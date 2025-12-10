@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Component Registry Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Optional: custom font -->
+  <!-- <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;600;700&display=swap" rel="stylesheet"> -->
+
+  <link rel="stylesheet" href="/styles/registry-explorer.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="app-inner">
+      <header class="app-header">
+        <div class="brand">
+          <div class="brand-logo">
+            <div class="brand-logo-inner">R</div>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title">Registry Atlas</div>
+            <div class="brand-subtitle">Shadcn-Based Component Index</div>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="pill-meta">
+            <div class="pill-dot"></div>
+            <span>Interactive SPA · Local data only</span>
+          </div>
+          <div class="search-bar">
+            <div class="search-icon">⌕</div>
+            <input
+              id="searchInput"
+              type="search"
+              class="search-input"
+              placeholder="Filter by name, focus, or tag"
+            />
+          </div>
+          <div class="tabs" role="tablist">
+            <button class="tab tab-active" data-view="focus" role="tab">
+              <span class="label">By Focus</span>
+              <span class="badge">Registry clusters</span>
+            </button>
+            <button class="tab" data-view="component" role="tab">
+              <span class="label">By Component</span>
+              <span class="badge">Need-based</span>
+            </button>
+            <button class="tab" data-view="matrix" role="tab">
+              <span class="label">Matrix</span>
+              <span class="badge">Coverage</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <aside>
+          <div class="aside-inner" id="aside"></div>
+        </aside>
+        <section class="content">
+          <div class="content-header" id="contentHeader"></div>
+          <div class="content-body">
+            <div class="scroll-region" id="contentBody"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // --- Data model ----------------------------------------------------------
+
+    const REGISTRIES = [
+      {
+        name: "ChatKit UI",
+        url: "https://example.com/chatkit",
+        description: "Focused set of AI chat surfaces: support inboxes, chat popovers, assistant consoles.",
+        primary_focus: ["ai-chat", "support"],
+        component_tags: [
+          "chatbot", "chat-window", "message-list", "typing-indicator", "prompt-box",
+          "button", "input", "badge", "avatar", "toolbar"
+        ],
+        framework: "React (shadcn/ui)",
+        license: "MIT"
+      },
+      {
+        name: "Minimal Primitives",
+        url: "https://example.com/minimal-primitives",
+        description: "Button-first primitive collection: buttons, toggles, input scaffolding.",
+        primary_focus: ["buttons-and-primitives"],
+        component_tags: [
+          "button", "icon-button", "loading-button", "toggle", "switch",
+          "input", "select", "textarea", "badge"
+        ],
+        framework: "React (shadcn/ui)",
+        license: "MIT"
+      },
+      {
+        name: "SaaS Admin Blocks",
+        url: "https://example.com/saas-admin-blocks",
+        description: "Composable admin building blocks: data tables, filters, metrics cards.",
+        primary_focus: ["dashboards-and-admin", "data-display-and-tables"],
+        component_tags: [
+          "table", "data-grid", "filter-bar", "badge", "pagination",
+          "chart", "stat-widget", "toolbar", "button"
+        ],
+        framework: "React (shadcn/ui)",
+        license: "Commercial"
+      },
+      {
+        name: "AuthKit UI",
+        url: "https://example.com/authkit",
+        description: "Authentication flows: sign-in, sign-up, magic links, profile menus.",
+        primary_focus: ["auth-and-user", "forms-and-inputs"],
+        component_tags: [
+          "auth-form", "input", "password-input", "button",
+          "stepper", "alert", "avatar", "navbar"
+        ],
+        framework: "React / Next.js",
+        license: "MIT"
+      },
+      {
+        name: "Navigation Shelf",
+        url: "https://example.com/navigation-shelf",
+        description: "Navigation-focused set: sidebars, app shells, breadcrumbs.",
+        primary_focus: ["navigation", "templates-and-layouts"],
+        component_tags: [
+          "sidebar", "navbar", "breadcrumb", "app-shell",
+          "tabs", "dropdown", "button"
+        ],
+        framework: "React",
+        license: "MIT"
+      },
+      {
+        name: "Story Sections",
+        url: "https://example.com/story-sections",
+        description: "Hero sections, grids, and editorial layouts for marketing pages.",
+        primary_focus: ["marketing-sections", "templates-and-layouts"],
+        component_tags: [
+          "hero-section", "feature-grid", "testimonial", "cta-section",
+          "button", "badge", "card"
+        ],
+        framework: "React",
+        license: "MIT"
+      },
+      {
+        name: "Commerce Blocks",
+        url: "https://example.com/commerce-blocks",
+        description: "Product cards, carts, and checkout-ready building blocks.",
+        primary_focus: ["ecommerce", "forms-and-inputs"],
+        component_tags: [
+          "product-card", "price-badge", "cart-drawer", "mini-cart",
+          "button", "input", "select", "table"
+        ],
+        framework: "React / Next.js",
+        license: "Commercial"
+      },
+      {
+        name: "Dataview Studio",
+        url: "https://example.com/dataview-studio",
+        description: "Heavy-duty data views: resizable tables, facets, and filters.",
+        primary_focus: ["data-display-and-tables", "dashboards-and-admin"],
+        component_tags: [
+          "data-grid", "table", "column-resize", "filter-bar",
+          "search-input", "tag-input", "badge", "toolbar"
+        ],
+        framework: "React",
+        license: "MIT"
+      },
+      {
+        name: "FormLab",
+        url: "https://example.com/formlab",
+        description: "Form field recipes, validation states, and multi-step flows.",
+        primary_focus: ["forms-and-inputs"],
+        component_tags: [
+          "input", "textarea", "select", "checkbox", "radio",
+          "datepicker", "stepper", "submit-button", "error-message"
+        ],
+        framework: "React",
+        license: "MIT"
+      },
+      {
+        name: "Utility Shelf",
+        url: "https://example.com/utility-shelf",
+        description: "Miscellaneous utilities: toasts, modals, drawers, and skeletons.",
+        primary_focus: ["misc-utility"],
+        component_tags: [
+          "toast", "modal", "drawer", "skeleton", "spinner",
+          "badge", "button"
+        ],
+        framework: "React",
+        license: "MIT"
+      }
+    ];
+
+    const MATRIX_COLUMNS = [
+      "chatbot",
+      "button",
+      "input",
+      "table",
+      "auth-form",
+      "navbar",
+      "hero-section"
+    ];
+
+    const STATE = {
+      currentView: "focus",          // "focus" | "component" | "matrix"
+      selectedFocus: null,           // string | null
+      selectedComponent: null,       // string | null
+      searchTerm: ""
+    };
+
+    const root = {
+      aside: document.getElementById("aside"),
+      contentHeader: document.getElementById("contentHeader"),
+      contentBody: document.getElementById("contentBody"),
+      tabs: document.querySelectorAll(".tab"),
+      searchInput: document.getElementById("searchInput")
+    };
+
+    // --- Helpers ------------------------------------------------------------
+
+    function getUniqueFocuses() {
+      const set = new Set();
+      REGISTRIES.forEach(r => r.primary_focus.forEach(f => set.add(f)));
+      return Array.from(set).sort();
+    }
+
+    function getComponentCounts() {
+      const map = new Map();
+      REGISTRIES.forEach(r => {
+        r.component_tags.forEach(tag => {
+          map.set(tag, (map.get(tag) || 0) + 1);
+        });
+      });
+      const arr = Array.from(map.entries()).map(([tag, count]) => ({ tag, count }));
+      arr.sort((a, b) => {
+        if (b.count !== a.count) return b.count - a.count;
+        return a.tag.localeCompare(b.tag);
+      });
+      return arr;
+    }
+
+    function filterRegistries(registries) {
+      if (!STATE.searchTerm.trim()) return registries;
+      const q = STATE.searchTerm.trim().toLowerCase();
+      return registries.filter(r => {
+        const haystack = [
+          r.name,
+          r.description,
+          r.framework,
+          r.license,
+          ...r.primary_focus,
+          ...r.component_tags
+        ]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(q);
+      });
+    }
+
+    function focusLabel(focusKey) {
+      const map = {
+        "ai-chat": "AI & Chatbot",
+        "support": "Support UIs",
+        "forms-and-inputs": "Forms & Inputs",
+        "buttons-and-primitives": "Buttons & Primitives",
+        "dashboards-and-admin": "Dashboards & Admin",
+        "marketing-sections": "Marketing Sections",
+        "ecommerce": "Ecommerce",
+        "auth-and-user": "Auth & User",
+        "data-display-and-tables": "Data Display & Tables",
+        "navigation": "Navigation",
+        "templates-and-layouts": "Layouts & Templates",
+        "misc-utility": "Utility & Misc"
+      };
+      return map[focusKey] || focusKey;
+    }
+
+    function componentLabel(componentKey) {
+      return componentKey.replace(/-/g, " ");
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    // --- Rendering: Aside ---------------------------------------------------
+
+    function renderAsideFocus() {
+      const focuses = getUniqueFocuses();
+      if (!STATE.selectedFocus && focuses.length) {
+        STATE.selectedFocus = focuses[0];
+      }
+
+      const filtered = filterRegistries(REGISTRIES);
+      const counts = new Map();
+      filtered.forEach(r => {
+        r.primary_focus.forEach(f => {
+          counts.set(f, (counts.get(f) || 0) + 1);
+        });
+      });
+
+      const summary =
+        `<div class="aside-header">
+           <div class="aside-title">Focus clusters</div>
+           <div class="aside-summary">
+             Registry groups by dominant <span class="em">use-case</span>.
+           </div>
+         </div>`;
+
+      const pills = focuses
+        .filter(f => counts.get(f) > 0)
+        .map(focusKey => {
+          const count = counts.get(focusKey) || 0;
+          const active = STATE.selectedFocus === focusKey ? " pill-active" : "";
+          return `
+            <button class="pill-item${active}" data-focus="${focusKey}">
+              <span class="pill-item-label">${escapeHtml(focusLabel(focusKey))}</span>
+              <span class="pill-item-count">${count}</span>
+            </button>
+          `;
+        })
+        .join("");
+
+      const footer =
+        `<div class="aside-footer">
+           <span class="muted-em">Filter by cluster</span>
+           <span class="key">Focus → registries</span>
+         </div>`;
+
+      root.aside.innerHTML =
+        summary +
+        `<div class="pill-list">${pills}</div>` +
+        footer;
+    }
+
+    function renderAsideComponent() {
+      const componentCounts = getComponentCounts();
+      if (!STATE.selectedComponent && componentCounts.length) {
+        STATE.selectedComponent = componentCounts[0].tag;
+      }
+
+      const filtered = filterRegistries(REGISTRIES);
+      const filteredCounts = new Map();
+      filtered.forEach(r => {
+        r.component_tags.forEach(tag => {
+          filteredCounts.set(tag, (filteredCounts.get(tag) || 0) + 1);
+        });
+      });
+
+      const summary =
+        `<div class="aside-header">
+           <div class="aside-title">Component index</div>
+           <div class="aside-summary">
+             Choose a <span class="em">component type</span> to see who ships it.
+           </div>
+         </div>`;
+
+      const pills = componentCounts
+        .filter(({ tag }) => filteredCounts.get(tag) > 0)
+        .slice(0, 32)
+        .map(({ tag }) => {
+          const count = filteredCounts.get(tag) || 0;
+          const active = STATE.selectedComponent === tag ? " pill-active" : "";
+          return `
+            <button class="pill-item${active}" data-component="${tag}">
+              <span class="pill-item-label">${escapeHtml(componentLabel(tag))}</span>
+              <span class="pill-item-count">${count}</span>
+            </button>
+          `;
+        })
+        .join("");
+
+      const footer =
+        `<div class="aside-footer">
+           <span class="muted-em">Filter by component</span>
+           <span class="key">Component → registries</span>
+         </div>`;
+
+      root.aside.innerHTML =
+        summary +
+        `<div class="pill-list">${pills}</div>` +
+        footer;
+    }
+
+    function renderAsideMatrix() {
+      const filtered = filterRegistries(REGISTRIES);
+      const summary =
+        `<div class="aside-header">
+           <div class="aside-title">Matrix axes</div>
+           <div class="aside-summary">
+             Rows: <span class="em">registries</span>. Columns: <span class="em">representative components</span>.
+           </div>
+         </div>`;
+
+      const registryCount = filtered.length;
+      const footer =
+        `<div class="aside-footer">
+           <span class="muted-em">Coverage overview</span>
+           <span class="key">${registryCount} registries · ${MATRIX_COLUMNS.length} columns</span>
+         </div>`;
+
+      const chips =
+        `<div class="pill-list">
+           ${MATRIX_COLUMNS.map(col => `
+             <div class="chip chip-compact chip-tag">
+               ${escapeHtml(componentLabel(col))}
+             </div>
+           `).join("")}
+         </div>`;
+
+      root.aside.innerHTML = summary + chips + footer;
+    }
+
+    // --- Rendering: Content header -----------------------------------------
+
+    function renderContentHeaderFocus() {
+      const filtered = filterRegistries(REGISTRIES);
+      const registryCount = filtered.length;
+      const clusterCount = getUniqueFocuses().length;
+
+      root.contentHeader.innerHTML =
+        `<div class="content-heading">
+           <div class="content-title">Registries by focus</div>
+           <div class="content-subtitle">
+             Browse component registries clustered by dominant product use-case.
+           </div>
+         </div>
+         <div class="content-metrics">
+           <span><strong>${registryCount}</strong> registries</span>
+           <span><strong>${clusterCount}</strong> focus groups</span>
+         </div>`;
+    }
+
+    function renderContentHeaderComponent() {
+      const filtered = filterRegistries(REGISTRIES);
+      const registryCount = filtered.length;
+      const componentCount = getComponentCounts().length;
+
+      root.contentHeader.innerHTML =
+        `<div class="content-heading">
+           <div class="content-title">Registries by component</div>
+           <div class="content-subtitle">
+             Start from the component you need; see every registry that ships it.
+           </div>
+         </div>
+         <div class="content-metrics">
+           <span><strong>${registryCount}</strong> registries</span>
+           <span><strong>${componentCount}</strong> component types</span>
+         </div>`;
+    }
+
+    function renderContentHeaderMatrix() {
+      const filtered = filterRegistries(REGISTRIES);
+      const registryCount = filtered.length;
+
+      root.contentHeader.innerHTML =
+        `<div class="content-heading">
+           <div class="content-title">Coverage matrix</div>
+           <div class="content-subtitle">
+             Quick scan of which registries cover core component families.
+           </div>
+         </div>
+         <div class="content-metrics">
+           <span><strong>${registryCount}</strong> registries</span>
+           <span><strong>${MATRIX_COLUMNS.length}</strong> component columns</span>
+         </div>`;
+    }
+
+    // --- Rendering: Content body -------------------------------------------
+
+    function renderContentBodyFocus() {
+      const filtered = filterRegistries(REGISTRIES);
+      if (!filtered.length) {
+        root.contentBody.innerHTML =
+          `<div class="empty-state">
+             <div class="empty-state-icon">⊘</div>
+             <div>No registries match this filter.</div>
+             <div>Clear the search filter or adjust your focus selection.</div>
+           </div>`;
+        return;
+      }
+
+      const registriesForFocus = STATE.selectedFocus
+        ? filtered.filter(r => r.primary_focus.includes(STATE.selectedFocus))
+        : filtered;
+
+      if (!registriesForFocus.length) {
+        root.contentBody.innerHTML =
+          `<div class="empty-state">
+             <div class="empty-state-icon">⊘</div>
+             <div>No registries in this focus cluster after filtering.</div>
+             <div>Try another focus cluster or clear the search filter.</div>
+           </div>`;
+        return;
+      }
+
+      const cards = registriesForFocus.map(r => {
+        const focusChips = r.primary_focus
+          .map(f => `<span class="chip chip-focus">${escapeHtml(focusLabel(f))}</span>`)
+          .join("");
+        const tagChips = r.component_tags.slice(0, 5)
+          .map(tag => `<span class="chip chip-tag chip-compact">${escapeHtml(componentLabel(tag))}</span>`)
+          .join("");
+        const extraCount = r.component_tags.length - 5;
+        const extraChip = extraCount > 0
+          ? `<span class="chip chip-compact chip-tag">+${extraCount} more</span>`
+          : "";
+
+        return `
+          <article class="registry-card">
+            <div class="registry-header">
+              <div>
+                <div class="registry-name">${escapeHtml(r.name)}</div>
+              </div>
+              <a href="${escapeHtml(r.url)}" class="registry-url" target="_blank" rel="noreferrer">
+                Visit
+              </a>
+            </div>
+            <div class="registry-description">
+              ${escapeHtml(r.description)}
+            </div>
+            <div class="chip-row">
+              ${focusChips}
+            </div>
+            <div class="registry-footer">
+              <div class="registry-meta">
+                <span>${escapeHtml(r.framework)}</span>
+                <span>${escapeHtml(r.license)}</span>
+              </div>
+              <div class="tag-row-compact">
+                ${tagChips}${extraChip}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      root.contentBody.innerHTML =
+        `<div class="registry-grid">${cards}</div>`;
+    }
+
+    function renderContentBodyComponent() {
+      const filtered = filterRegistries(REGISTRIES);
+      if (!filtered.length) {
+        root.contentBody.innerHTML =
+          `<div class="empty-state">
+             <div class="empty-state-icon">⊘</div>
+             <div>No registries match this filter.</div>
+           </div>`;
+        return;
+      }
+
+      const selected = STATE.selectedComponent;
+      if (!selected) {
+        root.contentBody.innerHTML =
+          `<div class="empty-state">
+             <div class="empty-state-icon">◎</div>
+             <div>Select a component type in the left panel.</div>
+           </div>`;
+        return;
+      }
+
+      const registriesForComponent = filtered.filter(r =>
+        r.component_tags.includes(selected)
+      );
+
+      if (!registriesForComponent.length) {
+        root.contentBody.innerHTML =
+          `<div class="empty-state">
+             <div class="empty-state-icon">⊘</div>
+             <div>No registries currently expose this component after filtering.</div>
+           </div>`;
+        return;
+      }
+
+      const groupsHtml = `
+        <div class="component-group-list">
+          <div class="component-group">
+            <div class="component-group-header">
+              <div class="component-name">${escapeHtml(componentLabel(selected))}</div>
+              <div class="component-count">${registriesForComponent.length} registries</div>
+            </div>
+            <div class="component-group-body">
+              ${registriesForComponent.map(r => {
+                const focusTags = r.primary_focus
+                  .map(f => `<span class="chip chip-focus chip-compact">${escapeHtml(focusLabel(f))}</span>`)
+                  .join("");
+                const extraTags = r.component_tags
+                  .filter(t => t !== selected)
+                  .slice(0, 3)
+                  .map(t => `<span class="chip chip-tag chip-compact">${escapeHtml(componentLabel(t))}</span>`)
+                  .join("");
+                const extraCount = r.component_tags.length - 1 - 3;
+                const moreChip = extraCount > 0
+                  ? `<span class="chip chip-compact chip-tag">+${extraCount} more</span>`
+                  : "";
+
+                return `
+                  <div class="component-registry-row">
+                    <div class="component-registry-main">
+                      <div class="component-registry-name">${escapeHtml(r.name)}</div>
+                      <div class="component-registry-description">
+                        ${escapeHtml(r.description)}
+                      </div>
+                    </div>
+                    <div class="component-registry-meta">
+                      ${focusTags}
+                      ${extraTags}
+                      ${moreChip}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      root.contentBody.innerHTML = groupsHtml;
+    }
+
+    function renderContentBodyMatrix() {
+      const filtered = filterRegistries(REGISTRIES);
+      if (!filtered.length) {
+        root.contentBody.innerHTML =
+          `<div class="empty-state">
+             <div class="empty-state-icon">⊘</div>
+             <div>No registries match this filter.</div>
+           </div>`;
+        return;
+      }
+
+      const rows = filtered.map(r => {
+        const cells = MATRIX_COLUMNS.map(col => {
+          const has = r.component_tags.includes(col);
+          const icon = has ? "●" : "";
+          const cls = has ? "matrix-icon" : "matrix-empty";
+          return `<td class="${cls}">${icon}</td>`;
+        }).join("");
+
+        return `
+          <tr>
+            <td>
+              <div class="matrix-registry-name">${escapeHtml(r.name)}</div>
+            </td>
+            ${cells}
+          </tr>
+        `;
+      }).join("");
+
+      const headers = MATRIX_COLUMNS.map(col =>
+        `<th>${escapeHtml(componentLabel(col))}</th>`
+      ).join("");
+
+      root.contentBody.innerHTML =
+        `<div class="matrix-wrapper">
+           <table class="matrix">
+             <thead>
+               <tr>
+                 <th>Registry</th>
+                 ${headers}
+               </tr>
+             </thead>
+             <tbody>
+               ${rows}
+             </tbody>
+           </table>
+         </div>`;
+    }
+
+    // --- Master render ------------------------------------------------------
+
+    function render() {
+      root.tabs.forEach(tab => {
+        const view = tab.getAttribute("data-view");
+        tab.classList.toggle("tab-active", view === STATE.currentView);
+      });
+
+      if (STATE.currentView === "focus") {
+        renderAsideFocus();
+        renderContentHeaderFocus();
+        renderContentBodyFocus();
+      } else if (STATE.currentView === "component") {
+        renderAsideComponent();
+        renderContentHeaderComponent();
+        renderContentBodyComponent();
+      } else {
+        renderAsideMatrix();
+        renderContentHeaderMatrix();
+        renderContentBodyMatrix();
+      }
+    }
+
+    // --- Event wiring -------------------------------------------------------
+
+    root.tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const view = tab.getAttribute("data-view");
+        if (view && view !== STATE.currentView) {
+          STATE.currentView = view;
+          render();
+        }
+      });
+    });
+
+    root.searchInput.addEventListener("input", e => {
+      STATE.searchTerm = e.target.value || "";
+      render();
+    });
+
+    document.addEventListener("click", e => {
+      const focusButton = e.target.closest("[data-focus]");
+      if (focusButton) {
+        const focusKey = focusButton.getAttribute("data-focus");
+        if (focusKey && focusKey !== STATE.selectedFocus) {
+          STATE.selectedFocus = focusKey;
+          STATE.currentView = "focus";
+          render();
+        }
+        return;
+      }
+
+      const componentButton = e.target.closest("[data-component]");
+      if (componentButton) {
+        const tagKey = componentButton.getAttribute("data-component");
+        if (tagKey && tagKey !== STATE.selectedComponent) {
+          STATE.selectedComponent = tagKey;
+          STATE.currentView = "component";
+          render();
+        }
+      }
+    });
+
+    // --- Initial render -----------------------------------------------------
+
+    render();
+  </script>
+</body>
+</html>
