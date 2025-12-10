@@ -92,7 +92,7 @@ To add a new community registry to the explorer:
 2.  Add a new entry to the `registries` array matching the `Registry` interface.
 3.  Use the controlled vocabularies for `primary_focus` and `component_tags` (intellisense will guide you).
 
-For more details, see [docs/registry-explorer-data.md](docs/registry-explorer-data.md).
+For more details, see [docs/registry-explorer-data.md](https://github.com/acidicsoil/registry-atlas/blob/HEAD/docs/registry-explorer-data.md).
 
 ---
 
