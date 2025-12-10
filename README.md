@@ -94,6 +94,12 @@ To add a new community registry to the explorer:
 
 For more details, see [docs/registry-explorer-data.md](docs/registry-explorer-data.md).
 
+---
+
+Built with [![Gemini CLI](https://img.shields.io/badge/Gemini%20CLI-1A73E8)](https://github.com/google-gemini/gemini-cli) & [claude-task-master](https://github.com/eyaltoledano/claude-task-master)
+
+---
+
 ## License
 
 MIT
