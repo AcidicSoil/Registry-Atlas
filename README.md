@@ -1,6 +1,6 @@
 # Registry Atlas
 
-A modular, interactive explorer for the shadcn/ui community registry ecosystem.
+A modular, interactive explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory)ecosystem.
 
 Registry Atlas provides a structured way to discover and compare community registries based on their primary focus (e.g., AI Chat, Admin Dashboards) or specific component availability (e.g., specific table implementations, authentication forms).
 
