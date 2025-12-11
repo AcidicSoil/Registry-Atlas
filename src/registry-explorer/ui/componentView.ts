@@ -22,7 +22,7 @@ export function renderComponentAside(
     </div>`;
 
   const pills = groups
-    .slice(0, 32) // Limit list size as per original
+    // .slice(0, 32) // Removed limit to show all
     .map(group => {
       const active = selectedComponent === group.componentKey ? " pill-active" : "";
       return `
