@@ -95,22 +95,24 @@ export function renderComponentContent(
       ? `<span class="chip chip-compact chip-tag">+${extraCount} more</span>`
       : "";
 
-    return `
-      <div class="component-registry-row">
-        <div class="component-registry-main">
-          <div class="component-registry-name">${escapeHtml(r.name)}</div>
-          <div class="component-registry-description">
-            ${escapeHtml(r.description)}
-          </div>
-        </div>
-        <div class="component-registry-meta">
-          ${focusTags}
-          ${extraTags}
-          ${moreChip}
-        </div>
-      </div>
-    `;
-  }).join("");
+            return `
+              <div class="component-registry-row">
+                <div class="component-registry-main">
+                  <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <div class="component-registry-name">${escapeHtml(r.name)}</div>
+                    <a href="${escapeHtml(r.url)}" class="registry-url" target="_blank" rel="noreferrer">Visit</a>
+                  </div>
+                  <div class="component-registry-description">
+                    ${escapeHtml(r.description)}
+                  </div>
+                </div>
+                <div class="component-registry-meta">
+                  ${focusTags}
+                  ${extraTags}
+                  ${moreChip}
+                </div>
+              </div>
+            `;  }).join("");
 
   bodyRoot.innerHTML = `
     <div class="component-group-list">
