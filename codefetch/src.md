@@ -32,19 +32,6 @@ Begin fixing the codebase provide your solutions.
 My current codebase:
 <current_codebase>
 <source_code>
-src/counter.ts
-```
-export function setupCounter(element: HTMLButtonElement) {
-  let counter = 0
-  const setCounter = (count: number) => {
-    counter = count
-    element.innerHTML = `count is ${counter}`
-  }
-  element.addEventListener('click', () => setCounter(counter + 1))
-  setCounter(0)
-}
-```
-
 src/main.ts
 ```
 import './style.css'
@@ -394,10 +381,17 @@ import type { ComponentTag } from './registry.schema';
 export const MATRIX_COLUMNS: readonly ComponentTag[] = [
   'chatbot',
   'button',
+  'badge',
   'input',
+  'select',
+  'dropdown',
   'table',
+  'chart',
   'auth-form',
   'navbar',
+  'tabs',
+  'card',
+  'modal',
   'hero-section',
 ];
 ```
@@ -487,7 +481,27 @@ export type ComponentTag =
   | 'modal'
   | 'drawer'
   | 'skeleton'
-  | 'spinner';
+  | 'spinner'
+  | 'accordion'
+  | 'calendar'
+  | 'carousel'
+  | 'collapsible'
+  | 'combobox'
+  | 'command'
+  | 'context-menu'
+  | 'hover-card'
+  | 'menubar'
+  | 'popover'
+  | 'progress'
+  | 'radio-group'
+  | 'scroll-area'
+  | 'separator'
+  | 'sheet'
+  | 'slider'
+  | 'tooltip'
+  | 'file-upload'
+  | 'dropzone'
+  | 'pricing-table';
 
 export const COMPONENT_TAG_VALUES: readonly ComponentTag[] = [
   'chatbot',
@@ -544,6 +558,26 @@ export const COMPONENT_TAG_VALUES: readonly ComponentTag[] = [
   'drawer',
   'skeleton',
   'spinner',
+  'accordion',
+  'calendar',
+  'carousel',
+  'collapsible',
+  'combobox',
+  'command',
+  'context-menu',
+  'hover-card',
+  'menubar',
+  'popover',
+  'progress',
+  'radio-group',
+  'scroll-area',
+  'separator',
+  'sheet',
+  'slider',
+  'tooltip',
+  'file-upload',
+  'dropzone',
+  'pricing-table',
 ];
 
 export interface Registry {
@@ -609,7 +643,7 @@ export function renderComponentAside(
     </div>`;
 
   const pills = groups
-    .slice(0, 32) // Limit list size as per original
+    // .slice(0, 32) // Removed limit to show all
     .map(group => {
       const active = selectedComponent === group.componentKey ? " pill-active" : "";
       return `
@@ -682,22 +716,24 @@ export function renderComponentContent(
       ? `<span class="chip chip-compact chip-tag">+${extraCount} more</span>`
       : "";
 
-    return `
-      <div class="component-registry-row">
-        <div class="component-registry-main">
-          <div class="component-registry-name">${escapeHtml(r.name)}</div>
-          <div class="component-registry-description">
-            ${escapeHtml(r.description)}
-          </div>
-        </div>
-        <div class="component-registry-meta">
-          ${focusTags}
-          ${extraTags}
-          ${moreChip}
-        </div>
-      </div>
-    `;
-  }).join("");
+            return `
+              <div class="component-registry-row">
+                <div class="component-registry-main">
+                  <div style="display: flex; align-items: baseline; gap: 8px;">
+                    <div class="component-registry-name">${escapeHtml(r.name)}</div>
+                    <a href="${escapeHtml(r.url)}" class="registry-url" target="_blank" rel="noreferrer">Visit</a>
+                  </div>
+                  <div class="component-registry-description">
+                    ${escapeHtml(r.description)}
+                  </div>
+                </div>
+                <div class="component-registry-meta">
+                  ${focusTags}
+                  ${extraTags}
+                  ${moreChip}
+                </div>
+              </div>
+            `;  }).join("");
 
   bodyRoot.innerHTML = `
     <div class="component-group-list">
@@ -1227,7 +1263,7 @@ export const registries: ReadonlyArray<Registry> = [
     url: 'https://better-upload.com',
     description: 'Provides simple and easy file uploads for React.',
     primary_focus: ['forms-and-inputs'],
-    component_tags: ['button', 'spinner'],
+    component_tags: ['button', 'spinner', 'file-upload', 'dropzone'],
     framework: 'React',
     license: 'MIT',
   },
@@ -1236,7 +1272,13 @@ export const registries: ReadonlyArray<Registry> = [
     url: 'https://basecn.dev',
     description: 'Distributes beautifully crafted shadcn/ui components powered by Base UI.',
     primary_focus: ['buttons-and-primitives', 'navigation', 'data-display-and-tables'],
-    component_tags: ['button', 'input', 'select', 'tabs', 'navbar', 'breadcrumb', 'sidebar', 'table', 'chart', 'card'],
+    component_tags: [
+      'button', 'input', 'select', 'tabs', 'navbar', 'breadcrumb', 'sidebar', 'table', 'chart', 'card',
+      'accordion', 'alert', 'avatar', 'badge', 'calendar', 'carousel', 'checkbox', 'collapsible',
+      'combobox', 'command', 'context-menu', 'dialog', 'drawer', 'hover-card', 'menubar', 'pagination',
+      'popover', 'progress', 'radio-group', 'scroll-area', 'separator', 'sheet', 'skeleton', 'slider',
+      'switch', 'textarea', 'toast', 'toggle', 'tooltip'
+    ],
     framework: 'React (shadcn/ui)',
     license: 'MIT',
   },
@@ -1245,7 +1287,7 @@ export const registries: ReadonlyArray<Registry> = [
     url: 'https://billingsdk.com',
     description: 'An open‑source library for SaaS billing and payments.',
     primary_focus: ['ecommerce', 'forms-and-inputs'],
-    component_tags: ['table', 'auth-form'],
+    component_tags: ['table', 'auth-form', 'pricing-table'],
     framework: 'React',
     license: 'MIT',
   },
@@ -1254,7 +1296,7 @@ export const registries: ReadonlyArray<Registry> = [
     url: 'https://blocks.so',
     description: 'Provides clean, modern application building blocks.',
     primary_focus: ['marketing-sections', 'dashboards-and-admin'],
-    component_tags: ['hero-section', 'feature-grid', 'table'],
+    component_tags: ['hero-section', 'feature-grid', 'table', 'dialog', 'auth-form', 'sidebar', 'chatbot'],
     framework: 'React',
     license: 'MIT',
   },
@@ -1268,11 +1310,25 @@ export const registries: ReadonlyArray<Registry> = [
     license: 'Commercial',
   },
   {
+    name: 'commercn',
+    url: 'https://commercn.com',
+    description: 'Shadcn UI blocks for e-commerce websites.',
+    primary_focus: ['ecommerce'],
+    component_tags: ['card', 'hero-section', 'table'],
+    framework: 'React (shadcn/ui)',
+    license: 'MIT',
+  },
+  {
     name: 'coss',
     url: 'https://coss.com',
     description: 'A modern UI component library built on top of Base UI for developers and AI.',
     primary_focus: ['buttons-and-primitives'],
-    component_tags: ['button', 'table', 'navbar'],
+    component_tags: [
+      'button', 'table', 'navbar', 'accordion', 'alert', 'avatar', 'badge', 'checkbox',
+      'collapsible', 'dialog', 'hover-card', 'menubar', 'pagination', 'popover', 'progress',
+      'radio-group', 'separator', 'sheet', 'skeleton', 'slider', 'spinner', 'switch',
+      'textarea', 'toast', 'toggle', 'tooltip'
+    ],
     framework: 'React',
     license: 'MIT',
   },

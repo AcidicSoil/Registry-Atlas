@@ -81,7 +81,34 @@ export type ComponentTag =
   | 'modal'
   | 'drawer'
   | 'skeleton'
-  | 'spinner';
+  | 'spinner'
+  | 'accordion'
+  | 'calendar'
+  | 'carousel'
+  | 'collapsible'
+  | 'combobox'
+  | 'command'
+  | 'context-menu'
+  | 'hover-card'
+  | 'menubar'
+  | 'popover'
+  | 'progress'
+  | 'radio-group'
+  | 'scroll-area'
+  | 'separator'
+  | 'sheet'
+  | 'slider'
+  | 'tooltip'
+  | 'file-upload'
+  | 'dropzone'
+  | 'pricing-table'
+  | 'timeline'
+  | 'scroll-progress'
+  | 'color-picker'
+  | 'audio-player'
+  | 'waveform'
+  | 'voice-picker'
+  | 'transcript-viewer';
 
 export const COMPONENT_TAG_VALUES: readonly ComponentTag[] = [
   'chatbot',
@@ -138,6 +165,33 @@ export const COMPONENT_TAG_VALUES: readonly ComponentTag[] = [
   'drawer',
   'skeleton',
   'spinner',
+  'accordion',
+  'calendar',
+  'carousel',
+  'collapsible',
+  'combobox',
+  'command',
+  'context-menu',
+  'hover-card',
+  'menubar',
+  'popover',
+  'progress',
+  'radio-group',
+  'scroll-area',
+  'separator',
+  'sheet',
+  'slider',
+  'tooltip',
+  'file-upload',
+  'dropzone',
+  'pricing-table',
+  'timeline',
+  'scroll-progress',
+  'color-picker',
+  'audio-player',
+  'waveform',
+  'voice-picker',
+  'transcript-viewer',
 ];
 
 export interface Registry {
