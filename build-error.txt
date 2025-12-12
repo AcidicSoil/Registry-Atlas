@@ -1,0 +1,9 @@
+
+> registry-atlas@0.0.0 build /home/user/projects/temp/registry-atlas
+> tsc && vite build
+
+src/main.ts(4,30): error TS2307: Cannot find module './counter.ts' or its corresponding type declarations.
+src/registry-explorer/data/registries.data.ts(127,46): error TS2322: Type '"dialog"' is not assignable to type 'ComponentTag'.
+src/registry-explorer/data/registries.data.ts(148,63): error TS2322: Type '"dialog"' is not assignable to type 'ComponentTag'.
+src/registry-explorer/data/registries.data.ts(177,22): error TS2322: Type '"dialog"' is not assignable to type 'ComponentTag'.
+ ELIFECYCLE  Command failed with exit code 2.

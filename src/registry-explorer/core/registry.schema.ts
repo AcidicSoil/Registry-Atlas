@@ -79,6 +79,7 @@ export type ComponentTag =
   | 'error-message'
   | 'toast'
   | 'modal'
+  | 'dialog'
   | 'drawer'
   | 'skeleton'
   | 'spinner'
@@ -162,6 +163,7 @@ export const COMPONENT_TAG_VALUES: readonly ComponentTag[] = [
   'error-message',
   'toast',
   'modal',
+  'dialog',
   'drawer',
   'skeleton',
   'spinner',
