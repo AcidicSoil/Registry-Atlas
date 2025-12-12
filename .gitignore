@@ -39,3 +39,6 @@ node_modules/
 codefetch
 .archived
 .taskmaster
+.browser-echo-mcp.json
+codefetch.config.mjs
+.codefetchignore
