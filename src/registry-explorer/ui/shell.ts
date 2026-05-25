@@ -1,4 +1,6 @@
 import type { Registry, PrimaryFocus, ComponentTag } from '../core/registry.schema';
+import type { MirrorValidationIssue } from '../core/registryMirror';
+import type { RegistryMirrorMeta } from '../data/loadRegistries';
 import {
   buildFocusGroups,
   buildComponentGroups,
@@ -9,9 +11,12 @@ import { MATRIX_COLUMNS } from '../core/matrixColumns';
 import { renderFocusAside, renderFocusContent } from './focusView';
 import { renderComponentAside, renderComponentContent } from './componentView';
 import { renderMatrixAside, renderMatrixContent } from './matrixView';
+import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export interface ShellOptions {
   registries: readonly Registry[];
+  mirrorMeta: RegistryMirrorMeta;
+  mirrorWarnings: readonly MirrorValidationIssue[];
   roots: {
     aside: HTMLElement;
     contentHeader: HTMLElement;
@@ -33,7 +38,7 @@ function isView(value: string | null): value is AppState['currentView'] {
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
-  const { registries, roots } = options;
+  const { registries, mirrorMeta, mirrorWarnings, roots } = options;
 
   // Initial State
   let state: AppState = {
@@ -101,6 +106,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
         renderMatrixAside(roots.aside, MATRIX_COLUMNS, metrics);
         renderMatrixContent(roots.contentHeader, roots.contentBody, rows, MATRIX_COLUMNS, metrics);
       }
+
+      renderMirrorStatus(roots.contentHeader, mirrorMeta, mirrorWarnings);
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);
       roots.contentBody.innerHTML = `
@@ -156,4 +163,47 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   // Initial Render
   render();
+}
+
+function renderMirrorStatus(
+  root: HTMLElement,
+  meta: RegistryMirrorMeta,
+  warnings: readonly MirrorValidationIssue[]
+): void {
+  const countMatches = meta.upstream_count === meta.local_count;
+  const countText = `${meta.local_count} / ${meta.upstream_count} registries mirrored`;
+  const synced = formatSyncTime(meta.synced_at);
+  const statusText = countMatches ? countText : `${countText}; counts need review`;
+  const warningText = warnings.length > 0
+    ? `${warnings.length} official fields need review`
+    : 'No mirror warnings';
+
+  root.insertAdjacentHTML('beforeend', `
+    <div class="mirror-status" aria-label="Registry mirror status">
+      <div class="mirror-source">
+        <span class="mirror-source-label">Official shadcn directory</span>
+        ${renderExternalLink(meta.source_url, 'Source', 'mirror-source-link')}
+      </div>
+      <div class="mirror-facts">
+        <span>Synced <strong>${escapeHtml(synced)}</strong></span>
+        <span>Upstream <strong>${meta.upstream_count}</strong></span>
+        <span>Local <strong>${meta.local_count}</strong></span>
+        <span class="${countMatches ? 'mirror-ok' : 'mirror-review'}">${escapeHtml(statusText)}</span>
+        <span class="${warnings.length > 0 ? 'mirror-review' : 'mirror-ok'}">${escapeHtml(warningText)}</span>
+      </div>
+    </div>
+  `);
+}
+
+function formatSyncTime(value: string): string {
+  const timestamp = Date.parse(value);
+
+  if (Number.isNaN(timestamp)) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(timestamp);
 }

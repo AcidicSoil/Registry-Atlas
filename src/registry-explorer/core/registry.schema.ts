@@ -110,6 +110,11 @@ export interface Registry {
   component_tags: ComponentTag[];
   framework?: string;
   license?: string;
+  mirror?: {
+    officialName: string;
+    registryUrlTemplate: string;
+    warnings: string[];
+  };
 }
 
 export interface FocusGroup {

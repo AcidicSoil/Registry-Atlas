@@ -89,12 +89,16 @@ export function renderComponentContent(
     const moreChip = extraCount > 0
       ? `<span class="chip chip-compact chip-tag">+${extraCount} more</span>`
       : "";
+    const warningChip = r.mirror?.warnings.length
+      ? `<span class="chip chip-warning chip-compact">${r.mirror.warnings.length} warning${r.mirror.warnings.length === 1 ? '' : 's'}</span>`
+      : "";
 
             return `
               <div class="component-registry-row">
                 <div class="component-registry-main">
                   <div style="display: flex; align-items: baseline; gap: 8px;">
                     <div class="component-registry-name">${escapeHtml(r.name)}</div>
+                    ${warningChip}
                     ${renderExternalLink(r.url, 'Visit')}
                   </div>
                   <div class="component-registry-description">

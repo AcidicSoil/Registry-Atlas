@@ -77,6 +77,9 @@ export function renderFocusContent(
     const extraChip = extraCount > 0
       ? `<span class="chip chip-compact chip-tag">+${extraCount} more</span>`
       : "";
+    const warningChip = r.mirror?.warnings.length
+      ? `<span class="chip chip-warning chip-compact">${r.mirror.warnings.length} warning${r.mirror.warnings.length === 1 ? '' : 's'}</span>`
+      : "";
 
     return `
       <article class="registry-card">
@@ -84,7 +87,10 @@ export function renderFocusContent(
           <div>
             <div class="registry-name">${escapeHtml(r.name)}</div>
           </div>
-          ${renderExternalLink(r.url, 'Visit')}
+          <div class="registry-actions">
+            ${warningChip}
+            ${renderExternalLink(r.url, 'Visit')}
+          </div>
         </div>
         <div class="registry-description">
           ${escapeHtml(r.description)}

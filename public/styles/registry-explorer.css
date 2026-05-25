@@ -468,6 +468,7 @@ section.content {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .content-heading {
@@ -508,6 +509,56 @@ section.content {
 .content-metrics span strong {
   color: var(--accent);
   font-weight: 600;
+}
+
+.mirror-status {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  font-size: 11px;
+  color: var(--text-softer);
+}
+
+.mirror-source,
+.mirror-facts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mirror-source-label {
+  color: var(--text-muted);
+}
+
+.mirror-source-link {
+  color: var(--accent-secondary);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(101, 212, 255, 0.6);
+}
+
+.mirror-facts span {
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.mirror-facts strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.mirror-ok {
+  color: var(--accent);
+}
+
+.mirror-review {
+  color: var(--accent-secondary);
 }
 
 .content-body {
@@ -600,6 +651,14 @@ section.content {
   gap: 6px;
 }
 
+.registry-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
 .registry-name {
   font-size: 13px;
   font-weight: 600;
@@ -653,6 +712,12 @@ section.content {
 
 .chip.chip-tag {
   border-style: dashed;
+}
+
+.chip.chip-warning {
+  border-color: rgba(101, 212, 255, 0.55);
+  color: var(--accent-secondary);
+  background: rgba(101, 212, 255, 0.08);
 }
 
 .chip.chip-compact {
@@ -909,6 +974,11 @@ table.matrix tbody tr:nth-child(odd) td {
   .search-bar {
     flex: 1;
     width: auto;
+  }
+
+  .mirror-status {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
 
