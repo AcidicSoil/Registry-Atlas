@@ -59,7 +59,7 @@ completed: 2026-05-25
 - Verified `vitest` package legitimacy before dependency installation.
 - Added Vitest as a dev dependency and lockfile entry.
 - Added `test`, `test:watch`, `typecheck`, `typecheck:test`, and `verify` scripts.
-- Added `tsconfig.test.json` so `src/**/*.ts` and `tests/**/*.ts` are type-checked together.
+- Added `tsconfig.test.json` so source and test TypeScript files are type-checked together.
 - Documented `pnpm test`, `pnpm typecheck:test`, `pnpm verify`, and the production role of `pnpm build`.
 
 ## Task Commits
