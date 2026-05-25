@@ -63,7 +63,24 @@ Plans:
   4. Validation fails on missing, malformed, or disallowed homepage and registry URL template protocols.
   5. User can see whether the local mirror matches the current upstream count, including the 198-registry target when synced.
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Create official directory sync script, raw upstream artifact, normalized runtime JSON, and sync report.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — Add strict local mirror validation helpers, tests, and `validate:data` command.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 02-03-PLAN.md — Load normalized runtime JSON in the app and show mirror freshness/count/warning status.
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 02-04-PLAN.md — Wire data validation into docs, `verify`, and final maintainer checks.
 
 ### Phase 3: Component-First Discovery
 
@@ -107,6 +124,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
-| 2. Official Mirror & Data Pipeline | 0/TBD | Not started | - |
+| 2. Official Mirror & Data Pipeline | 0/4 | Planned | - |
 | 3. Component-First Discovery | 0/TBD | Not started | - |
 | 4. Install Actions & Release Hardening | 0/TBD | Not started | - |
