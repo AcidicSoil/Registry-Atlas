@@ -28,6 +28,10 @@ interface AppState {
   searchTerm: string;
 }
 
+function isView(value: string | null): value is AppState['currentView'] {
+  return value === 'focus' || value === 'component' || value === 'matrix';
+}
+
 export function initRegistryExplorer(options: ShellOptions): void {
   const { registries, roots } = options;
 
@@ -99,14 +103,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       }
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);
-      // Optional: Render error state to UI
       roots.contentBody.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon">⚠️</div>
-          <div>Something went wrong while rendering the view.</div>
-          <div style="font-size: 10px; color: var(--text-muted); margin-top: 8px;">
-            ${error instanceof Error ? error.message : 'Unknown error'}
-          </div>
+          <div class="empty-state-icon">!</div>
+          <div>Something went wrong while rendering this view. Try clearing the search or reloading the page.</div>
         </div>
       `;
     }
@@ -117,8 +117,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
   // Tabs
   roots.tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      const view = tab.getAttribute('data-view') as AppState['currentView'];
-      if (view && view !== state.currentView) {
+      const view = tab.getAttribute('data-view');
+      if (isView(view) && view !== state.currentView) {
         setState({ currentView: view });
       }
     });
