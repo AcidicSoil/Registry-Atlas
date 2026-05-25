@@ -41,7 +41,7 @@ Declared values (must be multiples of 4):
 | 2xl | 48px | Empty-state breathing room and wide-screen content breaks |
 | 3xl | 64px | Page-level spacing only; do not introduce hero spacing in this phase |
 
-Exceptions: Existing radii may remain at 12px, 13px, 14px, 16px, 20px, and 28px where already defined. Phase 3 interactive rows must use a minimum 36px desktop target and 44px mobile/touch target. Status chips may keep 3px/7px internal padding to match the existing compact visual system.
+Exceptions: Existing radii may remain at 12px, 13px, 14px, 16px, 20px, and 28px where already defined. Phase 3 interactive rows must use a minimum 36px desktop target and 44px mobile/touch target. Status chips must use 4px 8px internal padding to match the approved spacing scale.
 
 ---
 
