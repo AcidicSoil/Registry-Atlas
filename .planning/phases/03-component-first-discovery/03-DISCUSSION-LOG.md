@@ -20,6 +20,8 @@
 **User's choice:** Optimal choices for best possible experience in all regards.
 **Notes:** Agent defaulted to component-first comparison because it directly matches the project core value and Phase 3 requirements.
 
+**Follow-up clarification:** User clarified that the main experience should link to components within each registry, not only to registry homepages. This applies to every component a registry has available: matching known component candidates should show with validated registry item routes when available.
+
 ---
 
 ## Coverage confidence
@@ -65,6 +67,7 @@
 
 - User delegated all Phase 3 decision areas to optimal defaults.
 - Agent prioritized fast scanning, honest coverage confidence, static deployment compatibility, provenance clarity, and Phase 4 readiness.
+- User specifically locked item-level registry routes as the primary Phase 3 value: results should expose validated resolved routes for all known registry/item pairs, across every component a registry has available.
 
 ## Deferred Ideas
 

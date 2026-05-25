@@ -8,7 +8,7 @@
 
 This phase turns Registry Atlas into a component-first discovery experience. Users should start from one primary search input, see viable registry/component candidates, compare alternatives, and inspect registry context without manually opening every community registry site.
 
-It covers search and ranking across registry metadata, Atlas enrichment, aliases, item names when available, focus tags, component tags, confidence/status fields, registry profiles, and secondary focus/matrix views. It does not implement copyable install/view commands, batch queues, URL share state, CI release hardening, or a full accessibility baseline expansion; those belong to Phase 4.
+It covers search and ranking across registry metadata, Atlas enrichment, aliases, item names when available, focus tags, component tags, confidence/status fields, validated registry item routes, registry profiles, and secondary focus/matrix views. It does not implement copyable install/view commands, batch queues, URL share state, CI release hardening, or a full accessibility baseline expansion; those belong to Phase 4.
 
 </domain>
 
@@ -19,9 +19,10 @@ It covers search and ranking across registry metadata, Atlas enrichment, aliases
 - **D-01:** Make one primary search input the lead workflow. It should search namespaces, descriptions, focus tags, component tags, aliases, item names when available, coverage status, confidence, and relevant mirror metadata.
 - **D-02:** Default search results should be component-first, not registry-first. A query for `button`, `data grid`, `chat`, or `auth form` should surface matching component/capability candidates first, with the registry as context.
 - **D-03:** Rank exact item/component/tag matches above alias and description matches, then rank records with higher confidence/status clarity above unverified records. Do not hide unverified records; sort them lower and label them clearly.
-- **D-04:** Use dense comparison rows or compact result cards optimized for scanning. Each candidate should show registry namespace, matched component/capability label, short description, coverage status, confidence/provenance, warning indicators, and source/profile affordances.
+- **D-04:** Use dense comparison rows or compact result cards optimized for scanning. Each candidate should show registry namespace, matched component/capability label, item slug when known, direct registry item route when validated, short description, coverage status, confidence/provenance, warning indicators, and source/profile affordances.
 - **D-05:** Avoid marketing-style hero or large card grids for the primary experience. The first screen should remain the usable explorer, with search and results visible immediately.
 - **D-06:** Search should degrade gracefully. If no verified or inferred component match exists, show partial/unverified registry matches with clear status copy instead of a false "no results" conclusion.
+- **D-06a:** The primary value is item-level linking for every component a registry exposes. If the user searches for any component, results should show every known matching component candidate and, for each validated registry/item pair, a direct link resolved from the registry URL template rather than only linking to the registry homepage.
 
 ### Coverage Confidence and Status Language
 - **D-07:** Use explicit coverage states: `verified`, `inferred`, `partial`, `unavailable`, and `unverified`.
@@ -30,23 +31,31 @@ It covers search and ranking across registry metadata, Atlas enrichment, aliases
 - **D-10:** Empty states must explain data limitations. For example: "No verified item matches yet; showing unverified registry matches" is better than "No results" when mirror or catalog coverage is incomplete.
 - **D-11:** Warnings from Phase 2 remain review/status indicators, not scare labels. Valid official links remain available unless mechanically invalid.
 
+### Component Item Routes
+- **D-12:** Phase 3 must model component/item candidates separately from registry homepages. A registry match without a known item slug is useful context, but it is not equivalent to a direct component route.
+- **D-13:** A direct component route is valid only when the registry namespace is valid, the registry URL template is valid, the item slug/token is known and valid, and resolving the template produces an allowed `http:` or `https:` URL.
+- **D-14:** Candidate results should prefer direct item links such as a resolved `{name}` route over generic homepage links. Homepage/profile links remain secondary context.
+- **D-15:** When no validated item route exists for a matching registry, show a clear status such as "item route unavailable" or "catalog not verified" instead of hiding the registry or pretending the homepage is the component link.
+- **D-16:** Copyable `npx shadcn@latest add/view` commands remain Phase 4, but Phase 3 should produce the validated namespace/item/template data those commands will need.
+
 ### Registry Profile
-- **D-12:** Add an inspectable registry profile/detail view for each registry. It should expose namespace, description, homepage/source link, registry URL template, official source provenance, last sync, warning status, coverage status, confidence, aliases, focus tags, component tags, and item discovery status.
-- **D-13:** The registry profile should distinguish official shadcn facts from Registry Atlas enrichment visually and structurally, following the Phase 2 `official` vs `atlas` split.
-- **D-14:** Profiles should include useful "why this matched" context when opened from search results: matched fields, matched aliases/tags/items, and coverage status behind the result.
-- **D-15:** Profiles should link out to upstream sources for inspection, but still avoid Phase 4 command-copy actions except for clearly deferred placeholders if needed for layout planning.
+- **D-17:** Add an inspectable registry profile/detail view for each registry. It should expose namespace, description, homepage/source link, registry URL template, official source provenance, last sync, warning status, coverage status, confidence, aliases, focus tags, component tags, item discovery status, and any discovered item routes.
+- **D-18:** The registry profile should distinguish official shadcn facts from Registry Atlas enrichment visually and structurally, following the Phase 2 `official` vs `atlas` split.
+- **D-19:** Profiles should include useful "why this matched" context when opened from search results: matched fields, matched aliases/tags/items, item route availability, and coverage status behind the result.
+- **D-20:** Profiles should link out to upstream sources for inspection, but still avoid Phase 4 command-copy actions except for clearly deferred placeholders if needed for layout planning.
 
 ### Secondary Views
-- **D-16:** Keep focus, component, and matrix browsing as secondary comparison modes. Do not remove them; reposition them as ways to browse and compare after search.
-- **D-17:** The component view should evolve into a component index/facet that supports the primary search flow rather than a separate dead-end mode.
-- **D-18:** The matrix should show coverage/status, not just yes/no coverage, where data allows. Unknown/unverified cells should be visually distinct from confirmed absence.
-- **D-19:** Focus view should remain useful for broad browsing, but it should carry status language when groups contain mostly unverified or inferred records.
+- **D-21:** Keep focus, component, and matrix browsing as secondary comparison modes. Do not remove them; reposition them as ways to browse and compare after search.
+- **D-22:** The component view should evolve into a component index/facet that supports the primary search flow rather than a separate dead-end mode.
+- **D-23:** The matrix should show coverage/status, not just yes/no coverage, where data allows. Unknown/unverified cells should be visually distinct from confirmed absence.
+- **D-24:** Focus view should remain useful for broad browsing, but it should carry status language when groups contain mostly unverified or inferred records.
 
 ### Data and Implementation Boundaries
-- **D-20:** Build Phase 3 on `public/data/registries.json` and `src/registry-explorer/data/loadRegistries.ts`; do not restore the legacy static TypeScript dataset as the runtime source.
-- **D-21:** Add pure search/index/derivation helpers under `src/registry-explorer/core/` and test them directly before wiring DOM rendering.
-- **D-22:** Keep the app static and client-side. Do not add a backend, database, or scheduled sync for Phase 3.
-- **D-23:** If item catalogs are fetched or generated in Phase 3, store their availability/status explicitly and keep unavailable catalogs from blocking registry-level discovery.
+- **D-25:** Build Phase 3 on `public/data/registries.json` and `src/registry-explorer/data/loadRegistries.ts`; do not restore the legacy static TypeScript dataset as the runtime source.
+- **D-26:** Add pure search/index/derivation helpers under `src/registry-explorer/core/` and test them directly before wiring DOM rendering.
+- **D-27:** Keep the app static and client-side. Do not add a backend, database, or scheduled sync for Phase 3.
+- **D-28:** If item catalogs are fetched or generated in Phase 3, store their availability/status explicitly and keep unavailable catalogs from blocking registry-level discovery.
+- **D-29:** Add or reuse pure URL/template helpers for resolving registry item routes. This logic must be tested independently from DOM rendering and should become the source for Phase 4 command/link validation.
 
 ### the agent's Discretion
 - The user asked for optimal choices for the best possible experience in all regards. Downstream agents should use the decisions above as locked defaults and choose implementation details that maximize fast scanning, truthful status, static deployability, and future Phase 4 command support.
@@ -119,6 +128,7 @@ It covers search and ranking across registry metadata, Atlas enrichment, aliases
 ## Specific Ideas
 
 - Primary results should answer "I need this component; which registry can help?" before asking the user to choose a registry brand.
+- For any component search, the intended result is a list of matching item candidates across registries, each with the validated registry route to that component when known.
 - The best default is a searchable comparison list with compact rows/cards, status chips, matched-field explanations, and a profile/details affordance.
 - Component-first search should include synonyms/aliases where available, but aliases are Atlas enrichment and should be labeled as such when they influence results.
 - Unknown and unverified coverage should remain visible but visually lower-confidence, so the app helps exploration without overstating certainty.
