@@ -1,12 +1,6 @@
 import type { FocusGroup, RegistryExplorerMetrics, PrimaryFocus, Registry } from '../core/registry.schema';
 import { focusLabel, componentLabel } from '../core/labels';
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
+import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export function renderFocusAside(
   root: HTMLElement,
@@ -67,7 +61,7 @@ export function renderFocusContent(
       <div class="empty-state">
          <div class="empty-state-icon">⊘</div>
          <div>No registries match this filter.</div>
-         <div>Try clearing the search or selecting a different group.</div>
+         <div>Clear the search or choose a different group.</div>
        </div>`;
      return;
   }
@@ -90,9 +84,7 @@ export function renderFocusContent(
           <div>
             <div class="registry-name">${escapeHtml(r.name)}</div>
           </div>
-          <a href="${escapeHtml(r.url)}" class="registry-url" target="_blank" rel="noreferrer">
-            Visit
-          </a>
+          ${renderExternalLink(r.url, 'Visit')}
         </div>
         <div class="registry-description">
           ${escapeHtml(r.description)}

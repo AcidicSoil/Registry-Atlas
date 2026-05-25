@@ -1,12 +1,6 @@
 import type { MatrixRow, RegistryExplorerMetrics, ComponentTag } from '../core/registry.schema';
 import { componentLabel } from '../core/labels';
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
+import { escapeHtml } from './renderSafety';
 
 export function renderMatrixAside(
   root: HTMLElement,
@@ -65,6 +59,7 @@ export function renderMatrixContent(
       <div class="empty-state">
          <div class="empty-state-icon">⊘</div>
          <div>No registries match this filter.</div>
+         <div>Clear the search or choose a different group.</div>
        </div>`;
     return;
   }

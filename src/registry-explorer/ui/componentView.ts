@@ -1,12 +1,6 @@
 import type { ComponentGroup, RegistryExplorerMetrics, ComponentTag } from '../core/registry.schema';
 import { componentLabel, focusLabel } from '../core/labels';
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
+import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export function renderComponentAside(
   root: HTMLElement,
@@ -76,7 +70,8 @@ export function renderComponentContent(
     bodyRoot.innerHTML = `
       <div class="empty-state">
          <div class="empty-state-icon">⊘</div>
-         <div>No registries currently expose this component after filtering.</div>
+         <div>No registries match this filter.</div>
+         <div>Clear the search or choose a different group.</div>
        </div>`;
     return;
   }
@@ -100,7 +95,7 @@ export function renderComponentContent(
                 <div class="component-registry-main">
                   <div style="display: flex; align-items: baseline; gap: 8px;">
                     <div class="component-registry-name">${escapeHtml(r.name)}</div>
-                    <a href="${escapeHtml(r.url)}" class="registry-url" target="_blank" rel="noreferrer">Visit</a>
+                    ${renderExternalLink(r.url, 'Visit')}
                   </div>
                   <div class="component-registry-description">
                     ${escapeHtml(r.description)}
