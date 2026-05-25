@@ -68,7 +68,7 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Create official directory sync script, raw upstream artifact, normalized runtime JSON, and sync report.
+- [x] 02-01-PLAN.md — Create official directory sync script, raw upstream artifact, normalized runtime JSON, and sync report.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -124,6 +124,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
-| 2. Official Mirror & Data Pipeline | 0/4 | Planned | - |
+| 2. Official Mirror & Data Pipeline | 1/4 | In Progress|  |
 | 3. Component-First Discovery | 0/TBD | Not started | - |
 | 4. Install Actions & Release Hardening | 0/TBD | Not started | - |
