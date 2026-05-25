@@ -69,6 +69,7 @@ pnpm verify
 ### Building for Production
 
 `pnpm build` remains the production output check. It type-checks source files and builds the Vite bundle.
+The generated `dist/` directory is ignored by `.gitignore`; regenerate it with `pnpm build` instead of editing or committing generated output.
 
 ```bash
 pnpm build
@@ -78,6 +79,12 @@ pnpm preview
 ## Architecture
 
 This project uses a modular vanilla TypeScript architecture, avoiding heavy frontend frameworks to maintain a lightweight footprint while ensuring type safety and testability.
+
+The canonical browser app surface is:
+
+- `index.html` - Static shell loaded by Vite and production builds.
+- `public/styles/registry-explorer.css` - App stylesheet copied as a public asset.
+- `src/registry-explorer/entry.ts` - TypeScript bootstrap that mounts the Registry Atlas explorer.
 
 ### Directory Structure
 
