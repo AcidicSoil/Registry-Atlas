@@ -1,1 +1,0 @@
-// File deprecated. See registry-explorer/entry.ts
