@@ -44,7 +44,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 01-02-PLAN.md — Make vocabularies const-array sourced and add data invariant tests.
-- [ ] 01-03-PLAN.md — Centralize render/link safety and fix unsafe renderer fallbacks.
+- [x] 01-03-PLAN.md — Centralize render/link safety and fix unsafe renderer fallbacks.
 - [ ] 01-04-PLAN.md — Remove stale deployable/starter artifacts and document the canonical app surface.
 
 **UI hint**: yes
@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation Safety & Verification | 2/4 | In Progress|  |
+| 1. Foundation Safety & Verification | 3/4 | In Progress|  |
 | 2. Official Mirror & Data Pipeline | 0/TBD | Not started | - |
 | 3. Component-First Discovery | 0/TBD | Not started | - |
 | 4. Install Actions & Release Hardening | 0/TBD | Not started | - |
