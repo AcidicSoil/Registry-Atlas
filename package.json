@@ -9,6 +9,7 @@
     "test:watch": "TMPDIR=${TMPDIR:-/tmp} vitest",
     "typecheck": "tsc --noEmit",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
+    "sync:registries": "node scripts/sync-shadcn-registries.mjs",
     "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm build",
     "build": "tsc && vite build",
     "preview": "vite preview"

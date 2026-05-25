@@ -1,0 +1,4430 @@
+{
+  "meta": {
+    "source_url": "https://ui.shadcn.com/r/registries.json",
+    "synced_at": "2026-05-25T17:28:25.832Z",
+    "upstream_count": 198,
+    "registry_count": 198,
+    "local_count": 198,
+    "validation_status": "not_run",
+    "report_path": "data/shadcn/sync-report.json"
+  },
+  "registries": [
+    {
+      "official": {
+        "name": "@8bitcn",
+        "homepage": "https://www.8bitcn.com",
+        "registry_url_template": "https://www.8bitcn.com/r/{name}.json",
+        "description": "A set of 8-bit styled retro components. Works with your favorite frameworks. Open Source. Open Code."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility",
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "dropdown",
+          "alert",
+          "toast",
+          "modal",
+          "card",
+          "table",
+          "chart",
+          "accordion",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "calendar",
+          "carousel",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@8starlabs-ui",
+        "homepage": "https://ui.8starlabs.com",
+        "registry_url_template": "https://ui.8starlabs.com/r/{name}.json",
+        "description": "A set of beautifully designed components designed for developers who want niche, high-utility UI elements that you won't find in standard libraries."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@unlumen-ui",
+        "homepage": "https://ui.unlumen.com",
+        "registry_url_template": "https://ui.unlumen.com/r/{name}.json",
+        "description": "Primitives and components with serious attention to animation and design. Copy, own, ship."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@auth0",
+        "homepage": "https://auth0.com",
+        "registry_url_template": "https://ui.auth0.com/r/{name}.json",
+        "description": "Official Auth0 Universal Components for Web. Accelerate development with pre-built, embeddable UI for enterprise SSO, MFA, and organization management"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@abui",
+        "homepage": "https://abui.io",
+        "registry_url_template": "https://abui.io/r/{name}.json",
+        "description": "A shadcn-compatible registry of reusable components, blocks, and utilities conforming to Vercel's components.build specification"
+      },
+      "atlas": {
+        "primary_focus": [
+          "templates-and-layouts",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "hero-section",
+          "testimonial",
+          "spinner",
+          "scroll-progress",
+          "timeline",
+          "accordion",
+          "color-picker"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@abstract",
+        "homepage": "https://build.abs.xyz",
+        "registry_url_template": "https://build.abs.xyz/r/{name}/json",
+        "description": "A collection of React components for the most common crypto patterns"
+      },
+      "atlas": {
+        "primary_focus": [
+          "auth-and-user",
+          "misc-utility"
+        ],
+        "component_tags": [
+          "auth-form",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@arc",
+        "homepage": "https://witharc.co/components",
+        "registry_url_template": "https://witharc.co/r/{name}.json",
+        "description": "Animated, accessible UI components built with React and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@aceternity",
+        "homepage": "https://ui.aceternity.com",
+        "registry_url_template": "https://ui.aceternity.com/registry/{name}.json",
+        "description": "A modern component library built with Tailwind CSS and Motion for React, Aceternity UI contains unique and interactive components that can make your landing pages look 100x better."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections",
+          "templates-and-layouts"
+        ],
+        "component_tags": [
+          "card",
+          "hero-section",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@agents-ui",
+        "homepage": "https://livekit.com/ui",
+        "registry_url_template": "https://livekit.com/ui/r/{name}.json",
+        "description": "This is a shadcn/ui component registry that distributes copy-paste React components for building LiveKit AI Agent interfaces."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@aevr",
+        "homepage": "https://ui.aevr.space",
+        "registry_url_template": "https://ui.aevr.space/r/{name}.json",
+        "description": "A small collection of focused, production‑ready components and primitives for React/Next.js projects—built on shadcn/ui and complementary libraries."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "card",
+          "alert"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ai-blocks",
+        "homepage": "https://webllm.org/blocks",
+        "registry_url_template": "https://webllm.org/r/{name}.json",
+        "description": "AI components for the web. No server. No API keys. Built on WebLLM."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat"
+        ],
+        "component_tags": [
+          "chatbot",
+          "prompt-box",
+          "spinner",
+          "alert"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ai-elements",
+        "homepage": "https://ai-sdk.dev/elements",
+        "registry_url_template": "https://ai-sdk.dev/elements/api/registry/{name}.json",
+        "description": "Pre-built components like conversations, messages and more to help you build AI-native applications faster."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat"
+        ],
+        "component_tags": [
+          "chat-window",
+          "message-list",
+          "avatar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@algolia",
+        "homepage": "https://sitesearch.algolia.com",
+        "registry_url_template": "https://sitesearch.algolia.com/r/{name}.json",
+        "description": "Enterprises and developers use Algolia's AI search infrastructure to understand users and show them what they're looking for."
+      },
+      "atlas": {
+        "primary_focus": [
+          "data-display-and-tables"
+        ],
+        "component_tags": [
+          "search-input",
+          "filter-bar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@aliimam",
+        "homepage": "https://aliimam.in",
+        "registry_url_template": "https://aliimam.in/r/{name}.json",
+        "description": "I create digital experiences that connect and inspire. I build apps, websites, brands, and products end-to-end."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "hero-section",
+          "card"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@amplo",
+        "homepage": "https://amplo.ale.design",
+        "registry_url_template": "https://amplo.ale.design/r/{name}.json",
+        "description": "OKLCH-native, Display-P3-aware composable fill picker with WCAG/APCA contrast metrics, gamut detection, and full keyboard accessibility."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@animate-ui",
+        "homepage": "https://animate-ui.com",
+        "registry_url_template": "https://animate-ui.com/r/{name}.json",
+        "description": "A fully animated, open-source React component distribution. Browse a list of animated primitives, components and icons you can install and use in your projects."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility",
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "modal",
+          "tabs",
+          "tooltip",
+          "avatar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@assistant-ui",
+        "homepage": "https://www.assistant-ui.com",
+        "registry_url_template": "https://r.assistant-ui.com/{name}.json",
+        "description": "Radix-style React primitives for AI chat with adapters for AI SDK, LangGraph, Mastra, and custom backends."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat"
+        ],
+        "component_tags": [
+          "message-list",
+          "typing-indicator"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tool-ui",
+        "homepage": "https://www.tool-ui.com",
+        "registry_url_template": "https://www.tool-ui.com/r/{name}.json",
+        "description": "Open source React components for rendering AI tool call widgets and rich assistant outputs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@better-upload",
+        "homepage": "https://better-upload.com",
+        "registry_url_template": "https://better-upload.com/r/{name}.json",
+        "description": "Simple and easy file uploads for React. Upload directly to any S3-compatible service with minimal setup."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "button",
+          "spinner",
+          "file-upload",
+          "dropzone"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@basecn",
+        "homepage": "https://basecn.dev",
+        "registry_url_template": "https://basecn.dev/r/{name}.json",
+        "description": "Beautifully crafted shadcn/ui components powered by Base UI"
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "navigation",
+          "data-display-and-tables"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "select",
+          "tabs",
+          "navbar",
+          "breadcrumb",
+          "sidebar",
+          "table",
+          "chart",
+          "card",
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "calendar",
+          "carousel",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "hover-card",
+          "menubar",
+          "pagination",
+          "popover",
+          "progress",
+          "radio-group",
+          "scroll-area",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "switch",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@billingsdk",
+        "homepage": "https://billingsdk.com",
+        "registry_url_template": "https://billingsdk.com/r/{name}.json",
+        "description": "BillingSDK is an open-source React and Next.js component library for SaaS billing and payments. It offers ready-to-use, customizable components for subscriptions, invoices, usage-based pricing and billing - fully compatible with Dodo Payments and Stripe."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ecommerce",
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "table",
+          "auth-form",
+          "pricing-table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@blocks-so",
+        "homepage": "https://blocks.so",
+        "registry_url_template": "https://blocks.so/r/{name}.json",
+        "description": "A set of clean, modern application building blocks for you in your applications. Free and Open Source"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@boldkit",
+        "homepage": "https://boldkit.dev",
+        "registry_url_template": "https://boldkit.dev/r/{name}.json",
+        "description": "Neubrutalism component library with 43 components, 42 SVG shapes, thick borders, and hard shadows. Supports React, Vue, and Nuxt. Built on shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@bklit",
+        "homepage": "https://ui.bklit.com",
+        "registry_url_template": "https://ui.bklit.com/r/{name}.json",
+        "description": "Open-source composable chart components for React — line, area, bar, pie, radar, maps, and more. Built with Visx, Motion, and shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@bundui",
+        "homepage": "https://bundui.io",
+        "registry_url_template": "https://bundui.io/r/{name}.json",
+        "description": "A collection of 150+ handcrafted UI components built with Tailwind CSS and shadcn/ui, covering marketing, e-commerce, dashboards, real estate, and more."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@cardcn",
+        "homepage": "https://cardcn.dev",
+        "registry_url_template": "https://cardcn.dev/r/{name}.json",
+        "description": "A set of beautifully-designed shadcn card components"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@chamaac",
+        "homepage": "https://chamaac.com",
+        "registry_url_template": "https://chamaac.com/r/{name}.json",
+        "description": "A collection of beautiful, animated components to elevate your web projects instantly."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@clerk",
+        "homepage": "https://clerk.com/docs/guides/development/shadcn-cli",
+        "registry_url_template": "https://clerk.com/r/{name}.json",
+        "description": "The easiest way to add authentication and user management to your application. Purpose-built for React, Next.js, Remix, and The Modern Web."
+      },
+      "atlas": {
+        "primary_focus": [
+          "auth-and-user"
+        ],
+        "component_tags": [
+          "auth-form",
+          "avatar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ramonclaudio-coderabbit",
+        "homepage": "https://ramonclaudio.com/registries/coderabbit",
+        "registry_url_template": "https://coderabbit-shadcn-registry.vercel.app/r/{name}.json",
+        "description": "A framework-agnostic API client, pluggable storage adapters (LocalStorage, Convex, Supabase, PostgreSQL, MySQL), and React components for generating developer activity reports."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@cognicatch",
+        "homepage": "https://cognicatch.dev",
+        "registry_url_template": "https://cognicatch.dev/registry/{name}.json",
+        "description": "Adaptive Error Boundaries and graceful fallback UIs (Banners, Modals, Toasts)."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@commercn",
+        "homepage": "https://commercn.com",
+        "registry_url_template": "https://commercn.com/r/{name}.json",
+        "description": "Shadcn UI Blocks for Ecommerce websites"
+      },
+      "atlas": {
+        "primary_focus": [
+          "ecommerce"
+        ],
+        "component_tags": [
+          "card",
+          "hero-section",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@corr",
+        "homepage": "https://ui.corr.sh",
+        "registry_url_template": "https://ui.corr.sh/r/{name}.json",
+        "description": "A collection of shadcn-based React components, charts, animated components, and blocks built over time."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@coss",
+        "homepage": "https://coss.com/ui",
+        "registry_url_template": "https://coss.com/ui/r/{name}.json",
+        "description": "A new, modern UI component library built on top of Base UI. Built for developers and AI."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "table",
+          "navbar",
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "checkbox",
+          "collapsible",
+          "dialog",
+          "hover-card",
+          "menubar",
+          "pagination",
+          "popover",
+          "progress",
+          "radio-group",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@creative-tim",
+        "homepage": "https://www.creative-tim.com/ui",
+        "registry_url_template": "https://www.creative-tim.com/ui/r/{name}.json",
+        "description": "A collection of open-source UI components, blocks and AI Agents. Integrate them in v0, Lovable, Claude or in your application."
+      },
+      "atlas": {
+        "primary_focus": [
+          "dashboards-and-admin",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "chart",
+          "table",
+          "card",
+          "hero-section",
+          "testimonial",
+          "chatbot"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@cult-ui",
+        "homepage": "https://www.cult-ui.com",
+        "registry_url_template": "https://cult-ui.com/r/{name}.json",
+        "description": "Cult UI is a rare, curated set of shadcn-compatible, headless and composable components—tastefully animated with Framer Motion."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility"
+        ],
+        "component_tags": [
+          "dropdown",
+          "modal",
+          "button",
+          "card"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@diceui",
+        "homepage": "https://www.diceui.com/",
+        "registry_url_template": "https://diceui.com/r/{name}.json",
+        "description": "Accessible shadcn/ui components built with React, TypeScript, and Tailwind CSS. Copy-paste ready, and customizable."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs",
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "input",
+          "select",
+          "checkbox",
+          "card",
+          "tabs",
+          "alert",
+          "skeleton",
+          "avatar",
+          "badge",
+          "combobox",
+          "data-grid",
+          "table",
+          "file-upload",
+          "color-picker"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@doras-ui",
+        "homepage": "https://ui.doras.to/",
+        "registry_url_template": "https://ui.doras.to/r/{name}.json",
+        "description": "A collection of beautiful, reusable component blocks built with React"
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections",
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "hero-section",
+          "feature-grid",
+          "testimonial",
+          "card",
+          "navbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@dsikeres1",
+        "homepage": "https://dsikeres1.github.io/react-date-range-picker/",
+        "registry_url_template": "https://dsikeres1.github.io/react-date-range-picker/r/{name}.json",
+        "description": "A headless, composable date & date range picker for React. 5 picker types, 15 locales, dark mode, accessible. Zero dependencies."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@elements",
+        "homepage": "https://www.tryelements.dev",
+        "registry_url_template": "https://www.tryelements.dev/r/{name}.json",
+        "description": "Full-stack shadcn/ui components that go beyond UI. Add auth, monetization, uploads, and AI to your app in seconds."
+      },
+      "atlas": {
+        "primary_focus": [
+          "auth-and-user",
+          "ecommerce",
+          "ai-chat"
+        ],
+        "component_tags": [
+          "auth-form",
+          "table",
+          "chatbot"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@elevenlabs-ui",
+        "homepage": "https://ui.elevenlabs.io",
+        "registry_url_template": "https://ui.elevenlabs.io/r/{name}.json",
+        "description": "A collection of Open Source agent and audio components that you can customize and extend."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat",
+          "misc-utility"
+        ],
+        "component_tags": [
+          "chatbot",
+          "audio-player",
+          "waveform",
+          "voice-picker",
+          "transcript-viewer",
+          "button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@efferd",
+        "homepage": "https://efferd.com/",
+        "registry_url_template": "https://efferd.com/r/{name}.json",
+        "description": "A collection of beautifully crafted Shadcn/UI blocks, designed to help developers build modern websites with ease."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "hero-section",
+          "testimonial",
+          "cta-section",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@einui",
+        "homepage": "https://ui.eindev.ir",
+        "registry_url_template": "https://ui.eindev.ir/r/{name}.json",
+        "description": "Beautiful, responsive Shadcn components with frosted glass morphism. Built for modern web applications with full dark mode support."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@eldoraui",
+        "homepage": "https://eldoraui.site",
+        "registry_url_template": "https://eldoraui.site/r/{name}.json",
+        "description": "An open-source, modern UI component library for React, built with TypeScript, Tailwind CSS, and Framer Motion. Eldora UI offers beautifully crafted, reusable components designed for performance and elegance."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "navigation"
+        ],
+        "component_tags": [
+          "button",
+          "toggle",
+          "input",
+          "select",
+          "navbar",
+          "tabs",
+          "sidebar",
+          "alert",
+          "spinner",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@evilcharts",
+        "homepage": "https://evilcharts.com",
+        "registry_url_template": "https://evilcharts.com/r/{name}.json",
+        "description": "EvilCharts is an open-source chart UI website built with shadcn and Recharts, beautifully designed and handcrafted."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@formcn",
+        "homepage": "https://formcn.dev",
+        "registry_url_template": "https://formcn.dev/r/{name}.json",
+        "description": "Build production-ready forms with a few clicks using shadcn components and modern tools."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "input",
+          "select",
+          "datepicker",
+          "stepper",
+          "submit-button",
+          "error-message"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@flightcn",
+        "homepage": "https://flightcn.yencheng.dev",
+        "registry_url_template": "https://flightcn.yencheng.dev/r/{name}.json",
+        "description": "Flight routes on interactive maps with great-circle arcs, airport markers, multi-leg journeys, and optional animation, built for mapcn."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gaia",
+        "homepage": "https://ui.heygaia.io",
+        "registry_url_template": "https://ui.heygaia.io/r/{name}.json",
+        "description": "Production-ready UI components designed for building beautiful AI assistants and conversational interfaces, from the team behind GAIA."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat"
+        ],
+        "component_tags": [
+          "chatbot",
+          "message-list",
+          "avatar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gc-solid",
+        "homepage": "https://binnodon.github.io/gc-solid-ui",
+        "registry_url_template": "https://binnodon.github.io/gc-solid-ui/r/{name}.json",
+        "description": "SolidJS port of shadcn-ui components built with Kobalte primitives. 57+ components with full TypeScript support and Vega theme."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gamifykit",
+        "homepage": "https://gamifykit.com",
+        "registry_url_template": "https://gamifykit.com/r/{name}.json",
+        "description": "A collection of fully composable components that extend shadcn/ui with a focus on common gamification UI patterns."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@glass-ui",
+        "homepage": "https://glass-ui.crenspire.com",
+        "registry_url_template": "https://glass-ui.crenspire.com/r/{name}.json",
+        "description": "A shadcn-ui compatible registry distributing 40+ glassmorphic React/TypeScript components with Apple-inspired design. Components include enhanced visual effects (glow, shimmer, ripple), theme support, and customizable glassmorphism styling."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "navigation"
+        ],
+        "component_tags": [
+          "card",
+          "sidebar",
+          "button",
+          "toggle",
+          "navbar",
+          "tabs"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@glasscn",
+        "homepage": "https://glasscn-components.vercel.app/",
+        "registry_url_template": "https://glasscn-components.vercel.app/r/{name}.json",
+        "description": "A shadcn-compatible registry of glassmorphism components inspired by Apple"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gymnopedies",
+        "homepage": "https://gymnopedies.shoota.work",
+        "registry_url_template": "https://gymnopedies.shoota.work/r/{name}.json",
+        "description": "A dark, serif, glow-leaning shadcn registry of read-only components for blogs, essays, and long-form reading experiences — inspired by the quiet, candlelit cabaret of Erik Satie's Gymnopédies."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ha-components",
+        "homepage": "https://hacomponents.keshuac.com",
+        "registry_url_template": "https://hacomponents.keshuac.com/r/{name}.json",
+        "description": "A collection of customisable components to build Home Assistant dashboards."
+      },
+      "atlas": {
+        "primary_focus": [
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "card",
+          "switch"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@hextaui",
+        "homepage": "https://hextaui.com",
+        "registry_url_template": "https://hextaui.com/r/{name}.json",
+        "description": "Ready-to-use foundation components/blocks built on top of shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "select",
+          "tabs",
+          "hero-section",
+          "table",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcnhooks",
+        "homepage": "https://shadcn-hooks.com",
+        "registry_url_template": "https://shadcn-hooks.com/r/{name}.json",
+        "description": "A comprehensive React Hooks Collection built with Shadcn."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@inferencesh",
+        "homepage": "https://ui.inference.sh",
+        "registry_url_template": "https://ui.inference.sh/r/{name}.json",
+        "description": "batteries-included agent components by inference.sh. chat interfaces with streaming, tool invocation rendering, syntax-highlighted code blocks, markdown renderer, and more."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@indiacn",
+        "homepage": "https://indiacn.in",
+        "registry_url_template": "https://indiacn.in/r/{name}.json",
+        "description": "UX4G 2.0 design system for India — many accessible React components and an 8-color theme preset for native apps."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@intentui",
+        "homepage": "https://intentui.com",
+        "registry_url_template": "https://intentui.com/r/{name}",
+        "description": "Accessible React component library to copy, customize, and own your UI."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs",
+          "navigation"
+        ],
+        "component_tags": [
+          "input",
+          "select",
+          "checkbox",
+          "tabs",
+          "alert",
+          "skeleton"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@jalco",
+        "homepage": "https://ui.justinlevine.me",
+        "registry_url_template": "https://ui.justinlevine.me/r/{name}.json",
+        "description": "A curated collection of GitHub-integrated, documentation, and developer-facing components. Self-contained, zero-dependency, and production-ready."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@kibo-ui",
+        "homepage": "https://www.kibo-ui.com/",
+        "registry_url_template": "https://www.kibo-ui.com/r/{name}.json",
+        "description": "Kibo UI is a custom registry of composable, accessible and open source components designed for use with shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "navigation"
+        ],
+        "component_tags": [
+          "button",
+          "card",
+          "navbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@kanpeki",
+        "homepage": "https://kanpeki.vercel.app",
+        "registry_url_template": "https://kanpeki.vercel.app/r/{name}.json",
+        "description": "A set of perfect-designed components built on top of React Aria and Motion."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "modal",
+          "dropdown"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@kapwa",
+        "homepage": "https://kapwa-two.vercel.app",
+        "registry_url_template": "https://kapwa-two.vercel.app/r/{name}.json",
+        "description": "Cleanly designed components purposely built for open-source government portals."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@kokonutui",
+        "homepage": "https://kokonutui.com",
+        "registry_url_template": "https://kokonutui.com/r/{name}.json",
+        "description": "Collection of stunning components built with Tailwind CSS, shadcn/ui and Motion to use on your websites."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "card",
+          "hero-section",
+          "testimonial",
+          "table",
+          "button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@launchui",
+        "homepage": "https://www.launchuicomponents.com/",
+        "registry_url_template": "https://www.launchuicomponents.com/r/{name}.json",
+        "description": "Carefully crafted landing page components and templates built with React, Shadcn/ui and Tailwind."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@lens-blocks",
+        "homepage": "https://lensblocks.com",
+        "registry_url_template": "https://lensblocks.com/r/{name}.json",
+        "description": "A collection of social media components for use with Lens Social Protocol."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility"
+        ],
+        "component_tags": [
+          "card",
+          "button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@limeplay",
+        "homepage": "https://limeplay.winoffrg.dev",
+        "registry_url_template": "https://limeplay.winoffrg.dev/r/{name}.json",
+        "description": "Modern UI Library for building media players in React. Powered by Shaka Player."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility"
+        ],
+        "component_tags": [
+          "button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@loading-ui",
+        "homepage": "https://loading-ui.com",
+        "registry_url_template": "https://loading-ui.com/r/{name}.json",
+        "description": "Spinners, loaders, and loading animations for modern web apps. Free and open-source."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@lmscn",
+        "homepage": "https://lmscn.vercel.app",
+        "registry_url_template": "https://lmscn.vercel.app/r/{name}.json",
+        "description": "LMS components for building interactive learning experiences — quiz, flashcards, matching, fill-in-the-blank, word scramble, sequencing, reading comprehension, spaced repetition and more."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@lucide-animated",
+        "homepage": "https://lucide-animated.com",
+        "registry_url_template": "https://lucide-animated.com/r/{name}.json",
+        "description": "An open-source collection of smooth animated lucide icons for your projects"
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@lytenyte",
+        "homepage": "https://www.1771technologies.com",
+        "registry_url_template": "https://www.1771technologies.com/r/{name}.json",
+        "description": "LyteNyte Grid is a high performance, light weight, headless, React data grid. Our registry provides LyteNyte Grid themed using Tailwind and the Shadcn theme variables."
+      },
+      "atlas": {
+        "primary_focus": [
+          "data-display-and-tables"
+        ],
+        "component_tags": [
+          "table",
+          "data-grid",
+          "pagination"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@magicui",
+        "homepage": "https://magicui.design",
+        "registry_url_template": "https://magicui.design/r/{name}",
+        "description": "UI Library for Design Engineers. 150+ free and open-source animated components and effects built with React, Typescript, Tailwind CSS, and Motion. Perfect companion for shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "switch",
+          "hero-section",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@manifest",
+        "homepage": "https://ui.manifest.build",
+        "registry_url_template": "https://ui.manifest.build/r/{name}.json",
+        "description": "Agentic UI toolkit for building MCP Apps. Open-source components and blocks ready to use within your chat app."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@mapcn",
+        "homepage": "https://mapcn.dev",
+        "registry_url_template": "https://mapcn.dev/r/{name}.json",
+        "description": "Beautiful maps, made simple. Ready to use, customizable map components for React. Built on MapLibre. Styled with Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@mui-treasury",
+        "homepage": "https://www.mui-treasury.com",
+        "registry_url_template": "https://mui-treasury.com/r/{name}.json",
+        "description": "A collection of hand-crafted interfaces built on top of MUI components"
+      },
+      "atlas": {
+        "primary_focus": [
+          "navigation",
+          "data-display-and-tables",
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "sidebar",
+          "table",
+          "card",
+          "input",
+          "select",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@moleculeui",
+        "homepage": "https://www.moleculeui.design/",
+        "registry_url_template": "https://www.moleculeui.design/r/{name}.json",
+        "description": "A modern React component library focused on intuitive interactions and seamless user experiences."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "navigation"
+        ],
+        "component_tags": [
+          "button",
+          "card",
+          "navbar",
+          "tabs",
+          "breadcrumb",
+          "modal",
+          "drawer"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@motion-primitives",
+        "homepage": "https://www.motion-primitives.com",
+        "registry_url_template": "https://motion-primitives.com/c/{name}.json",
+        "description": "Beautifully designed motions components. Easy copy-paste. Customizable. Open Source. Built for engineers and designers."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nordaun",
+        "homepage": "https://ui.nordaun.com",
+        "registry_url_template": "https://ui.nordaun.com/r/{name}.json",
+        "description": "Simple components for your extraordinary creations."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ncdai",
+        "homepage": "https://chanhdai.com/components",
+        "registry_url_template": "https://chanhdai.com/r/{name}.json",
+        "description": "Pixel-perfect, uniquely crafted."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "select",
+          "alert"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nteract",
+        "homepage": "https://nteract-elements.vercel.app/",
+        "registry_url_template": "https://nteract-elements.vercel.app/r/{name}.json",
+        "description": "Components for interactive computing notebooks."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nuqs",
+        "homepage": "https://nuqs.dev/registry",
+        "registry_url_template": "https://nuqs.dev/r/{name}.json",
+        "description": "Custom parsers, adapters and utilities from the community for type-safe URL state management."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility"
+        ],
+        "component_tags": [
+          "filter-bar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@neobrutalism",
+        "homepage": "https://www.neobrutalism.dev",
+        "registry_url_template": "https://www.neobrutalism.dev/r/{name}.json",
+        "description": "A collection of neobrutalism-styled components based on shadcn/ui"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nessra-ui",
+        "homepage": "https://nessra-ui.vercel.app",
+        "registry_url_template": "https://nessra-ui.vercel.app/r/{name}.json",
+        "description": "Beautiful, accessible components built with Tailwind CSS v4 and Radix UI. Includes auth blocks, data tables, and TanStack Form integration."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nexus-elements",
+        "homepage": "https://elements.nexus.availproject.org/docs/view-components",
+        "registry_url_template": "https://elements.nexus.availproject.org/r/{name}.json",
+        "description": "Ready-made React components for almost any use case. Use as is or customise and go to market fast"
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "marketing-sections",
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "button",
+          "card",
+          "table",
+          "auth-form",
+          "hero-section",
+          "chart"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@openstatus",
+        "homepage": "https://openstatus.dev/registry",
+        "registry_url_template": "https://openstatus.dev/r/{name}.json",
+        "description": "Hand-crafted, accessible components for building beautiful status pages."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@optics",
+        "homepage": "https://optics.agusmayol.com.ar",
+        "registry_url_template": "https://optics.agusmayol.com.ar/r/{name}.json",
+        "description": "A design system that distributes re-styled components, utilities, and hooks ready to use."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@oui",
+        "homepage": "https://oui.mw10013.workers.dev",
+        "registry_url_template": "https://oui.mw10013.workers.dev/r/{name}.json",
+        "description": "React Aria Components with shadcn characteristics.Copy-and-paste react aria components that run side-by-side with shadcn components."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pacekit",
+        "homepage": "https://ui.pacekit.dev",
+        "registry_url_template": "https://ui.pacekit.dev/r/{name}.json",
+        "description": "Carefully built UI blocks for real apps and dashboards, designed to integrate smoothly from early ideas to production releases."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pacekit-gsap",
+        "homepage": "https://gsap.pacekit.dev",
+        "registry_url_template": "https://gsap.pacekit.dev/r/{name}.json",
+        "description": "Animated GSAP components crafted for smooth interaction and rich detail."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@paddle",
+        "homepage": "https://developer.paddle.com/",
+        "registry_url_template": "https://developer.paddle.com/r/{name}.json",
+        "description": "Drop-in components for building checkouts, pricing pages, and subscription management screens using Paddle Billing."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pastecn",
+        "homepage": "https://pastecn.com",
+        "registry_url_template": "https://pastecn.com/r/{name}",
+        "description": "pastebin + shadcn = pastecn. Paste your code and get a shadcn-compatible registry URL instantly."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@paykit-sdk",
+        "homepage": "https://www.usepaykit.dev",
+        "registry_url_template": "https://www.usepaykit.dev/r/{name}.json",
+        "description": "Unified payments SDK for builders — handle checkout, billing, and webhooks across Stripe, PayPal, Adyen, and regional gateways with a single integration."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ecommerce"
+        ],
+        "component_tags": [
+          "auth-form"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@plate",
+        "homepage": "https://platejs.org",
+        "registry_url_template": "https://platejs.org/r/{name}.json",
+        "description": "AI-powered rich text editor for React."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@prompt-kit",
+        "homepage": "https://www.prompt-kit.com",
+        "registry_url_template": "https://www.prompt-kit.com/c/{name}.json",
+        "description": "Core building blocks for AI apps. High-quality, accessible, and customizable components for AI interfaces."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat"
+        ],
+        "component_tags": [
+          "prompt-box",
+          "chatbot"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@prosekit",
+        "homepage": "https://prosekit.dev",
+        "registry_url_template": "https://prosekit.dev/r/{name}.json",
+        "description": "Powerful and flexible rich text editor for React, Vue, Preact, Svelte, and SolidJS."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@phucbm",
+        "homepage": "https://phucbm.com/components",
+        "registry_url_template": "https://phucbm.com/r/{name}.json",
+        "description": "A collection of modern React UI components with GSAP animations."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "card",
+          "hero-section"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@react-aria",
+        "homepage": "https://react-aria.adobe.com",
+        "registry_url_template": "https://react-aria.adobe.com/registry/{name}.json",
+        "description": "Customizable Tailwind and Vanilla CSS components with adaptive interactions, top-tier accessibility, and internationalization."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@react-bits",
+        "homepage": "https://reactbits.dev",
+        "registry_url_template": "https://reactbits.dev/r/{name}.json",
+        "description": "A large collection of animated, interactive & fully customizable React components for building memorable websites. From smooth text animations all the way to eye-catching backgrounds, you can find it here."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@react-easy-modals",
+        "homepage": "https://react-easy-modals-docs.vercel.app",
+        "registry_url_template": "https://react-easy-modals-docs.vercel.app/r/styles/{style}/{name}.json",
+        "description": "Modal component for react-easy-modals. Integrates with shadcn Dialog for a simple, powerful modal system with TypeScript support and promise-based API."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@react-slot",
+        "homepage": "https://react-slot.vercel.app/",
+        "registry_url_template": "https://react-slot.vercel.app/r/{name}.json",
+        "description": "Vue-style slot composition for React - Fine-grained control over component composition"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@retroui",
+        "homepage": "https://retroui.dev",
+        "registry_url_template": "https://retroui.dev/r/{name}.json",
+        "description": "A Neobrutalism styled React + TailwindCSS UI library for building bold, modern web apps. Perfect for any project using Shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "card",
+          "modal",
+          "hero-section",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@reui",
+        "homepage": "https://reui.io",
+        "registry_url_template": "https://reui.io/r/{style}/{name}.json",
+        "description": "Free & open-source library of 1,000+ components and patterns to 10x your productivity in shadcn projects."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "tabs",
+          "dropdown",
+          "modal",
+          "drawer"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@scrollxui",
+        "homepage": "https://www.scrollxui.dev",
+        "registry_url_template": "https://www.scrollxui.dev/registry/{name}.json",
+        "description": "ScrollX UI is an open-source React and shadcn-compatible component library for animated, interactive, and customizable user interfaces. It offers motion-driven components that blend seamlessly with modern ShadCN setups."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "card",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@spell",
+        "homepage": "https://spell.sh",
+        "registry_url_template": "https://spell.sh/r/{name}.json",
+        "description": "Beautiful, sophisticated UI components designed for modern React and Tailwind CSS applications."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@square-ui",
+        "homepage": "https://square.lndev.me",
+        "registry_url_template": "https://square.lndev.me/registry/{name}.json",
+        "description": "Collection of beautifully crafted open-source layouts UI built with shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "templates-and-layouts"
+        ],
+        "component_tags": [
+          "hero-section",
+          "testimonial",
+          "navbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@systaliko-ui",
+        "homepage": "https://systaliko-ui.vercel.app",
+        "registry_url_template": "https://systaliko-ui.vercel.app/r/{name}.json",
+        "description": "UI component library, Designed for flexibility, built for customization, and crafted to scale across variants and use cases."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "input",
+          "button",
+          "card"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@roiui",
+        "homepage": "https://roiui.com",
+        "registry_url_template": "https://roiui.com/r/{name}.json",
+        "description": "Roi UI is a library that offers UI components and blocks built with Base UI primitives. Some blocks and components use motion (framer). Everything is open-source and will be forever."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "input",
+          "button",
+          "modal",
+          "tabs",
+          "auth-form",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@slide-cn",
+        "homepage": "https://slide-cn.com",
+        "registry_url_template": "https://slide-cn.com/r/{name}.json",
+        "description": "A component library to build slide decks using code."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@satoriui",
+        "homepage": "https://satoriui.site",
+        "registry_url_template": "https://satoriui.site/r/{name}.json",
+        "description": "A comprehensive suite of high-fidelity interaction components. It offers motion-driven components that designed with motion-react and tailwindcss, that blends seamlessly."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@solaceui",
+        "homepage": "https://www.solaceui.com",
+        "registry_url_template": "https://www.solaceui.com/r/{name}.json",
+        "description": "Production-ready and tastefully crafted sections, animated components, and full-page templates for Next.js, Tailwind CSS & Motion"
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections",
+          "templates-and-layouts"
+        ],
+        "component_tags": [
+          "hero-section",
+          "testimonial"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcnblocks",
+        "homepage": "https://shadcnblocks.com",
+        "registry_url_template": "https://shadcnblocks.com/r/{name}.json",
+        "description": "A shadcn/ui registry with 1429 blocks, 1189 component variants, 14 templates, themes, and admin dashboard patterns."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections",
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "hero-section",
+          "card",
+          "table",
+          "chart",
+          "navbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcndesign",
+        "homepage": "https://www.shadcndesign.com",
+        "registry_url_template": "https://shadcndesign-free.vercel.app/r/{name}.json",
+        "description": "A growing collection of high-quality blocks and themes for shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "hero-section"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcnmaps",
+        "homepage": "https://shadcnmaps.com",
+        "registry_url_template": "https://shadcnmaps.com/r/{name}.json",
+        "description": "Beautiful map components powered by pure SVG."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcnstore",
+        "homepage": "https://www.shadcnstore.com",
+        "registry_url_template": "https://shadcnstore.com/r/{name}.json",
+        "description": "A growing collection of shadcn/ui components, blocks, and templates for building modern web apps."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcn-map",
+        "homepage": "https://shadcn-map.vercel.app",
+        "registry_url_template": "http://shadcn-map.vercel.app/r/{name}.json",
+        "description": "A map component for shadcn/ui. Built with Leaflet and React Leaflet."
+      },
+      "atlas": {
+        "primary_focus": [
+          "data-display-and-tables"
+        ],
+        "component_tags": [
+          "card"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcn-studio",
+        "homepage": "https://shadcnstudio.com",
+        "registry_url_template": "https://shadcnstudio.com/r/{name}.json",
+        "description": "An open-source set of shadcn/ui components, blocks, and templates with a powerful theme generator."
+      },
+      "atlas": {
+        "primary_focus": [
+          "dashboards-and-admin",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "modal",
+          "table",
+          "hero-section",
+          "testimonial"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@waves-cn",
+        "homepage": "https://waves-cn.vercel.app",
+        "registry_url_template": "https://waves-cn.vercel.app/r/{name}.json",
+        "description": "A collection of wave players and waveform components built with wavesurfer.js and shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcn-editor",
+        "homepage": "https://shadcn-editor.vercel.app",
+        "registry_url_template": "https://raw.githubusercontent.com/htmujahid/shadcn-editor/refs/heads/main/public/r/{name}.json",
+        "description": "Accessible, Customizable, Rich Text Editor. Made with Lexical and Shadcn/UI. Open Source. Open Code."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcnui-blocks",
+        "homepage": "https://shadcnui-blocks.com",
+        "registry_url_template": "https://shadcnui-blocks.com/r/{name}.json",
+        "description": "A collection of premium, production-ready shadcn/ui blocks, components and templates."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "hero-section",
+          "testimonial",
+          "button",
+          "table",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcnuikit",
+        "homepage": "https://shadcnuikit.com",
+        "registry_url_template": "https://shadcnuikit.com/r/{name}.json",
+        "description": "Launch your projects faster with admin dashboards, website templates, components, blocks, and pre-built real-world examples."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcncraft",
+        "homepage": "https://shadcncraft.com",
+        "registry_url_template": "https://shadcncraft.com/r/{name}.json",
+        "description": "A starter collection of polished shadcn/ui components and blocks built to production standards. Part of a larger Figma + React system designed to scale with your product."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shark",
+        "homepage": "https://shark.vini.one",
+        "registry_url_template": "https://shark.vini.one/r/{name}.json",
+        "description": "shadcn/ui-style components built on Ark UI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@smoothui",
+        "homepage": "https://smoothui.dev",
+        "registry_url_template": "https://smoothui.dev/r/{name}.json",
+        "description": "A collection of beautifully crafted motion components built with React, Framer Motion, and TailwindCSS. Designed to elevate microinteractions, each component focuses on smooth animations, subtle feedback, and delightful UX. Perfect for designers and developers who want to add refined motion to their interfaces — copy, paste, and make your UI come alive."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "card"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@spectrumui",
+        "homepage": "https://ui.spectrumhq.in",
+        "registry_url_template": "https://ui.spectrumhq.in/r/{name}.json",
+        "description": "A modern component library built with shadcn/ui and Tailwind CSS. Spectrum UI offers elegant, responsive components and smooth animations designed for high-quality interfaces."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "templates-and-layouts"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "select",
+          "tabs",
+          "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@supabase",
+        "homepage": "https://supabase.com/ui",
+        "registry_url_template": "https://supabase.com/ui/r/{name}.json",
+        "description": "A collection of React components and blocks built on the shadcn/ui library that connect your front-end to your Supabase back-end via a single command."
+      },
+      "atlas": {
+        "primary_focus": [
+          "auth-and-user",
+          "data-display-and-tables",
+          "dashboards-and-admin",
+          "misc-utility"
+        ],
+        "component_tags": [
+          "auth-form",
+          "table",
+          "chart"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@svgl",
+        "homepage": "https://svgl.app",
+        "registry_url_template": "https://svgl.app/r/{name}.json",
+        "description": "A beautiful library with SVG logos."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "card"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tailark",
+        "homepage": "https://tailark.com",
+        "registry_url_template": "https://tailark.com/r/{name}.json",
+        "description": "Shadcn blocks designed for building modern marketing websites."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "hero-section",
+          "table",
+          "testimonial",
+          "cta-section"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@taki",
+        "homepage": "https://taki-ui.com",
+        "registry_url_template": "https://taki-ui.com/r/{name}.json",
+        "description": "Beautifully designed, accessible components that you can copy and paste into your apps. Made with React Aria Components and Shadcn tokens."
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs",
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "toggle",
+          "modal",
+          "search-input",
+          "datepicker"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@terrae",
+        "homepage": "https://www.terrae.dev",
+        "registry_url_template": "https://www.terrae.dev/{name}.json",
+        "description": "Composable, animated map components for React. Built with TypeScript, Tailwind CSS, Mapbox GL JS, and MapLibre GL. Perfect companion for shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@thegridcn",
+        "homepage": "https://thegridcn.com",
+        "registry_url_template": "https://thegridcn.com/r/{name}.json",
+        "description": "A Tron-inspired shadcn/ui theme system with Greek god color schemes, glow intensity levels, and sci-fi components like DataCard, HUD, Radar, and more."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tour",
+        "homepage": "https://onboarding-tour.vercel.app",
+        "registry_url_template": "https://onboarding-tour.vercel.app/r/{name}.json",
+        "description": "A component for building onboarding tours. Designed to integrate with shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility"
+        ],
+        "component_tags": [
+          "prompt-box"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@trophy-ui",
+        "homepage": "https://ui.trophy.so",
+        "registry_url_template": "https://ui.trophy.so/r/{name}.json",
+        "description": "Open-source gamification UI components for streaks, achievements, leaderboards, points, and more. Built on shadcn/ui and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uitripled",
+        "homepage": "https://ui.tripled.work",
+        "registry_url_template": "https://ui.tripled.work/r/{name}.json",
+        "description": "An open-source, Production-ready UI components and blocks powered by shadcn/ui and Framer Motion"
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "button",
+          "input",
+          "select",
+          "table",
+          "modal",
+          "hero-section"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@utilcn",
+        "homepage": "https://utilcn.dev",
+        "registry_url_template": "https://utilcn.dev/r/{name}.json",
+        "description": "Fullstack registry items to start those big features. Utilcn has ChatGPT Apps, file uploading (with progress bars) and downloading, and a way to make your env vars typesafe on the backend."
+      },
+      "atlas": {
+        "primary_focus": [
+          "ai-chat",
+          "misc-utility"
+        ],
+        "component_tags": [
+          "chatbot"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@w3-kit",
+        "homepage": "https://w3-kit.com",
+        "registry_url_template": "https://w3-kit.com/registry/{name}.json",
+        "description": "Web3 UI components for blockchain dApps. Includes wallet connection, token swaps, NFT cards, staking interfaces, and 20+ more crypto components."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@wandry-ui",
+        "homepage": "http://ui.wandry.com.ua/",
+        "registry_url_template": "https://ui.wandry.com.ua/r/{name}.json",
+        "description": "A set of open source fully controlled React Inertia form elements"
+      },
+      "atlas": {
+        "primary_focus": [
+          "forms-and-inputs"
+        ],
+        "component_tags": [
+          "input",
+          "select",
+          "toggle",
+          "datepicker"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@wds",
+        "homepage": "https://wds-shadcn-registry.netlify.app/",
+        "registry_url_template": "https://wds-shadcn-registry.netlify.app/r/{name}.json",
+        "description": "A collection of accessible components built for use with Shadcn."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@wigggle-ui",
+        "homepage": "https://wigggle-ui.vercel.app",
+        "registry_url_template": "https://wigggle-ui.vercel.app/r/{name}.json",
+        "description": "A beautiful collection of copy-and-paste widgets for your next project."
+      },
+      "atlas": {
+        "primary_focus": [
+          "misc-utility"
+        ],
+        "component_tags": [
+          "modal",
+          "dropdown"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@zippystarter",
+        "homepage": "https://zippystarter.com",
+        "registry_url_template": "https://zippystarter.com/r/{name}.json",
+        "description": "Expertly crafted blocks, components & themes for shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections",
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "hero-section",
+          "testimonial",
+          "table",
+          "chart"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uicapsule",
+        "homepage": "https://uicapsule.com",
+        "registry_url_template": "https://uicapsule.com/r/{name}.json",
+        "description": "A curated collection of components that spark joy. Featuring interactive concepts, design experiments, and components in the intersection of AI/UI."
+      },
+      "atlas": {
+        "primary_focus": [
+          "buttons-and-primitives"
+        ],
+        "component_tags": [
+          "button",
+          "toggle",
+          "chatbot"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ui-layouts",
+        "homepage": "https://ui-layouts.com/",
+        "registry_url_template": "https://ui-layouts.com/r/{name}.json",
+        "description": "UI Layouts offers components, effects, design tools, and ready-made blocks that make building modern interfaces more efficient—built with React, Next.js, Tailwind CSS, and shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [
+          "templates-and-layouts",
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "hero-section",
+          "table",
+          "testimonial"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pureui",
+        "homepage": "https://pure.kam-ui.com/",
+        "registry_url_template": "https://pure.kam-ui.com/r/{name}.json",
+        "description": "Pure UI is a curated collection of refined, animated, and accessible components built with Base UI, Tailwind CSS, Motion, and other high-quality open source libraries."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tailwind-builder",
+        "homepage": "https://tailwindbuilder.ai/",
+        "registry_url_template": "https://tailwindbuilder.ai/r/{name}.json",
+        "description": "Tailwind Builder is a collection of free ui blocks and components and provide ai tools to generate production-ready forms, tables, and charts in seconds. Built with React, Next.js, Tailwind & ShadCN."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections",
+          "data-display-and-tables"
+        ],
+        "component_tags": [
+          "hero-section",
+          "cta-section",
+          "auth-form",
+          "table",
+          "chart"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tailwind-admin",
+        "homepage": "https://tailwind-admin.com/",
+        "registry_url_template": "https://tailwind-admin.com/r/{name}.json",
+        "description": "Tailwind Builder provides free tailwind admin dashboard templates, components and ui-blocks built with React, Next.js, Tailwind CSS, and shadcn/ui to help you build admin panels quickly and efficiently."
+      },
+      "atlas": {
+        "primary_focus": [
+          "dashboards-and-admin"
+        ],
+        "component_tags": [
+          "sidebar",
+          "chart",
+          "table",
+          "search-input",
+          "auth-form"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@forgeui",
+        "homepage": "https://forgeui.in/",
+        "registry_url_template": "https://forgeui.in/r/{name}.json",
+        "description": "Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@skiper-ui",
+        "homepage": "https://skiper-ui.com/",
+        "registry_url_template": "https://skiper-ui.com/registry/{name}.json",
+        "description": "Brand new uncommon components for your Next.js project. Use with ease through shadcn CLI 3.0, featuring fast-growing components and collections that are easy to edit and use."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@animbits",
+        "homepage": "https://animbits.dev",
+        "registry_url_template": "https://animbits.dev/r/{name}.json",
+        "description": "AnimBits is a collection animated UI components for React that use Framer Motion. The components provided include buttons, cards, text, icons, lists, loaders, and page transitions, animation hooks all of which have general-purpose effects that are not flashy and easy on the eyes, making them easy to use."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shadcn-space",
+        "homepage": "https://shadcnspace.com",
+        "registry_url_template": "https://shadcnspace.com/r/{name}.json",
+        "description": "ShadcnSpace is a collection of extra-ordinary, highly customizable shadcn/ui components, blocks, and themes to build modern UIs with speed and clarity."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@icons-animated",
+        "homepage": "https://icons.lndev.me",
+        "registry_url_template": "https://icons.lndev.me/r/{name}.json",
+        "description": "An open-source library of meticulously animated icons (Tabler, Phosphor, and more) for your projects, inspired by lucide-animated.com"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@heroicons-animated",
+        "homepage": "https://www.heroicons-animated.com/",
+        "registry_url_template": "https://www.heroicons-animated.com/r/{name}.json",
+        "description": "An open-source collection of 316 beautifully animated heroicons for your projects."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@darx",
+        "homepage": "https://darshitdev.in/arts",
+        "registry_url_template": "https://darshitdev.in/r/{name}.json",
+        "description": "Magic 3D Tabs component featuring mouse-interactive 3D rotation, floating particles background effect, and smooth spring animations."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@devl",
+        "homepage": "https://devl.dev",
+        "registry_url_template": "https://devl.dev/r/{name}.json",
+        "description": "Hand-crafted layouts and UI primitives for shipping fast."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@beste-ui",
+        "homepage": "https://ui.beste.co",
+        "registry_url_template": "https://ui.beste.co/r/{name}.json",
+        "description": "Production-ready UI blocks for landing pages, dashboards, and web apps."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tokenui",
+        "homepage": "https://www.tokenui.dev",
+        "registry_url_template": "https://www.tokenui.dev/r/{name}.json",
+        "description": "Beautiful, interactive documentation components for your design tokens following industry standards."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@lumiui",
+        "homepage": "https://www.lumiui.dev",
+        "registry_url_template": "https://www.lumiui.dev/r/{name}.json",
+        "description": "Composable React components powered by Base UI and Tailwind CSS — Build fast, customize everything."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uselayouts",
+        "homepage": "https://uselayouts.com",
+        "registry_url_template": "https://uselayouts.com/r/{name}.json",
+        "description": "A collection of premium animated React components and micro-interactions built with Motion for building fluid, professional interfaces."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@joyco",
+        "homepage": "https://registry.joyco.studio",
+        "registry_url_template": "https://registry.joyco.studio/r/{name}.json",
+        "description": "Components including MobileMenu, ScrollArea with gradients, Chat UI, HLSVideoPlayer, and Marquee."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gooseui",
+        "homepage": "https://gooseui.pro",
+        "registry_url_template": "https://gooseui.pro/r/{name}.json",
+        "description": "Open source component library with animated components, beautiful effects, and custom toast notifications. Built with Radix UI and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@baselayer",
+        "homepage": "https://www.baselayer.dev",
+        "registry_url_template": "https://www.baselayer.dev/r/{name}.json",
+        "description": "A collection of components built on React Aria, Tailwind CSS, and tailwind-variants."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@jolyui",
+        "homepage": "https://www.jolyui.dev",
+        "registry_url_template": "https://www.jolyui.dev/r/{name}.json",
+        "description": "JolyUI is a modern React component library built with TypeScript and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@fab-ui",
+        "homepage": "https://fab-ui.com",
+        "registry_url_template": "https://fab-ui.com/r/{name}.json",
+        "description": "A collection of beautifully designed UI components for building modern web applications."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@asanshay",
+        "homepage": "https://ds.asanshay.com",
+        "registry_url_template": "https://ds.asanshay.com/r/{name}.json",
+        "description": "Clean, beautiful, and simple UI primitives and AI elements."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@headcodecms",
+        "homepage": "https://headcodecms.com",
+        "registry_url_template": "https://headcodecms.com/r/{name}.json",
+        "description": "A Minimalistic Web CMS for Next.js, optimized for Cache Components."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@typedora-ui",
+        "homepage": "https://typedora-ui.netlify.app",
+        "registry_url_template": "https://typedora-ui.netlify.app/r/{name}.json",
+        "description": "Typedora UI is a next-generation extension layer for shadcn/ui, designed to bring full type-safety to your UI components."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@sona-ui",
+        "homepage": "https://sona-ui.vercel.app",
+        "registry_url_template": "https://sona-ui.vercel.app/r/{name}.json",
+        "description": "A modern UI component library built with React and TailwindCSS to help you build beautiful and accessible web applications faster."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@soundcn",
+        "homepage": "https://soundcn.xyz",
+        "registry_url_template": "https://soundcn.xyz/r/{name}.json",
+        "description": "Large collection of game, interface, retro, and voice sound effects for web applications"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pixelact-ui",
+        "homepage": "https://pixelactui.com",
+        "registry_url_template": "https://pixelactui.com/r/{name}.json",
+        "description": "Playful pixel art style components library built on top of shadcn. Perfect for retro style projects and games."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@emerald-ui",
+        "homepage": "https://emerald-ui.com",
+        "registry_url_template": "https://emerald-ui.com/r/{name}.json",
+        "description": "Emerald UI - collection of components built with Motion, GSAP, Tailwind CSS and shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@iconiq",
+        "homepage": "https://iconiqui.com",
+        "registry_url_template": "https://iconiqui.com/r/{name}.json",
+        "description": "Iconiq is a collection of icons designed for web applications. It is a modern, clean, and minimalistic icon set that is perfect for web applications."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@fonttrio",
+        "homepage": "https://www.fonttrio.xyz",
+        "registry_url_template": "https://www.fonttrio.xyz/r/{name}.json",
+        "description": "Curated font pairing registry for shadcn. Three fonts. One command. Install perfectly configured typography (heading + body + mono) with shadcn add. Includes editorial-grade type scales, CSS variables, and a live preview site."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@componentry",
+        "homepage": "https://componentry.fun",
+        "registry_url_template": "https://componentry.fun/r/{name}.json",
+        "description": "Beautiful, interactive React + Tailwind components for modern product UIs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@paletteui",
+        "homepage": "https://paletteui.xyz",
+        "registry_url_template": "https://paletteui.xyz/r/{name}.json",
+        "description": "Curated OKLCH color themes for shadcn/ui + visual theme editor with CSS, Tailwind v4, and Figma export."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@fluid",
+        "homepage": "https://www.fluidfunctionalism.com",
+        "registry_url_template": "https://www.fluidfunctionalism.com/r/{name}.json",
+        "description": "Fluid components used exclusively in service of functional clarity. Proximity hover, spring animations, font-weight transitions, and animated focus rings."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gammaui",
+        "homepage": "https://www.gammaui.com",
+        "registry_url_template": "https://www.gammaui.com/r/{name}.json",
+        "description": "Beautifully designed landing page components built with React & Tailwind CSS & Motion."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@flx",
+        "homepage": "https://ui.flexnative.com",
+        "registry_url_template": "https://ui.flexnative.com/r/{name}.json",
+        "description": "A collection of customizable UI blocks with interactive live previews"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tailgrids",
+        "homepage": "https://tailgrids.com",
+        "registry_url_template": "https://tailgrids.com/docs/r/{name}.json",
+        "description": "React UI Components, Powered by Tailwind CSS"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nexus-ui",
+        "homepage": "https://nexus-ui.dev",
+        "registry_url_template": "https://nexus-ui.dev/r/{name}.json",
+        "description": "Open-source component library of composable, copy-paste primitives for building AI interfaces (chat, streaming, multimodal)"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@sabraman",
+        "homepage": "https://sabraman.ru/components",
+        "registry_url_template": "https://sabraman.ru/r/{name}.json",
+        "description": "Legacy skeuomorphic UI components and blocks for shadcn."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@odysseyui",
+        "homepage": "https://www.odysseyui.com/docs",
+        "registry_url_template": "https://www.odysseyui.com/r/{name}.json",
+        "description": "A design focused component library for Next.js, built for speed, flexibility and developer experience."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pulkitxm",
+        "homepage": "https://pulkitxm.com",
+        "registry_url_template": "https://pulkitxm.com/components/{name}.json",
+        "description": "Animated shadcn components powered by GSAP and Framer Motion. Built for expressive UIs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@rescript-shadcn",
+        "homepage": "https://rescript-shadcn.miriad.studio",
+        "registry_url_template": "https://rescript-shadcn.miriad.studio/r/{name}.json",
+        "description": "Shadcn components rewritten in Rescript, compatible with shadcn CLI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@openpolicy",
+        "homepage": "https://www.openpolicy.sh",
+        "registry_url_template": "https://www.openpolicy.sh/r/{name}.json",
+        "description": "Open-source components for building terms, privacy policies and cookie banners."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@mksingh",
+        "homepage": "https://mksingh.dev/docs",
+        "registry_url_template": "https://mksingh.dev/r/{name}.json",
+        "description": "A personal registry of production-ready ShadCN components and utilities. Everything is built to drop into your existing ShadCN project with no extra setup."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@flowkit-ui",
+        "homepage": "https://flowkit-ui.vzkiss.com",
+        "registry_url_template": "https://flowkit-ui.vzkiss.com/r/{name}.json",
+        "description": "Opinionated, accessible components on Base UI and shadcn-style primitives — starting with a Creatable Combobox."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@termcn",
+        "homepage": "https://termcn.vercel.app",
+        "registry_url_template": "https://termcn.vercel.app/r/{name}.json",
+        "description": "Beautiful terminal UIs, made simple. Ready to use, customizable terminal UI components for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@remocn",
+        "homepage": "https://www.remocn.dev/",
+        "registry_url_template": "https://www.remocn.dev/r/{name}.json",
+        "description": "Production-ready components for Remotion - text animations, backgrounds, transitions, UI blocks, and full scene compositions"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@exabase",
+        "homepage": "https://exawizards.com/exabase/design/",
+        "registry_url_template": "https://exawizards.com/exabase/design/registry/{name}.json",
+        "description": "A collection of UI components based on the exaBase Design System, built with React and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@aicanvas",
+        "homepage": "https://aicanvas.me",
+        "registry_url_template": "https://aicanvas.me/r/{name}.json",
+        "description": "54 animated React components with AI reproduction prompts for Claude Code, Lovable, and v0. Free and open source."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@xcn",
+        "homepage": "https://ui.radiumcoders.com",
+        "registry_url_template": "https://ui.radiumcoders.com/r/xcn/{name}.json",
+        "description": "Hand-crafted, beautiful, and minimal UI components built with Tailwind CSS and Motion."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@dotmatrix",
+        "homepage": "https://dotmatrix.zzzzshawn.cloud",
+        "registry_url_template": "https://dotmatrix.zzzzshawn.cloud/r/{name}.json",
+        "description": "Production-ready dot-matrix loading components for React, featuring square, circular, and triangle animations with polished motion."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@delta",
+        "homepage": "https://deltacomponents.dev",
+        "registry_url_template": "https://deltacomponents.dev/r/{name}.json",
+        "description": "A shadcn registry for AI and media-rich interfaces — streaming LLM chat, zoomable images, swipeable card decks, interactive maps, plus dashboard and landing-page blocks."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@shieldcn",
+        "homepage": "https://shieldcn.dev",
+        "registry_url_template": "https://shieldcn.dev/r/{name}.json",
+        "description": "Beautiful README badges as a service. A shields.io alternative with the visual quality of shadcn/ui. Drop-in SVG badge components for npm, GitHub, Discord, and more."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@evilbuttons",
+        "homepage": "https://evilbuttons.radiumcoders.com/docs",
+        "registry_url_template": "https://evilbuttons.radiumcoders.com/r/{name}.json",
+        "description": "A shadcn/ui registry featuring a collection of animated buttons built with Motion. Each component is designed to add punchy, interactive feedback to your UI with minimal setup."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@stepper",
+        "homepage": "https://francozeta-stepper.vercel.app",
+        "registry_url_template": "https://francozeta-stepper.vercel.app/{name}.json",
+        "description": "A modern, accessible and composable Stepper component for React and Tailwind CSS. Built for shadcn/ui-style workflows with registry-first distribution."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@text-ui",
+        "homepage": "https://joelachance.github.io/text-ui/docs",
+        "registry_url_template": "https://joelachance.github.io/text-ui/r/{name}.json",
+        "description": "A shadcn/ui registry with EchoText (`echo-text`): layered stroke text that follows the pointer—minimal setup, drop-in component."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@framecn",
+        "homepage": "https://framecn.vercel.app",
+        "registry_url_template": "https://framecn.vercel.app/r/{name}.json",
+        "description": "Beautiful videos, made simple. Ready to use, customizable video components for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@turbopills-ui",
+        "homepage": "https://www.turbopills.com/ui/docs",
+        "registry_url_template": "https://ui.turbopills.com/r/{name}.json",
+        "description": "Beautiful, accessible, and customizable React components for your telehealth applications."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nexus-labs",
+        "homepage": "https://nexus-ui.com",
+        "registry_url_template": "https://nexus-ui.com/r/{name}.json",
+        "description": "Motion-native animated components for Next.js — backgrounds, heroes, inputs, carousels, and more. Open source. Copy-ready TypeScript."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@wensity",
+        "homepage": "https://wensity.com",
+        "registry_url_template": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/{name}.json",
+        "description": "Motion-rich React components for AI interfaces, SaaS blocks, and cinematic interactions. Free Wensity components only."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    }
+  ]
+}
