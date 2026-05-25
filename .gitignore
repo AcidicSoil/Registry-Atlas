@@ -31,9 +31,6 @@ node_modules/
 .vscode
 # OS specific
 
-# Task files
-# tasks.json
-# tasks/
 .gemini
 .todo
 codefetch
@@ -42,3 +39,7 @@ codefetch
 .browser-echo-mcp.json
 codefetch.config.mjs
 .codefetchignore
+
+# Task files
+# tasks.json
+# tasks/ 
