@@ -25,7 +25,12 @@ interface Registry {
 
 ### Controlled Vocabularies
 
-To ensure consistent grouping and filtering, `primary_focus` and `component_tags` use controlled vocabularies.
+To ensure consistent grouping and filtering, `primary_focus` and `component_tags` use controlled vocabularies. The exported arrays in `src/registry-explorer/core/registry.schema.ts` are the source of truth:
+
+- `PRIMARY_FOCUS_VALUES`
+- `COMPONENT_TAG_VALUES`
+
+The `PrimaryFocus` and `ComponentTag` TypeScript types are derived from those arrays.
 
 #### Primary Focus (`PrimaryFocus`)
 
@@ -64,10 +69,11 @@ Allowed values are defined in `COMPONENT_TAG_VALUES` in `src/registry-explorer/c
 If a new focus or component type is needed:
 
 1.  Open `src/registry-explorer/core/registry.schema.ts`.
-2.  Add the new key to the `PrimaryFocus` or `ComponentTag` type union.
-3.  Add the new key to the corresponding `VALUES` constant array.
+2.  Add the new key to `PRIMARY_FOCUS_VALUES` or `COMPONENT_TAG_VALUES`.
+3.  Do not edit a parallel union type; `PrimaryFocus` and `ComponentTag` are derived from the const arrays.
 4.  Open `src/registry-explorer/core/labels.ts`.
 5.  Add a human-readable label mapping for the new key (for Focus) or ensure the default transformation works (for Component).
+6.  Run `pnpm test`, `pnpm typecheck:test`, and `pnpm verify`.
 
 ## Architecture Overview
 
