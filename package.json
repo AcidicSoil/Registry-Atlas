@@ -5,12 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "test": "TMPDIR=${TMPDIR:-/tmp} vitest run",
+    "test:watch": "TMPDIR=${TMPDIR:-/tmp} vitest",
+    "typecheck": "tsc --noEmit",
+    "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
+    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm build",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "react-grab": "0.1.37",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
-    "react-grab": "0.1.37"
+    "vitest": "^4.1.7"
   }
 }

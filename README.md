@@ -46,7 +46,29 @@ pnpm dev
 
 Visit `http://localhost:5173` in your browser.
 
+### Verification
+
+Run the test suite:
+
+```bash
+pnpm test
+```
+
+Type-check the test files and source files together:
+
+```bash
+pnpm typecheck:test
+```
+
+Run the full maintainer verification gate:
+
+```bash
+pnpm verify
+```
+
 ### Building for Production
+
+`pnpm build` remains the production output check. It type-checks source files and builds the Vite bundle.
 
 ```bash
 pnpm build

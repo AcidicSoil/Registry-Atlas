@@ -6,7 +6,7 @@ import {
   buildMatrixRows,
   computeMetrics
 } from '../../src/registry-explorer/core/grouping';
-import { Registry } from '../../src/registry-explorer/core/registry.schema';
+import type { Registry } from '../../src/registry-explorer/core/registry.schema';
 
 const mockRegistries: Registry[] = [
   {
