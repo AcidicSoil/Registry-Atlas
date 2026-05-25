@@ -9,8 +9,8 @@ Requirements for the next milestone. Each maps to roadmap phases.
 
 ### Foundation
 
-- [ ] **FOUND-01**: Maintainer can run the project test suite with one documented package script.
-- [ ] **FOUND-02**: Maintainer can verify generated data, core grouping, command generation, and search behavior through automated tests.
+- [x] **FOUND-01**: Maintainer can run the project test suite with one documented package script.
+- [x] **FOUND-02**: Maintainer can verify generated data, core grouping, command generation, and search behavior through automated tests.
 - [ ] **FOUND-03**: User only reaches the canonical Registry Atlas app surface; stale legacy and starter artifacts are removed or archived outside the deployed app.
 - [ ] **FOUND-04**: Imported registry text and URLs render through safe helpers that avoid untrusted `innerHTML` and reject unsafe URL protocols.
 - [ ] **FOUND-05**: Maintainer can update controlled focus/component vocabularies from a single source of truth without type/runtime drift.
@@ -89,8 +89,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| FOUND-01 | Phase 1 | Pending |
-| FOUND-02 | Phase 1 | Pending |
+| FOUND-01 | Phase 1 | Complete |
+| FOUND-02 | Phase 1 | Complete |
 | FOUND-03 | Phase 1 | Pending |
 | FOUND-04 | Phase 1 | Pending |
 | FOUND-05 | Phase 1 | Pending |
