@@ -14,7 +14,7 @@ Registry Atlas v1 moves the existing static explorer into a reliable shadcn dire
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation Safety & Verification** - Maintainers have a runnable, canonical, safe app foundation before importing broader third-party data. (completed 2026-05-25)
-- [ ] **Phase 2: Official Mirror & Data Pipeline** - Maintainers can sync, normalize, validate, and review the official shadcn registry directory.
+- [x] **Phase 2: Official Mirror & Data Pipeline** - Maintainers can sync, normalize, validate, and review the official shadcn registry directory. (completed 2026-05-25)
 - [ ] **Phase 3: Component-First Discovery** - Users can search by component need, inspect registry context, and understand coverage confidence.
 - [ ] **Phase 4: Install Actions & Release Hardening** - Users can copy validated commands, manage a batch queue, share state, and trust the release checks.
 
@@ -80,7 +80,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 02-04-PLAN.md — Wire data validation into docs, `verify`, and final maintainer checks.
+- [x] 02-04-PLAN.md — Wire data validation into docs, `verify`, and final maintainer checks.
 
 ### Phase 3: Component-First Discovery
 
@@ -124,6 +124,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
-| 2. Official Mirror & Data Pipeline | 3/4 | In Progress|  |
+| 2. Official Mirror & Data Pipeline | 4/4 | Complete   | 2026-05-25 |
 | 3. Component-First Discovery | 0/TBD | Not started | - |
 | 4. Install Actions & Release Hardening | 0/TBD | Not started | - |
