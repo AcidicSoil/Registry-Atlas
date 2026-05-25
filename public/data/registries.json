@@ -1,10 +1,10 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-05-25T17:28:25.832Z",
-    "upstream_count": 198,
-    "registry_count": 198,
-    "local_count": 198,
+    "synced_at": "2026-05-25T18:21:20.745Z",
+    "upstream_count": 199,
+    "registry_count": 199,
+    "local_count": 199,
     "validation_status": "not_run",
     "report_path": "data/shadcn/sync-report.json"
   },
@@ -3539,6 +3539,25 @@
         "homepage": "https://ui.beste.co",
         "registry_url_template": "https://ui.beste.co/r/{name}.json",
         "description": "Production-ready UI blocks for landing pages, dashboards, and web apps."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@toc-cn",
+        "homepage": "https://tocn.vercel.app",
+        "registry_url_template": "https://tocn.vercel.app/r/{name}.json",
+        "description": "Documentation-style in-page table of contents with scroll spy, animated SVG tree indicator, and mobile sticky collapsible."
       },
       "atlas": {
         "primary_focus": [],

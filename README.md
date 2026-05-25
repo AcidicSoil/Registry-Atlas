@@ -1,6 +1,6 @@
 # Registry Atlas
 
-A modular, interactive explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory)ecosystem.
+A modular, interactive explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory) ecosystem.
 
 Registry Atlas provides a structured way to discover and compare community registries based on their primary focus (e.g., AI Chat, Admin Dashboards) or specific component availability (e.g., specific table implementations, authentication forms).
 
@@ -48,6 +48,12 @@ Visit `http://localhost:5173` in your browser.
 
 ### Verification
 
+Validate the generated registry mirror data:
+
+```bash
+pnpm validate:data
+```
+
 Run the test suite:
 
 ```bash
@@ -65,6 +71,20 @@ Run the full maintainer verification gate:
 ```bash
 pnpm verify
 ```
+
+`pnpm verify` runs source type-checking, test type-checking, tests, data validation, and the production build. It does not refresh generated registry data.
+
+### Refreshing Registry Data
+
+Registry Atlas mirrors the official shadcn directory into generated local artifacts. Refresh them explicitly when you want to review upstream changes:
+
+```bash
+pnpm sync:registries
+pnpm validate:data
+pnpm verify
+```
+
+Review `data/shadcn/sync-report.json` and `public/data/registries.json` before accepting regenerated data.
 
 ### Building for Production
 
@@ -96,7 +116,8 @@ src/registry-explorer/
 │   ├── labels.ts           # UI label mappers
 │   └── matrixColumns.ts    # Configuration for Matrix view
 ├── data/
-│   └── registries.data.ts  # Static database of registries
+│   ├── loadRegistries.ts   # Runtime loader for generated registry mirror JSON
+│   └── registries.data.ts  # Legacy enrichment seed used by sync tooling
 ├── ui/                 # DOM rendering modules
 │   ├── shell.ts            # State management & event orchestration
 │   ├── focusView.ts        # Renderer for Focus view
@@ -113,13 +134,14 @@ src/registry-explorer/
 
 ## Maintenance
 
-### Adding a Registry
+### Maintaining Registry Data
 
-To add a new community registry to the explorer:
+The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing the runtime catalog:
 
-1.  Open `src/registry-explorer/data/registries.data.ts`.
-2.  Add a new entry to the `registries` array matching the `Registry` interface.
-3.  Use the controlled vocabularies for `primary_focus` and `component_tags` (intellisense will guide you).
+1.  Run `pnpm sync:registries`.
+2.  Review `data/shadcn/registries.raw.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json`.
+3.  Run `pnpm validate:data`.
+4.  Run `pnpm verify`.
 
 For more details, see [docs/registry-explorer-data.md](https://github.com/acidicsoil/registry-atlas/blob/HEAD/docs/registry-explorer-data.md).
 
