@@ -72,7 +72,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-02-PLAN.md — Add strict local mirror validation helpers, tests, and `validate:data` command.
+- [x] 02-02-PLAN.md — Add strict local mirror validation helpers, tests, and `validate:data` command.
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -124,6 +124,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
-| 2. Official Mirror & Data Pipeline | 1/4 | In Progress|  |
+| 2. Official Mirror & Data Pipeline | 2/4 | In Progress|  |
 | 3. Component-First Discovery | 0/TBD | Not started | - |
 | 4. Install Actions & Release Hardening | 0/TBD | Not started | - |
