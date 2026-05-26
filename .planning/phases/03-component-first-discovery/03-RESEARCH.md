@@ -378,17 +378,16 @@ Source: locked Phase 3 status language. [VERIFIED: CONTEXT.md]
 |---|-------|---------|---------------|
 | A1 | A native TypeScript search/ranking implementation is sufficient instead of adding Fuse.js/MiniSearch. | Standard Stack | If users need typo tolerance or complex ranking, later plans may need a package and package legitimacy gate. |
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Will Phase 3 fetch individual item catalogs, or only model the status surface for future catalog ingestion?**
    - What we know: D-23 permits fetched/generated item catalogs if statused, but Phase 3 can satisfy current data with inferred/unverified coverage. [VERIFIED: CONTEXT.md]
-   - What's unclear: Whether MVP time should include network/catalog probing for selected registries. [ASSUMED]
-   - Recommendation: Plan the core/search/profile work first, then add an optional final wave only if catalog data already exists or can be generated without infrastructure. [ASSUMED]
+   - Decision: Phase 3 must model and preserve static/generated item catalog summaries for every registry where item data can be discovered by the existing sync/validation pipeline or checked-in mirror data. Do not perform browser runtime catalog probing. Store item discovery availability/status explicitly so unavailable catalogs never block registry-level discovery. [RESOLVED: D-06a, D-08, D-23]
+   - Planning requirement: Plans must add a data/model/validation slice before discovery ranking that carries known item `name`, `slug`, `type/category` when available, source/provenance, catalog status, and route eligibility into runtime records. Search/profile/UI work must consume those known item summaries and show direct item routes only when `registryUrlTemplate + item.slug` validates. [RESOLVED: checker feedback]
 
 2. **Should the default tab become a new `discover` view or should the existing `component` tab become default?**
    - What we know: D-02 requires default results to be component-first and D-16 requires existing browse views to remain. [VERIFIED: CONTEXT.md]
-   - What's unclear: The least disruptive DOM/tab label change. [ASSUMED]
-   - Recommendation: Add a `discover`/results render path as the default state and keep `component` as a component index/facet. [ASSUMED]
+   - Decision: Add a `discover`/results render path as the default state and keep `component` as a secondary component index/facet. [RESOLVED: D-02, D-16]
 
 ## Environment Availability
 
