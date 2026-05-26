@@ -96,7 +96,25 @@ Plans:
   4. User can distinguish verified, inferred, partial, unavailable, and unverified component coverage in both results and registry profiles.
   5. User can still browse registry-first focus and matrix views as secondary comparison views with useful empty and partial-data states.
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — Preserve coverage/provenance data and validate direct item-route eligibility.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 03-02-PLAN.md — Derive ranked component candidates and source-boundary registry profiles.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 03-03-PLAN.md — Wire default component-first discovery results and inspectable profiles.
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 03-04-PLAN.md — Upgrade secondary focus/component/matrix views with status-aware comparison.
+
 **UI hint**: yes
 
 ### Phase 4: Install Actions & Release Hardening
