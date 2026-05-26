@@ -6,8 +6,11 @@ import type {
   RegistryExplorerMetrics,
   ComponentTag,
   PrimaryFocus,
+  CoverageStatusCounts,
+  MatrixCell,
 } from './registry.schema';
 import { focusLabel, componentLabel } from './labels';
+import { coverageStatusLabel } from './coverageStatus';
 
 export function filterRegistries(
   registries: readonly Registry[],
@@ -29,6 +32,23 @@ export function filterRegistries(
       .toLowerCase();
     return haystack.includes(term);
   });
+}
+
+export function countCoverageStatuses(registries: readonly Registry[]): CoverageStatusCounts {
+  const counts: CoverageStatusCounts = {
+    verified: 0,
+    inferred: 0,
+    partial: 0,
+    unavailable: 0,
+    unverified: 0,
+  };
+
+  registries.forEach(registry => {
+    const status = registry.atlas?.coverageStatus ?? 'unverified';
+    counts[status] += 1;
+  });
+
+  return counts;
 }
 
 export function buildFocusGroups(
@@ -54,6 +74,7 @@ export function buildFocusGroups(
       label: focusLabel(key),
       registries: items.sort((a, b) => a.name.localeCompare(b.name)),
       count: items.length,
+      statusCounts: countCoverageStatuses(items),
     });
   });
 
@@ -86,6 +107,7 @@ export function buildComponentGroups(
       label: componentLabel(key),
       registries: items.sort((a, b) => a.name.localeCompare(b.name)),
       count: items.length,
+      statusCounts: countCoverageStatuses(items),
     });
   });
 
@@ -105,10 +127,20 @@ export function buildMatrixRows(
   const sorted = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
 
   return sorted.map((r) => {
-    const coverage = columns.map((col) => r.component_tags.includes(col));
+    const cells: MatrixCell[] = columns.map((col) => {
+      const matched = r.component_tags.includes(col);
+      const status: MatrixCell['status'] = matched ? (r.atlas?.coverageStatus ?? 'unverified') : 'absent';
+      return {
+        componentKey: col,
+        matched,
+        status,
+        label: status === 'absent' ? 'No known tag match' : coverageStatusLabel(status),
+      };
+    });
     return {
       registry: r,
-      coverage,
+      coverage: cells.map(cell => cell.matched),
+      cells,
     };
   });
 }

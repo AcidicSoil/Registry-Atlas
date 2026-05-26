@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation Safety & Verification** - Maintainers have a runnable, canonical, safe app foundation before importing broader third-party data. (completed 2026-05-25)
 - [x] **Phase 2: Official Mirror & Data Pipeline** - Maintainers can sync, normalize, validate, and review the official shadcn registry directory. (completed 2026-05-25)
-- [ ] **Phase 3: Component-First Discovery** - Users can search by component need, inspect registry context, and understand coverage confidence.
+- [x] **Phase 3: Component-First Discovery** - Users can search by component need, inspect registry context, and understand coverage confidence. (completed 2026-05-26)
 - [ ] **Phase 4: Install Actions & Release Hardening** - Users can copy validated commands, manage a batch queue, share state, and trust the release checks.
 
 ## Phase Details
@@ -101,23 +101,23 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 03-01-PLAN.md — Validate coverage/catalog status and populate known item-summary data.
+- [x] 03-01-PLAN.md — Validate coverage/catalog status and populate known item-summary data.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-02-PLAN.md — Load populated item summaries and validate direct item-route eligibility.
+- [x] 03-02-PLAN.md — Load populated item summaries and validate direct item-route eligibility.
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 03-03-PLAN.md — Derive ranked component candidates and source-boundary registry profiles.
+- [x] 03-03-PLAN.md — Derive ranked component candidates and source-boundary registry profiles.
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 03-04-PLAN.md — Wire default component-first discovery results and inspectable profiles.
+- [x] 03-04-PLAN.md — Wire default component-first discovery results and inspectable profiles.
 
 **Wave 5** *(blocked on Wave 4 completion)*
 
-- [ ] 03-05-PLAN.md — Upgrade secondary focus/component/matrix views with status-aware comparison.
+- [x] 03-05-PLAN.md — Upgrade secondary focus/component/matrix views with status-aware comparison.
 
 **UI hint**: yes
 
@@ -147,5 +147,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 |-------|----------------|--------|-----------|
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
 | 2. Official Mirror & Data Pipeline | 4/4 | Complete   | 2026-05-25 |
-| 3. Component-First Discovery | 0/TBD | Not started | - |
+| 3. Component-First Discovery | 5/5 | Complete | 2026-05-26 |
 | 4. Install Actions & Release Hardening | 0/TBD | Not started | - |

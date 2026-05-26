@@ -1,7 +1,15 @@
 import {
+  COVERAGE_CONFIDENCE_VALUES,
+  COVERAGE_STATUS_VALUES,
+  ITEM_CATALOG_STATUS_VALUES,
+} from './coverageStatus.ts';
+import {
   COMPONENT_TAG_VALUES,
   PRIMARY_FOCUS_VALUES,
   type ComponentTag,
+  type CoverageConfidence,
+  type CoverageStatus,
+  type ItemCatalogStatus,
   type PrimaryFocus,
 } from './registry.schema.ts';
 
@@ -21,7 +29,12 @@ export type MirrorValidationCode =
   | 'url-http'
   | 'template-missing-token'
   | 'atlas-invalid-primary-focus'
-  | 'atlas-invalid-component-tag';
+  | 'atlas-invalid-component-tag'
+  | 'atlas-invalid-coverage-status'
+  | 'atlas-invalid-confidence'
+  | 'atlas-invalid-catalog-status'
+  | 'atlas-invalid-item-summary'
+  | 'atlas-invalid-item-slug';
 
 export interface MirrorValidationIssue {
   code: MirrorValidationCode;
@@ -52,6 +65,10 @@ interface MirrorRecord {
   atlas?: {
     primary_focus?: unknown;
     component_tags?: unknown;
+    coverage_status?: unknown;
+    confidence?: unknown;
+    catalog_status?: unknown;
+    item_summaries?: unknown;
   };
 }
 
@@ -77,6 +94,10 @@ const OFFICIAL_URL_POLICY: UrlPolicy = {
 
 const PRIMARY_FOCUS_SET = new Set<PrimaryFocus>(PRIMARY_FOCUS_VALUES);
 const COMPONENT_TAG_SET = new Set<ComponentTag>(COMPONENT_TAG_VALUES);
+const COVERAGE_STATUS_SET = new Set<CoverageStatus>(COVERAGE_STATUS_VALUES);
+const COVERAGE_CONFIDENCE_SET = new Set<CoverageConfidence>(COVERAGE_CONFIDENCE_VALUES);
+const ITEM_CATALOG_STATUS_SET = new Set<ItemCatalogStatus>(ITEM_CATALOG_STATUS_VALUES);
+const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorValidationResult {
   const result = createResult();
@@ -207,6 +228,10 @@ function validateMirrorRecord(
   validateRegistryUrlTemplateIntoResult(record.official?.registry_url_template, namespace, 'official.registry_url_template', result);
   validateAtlasValues(record.atlas?.primary_focus, PRIMARY_FOCUS_SET, 'atlas.primary_focus', 'atlas-invalid-primary-focus', label, result);
   validateAtlasValues(record.atlas?.component_tags, COMPONENT_TAG_SET, 'atlas.component_tags', 'atlas-invalid-component-tag', label, result);
+  validateAtlasScalar(record.atlas?.coverage_status, COVERAGE_STATUS_SET, 'atlas.coverage_status', 'atlas-invalid-coverage-status', label, result);
+  validateAtlasScalar(record.atlas?.confidence, COVERAGE_CONFIDENCE_SET, 'atlas.confidence', 'atlas-invalid-confidence', label, result);
+  validateAtlasScalar(record.atlas?.catalog_status, ITEM_CATALOG_STATUS_SET, 'atlas.catalog_status', 'atlas-invalid-catalog-status', label, result);
+  validateItemSummaries(record.atlas?.item_summaries, label, record.official?.registry_url_template, result);
 }
 
 function validateNamespaceIntoResult(
@@ -346,6 +371,136 @@ function validateRegistryUrlTemplateIntoResult(
       value: typeof value === 'string' ? value : undefined,
     });
   }
+}
+
+function validateAtlasScalar(
+  value: unknown,
+  allowedValues: ReadonlySet<string>,
+  field: string,
+  code: MirrorValidationCode,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined) {
+    return;
+  }
+
+  if (typeof value === 'string' && allowedValues.has(value)) {
+    return;
+  }
+
+  addIssue(result, {
+    code,
+    message: `${field} contains an unknown value.`,
+    severity: 'error',
+    namespace,
+    field,
+    value: typeof value === 'string' ? value : String(value),
+  });
+}
+
+function validateItemSummaries(
+  value: unknown,
+  namespace: string,
+  registryUrlTemplate: unknown,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined) {
+    return;
+  }
+
+  if (!Array.isArray(value)) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-summary',
+      message: 'atlas.item_summaries must be an array.',
+      severity: 'error',
+      namespace,
+      field: 'atlas.item_summaries',
+    });
+    return;
+  }
+
+  value.forEach((item, index) => {
+    const field = `atlas.item_summaries[${index}]`;
+    if (!isObject(item)) {
+      addIssue(result, {
+        code: 'atlas-invalid-item-summary',
+        message: `${field} must be an object.`,
+        severity: 'error',
+        namespace,
+        field,
+      });
+      return;
+    }
+
+    const record = item as Record<string, unknown>;
+    const slug = record.slug;
+    const catalogStatus = record.catalog_status ?? record.catalogStatus;
+    const routeEligible = record.route_eligible ?? record.routeEligible;
+
+    if (typeof record.name !== 'string' || record.name.trim() === '') {
+      addIssue(result, {
+        code: 'atlas-invalid-item-summary',
+        message: `${field}.name is required.`,
+        severity: 'error',
+        namespace,
+        field: `${field}.name`,
+      });
+    }
+
+    if (typeof record.source !== 'string' || record.source.trim() === '' || typeof record.provenance !== 'string' || record.provenance.trim() === '') {
+      addIssue(result, {
+        code: 'atlas-invalid-item-summary',
+        message: `${field} requires source and provenance.`,
+        severity: 'error',
+        namespace,
+        field,
+      });
+    }
+
+    if (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug)) {
+      addIssue(result, {
+        code: 'atlas-invalid-item-slug',
+        message: `${field}.slug must be a lowercase kebab-case slug.`,
+        severity: 'error',
+        namespace,
+        field: `${field}.slug`,
+        value: typeof slug === 'string' ? slug : String(slug),
+      });
+    }
+
+    if (typeof catalogStatus !== 'string' || !ITEM_CATALOG_STATUS_SET.has(catalogStatus as ItemCatalogStatus)) {
+      addIssue(result, {
+        code: 'atlas-invalid-catalog-status',
+        message: `${field}.catalog_status contains an unknown value.`,
+        severity: 'error',
+        namespace,
+        field: `${field}.catalog_status`,
+        value: typeof catalogStatus === 'string' ? catalogStatus : String(catalogStatus),
+      });
+    }
+
+    if (routeEligible !== undefined && typeof routeEligible !== 'boolean') {
+      addIssue(result, {
+        code: 'atlas-invalid-item-summary',
+        message: `${field}.route_eligible must be a boolean.`,
+        severity: 'error',
+        namespace,
+        field: `${field}.route_eligible`,
+        value: String(routeEligible),
+      });
+    }
+
+    if (routeEligible === true && (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug) || typeof registryUrlTemplate !== 'string' || !registryUrlTemplate.includes('{name}'))) {
+      addIssue(result, {
+        code: 'atlas-invalid-item-summary',
+        message: `${field}.route_eligible requires a valid slug and registry URL template.`,
+        severity: 'error',
+        namespace,
+        field: `${field}.route_eligible`,
+      });
+    }
+  });
 }
 
 function validateAtlasValues(

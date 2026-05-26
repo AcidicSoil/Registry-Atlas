@@ -1,0 +1,68 @@
+{
+  "@8bitcn": [
+    {
+      "name": "Button",
+      "slug": "button",
+      "type": "registry:ui",
+      "category": "buttons-and-primitives",
+      "source": "known-catalog",
+      "provenance": "static item-summary seed from Phase 03 catalog review",
+      "catalog_status": "available",
+      "route_eligible": true
+    },
+    {
+      "name": "Card",
+      "slug": "card",
+      "type": "registry:ui",
+      "category": "data-display-and-tables",
+      "source": "known-catalog",
+      "provenance": "static item-summary seed from Phase 03 catalog review",
+      "catalog_status": "available",
+      "route_eligible": true
+    },
+    {
+      "name": "Input",
+      "slug": "input",
+      "type": "registry:ui",
+      "category": "forms-and-inputs",
+      "source": "known-catalog",
+      "provenance": "static item-summary seed from Phase 03 catalog review",
+      "catalog_status": "available",
+      "route_eligible": true
+    }
+  ],
+  "@assistant-ui": [
+    {
+      "name": "Thread",
+      "slug": "thread",
+      "type": "registry:component",
+      "category": "ai-chat",
+      "source": "known-catalog",
+      "provenance": "static item-summary seed from Phase 03 catalog review",
+      "catalog_status": "available",
+      "route_eligible": true
+    },
+    {
+      "name": "Composer",
+      "slug": "composer",
+      "type": "registry:component",
+      "category": "ai-chat",
+      "source": "known-catalog",
+      "provenance": "static item-summary seed from Phase 03 catalog review",
+      "catalog_status": "available",
+      "route_eligible": true
+    }
+  ],
+  "@better-upload": [
+    {
+      "name": "Upload Dropzone",
+      "slug": "upload-dropzone",
+      "type": "registry:component",
+      "category": "forms-and-inputs",
+      "source": "known-catalog",
+      "provenance": "static item-summary seed from Phase 03 catalog review",
+      "catalog_status": "partial",
+      "route_eligible": true
+    }
+  ]
+}

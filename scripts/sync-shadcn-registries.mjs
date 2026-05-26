@@ -6,6 +6,7 @@ const RAW_OUTPUT_PATH = 'data/shadcn/registries.raw.json';
 const REPORT_OUTPUT_PATH = 'data/shadcn/sync-report.json';
 const RUNTIME_OUTPUT_PATH = 'public/data/registries.json';
 const LEGACY_DATA_PATH = 'src/registry-explorer/data/registries.data.ts';
+const REGISTRY_ITEMS_PATH = 'data/shadcn/registry-items.json';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   primary_focus: [],
@@ -14,6 +15,8 @@ const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   coverage_status: 'unverified',
   confidence: 'unknown',
   notes: '',
+  catalog_status: 'unavailable',
+  item_summaries: [],
 });
 
 async function readJsonIfExists(filePath) {
@@ -98,13 +101,32 @@ function readPreviousEnrichment(previousRuntimeData) {
   return enrichment;
 }
 
-function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrichment) {
+function normalizeItemSummary(item) {
+  return {
+    name: item.name,
+    slug: item.slug,
+    type: item.type,
+    category: item.category,
+    source: item.source,
+    provenance: item.provenance,
+    catalog_status: item.catalog_status ?? item.catalogStatus,
+    route_eligible: Boolean(item.route_eligible ?? item.routeEligible),
+  };
+}
+
+function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrichment, itemSummariesByNamespace) {
   const name = normalizeNamespace(registry.name);
   const atlas =
     enrichmentByNamespace.get(name) ||
     legacyEnrichment.get(name) ||
     legacyEnrichment.get(name.slice(1)) ||
     DEFAULT_ATLAS_ENRICHMENT;
+  const itemSummaries = Array.isArray(itemSummariesByNamespace?.[name])
+    ? itemSummariesByNamespace[name].map(normalizeItemSummary)
+    : [];
+  const catalogStatus = itemSummaries.length > 0
+    ? (itemSummaries.some(item => item.catalog_status === 'partial') ? 'partial' : 'available')
+    : (typeof atlas.catalog_status === 'string' ? atlas.catalog_status : 'unavailable');
 
   return {
     official: {
@@ -117,8 +139,10 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrich
       primary_focus: Array.isArray(atlas.primary_focus) ? atlas.primary_focus : [],
       component_tags: Array.isArray(atlas.component_tags) ? atlas.component_tags : [],
       aliases: Array.isArray(atlas.aliases) ? atlas.aliases : [],
-      coverage_status: typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified',
-      confidence: typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown',
+      coverage_status: itemSummaries.length > 0 ? 'verified' : (typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified'),
+      confidence: itemSummaries.length > 0 ? 'high' : (typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown'),
+      catalog_status: catalogStatus,
+      item_summaries: itemSummaries,
       notes: typeof atlas.notes === 'string' ? atlas.notes : '',
     },
     status: {
@@ -169,10 +193,11 @@ async function main() {
     : [];
   const previousEnrichment = readPreviousEnrichment(previousRuntimeData);
   const legacyEnrichment = await readLegacyEnrichment();
+  const itemSummariesByNamespace = await readJsonIfExists(REGISTRY_ITEMS_PATH) ?? {};
   const syncedAt = new Date().toISOString();
 
   const registries = upstream.map(registry =>
-    normalizeOfficialRegistry(registry, previousEnrichment, legacyEnrichment)
+    normalizeOfficialRegistry(registry, previousEnrichment, legacyEnrichment, itemSummariesByNamespace)
   );
 
   const runtimeData = {

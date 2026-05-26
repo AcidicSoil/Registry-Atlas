@@ -65,10 +65,10 @@ export function renderMatrixContent(
   }
 
   const tableRows = rows.map(r => {
-    const cells = r.coverage.map(has => {
-      const icon = has ? "●" : "";
-      const cls = has ? "matrix-icon" : "matrix-empty";
-      return `<td class="${cls}">${icon}</td>`;
+    const cells = r.cells.map(cell => {
+      const icon = cell.matched ? "●" : "";
+      const cls = cell.matched ? `matrix-icon status-${cell.status}` : "matrix-empty";
+      return `<td class="${cls}" title="${escapeHtml(cell.label)}"><span>${icon}</span><span class="matrix-status-label">${escapeHtml(cell.status)}</span></td>`;
     }).join("");
 
     return `

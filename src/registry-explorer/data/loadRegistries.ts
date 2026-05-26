@@ -1,4 +1,12 @@
-import type { ComponentTag, PrimaryFocus, Registry } from '../core/registry.schema';
+import type {
+  ComponentTag,
+  CoverageConfidence,
+  CoverageStatus,
+  ItemCatalogStatus,
+  PrimaryFocus,
+  Registry,
+  RegistryItemSummary,
+} from '../core/registry.schema';
 import {
   type MirrorValidationIssue,
   validateRegistryMirror,
@@ -30,6 +38,23 @@ interface RegistryMirrorRecord {
   atlas?: {
     primary_focus?: PrimaryFocus[];
     component_tags?: ComponentTag[];
+    aliases?: string[];
+    coverage_status?: CoverageStatus;
+    confidence?: CoverageConfidence;
+    notes?: string;
+    catalog_status?: ItemCatalogStatus;
+    item_summaries?: Array<{
+      name: string;
+      slug: string;
+      type?: string;
+      category?: string;
+      source: string;
+      provenance: string;
+      catalog_status?: ItemCatalogStatus;
+      catalogStatus?: ItemCatalogStatus;
+      route_eligible?: boolean;
+      routeEligible?: boolean;
+    }>;
   };
   status?: {
     warnings?: string[];
@@ -72,9 +97,21 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
       component_tags: record.atlas?.component_tags ?? [],
       framework: 'React',
       license: 'Community',
+      atlas: {
+        aliases: record.atlas?.aliases ?? [],
+        coverageStatus: record.atlas?.coverage_status ?? 'unverified',
+        confidence: record.atlas?.confidence ?? 'unknown',
+        notes: record.atlas?.notes ?? '',
+        catalogStatus: record.atlas?.catalog_status ?? 'unverified',
+      },
+      itemSummaries: mapItemSummaries(record.atlas?.item_summaries ?? []),
       mirror: {
         officialName: record.official.name,
         registryUrlTemplate: record.official.registry_url_template,
+        sourceUrl: typedMirror.meta.source_url,
+        syncedAt: typedMirror.meta.synced_at,
+        upstreamCount: typedMirror.meta.upstream_count,
+        localCount: typedMirror.meta.local_count,
         warnings: [
           ...(record.status?.warnings ?? []),
           ...(warningsByNamespace.get(record.official.name) ?? []),
@@ -82,6 +119,19 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
       },
     })),
   };
+}
+
+function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['item_summaries']): RegistryItemSummary[] {
+  return (items ?? []).map(item => ({
+    name: item.name,
+    slug: item.slug,
+    type: item.type,
+    category: item.category,
+    source: item.source,
+    provenance: item.provenance,
+    catalogStatus: item.catalog_status ?? item.catalogStatus ?? 'unverified',
+    routeEligible: item.route_eligible ?? item.routeEligible ?? false,
+  }));
 }
 
 function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): Map<string, string[]> {

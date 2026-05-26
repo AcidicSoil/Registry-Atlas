@@ -42,9 +42,42 @@
           "command"
         ],
         "aliases": [],
-        "coverage_status": "inferred",
-        "confidence": "medium",
-        "notes": ""
+        "coverage_status": "verified",
+        "confidence": "high",
+        "notes": "",
+        "item_summaries": [
+          {
+            "name": "Button",
+            "slug": "button",
+            "type": "registry:ui",
+            "category": "buttons-and-primitives",
+            "source": "known-catalog",
+            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "catalog_status": "available",
+            "route_eligible": true
+          },
+          {
+            "name": "Card",
+            "slug": "card",
+            "type": "registry:ui",
+            "category": "data-display-and-tables",
+            "source": "known-catalog",
+            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "catalog_status": "available",
+            "route_eligible": true
+          },
+          {
+            "name": "Input",
+            "slug": "input",
+            "type": "registry:ui",
+            "category": "forms-and-inputs",
+            "source": "known-catalog",
+            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "catalog_status": "available",
+            "route_eligible": true
+          }
+        ],
+        "catalog_status": "available"
       },
       "status": {
         "warnings": []
@@ -63,7 +96,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -82,7 +117,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -101,7 +138,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -133,7 +172,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -158,7 +199,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -177,7 +220,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -203,7 +248,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -222,7 +269,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -247,7 +296,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -273,7 +324,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -298,7 +351,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -322,7 +377,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -346,7 +403,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -365,7 +424,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -393,7 +454,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -415,9 +478,32 @@
           "typing-indicator"
         ],
         "aliases": [],
-        "coverage_status": "inferred",
-        "confidence": "medium",
-        "notes": ""
+        "coverage_status": "verified",
+        "confidence": "high",
+        "notes": "",
+        "item_summaries": [
+          {
+            "name": "Thread",
+            "slug": "thread",
+            "type": "registry:component",
+            "category": "ai-chat",
+            "source": "known-catalog",
+            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "catalog_status": "available",
+            "route_eligible": true
+          },
+          {
+            "name": "Composer",
+            "slug": "composer",
+            "type": "registry:component",
+            "category": "ai-chat",
+            "source": "known-catalog",
+            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "catalog_status": "available",
+            "route_eligible": true
+          }
+        ],
+        "catalog_status": "available"
       },
       "status": {
         "warnings": []
@@ -436,7 +522,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -460,9 +548,22 @@
           "dropzone"
         ],
         "aliases": [],
-        "coverage_status": "inferred",
-        "confidence": "medium",
-        "notes": ""
+        "coverage_status": "verified",
+        "confidence": "high",
+        "notes": "",
+        "item_summaries": [
+          {
+            "name": "Upload Dropzone",
+            "slug": "upload-dropzone",
+            "type": "registry:component",
+            "category": "forms-and-inputs",
+            "source": "known-catalog",
+            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "catalog_status": "partial",
+            "route_eligible": true
+          }
+        ],
+        "catalog_status": "partial"
       },
       "status": {
         "warnings": []
@@ -525,7 +626,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -551,7 +654,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -570,7 +675,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -589,7 +696,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -608,7 +717,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -627,7 +738,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -646,7 +759,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -665,7 +780,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -689,7 +806,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -708,7 +827,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -727,7 +848,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -752,7 +875,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -771,7 +896,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -819,7 +946,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -848,7 +977,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -874,7 +1005,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -911,7 +1044,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -939,7 +1074,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -958,7 +1095,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -985,7 +1124,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1014,7 +1155,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1040,7 +1183,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1059,7 +1204,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1092,7 +1239,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1111,7 +1260,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1139,7 +1290,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1158,7 +1311,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1183,7 +1338,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1202,7 +1359,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1221,7 +1380,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1250,7 +1411,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1269,7 +1432,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1288,7 +1453,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1312,7 +1479,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1342,7 +1511,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1361,7 +1532,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1380,7 +1553,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1399,7 +1574,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1428,7 +1605,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1447,7 +1626,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1473,7 +1654,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1498,7 +1681,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1517,7 +1702,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1544,7 +1731,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1563,7 +1752,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1587,7 +1778,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1610,7 +1803,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1629,7 +1824,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1648,7 +1845,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1671,7 +1870,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1696,7 +1897,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1722,7 +1925,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1741,7 +1946,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1760,7 +1967,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1790,7 +1999,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1820,7 +2031,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1844,7 +2057,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1863,7 +2078,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1889,7 +2106,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1908,7 +2127,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1931,7 +2152,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1950,7 +2173,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1969,7 +2194,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -1999,7 +2226,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2018,7 +2247,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2037,7 +2268,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2061,7 +2294,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2080,7 +2315,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2099,7 +2336,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2118,7 +2357,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2137,7 +2378,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2160,7 +2403,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2183,7 +2428,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2207,7 +2454,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2230,7 +2479,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2255,7 +2506,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2274,7 +2527,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2298,7 +2553,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2317,7 +2574,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2336,7 +2595,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2364,7 +2625,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2392,7 +2655,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2416,7 +2681,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2435,7 +2702,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2460,7 +2729,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2485,7 +2756,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2514,7 +2787,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2533,7 +2808,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2552,7 +2829,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2577,7 +2856,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2605,7 +2886,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2628,7 +2911,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2647,7 +2932,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2666,7 +2953,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2689,7 +2978,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2718,7 +3009,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2737,7 +3030,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2760,7 +3055,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2787,7 +3084,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2806,7 +3105,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2825,7 +3126,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2844,7 +3147,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2868,7 +3173,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2896,7 +3203,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2924,7 +3233,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2947,7 +3258,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -2973,7 +3286,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3002,7 +3317,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3021,7 +3338,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3040,7 +3359,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3063,7 +3384,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3082,7 +3405,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3111,7 +3436,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3135,7 +3462,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3154,7 +3483,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3180,7 +3511,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3199,7 +3532,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3223,7 +3558,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3250,7 +3587,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3275,7 +3614,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3301,7 +3642,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3320,7 +3663,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3348,7 +3693,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3375,7 +3722,9 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3394,7 +3743,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3413,7 +3764,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3432,7 +3785,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3451,7 +3806,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3470,7 +3827,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3489,7 +3848,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3508,7 +3869,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3527,7 +3890,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3546,7 +3911,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3565,7 +3932,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3584,7 +3953,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3603,7 +3974,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3622,7 +3995,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3641,7 +4016,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3660,7 +4037,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3679,7 +4058,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3698,7 +4079,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3717,7 +4100,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3736,7 +4121,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3755,7 +4142,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3774,7 +4163,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3793,7 +4184,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3812,7 +4205,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3831,7 +4226,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3850,7 +4247,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3869,7 +4268,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3888,7 +4289,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3907,7 +4310,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3926,7 +4331,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3945,7 +4352,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3964,7 +4373,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -3983,7 +4394,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4002,7 +4415,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4021,7 +4436,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4040,7 +4457,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4059,7 +4478,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4078,7 +4499,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4097,7 +4520,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4116,7 +4541,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4135,7 +4562,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4154,7 +4583,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4173,7 +4604,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4192,7 +4625,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4211,7 +4646,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4230,7 +4667,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4249,7 +4688,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4268,7 +4709,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4287,7 +4730,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4306,7 +4751,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4325,7 +4772,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4344,7 +4793,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4363,7 +4814,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4382,7 +4835,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4401,7 +4856,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4420,7 +4877,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []
@@ -4439,7 +4898,9 @@
         "aliases": [],
         "coverage_status": "unverified",
         "confidence": "unknown",
-        "notes": ""
+        "notes": "",
+        "item_summaries": [],
+        "catalog_status": "unavailable"
       },
       "status": {
         "warnings": []

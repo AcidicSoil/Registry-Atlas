@@ -23,6 +23,7 @@ export function renderComponentAside(
         <button class="pill-item${active}" data-component="${group.componentKey}">
           <span class="pill-item-label">${escapeHtml(group.label)}</span>
           <span class="pill-item-count">${group.count}</span>
+          <span class="status-hint">${group.statusCounts.verified} verified · ${group.statusCounts.unverified} unverified</span>
         </button>
       `;
     })
@@ -118,7 +119,8 @@ export function renderComponentContent(
       <div class="component-group">
         <div class="component-group-header">
           <div class="component-name">${escapeHtml(group.label)}</div>
-          <div class="component-count">${group.registries.length} registries</div>
+          <div class="component-count">${group.registries.length} registries · ${group.statusCounts.verified} verified · ${group.statusCounts.unverified} unverified</div>
+          <button class="link-button" type="button" data-discover-component="${escapeHtml(group.componentKey)}">Search this component</button>
         </div>
         <div class="component-group-body">
           ${rows}

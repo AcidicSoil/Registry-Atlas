@@ -7,10 +7,14 @@ import {
   buildMatrixRows,
   computeMetrics
 } from '../core/grouping';
+import { searchComponentCandidates, buildDiscoveryOverview } from '../core/discovery';
+import { buildRegistryProfile } from '../core/registryProfile';
 import { MATRIX_COLUMNS } from '../core/matrixColumns';
 import { renderFocusAside, renderFocusContent } from './focusView';
 import { renderComponentAside, renderComponentContent } from './componentView';
 import { renderMatrixAside, renderMatrixContent } from './matrixView';
+import { renderDiscoveryAside, renderDiscoveryContent } from './discoveryView';
+import { renderRegistryProfile } from './registryProfileView';
 import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export interface ShellOptions {
@@ -27,14 +31,16 @@ export interface ShellOptions {
 }
 
 interface AppState {
-  currentView: 'focus' | 'component' | 'matrix';
+  currentView: 'discover' | 'focus' | 'component' | 'matrix';
   selectedFocus: PrimaryFocus | null;
   selectedComponent: ComponentTag | null;
+  selectedCandidateId: string | null;
+  selectedProfileRegistryName: string | null;
   searchTerm: string;
 }
 
 function isView(value: string | null): value is AppState['currentView'] {
-  return value === 'focus' || value === 'component' || value === 'matrix';
+  return value === 'discover' || value === 'focus' || value === 'component' || value === 'matrix';
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
@@ -42,9 +48,11 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   // Initial State
   let state: AppState = {
-    currentView: 'focus',
+    currentView: 'discover',
     selectedFocus: null,
     selectedComponent: null,
+    selectedCandidateId: null,
+    selectedProfileRegistryName: null,
     searchTerm: '',
   };
 
@@ -71,7 +79,21 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const metrics = computeMetrics(registries, state.searchTerm);
 
       // 3. Delegate to Views
-      if (state.currentView === 'focus') {
+      if (state.selectedProfileRegistryName) {
+        const candidates = searchComponentCandidates(registries, state.searchTerm);
+        const candidate = candidates.find(item => item.id === state.selectedCandidateId);
+        const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
+        if (registry) {
+          renderRegistryProfile(roots.contentHeader, roots.contentBody, buildRegistryProfile(registry, { candidate }));
+          roots.aside.innerHTML = '<div class="aside-section-title">Registry profile</div><div class="aside-hint">Official facts and Atlas enrichment are separated.</div>';
+        }
+      } else if (state.currentView === 'discover') {
+        const overview = buildDiscoveryOverview(registries);
+        const candidates = searchComponentCandidates(registries, state.searchTerm);
+        renderDiscoveryAside(roots.aside, overview, state.selectedCandidateId);
+        renderDiscoveryContent(roots.contentHeader, roots.contentBody, candidates, overview, state.searchTerm, state.selectedCandidateId);
+
+      } else if (state.currentView === 'focus') {
         const groups = buildFocusGroups(registries, state.searchTerm);
         
         let effectiveFocus = state.selectedFocus;
@@ -126,7 +148,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     tab.addEventListener('click', () => {
       const view = tab.getAttribute('data-view');
       if (isView(view) && view !== state.currentView) {
-        setState({ currentView: view });
+        setState({ currentView: view, selectedProfileRegistryName: null, selectedCandidateId: null });
       }
     });
   });
@@ -158,6 +180,37 @@ export function initRegistryExplorer(options: ShellOptions): void {
       if (tagKey && tagKey !== state.selectedComponent) {
         setState({ selectedComponent: tagKey, currentView: 'component' });
       }
+    }
+  });
+
+  roots.contentBody.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const profileButton = target.closest('[data-profile-registry]');
+    if (profileButton) {
+      setState({
+        currentView: 'discover',
+        selectedProfileRegistryName: profileButton.getAttribute('data-profile-registry'),
+        selectedCandidateId: profileButton.getAttribute('data-candidate-id'),
+      });
+      return;
+    }
+
+    const backButton = target.closest('[data-back-to-results]');
+    if (backButton) {
+      setState({ selectedProfileRegistryName: null });
+      return;
+    }
+
+    const discoverComponent = target.closest('[data-discover-component]');
+    if (discoverComponent) {
+      const component = discoverComponent.getAttribute('data-discover-component') ?? '';
+      roots.searchInput.value = component;
+      setState({
+        currentView: 'discover',
+        searchTerm: component,
+        selectedProfileRegistryName: null,
+        selectedCandidateId: null,
+      });
     }
   });
 

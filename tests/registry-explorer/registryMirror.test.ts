@@ -78,6 +78,52 @@ describe('registryMirror validation', () => {
     expect(result.errors.map(error => error.code)).toContain('atlas-invalid-primary-focus');
     expect(result.errors.map(error => error.code)).toContain('atlas-invalid-component-tag');
   });
+
+  it('fails invalid coverage, confidence, catalog status, and item summaries', () => {
+    const result = validateRegistryMirror(createMirror([
+      createRecord({
+        coverageStatus: 'approved',
+        confidence: 'certain',
+        catalogStatus: 'audited',
+        itemSummaries: [
+          {
+            name: '',
+            slug: 'Bad/Slug',
+            source: '',
+            provenance: '',
+            catalog_status: 'unknown',
+            route_eligible: true,
+          },
+        ],
+      }),
+    ]));
+
+    const codes = result.errors.map(error => error.code);
+    expect(codes).toContain('atlas-invalid-coverage-status');
+    expect(codes).toContain('atlas-invalid-confidence');
+    expect(codes).toContain('atlas-invalid-catalog-status');
+    expect(codes).toContain('atlas-invalid-item-summary');
+    expect(codes).toContain('atlas-invalid-item-slug');
+  });
+
+  it('accepts valid item summaries and route eligibility', () => {
+    const result = validateRegistryMirror(createMirror([
+      createRecord({
+        itemSummaries: [
+          {
+            name: 'Data Grid',
+            slug: 'data-grid',
+            source: 'known-catalog',
+            provenance: 'fixture',
+            catalog_status: 'available',
+            route_eligible: true,
+          },
+        ],
+      }),
+    ]));
+
+    expect(result.errors).toEqual([]);
+  });
 });
 
 function createMirror(records = [createRecord()]) {
@@ -97,6 +143,10 @@ function createRecord(options: {
   registryUrlTemplate?: string;
   primaryFocus?: string[];
   componentTags?: string[];
+  coverageStatus?: string;
+  confidence?: string;
+  catalogStatus?: string;
+  itemSummaries?: unknown[];
 } = {}) {
   return {
     official: {
@@ -108,6 +158,10 @@ function createRecord(options: {
     atlas: {
       primary_focus: options.primaryFocus ?? ['support'],
       component_tags: options.componentTags ?? ['button'],
+      coverage_status: options.coverageStatus ?? 'inferred',
+      confidence: options.confidence ?? 'medium',
+      catalog_status: options.catalogStatus ?? 'unverified',
+      item_summaries: options.itemSummaries ?? [],
     },
     status: {
       warnings: [],

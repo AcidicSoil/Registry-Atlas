@@ -102,6 +102,23 @@ export const COMPONENT_TAG_VALUES = [
 
 export type ComponentTag = (typeof COMPONENT_TAG_VALUES)[number];
 
+export type CoverageStatus = 'verified' | 'inferred' | 'partial' | 'unavailable' | 'unverified';
+
+export type CoverageConfidence = 'high' | 'medium' | 'low' | 'unknown';
+
+export type ItemCatalogStatus = 'available' | 'partial' | 'unavailable' | 'unverified';
+
+export interface RegistryItemSummary {
+  name: string;
+  slug: string;
+  type?: string;
+  category?: string;
+  source: string;
+  provenance: string;
+  catalogStatus: ItemCatalogStatus;
+  routeEligible: boolean;
+}
+
 export interface Registry {
   name: string;
   url: string;
@@ -110,18 +127,33 @@ export interface Registry {
   component_tags: ComponentTag[];
   framework?: string;
   license?: string;
+  atlas?: {
+    aliases: readonly string[];
+    coverageStatus: CoverageStatus;
+    confidence: CoverageConfidence;
+    notes: string;
+    catalogStatus: ItemCatalogStatus;
+  };
   mirror?: {
     officialName: string;
     registryUrlTemplate: string;
+    sourceUrl: string;
+    syncedAt: string;
+    upstreamCount: number;
+    localCount: number;
     warnings: string[];
   };
+  itemSummaries?: readonly RegistryItemSummary[];
 }
+
+export type CoverageStatusCounts = Record<CoverageStatus, number>;
 
 export interface FocusGroup {
   focusKey: PrimaryFocus;
   label: string;
   registries: Registry[];
   count: number;
+  statusCounts: CoverageStatusCounts;
 }
 
 export interface ComponentGroup {
@@ -129,11 +161,20 @@ export interface ComponentGroup {
   label: string;
   registries: Registry[];
   count: number;
+  statusCounts: CoverageStatusCounts;
+}
+
+export interface MatrixCell {
+  componentKey: ComponentTag;
+  matched: boolean;
+  status: CoverageStatus | 'absent';
+  label: string;
 }
 
 export interface MatrixRow {
   registry: Registry;
   coverage: boolean[];
+  cells: MatrixCell[];
 }
 
 export interface RegistryExplorerMetrics {
@@ -141,4 +182,66 @@ export interface RegistryExplorerMetrics {
   visibleRegistries: number;
   focusGroupCount: number;
   componentTypeCount: number;
+}
+
+export type CandidateMatchField = 'item' | 'component-tag' | 'alias' | 'focus' | 'namespace' | 'description' | 'metadata';
+
+export interface ComponentCandidate {
+  id: string;
+  registry: Registry;
+  matchedLabel: string;
+  matchedField: CandidateMatchField;
+  itemName?: string;
+  itemSlug?: string;
+  itemType?: string;
+  itemCategory?: string;
+  itemSource?: string;
+  itemProvenance?: string;
+  catalogStatus: ItemCatalogStatus;
+  routeEligible: boolean;
+  route?: string;
+  matchReasons: string[];
+  coverageStatus: CoverageStatus;
+  coverageLabel: string;
+  confidence: CoverageConfidence;
+  score: number;
+  warnings: readonly string[];
+}
+
+export interface DiscoveryOverview {
+  totalRegistries: number;
+  knownItemCount: number;
+  routeEligibleItemCount: number;
+  verifiedRegistryCount: number;
+  unverifiedRegistryCount: number;
+}
+
+export interface RegistryProfileFact {
+  label: string;
+  value: string | number | readonly string[];
+  url?: string;
+}
+
+export interface RegistryProfileItemRow {
+  name: string;
+  slug: string;
+  type?: string;
+  category?: string;
+  catalogStatus: ItemCatalogStatus;
+  source: string;
+  provenance: string;
+  routeEligible: boolean;
+  route?: string;
+  routeLabel: string;
+}
+
+export interface RegistryProfileSection {
+  name: 'Official shadcn facts' | 'Registry Atlas enrichment' | 'Item discovery status' | 'Why this matched';
+  facts?: readonly RegistryProfileFact[];
+  items?: readonly RegistryProfileItemRow[];
+}
+
+export interface RegistryProfile {
+  registry: Registry;
+  sections: readonly RegistryProfileSection[];
 }

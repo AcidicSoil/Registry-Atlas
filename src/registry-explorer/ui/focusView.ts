@@ -22,6 +22,7 @@ export function renderFocusAside(
         <button class="pill-item${active}" data-focus="${group.focusKey}">
           <span class="pill-item-label">${escapeHtml(group.label)}</span>
           <span class="pill-item-count">${group.count}</span>
+          <span class="status-hint">${group.statusCounts.verified} verified · ${group.statusCounts.unverified} unverified</span>
         </button>
       `;
     })
@@ -80,6 +81,7 @@ export function renderFocusContent(
     const warningChip = r.mirror?.warnings.length
       ? `<span class="chip chip-warning chip-compact">${r.mirror.warnings.length} warning${r.mirror.warnings.length === 1 ? '' : 's'}</span>`
       : "";
+    const statusChip = `<span class="status-chip status-${escapeHtml(r.atlas?.coverageStatus ?? 'unverified')}">${escapeHtml(r.atlas?.coverageStatus ?? 'unverified')}</span>`;
 
     return `
       <article class="registry-card">
@@ -88,6 +90,7 @@ export function renderFocusContent(
             <div class="registry-name">${escapeHtml(r.name)}</div>
           </div>
           <div class="registry-actions">
+            ${statusChip}
             ${warningChip}
             ${renderExternalLink(r.url, 'Visit')}
           </div>
