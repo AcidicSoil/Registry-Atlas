@@ -1,12 +1,16 @@
 {
   "source_url": "https://ui.shadcn.com/r/registries.json",
-  "synced_at": "2026-05-25T18:21:20.745Z",
-  "upstream_count": 199,
-  "local_count": 199,
-  "previous_count": 198,
+  "synced_at": "2026-06-04T17:46:51.229Z",
+  "upstream_count": 202,
+  "local_count": 202,
+  "previous_count": 199,
   "added": [
-    "@toc-cn"
+    "@blockus",
+    "@dominik-ui",
+    "@grootstudio"
   ],
   "removed": [],
-  "changed": []
+  "changed": [
+    "@shadcn-studio"
+  ]
 }
