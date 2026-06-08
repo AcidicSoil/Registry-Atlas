@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -78,9 +82,9 @@ Phase 1 of the vertical-mvp-slice PRD shipped the planner-side machinery; this c
 </objective>
 
 <execution_context>
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/mvp-phase.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/spidr-splitting.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/user-story-template.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/mvp-phase.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/spidr-splitting.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/user-story-template.md
 </execution_context>
 
 <runtime_note>
@@ -94,6 +98,6 @@ The phase must already exist in ROADMAP.md (created via `/gsd new-project`, `/gs
 </context>
 
 <process>
-Execute the mvp-phase workflow from @/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/mvp-phase.md end-to-end.
+Execute the mvp-phase workflow from @/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/mvp-phase.md end-to-end.
 Preserve all gates: phase existence, status guard (refuse in_progress/completed), user-story format validation, SPIDR splitting check, ROADMAP write confirmation, plan-phase delegation.
 </process>

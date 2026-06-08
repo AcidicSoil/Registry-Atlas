@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -74,16 +78,16 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 **Research-only mode (`--research-phase <N>`):** Spawn `gsd-phase-researcher` for phase `N`, write `RESEARCH.md`, then exit before the planner runs. Useful for cross-phase research, doc review before committing to a planning approach, and correction-without-replanning loops where iterating on research alone is dramatically cheaper than re-spawning the planner. Replaces the deleted research-phase command (#3042).
 
 **Research-only modifiers:**
-- **No flag** — when `RESEARCH.md` already exists, prompt the user to choose `update / view / skip`.
-- **`--research`** — force-refresh: re-spawn the researcher unconditionally, no prompt. Skips the existing-RESEARCH.md menu.
+- **No flag** — when `RESEARCH.md` already exists, auto-uses it: emits a one-line notice and exits cleanly, no prompt.
+- **`--research`** — force-refresh: re-spawn the researcher unconditionally, no prompt. Bypasses the existing-RESEARCH.md auto-use path.
 - **`--view`** — view-only: print existing `RESEARCH.md` to stdout. Does not spawn the researcher. Cheapest mode for the correction-without-replanning loop. If no `RESEARCH.md` exists yet, errors with a hint to drop `--view`.
 
 **Orchestrator role:** Parse arguments, validate phase, research domain (unless skipped), spawn gsd-planner, verify with gsd-plan-checker, iterate until pass or max iterations, present results.
 </objective>
 
 <execution_context>
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/plan-phase.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/ui-brand.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/plan-phase.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/ui-brand.md
 </execution_context>
 
 <runtime_note>

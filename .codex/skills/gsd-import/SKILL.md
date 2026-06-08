@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -74,10 +78,10 @@ Import external plan files into the GSD planning system with conflict detection 
 </objective>
 
 <execution_context>
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/import.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/ui-brand.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/gate-prompts.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/doc-conflict-engine.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/import.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/ui-brand.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/gate-prompts.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/doc-conflict-engine.md
 </execution_context>
 
 <context>
@@ -86,8 +90,12 @@ Import external plan files into the GSD planning system with conflict detection 
 
 <process>
 If `--from-gsd2` is in {{GSD_ARGS}}:
-Run: `node "$HOME/.codex/get-shit-done/bin/gsd-tools.cjs" from-gsd2`
-Pass `--path <dir>` if provided. Present the migration result to the user.
+Run the reverse-migration (append `--path <dir>` if provided):
+```bash
+_GSD_SHIM_NAME="gsd-tools.cjs"; _GSD_RUNTIME_ROOT="${RUNTIME_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"; GSD_TOOLS="${_GSD_RUNTIME_ROOT}/gsd-core/bin/${_GSD_SHIM_NAME}"; if [ -f "$GSD_TOOLS" ]; then gsd_run() { node "$GSD_TOOLS" "$@"; }; elif [ -f "${_GSD_RUNTIME_ROOT}/.claude/gsd-core/bin/${_GSD_SHIM_NAME}" ]; then GSD_TOOLS="${_GSD_RUNTIME_ROOT}/.claude/gsd-core/bin/${_GSD_SHIM_NAME}"; gsd_run() { node "$GSD_TOOLS" "$@"; }; elif command -v gsd-tools >/dev/null 2>&1; then GSD_TOOLS="$(command -v gsd-tools)"; gsd_run() { "$GSD_TOOLS" "$@"; }; elif [ -f "$HOME/.codex/gsd-core/bin/${_GSD_SHIM_NAME}" ]; then GSD_TOOLS="$HOME/.codex/gsd-core/bin/${_GSD_SHIM_NAME}"; gsd_run() { node "$GSD_TOOLS" "$@"; }; else echo "ERROR: gsd-tools.cjs not found at $GSD_TOOLS and gsd-tools is not on PATH. Run: npx -y @opengsd/gsd-core@latest --claude --local" >&2; exit 1; fi
+gsd_run from-gsd2
+```
+Present the migration result to the user.
 Stop here (do not run the standard import workflow).
 
 Otherwise, execute the import workflow end-to-end.

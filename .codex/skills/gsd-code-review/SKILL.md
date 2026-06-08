@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -86,7 +90,7 @@ Output: {padded_phase}-REVIEW.md in phase directory + inline summary of findings
 </objective>
 
 <execution_context>
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/code-review.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/code-review.md
 </execution_context>
 
 <context>
@@ -96,7 +100,7 @@ Optional flags parsed from {{GSD_ARGS}}:
 - `--depth=VALUE` — Depth override (quick|standard|deep). If provided, overrides workflow.code_review_depth config.
 - `--files=file1,file2,...` — Explicit file list override. Has highest precedence for file scoping per D-08. When provided, workflow skips SUMMARY.md extraction and git diff fallback entirely.
 
-Context files (AGENTS.md, SUMMARY.md, phase state) are resolved inside the workflow via `gsd-sdk query init.phase-op` and delegated to agent via `<files_to_read>` blocks.
+Context files (AGENTS.md, SUMMARY.md, phase state) are resolved inside the workflow via `gsd-tools query init.phase-op` and delegated to agent via `<files_to_read>` blocks.
 </context>
 
 <process>

@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -78,10 +82,10 @@ Replaces gsd-plan-phase's internal gsd-plan-checker with external AI reviewers (
 </objective>
 
 <execution_context>
-@$HOME/.codex/get-shit-done/workflows/plan-review-convergence.md
-@$HOME/.codex/get-shit-done/references/revision-loop.md
-@$HOME/.codex/get-shit-done/references/gates.md
-@$HOME/.codex/get-shit-done/references/agent-contracts.md
+@$HOME/.codex/gsd-core/workflows/plan-review-convergence.md
+@$HOME/.codex/gsd-core/references/revision-loop.md
+@$HOME/.codex/gsd-core/references/gates.md
+@$HOME/.codex/gsd-core/references/agent-contracts.md
 </execution_context>
 
 <runtime_note>

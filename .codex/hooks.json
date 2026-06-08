@@ -4,7 +4,40 @@
       "hooks": [
         {
           "type": "command",
-          "command": "\"/home/user/.nvm/versions/node/v24.15.0/bin/node\" \"/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/hooks/gsd-check-update.js\""
+          "command": "\"/home/user/.local/share/pnpm/store/v11/links/@/node/24.15.0/c4fa83092678f7f37070eac34af64dc1729bbf8bcd0b8423293b4b9db3d402ab/node_modules/node/bin/node\" \"/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/hooks/gsd-check-update.js\""
+        }
+      ]
+    }
+  ],
+  "SubagentStart": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "\"/home/user/.local/share/pnpm/store/v11/links/@/node/24.15.0/c4fa83092678f7f37070eac34af64dc1729bbf8bcd0b8423293b4b9db3d402ab/node_modules/node/bin/node\" \"/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/hooks/gsd-context-monitor.js\"",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "\"/home/user/.local/share/pnpm/store/v11/links/@/node/24.15.0/c4fa83092678f7f37070eac34af64dc1729bbf8bcd0b8423293b4b9db3d402ab/node_modules/node/bin/node\" \"/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/hooks/gsd-context-monitor.js\"",
+          "timeout": 10
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "\"/home/user/.local/share/pnpm/store/v11/links/@/node/24.15.0/c4fa83092678f7f37070eac34af64dc1729bbf8bcd0b8423293b4b9db3d402ab/node_modules/node/bin/node\" \"/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/hooks/gsd-context-monitor.js\"",
+          "timeout": 10
         }
       ]
     }

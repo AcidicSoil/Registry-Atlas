@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -83,14 +87,14 @@ Mode routing:
 | (none) | Interactive 5-question common-case config prompt | settings |
 | --advanced | Power-user knobs: planning, execution, discussion, cross-AI, git, runtime | settings-advanced |
 | --integrations | API keys (Brave/Firecrawl/Exa), review CLI routing, agent skills | settings-integrations |
-| --profile &lt;name&gt; | Switch model profile without interactive prompt | gsd-sdk config-set-model-profile |
+| --profile &lt;name&gt; | Switch model profile without interactive prompt | gsd-tools query config-set-model-profile |
 
 </routing>
 
 <execution_context>
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/settings.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/settings-advanced.md
-@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/workflows/settings-integrations.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/settings.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/settings-advanced.md
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/workflows/settings-integrations.md
 </execution_context>
 
 <context>
@@ -100,10 +104,8 @@ Parse the first token of {{GSD_ARGS}}:
 - If it is `--advanced`: strip the flag, execute settings-advanced workflow
 - If it is `--integrations`: strip the flag, execute settings-integrations workflow
 - If it starts with `--profile`: extract the profile name (remainder after `--profile`), then:
-  1. **Pre-flight check (#2439):** verify `gsd-sdk` is on PATH via `command -v gsd-sdk`.
-     If absent, emit the install hint `Install GSD via 'npm i -g get-shit-done'` and stop —
-     do NOT invoke `gsd-sdk` directly (avoids the opaque `command not found: gsd-sdk` failure).
-  2. Run: `gsd-sdk query config-set-model-profile <profile-name> --raw` and display the output verbatim.
+  1. Verify `gsd-tools` is on PATH via `command -v gsd-tools`; if absent, emit the install hint `Install GSD via 'npm i -g @opengsd/gsd-core'` and stop.
+  2. Run: `gsd-tools query config-set-model-profile <profile-name> --raw` and display the output verbatim.
 - Otherwise: execute settings workflow (no argument needed)
 </context>
 

@@ -5,7 +5,7 @@ description: "Manages multi-cycle $gsd-debug checkpoint and continuation loop in
 
 <codex_agent_role>
 role: gsd-debug-session-manager
-tools: Read, Write, Bash, Grep, Glob, Agent, AskUserQuestion
+tools: Read, Write, Edit, Bash, Grep, Glob, Agent, AskUserQuestion
 purpose: Manages multi-cycle $gsd-debug checkpoint and continuation loop in isolated context. Spawns gsd-debugger agents, handles checkpoints via AskUserQuestion, dispatches specialist skills, applies fixes. Returns compact summary to main context. Spawned by $gsd-debug command.
 </codex_agent_role>
 
@@ -92,7 +92,7 @@ Agent(
 
 Resolve the debugger model before spawning:
 ```bash
-debugger_model=$(gsd-sdk query resolve-model gsd-debugger 2>/dev/null | jq -r '.model' 2>/dev/null || true)
+debugger_model=$(gsd-tools query resolve-model gsd-debugger 2>/dev/null | jq -r '.model' 2>/dev/null || true)
 ```
 
 ## Step 3: Handle Agent Return

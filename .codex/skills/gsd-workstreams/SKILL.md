@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -94,30 +98,30 @@ If no subcommand given, default to `list`.
 ## Step 2: Execute Operation
 
 ### list
-Run: `gsd-sdk query workstream.list --raw --cwd "$CWD"`
+Run: `gsd-tools query workstream.list --raw --cwd "$CWD"`
 Display the workstreams in a table format showing name, status, current phase, and progress.
 
 ### create
-Run: `gsd-sdk query workstream.create <name> --raw --cwd "$CWD"`
+Run: `gsd-tools query workstream.create <name> --raw --cwd "$CWD"`
 After creation, display the new workstream path and suggest next steps:
 - `$gsd-new-milestone --ws <name>` to set up the milestone
 
 ### status
-Run: `gsd-sdk query workstream.status <name> --raw --cwd "$CWD"`
+Run: `gsd-tools query workstream.status <name> --raw --cwd "$CWD"`
 Display detailed phase breakdown and state information.
 
 ### switch
-Run: `gsd-sdk query workstream.set <name> --raw --cwd "$CWD"`
+Run: `gsd-tools query workstream.set <name> --raw --cwd "$CWD"`
 Also set `GSD_WORKSTREAM` for the current session when the runtime supports it.
 If the runtime exposes a session identifier, GSD also stores the active workstream
 session-locally so concurrent sessions do not overwrite each other.
 
 ### progress
-Run: `gsd-sdk query workstream.progress --raw --cwd "$CWD"`
+Run: `gsd-tools query workstream.progress --raw --cwd "$CWD"`
 Display a progress overview across all workstreams.
 
 ### complete
-Run: `gsd-sdk query workstream.complete <name> --raw --cwd "$CWD"`
+Run: `gsd-tools query workstream.complete <name> --raw --cwd "$CWD"`
 Archive the workstream to milestones/.
 
 ### resume
@@ -125,5 +129,5 @@ Set the workstream as active and suggest `$gsd-resume-work --ws <name>`.
 
 ## Step 3: Display Results
 
-Format the JSON output from gsd-sdk query into a human-readable display.
+Format the JSON output from gsd-tools query into a human-readable display.
 Include the `${GSD_WS}` flag in any routing suggestions.

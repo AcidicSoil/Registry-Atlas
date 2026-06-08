@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -94,7 +98,7 @@ Parse the first token of {{GSD_ARGS}}:
 ## list / status
 
 Call `listSurface(runtimeConfigDir, manifest, CLUSTERS)` from
-`get-shit-done/bin/lib/surface.cjs`. Display:
+`gsd-core/bin/lib/surface.cjs`. Display:
 
 ```
 Enabled (N skills, ~T tokens):
@@ -173,16 +177,16 @@ Valid cluster names: `core_loop`, `audit_review`, `milestone`, `research_ideate`
 ## runtimeConfigDir resolution
 
 The `runtimeConfigDir` for `applySurface` is the **base the agent config directory**
-(`~/.claude`), NOT the skills sub-directory (`/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/skills`).
+(`~/.codex`), NOT the skills sub-directory (`/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/skills`).
 
 This matches `installRuntimeArtifacts` and `uninstallRuntimeArtifacts`, which also
-receive `~/.claude` as `configDir`. The skill dirs themselves live at
+receive `~/.codex` as `configDir`. The skill dirs themselves live at
 `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/skills/gsd-*/` because the `claude global` layout has `destSubpath =
 'skills'` — they are derived from `configDir`, not the root for it.
 
 ```bash
 # Claude Code — global install
-RUNTIME_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+RUNTIME_CONFIG_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.codex}"
 SCOPE="global"
 
 # Artifact destinations are derived from runtime layout
@@ -201,12 +205,12 @@ All paths can be overridden by reading the `CLAUDE_CONFIG_DIR` env var if set.
 
 - Unknown cluster name → list valid cluster names, exit without writing.
 - Unknown profile name → list known profiles (`core`, `standard`, `full`), exit.
-- Missing `surface.cjs` → prompt: "Run `npm i -g get-shit-done` to reinstall GSD."
+- Missing `surface.cjs` → prompt: "Run `npm i -g gsd-core` to reinstall GSD."
 
 <execution_context>
 Surface state file: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/.gsd-surface.json`
 Install profile marker: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/.gsd-profile`
 Skill dirs: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/skills/gsd-*/`
-Engine module: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/bin/lib/surface.cjs`
-Cluster definitions: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/bin/lib/clusters.cjs`
+Engine module: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/bin/lib/surface.cjs`
+Cluster definitions: `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/bin/lib/clusters.cjs`
 </execution_context>

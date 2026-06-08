@@ -16,7 +16,7 @@ Run a ≤6-question interview, score frameworks, return a ranked recommendation 
 </role>
 
 <required_reading>
-Read `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/get-shit-done/references/ai-frameworks.md` before asking questions. This is your decision matrix.
+Read `/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/ai-frameworks.md` before asking questions. This is your decision matrix.
 </required_reading>
 
 <project_context>

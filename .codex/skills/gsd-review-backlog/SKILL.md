@@ -39,6 +39,7 @@ GSD workflows use `Task(...)` (Claude Code syntax). Translate to Codex collabora
 
 Direct mapping:
 - `Task(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
+- `Agent(subagent_type="X", prompt="Y")` → `spawn_agent(agent_type="X", message="Y")`
 - `Task(model="...")` → omit. `spawn_agent` has no inline `model` parameter;
   GSD embeds the resolved per-agent model directly into each agent's `.toml`
   at install time so `model_overrides` from `.planning/config.json` and
@@ -57,6 +58,9 @@ Spawn restriction:
 - Codex restricts `spawn_agent` to cases where the user has explicitly
   requested sub-agents. When automatic spawning is not permitted, do the
   work inline in the current agent rather than attempting to force a spawn.
+- In some Codex sessions, multi-agent tooling can be deferred. If `spawn_agent`
+  is not currently visible, discover tools first via `tool_search` before
+  defaulting to inline execution.
 
 Parallel fan-out:
 - Spawn multiple agents → collect agent IDs → `wait(ids)` for all to complete
@@ -92,7 +96,7 @@ milestone sequence or remove stale entries.
    - Find the next sequential phase number in the active milestone
    - Rename the directory from `999.x-slug` to `{new_num}-slug`:
      ```bash
-     NEW_NUM=$(gsd-sdk query phase.add "${DESCRIPTION}" --raw)
+     NEW_NUM=$(gsd-tools query phase.add "${DESCRIPTION}" --raw)
      ```
    - Move accumulated artifacts to the new phase directory
    - Update ROADMAP.md: move the entry from `## Backlog` section to the active phase list
@@ -105,7 +109,7 @@ milestone sequence or remove stale entries.
 
 6. **Commit changes:**
    ```bash
-   gsd-sdk query commit "docs: review backlog — promoted N, removed M" --files .planning/ROADMAP.md
+   gsd-tools query commit "docs: review backlog — promoted N, removed M" --files .planning/ROADMAP.md
    ```
 
 7. **Report summary:**

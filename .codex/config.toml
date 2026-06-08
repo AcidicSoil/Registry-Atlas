@@ -4,6 +4,8 @@
 [features]
 hooks = true
 
+# GSD Agent Configuration — managed by gsd-core installer
+
 [agents.gsd-advisor-researcher]
 description = "Researches a single gray area decision and returns a structured comparison table with rationale. Spawned by discuss-phase advisor mode."
 config_file = "/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/agents/gsd-advisor-researcher.toml"
