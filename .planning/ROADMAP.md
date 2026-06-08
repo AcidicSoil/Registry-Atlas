@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation Safety & Verification** - Maintainers have a runnable, canonical, safe app foundation before importing broader third-party data. (completed 2026-05-25)
 - [x] **Phase 2: Official Mirror & Data Pipeline** - Maintainers can sync, normalize, validate, and review the official shadcn registry directory. (completed 2026-05-25)
 - [x] **Phase 3: Component-First Discovery** - Users can search by component need, inspect registry context, and understand coverage confidence. (completed 2026-05-26)
-- [ ] **Phase 4: Install Actions & Release Hardening** - Users can copy validated commands, manage a batch queue, share state, and trust the release checks.
+- [x] **Phase 4: Install Actions & Release Hardening** - Users can copy validated commands, manage a batch queue, share state, and trust the release checks. (completed 2026-06-08)
 
 ## Phase Details
 
@@ -135,7 +135,7 @@ Plans:
   4. User sees a clear reason when an item cannot be copied or queued because namespace, item slug, source URL, or validation status is incomplete.
   5. Maintainer can rely on CI checks for build, tests, data validation, static deployment assumptions, URL state, and the documented accessibility baseline.
 
-**Plans**: TBD
+**Plans**: 4 plans
 **UI hint**: yes
 
 ## Progress
@@ -148,4 +148,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
 | 2. Official Mirror & Data Pipeline | 4/4 | Complete   | 2026-05-25 |
 | 3. Component-First Discovery | 5/5 | Complete | 2026-05-26 |
-| 4. Install Actions & Release Hardening | 3/4 | In Progress|  |
+| 4. Install Actions & Release Hardening | 4/4 | Complete    | 2026-06-08 |

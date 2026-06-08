@@ -36,21 +36,21 @@ Requirements for the next milestone. Each maps to roadmap phases.
 
 ### Install Actions
 
-- [ ] **INST-01**: User can copy a single-item install command using exact `npx shadcn@latest add @<registry>/<item>` syntax for validated namespace/item pairs.
-- [ ] **INST-02**: User can copy an inspect-before-install command using exact `npx shadcn@latest view @<registry>/<item>` syntax for validated namespace/item pairs.
-- [ ] **INST-03**: User can open valid source, homepage, raw catalog, or raw item links from registry and component views.
-- [ ] **INST-04**: User can add multiple validated items to a queue and copy one deduped batch install command.
-- [ ] **INST-05**: User sees why an item cannot be copied or queued when namespace, item slug, source URL, or validation status is incomplete.
-- [ ] **INST-06**: Command-generation logic is pure and tested independently from the DOM.
+- [x] **INST-01**: User can copy a single-item install command using exact `npx shadcn@latest add @<registry>/<item>` syntax for validated namespace/item pairs.
+- [x] **INST-02**: User can copy an inspect-before-install command using exact `npx shadcn@latest view @<registry>/<item>` syntax for validated namespace/item pairs.
+- [x] **INST-03**: User can open valid source, homepage, raw catalog, or raw item links from registry and component views.
+- [x] **INST-04**: User can add multiple validated items to a queue and copy one deduped batch install command.
+- [x] **INST-05**: User sees why an item cannot be copied or queued when namespace, item slug, source URL, or validation status is incomplete.
+- [x] **INST-06**: Command-generation logic is pure and tested independently from the DOM.
 
 ### Hardening
 
 - [ ] **HARD-01**: Maintainer can run a local validation command that checks upstream mirror data, generated app data, URL safety, command-token safety, and controlled vocabulary coverage.
-- [ ] **HARD-02**: CI verifies build, tests, data validation, and static deployment assumptions before release.
+- [x] **HARD-02**: CI verifies build, tests, data validation, and static deployment assumptions before release.
 - [ ] **HARD-03**: Maintainer can review official-directory deltas before accepting regenerated data.
 - [ ] **HARD-04**: User can see neutral provenance/freshness/status indicators without the app implying third-party code is approved or safe.
-- [ ] **HARD-05**: User can share or revisit a filtered discovery state through URL state for query, selected view, and relevant selection.
-- [ ] **HARD-06**: Search, tabs, copy buttons, filters, links, and queue controls have a documented accessibility baseline and targeted verification.
+- [x] **HARD-05**: User can share or revisit a filtered discovery state through URL state for query, selected view, and relevant selection.
+- [x] **HARD-06**: Search, tabs, copy buttons, filters, links, and queue controls have a documented accessibility baseline and targeted verification.
 
 ## v2 Requirements
 
@@ -107,20 +107,21 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DISC-05 | Phase 3 | Pending |
 | DISC-06 | Phase 3 | Pending |
 | DISC-07 | Phase 3 | Pending |
-| INST-01 | Phase 4 | Pending |
-| INST-02 | Phase 4 | Pending |
-| INST-03 | Phase 4 | Pending |
-| INST-04 | Phase 4 | Pending |
-| INST-05 | Phase 4 | Pending |
-| INST-06 | Phase 4 | Pending |
+| INST-01 | Phase 4 | Complete |
+| INST-02 | Phase 4 | Complete |
+| INST-03 | Phase 4 | Complete |
+| INST-04 | Phase 4 | Complete |
+| INST-05 | Phase 4 | Complete |
+| INST-06 | Phase 4 | Complete |
 | HARD-01 | Phase 2 | Pending |
-| HARD-02 | Phase 4 | Pending |
+| HARD-02 | Phase 4 | Complete |
 | HARD-03 | Phase 2 | Pending |
 | HARD-04 | Phase 3 | Pending |
-| HARD-05 | Phase 4 | Pending |
-| HARD-06 | Phase 4 | Pending |
+| HARD-05 | Phase 4 | Complete |
+| HARD-06 | Phase 4 | Complete |
 
 **Coverage:**
+
 - v1 requirements: 30 total
 - Mapped to phases: 30
 - Unmapped: 0
