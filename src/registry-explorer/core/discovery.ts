@@ -1,4 +1,5 @@
 import { coverageStatusLabel, compareCoverageStatus } from './coverageStatus.ts';
+import { getInstallActionState } from './installActions.ts';
 import { resolveRegistryItemRoute } from './itemRoutes.ts';
 import type {
   CandidateMatchField,
@@ -96,6 +97,12 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
     catalogStatus: item.catalogStatus,
     routeEligible: item.routeEligible,
     route: route?.status === 'available' ? route.url : undefined,
+    installAction: getInstallActionState({
+      namespace: registry.name,
+      itemSlug: item.slug,
+      routeEligible: item.routeEligible,
+      registryUrlTemplate: registry.mirror?.registryUrlTemplate,
+    }),
     matchReasons: [exact ? 'Exact item match' : 'Known item summary match'],
     coverageStatus: atlas.coverageStatus,
     coverageLabel: coverageStatusLabel(atlas.coverageStatus),
@@ -125,6 +132,14 @@ function buildFallbackCandidate(registry: Registry, query: string): ComponentCan
     matchedField,
     catalogStatus: atlas.catalogStatus,
     routeEligible: false,
+    installAction: getInstallActionState({
+      namespace: registry.name,
+      itemSlug: null,
+      routeEligible: false,
+      registryUrlTemplate: registry.mirror?.registryUrlTemplate,
+      isFallbackCandidate: true,
+      fallbackReason: 'Inferred/fallback candidate; install command unavailable.',
+    }),
     matchReasons,
     coverageStatus: atlas.coverageStatus,
     coverageLabel: coverageStatusLabel(atlas.coverageStatus),

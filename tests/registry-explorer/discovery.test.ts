@@ -28,6 +28,14 @@ describe('component discovery', () => {
       itemSlug: 'thread',
       routeEligible: true,
       route: 'https://verified.example/r/thread.json',
+      installAction: {
+        status: 'enabled',
+        token: '@verified/thread',
+        installCommand: 'npx shadcn@latest add @verified/thread',
+        inspectCommand: 'npx shadcn@latest view @verified/thread',
+        route: 'https://verified.example/r/thread.json',
+        disabledReason: null,
+      },
       matchReasons: ['Exact item match'],
       coverageStatus: 'verified',
       coverageLabel: 'Verified item',
@@ -42,6 +50,13 @@ describe('component discovery', () => {
       matchedField: 'alias',
       matchedLabel: 'conversation-panel',
       routeEligible: false,
+      installAction: expect.objectContaining({
+        status: 'disabled',
+        token: null,
+        installCommand: null,
+        inspectCommand: null,
+        disabledReason: expect.stringContaining('fallback'),
+      }),
       matchReasons: ['Why this matched: alias match'],
       coverageStatus: 'inferred',
     }));

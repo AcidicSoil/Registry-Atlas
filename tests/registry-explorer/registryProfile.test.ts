@@ -28,6 +28,14 @@ describe('buildRegistryProfile', () => {
         routeEligible: true,
         route: 'https://profile.example/r/thread.json',
         routeLabel: 'Open item route',
+        installAction: {
+          status: 'enabled',
+          token: '@profile/thread',
+          installCommand: 'npx shadcn@latest add @profile/thread',
+          inspectCommand: 'npx shadcn@latest view @profile/thread',
+          route: 'https://profile.example/r/thread.json',
+          disabledReason: null,
+        },
       }),
       expect.objectContaining({
         name: 'Card',
@@ -35,6 +43,13 @@ describe('buildRegistryProfile', () => {
         routeEligible: false,
         route: undefined,
         routeLabel: 'Catalog not verified',
+        installAction: expect.objectContaining({
+          status: 'disabled',
+          token: null,
+          installCommand: null,
+          inspectCommand: null,
+          disabledReason: expect.any(String),
+        }),
       }),
     ]);
   });
@@ -51,6 +66,14 @@ describe('buildRegistryProfile', () => {
       catalogStatus: 'available',
       routeEligible: true,
       route: 'https://profile.example/r/thread.json',
+      installAction: {
+        status: 'enabled',
+        token: '@profile/thread',
+        installCommand: 'npx shadcn@latest add @profile/thread',
+        inspectCommand: 'npx shadcn@latest view @profile/thread',
+        route: 'https://profile.example/r/thread.json',
+        disabledReason: null,
+      },
       matchReasons: ['Exact item match'],
       coverageStatus: 'verified',
       coverageLabel: 'Verified item',
