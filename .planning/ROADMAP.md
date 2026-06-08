@@ -148,4 +148,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4
 | 1. Foundation Safety & Verification | 4/4 | Complete   | 2026-05-25 |
 | 2. Official Mirror & Data Pipeline | 4/4 | Complete   | 2026-05-25 |
 | 3. Component-First Discovery | 5/5 | Complete | 2026-05-26 |
-| 4. Install Actions & Release Hardening | 0/TBD | Not started | - |
+| 4. Install Actions & Release Hardening | 1/4 | In Progress|  |
