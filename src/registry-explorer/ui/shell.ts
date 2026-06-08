@@ -1,4 +1,4 @@
-import type { Registry, PrimaryFocus, ComponentTag } from '../core/registry.schema';
+import type { InstallQueueEntry, Registry, PrimaryFocus, ComponentTag } from '../core/registry.schema';
 import type { MirrorValidationIssue } from '../core/registryMirror';
 import type { RegistryMirrorMeta } from '../data/loadRegistries';
 import {
@@ -9,11 +9,17 @@ import {
 } from '../core/grouping';
 import { searchComponentCandidates, buildDiscoveryOverview } from '../core/discovery';
 import { buildRegistryProfile } from '../core/registryProfile';
+import {
+  addToInstallQueue,
+  buildInstallQueueBatchState,
+  clearInstallQueue,
+  removeFromInstallQueue,
+} from '../core/installQueue';
 import { MATRIX_COLUMNS } from '../core/matrixColumns';
 import { renderFocusAside, renderFocusContent } from './focusView';
 import { renderComponentAside, renderComponentContent } from './componentView';
 import { renderMatrixAside, renderMatrixContent } from './matrixView';
-import { renderDiscoveryAside, renderDiscoveryContent } from './discoveryView';
+import { type CopyFeedback, renderDiscoveryAside, renderDiscoveryContent } from './discoveryView';
 import { renderRegistryProfile } from './registryProfileView';
 import { escapeHtml, renderExternalLink } from './renderSafety';
 
@@ -37,6 +43,8 @@ interface AppState {
   selectedCandidateId: string | null;
   selectedProfileRegistryName: string | null;
   searchTerm: string;
+  installQueue: InstallQueueEntry[];
+  copyFeedback: CopyFeedback | null;
 }
 
 function isView(value: string | null): value is AppState['currentView'] {
@@ -54,6 +62,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
     selectedCandidateId: null,
     selectedProfileRegistryName: null,
     searchTerm: '',
+    installQueue: [],
+    copyFeedback: null,
   };
 
   // State Update Logic
@@ -77,6 +87,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
       // 2. Compute Data
       const metrics = computeMetrics(registries, state.searchTerm);
+      const queuedTokens = new Set(state.installQueue.map(entry => entry.token));
+      const queueBatch = buildInstallQueueBatchState(state.installQueue);
 
       // 3. Delegate to Views
       if (state.selectedProfileRegistryName) {
@@ -84,14 +96,21 @@ export function initRegistryExplorer(options: ShellOptions): void {
         const candidate = candidates.find(item => item.id === state.selectedCandidateId);
         const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
         if (registry) {
-          renderRegistryProfile(roots.contentHeader, roots.contentBody, buildRegistryProfile(registry, { candidate }));
-          roots.aside.innerHTML = '<div class="aside-section-title">Registry profile</div><div class="aside-hint">Official facts and Atlas enrichment are separated.</div>';
+          renderRegistryProfile(roots.contentHeader, roots.contentBody, buildRegistryProfile(registry, { candidate }), queuedTokens);
+          roots.aside.innerHTML = `
+            <div class="aside-section-title">Registry profile</div>
+            <div class="aside-hint">Official facts and Atlas enrichment are separated. Install queue state stays local to this page session.</div>
+          `;
         }
       } else if (state.currentView === 'discover') {
         const overview = buildDiscoveryOverview(registries);
         const candidates = searchComponentCandidates(registries, state.searchTerm);
-        renderDiscoveryAside(roots.aside, overview, state.selectedCandidateId);
-        renderDiscoveryContent(roots.contentHeader, roots.contentBody, candidates, overview, state.searchTerm, state.selectedCandidateId);
+        renderDiscoveryAside(roots.aside, overview, state.selectedCandidateId, {
+          entries: state.installQueue,
+          batch: queueBatch,
+          feedback: state.copyFeedback,
+        });
+        renderDiscoveryContent(roots.contentHeader, roots.contentBody, candidates, overview, state.searchTerm, state.selectedCandidateId, queuedTokens);
 
       } else if (state.currentView === 'focus') {
         const groups = buildFocusGroups(registries, state.searchTerm);
@@ -156,15 +175,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   // Search
   roots.searchInput.addEventListener('input', (e) => {
     const target = e.target as HTMLInputElement;
-    setState({ searchTerm: target.value || '' });
+    setState({ searchTerm: target.value || '', copyFeedback: null });
   });
 
-  // Aside Delegation (Focus and Component pills)
-  // We attach to document body or roots.aside? index.html attached to document.
-  // Using roots.aside is better for encapsulation if the events bubble up there.
-  // But wait, pills are inside roots.aside.
   roots.aside.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    if (handleInstallActionClick(target)) return;
+
     const focusButton = target.closest('[data-focus]');
     if (focusButton) {
       const focusKey = focusButton.getAttribute('data-focus') as PrimaryFocus;
@@ -185,6 +202,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   roots.contentBody.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
+    if (handleInstallActionClick(target)) return;
+
     const profileButton = target.closest('[data-profile-registry]');
     if (profileButton) {
       setState({
@@ -213,6 +232,73 @@ export function initRegistryExplorer(options: ShellOptions): void {
       });
     }
   });
+
+  function handleInstallActionClick(target: HTMLElement): boolean {
+    const copyButton = target.closest('[data-copy-command]');
+    if (copyButton) {
+      const command = copyButton.getAttribute('data-copy-command') ?? '';
+      if (command) void copyCommand(command);
+      return true;
+    }
+
+    const addButton = target.closest('[data-queue-add]');
+    if (addButton) {
+      const token = addButton.getAttribute('data-queue-add') ?? '';
+      const installCommand = addButton.getAttribute('data-queue-install') ?? '';
+      const inspectCommand = addButton.getAttribute('data-queue-inspect') ?? '';
+      const route = addButton.getAttribute('data-queue-route') ?? '';
+      const nextQueue = addToInstallQueue(state.installQueue, {
+        action: {
+          status: 'enabled',
+          token,
+          installCommand,
+          inspectCommand,
+          route,
+          disabledReason: null,
+        },
+        label: addButton.getAttribute('data-queue-label') ?? token,
+        registry: addButton.getAttribute('data-queue-registry') ?? '',
+        item: addButton.getAttribute('data-queue-item') ?? token,
+      });
+      setState({ installQueue: nextQueue, copyFeedback: null });
+      return true;
+    }
+
+    const removeButton = target.closest('[data-queue-remove]');
+    if (removeButton) {
+      setState({
+        installQueue: removeFromInstallQueue(state.installQueue, removeButton.getAttribute('data-queue-remove') ?? ''),
+        copyFeedback: null,
+      });
+      return true;
+    }
+
+    const clearButton = target.closest('[data-queue-clear]');
+    if (clearButton) {
+      setState({ installQueue: clearInstallQueue(), copyFeedback: null });
+      return true;
+    }
+
+    return false;
+  }
+
+  async function copyCommand(command: string): Promise<void> {
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API unavailable');
+      }
+      await navigator.clipboard.writeText(command);
+      setState({ copyFeedback: { status: 'success', message: 'Command copied.', command } });
+    } catch {
+      setState({
+        copyFeedback: {
+          status: 'error',
+          message: 'Clipboard unavailable. Select and copy the command manually.',
+          command,
+        },
+      });
+    }
+  }
 
   // Initial Render
   render();
