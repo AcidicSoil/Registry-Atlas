@@ -1,4 +1,5 @@
 import type { InstallQueueEntry, Registry, PrimaryFocus, ComponentTag } from '../core/registry.schema';
+import { COMPONENT_TAG_VALUES, PRIMARY_FOCUS_VALUES } from '../core/registry.schema';
 import type { MirrorValidationIssue } from '../core/registryMirror';
 import type { RegistryMirrorMeta } from '../data/loadRegistries';
 import {
@@ -15,6 +16,11 @@ import {
   clearInstallQueue,
   removeFromInstallQueue,
 } from '../core/installQueue';
+import {
+  parseRegistryExplorerUrlState,
+  serializeRegistryExplorerUrlState,
+  type ParsedRegistryExplorerUrlState,
+} from '../core/urlState';
 import { MATRIX_COLUMNS } from '../core/matrixColumns';
 import { renderFocusAside, renderFocusContent } from './focusView';
 import { renderComponentAside, renderComponentContent } from './componentView';
@@ -54,21 +60,25 @@ function isView(value: string | null): value is AppState['currentView'] {
 export function initRegistryExplorer(options: ShellOptions): void {
   const { registries, mirrorMeta, mirrorWarnings, roots } = options;
 
+  const hydratedState = hydrateStateFromUrl(registries);
+
   // Initial State
   let state: AppState = {
-    currentView: 'discover',
-    selectedFocus: null,
-    selectedComponent: null,
-    selectedCandidateId: null,
-    selectedProfileRegistryName: null,
-    searchTerm: '',
+    currentView: hydratedState.view,
+    selectedFocus: hydratedState.selectedFocus,
+    selectedComponent: hydratedState.selectedComponent,
+    selectedCandidateId: hydratedState.selectedCandidateId,
+    selectedProfileRegistryName: hydratedState.selectedProfileRegistryName,
+    searchTerm: hydratedState.searchTerm,
     installQueue: [],
     copyFeedback: null,
   };
+  roots.searchInput.value = state.searchTerm;
 
   // State Update Logic
   function setState(partial: Partial<AppState>) {
     state = { ...state, ...partial };
+    syncUrlState(state);
     render();
   }
 
@@ -301,7 +311,46 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   // Initial Render
+  syncUrlState(state);
   render();
+}
+
+function hydrateStateFromUrl(registries: readonly Registry[]): ParsedRegistryExplorerUrlState {
+  const parsed = parseRegistryExplorerUrlState(new URLSearchParams(window.location.search));
+  const registryExists = parsed.selectedProfileRegistryName
+    ? registries.some(registry => registry.name === parsed.selectedProfileRegistryName)
+    : false;
+  const selectedFocus = parsed.selectedFocus && PRIMARY_FOCUS_VALUES.includes(parsed.selectedFocus)
+    ? parsed.selectedFocus
+    : null;
+  const selectedComponent = parsed.selectedComponent && COMPONENT_TAG_VALUES.includes(parsed.selectedComponent)
+    ? parsed.selectedComponent
+    : null;
+
+  return {
+    ...parsed,
+    selectedProfileRegistryName: registryExists ? parsed.selectedProfileRegistryName : null,
+    selectedCandidateId: registryExists ? parsed.selectedCandidateId : null,
+    selectedFocus,
+    selectedComponent,
+  };
+}
+
+function syncUrlState(state: AppState): void {
+  const params = serializeRegistryExplorerUrlState({
+    view: state.currentView,
+    searchTerm: state.searchTerm,
+    selectedProfileRegistryName: state.selectedProfileRegistryName,
+    selectedCandidateId: state.selectedProfileRegistryName ? state.selectedCandidateId : null,
+    selectedFocus: state.currentView === 'focus' ? state.selectedFocus : null,
+    selectedComponent: state.currentView === 'component' ? state.selectedComponent : null,
+  });
+  const query = params.toString();
+  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+
+  if (nextUrl !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+    window.history.replaceState(null, '', nextUrl);
+  }
 }
 
 function renderMirrorStatus(

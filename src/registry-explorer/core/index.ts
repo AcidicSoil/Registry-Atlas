@@ -8,3 +8,4 @@ export * from './installActions';
 export * from './installQueue';
 export * from './discovery';
 export * from './registryProfile';
+export * from './urlState';
