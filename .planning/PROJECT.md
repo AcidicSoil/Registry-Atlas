@@ -2,61 +2,55 @@
 
 ## What This Is
 
-Registry Atlas is a fast discovery layer for the shadcn/ui registry ecosystem. It should mirror the official shadcn registry directory and make it quick and painless to choose UI components without manually opening every community registry site and sifting through each one.
-
-The current app already provides a static explorer with focus, component, matrix, and search views. The next milestone turns that explorer into a reliable shadcn directory companion: synced from the official source, searchable by component need, and able to give users practical install actions.
+Registry Atlas is a static discovery and install-assist layer for the shadcn/ui registry ecosystem. It mirrors the official shadcn registry directory into local generated data, helps users search by component need, compares registry/item candidates with neutral coverage context, and gives safe copy-only shadcn CLI actions without executing third-party code in the browser.
 
 ## Core Value
 
 Users can quickly find the right shadcn-compatible registry or component and act on it without manually browsing dozens of registry sites.
 
+## Current State
+
+**Shipped:** v1.0 Registry Atlas v1 on 2026-06-09
+
+Registry Atlas v1 now has:
+
+- A runnable Vite/vanilla TypeScript SPA with strict source/test type-checking and Vitest coverage.
+- Official shadcn registry mirror sync artifacts, normalized runtime data, and validation reports.
+- Component-first discovery with item summaries, coverage confidence, route eligibility, and registry profiles.
+- Copy-only `npx shadcn@latest add` and `npx shadcn@latest view` commands for validated route-eligible items.
+- Safe homepage/source/raw item links, disabled reasons for ineligible candidates, and a local deduped install queue.
+- Shareable discovery URL state for view/search/profile/focus/component context while intentionally excluding queue state.
+- A local and CI release gate through `pnpm verify`, plus a documented browser/accessibility smoke baseline.
+
+## Next Milestone Goals
+
+Define v1.1 with `/gsd-new-milestone`. Candidate directions from deferred v2 ideas and shipped v1 learnings:
+
+- Scheduled or PR-based upstream sync automation.
+- Package-manager command variants for npm, pnpm, yarn, and bun.
+- Richer item impact metadata when upstream schemas make it reliable.
+- Similar registry suggestions when no exact component match exists.
+- Optional visual previews or comparison flows when source artifacts are reliable enough.
+
 ## Requirements
 
-### Validated
+Current milestone requirements are archived at `.planning/milestones/v1.0-REQUIREMENTS.md`.
 
-- ✓ Static registry explorer exists with focus-based browsing, component grouping, matrix comparison, and real-time filtering — existing
-- ✓ Vanilla TypeScript SPA architecture is in place with pure core grouping/filtering logic and separate DOM renderers — existing
-- ✓ Typed registry dataset exists under `src/registry-explorer/data/registries.data.ts` with controlled focus and component vocabularies — existing
-- ✓ Local app can be built and served through Vite, with GitHub Pages deployment workflow present — existing
-- ✓ Core grouping and matrix behavior have Vitest-style tests under `tests/registry-explorer/` — existing
-- ✓ Users can copy exact `npx shadcn@latest add @<registry>/<item>` and `npx shadcn@latest view @<registry>/<item>` commands for validated route-eligible items — Phase 4
-- ✓ Users can open source/homepage/raw item links and manage a local deduped batch install queue — Phase 4
-- ✓ CI and local release checks run `pnpm verify`, covering typechecks, tests, data validation, and production build — Phase 4
-
-### Active
-
-- [ ] Mirror the official shadcn registry directory so Registry Atlas tracks the current directory source, including the current 198-registry target.
-- [ ] Add an automated sync and validation path so registry data can be refreshed without hand-editing the full dataset.
-- [ ] Make component-first search the primary discovery path, so users can start from the UI component they need and compare matching registries.
-- [ ] Preserve registry-level browsing for users who want source links, focus notes, and registry context in one place.
-
-- [ ] Add data quality checks for duplicate registries, valid URLs, allowed protocols, required fields, and controlled vocabulary coverage.
-- [ ] Remove or clearly archive stale legacy and starter artifacts that can confuse users or contributors.
-
-### Out of Scope
-
-- A hosted component marketplace with ratings, accounts, or payments — the project is a discovery and install-assist layer, not a marketplace.
-- Owning or rehosting third-party registry source code — users should still review upstream source registries before installing.
-- Replacing the shadcn CLI — Registry Atlas should generate or copy CLI commands, not implement installation itself.
-- Backend services or user accounts for v1 — the current static SPA model is enough for the next milestone unless sync requirements prove otherwise.
-- Guaranteeing third-party registry safety — the app can surface metadata and warnings, but users must review community registry code before installation.
+Fresh requirements for the next milestone should be created by `/gsd-new-milestone`.
 
 ## Context
 
-- The canonical upstream reference is the shadcn registry directory at `https://ui.shadcn.com/docs/directory`.
-- The official directory currently shows 198 registries and describes community registries as built into the shadcn CLI with no extra configuration required.
-- The install pattern users need is `npx shadcn add @<registry>/<component>`.
-- The current local dataset has fewer entries than the official directory and is hand-maintained in `src/registry-explorer/data/registries.data.ts`.
-- Existing code separates pure data transformations in `src/registry-explorer/core/` from DOM rendering in `src/registry-explorer/ui/`, which is a good base for adding sync validation and richer discovery behavior.
-- The codebase map flags several concerns that should shape planning: string-built DOM renderers, missing data validation, a missing runnable test script, stale legacy output, starter-file remnants, and GitHub Pages base-path casing risk.
-- The product should reduce the user burden of opening each registry site manually, understanding what it contains, and constructing the correct shadcn CLI command.
+- The canonical upstream reference remains the shadcn registry directory at `https://ui.shadcn.com/docs/directory`.
+- Community registries are third-party code. Registry Atlas surfaces metadata, routes, commands, and warnings, but does not audit, approve, or execute registry code.
+- The deployed product remains a static GitHub Pages-compatible SPA.
+- Existing validation warnings for official HTTP URLs are provenance warnings for upstream directory entries, not release blockers.
 
 ## Constraints
 
 - **Source alignment**: The official shadcn directory is the source to mirror — the app should not drift into an unrelated curated catalog.
-- **Data freshness**: The current directory count is 198 registries — sync and validation should make mismatches visible.
+- **Data freshness**: Sync and validation should make upstream/local count mismatches visible.
 - **Static app bias**: Preserve the lightweight Vite/vanilla TypeScript SPA unless a concrete sync or data-delivery requirement justifies adding infrastructure.
-- **Security**: Community registries are third-party code — links, commands, and metadata should avoid implying that Registry Atlas has audited or endorsed them.
+- **Security**: Community registries are third-party code — links, commands, and metadata should avoid implying Registry Atlas has audited or endorsed them.
 - **Install behavior**: Use copyable shadcn CLI commands and source links — do not execute installs from the browser.
 - **Maintainability**: Data imports and generated output need tests or validation so a future refresh does not silently break search, grouping, URLs, or install commands.
 - **Compatibility**: Keep the app deployable as a static GitHub Pages site.
@@ -65,28 +59,17 @@ Users can quickly find the right shadcn-compatible registry or component and act
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Mirror the official shadcn registry directory | Users want a faster way to use the same ecosystem that shadcn exposes, not a disconnected list | — Pending |
-| Prioritize automated sync over manual maintenance | The official directory has 198 registries today, making hand maintenance error-prone and slow | — Pending |
-| Lead with component-first search | The core user need starts with "I need this UI component" rather than "I want to browse registry brands" | — Pending |
+| Mirror the official shadcn registry directory | Users want a faster way to use the same ecosystem that shadcn exposes, not a disconnected list | Delivered in v1.0 through sync artifacts and normalized runtime data |
+| Prioritize automated sync over manual maintenance | The official directory has many registries, making hand maintenance error-prone and slow | Delivered as explicit sync/validation commands; scheduled automation deferred |
+| Lead with component-first search | The core user need starts with "I need this UI component" rather than "I want to browse registry brands" | Delivered in v1.0 discovery flow |
 | Support copy command, source link, and batch queue install flows | Users need both quick actions and a way to inspect upstream code before installing | Delivered in Phase 4 with copy-only install/view commands, safe links, and a local deduped queue |
-| Keep v1 static unless sync requires otherwise | The existing app is a lightweight static SPA and can likely support the next milestone without backend complexity | Preserved through v1; release remains a static GitHub Pages SPA |
+| Keep v1 static unless sync requires otherwise | The existing app is a lightweight static SPA and can likely support the next milestone without backend complexity | Preserved through v1.0; release remains a static GitHub Pages SPA |
+| Do not persist queue state in URLs | Install intent should stay local and not be silently restored from shared URLs | Delivered in Phase 4 URL state |
+| Use `pnpm verify` as the release gate | Maintainers need one command covering typecheck, tests, data validation, and build | Delivered in local scripts and GitHub Pages workflow |
 
 ## Evolution
 
-This document evolves at phase transitions and milestone boundaries.
-
-**After each phase transition** (via `$gsd-transition`):
-1. Requirements invalidated? -> Move to Out of Scope with reason
-2. Requirements validated? -> Move to Validated with phase reference
-3. New requirements emerged? -> Add to Active
-4. Decisions to log? -> Add to Key Decisions
-5. "What This Is" still accurate? -> Update if drifted
-
-**After each milestone** (via `$gsd-complete-milestone`):
-1. Full review of all sections
-2. Core Value check — still the right priority?
-3. Audit Out of Scope — reasons still valid?
-4. Update Context with current state
+This document evolves at milestone boundaries. v1.0 planning artifacts are archived under `.planning/milestones/`.
 
 ---
-*Last updated: 2026-06-08 after Phase 4*
+*Last updated: 2026-06-09 after v1.0 milestone*

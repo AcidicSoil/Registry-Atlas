@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: shipping
-stopped_at: Phase 04 shipped in PR #2; awaiting review/merge and milestone closeout.
-last_updated: "2026-06-08T23:57:00.205Z"
-last_activity: 2026-06-08
+status: Awaiting next milestone
+stopped_at: "Phase 04 shipped in PR #2; next step is merge after CI, then complete milestone v1.0."
+last_updated: "2026-06-09T00:08:02.590Z"
+last_activity: 2026-06-09 — Milestone v1.0 completed and archived
 progress:
   total_phases: 4
   completed_phases: 4
@@ -18,19 +18,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-08)
+See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** Users can quickly find the right shadcn-compatible registry or component and act on it without manually browsing dozens of registry sites.
-**Current focus:** Phase 04 complete — ship and complete milestone v1.0
+**Current focus:** v1.0 complete — define next milestone
 
 ## Current Position
 
-Phase: 04 (install-actions-release-hardening) — COMPLETE
-Plan: 4 of 4
-Status: Shipped — PR #2
-Last activity: 2026-06-08
-
-Progress: [██████████] 100%
+Phase: Milestone v1.0 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-06-09 — Milestone v1.0 completed and archived
 
 ## Performance Metrics
 
@@ -84,9 +82,7 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 1 must address non-runnable tests, stale deployed artifacts, unsafe rendering helpers, and vocabulary drift before importing broader upstream metadata.
-- Phase 3 component inventory scope has medium confidence because third-party registry item catalogs vary in availability and schema quality.
-
+None currently recorded.
 
 ### Quick Tasks Completed
 
@@ -104,6 +100,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T18:59:00-05:00
-Stopped at: Phase 04 shipped in PR #2; next step is merge after CI, then complete milestone v1.0.
-Resume file: .planning/phases/04-install-actions-release-hardening/04-VERIFICATION.md
+Last session: 2026-06-09T00:08:00Z
+Stopped at: Milestone v1.0 complete and archived; next step is `/gsd-new-milestone`.
+Resume file: None
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone
