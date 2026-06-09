@@ -1,15 +1,17 @@
 #!/usr/bin/env node
 
-import { readFile } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
-import { validateRegistryMirror } from '../src/registry-explorer/core/registryMirror.ts';
+import { dirname, join, resolve } from 'node:path';
+import { tmpdir } from 'node:os';
+import ts from 'typescript';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, '..');
 const rawPath = resolve(projectRoot, 'data/shadcn/registries.raw.json');
 const runtimePath = resolve(projectRoot, 'public/data/registries.json');
 const registryItemsPath = resolve(projectRoot, 'data/shadcn/registry-items.json');
+const { validateRegistryMirror } = await loadRegistryMirrorValidator();
 
 const [rawData, runtimeData, knownItemData] = await Promise.all([
   readJson(rawPath),
@@ -94,4 +96,28 @@ function formatIssue(issue) {
   const prefix = location.length > 0 ? `${issue.severity} ${issue.code} ${location}` : `${issue.severity} ${issue.code}`;
 
   return `${prefix}: ${issue.message}`;
+}
+
+async function loadRegistryMirrorValidator() {
+  const sourceDir = resolve(projectRoot, 'src/registry-explorer/core');
+  const compiledDir = await mkdtemp(join(tmpdir(), 'registry-atlas-validator-'));
+  const modules = [
+    'registry.schema.ts',
+    'coverageStatus.ts',
+    'registryMirror.ts',
+  ];
+
+  await Promise.all(modules.map(async moduleName => {
+    const source = await readFile(resolve(sourceDir, moduleName), 'utf8');
+    const transpiled = ts.transpileModule(source, {
+      compilerOptions: {
+        target: ts.ScriptTarget.ES2022,
+        module: ts.ModuleKind.ES2022,
+        verbatimModuleSyntax: true,
+      },
+    }).outputText.replaceAll(".ts';", ".mjs';");
+    await writeFile(resolve(compiledDir, moduleName.replace(/\.ts$/, '.mjs')), transpiled);
+  }));
+
+  return import(resolve(compiledDir, 'registryMirror.mjs'));
 }
