@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: shipping
-stopped_at: Phase 04 complete and verified; preparing shipping PR and milestone closeout.
+stopped_at: Phase 04 shipped in PR #2; awaiting review/merge and milestone closeout.
 last_updated: "2026-06-08T23:57:00.205Z"
 last_activity: 2026-06-08
 progress:
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-06-08)
 
 Phase: 04 (install-actions-release-hardening) — COMPLETE
 Plan: 4 of 4
-Status: Verified; shipping PR pending
+Status: Shipped — PR #2
 Last activity: 2026-06-08
 
 Progress: [██████████] 100%
@@ -104,6 +104,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-08T18:49:08-05:00
-Stopped at: Phase 04 complete and verified; shipping PR is being prepared.
+Last session: 2026-06-08T18:59:00-05:00
+Stopped at: Phase 04 shipped in PR #2; next step is merge after CI, then complete milestone v1.0.
 Resume file: .planning/phases/04-install-actions-release-hardening/04-VERIFICATION.md
