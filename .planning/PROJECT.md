@@ -19,6 +19,9 @@ Users can quickly find the right shadcn-compatible registry or component and act
 - ✓ Typed registry dataset exists under `src/registry-explorer/data/registries.data.ts` with controlled focus and component vocabularies — existing
 - ✓ Local app can be built and served through Vite, with GitHub Pages deployment workflow present — existing
 - ✓ Core grouping and matrix behavior have Vitest-style tests under `tests/registry-explorer/` — existing
+- ✓ Users can copy exact `npx shadcn@latest add @<registry>/<item>` and `npx shadcn@latest view @<registry>/<item>` commands for validated route-eligible items — Phase 4
+- ✓ Users can open source/homepage/raw item links and manage a local deduped batch install queue — Phase 4
+- ✓ CI and local release checks run `pnpm verify`, covering typechecks, tests, data validation, and production build — Phase 4
 
 ### Active
 
@@ -26,9 +29,7 @@ Users can quickly find the right shadcn-compatible registry or component and act
 - [ ] Add an automated sync and validation path so registry data can be refreshed without hand-editing the full dataset.
 - [ ] Make component-first search the primary discovery path, so users can start from the UI component they need and compare matching registries.
 - [ ] Preserve registry-level browsing for users who want source links, focus notes, and registry context in one place.
-- [ ] Provide copyable `npx shadcn add @<registry>/<component>` commands for registry and component choices.
-- [ ] Link users out to each source registry when they need to inspect the upstream implementation, docs, or quality details.
-- [ ] Let users queue multiple selected components and generate a batch install command.
+
 - [ ] Add data quality checks for duplicate registries, valid URLs, allowed protocols, required fields, and controlled vocabulary coverage.
 - [ ] Remove or clearly archive stale legacy and starter artifacts that can confuse users or contributors.
 
@@ -67,8 +68,8 @@ Users can quickly find the right shadcn-compatible registry or component and act
 | Mirror the official shadcn registry directory | Users want a faster way to use the same ecosystem that shadcn exposes, not a disconnected list | — Pending |
 | Prioritize automated sync over manual maintenance | The official directory has 198 registries today, making hand maintenance error-prone and slow | — Pending |
 | Lead with component-first search | The core user need starts with "I need this UI component" rather than "I want to browse registry brands" | — Pending |
-| Support copy command, source link, and batch queue install flows | Users need both quick actions and a way to inspect upstream code before installing | — Pending |
-| Keep v1 static unless sync requires otherwise | The existing app is a lightweight static SPA and can likely support the next milestone without backend complexity | — Pending |
+| Support copy command, source link, and batch queue install flows | Users need both quick actions and a way to inspect upstream code before installing | Delivered in Phase 4 with copy-only install/view commands, safe links, and a local deduped queue |
+| Keep v1 static unless sync requires otherwise | The existing app is a lightweight static SPA and can likely support the next milestone without backend complexity | Preserved through v1; release remains a static GitHub Pages SPA |
 
 ## Evolution
 
@@ -88,4 +89,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-25 after initialization*
+*Last updated: 2026-06-08 after Phase 4*

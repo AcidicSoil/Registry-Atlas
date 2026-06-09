@@ -74,6 +74,8 @@ pnpm verify
 
 `pnpm verify` runs source type-checking, test type-checking, tests, data validation, and the production build. It does not refresh generated registry data.
 
+For release browser checks, use `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md`. It covers install-command copy behavior, disabled states, queue flow, URL restoration, safe links, and the keyboard/focus baseline against the `/Registry-Atlas/` base path.
+
 ### Refreshing Registry Data
 
 Registry Atlas mirrors the official shadcn directory into generated local artifacts. Refresh them explicitly when you want to review upstream changes:

@@ -1,4 +1,5 @@
 import { coverageStatusLabel } from './coverageStatus.ts';
+import { getInstallActionState } from './installActions.ts';
 import { resolveRegistryItemRoute } from './itemRoutes.ts';
 import type {
   ComponentCandidate,
@@ -98,5 +99,11 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
     routeEligible: item.routeEligible,
     route: route?.status === 'available' ? route.url : undefined,
     routeLabel: route?.status === 'available' ? route.label : 'Catalog not verified',
+    installAction: getInstallActionState({
+      namespace: registry.name,
+      itemSlug: item.slug,
+      routeEligible: item.routeEligible,
+      registryUrlTemplate: registry.mirror?.registryUrlTemplate,
+    }),
   };
 }

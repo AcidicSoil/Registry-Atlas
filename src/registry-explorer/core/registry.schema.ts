@@ -200,6 +200,7 @@ export interface ComponentCandidate {
   catalogStatus: ItemCatalogStatus;
   routeEligible: boolean;
   route?: string;
+  installAction: InstallActionState;
   matchReasons: string[];
   coverageStatus: CoverageStatus;
   coverageLabel: string;
@@ -214,6 +215,42 @@ export interface DiscoveryOverview {
   routeEligibleItemCount: number;
   verifiedRegistryCount: number;
   unverifiedRegistryCount: number;
+}
+
+export type InstallActionStatus = 'enabled' | 'disabled';
+
+export interface EnabledInstallActionState {
+  status: 'enabled';
+  token: string;
+  installCommand: string;
+  inspectCommand: string;
+  route: string;
+  disabledReason: null;
+}
+
+export interface DisabledInstallActionState {
+  status: 'disabled';
+  token: null;
+  installCommand: null;
+  inspectCommand: null;
+  route: null;
+  disabledReason: string;
+}
+
+export type InstallActionState = EnabledInstallActionState | DisabledInstallActionState;
+
+export interface InstallQueueEntry {
+  token: string;
+  label: string;
+  registry: string;
+  item: string;
+}
+
+export interface BatchInstallCommandState {
+  status: InstallActionStatus;
+  command: string | null;
+  disabledReason: string | null;
+  tokens: readonly string[];
 }
 
 export interface RegistryProfileFact {
@@ -233,6 +270,7 @@ export interface RegistryProfileItemRow {
   routeEligible: boolean;
   route?: string;
   routeLabel: string;
+  installAction: InstallActionState;
 }
 
 export interface RegistryProfileSection {

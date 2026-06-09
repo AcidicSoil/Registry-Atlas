@@ -12,9 +12,12 @@ describe('renderSafety', () => {
     );
   });
 
-  it('accepts HTTPS URLs', () => {
+  it('accepts HTTP and HTTPS URLs', () => {
     expect(toSafeExternalUrl('https://example.com/path?q=1')?.href).toBe(
       'https://example.com/path?q=1'
+    );
+    expect(toSafeExternalUrl('http://example.com/raw/button.json')?.href).toBe(
+      'http://example.com/raw/button.json'
     );
   });
 
@@ -22,6 +25,7 @@ describe('renderSafety', () => {
     expect(toSafeExternalUrl('javascript:alert(1)')).toBeNull();
     expect(toSafeExternalUrl('data:text/html,<h1>x</h1>')).toBeNull();
     expect(toSafeExternalUrl('//example.com/path')).toBeNull();
+    expect(toSafeExternalUrl('ftp://example.com/path')).toBeNull();
     expect(toSafeExternalUrl('not a url')).toBeNull();
   });
 

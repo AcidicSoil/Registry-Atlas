@@ -2,32 +2,33 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-last_updated: "2026-05-26T04:38:45Z"
-last_activity: 2026-05-26 -- Phase 03 execution complete
+status: shipping
+stopped_at: Phase 04 shipped in PR #2; awaiting review/merge and milestone closeout.
+last_updated: "2026-06-08T23:57:00.205Z"
+last_activity: 2026-06-08
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 13
-  completed_plans: 13
-  percent: 75
+  completed_phases: 4
+  total_plans: 17
+  completed_plans: 17
+  percent: 100
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-25)
+See: .planning/PROJECT.md (updated 2026-06-08)
 
 **Core value:** Users can quickly find the right shadcn-compatible registry or component and act on it without manually browsing dozens of registry sites.
-**Current focus:** Phase 03 — Component-First Discovery
+**Current focus:** Phase 04 complete — ship and complete milestone v1.0
 
 ## Current Position
 
-Phase: 03 (Component-First Discovery) — COMPLETE
-Plan: 5 of 5
-Status: Complete
-Last activity: 2026-05-26 -- Phase 03 execution complete
+Phase: 04 (install-actions-release-hardening) — COMPLETE
+Plan: 4 of 4
+Status: Shipped — PR #2
+Last activity: 2026-06-08
 
 Progress: [██████████] 100%
 
@@ -35,7 +36,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 4
+- Total plans completed: 17
 - Average duration: 19 min
 - Total execution time: 1.3 hours
 
@@ -45,13 +46,13 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 1. Foundation Safety & Verification | 4/4 | 76 min | 19 min |
 | 2. Official Mirror & Data Pipeline | 4/4 | 61 min | 15 min |
-| 3. Component-First Discovery | 0/5 | N/A | N/A |
-| 4. Install Actions & Release Hardening | 0/TBD | N/A | N/A |
+| 3. Component-First Discovery | 5/5 | N/A | N/A |
+| 4. Install Actions & Release Hardening | 4/4 | N/A | N/A |
 
 **Recent Trend:**
 
-- Last 5 plans: 01-01, 01-02, 01-03, 01-04
-- Trend: Phase 1 complete
+- Last 5 plans: 03-05, 04-01, 04-02, 04-03, 04-04
+- Trend: Phase 4 complete and verified
 
 *Updated after each plan completion*
 | Phase 01 P01 | 24 | 2 tasks | 5 files |
@@ -73,7 +74,9 @@ Recent decisions affecting current work:
 - Roadmap uses coarse granularity and vertical MVP mode across all phases.
 - Official shadcn registry directory mirror precedes component discovery and install actions.
 - Static Vite/vanilla TypeScript app remains the v1 deployment model.
-- [Phase 01]: Use Vitest as the configured test runner because existing tests already use Vitest APIs. — Plan 01-01 established the verification baseline and passed pnpm verify.
+- [Phase 04]: Install actions remain copy-only; users get `npx shadcn@latest add` and `view` commands but the browser never executes installs.
+- [Phase 04]: Queue state stays local to the page session and is intentionally excluded from URL state.
+- [Phase 04]: `pnpm verify` is the release gate for CI and local checks before GitHub Pages deployment.
 
 ### Pending Todos
 
@@ -83,7 +86,13 @@ None yet.
 
 - Phase 1 must address non-runnable tests, stale deployed artifacts, unsafe rendering helpers, and vocabulary drift before importing broader upstream metadata.
 - Phase 3 component inventory scope has medium confidence because third-party registry item catalogs vary in availability and schema quality.
-- Phase 4 should verify current shadcn CLI behavior before final copy text and command examples are locked.
+
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260608-msn | Fix Phase 3 review warnings: coverage ordering, discovery/profile tests, and out-of-place index dev tooling | 2026-06-08 | de3c8a0 | [260608-msn-fix-phase-3-review-warnings-coverage-ord](./quick/260608-msn-fix-phase-3-review-warnings-coverage-ord/) |
 
 ## Deferred Items
 
@@ -95,6 +104,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-05-26T01:31:44.830Z
-Stopped at: Phase 3 planning complete
-Resume file: .planning/phases/03-component-first-discovery/03-01-PLAN.md
+Last session: 2026-06-08T18:59:00-05:00
+Stopped at: Phase 04 shipped in PR #2; next step is merge after CI, then complete milestone v1.0.
+Resume file: .planning/phases/04-install-actions-release-hardening/04-VERIFICATION.md

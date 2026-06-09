@@ -27,10 +27,10 @@ export const COVERAGE_STATUS_LABELS: Record<CoverageStatus, string> = {
 
 export const COVERAGE_STATUS_ORDER: Record<CoverageStatus, number> = {
   verified: 0,
-  partial: 1,
-  inferred: 2,
-  unverified: 3,
-  unavailable: 4,
+  inferred: 1,
+  partial: 2,
+  unavailable: 3,
+  unverified: 4,
 };
 
 export function coverageStatusLabel(status: CoverageStatus): string {
