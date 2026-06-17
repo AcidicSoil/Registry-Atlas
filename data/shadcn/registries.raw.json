@@ -228,6 +228,12 @@
     "description": "A collection of open-source UI components, blocks and AI Agents. Integrate them in v0, Lovable, Claude or in your application."
   },
   {
+    "name": "@cubby-ui",
+    "homepage": "https://www.cubby-ui.dev",
+    "url": "https://www.cubby-ui.dev/r/{name}.json",
+    "description": "An opinionated component library with curated styling and simplified patterns for common use cases. Built on Base UI and Tailwind CSS 4."
+  },
+  {
     "name": "@cult-ui",
     "homepage": "https://www.cult-ui.com",
     "url": "https://cult-ui.com/r/{name}.json",
@@ -254,7 +260,7 @@
   {
     "name": "@diceui",
     "homepage": "https://www.diceui.com/",
-    "url": "https://diceui.com/r/{name}.json",
+    "url": "https://diceui.com/r/{style}/{name}.json",
     "description": "Accessible shadcn/ui components built with React, TypeScript, and Tailwind CSS. Copy-paste ready, and customizable."
   },
   {
@@ -336,6 +342,12 @@
     "description": "A collection of UI components based on the exaBase Design System, built with React and Tailwind CSS."
   },
   {
+    "name": "@extend",
+    "homepage": "https://ui.extend.ai",
+    "url": "https://ui.extend.ai/r/{name}.json",
+    "description": "A collection of UI components for building document agents and human-in-the-loop review workflows."
+  },
+  {
     "name": "@fab-ui",
     "homepage": "https://fab-ui.com",
     "url": "https://fab-ui.com/r/{name}.json",
@@ -394,6 +406,12 @@
     "homepage": "https://ui.heygaia.io",
     "url": "https://ui.heygaia.io/r/{name}.json",
     "description": "Production-ready UI components designed for building beautiful AI assistants and conversational interfaces, from the team behind GAIA."
+  },
+  {
+    "name": "@gamekitui",
+    "homepage": "https://gamekitui.com",
+    "url": "https://gamekitui.com/r/{name}.json",
+    "description": "Drop-in, themeable browser games for shadcn — Snake, 2048, Minesweeper, and more. Each is a single self-contained file with zero dependencies."
   },
   {
     "name": "@gamifykit",
@@ -690,6 +708,12 @@
     "description": "A design focused component library for Next.js, built for speed, flexibility and developer experience."
   },
   {
+    "name": "@ogimagecn",
+    "homepage": "https://ogimagecn.vercel.app",
+    "url": "https://ogimagecn.vercel.app/r/{name}.json",
+    "description": "Beautiful OG images, made simple. Ready to use, customizable Open Graph image components for React."
+  },
+  {
     "name": "@openpolicy",
     "homepage": "https://www.openpolicy.sh",
     "url": "https://www.openpolicy.sh/r/{name}.json",
@@ -984,6 +1008,12 @@
     "description": "A modern UI component library built with React and TailwindCSS to help you build beautiful and accessible web applications faster."
   },
   {
+    "name": "@soralabs",
+    "homepage": "https://ui.soralabs.io.vn",
+    "url": "https://ui.soralabs.io.vn/r/{name}.json",
+    "description": "Motion-first React primitives and animated UI components for shadcn/ui. Copy, customize, and ship fluid interfaces."
+  },
+  {
     "name": "@soundcn",
     "homepage": "https://soundcn.xyz",
     "url": "https://soundcn.xyz/r/{name}.json",
@@ -1204,6 +1234,72 @@
     "homepage": "https://ui.radiumcoders.com",
     "url": "https://ui.radiumcoders.com/r/xcn/{name}.json",
     "description": "Hand-crafted, beautiful, and minimal UI components built with Tailwind CSS and Motion."
+  },
+  {
+    "name": "@saaskit",
+    "homepage": "https://saaskit-theta.vercel.app",
+    "url": "https://saaskit-theta.vercel.app/r/{name}.json",
+    "description": "10 essential shadcn/ui components for B2B SaaS: Pricing, Billing, Usage, and Onboarding. Minimalist Soft Brutalist design."
+  },
+  {
+    "name": "@dotmatrix",
+    "homepage": "https://dotmatrix.zzzzshawn.cloud",
+    "url": "https://dotmatrix.zzzzshawn.cloud/r/{name}.json",
+    "description": "Production-ready dot-matrix loading components for React, featuring square, circular, and triangle animations with polished motion."
+  },
+  {
+    "name": "@delta",
+    "homepage": "https://deltacomponents.dev",
+    "url": "https://deltacomponents.dev/r/{name}.json",
+    "description": "A shadcn registry for AI and media-rich interfaces — streaming LLM chat, zoomable images, swipeable card decks, interactive maps, plus dashboard and landing-page blocks."
+  },
+  {
+    "name": "@shieldcn",
+    "homepage": "https://shieldcn.dev",
+    "url": "https://shieldcn.dev/r/{name}.json",
+    "description": "Beautiful README badges as a service. A shields.io alternative with the visual quality of shadcn/ui. Drop-in SVG badge components for npm, GitHub, Discord, and more."
+  },
+  {
+    "name": "@evilbuttons",
+    "homepage": "https://evilbuttons.radiumcoders.com/docs",
+    "url": "https://evilbuttons.radiumcoders.com/r/{name}.json",
+    "description": "A shadcn/ui registry featuring a collection of animated buttons built with Motion. Each component is designed to add punchy, interactive feedback to your UI with minimal setup."
+  },
+  {
+    "name": "@stepper",
+    "homepage": "https://francozeta-stepper.vercel.app",
+    "url": "https://francozeta-stepper.vercel.app/{name}.json",
+    "description": "A modern, accessible and composable Stepper component for React and Tailwind CSS. Built for shadcn/ui-style workflows with registry-first distribution."
+  },
+  {
+    "name": "@text-ui",
+    "homepage": "https://joelachance.github.io/text-ui/docs",
+    "url": "https://joelachance.github.io/text-ui/r/{name}.json",
+    "description": "A shadcn/ui registry with EchoText (`echo-text`): layered stroke text that follows the pointer—minimal setup, drop-in component."
+  },
+  {
+    "name": "@framecn",
+    "homepage": "https://framecn.vercel.app",
+    "url": "https://framecn.vercel.app/r/{name}.json",
+    "description": "Beautiful videos, made simple. Ready to use, customizable video components for React."
+  },
+  {
+    "name": "@turbopills-ui",
+    "homepage": "https://www.turbopills.com/ui/docs",
+    "url": "https://ui.turbopills.com/r/{name}.json",
+    "description": "Beautiful, accessible, and customizable React components for your telehealth applications."
+  },
+  {
+    "name": "@nexus-labs",
+    "homepage": "https://nexus-ui.com",
+    "url": "https://nexus-ui.com/r/{name}.json",
+    "description": "Motion-native animated components for Next.js — backgrounds, heroes, inputs, carousels, and more. Open source. Copy-ready TypeScript."
+  },
+  {
+    "name": "@wensity",
+    "homepage": "https://wensity.com",
+    "url": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/{name}.json",
+    "description": "Motion-rich React components for AI interfaces, SaaS blocks, and cinematic interactions. Free Wensity components only."
   },
   {
     "name": "@zippystarter",
