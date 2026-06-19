@@ -1,7 +1,7 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-06-10T06:08:45.269Z",
+    "synced_at": "2026-06-19T15:29:31.895Z",
     "upstream_count": 218,
     "registry_count": 218,
     "local_count": 218,
@@ -553,6 +553,27 @@
     },
     {
       "official": {
+        "name": "@baraile-loader",
+        "homepage": "https://shadcn-braille-loader.vercel.app",
+        "registry_url_template": "https://shadcn-braille-loader.vercel.app/r/{name}.json",
+        "description": "A simple braille-inspired loader components for shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@basecn",
         "homepage": "https://basecn.dev",
         "registry_url_template": "https://basecn.dev/r/{name}.json",
@@ -691,6 +712,27 @@
             "route_eligible": true
           }
         ],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@beui",
+        "homepage": "https://beui.dev",
+        "registry_url_template": "https://beui.dev/r/{name}.json",
+        "description": "Bespoke motion components for React. Copy-paste components with shadcn-compatible installs, Tailwind CSS v4, and Motion."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
         "notes": ""
       },
       "status": {
@@ -969,6 +1011,27 @@
     },
     {
       "official": {
+        "name": "@contentbit",
+        "homepage": "https://contentbit.dev",
+        "registry_url_template": "https://contentbit.dev/r/{name}.json",
+        "description": "React components that render Content Blocks: plain Markdown with schema-validated directive blocks. Built for content written by humans, CMSes, and LLMs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@corr",
         "homepage": "https://ui.corr.sh",
         "registry_url_template": "https://ui.corr.sh/r/{name}.json",
@@ -1124,6 +1187,27 @@
         "homepage": "https://darshitdev.in/arts",
         "registry_url_template": "https://darshitdev.in/r/{name}.json",
         "description": "Magic 3D Tabs component featuring mouse-interactive 3D rotation, floating particles background effect, and smooth spring animations."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@delego",
+        "homepage": "https://github.com/Delego-Dev/registry",
+        "registry_url_template": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/{name}.json",
+        "description": "Design-system registry for Delego — intent-bound action authorization for AI agents. Theme (OKLCH) plus signature components: decision pill, signed receipt, status badge, field."
       },
       "atlas": {
         "primary_focus": [],
@@ -1929,6 +2013,27 @@
         "homepage": "https://gooseui.pro",
         "registry_url_template": "https://gooseui.pro/r/{name}.json",
         "description": "Open source component library with animated components, beautiful effects, and custom toast notifications. Built with Radix UI and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@gpt-vis",
+        "homepage": "https://gpt-vis.antv.vision",
+        "registry_url_template": "https://gpt-vis.antv.vision/r/{name}.json",
+        "description": "AI-native visualization components for LLM projects. Render 26 chart types from vis syntax strings or config objects."
       },
       "atlas": {
         "primary_focus": [],
@@ -3790,6 +3895,27 @@
     },
     {
       "official": {
+        "name": "@shadcn-ui-blocks",
+        "homepage": "https://www.shadcn-ui-blocks.com",
+        "registry_url_template": "https://www.shadcn-ui-blocks.com/r/{name}.json",
+        "description": "Shadcn blocks across standard collections and handcrafted premium collections, plus a beautiful templates. Start free, then unlock more with Pro."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@shadcnblocks",
         "homepage": "https://shadcnblocks.com",
         "registry_url_template": "https://shadcnblocks.com/r/{name}.json",
@@ -4841,10 +4967,52 @@
     },
     {
       "official": {
+        "name": "@untld",
+        "homepage": "https://ui.untldlabs.com",
+        "registry_url_template": "https://ui.untldlabs.com/r/{name}.json",
+        "description": "A set of beautifully designed components for modern web applications."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@uselayouts",
         "homepage": "https://uselayouts.com",
         "registry_url_template": "https://uselayouts.com/r/{name}.json",
         "description": "A collection of premium animated React components and micro-interactions built with Motion for building fluid, professional interfaces."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uui",
+        "homepage": "https://uui.app",
+        "registry_url_template": "https://uui.app/r/{name}.json",
+        "description": "Inspiration for UI Interfaces. Discover UI ideas, micro-interactions, and components drawn from real products."
       },
       "atlas": {
         "primary_focus": [],
@@ -5026,6 +5194,27 @@
     },
     {
       "official": {
+        "name": "@heatmap",
+        "homepage": "https://shadcn-heatmap.pages.dev",
+        "registry_url_template": "https://shadcn-heatmap.pages.dev/r/{name}.json",
+        "description": "Beautiful, accessible heatmap components for React: GitHub-style calendar, weekday x hour matrix, date x hour, and status timeline. Built with shadcn/ui conventions."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@xcn",
         "homepage": "https://ui.radiumcoders.com",
         "registry_url_template": "https://ui.radiumcoders.com/r/xcn/{name}.json",
@@ -5068,216 +5257,6 @@
     },
     {
       "official": {
-        "name": "@dotmatrix",
-        "homepage": "https://dotmatrix.zzzzshawn.cloud",
-        "registry_url_template": "https://dotmatrix.zzzzshawn.cloud/r/{name}.json",
-        "description": "Production-ready dot-matrix loading components for React, featuring square, circular, and triangle animations with polished motion."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@delta",
-        "homepage": "https://deltacomponents.dev",
-        "registry_url_template": "https://deltacomponents.dev/r/{name}.json",
-        "description": "A shadcn registry for AI and media-rich interfaces — streaming LLM chat, zoomable images, swipeable card decks, interactive maps, plus dashboard and landing-page blocks."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@shieldcn",
-        "homepage": "https://shieldcn.dev",
-        "registry_url_template": "https://shieldcn.dev/r/{name}.json",
-        "description": "Beautiful README badges as a service. A shields.io alternative with the visual quality of shadcn/ui. Drop-in SVG badge components for npm, GitHub, Discord, and more."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@evilbuttons",
-        "homepage": "https://evilbuttons.radiumcoders.com/docs",
-        "registry_url_template": "https://evilbuttons.radiumcoders.com/r/{name}.json",
-        "description": "A shadcn/ui registry featuring a collection of animated buttons built with Motion. Each component is designed to add punchy, interactive feedback to your UI with minimal setup."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@stepper",
-        "homepage": "https://francozeta-stepper.vercel.app",
-        "registry_url_template": "https://francozeta-stepper.vercel.app/{name}.json",
-        "description": "A modern, accessible and composable Stepper component for React and Tailwind CSS. Built for shadcn/ui-style workflows with registry-first distribution."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@text-ui",
-        "homepage": "https://joelachance.github.io/text-ui/docs",
-        "registry_url_template": "https://joelachance.github.io/text-ui/r/{name}.json",
-        "description": "A shadcn/ui registry with EchoText (`echo-text`): layered stroke text that follows the pointer—minimal setup, drop-in component."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@framecn",
-        "homepage": "https://framecn.vercel.app",
-        "registry_url_template": "https://framecn.vercel.app/r/{name}.json",
-        "description": "Beautiful videos, made simple. Ready to use, customizable video components for React."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@turbopills-ui",
-        "homepage": "https://www.turbopills.com/ui/docs",
-        "registry_url_template": "https://ui.turbopills.com/r/{name}.json",
-        "description": "Beautiful, accessible, and customizable React components for your telehealth applications."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@nexus-labs",
-        "homepage": "https://nexus-ui.com",
-        "registry_url_template": "https://nexus-ui.com/r/{name}.json",
-        "description": "Motion-native animated components for Next.js — backgrounds, heroes, inputs, carousels, and more. Open source. Copy-ready TypeScript."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
-        "name": "@wensity",
-        "homepage": "https://wensity.com",
-        "registry_url_template": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/{name}.json",
-        "description": "Motion-rich React components for AI interfaces, SaaS blocks, and cinematic interactions. Free Wensity components only."
-      },
-      "atlas": {
-        "primary_focus": [],
-        "component_tags": [],
-        "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
-        "catalog_status": "unavailable",
-        "item_summaries": [],
-        "notes": ""
-      },
-      "status": {
-        "warnings": []
-      }
-    },
-    {
-      "official": {
         "name": "@zippystarter",
         "homepage": "https://zippystarter.com",
         "registry_url_template": "https://zippystarter.com/r/{name}.json",
@@ -5297,6 +5276,27 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@kaui",
+        "homepage": "https://kaui-shadcn-registry.vercel.app",
+        "registry_url_template": "https://kaui-shadcn-registry.vercel.app/r/{name}.json",
+        "description": "Personal well crafted components for Shadcn ui"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
         "catalog_status": "unavailable",
         "item_summaries": [],
         "notes": ""

@@ -1,10 +1,21 @@
 {
   "source_url": "https://ui.shadcn.com/r/registries.json",
-  "synced_at": "2026-06-10T06:08:45.269Z",
+  "synced_at": "2026-06-19T15:29:31.895Z",
   "upstream_count": 218,
   "local_count": 218,
   "previous_count": 218,
-  "added": [],
+  "added": [
+    "@baraile-loader",
+    "@beui",
+    "@contentbit",
+    "@delego",
+    "@gpt-vis",
+    "@heatmap",
+    "@kaui",
+    "@shadcn-ui-blocks",
+    "@untld",
+    "@uui"
+  ],
   "removed": [],
   "changed": []
 }
