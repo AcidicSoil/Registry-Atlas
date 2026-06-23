@@ -1,14 +1,35 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-06-19T15:29:31.895Z",
-    "upstream_count": 218,
-    "registry_count": 218,
-    "local_count": 218,
+    "synced_at": "2026-06-23T22:08:34.256Z",
+    "upstream_count": 222,
+    "registry_count": 222,
+    "local_count": 222,
     "validation_status": "not_run",
     "report_path": "data/shadcn/sync-report.json"
   },
   "registries": [
+    {
+      "official": {
+        "name": "@7ovr",
+        "homepage": "https://7ovr.com",
+        "registry_url_template": "https://7ovr.com/r/{name}.json",
+        "description": "Free, production-ready UI blocks for marketing pages and application dashboards, built on Base UI and installable with the shadcn CLI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
     {
       "official": {
         "name": "@8bitcn",
@@ -212,6 +233,27 @@
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@agentcn",
+        "homepage": "https://agentcn.vercel.app",
+        "registry_url_template": "https://agentcn.vercel.app/r/{name}.json",
+        "description": "Production-ready agents, made simple. Ready to use, customizable AI agent recipes. Built on Eve and Flue."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
         "catalog_status": "unavailable",
         "item_summaries": [],
         "notes": ""
@@ -4667,6 +4709,27 @@
     },
     {
       "official": {
+        "name": "@tetra-ui",
+        "homepage": "https://tetra-ui.com",
+        "registry_url_template": "https://tetra-ui.com/r/{name}.json",
+        "description": "Delightful components for a clean, accessible and modern component library for React Native."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@text-ui",
         "homepage": "https://joelachance.github.io/text-ui/docs",
         "registry_url_template": "https://joelachance.github.io/text-ui/r/{name}.json",
@@ -5290,6 +5353,27 @@
         "homepage": "https://kaui-shadcn-registry.vercel.app",
         "registry_url_template": "https://kaui-shadcn-registry.vercel.app/r/{name}.json",
         "description": "Personal well crafted components for Shadcn ui"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uiable",
+        "homepage": "https://uiable.com",
+        "registry_url_template": "https://uiable.com/r/{name}.json",
+        "description": "Free, open-source UI component library built with Next.js, React 19, Tailwind CSS v4, and shadcn/ui — beautifully designed components you can copy, customize, and make your own."
       },
       "atlas": {
         "primary_focus": [],

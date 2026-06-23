@@ -1,5 +1,11 @@
 [
   {
+    "name": "@7ovr",
+    "homepage": "https://7ovr.com",
+    "url": "https://7ovr.com/r/{name}.json",
+    "description": "Free, production-ready UI blocks for marketing pages and application dashboards, built on Base UI and installable with the shadcn CLI."
+  },
+  {
     "name": "@8bitcn",
     "homepage": "https://www.8bitcn.com",
     "url": "https://www.8bitcn.com/r/{name}.json",
@@ -34,6 +40,12 @@
     "homepage": "https://ui.aevr.space",
     "url": "https://ui.aevr.space/r/{name}.json",
     "description": "A small collection of focused, production‑ready components and primitives for React/Next.js projects—built on shadcn/ui and complementary libraries."
+  },
+  {
+    "name": "@agentcn",
+    "homepage": "https://agentcn.vercel.app",
+    "url": "https://agentcn.vercel.app/r/{name}.json",
+    "description": "Production-ready agents, made simple. Ready to use, customizable AI agent recipes. Built on Eve and Flue."
   },
   {
     "name": "@agents-ui",
@@ -1140,6 +1152,12 @@
     "description": "Composable, animated map components for React. Built with TypeScript, Tailwind CSS, Mapbox GL JS, and MapLibre GL. Perfect companion for shadcn/ui."
   },
   {
+    "name": "@tetra-ui",
+    "homepage": "https://tetra-ui.com",
+    "url": "https://tetra-ui.com/r/{name}.json",
+    "description": "Delightful components for a clean, accessible and modern component library for React Native."
+  },
+  {
     "name": "@text-ui",
     "homepage": "https://joelachance.github.io/text-ui/docs",
     "url": "https://joelachance.github.io/text-ui/r/{name}.json",
@@ -1306,5 +1324,11 @@
     "homepage": "https://kaui-shadcn-registry.vercel.app",
     "url": "https://kaui-shadcn-registry.vercel.app/r/{name}.json",
     "description": "Personal well crafted components for Shadcn ui"
+  },
+  {
+    "name": "@uiable",
+    "homepage": "https://uiable.com",
+    "url": "https://uiable.com/r/{name}.json",
+    "description": "Free, open-source UI component library built with Next.js, React 19, Tailwind CSS v4, and shadcn/ui — beautifully designed components you can copy, customize, and make your own."
   }
 ]
