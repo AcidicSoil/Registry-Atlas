@@ -528,6 +528,12 @@
     "description": "Ready-to-use foundation components/blocks built on top of shadcn/ui."
   },
   {
+    "name": "@hirael",
+    "homepage": "https://hirael.com",
+    "url": "https://hirael.com/r/{name}.json",
+    "description": "The components shadcn/ui doesn't ship. A collection of high-utility React components built on top of shadcn/ui."
+  },
+  {
     "name": "@iconiq",
     "homepage": "https://iconiqui.com",
     "url": "https://iconiqui.com/r/{name}.json",
@@ -778,6 +784,12 @@
     "homepage": "https://oui.mw10013.workers.dev",
     "url": "https://oui.mw10013.workers.dev/r/{name}.json",
     "description": "React Aria Components with shadcn characteristics.Copy-and-paste react aria components that run side-by-side with shadcn components."
+  },
+  {
+    "name": "@paceui",
+    "homepage": "https://paceui.com",
+    "url": "https://paceui.com/r/{name}.json",
+    "description": "Carefully built UI blocks for real apps and dashboards, designed to integrate smoothly from early ideas to production releases."
   },
   {
     "name": "@pacekit",

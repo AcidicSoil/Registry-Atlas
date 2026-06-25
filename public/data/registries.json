@@ -1,10 +1,10 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-06-23T22:08:34.256Z",
-    "upstream_count": 222,
-    "registry_count": 222,
-    "local_count": 222,
+    "synced_at": "2026-06-24T17:09:41.203Z",
+    "upstream_count": 224,
+    "registry_count": 224,
+    "local_count": 224,
     "validation_status": "not_run",
     "report_path": "data/shadcn/sync-report.json"
   },
@@ -2235,6 +2235,27 @@
     },
     {
       "official": {
+        "name": "@hirael",
+        "homepage": "https://hirael.com",
+        "registry_url_template": "https://hirael.com/r/{name}.json",
+        "description": "The components shadcn/ui doesn't ship. A collection of high-utility React components built on top of shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@iconiq",
         "homepage": "https://iconiqui.com",
         "registry_url_template": "https://iconiqui.com/r/{name}.json",
@@ -3214,6 +3235,33 @@
         "component_tags": [
           "button",
           "modal"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@paceui",
+        "homepage": "https://paceui.com",
+        "registry_url_template": "https://paceui.com/r/{name}.json",
+        "description": "Carefully built UI blocks for real apps and dashboards, designed to integrate smoothly from early ideas to production releases."
+      },
+      "atlas": {
+        "primary_focus": [
+          "marketing-sections"
+        ],
+        "component_tags": [
+          "card",
+          "modal",
+          "hero-section"
         ],
         "aliases": [],
         "coverage_status": "inferred",

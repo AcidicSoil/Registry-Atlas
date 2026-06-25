@@ -1,14 +1,12 @@
 {
   "source_url": "https://ui.shadcn.com/r/registries.json",
-  "synced_at": "2026-06-23T22:08:34.256Z",
-  "upstream_count": 222,
-  "local_count": 222,
-  "previous_count": 218,
+  "synced_at": "2026-06-24T17:09:41.203Z",
+  "upstream_count": 224,
+  "local_count": 224,
+  "previous_count": 222,
   "added": [
-    "@7ovr",
-    "@agentcn",
-    "@tetra-ui",
-    "@uiable"
+    "@hirael",
+    "@paceui"
   ],
   "removed": [],
   "changed": []
