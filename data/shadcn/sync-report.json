@@ -1,12 +1,11 @@
 {
   "source_url": "https://ui.shadcn.com/r/registries.json",
-  "synced_at": "2026-06-24T17:09:41.203Z",
-  "upstream_count": 224,
-  "local_count": 224,
-  "previous_count": 222,
+  "synced_at": "2026-06-26T22:05:15.525Z",
+  "upstream_count": 225,
+  "local_count": 225,
+  "previous_count": 224,
   "added": [
-    "@hirael",
-    "@paceui"
+    "@payload-components"
   ],
   "removed": [],
   "changed": []
