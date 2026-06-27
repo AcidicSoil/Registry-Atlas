@@ -1,7 +1,7 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-06-27T10:00:13.059Z",
+    "synced_at": "2026-06-27T11:28:24.379Z",
     "upstream_count": 226,
     "registry_count": 226,
     "local_count": 226,
@@ -43,24 +43,24 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
-          "button",
-          "dropdown",
-          "alert",
-          "toast",
-          "modal",
-          "card",
-          "table",
-          "chart",
           "accordion",
+          "alert",
           "avatar",
           "badge",
           "breadcrumb",
+          "button",
           "calendar",
+          "card",
           "carousel",
+          "chart",
           "checkbox",
           "collapsible",
           "combobox",
-          "command"
+          "command",
+          "dropdown",
+          "modal",
+          "table",
+          "toast"
         ],
         "aliases": [],
         "coverage_status": "verified",
@@ -186,15 +186,15 @@
           "marketing-sections"
         ],
         "component_tags": [
-          "button",
-          "input",
-          "hero-section",
-          "testimonial",
-          "spinner",
-          "scroll-progress",
-          "timeline",
           "accordion",
-          "color-picker"
+          "button",
+          "color-picker",
+          "hero-section",
+          "input",
+          "scroll-progress",
+          "spinner",
+          "testimonial",
+          "timeline"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -247,9 +247,9 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
+          "alert",
           "button",
-          "card",
-          "alert"
+          "card"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -316,10 +316,10 @@
           "ai-chat"
         ],
         "component_tags": [
+          "alert",
           "chatbot",
           "prompt-box",
-          "spinner",
-          "alert"
+          "spinner"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -344,9 +344,9 @@
           "ai-chat"
         ],
         "component_tags": [
+          "avatar",
           "chat-window",
-          "message-list",
-          "avatar"
+          "message-list"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -392,8 +392,8 @@
           "data-display-and-tables"
         ],
         "component_tags": [
-          "search-input",
-          "filter-bar"
+          "filter-bar",
+          "search-input"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -418,8 +418,8 @@
           "marketing-sections"
         ],
         "component_tags": [
-          "hero-section",
-          "card"
+          "card",
+          "hero-section"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -466,11 +466,11 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
+          "avatar",
           "button",
           "modal",
           "tabs",
-          "tooltip",
-          "avatar"
+          "tooltip"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -663,22 +663,16 @@
           "data-display-and-tables"
         ],
         "component_tags": [
-          "button",
-          "input",
-          "select",
-          "tabs",
-          "navbar",
-          "breadcrumb",
-          "sidebar",
-          "table",
-          "chart",
-          "card",
           "accordion",
           "alert",
           "avatar",
           "badge",
+          "breadcrumb",
+          "button",
           "calendar",
+          "card",
           "carousel",
+          "chart",
           "checkbox",
           "collapsible",
           "combobox",
@@ -687,17 +681,23 @@
           "dialog",
           "drawer",
           "hover-card",
+          "input",
           "menubar",
+          "navbar",
           "pagination",
           "popover",
           "progress",
           "radio-group",
           "scroll-area",
+          "select",
           "separator",
           "sheet",
+          "sidebar",
           "skeleton",
           "slider",
           "switch",
+          "table",
+          "tabs",
           "textarea",
           "toast",
           "toggle",
@@ -769,9 +769,9 @@
         ],
         "component_tags": [
           "button",
-          "spinner",
+          "dropzone",
           "file-upload",
-          "dropzone"
+          "spinner"
         ],
         "aliases": [],
         "coverage_status": "verified",
@@ -836,9 +836,9 @@
           "forms-and-inputs"
         ],
         "component_tags": [
-          "table",
           "auth-form",
-          "pricing-table"
+          "pricing-table",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -1147,18 +1147,17 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
-          "button",
-          "table",
-          "navbar",
           "accordion",
           "alert",
           "avatar",
           "badge",
+          "button",
           "checkbox",
           "collapsible",
           "dialog",
           "hover-card",
           "menubar",
+          "navbar",
           "pagination",
           "popover",
           "progress",
@@ -1169,6 +1168,7 @@
           "slider",
           "spinner",
           "switch",
+          "table",
           "textarea",
           "toast",
           "toggle",
@@ -1198,12 +1198,12 @@
           "marketing-sections"
         ],
         "component_tags": [
-          "chart",
-          "table",
           "card",
+          "chart",
+          "chatbot",
           "hero-section",
-          "testimonial",
-          "chatbot"
+          "table",
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -1249,10 +1249,10 @@
           "misc-utility"
         ],
         "component_tags": [
-          "dropdown",
-          "modal",
           "button",
-          "card"
+          "card",
+          "dropdown",
+          "modal"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -1295,7 +1295,17 @@
       },
       "atlas": {
         "primary_focus": [],
-        "component_tags": [],
+        "component_tags": [
+          "audit",
+          "badge",
+          "button",
+          "decision-pill",
+          "input",
+          "pill",
+          "receipt",
+          "status-pill",
+          "theme"
+        ],
         "aliases": [],
         "coverage_status": "verified",
         "confidence": "high",
@@ -1545,7 +1555,24 @@
       },
       "atlas": {
         "primary_focus": [],
-        "component_tags": [],
+        "component_tags": [
+          "admonition",
+          "ai-chat",
+          "alert",
+          "button",
+          "card-deck",
+          "carousel",
+          "chat-interface",
+          "code-block",
+          "input",
+          "map-pointer",
+          "otp-input",
+          "qr-code",
+          "syntax-highlighting",
+          "tabs",
+          "utility-button",
+          "zoomable-image"
+        ],
         "aliases": [],
         "coverage_status": "verified",
         "confidence": "high",
@@ -1990,20 +2017,28 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
-          "input",
-          "select",
-          "checkbox",
-          "card",
-          "tabs",
           "alert",
-          "skeleton",
+          "angle-slider",
           "avatar",
           "badge",
+          "card",
+          "checkbox",
+          "circular-progress",
+          "color-picker",
+          "color-swatch",
           "combobox",
+          "compare-slider",
+          "cropper",
           "data-grid",
-          "table",
           "file-upload",
-          "color-picker"
+          "input",
+          "progress",
+          "select",
+          "skeleton",
+          "slider",
+          "table",
+          "tabs",
+          "toolbar"
         ],
         "aliases": [],
         "coverage_status": "verified",
@@ -2569,11 +2604,11 @@
           "dashboards-and-admin"
         ],
         "component_tags": [
-          "hero-section",
-          "feature-grid",
-          "testimonial",
           "card",
-          "navbar"
+          "feature-grid",
+          "hero-section",
+          "navbar",
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -2640,10 +2675,10 @@
           "marketing-sections"
         ],
         "component_tags": [
-          "hero-section",
-          "testimonial",
           "cta-section",
-          "table"
+          "hero-section",
+          "table",
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -2690,16 +2725,16 @@
           "navigation"
         ],
         "component_tags": [
-          "button",
-          "toggle",
-          "input",
-          "select",
-          "navbar",
-          "tabs",
-          "sidebar",
           "alert",
+          "button",
+          "input",
+          "modal",
+          "navbar",
+          "select",
+          "sidebar",
           "spinner",
-          "modal"
+          "tabs",
+          "toggle"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -2727,8 +2762,8 @@
         ],
         "component_tags": [
           "auth-form",
-          "table",
-          "chatbot"
+          "chatbot",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -2754,12 +2789,12 @@
           "misc-utility"
         ],
         "component_tags": [
-          "chatbot",
           "audio-player",
-          "waveform",
-          "voice-picker",
+          "button",
+          "chatbot",
           "transcript-viewer",
-          "button"
+          "voice-picker",
+          "waveform"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3057,12 +3092,12 @@
           "forms-and-inputs"
         ],
         "component_tags": [
+          "datepicker",
+          "error-message",
           "input",
           "select",
-          "datepicker",
           "stepper",
-          "submit-button",
-          "error-message"
+          "submit-button"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3108,9 +3143,9 @@
           "ai-chat"
         ],
         "component_tags": [
+          "avatar",
           "chatbot",
-          "message-list",
-          "avatar"
+          "message-list"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3220,12 +3255,12 @@
           "navigation"
         ],
         "component_tags": [
-          "card",
-          "sidebar",
           "button",
-          "toggle",
+          "card",
           "navbar",
-          "tabs"
+          "sidebar",
+          "tabs",
+          "toggle"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3425,12 +3460,12 @@
         ],
         "component_tags": [
           "button",
-          "input",
-          "select",
-          "tabs",
           "hero-section",
+          "input",
+          "modal",
+          "select",
           "table",
-          "modal"
+          "tabs"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3561,12 +3596,12 @@
           "navigation"
         ],
         "component_tags": [
+          "alert",
+          "checkbox",
           "input",
           "select",
-          "checkbox",
-          "tabs",
-          "alert",
-          "skeleton"
+          "skeleton",
+          "tabs"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3655,8 +3690,8 @@
         ],
         "component_tags": [
           "button",
-          "modal",
-          "dropdown"
+          "dropdown",
+          "modal"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3730,11 +3765,11 @@
           "marketing-sections"
         ],
         "component_tags": [
+          "button",
           "card",
           "hero-section",
-          "testimonial",
           "table",
-          "button"
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3780,8 +3815,8 @@
           "misc-utility"
         ],
         "component_tags": [
-          "card",
-          "button"
+          "button",
+          "card"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3919,9 +3954,9 @@
           "data-display-and-tables"
         ],
         "component_tags": [
-          "table",
           "data-grid",
-          "pagination"
+          "pagination",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -3947,8 +3982,8 @@
         ],
         "component_tags": [
           "button",
-          "switch",
           "hero-section",
+          "switch",
           "table"
         ],
         "aliases": [],
@@ -4038,13 +4073,13 @@
           "navigation"
         ],
         "component_tags": [
+          "breadcrumb",
           "button",
           "card",
-          "navbar",
-          "tabs",
-          "breadcrumb",
+          "drawer",
           "modal",
-          "drawer"
+          "navbar",
+          "tabs"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -4097,11 +4132,11 @@
           "forms-and-inputs"
         ],
         "component_tags": [
-          "sidebar",
-          "table",
           "card",
           "input",
           "select",
+          "sidebar",
+          "table",
           "toggle"
         ],
         "aliases": [],
@@ -4127,10 +4162,10 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
+          "alert",
           "button",
           "input",
-          "select",
-          "alert"
+          "select"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -4199,12 +4234,12 @@
           "dashboards-and-admin"
         ],
         "component_tags": [
+          "auth-form",
           "button",
           "card",
-          "table",
-          "auth-form",
+          "chart",
           "hero-section",
-          "chart"
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -4470,8 +4505,8 @@
         ],
         "component_tags": [
           "card",
-          "modal",
-          "hero-section"
+          "hero-section",
+          "modal"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -4720,8 +4755,8 @@
           "ai-chat"
         ],
         "component_tags": [
-          "prompt-box",
-          "chatbot"
+          "chatbot",
+          "prompt-box"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -4968,8 +5003,8 @@
         "component_tags": [
           "button",
           "card",
-          "modal",
           "hero-section",
+          "modal",
           "table"
         ],
         "aliases": [],
@@ -4996,11 +5031,11 @@
         ],
         "component_tags": [
           "button",
-          "input",
-          "tabs",
+          "drawer",
           "dropdown",
+          "input",
           "modal",
-          "drawer"
+          "tabs"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5026,12 +5061,12 @@
           "dashboards-and-admin"
         ],
         "component_tags": [
-          "input",
-          "button",
-          "modal",
-          "tabs",
           "auth-form",
-          "table"
+          "button",
+          "input",
+          "modal",
+          "table",
+          "tabs"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5197,10 +5232,10 @@
         ],
         "component_tags": [
           "button",
+          "hero-section",
           "input",
           "modal",
           "table",
-          "hero-section",
           "testimonial"
         ],
         "aliases": [],
@@ -5248,11 +5283,11 @@
           "dashboards-and-admin"
         ],
         "component_tags": [
-          "hero-section",
           "card",
-          "table",
           "chart",
-          "navbar"
+          "hero-section",
+          "navbar",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5386,11 +5421,11 @@
           "marketing-sections"
         ],
         "component_tags": [
-          "hero-section",
-          "testimonial",
           "button",
+          "hero-section",
+          "modal",
           "table",
-          "modal"
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5639,9 +5674,9 @@
         "component_tags": [
           "button",
           "input",
+          "modal",
           "select",
-          "tabs",
-          "modal"
+          "tabs"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5688,8 +5723,8 @@
         ],
         "component_tags": [
           "hero-section",
-          "testimonial",
-          "navbar"
+          "navbar",
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5739,8 +5774,8 @@
         ],
         "component_tags": [
           "auth-form",
-          "table",
-          "chart"
+          "chart",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5790,9 +5825,9 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
-          "input",
           "button",
-          "card"
+          "card",
+          "input"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5817,10 +5852,10 @@
           "marketing-sections"
         ],
         "component_tags": [
+          "cta-section",
           "hero-section",
           "table",
-          "testimonial",
-          "cta-section"
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5866,11 +5901,11 @@
           "dashboards-and-admin"
         ],
         "component_tags": [
-          "sidebar",
+          "auth-form",
           "chart",
-          "table",
           "search-input",
-          "auth-form"
+          "sidebar",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5896,11 +5931,11 @@
           "data-display-and-tables"
         ],
         "component_tags": [
-          "hero-section",
-          "cta-section",
           "auth-form",
-          "table",
-          "chart"
+          "chart",
+          "cta-section",
+          "hero-section",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -5927,11 +5962,11 @@
         ],
         "component_tags": [
           "button",
+          "datepicker",
           "input",
-          "toggle",
           "modal",
           "search-input",
-          "datepicker"
+          "toggle"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -6241,8 +6276,8 @@
         ],
         "component_tags": [
           "button",
-          "toggle",
-          "chatbot"
+          "chatbot",
+          "toggle"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -6269,11 +6304,11 @@
         ],
         "component_tags": [
           "button",
+          "hero-section",
           "input",
-          "select",
-          "table",
           "modal",
-          "hero-section"
+          "select",
+          "table"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -6429,10 +6464,10 @@
           "forms-and-inputs"
         ],
         "component_tags": [
+          "datepicker",
           "input",
           "select",
-          "toggle",
-          "datepicker"
+          "toggle"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -6520,8 +6555,8 @@
           "misc-utility"
         ],
         "component_tags": [
-          "modal",
-          "dropdown"
+          "dropdown",
+          "modal"
         ],
         "aliases": [],
         "coverage_status": "inferred",
@@ -6610,10 +6645,10 @@
           "dashboards-and-admin"
         ],
         "component_tags": [
+          "chart",
           "hero-section",
-          "testimonial",
           "table",
-          "chart"
+          "testimonial"
         ],
         "aliases": [],
         "coverage_status": "inferred",

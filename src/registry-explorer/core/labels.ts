@@ -1,3 +1,4 @@
+import { componentTaxonomyLabel } from './componentTaxonomy';
 import type { PrimaryFocus, ComponentTag } from './registry.schema';
 
 export function focusLabel(focus: PrimaryFocus): string {
@@ -19,6 +20,5 @@ export function focusLabel(focus: PrimaryFocus): string {
 }
 
 export function componentLabel(tag: ComponentTag): string {
-  // Replace hyphens with spaces
-  return tag.replace(/-/g, ' ');
+  return componentTaxonomyLabel(tag);
 }

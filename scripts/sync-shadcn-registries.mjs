@@ -121,6 +121,23 @@ function optionalString(value) {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
+function itemSummaryComponentTags(item) {
+  return [
+    ...normalizeStringArray(item.component_tags_existing),
+    ...normalizeStringArray(item.componentTagsExisting),
+    ...normalizeStringArray(item.component_tags_proposed),
+    ...normalizeStringArray(item.componentTagsProposed),
+  ];
+}
+
+function mergedComponentTags(atlas, itemSummaries) {
+  const tags = new Set(normalizeStringArray(atlas.component_tags));
+  itemSummaries.forEach(item => {
+    itemSummaryComponentTags(item).forEach(tag => tags.add(tag));
+  });
+  return [...tags].sort((a, b) => a.localeCompare(b));
+}
+
 function normalizeItemSummary(item) {
   return {
     name: item.name,
@@ -175,7 +192,7 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrich
     },
     atlas: {
       primary_focus: Array.isArray(atlas.primary_focus) ? atlas.primary_focus : [],
-      component_tags: Array.isArray(atlas.component_tags) ? atlas.component_tags : [],
+      component_tags: mergedComponentTags(atlas, itemSummaries),
       aliases: Array.isArray(atlas.aliases) ? atlas.aliases : [],
       coverage_status: itemSummaries.length > 0 ? 'verified' : (typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified'),
       confidence: itemSummaries.length > 0 ? 'high' : (typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown'),

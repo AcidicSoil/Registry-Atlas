@@ -60,6 +60,31 @@ describe('registryData mirror artifact', () => {
     );
   });
 
+  it('surfaces accepted researched tags at registry level for imported sample registries', () => {
+    const byName = new Map(mirrorData.registries.map(registry => [registry.official.name, registry]));
+
+    expect(byName.get('@delego')?.atlas.component_tags).toEqual(expect.arrayContaining([
+      'theme',
+      'status-pill',
+      'decision-pill',
+      'receipt',
+      'audit',
+    ]));
+    expect(byName.get('@delta')?.atlas.component_tags).toEqual(expect.arrayContaining([
+      'otp-input',
+      'code-block',
+      'qr-code',
+      'ai-chat',
+      'map-pointer',
+    ]));
+    expect(byName.get('@diceui')?.atlas.component_tags).toEqual(expect.arrayContaining([
+      'angle-slider',
+      'color-picker',
+      'compare-slider',
+      'cropper',
+    ]));
+  });
+
   it('retains existing v1.0 seeded item summaries after the v1.1 catalog import', () => {
     const assistant = mirrorData.registries.find(registry => registry.official.name === '@assistant-ui');
 

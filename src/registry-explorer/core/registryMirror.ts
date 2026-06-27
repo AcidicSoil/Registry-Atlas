@@ -519,8 +519,8 @@ function validateItemSummaries(
     validateOptionalStringArray(record.dependencies, `${field}.dependencies`, namespace, result);
     validateOptionalStringArray(record.devDependencies, `${field}.devDependencies`, namespace, result);
     validateOptionalStringArray(record.registryDependencies, `${field}.registryDependencies`, namespace, result);
-    validateOptionalStringArray(record.component_tags_existing ?? record.componentTagsExisting, `${field}.component_tags_existing`, namespace, result);
-    validateOptionalStringArray(record.component_tags_proposed ?? record.componentTagsProposed, `${field}.component_tags_proposed`, namespace, result);
+    validateOptionalComponentTagArray(record.component_tags_existing ?? record.componentTagsExisting, `${field}.component_tags_existing`, namespace, result);
+    validateOptionalComponentTagArray(record.component_tags_proposed ?? record.componentTagsProposed, `${field}.component_tags_proposed`, namespace, result);
     validateOptionalStringArray(record.warnings, `${field}.warnings`, namespace, result);
     validateOptionalFiles(record.files, `${field}.files`, namespace, result);
   });
@@ -614,6 +614,39 @@ function validateOptionalCommand(
       value: typeof value === 'string' ? value : String(value),
     });
   }
+}
+
+function validateOptionalComponentTagArray(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined || value === null) return;
+  if (!Array.isArray(value)) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-array',
+      message: `${field} must be an array of component tag strings when present.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: String(value),
+    });
+    return;
+  }
+
+  value.forEach((tag, index) => {
+    if (typeof tag !== 'string' || !COMPONENT_TAG_SET.has(tag as ComponentTag)) {
+      addIssue(result, {
+        code: 'atlas-invalid-component-tag',
+        message: `${field}[${index}] contains an unknown component tag.`,
+        severity: 'error',
+        namespace,
+        field: `${field}[${index}]`,
+        value: typeof tag === 'string' ? tag : String(tag),
+      });
+    }
+  });
 }
 
 function validateOptionalStringArray(
