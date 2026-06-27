@@ -1054,6 +1054,7 @@ table.matrix tbody tr:nth-child(odd) td {
 }
 .discovery-registry,
 .discovery-reason,
+.discovery-description,
 .discovery-item-meta,
 .secondary-links,
 .muted {

@@ -78,6 +78,38 @@ describe('component discovery', () => {
       '@unverified',
     ]);
   });
+
+  it('matches rich imported item metadata and exposes concise catalog-backed counts', () => {
+    const [candidate] = searchComponentCandidates([richRegistry()], 'lucide-react');
+
+    expect(candidate).toEqual(expect.objectContaining({
+      id: '@delta:input-otp',
+      matchedField: 'item',
+      matchedLabel: 'Input OTP',
+      itemDescription: 'OTP input component with six slots.',
+      rawItemUrl: 'https://deltacomponents.dev/r/input-otp.json',
+      docsUrl: 'https://deltacomponents.dev/components/input-otp',
+      evidenceUrl: 'https://deltacomponents.dev/r/registry.json',
+      dependencyCount: 1,
+      registryDependencyCount: 1,
+      fileCount: 1,
+      route: 'https://deltacomponents.dev/r/input-otp.json',
+      installAction: expect.objectContaining({
+        status: 'enabled',
+      }),
+    }));
+    expect(candidate?.installAction.status === 'enabled' ? candidate.installAction.token : null).toBe('@delta/input-otp');
+  });
+
+  it('matches proposed tags from imported item summaries', () => {
+    const [candidate] = searchComponentCandidates([richRegistry()], 'otp-input');
+
+    expect(candidate).toEqual(expect.objectContaining({
+      id: '@delta:input-otp',
+      matchedField: 'item',
+      routeEligible: true,
+    }));
+  });
 });
 
 function verifiedRegistry(): Registry {
@@ -151,6 +183,55 @@ function inferredRegistry(): Registry {
         provenance: 'fixture',
         catalogStatus: 'partial',
         routeEligible: false,
+      },
+    ],
+  };
+}
+
+function richRegistry(): Registry {
+  return {
+    name: '@delta',
+    url: 'https://deltacomponents.dev',
+    description: 'Delta component registry.',
+    primary_focus: ['ai-chat'],
+    component_tags: ['input'],
+    atlas: {
+      aliases: [],
+      coverageStatus: 'verified',
+      confidence: 'high',
+      notes: 'Imported fixture.',
+      catalogStatus: 'available',
+    },
+    mirror: {
+      officialName: '@delta',
+      registryUrlTemplate: 'https://deltacomponents.dev/r/{name}.json',
+      sourceUrl: 'https://ui.shadcn.com/r/registries.json',
+      syncedAt: '2026-06-27T00:00:00.000Z',
+      upstreamCount: 1,
+      localCount: 1,
+      warnings: [],
+    },
+    itemSummaries: [
+      {
+        name: 'Input OTP',
+        slug: 'input-otp',
+        title: 'Input OTP',
+        description: 'OTP input component with six slots.',
+        type: 'registry:ui',
+        category: 'input',
+        componentTagsExisting: ['input'],
+        componentTagsProposed: ['otp-input'],
+        source: 'registry-json',
+        provenance: 'fixture',
+        catalogStatus: 'available',
+        confidence: 'high',
+        routeEligible: true,
+        rawItemUrl: 'https://deltacomponents.dev/r/input-otp.json',
+        docsUrl: 'https://deltacomponents.dev/components/input-otp',
+        evidenceUrl: 'https://deltacomponents.dev/r/registry.json',
+        dependencies: ['lucide-react'],
+        registryDependencies: ['button'],
+        files: [{ path: 'registry/delta-ui/delta/input-otp.tsx', type: 'registry:ui', target: 'components/input-otp.tsx' }],
       },
     ],
   };

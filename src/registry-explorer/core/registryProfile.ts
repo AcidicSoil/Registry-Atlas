@@ -85,7 +85,7 @@ function atlasFacts(registry: Registry): RegistryProfileFact[] {
 
 function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']>[number]): RegistryProfileItemRow {
   const route = item.routeEligible && registry.mirror
-    ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug)
+    ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug, item.rawItemUrl)
     : null;
 
   return {
@@ -94,8 +94,16 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
     type: item.type,
     category: item.category,
     catalogStatus: item.catalogStatus,
+    confidence: item.confidence,
     source: item.source,
     provenance: item.provenance,
+    description: item.description ?? item.title,
+    rawItemUrl: item.rawItemUrl,
+    docsUrl: item.docsUrl,
+    evidenceUrl: item.evidenceUrl,
+    dependencyCount: item.dependencies?.length ?? 0,
+    registryDependencyCount: item.registryDependencies?.length ?? 0,
+    fileCount: item.files?.length ?? 0,
     routeEligible: item.routeEligible,
     route: route?.status === 'available' ? route.url : undefined,
     routeLabel: route?.status === 'available' ? route.label : 'Catalog not verified',
@@ -104,6 +112,7 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
       itemSlug: item.slug,
       routeEligible: item.routeEligible,
       registryUrlTemplate: registry.mirror?.registryUrlTemplate,
+      rawItemUrl: item.rawItemUrl,
     }),
   };
 }

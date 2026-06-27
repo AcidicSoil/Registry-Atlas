@@ -90,6 +90,15 @@ function renderCandidate(
   const source = candidate.registry.mirror?.sourceUrl
     ? renderExternalLink(candidate.registry.mirror.sourceUrl, 'Official source', 'secondary-link')
     : '';
+  const rawItem = candidate.rawItemUrl
+    ? renderExternalLink(candidate.rawItemUrl, 'Open raw item route', 'secondary-link')
+    : '';
+  const docs = candidate.docsUrl
+    ? renderExternalLink(candidate.docsUrl, 'Docs', 'secondary-link')
+    : '';
+  const evidence = candidate.evidenceUrl
+    ? renderExternalLink(candidate.evidenceUrl, 'Evidence', 'secondary-link')
+    : '';
 
   return `
     <article class="discovery-row ${selected ? 'selected' : ''}" data-candidate-id="${escapeHtml(candidate.id)}">
@@ -101,9 +110,12 @@ function renderCandidate(
           ${candidate.itemType ? `<span>${escapeHtml(candidate.itemType)}</span>` : ''}
           ${candidate.itemCategory ? `<span>${escapeHtml(candidate.itemCategory)}</span>` : ''}
           ${candidate.itemSource ? `<span>${escapeHtml(candidate.itemSource)}</span>` : ''}
-          ${candidate.itemProvenance ? `<span>${escapeHtml(candidate.itemProvenance)}</span>` : ''}
-          <span class="catalog-${escapeHtml(candidate.catalogStatus)}">${escapeHtml(candidate.catalogStatus)}</span>
+          <span class="catalog-${escapeHtml(candidate.catalogStatus)}">${escapeHtml(candidate.catalogStatus === 'available' ? 'catalog-backed' : candidate.catalogStatus)}</span>
+          ${candidate.dependencyCount ? `<span>${escapeHtml(String(candidate.dependencyCount))} deps</span>` : ''}
+          ${candidate.registryDependencyCount ? `<span>${escapeHtml(String(candidate.registryDependencyCount))} registry deps</span>` : ''}
+          ${candidate.fileCount ? `<span>${escapeHtml(String(candidate.fileCount))} files</span>` : ''}
         </div>
+        ${candidate.itemDescription ? `<p class="discovery-description">${escapeHtml(candidate.itemDescription)}</p>` : ''}
         <div class="discovery-reason"><strong>Why this matched</strong>: ${escapeHtml(candidate.matchReasons[0] ?? candidate.matchedField)}</div>
         ${renderInstallActions(candidate.installAction, {
           label: itemLabel,
@@ -117,7 +129,7 @@ function renderCandidate(
         <span class="confidence-chip">${escapeHtml(candidate.confidence)} confidence</span>
         ${route}
         <button class="link-button" type="button" data-profile-registry="${escapeHtml(candidate.registry.name)}" data-candidate-id="${escapeHtml(candidate.id)}">View profile</button>
-        <div class="secondary-links">${homepage} ${source}</div>
+        <div class="secondary-links">${homepage} ${source} ${rawItem} ${docs} ${evidence}</div>
       </div>
     </article>
   `;

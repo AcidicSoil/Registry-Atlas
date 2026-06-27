@@ -81,12 +81,15 @@ For release browser checks, use `.planning/phases/04-install-actions-release-har
 Registry Atlas mirrors the official shadcn directory into generated local artifacts. Refresh them explicitly when you want to review upstream changes:
 
 ```bash
+pnpm import:catalog
 pnpm sync:registries
 pnpm validate:data
 pnpm verify
 ```
 
-Review `data/shadcn/sync-report.json` and `public/data/registries.json` before accepting regenerated data.
+`pnpm import:catalog` imports the reviewed v1.1 sample catalog into `data/shadcn/registry-items.json` and writes `data/shadcn/registry-catalog-import-report.json`. `pnpm sync:registries` then merges that Atlas item-summary enrichment with the official shadcn directory mirror.
+
+Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json` before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
 
 ### Building for Production
 
@@ -140,10 +143,11 @@ src/registry-explorer/
 
 The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing the runtime catalog:
 
-1.  Run `pnpm sync:registries`.
-2.  Review `data/shadcn/registries.raw.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json`.
-3.  Run `pnpm validate:data`.
-4.  Run `pnpm verify`.
+1.  Run `pnpm import:catalog` to refresh reviewed Atlas item-summary enrichment.
+2.  Run `pnpm sync:registries` to merge that enrichment with the official shadcn directory mirror.
+3.  Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/registries.raw.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json`.
+4.  Run `pnpm validate:data`.
+5.  Run `pnpm verify`.
 
 For more details, see [docs/registry-explorer-data.md](https://github.com/acidicsoil/registry-atlas/blob/HEAD/docs/registry-explorer-data.md).
 

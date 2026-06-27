@@ -71,7 +71,19 @@ function atlasOf(registry: Registry): NonNullable<Registry['atlas']> {
 
 function matchesItem(item: RegistryItemSummary, query: string): boolean {
   if (!query) return true;
-  return [item.name, item.slug, item.type, item.category]
+  return [
+    item.name,
+    item.slug,
+    item.title,
+    item.description,
+    item.type,
+    item.category,
+    ...(item.componentTagsExisting ?? []),
+    ...(item.componentTagsProposed ?? []),
+    ...(item.dependencies ?? []),
+    ...(item.devDependencies ?? []),
+    ...(item.registryDependencies ?? []),
+  ]
     .filter(Boolean)
     .some(value => normalizeSearchTerm(String(value)).includes(query));
 }
@@ -80,7 +92,7 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
   const atlas = atlasOf(registry);
   const exact = query.length > 0 && (normalizeSearchTerm(item.name) === query || item.slug === query);
   const route = item.routeEligible && registry.mirror
-    ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug)
+    ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug, item.rawItemUrl)
     : null;
 
   return {
@@ -92,8 +104,15 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
     itemSlug: item.slug,
     itemType: item.type,
     itemCategory: item.category,
+    itemDescription: item.description ?? item.title,
     itemSource: item.source,
     itemProvenance: item.provenance,
+    rawItemUrl: item.rawItemUrl,
+    docsUrl: item.docsUrl,
+    evidenceUrl: item.evidenceUrl,
+    dependencyCount: item.dependencies?.length ?? 0,
+    registryDependencyCount: item.registryDependencies?.length ?? 0,
+    fileCount: item.files?.length ?? 0,
     catalogStatus: item.catalogStatus,
     routeEligible: item.routeEligible,
     route: route?.status === 'available' ? route.url : undefined,
@@ -102,6 +121,7 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
       itemSlug: item.slug,
       routeEligible: item.routeEligible,
       registryUrlTemplate: registry.mirror?.registryUrlTemplate,
+      rawItemUrl: item.rawItemUrl,
     }),
     matchReasons: [exact ? 'Exact item match' : 'Known item summary match'],
     coverageStatus: atlas.coverageStatus,

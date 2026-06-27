@@ -62,10 +62,19 @@ function renderItems(items: readonly RegistryProfileItemRow[], queuedTokens: Rea
           <span>${escapeHtml(item.slug)}</span>
           ${item.type ? `<span>${escapeHtml(item.type)}</span>` : ''}
           ${item.category ? `<span>${escapeHtml(item.category)}</span>` : ''}
-          <span class="catalog-${escapeHtml(item.catalogStatus)}">${escapeHtml(item.catalogStatus)}</span>
+          <span class="catalog-${escapeHtml(item.catalogStatus)}">${escapeHtml(item.catalogStatus === 'available' ? 'catalog-backed' : item.catalogStatus)}</span>
+          ${item.confidence ? `<span>${escapeHtml(item.confidence)} confidence</span>` : ''}
           <span>${escapeHtml(item.source)}</span>
-          <span>${escapeHtml(item.provenance)}</span>
+          ${item.dependencyCount ? `<span>${escapeHtml(String(item.dependencyCount))} deps</span>` : ''}
+          ${item.registryDependencyCount ? `<span>${escapeHtml(String(item.registryDependencyCount))} registry deps</span>` : ''}
+          ${item.fileCount ? `<span>${escapeHtml(String(item.fileCount))} files</span>` : ''}
           <span>${item.routeEligible ? 'route eligible' : 'route unavailable'}</span>
+        </div>
+        ${item.description ? `<p class="discovery-description">${escapeHtml(item.description)}</p>` : ''}
+        <div class="secondary-links">
+          ${item.rawItemUrl ? renderExternalLink(item.rawItemUrl, 'Open raw item route', 'secondary-link') : ''}
+          ${item.docsUrl ? renderExternalLink(item.docsUrl, 'Docs', 'secondary-link') : ''}
+          ${item.evidenceUrl ? renderExternalLink(item.evidenceUrl, 'Evidence', 'secondary-link') : ''}
         </div>
         ${renderInstallActions(item.installAction, {
           label: item.name,
