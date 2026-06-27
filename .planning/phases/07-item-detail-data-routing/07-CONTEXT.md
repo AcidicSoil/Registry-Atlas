@@ -27,23 +27,29 @@ This phase does **not** build the hover/peek card UI, item type filters, related
 - **D-05:** Technical detail such as dependencies, registry dependencies, files, targets, and source metadata can appear after the primary component area, but should support evaluation rather than dominate the page.
 - **D-06:** The page should preserve the v1.2 product direction: users are browsing/evaluating components from one place so they do not have to open every registry site manually.
 
+### Card Density and Cleanup
+
+- **D-07:** Discovery/profile cards should be compact summaries, not crowded detail pages. They should not try to show every metadata field, source link, dependency count, and route action inline.
+- **D-08:** Move technical/source/detail content out of result cards and into the item page. Cards should primarily help users choose a component and open the component page.
+- **D-09:** Remove `Open raw item route` from normal card action clusters. User-facing route language should be `View component`, `Open component`, or `Open component page`.
+
 ### Loading and Fallback States
 
-- **D-07:** If Registry Atlas cannot show the component visual or full item content yet, the fallback should point users to the component/item page or docs/demo/source page, not raw JSON.
-- **D-08:** Failure states should be honest and specific, but not feel like a dead end. They can explain preview/item detail availability and then offer the best user-facing next action.
-- **D-09:** Invalid JSON, fetch failure, CORS/network blocks, missing item route, and unavailable catalog states should render safe user-facing messages without crashing the app or implying Registry Atlas has audited the component.
+- **D-10:** If Registry Atlas cannot show the component visual or full item content yet, the fallback should point users to the component/item page or docs/demo/source page, not raw JSON.
+- **D-11:** Failure states should be honest and specific, but not feel like a dead end. They can explain preview/item detail availability and then offer the best user-facing next action.
+- **D-12:** Invalid JSON, fetch failure, CORS/network blocks, missing item route, and unavailable catalog states should render safe user-facing messages without crashing the app or implying Registry Atlas has audited the component.
 
 ### Command and Action Placement
 
-- **D-10:** Split actions by user intent. User-facing component actions should live near the top of the item page, close to the component identity/visual area.
-- **D-11:** User-facing actions include copy install, inspect/view command, open component/docs/demo page when available, and any safe item/source link that helps the user see the component.
-- **D-12:** Developer/source/maintainer details should be lower priority. Do not let raw/developer affordances crowd the main component browsing path.
+- **D-13:** Split actions by user intent. User-facing component actions should live near the top of the item page, close to the component identity/visual area.
+- **D-14:** User-facing actions include copy install, inspect/view command, open component/docs/demo page when available, and any safe item/source link that helps the user see the component.
+- **D-15:** Developer/source/maintainer details should be lower priority. Do not let raw/developer affordances crowd the main component browsing path.
 
 ### Raw JSON Policy
 
-- **D-13:** Do not show raw JSON in the normal user UI. The user explicitly does not want JSON taking up space or cluttering the interface.
-- **D-14:** Raw JSON is for agents, maintainers, validation, tests, internal loading, and debugging paths. It should not be a normal item-page section, tab, or prominent action.
-- **D-15:** The planner may preserve a raw item/source URL internally or in maintainable metadata, but the user-facing item route should not require users to read or click around JSON to understand the component.
+- **D-16:** Do not show raw JSON in the normal user UI. The user explicitly does not want JSON taking up space or cluttering the interface.
+- **D-17:** Raw JSON is for agents, maintainers, validation, tests, internal loading, and debugging paths. It should not be a normal item-page section, tab, or prominent action.
+- **D-18:** The planner may preserve a raw item/source URL internally or in maintainable metadata, but the user-facing item route should not require users to read or click around JSON to understand the component.
 
 ### the agent's Discretion
 
@@ -136,6 +142,7 @@ This phase does **not** build the hover/peek card UI, item type filters, related
 <specifics>
 ## Specific Ideas
 
+- The user provided screenshot feedback that the current discovery/profile cards are overcrowded with metadata and link clusters. Phase 7 should resolve this by making cards compact summaries and moving technical/source/detail content into the item page.
 - The user clarified that “inspect it” means seeing the component/item, not seeing JSON.
 - The user explicitly rejected raw JSON in the user interface: “JSON is for agents and shit. I don't need to see that.”
 - The user emphasized that raw JSON would take up space, clutter the interface, and add noise that does not help component browsing.

@@ -29,7 +29,7 @@ Phase 7 must extend the existing vanilla TypeScript + CSS visual system in `publ
 
 ## Product UI Principle
 
-The item route is a **component page**, not a JSON inspector.
+The item route is a **component page**, not a JSON inspector. Existing result/profile cards are **summaries**, not detail pages.
 
 The page should answer, in order:
 
@@ -183,6 +183,56 @@ Do not send users to raw JSON as the primary visual fallback.
 | Destructive confirmation | not applicable; Phase 7 has no destructive action |
 
 Tone: direct, practical, no blame. Avoid developer-only phrases in user-facing copy such as `CORS`, `schema`, or `JSON` unless the page is clearly presenting a low-priority technical diagnostic.
+
+---
+
+## Existing Card Cleanup Contract
+
+The current discovery/profile cards must be de-cluttered as part of Phase 7. The screenshot feedback shows cards becoming cramped because too many metadata fields and links are rendered directly inside each result card.
+
+### Result/Profile Item Cards Must Become Summaries
+
+Cards that appear in discovery results or registry profile item lists should act as compact entry points into the item page. They should not try to show every detail inline.
+
+Each compact card should prioritize:
+
+1. Component/item name.
+2. Registry namespace.
+3. One short description or one-line purpose.
+4. At most one row of essential chips: status, confidence, type/category, and up to two taxonomy chips.
+5. One primary action: `View component` or `Open component`.
+6. Copy-only install/inspect actions only when they fit without crowding; otherwise they can move to the item page.
+
+### Move Details Out of Cards
+
+The following should move from crowded cards into the item detail page or lower-priority compact disclosure areas:
+
+- Long descriptions.
+- Full dependency counts plus dependency lists.
+- File counts plus file/path lists.
+- Source/provenance/evidence links.
+- Multiple secondary links in a single horizontal row.
+- Raw item/source route labels.
+- Repeated route/status/debug labels.
+
+### Raw Route Link Cleanup
+
+Do not show `Open raw item route` in normal discovery/profile cards. Replace user-facing route language with component language:
+
+- Use `View component` or `Open component` for the internal Atlas item route.
+- Use `Open component page` for docs/demo/preview pages.
+- Keep raw item URLs internal or maintainer-facing; they should not appear as crowded card actions.
+
+### Density Limits
+
+A normal result card should remain readable at narrow widths:
+
+- No more than two visible metadata rows before the action row.
+- No horizontal link cluster with more than two links.
+- No wrapping action/link row that pushes the card into a tall, noisy block.
+- No raw/debug/source wording in the primary card area.
+
+If additional details are useful, the card should route to the item page instead of expanding inline.
 
 ---
 
