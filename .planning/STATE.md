@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: milestone
 current_phase: 8
-status: verifying
-stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-06-27T18:43:26.664Z"
+status: paused
+stopped_at: Phase 8 paused before planning
+last_updated: "2026-06-27T19:03:39.141Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 2
@@ -22,13 +22,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-09)
 
 **Core value:** Users can quickly find the right shadcn-compatible registry or component and act on it without manually browsing dozens of registry sites.
-**Current focus:** Phase 07 — Item Detail Data & Routing
+**Current focus:** Phase 08 — Component Peek & Alternatives UI
 
 ## Current Position
 
 Phase: 8
 Plan: Not started
-Status: Phase complete — ready for verification
+Status: Paused — ready for Phase 8 planning
 Last activity: 2026-06-27
 
 ## Performance Metrics
@@ -110,10 +110,11 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T18:43:26.657Z
-Stopped at: Phase 8 UI-SPEC approved
-Resume file: .planning/phases/08-component-peek-alternatives-ui/08-UI-SPEC.md
+Last session: 2026-06-27T19:03:33.448Z
+Stopped at: Phase 8 paused before planning
+Resume file: .planning/phases/08-component-peek-alternatives-ui/.continue-here.md
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Resume Phase 8 planning with `$gsd-plan-phase 8`.
+- Or restore the paused session with `$gsd-resume-work`.
