@@ -4,8 +4,8 @@ milestone: v1.2
 milestone_name: milestone
 current_phase: 8
 status: verifying
-stopped_at: Phase 8 context gathered
-last_updated: "2026-06-27T17:32:28.152Z"
+stopped_at: Phase 8 UI-SPEC approved
+last_updated: "2026-06-27T18:43:26.664Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 2
@@ -110,9 +110,9 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-27T17:32:28.144Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/phases/08-component-peek-alternatives-ui/08-CONTEXT.md
+Last session: 2026-06-27T18:43:26.657Z
+Stopped at: Phase 8 UI-SPEC approved
+Resume file: .planning/phases/08-component-peek-alternatives-ui/08-UI-SPEC.md
 
 ## Operator Next Steps
 
