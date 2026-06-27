@@ -10,12 +10,12 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Expanded Catalog
 
-- [ ] **CAT-01**: User can discover component items from the newly researched `@delego`, `@delta`, and `@diceui` registries in Registry Atlas.
-- [ ] **CAT-02**: Maintainer can import or stage normalized researched registry/item data from `registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json` without manually retyping records.
-- [ ] **CAT-03**: Registry records can show useful metadata from the research bundle, including homepage/source, catalog availability, framework, license where known, and route eligibility.
-- [ ] **CAT-04**: Item summaries can preserve item slug/name, title/description, type, category/tags, dependencies, registry dependencies, files/targets where available, source/evidence URL, install token, view command, and install command.
-- [ ] **CAT-05**: Validation distinguishes real catalog-backed item data from inferred or unavailable data so Registry Atlas does not overstate coverage.
-- [ ] **CAT-06**: Existing v1.0 official mirror data remains valid and usable after adding the new researched records.
+- [x] **CAT-01**: User can discover component items from the newly researched `@delego`, `@delta`, and `@diceui` registries in Registry Atlas.
+- [x] **CAT-02**: Maintainer can import or stage normalized researched registry/item data from `registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json` without manually retyping records.
+- [x] **CAT-03**: Registry records can show useful metadata from the research bundle, including homepage/source, catalog availability, framework, license where known, and route eligibility.
+- [x] **CAT-04**: Item summaries can preserve item slug/name, title/description, type, category/tags, dependencies, registry dependencies, files/targets where available, source/evidence URL, install token, view command, and install command.
+- [x] **CAT-05**: Validation distinguishes real catalog-backed item data from inferred or unavailable data so Registry Atlas does not overstate coverage.
+- [x] **CAT-06**: Existing v1.0 official mirror data remains valid and usable after adding the new researched records.
 
 ### Component Search and Taxonomy
 
@@ -70,22 +70,36 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CAT-01 | Phase 5 | Planned |
-| CAT-02 | Phase 5 | Planned |
-| CAT-03 | Phase 5 | Planned |
-| CAT-04 | Phase 5 | Planned |
-| CAT-05 | Phase 5 | Planned |
-| CAT-06 | Phase 5 | Planned |
+| CAT-01 | Phase 5 | Complete |
+| CAT-02 | Phase 5 | Complete |
+| CAT-03 | Phase 5 | Complete |
+| CAT-04 | Phase 5 | Complete |
+| CAT-05 | Phase 5 | Complete |
+| CAT-06 | Phase 5 | Complete |
 | DISC-01 | Phase 6 | Planned |
 | DISC-02 | Phase 6 | Planned |
 | DISC-03 | Phase 6 | Planned |
 | DISC-04 | Phase 6 | Planned |
 | DISC-05 | Phase 6 | Planned |
+| ITEM-01 | Future v1.2 | Candidate |
+| ITEM-02 | Future v1.2 | Candidate |
+| ITEM-03 | Future v1.2 | Candidate |
+| ITEM-04 | Future v1.2 | Candidate |
+| ITEM-05 | Future v1.2 | Candidate |
+| MATRIX-01 | Future v1.3 | Candidate |
+| MATRIX-02 | Future v1.3 | Candidate |
+| MATRIX-03 | Future v1.3 | Candidate |
+| AUTO-01 | Future v1.4 | Candidate |
+| AUTO-02 | Future v1.4 | Candidate |
+| AUTO-03 | Future v1.4 | Candidate |
+| AUTO-04 | Future v1.4 | Candidate |
 
 **Coverage:**
 
 - v1.1 requirements: 11 total
-- Mapped to phases: 11
+- Phase 5 complete: 6
+- Phase 6 planned: 5
+- Future candidate requirements: 12
 - Unmapped: 0
 
 ---
