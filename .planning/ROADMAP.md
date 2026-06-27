@@ -86,12 +86,12 @@ Plans:
 - `.planning/codebase/CONVENTIONS.md`
 - `.planning/codebase/TESTING.md`
 
-**Plans:** 0/3 plans executed
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 06-01-taxonomy-vocabulary-data-PLAN.md — Add researched taxonomy tags, labels, categories, and generated-data normalization.
+- [x] 06-01-taxonomy-vocabulary-data-PLAN.md — Add researched taxonomy tags, labels, categories, and generated-data normalization.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -124,7 +124,7 @@ Phases execute in numeric order: 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Expanded Component Catalog | 3/3 | Complete    | 2026-06-27 |
-| 6. Component Search & Taxonomy | 0/3 | Planned    |  |
+| 6. Component Search & Taxonomy | 1/3 | In Progress|  |
 
 ## Next
 
