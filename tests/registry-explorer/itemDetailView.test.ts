@@ -67,7 +67,7 @@ function registryFixture(options: { title?: string; description?: string; filePa
     name: '@delta',
     url: 'https://delta.example',
     description: 'Delta registry fixture.',
-    primary_focus: ['code-and-markdown'],
+    primary_focus: ['support'],
     component_tags: ['code-block'],
     atlas: {
       aliases: [],

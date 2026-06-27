@@ -80,7 +80,7 @@ describe('registry item detail', () => {
       status: 200,
       statusText: 'OK',
       json: async () => { throw new SyntaxError('bad json'); },
-    } as Response));
+    } as unknown as Response));
 
     expect(result).toEqual(expect.objectContaining({ status: 'invalid-json' }));
   });
@@ -112,7 +112,7 @@ function registryFixture(): Registry {
     name: '@delta',
     url: 'https://delta.example',
     description: 'Delta registry fixture.',
-    primary_focus: ['code-and-markdown'],
+    primary_focus: ['support'],
     component_tags: ['code-block', 'card'],
     atlas: {
       aliases: [],
