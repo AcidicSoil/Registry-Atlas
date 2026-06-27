@@ -86,12 +86,25 @@ Plans:
 - `.planning/codebase/CONVENTIONS.md`
 - `.planning/codebase/TESTING.md`
 
-**Plans**: 0 plans
+**Plans:** 0/3 plans executed
 
 Plans:
-**Wave 1** *(blocked on Phase 5 completion)*
+**Wave 1**
 
-- [ ] TBD (run `$gsd-discuss-phase --text 6`, then `$gsd-plan-phase 6`)
+- [ ] 06-01-taxonomy-vocabulary-data-PLAN.md — Add researched taxonomy tags, labels, categories, and generated-data normalization.
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 06-02-search-alias-category-matching-PLAN.md — Add simple aliases, category matching, match reasons, and ranking behavior.
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 06-03-status-aware-taxonomy-ui-PLAN.md — Surface taxonomy/category/status labels in existing discovery/profile UI and docs.
+
+**Cross-cutting constraints:**
+
+- Use the already-prepared research bundle and Phase 5 outputs.
+- Keep Phase 6 incremental; defer layout audit, item-detail viewer, dynamic matrix, and research automation.
 
 ## Future Milestones
 
@@ -111,8 +124,8 @@ Phases execute in numeric order: 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Expanded Component Catalog | 3/3 | Complete    | 2026-06-27 |
-| 6. Component Search & Taxonomy | 0/TBD | Planned | — |
+| 6. Component Search & Taxonomy | 0/3 | Planned    |  |
 
 ## Next
 
-Run `$gsd-execute-phase 5` to implement the expanded component catalog plans.
+Run `$gsd-execute-phase 6` to implement the component search and taxonomy plans.
