@@ -43,7 +43,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - `.planning/codebase/CONVENTIONS.md`
 - `.planning/codebase/TESTING.md`
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 **Wave 1**
@@ -52,7 +52,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 05-02-rich-item-schema-validation-PLAN.md — Preserve and validate richer imported item metadata.
+- [x] 05-02-rich-item-schema-validation-PLAN.md — Preserve and validate richer imported item metadata.
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -110,7 +110,7 @@ Phases execute in numeric order: 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 5. Expanded Component Catalog | 1/3 | In Progress|  |
+| 5. Expanded Component Catalog | 2/3 | In Progress|  |
 | 6. Component Search & Taxonomy | 0/TBD | Planned | — |
 
 ## Next
