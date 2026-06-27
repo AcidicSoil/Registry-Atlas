@@ -245,6 +245,8 @@ export interface ComponentCandidate {
   itemDescription?: string;
   taxonomyTagLabels?: readonly string[];
   taxonomyCategoryLabels?: readonly string[];
+  statusDisplayLabel?: string;
+  statusExplanation?: string;
   itemSource?: string;
   itemProvenance?: string;
   rawItemUrl?: string;
@@ -327,6 +329,8 @@ export interface RegistryProfileItemRow {
   description?: string;
   taxonomyTagLabels?: readonly string[];
   taxonomyCategoryLabels?: readonly string[];
+  statusDisplayLabel?: string;
+  statusExplanation?: string;
   rawItemUrl?: string;
   docsUrl?: string;
   evidenceUrl?: string;

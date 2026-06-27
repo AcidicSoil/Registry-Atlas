@@ -168,10 +168,39 @@ function matchesDirectTaxonomyTerm(tag: ComponentTag, queryTerms: readonly strin
   return values.some(value => matchesDirectQueryTerm(value, queryTerms));
 }
 
+function statusDisplayFor(
+  catalogStatus: RegistryItemSummary['catalogStatus'],
+  coverageStatus: NonNullable<Registry['atlas']>['coverageStatus'],
+): { label: string; explanation: string } {
+  if (catalogStatus === 'available') {
+    return {
+      label: 'catalog-backed',
+      explanation: 'Registry Atlas has a concrete catalog item for this result.',
+    };
+  }
+  if (coverageStatus === 'inferred' || catalogStatus === 'partial') {
+    return {
+      label: 'inferred',
+      explanation: 'Registry Atlas can match this result, but catalog evidence is incomplete.',
+    };
+  }
+  if (catalogStatus === 'unavailable') {
+    return {
+      label: 'unavailable',
+      explanation: 'No verified item catalog is available for this result yet.',
+    };
+  }
+  return {
+    label: 'manual follow-up',
+    explanation: 'This result needs manual review before stronger item actions are shown.',
+  };
+}
+
 function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query: string): ComponentCandidate {
   const atlas = atlasOf(registry);
   const exact = query.length > 0 && (normalizeSearchTerm(item.name) === query || normalizeSearchTerm(item.slug) === query);
   const tags = itemTaxonomyTags(item);
+  const statusDisplay = statusDisplayFor(item.catalogStatus, atlas.coverageStatus);
   const route = item.routeEligible && registry.mirror
     ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug, item.rawItemUrl)
     : null;
@@ -188,6 +217,8 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
     itemDescription: item.description ?? item.title,
     taxonomyTagLabels: taxonomyTagLabels(tags),
     taxonomyCategoryLabels: taxonomyCategoryLabels(tags),
+    statusDisplayLabel: statusDisplay.label,
+    statusExplanation: statusDisplay.explanation,
     itemSource: item.source,
     itemProvenance: item.provenance,
     rawItemUrl: item.rawItemUrl,

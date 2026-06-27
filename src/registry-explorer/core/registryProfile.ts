@@ -89,6 +89,34 @@ function atlasFacts(registry: Registry): RegistryProfileFact[] {
   ];
 }
 
+function statusDisplayFor(
+  catalogStatus: NonNullable<Registry['itemSummaries']>[number]['catalogStatus'],
+  coverageStatus: NonNullable<Registry['atlas']>['coverageStatus'],
+): { label: string; explanation: string } {
+  if (catalogStatus === 'available') {
+    return {
+      label: 'catalog-backed',
+      explanation: 'Registry Atlas has a concrete catalog item for this result.',
+    };
+  }
+  if (coverageStatus === 'inferred' || catalogStatus === 'partial') {
+    return {
+      label: 'inferred',
+      explanation: 'Registry Atlas can match this result, but catalog evidence is incomplete.',
+    };
+  }
+  if (catalogStatus === 'unavailable') {
+    return {
+      label: 'unavailable',
+      explanation: 'No verified item catalog is available for this result yet.',
+    };
+  }
+  return {
+    label: 'manual follow-up',
+    explanation: 'This result needs manual review before stronger item actions are shown.',
+  };
+}
+
 function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']>[number]): RegistryProfileItemRow {
   const route = item.routeEligible && registry.mirror
     ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug, item.rawItemUrl)
@@ -103,6 +131,7 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
     .filter(Boolean)
     .map(category => componentTaxonomyCategoryLabel(category))
     .filter(Boolean))];
+  const statusDisplay = statusDisplayFor(item.catalogStatus, atlasOf(registry).coverageStatus);
 
   return {
     name: item.name,
@@ -116,6 +145,8 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
     description: item.description ?? item.title,
     taxonomyTagLabels: taxonomyTags.map(componentTaxonomyLabel),
     taxonomyCategoryLabels,
+    statusDisplayLabel: statusDisplay.label,
+    statusExplanation: statusDisplay.explanation,
     rawItemUrl: item.rawItemUrl,
     docsUrl: item.docsUrl,
     evidenceUrl: item.evidenceUrl,

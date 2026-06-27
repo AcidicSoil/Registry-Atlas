@@ -50,6 +50,13 @@ function renderFacts(facts: readonly RegistryProfileFact[]): string {
   `).join('')}</dl>`;
 }
 
+
+function renderChipList(labels: readonly string[] | undefined, className: string): string {
+  return (labels ?? [])
+    .map(label => `<span class="${className}">${escapeHtml(label)}</span>`)
+    .join('');
+}
+
 function renderItems(items: readonly RegistryProfileItemRow[], queuedTokens: ReadonlySet<string>): string {
   if (items.length === 0) {
     return '<p class="muted">Catalog not verified</p>';
@@ -62,7 +69,9 @@ function renderItems(items: readonly RegistryProfileItemRow[], queuedTokens: Rea
           <span>${escapeHtml(item.slug)}</span>
           ${item.type ? `<span>${escapeHtml(item.type)}</span>` : ''}
           ${item.category ? `<span>${escapeHtml(item.category)}</span>` : ''}
-          <span class="catalog-${escapeHtml(item.catalogStatus)}">${escapeHtml(item.catalogStatus === 'available' ? 'catalog-backed' : item.catalogStatus)}</span>
+          ${renderChipList(item.taxonomyCategoryLabels, 'taxonomy-category-chip')}
+          ${renderChipList(item.taxonomyTagLabels, 'taxonomy-tag-chip')}
+          <span class="catalog-${escapeHtml(item.catalogStatus)}" title="${escapeHtml(item.statusExplanation ?? '')}">${escapeHtml(item.statusDisplayLabel ?? (item.catalogStatus === 'available' ? 'catalog-backed' : item.catalogStatus))}</span>
           ${item.confidence ? `<span>${escapeHtml(item.confidence)} confidence</span>` : ''}
           <span>${escapeHtml(item.source)}</span>
           ${item.dependencyCount ? `<span>${escapeHtml(String(item.dependencyCount))} deps</span>` : ''}

@@ -76,6 +76,13 @@ export function renderDiscoveryContent(
   `;
 }
 
+
+function renderChipList(labels: readonly string[] | undefined, className: string): string {
+  return (labels ?? [])
+    .map(label => `<span class="${className}">${escapeHtml(label)}</span>`)
+    .join('');
+}
+
 function renderCandidate(
   candidate: ComponentCandidate,
   selected: boolean,
@@ -110,7 +117,9 @@ function renderCandidate(
           ${candidate.itemType ? `<span>${escapeHtml(candidate.itemType)}</span>` : ''}
           ${candidate.itemCategory ? `<span>${escapeHtml(candidate.itemCategory)}</span>` : ''}
           ${candidate.itemSource ? `<span>${escapeHtml(candidate.itemSource)}</span>` : ''}
-          <span class="catalog-${escapeHtml(candidate.catalogStatus)}">${escapeHtml(candidate.catalogStatus === 'available' ? 'catalog-backed' : candidate.catalogStatus)}</span>
+          ${renderChipList(candidate.taxonomyCategoryLabels, 'taxonomy-category-chip')}
+          ${renderChipList(candidate.taxonomyTagLabels, 'taxonomy-tag-chip')}
+          <span class="catalog-${escapeHtml(candidate.catalogStatus)}" title="${escapeHtml(candidate.statusExplanation ?? '')}">${escapeHtml(candidate.statusDisplayLabel ?? (candidate.catalogStatus === 'available' ? 'catalog-backed' : candidate.catalogStatus))}</span>
           ${candidate.dependencyCount ? `<span>${escapeHtml(String(candidate.dependencyCount))} deps</span>` : ''}
           ${candidate.registryDependencyCount ? `<span>${escapeHtml(String(candidate.registryDependencyCount))} registry deps</span>` : ''}
           ${candidate.fileCount ? `<span>${escapeHtml(String(candidate.fileCount))} files</span>` : ''}

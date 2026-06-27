@@ -1314,3 +1314,15 @@ table.matrix tbody tr:nth-child(odd) td {
   }
   .discovery-actions { justify-items: start; }
 }
+
+.taxonomy-category-chip,
+.taxonomy-tag-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.taxonomy-category-chip {
+  color: var(--accent, #ffd95e);
+}

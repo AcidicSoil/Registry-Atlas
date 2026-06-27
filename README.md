@@ -89,6 +89,8 @@ pnpm verify
 
 `pnpm import:catalog` imports the reviewed v1.1 sample catalog into `data/shadcn/registry-items.json` and writes `data/shadcn/registry-catalog-import-report.json`. `pnpm sync:registries` then merges that Atlas item-summary enrichment with the official shadcn directory mirror.
 
+Taxonomy/search labels come from the controlled vocabulary in `src/registry-explorer/core/componentTaxonomy.ts`. Keep proposed tags backed by imported item examples, and use catalog-backed, inferred, unavailable, or manual-follow-up wording when coverage is incomplete.
+
 Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json` before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
 
 ### Building for Production
