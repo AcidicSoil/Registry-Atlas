@@ -47,7 +47,7 @@ The milestone preserves the static Vite/vanilla TypeScript deployment model and 
 - `src/registry-explorer/core/registry.schema.ts`
 - `src/registry-explorer/ui/shell.ts`
 
-**Plans:** 0/0 plans created
+**Plans:** 1/2 plans executed
 
 **Cross-cutting constraints:**
 
@@ -109,7 +109,7 @@ Phases execute in numeric order: 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Item Detail Data & Routing | 0/0 | Pending | — |
+| 7. Item Detail Data & Routing | 1/2 | In Progress|  |
 | 8. Component Peek & Alternatives UI | 0/0 | Pending | — |
 
 ## Next

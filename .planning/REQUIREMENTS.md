@@ -17,12 +17,12 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Item Detail Viewer
 
-- [ ] **ITEM-01**: User can open an internal item route with URL state like `?view=item&registry=@delta&item=code-block`.
-- [ ] **ITEM-02**: User can load real registry item JSON through a typed `RegistryItemDetail` model rather than only seeing summary metadata.
+- [x] **ITEM-01**: User can open an internal item route with URL state like `?view=item&registry=@delta&item=code-block`.
+- [x] **ITEM-02**: User can load real registry item JSON through a typed `RegistryItemDetail` model rather than only seeing summary metadata.
 - [ ] **ITEM-03**: User can view item overview data including title, description, registry namespace, item slug, type, category, taxonomy labels, visual status, and catalog status.
 - [ ] **ITEM-04**: User can view item technical details including dependencies, dev dependencies, registry dependencies, files, target paths, and escaped raw JSON.
 - [ ] **ITEM-05**: User can copy shadcn `view` and `add` commands from the item detail surface without the browser executing either command.
-- [ ] **ITEM-06**: User sees safe failure states when an item route is unavailable, fetch fails, JSON is invalid, CORS/network access blocks loading, or a registry lacks a machine-readable item route.
+- [x] **ITEM-06**: User sees safe failure states when an item route is unavailable, fetch fails, JSON is invalid, CORS/network access blocks loading, or a registry lacks a machine-readable item route.
 
 ### Filtering and Evaluation
 
@@ -86,12 +86,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | PEEK-02 | Phase 8 | Pending |
 | PEEK-03 | Phase 8 | Pending |
 | PEEK-04 | Phase 8 | Pending |
-| ITEM-01 | Phase 7 | Pending |
-| ITEM-02 | Phase 7 | Pending |
+| ITEM-01 | Phase 7 | Complete |
+| ITEM-02 | Phase 7 | Complete |
 | ITEM-03 | Phase 7 | Pending |
 | ITEM-04 | Phase 7 | Pending |
 | ITEM-05 | Phase 7 | Pending |
-| ITEM-06 | Phase 7 | Pending |
+| ITEM-06 | Phase 7 | Complete |
 | FILT-01 | Phase 8 | Pending |
 | EVAL-01 | Phase 8 | Pending |
 | EVAL-02 | Phase 8 | Pending |
