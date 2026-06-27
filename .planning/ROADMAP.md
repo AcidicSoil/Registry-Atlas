@@ -109,7 +109,7 @@ Phases execute in numeric order: 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Item Detail Data & Routing | 2/2 | Complete   | 2026-06-27 |
+| 7. Item Detail Data & Routing | 2/2 | Complete    | 2026-06-27 |
 | 8. Component Peek & Alternatives UI | 0/0 | Pending | — |
 
 ## Next
