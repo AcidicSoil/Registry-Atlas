@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.1
 milestone_name: milestone
-status: Awaiting next milestone
-stopped_at: "Phase 04 shipped in PR #2; next step is merge after CI, then complete milestone v1.0."
-last_updated: "2026-06-09T00:08:02.590Z"
-last_activity: 2026-06-09 — Milestone v1.0 completed and archived
+status: Defining requirements
+stopped_at: Phase 5 planned
+last_updated: "2026-06-27T09:41:16.336Z"
+last_activity: 2026-06-27 — Milestone v1.1 started
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 17
-  completed_plans: 17
-  percent: 100
+  total_phases: 2
+  completed_phases: 0
+  total_plans: 3
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -25,10 +25,10 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 
 ## Current Position
 
-Phase: Milestone v1.0 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-06-09 — Milestone v1.0 completed and archived
+Status: Defining requirements
+Last activity: 2026-06-27 — Milestone v1.1 started
 
 ## Performance Metrics
 
@@ -100,9 +100,9 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-06-09T00:08:00Z
-Stopped at: Milestone v1.0 complete and archived; next step is `/gsd-new-milestone`.
-Resume file: None
+Last session: 2026-06-27T09:41:16.332Z
+Stopped at: Phase 5 planned
+Resume file: .planning/phases/05-expanded-component-catalog/05-01-import-normalized-catalog-PLAN.md
 
 ## Operator Next Steps
 
