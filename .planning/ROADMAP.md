@@ -14,7 +14,7 @@ The milestone preserves the static Vite/vanilla TypeScript deployment model and 
 - v1.2 starts at Phase 7.
 - Decimal phases remain reserved for urgent insertions.
 
-- [ ] **Phase 7: Item Detail Data & Routing** - Users can open internal item detail routes backed by typed registry item JSON loading, safe failure states, raw JSON, dependency/file detail, and copy-only view/add commands.
+- [x] **Phase 7: Item Detail Data & Routing** - Users can open internal item detail routes backed by typed registry item JSON loading, safe failure states, raw JSON, dependency/file detail, and copy-only view/add commands. (completed 2026-06-27)
 - [ ] **Phase 8: Component Peek & Alternatives UI** - Users can quickly peek at component visuals/metadata from existing discovery/profile surfaces, filter by item type, and see related/similar alternatives without unsupported quality claims.
 
 ## Phase Details
@@ -47,7 +47,7 @@ The milestone preserves the static Vite/vanilla TypeScript deployment model and 
 - `src/registry-explorer/core/registry.schema.ts`
 - `src/registry-explorer/ui/shell.ts`
 
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 **Cross-cutting constraints:**
 
@@ -109,7 +109,7 @@ Phases execute in numeric order: 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. Item Detail Data & Routing | 1/2 | In Progress|  |
+| 7. Item Detail Data & Routing | 2/2 | Complete   | 2026-06-27 |
 | 8. Component Peek & Alternatives UI | 0/0 | Pending | — |
 
 ## Next
