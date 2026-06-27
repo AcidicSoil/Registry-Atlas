@@ -78,7 +78,7 @@ Exceptions: existing CSS includes 5px/6px/10px/11px/12px/14px/18px/20px/22px/28p
 | Secondary accent | #65d4ff | Secondary highlight in gradients, non-primary information emphasis |
 | Destructive | #ff6b6b | Destructive or risk-state copy only; not needed for normal Phase 5 actions |
 
-Accent reserved for: active navigation, primary copy/install buttons, catalog-backed verified emphasis, focus rings, and the existing brand logo. Do not use accent for every link or all interactive elements.
+Accent reserved for: active navigation, primary copy/install buttons, catalog-backed verified emphasis, focus rings, and the existing brand logo. Do not spread accent treatment across routine links, secondary buttons, metadata chips, or every hoverable control.
 
 **Status colors:** reuse existing `status-*`, `catalog-*`, `confidence-chip`, `partial-data-note`, and muted text patterns. If new catalog states are added, map them to existing status semantics rather than inventing unrelated colors.
 
