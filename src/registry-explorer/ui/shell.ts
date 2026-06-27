@@ -26,6 +26,8 @@ import { renderFocusAside, renderFocusContent } from './focusView';
 import { renderComponentAside, renderComponentContent } from './componentView';
 import { renderMatrixAside, renderMatrixContent } from './matrixView';
 import { type CopyFeedback, renderDiscoveryAside, renderDiscoveryContent } from './discoveryView';
+import { resolveRegistryItemDetailFromSummary } from '../core/registryItemDetail';
+import { renderItemDetailView } from './itemDetailView';
 import { renderRegistryProfile } from './registryProfileView';
 import { escapeHtml, renderExternalLink } from './renderSafety';
 
@@ -103,7 +105,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const queueBatch = buildInstallQueueBatchState(state.installQueue);
 
       // 3. Delegate to Views
-      if (state.selectedProfileRegistryName) {
+      if (state.currentView === 'item') {
+        const result = resolveRegistryItemDetailFromSummary(registries, state.selectedProfileRegistryName, state.selectedItemSlug);
+        renderItemDetailView(roots.contentHeader, roots.contentBody, result, queuedTokens);
+        roots.aside.innerHTML = `
+          <div class="aside-section-title">Component item</div>
+          <div class="aside-hint">Component-first detail route. JSON powers the page but stays out of the normal UI.</div>
+        `;
+      } else if (state.selectedProfileRegistryName) {
         const candidates = searchComponentCandidates(registries, state.searchTerm);
         const candidate = candidates.find(item => item.id === state.selectedCandidateId);
         const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
@@ -179,7 +188,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     tab.addEventListener('click', () => {
       const view = tab.getAttribute('data-view');
       if (isView(view) && view !== state.currentView) {
-        setState({ currentView: view, selectedProfileRegistryName: null, selectedCandidateId: null });
+        setState({ currentView: view, selectedProfileRegistryName: null, selectedCandidateId: null, selectedItemSlug: null });
       }
     });
   });
@@ -216,6 +225,17 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const target = e.target as HTMLElement;
     if (handleInstallActionClick(target)) return;
 
+    const itemButton = target.closest('[data-view-item-registry]');
+    if (itemButton) {
+      setState({
+        currentView: 'item',
+        selectedProfileRegistryName: itemButton.getAttribute('data-view-item-registry'),
+        selectedItemSlug: itemButton.getAttribute('data-view-item-slug'),
+        selectedCandidateId: itemButton.getAttribute('data-candidate-id'),
+      });
+      return;
+    }
+
     const profileButton = target.closest('[data-profile-registry]');
     if (profileButton) {
       setState({
@@ -226,9 +246,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return;
     }
 
+    const backFromItem = target.closest('[data-back-from-item]');
+    if (backFromItem) {
+      setState({ currentView: 'discover', selectedItemSlug: null, selectedProfileRegistryName: null });
+      return;
+    }
+
     const backButton = target.closest('[data-back-to-results]');
     if (backButton) {
-      setState({ selectedProfileRegistryName: null });
+      setState({ selectedProfileRegistryName: null, selectedItemSlug: null });
       return;
     }
 

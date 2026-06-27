@@ -88,24 +88,15 @@ function renderCandidate(
   selected: boolean,
   queuedTokens: ReadonlySet<string>,
 ): string {
-  const route = candidate.route
-    ? renderExternalLink(candidate.route, 'Open raw item route', 'discovery-route')
-    : `<span class="discovery-route muted">${candidate.catalogStatus === 'unverified' || candidate.catalogStatus === 'unavailable' ? 'Catalog not verified' : 'Item route unavailable'}</span>`;
   const itemSlug = candidate.itemSlug ? candidate.itemSlug : 'Item slug unknown';
   const itemLabel = candidate.itemName ?? candidate.matchedLabel;
-  const homepage = renderExternalLink(candidate.registry.url, 'Registry homepage', 'secondary-link');
-  const source = candidate.registry.mirror?.sourceUrl
-    ? renderExternalLink(candidate.registry.mirror.sourceUrl, 'Official source', 'secondary-link')
-    : '';
-  const rawItem = candidate.rawItemUrl
-    ? renderExternalLink(candidate.rawItemUrl, 'Open raw item route', 'secondary-link')
-    : '';
+  const componentAction = candidate.routeEligible && candidate.itemSlug
+    ? `<button class="link-button discovery-route" type="button" data-view-item-registry="${escapeHtml(candidate.registry.name)}" data-view-item-slug="${escapeHtml(candidate.itemSlug)}" data-candidate-id="${escapeHtml(candidate.id)}">View component</button>`
+    : `<span class="discovery-route muted">${candidate.catalogStatus === 'unverified' || candidate.catalogStatus === 'unavailable' ? 'Catalog not verified' : 'Component unavailable'}</span>`;
   const docs = candidate.docsUrl
     ? renderExternalLink(candidate.docsUrl, 'Docs', 'secondary-link')
     : '';
-  const evidence = candidate.evidenceUrl
-    ? renderExternalLink(candidate.evidenceUrl, 'Evidence', 'secondary-link')
-    : '';
+  const homepage = renderExternalLink(candidate.registry.url, 'Registry homepage', 'secondary-link');
 
   return `
     <article class="discovery-row ${selected ? 'selected' : ''}" data-candidate-id="${escapeHtml(candidate.id)}">
@@ -116,13 +107,9 @@ function renderCandidate(
           <span>${escapeHtml(itemSlug)}</span>
           ${candidate.itemType ? `<span>${escapeHtml(candidate.itemType)}</span>` : ''}
           ${candidate.itemCategory ? `<span>${escapeHtml(candidate.itemCategory)}</span>` : ''}
-          ${candidate.itemSource ? `<span>${escapeHtml(candidate.itemSource)}</span>` : ''}
-          ${renderChipList(candidate.taxonomyCategoryLabels, 'taxonomy-category-chip')}
-          ${renderChipList(candidate.taxonomyTagLabels, 'taxonomy-tag-chip')}
+          ${renderChipList(candidate.taxonomyCategoryLabels?.slice(0, 1), 'taxonomy-category-chip')}
+          ${renderChipList(candidate.taxonomyTagLabels?.slice(0, 2), 'taxonomy-tag-chip')}
           <span class="catalog-${escapeHtml(candidate.catalogStatus)}" title="${escapeHtml(candidate.statusExplanation ?? '')}">${escapeHtml(candidate.statusDisplayLabel ?? (candidate.catalogStatus === 'available' ? 'catalog-backed' : candidate.catalogStatus))}</span>
-          ${candidate.dependencyCount ? `<span>${escapeHtml(String(candidate.dependencyCount))} deps</span>` : ''}
-          ${candidate.registryDependencyCount ? `<span>${escapeHtml(String(candidate.registryDependencyCount))} registry deps</span>` : ''}
-          ${candidate.fileCount ? `<span>${escapeHtml(String(candidate.fileCount))} files</span>` : ''}
         </div>
         ${candidate.itemDescription ? `<p class="discovery-description">${escapeHtml(candidate.itemDescription)}</p>` : ''}
         <div class="discovery-reason"><strong>Why this matched</strong>: ${escapeHtml(candidate.matchReasons[0] ?? candidate.matchedField)}</div>
@@ -136,9 +123,9 @@ function renderCandidate(
       <div class="discovery-actions">
         <span class="status-chip status-${escapeHtml(candidate.coverageStatus)}">${escapeHtml(candidate.coverageLabel)}</span>
         <span class="confidence-chip">${escapeHtml(candidate.confidence)} confidence</span>
-        ${route}
+        ${componentAction}
         <button class="link-button" type="button" data-profile-registry="${escapeHtml(candidate.registry.name)}" data-candidate-id="${escapeHtml(candidate.id)}">View profile</button>
-        <div class="secondary-links">${homepage} ${source} ${rawItem} ${docs} ${evidence}</div>
+        <div class="secondary-links">${docs} ${homepage}</div>
       </div>
     </article>
   `;

@@ -61,7 +61,13 @@ function renderItems(items: readonly RegistryProfileItemRow[], queuedTokens: Rea
   if (items.length === 0) {
     return '<p class="muted">Catalog not verified</p>';
   }
-  return `<div class="profile-items">${items.map(item => `
+  return `<div class="profile-items">${items.map(item => {
+    const componentAction = item.routeEligible
+      ? `<button class="link-button discovery-route" type="button" data-view-item-registry="${escapeHtml(item.installAction.status === 'enabled' ? item.installAction.token.split('/')[0] : '')}" data-view-item-slug="${escapeHtml(item.slug)}">View component</button>`
+      : `<span class="discovery-route muted">${escapeHtml(item.routeLabel === 'Open item route' ? 'Component unavailable' : item.routeLabel)}</span>`;
+    const docs = item.docsUrl ? renderExternalLink(item.docsUrl, 'Docs', 'secondary-link') : '';
+
+    return `
     <div class="profile-item-row">
       <div>
         <strong>${escapeHtml(item.name)}</strong>
@@ -69,22 +75,13 @@ function renderItems(items: readonly RegistryProfileItemRow[], queuedTokens: Rea
           <span>${escapeHtml(item.slug)}</span>
           ${item.type ? `<span>${escapeHtml(item.type)}</span>` : ''}
           ${item.category ? `<span>${escapeHtml(item.category)}</span>` : ''}
-          ${renderChipList(item.taxonomyCategoryLabels, 'taxonomy-category-chip')}
-          ${renderChipList(item.taxonomyTagLabels, 'taxonomy-tag-chip')}
+          ${renderChipList(item.taxonomyCategoryLabels?.slice(0, 1), 'taxonomy-category-chip')}
+          ${renderChipList(item.taxonomyTagLabels?.slice(0, 2), 'taxonomy-tag-chip')}
           <span class="catalog-${escapeHtml(item.catalogStatus)}" title="${escapeHtml(item.statusExplanation ?? '')}">${escapeHtml(item.statusDisplayLabel ?? (item.catalogStatus === 'available' ? 'catalog-backed' : item.catalogStatus))}</span>
           ${item.confidence ? `<span>${escapeHtml(item.confidence)} confidence</span>` : ''}
-          <span>${escapeHtml(item.source)}</span>
-          ${item.dependencyCount ? `<span>${escapeHtml(String(item.dependencyCount))} deps</span>` : ''}
-          ${item.registryDependencyCount ? `<span>${escapeHtml(String(item.registryDependencyCount))} registry deps</span>` : ''}
-          ${item.fileCount ? `<span>${escapeHtml(String(item.fileCount))} files</span>` : ''}
-          <span>${item.routeEligible ? 'route eligible' : 'route unavailable'}</span>
         </div>
         ${item.description ? `<p class="discovery-description">${escapeHtml(item.description)}</p>` : ''}
-        <div class="secondary-links">
-          ${item.rawItemUrl ? renderExternalLink(item.rawItemUrl, 'Open raw item route', 'secondary-link') : ''}
-          ${item.docsUrl ? renderExternalLink(item.docsUrl, 'Docs', 'secondary-link') : ''}
-          ${item.evidenceUrl ? renderExternalLink(item.evidenceUrl, 'Evidence', 'secondary-link') : ''}
-        </div>
+        <div class="secondary-links">${docs}</div>
         ${renderInstallActions(item.installAction, {
           label: item.name,
           registry: item.installAction.status === 'enabled' ? item.installAction.token.split('/')[0] : '',
@@ -92,9 +89,9 @@ function renderItems(items: readonly RegistryProfileItemRow[], queuedTokens: Rea
           queued: item.installAction.status === 'enabled' && queuedTokens.has(item.installAction.token),
         })}
       </div>
-      <div>${item.route ? renderExternalLink(item.route, 'Open raw item route', 'discovery-route') : escapeHtml(item.routeLabel)}</div>
+      <div>${componentAction}</div>
     </div>
-  `).join('')}</div>`;
+  `}).join('')}</div>`;
 }
 
 function renderInstallActions(
