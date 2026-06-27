@@ -10,10 +10,10 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Component Peeks
 
-- [ ] **PEEK-01**: User can trigger a quick component peek from any route-eligible discovery result or registry profile item without leaving the current browsing context.
-- [ ] **PEEK-02**: User can see the best available visual for a component using a clear fallback order: screenshot/thumbnail, preview image, docs/demo link, raw metadata, or preview-unavailable state.
-- [ ] **PEEK-03**: User can use component peeks with mouse, keyboard focus, and click/tap so the feature is not hover-only.
-- [ ] **PEEK-04**: User can distinguish real visual previews from docs links, raw item metadata, and unavailable visuals.
+- [x] **PEEK-01**: User can trigger a quick component peek from any route-eligible discovery result or registry profile item without leaving the current browsing context.
+- [x] **PEEK-02**: User can see the best available visual for a component using a clear fallback order: screenshot/thumbnail, preview image, docs/demo link, raw metadata, or preview-unavailable state.
+- [x] **PEEK-03**: User can use component peeks with mouse, keyboard focus, and click/tap so the feature is not hover-only.
+- [x] **PEEK-04**: User can distinguish real visual previews from docs links, raw item metadata, and unavailable visuals.
 
 ### Item Detail Viewer
 
@@ -26,15 +26,15 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Filtering and Evaluation
 
-- [ ] **FILT-01**: User can filter item-capable discovery/profile results by registry item type such as `registry:ui`, `registry:block`, `registry:page`, `registry:lib`, or unknown.
-- [ ] **EVAL-01**: User can see concise evaluation badges or labels based on item JSON and summary metadata, including dependency counts, registry dependency counts, file counts, visual availability, and catalog-backed status.
-- [ ] **EVAL-02**: User can inspect dependency/risk context without Registry Atlas implying that third-party code has been audited or approved.
+- [x] **FILT-01**: User can filter item-capable discovery/profile results by registry item type such as `registry:ui`, `registry:block`, `registry:page`, `registry:lib`, or unknown.
+- [x] **EVAL-01**: User can see concise evaluation badges or labels based on item JSON and summary metadata, including dependency counts, registry dependency counts, file counts, visual availability, and catalog-backed status.
+- [x] **EVAL-02**: User can inspect dependency/risk context without Registry Atlas implying that third-party code has been audited or approved.
 
 ### Alternatives Foundation
 
-- [ ] **ALT-01**: User can see related or similar component alternatives from the same taxonomy tag, category, item type, or registry item metadata on peek/detail surfaces.
-- [ ] **ALT-02**: User can tell that related components are similarity-based alternatives, not quality-ranked “best” recommendations.
-- [ ] **ALT-03**: Maintainer can preserve visual/evaluation metadata needed for later component swap recommendations without adding AI ranking or fake quality scores in v1.2.
+- [x] **ALT-01**: User can see related or similar component alternatives from the same taxonomy tag, category, item type, or registry item metadata on peek/detail surfaces.
+- [x] **ALT-02**: User can tell that related components are similarity-based alternatives, not quality-ranked “best” recommendations.
+- [x] **ALT-03**: Maintainer can preserve visual/evaluation metadata needed for later component swap recommendations without adding AI ranking or fake quality scores in v1.2.
 
 ## Future Requirements
 
@@ -82,22 +82,22 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PEEK-01 | Phase 8 | Pending |
-| PEEK-02 | Phase 8 | Pending |
-| PEEK-03 | Phase 8 | Pending |
-| PEEK-04 | Phase 8 | Pending |
+| PEEK-01 | Phase 8 | Complete |
+| PEEK-02 | Phase 8 | Complete |
+| PEEK-03 | Phase 8 | Complete |
+| PEEK-04 | Phase 8 | Complete |
 | ITEM-01 | Phase 7 | Complete |
 | ITEM-02 | Phase 7 | Complete |
 | ITEM-03 | Phase 7 | Complete |
 | ITEM-04 | Phase 7 | Complete |
 | ITEM-05 | Phase 7 | Complete |
 | ITEM-06 | Phase 7 | Complete |
-| FILT-01 | Phase 8 | Pending |
-| EVAL-01 | Phase 8 | Pending |
-| EVAL-02 | Phase 8 | Pending |
-| ALT-01 | Phase 8 | Pending |
-| ALT-02 | Phase 8 | Pending |
-| ALT-03 | Phase 8 | Pending |
+| FILT-01 | Phase 8 | Complete |
+| EVAL-01 | Phase 8 | Complete |
+| EVAL-02 | Phase 8 | Complete |
+| ALT-01 | Phase 8 | Complete |
+| ALT-02 | Phase 8 | Complete |
+| ALT-03 | Phase 8 | Complete |
 
 **Coverage:**
 
