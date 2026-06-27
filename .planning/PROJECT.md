@@ -8,16 +8,18 @@ Registry Atlas is a static discovery and install-assist layer for the shadcn/ui 
 
 Users can quickly find the right shadcn-compatible registry or component and act on it without manually browsing dozens of registry sites.
 
-## Current Milestone: v1.1 Expanded Component Catalog
+## Current Milestone: v1.2 Component Peek & Alternatives Foundation
 
-**Goal:** Add more real components to Registry Atlas from the imported research bundle so users can discover more useful registry items, starting with the cataloged `@delego`, `@delta`, and `@diceui` data.
+**Goal:** Let users quickly see what a registry component looks like from inside Registry Atlas, using visual peeks like screenshots/thumbnails or safe previews, so they can browse, compare, and start finding better alternatives without opening every registry site.
 
 **Target features:**
 
-- Add newly researched registries and components from `registry-altas-improvement-phase/` into the app's generated/runtime data path.
-- Preserve route eligibility, install/view tokens, registry metadata, item metadata, dependency/file summaries, and source links where available.
-- Extend component tags/search so new items such as AI chat, code blocks, OTP inputs, color pickers, receipts, and map widgets are discoverable.
-- Keep uncertainty visible: items with real catalog data should be treated differently from inferred or manual-follow-up entries.
+- Add component peek cards for route-eligible items, focused on screenshots/thumbnails or safely available visuals rather than iframe/embed-first behavior.
+- Add internal item route state such as `view=item&registry=&item=` and component detail pages for deeper inspection.
+- Load real registry item JSON through a typed detail loader and show overview, files, dependencies, raw JSON, install/view commands, and fallback states.
+- Add “Peek” / “View component” actions wherever an item is route eligible.
+- Add item type filters and evaluation metadata that helps users decide whether a component is worth using.
+- Start alternatives groundwork with related/similar components by taxonomy/category/tag, while avoiding fake quality rankings until stronger evidence exists.
 
 ## Current State
 
@@ -33,12 +35,14 @@ Registry Atlas v1 now has:
 - Shareable discovery URL state for view/search/profile/focus/component context while intentionally excluding queue state.
 - A local and CI release gate through `pnpm verify`, plus a documented browser/accessibility smoke baseline for release hardening.
 
-**Planning now:** The next product direction is simple: get more components into Atlas, then let users view real component/item JSON in-app. The imported improvement bundle is split into multiple milestones so each release stays focused:
+**Planning now:** v1.1 expanded the catalog and taxonomy. The next product direction is visual component evaluation: users want a quick peek at what components look like, so Registry Atlas can become the place to browse components and later recommend better swaps for generic AI-generated UI.
 
-1. v1.1 Expanded Component Catalog — more researched components and better discovery terms.
-2. v1.2 Component Item Viewer — internal `view=item` route and real item JSON inspection.
-3. v1.3 Dynamic Coverage Matrix — better matrix modes/presets once the richer catalog exists.
-4. v1.4 Registry Research Automation — browser/manual research workflows for additional registries.
+Milestone split:
+
+1. v1.1 Expanded Component Catalog — shipped: more researched components and better discovery terms.
+2. v1.2 Component Peek & Alternatives Foundation — visual peeks, item detail routes, item JSON loading, and related-component groundwork.
+3. v1.3 Dynamic Coverage Matrix — better matrix modes/presets once visual/item detail browsing exists.
+4. v1.4 Registry Research Automation — browser/manual research workflows for additional registries and broader visual/catalog coverage.
 
 ## Requirements
 
@@ -52,8 +56,9 @@ Archived v1.0 requirements remain at `.planning/milestones/v1.0-REQUIREMENTS.md`
 - Community registries are third-party code. Registry Atlas surfaces metadata, routes, commands, and warnings, but does not audit, approve, or execute registry code.
 - The deployed product remains a static GitHub Pages-compatible SPA.
 - The imported research bundle currently has concrete catalog data for `@delego`, `@delta`, and `@diceui`, plus proposed component tags and a sample coverage matrix.
-- The seed docs explicitly call out that the current app's “actual component” layer is shallow: summaries exist, but real item JSON is not fetched/rendered in-app yet.
-- The item-view work is important, but it should be its own milestone after the expanded catalog foundation lands.
+- v1.1 added concrete catalog summaries and taxonomy/search, but the app still does not let users quickly see what components actually look like.
+- The user wants a “peek” experience: screenshot/thumbnail or safely available component visual first, with source/item JSON as supporting detail.
+- The long-term product direction is alternatives: when AI generates generic/sloppy UI, Registry Atlas should help users find better component swaps.
 
 ## Constraints
 
@@ -77,11 +82,13 @@ Archived v1.0 requirements remain at `.planning/milestones/v1.0-REQUIREMENTS.md`
 | Do not persist queue state in URLs | Install intent should stay local and not be silently restored from shared URLs | Delivered in Phase 4 URL state |
 | Use `pnpm verify` as the release gate | Maintainers need one command covering typecheck, tests, data validation, and build | Delivered in local scripts and GitHub Pages workflow |
 | Keep the next milestone product-first | The user goal is more components and component viewing, not a standalone evidence-management feature | v1.1 now focuses on expanded catalog data and taxonomy/search needed to expose it |
-| Split item viewing into the next milestone | Fetching/rendering real item JSON is substantial enough to be its own release slice | v1.2 is Component Item Viewer |
+| Reframe item viewing as visual component peeking | The user wants to see what components look like without visiting every registry site, not just inspect JSON | v1.2 is Component Peek & Alternatives Foundation |
+| Avoid embed-first previews | Third-party sites can block embeds and arbitrary component execution is risky; screenshots/thumbnails/safe visuals should be the first preview layer | Pending in v1.2 |
+| Treat alternatives as groundwork, not fake ranking | The long-term goal is better swaps for AI-generated slop UI, but quality scoring needs evidence | Pending in v1.2 |
 
 ## Evolution
 
 This document evolves at milestone boundaries. v1.0 planning artifacts are archived under `.planning/milestones/`.
 
 ---
-*Last updated: 2026-06-27 for v1.1 milestone planning*
+*Last updated: 2026-06-27 for v1.2 milestone planning*
