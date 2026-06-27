@@ -17,6 +17,7 @@ describe('urlState', () => {
       selectedCandidateId: '@8bitcn:button',
       selectedFocus: 'buttons-and-primitives',
       selectedComponent: 'button',
+      selectedItemSlug: null,
     });
   });
 
@@ -32,6 +33,7 @@ describe('urlState', () => {
       selectedCandidateId: null,
       selectedFocus: null,
       selectedComponent: null,
+      selectedItemSlug: null,
     });
   });
 
@@ -43,6 +45,7 @@ describe('urlState', () => {
       selectedCandidateId: '@better-upload:upload-dropzone',
       selectedFocus: 'forms-and-inputs',
       selectedComponent: 'file-upload',
+      selectedItemSlug: null,
     });
 
     expect(params.toString()).toBe(
@@ -59,6 +62,24 @@ describe('urlState', () => {
     expect(parsed.searchTerm).toBe('AI chat/thread');
     expect(parsed.selectedProfileRegistryName).toBe('@assistant-ui');
     expect(serialized.get('registry')).toBe('@assistant-ui');
+  });
+
+  it('parses and serializes internal item routes', () => {
+    const parsed = parseRegistryExplorerUrlState(
+      new URLSearchParams('view=item&registry=%40delta&item=code-block')
+    );
+    const serialized = serializeRegistryExplorerUrlState(parsed);
+
+    expect(parsed).toEqual({
+      view: 'item',
+      searchTerm: '',
+      selectedProfileRegistryName: '@delta',
+      selectedCandidateId: null,
+      selectedFocus: null,
+      selectedComponent: null,
+      selectedItemSlug: 'code-block',
+    });
+    expect(serialized.toString()).toBe('view=item&registry=%40delta&item=code-block');
   });
 
   it('ignores queue and install-token params during parse and serialize', () => {

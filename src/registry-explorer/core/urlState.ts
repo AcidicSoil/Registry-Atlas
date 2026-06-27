@@ -1,6 +1,6 @@
 import type { ComponentTag, PrimaryFocus } from './registry.schema';
 
-export type RegistryExplorerView = 'discover' | 'focus' | 'component' | 'matrix';
+export type RegistryExplorerView = 'discover' | 'focus' | 'component' | 'matrix' | 'item';
 
 export interface ParsedRegistryExplorerUrlState {
   view: RegistryExplorerView;
@@ -9,6 +9,7 @@ export interface ParsedRegistryExplorerUrlState {
   selectedCandidateId: string | null;
   selectedFocus: PrimaryFocus | null;
   selectedComponent: ComponentTag | null;
+  selectedItemSlug: string | null;
 }
 
 export interface SerializableRegistryExplorerUrlState extends ParsedRegistryExplorerUrlState {
@@ -18,7 +19,7 @@ export interface SerializableRegistryExplorerUrlState extends ParsedRegistryExpl
   install?: unknown;
 }
 
-const VALID_VIEWS: readonly RegistryExplorerView[] = ['discover', 'focus', 'component', 'matrix'];
+const VALID_VIEWS: readonly RegistryExplorerView[] = ['discover', 'focus', 'component', 'matrix', 'item'];
 
 export function parseRegistryExplorerUrlState(
   params: URLSearchParams,
@@ -31,6 +32,7 @@ export function parseRegistryExplorerUrlState(
     selectedCandidateId: nullableParam(params.get('candidate')),
     selectedFocus: nullableParam(params.get('focus')) as PrimaryFocus | null,
     selectedComponent: nullableParam(params.get('component')) as ComponentTag | null,
+    selectedItemSlug: nullableParam(params.get('item')),
   };
 }
 
@@ -45,6 +47,7 @@ export function serializeRegistryExplorerUrlState(
   setNonEmpty(params, 'candidate', state.selectedCandidateId);
   setNonEmpty(params, 'focus', state.selectedFocus);
   setNonEmpty(params, 'component', state.selectedComponent);
+  setNonEmpty(params, 'item', state.selectedItemSlug);
 
   return params;
 }

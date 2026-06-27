@@ -43,18 +43,19 @@ export interface ShellOptions {
 }
 
 interface AppState {
-  currentView: 'discover' | 'focus' | 'component' | 'matrix';
+  currentView: 'discover' | 'focus' | 'component' | 'matrix' | 'item';
   selectedFocus: PrimaryFocus | null;
   selectedComponent: ComponentTag | null;
   selectedCandidateId: string | null;
   selectedProfileRegistryName: string | null;
+  selectedItemSlug: string | null;
   searchTerm: string;
   installQueue: InstallQueueEntry[];
   copyFeedback: CopyFeedback | null;
 }
 
 function isView(value: string | null): value is AppState['currentView'] {
-  return value === 'discover' || value === 'focus' || value === 'component' || value === 'matrix';
+  return value === 'discover' || value === 'focus' || value === 'component' || value === 'matrix' || value === 'item';
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
@@ -69,6 +70,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     selectedComponent: hydratedState.selectedComponent,
     selectedCandidateId: hydratedState.selectedCandidateId,
     selectedProfileRegistryName: hydratedState.selectedProfileRegistryName,
+    selectedItemSlug: hydratedState.selectedItemSlug,
     searchTerm: hydratedState.searchTerm,
     installQueue: [],
     copyFeedback: null,
@@ -333,6 +335,7 @@ function hydrateStateFromUrl(registries: readonly Registry[]): ParsedRegistryExp
     selectedCandidateId: registryExists ? parsed.selectedCandidateId : null,
     selectedFocus,
     selectedComponent,
+    selectedItemSlug: registryExists ? parsed.selectedItemSlug : null,
   };
 }
 
@@ -344,6 +347,7 @@ function syncUrlState(state: AppState): void {
     selectedCandidateId: state.selectedProfileRegistryName ? state.selectedCandidateId : null,
     selectedFocus: state.currentView === 'focus' ? state.selectedFocus : null,
     selectedComponent: state.currentView === 'component' ? state.selectedComponent : null,
+    selectedItemSlug: state.currentView === 'item' ? state.selectedItemSlug : null,
   });
   const query = params.toString();
   const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
