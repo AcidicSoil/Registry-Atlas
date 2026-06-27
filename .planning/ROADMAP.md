@@ -43,12 +43,12 @@ Decimal phases appear between their surrounding integers in numeric order.
 - `.planning/codebase/CONVENTIONS.md`
 - `.planning/codebase/TESTING.md`
 
-**Plans:** 0/3 plans executed
+**Plans:** 1/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 05-01-import-normalized-catalog-PLAN.md — Import researched catalog records into Atlas source/generated data.
+- [x] 05-01-import-normalized-catalog-PLAN.md — Import researched catalog records into Atlas source/generated data.
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -110,7 +110,7 @@ Phases execute in numeric order: 5 -> 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 5. Expanded Component Catalog | 0/3 | Planned    |  |
+| 5. Expanded Component Catalog | 1/3 | In Progress|  |
 | 6. Component Search & Taxonomy | 0/TBD | Planned | — |
 
 ## Next
