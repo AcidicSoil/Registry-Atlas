@@ -86,7 +86,7 @@ Plans:
 - `.planning/codebase/CONVENTIONS.md`
 - `.planning/codebase/TESTING.md`
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 **Wave 1**
@@ -95,7 +95,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 06-02-search-alias-category-matching-PLAN.md — Add simple aliases, category matching, match reasons, and ranking behavior.
+- [x] 06-02-search-alias-category-matching-PLAN.md — Add simple aliases, category matching, match reasons, and ranking behavior.
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -124,7 +124,7 @@ Phases execute in numeric order: 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Expanded Component Catalog | 3/3 | Complete    | 2026-06-27 |
-| 6. Component Search & Taxonomy | 1/3 | In Progress|  |
+| 6. Component Search & Taxonomy | 2/3 | In Progress|  |
 
 ## Next
 
