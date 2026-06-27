@@ -1,0 +1,18 @@
+{
+  "source_path": "registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json",
+  "generated_at": "2026-06-27T10:00:12.394Z",
+  "registry_count": 3,
+  "item_count": 28,
+  "namespaces": [
+    "@delego",
+    "@delta",
+    "@diceui"
+  ],
+  "item_counts": {
+    "@delego": 6,
+    "@delta": 10,
+    "@diceui": 12
+  },
+  "warnings": [],
+  "skipped": []
+}

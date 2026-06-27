@@ -101,16 +101,54 @@ function readPreviousEnrichment(previousRuntimeData) {
   return enrichment;
 }
 
+function normalizeStringArray(value) {
+  return Array.isArray(value) ? value.filter(item => typeof item === 'string') : [];
+}
+
+function normalizeFiles(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(file => file && typeof file === 'object')
+    .map(file => ({
+      path: typeof file.path === 'string' ? file.path : '',
+      type: typeof file.type === 'string' ? file.type : '',
+      target: typeof file.target === 'string' ? file.target : undefined,
+    }))
+    .filter(file => file.path && file.type);
+}
+
+function optionalString(value) {
+  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
 function normalizeItemSummary(item) {
   return {
     name: item.name,
     slug: item.slug,
+    title: optionalString(item.title),
+    description: optionalString(item.description),
     type: item.type,
     category: item.category,
+    component_tags_existing: normalizeStringArray(item.component_tags_existing),
+    component_tags_proposed: normalizeStringArray(item.component_tags_proposed),
     source: item.source,
     provenance: item.provenance,
     catalog_status: item.catalog_status ?? item.catalogStatus,
+    confidence: optionalString(item.confidence),
     route_eligible: Boolean(item.route_eligible ?? item.routeEligible),
+    install_token: optionalString(item.install_token),
+    view_command: optionalString(item.view_command),
+    install_command: optionalString(item.install_command),
+    raw_item_url: optionalString(item.raw_item_url),
+    docs_url: optionalString(item.docs_url),
+    preview_url: optionalString(item.preview_url),
+    evidence_url: optionalString(item.evidence_url),
+    evidence_note: optionalString(item.evidence_note),
+    dependencies: normalizeStringArray(item.dependencies),
+    devDependencies: normalizeStringArray(item.devDependencies),
+    registryDependencies: normalizeStringArray(item.registryDependencies),
+    files: normalizeFiles(item.files),
+    warnings: normalizeStringArray(item.warnings),
   };
 }
 

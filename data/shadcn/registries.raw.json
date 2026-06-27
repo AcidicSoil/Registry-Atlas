@@ -360,6 +360,12 @@
     "description": "Emerald UI - collection of components built with Motion, GSAP, Tailwind CSS and shadcn/ui."
   },
   {
+    "name": "@evex",
+    "homepage": "https://evex.sh",
+    "url": "https://evex.sh/r/{name}.json",
+    "description": "Installable AI agent recipes for Eve apps, including PR review, data analysis, and workflow automation agents."
+  },
+  {
     "name": "@evilbuttons",
     "homepage": "https://evilbuttons.radiumcoders.com/docs",
     "url": "https://evilbuttons.radiumcoders.com/r/{name}.json",

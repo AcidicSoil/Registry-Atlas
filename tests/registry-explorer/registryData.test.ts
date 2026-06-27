@@ -36,4 +36,35 @@ describe('registryData mirror artifact', () => {
       });
     });
   });
+
+  it('includes imported catalog-backed item summaries for the v1.1 sample registries', () => {
+    const byName = new Map(mirrorData.registries.map(registry => [registry.official.name, registry]));
+
+    expect(byName.get('@delego')?.atlas.item_summaries.map(item => item.slug)).toEqual(
+      expect.arrayContaining(['delego-theme', 'button', 'status-badge']),
+    );
+    expect(byName.get('@delta')?.atlas.item_summaries.map(item => item.slug)).toEqual(
+      expect.arrayContaining(['input-otp', 'code-block', 'chat']),
+    );
+    expect(byName.get('@diceui')?.atlas.item_summaries.map(item => item.slug)).toEqual(
+      expect.arrayContaining(['action-bar', 'angle-slider', 'color-picker']),
+    );
+
+    expect(byName.get('@delta')?.atlas.item_summaries.find(item => item.slug === 'input-otp')).toEqual(
+      expect.objectContaining({
+        route_eligible: true,
+        install_token: '@delta/input-otp',
+        raw_item_url: 'https://deltacomponents.dev/r/input-otp.json',
+        evidence_url: 'https://deltacomponents.dev/r/registry.json',
+      }),
+    );
+  });
+
+  it('retains existing v1.0 seeded item summaries after the v1.1 catalog import', () => {
+    const assistant = mirrorData.registries.find(registry => registry.official.name === '@assistant-ui');
+
+    expect(assistant?.atlas.item_summaries.map(item => item.slug)).toEqual(
+      expect.arrayContaining(['thread', 'composer']),
+    );
+  });
 });
