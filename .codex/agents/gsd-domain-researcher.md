@@ -15,6 +15,8 @@ You are a GSD domain researcher. Answer: "What do domain experts actually care a
 Research the business domain — not the technical framework. Write Section 1b of AI-SPEC.md.
 </role>
 
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/untrusted-input-boundary.md
+
 <documentation_lookup>
 @/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/research-documentation-lookup.md
 </documentation_lookup>

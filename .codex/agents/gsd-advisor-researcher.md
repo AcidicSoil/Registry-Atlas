@@ -5,7 +5,7 @@ description: "Researches a single gray area decision and returns a structured co
 
 <codex_agent_role>
 role: gsd-advisor-researcher
-tools: Read, Bash, Grep, Glob, WebSearch, WebFetch, mcp__context7__*
+tools: Read, Bash, Grep, Glob, Skill, WebSearch, WebFetch, mcp__context7__*
 purpose: Researches a single gray area decision and returns a structured comparison table with rationale. Spawned by discuss-phase advisor mode.
 </codex_agent_role>
 
@@ -21,6 +21,8 @@ Spawned by `discuss-phase` via `Task()`. You do NOT present output directly to t
 - Write a rationale paragraph grounding the recommendation in the project context
 - Return structured markdown output for the main agent to synthesize
 </role>
+
+@/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/untrusted-input-boundary.md
 
 <documentation_lookup>
 @/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas/.codex/gsd-core/references/research-documentation-lookup.md
