@@ -252,6 +252,8 @@ export interface ComponentCandidate {
   rawItemUrl?: string;
   docsUrl?: string;
   evidenceUrl?: string;
+  previewUrl?: string;
+  componentPageUrl?: string;
   dependencyCount?: number;
   registryDependencyCount?: number;
   fileCount?: number;
@@ -334,6 +336,8 @@ export interface RegistryProfileItemRow {
   rawItemUrl?: string;
   docsUrl?: string;
   evidenceUrl?: string;
+  previewUrl?: string;
+  componentPageUrl?: string;
   dependencyCount: number;
   registryDependencyCount: number;
   fileCount: number;

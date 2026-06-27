@@ -12,7 +12,7 @@ describe('renderItemDetailView', () => {
     renderItemDetailView(header, body, result, new Set());
 
     expect(header.innerHTML).toContain('Code Block');
-    expect(body.innerHTML).toContain('Preview not available in Atlas yet');
+    expect(body.innerHTML).toContain('Preview not available yet');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Copy install');

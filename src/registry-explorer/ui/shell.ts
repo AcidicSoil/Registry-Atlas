@@ -11,6 +11,13 @@ import {
 import { searchComponentCandidates, buildDiscoveryOverview } from '../core/discovery';
 import { buildRegistryProfile } from '../core/registryProfile';
 import {
+  applyComponentFiltersToCandidates,
+  applyComponentFiltersToProfileRows,
+  buildComponentFilterGroups,
+  createSelectedComponentFilter,
+  type SelectedComponentFilter,
+} from '../core/componentFilters';
+import {
   addToInstallQueue,
   buildInstallQueueBatchState,
   clearInstallQueue,
@@ -54,6 +61,8 @@ interface AppState {
   searchTerm: string;
   installQueue: InstallQueueEntry[];
   copyFeedback: CopyFeedback | null;
+  selectedComponentFilters: SelectedComponentFilter[];
+  activePeekId: string | null;
 }
 
 function isView(value: string | null): value is AppState['currentView'] {
@@ -76,6 +85,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
     searchTerm: hydratedState.searchTerm,
     installQueue: [],
     copyFeedback: null,
+    selectedComponentFilters: [],
+    activePeekId: null,
   };
   roots.searchInput.value = state.searchTerm;
 
@@ -103,11 +114,12 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const metrics = computeMetrics(registries, state.searchTerm);
       const queuedTokens = new Set(state.installQueue.map(entry => entry.token));
       const queueBatch = buildInstallQueueBatchState(state.installQueue);
+      const filterGroups = buildComponentFilterGroups(registries);
 
       // 3. Delegate to Views
       if (state.currentView === 'item') {
         const result = resolveRegistryItemDetailFromSummary(registries, state.selectedProfileRegistryName, state.selectedItemSlug);
-        renderItemDetailView(roots.contentHeader, roots.contentBody, result, queuedTokens);
+        renderItemDetailView(roots.contentHeader, roots.contentBody, result, queuedTokens, registries);
         roots.aside.innerHTML = `
           <div class="aside-section-title">Component item</div>
           <div class="aside-hint">Component-first detail route. JSON powers the page but stays out of the normal UI.</div>
@@ -117,7 +129,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
         const candidate = candidates.find(item => item.id === state.selectedCandidateId);
         const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
         if (registry) {
-          renderRegistryProfile(roots.contentHeader, roots.contentBody, buildRegistryProfile(registry, { candidate }), queuedTokens);
+          const profile = buildRegistryProfile(registry, { candidate });
+          const filteredProfile = {
+            ...profile,
+            sections: profile.sections.map(section => section.items
+              ? { ...section, items: applyComponentFiltersToProfileRows(section.items, state.selectedComponentFilters) }
+              : section),
+          };
+          renderRegistryProfile(roots.contentHeader, roots.contentBody, filteredProfile, queuedTokens, filterGroups, state.selectedComponentFilters, state.activePeekId);
           roots.aside.innerHTML = `
             <div class="aside-section-title">Registry profile</div>
             <div class="aside-hint">Official facts and Atlas enrichment are separated. Install queue state stays local to this page session.</div>
@@ -125,13 +144,27 @@ export function initRegistryExplorer(options: ShellOptions): void {
         }
       } else if (state.currentView === 'discover') {
         const overview = buildDiscoveryOverview(registries);
-        const candidates = searchComponentCandidates(registries, state.searchTerm);
+        const candidates = applyComponentFiltersToCandidates(
+          searchComponentCandidates(registries, state.searchTerm),
+          state.selectedComponentFilters,
+        );
         renderDiscoveryAside(roots.aside, overview, state.selectedCandidateId, {
           entries: state.installQueue,
           batch: queueBatch,
           feedback: state.copyFeedback,
         });
-        renderDiscoveryContent(roots.contentHeader, roots.contentBody, candidates, overview, state.searchTerm, state.selectedCandidateId, queuedTokens);
+        renderDiscoveryContent(
+          roots.contentHeader,
+          roots.contentBody,
+          candidates,
+          overview,
+          state.searchTerm,
+          state.selectedCandidateId,
+          queuedTokens,
+          filterGroups,
+          state.selectedComponentFilters,
+          state.activePeekId,
+        );
 
       } else if (state.currentView === 'focus') {
         const groups = buildFocusGroups(registries, state.searchTerm);
@@ -224,6 +257,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.contentBody.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     if (handleInstallActionClick(target)) return;
+    if (handleFilterClick(target)) return;
 
     const itemButton = target.closest('[data-view-item-registry]');
     if (itemButton) {
@@ -270,6 +304,82 @@ export function initRegistryExplorer(options: ShellOptions): void {
       });
     }
   });
+
+  roots.contentBody.addEventListener('mouseover', (e) => {
+    const trigger = (e.target as HTMLElement).closest('[data-component-peek-id]');
+    const peekId = trigger?.getAttribute('data-component-peek-id') ?? null;
+    if (peekId && peekId !== state.activePeekId) setState({ activePeekId: peekId });
+  });
+
+  roots.contentBody.addEventListener('focusin', (e) => {
+    const trigger = (e.target as HTMLElement).closest('[data-component-peek-id]');
+    const peekId = trigger?.getAttribute('data-component-peek-id') ?? null;
+    if (peekId && peekId !== state.activePeekId) setState({ activePeekId: peekId });
+  });
+
+  roots.contentBody.addEventListener('mouseout', (e) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('[data-component-peek-id]') && !target.closest('[data-component-peek-popover]')) return;
+    const related = e.relatedTarget as HTMLElement | null;
+    if (related?.closest?.('[data-component-peek-id], [data-component-peek-popover]')) return;
+    if (state.activePeekId) setState({ activePeekId: null });
+  });
+
+  roots.contentBody.addEventListener('focusout', (e) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest('[data-component-peek-id]') && !target.closest('[data-component-peek-popover]')) return;
+    window.setTimeout(() => {
+      if (!roots.contentBody.querySelector('[data-component-peek-id]:focus, [data-component-peek-popover]:focus')) {
+        setState({ activePeekId: null });
+      }
+    }, 0);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.activePeekId) setState({ activePeekId: null });
+  });
+
+  document.addEventListener('pointerdown', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-component-peek-id], [data-component-peek-popover]')) return;
+    if (state.activePeekId) setState({ activePeekId: null });
+  });
+
+  function handleFilterClick(target: HTMLElement): boolean {
+    const resetButton = target.closest('[data-filter-reset]');
+    if (resetButton) {
+      setState({ selectedComponentFilters: [], activePeekId: null });
+      return true;
+    }
+
+    const removeButton = target.closest('[data-filter-remove-dimension]');
+    if (removeButton) {
+      const dimension = removeButton.getAttribute('data-filter-remove-dimension');
+      const value = removeButton.getAttribute('data-filter-remove-value');
+      setState({
+        selectedComponentFilters: state.selectedComponentFilters.filter(filter =>
+          filter.dimension !== dimension || filter.value !== value
+        ),
+        activePeekId: null,
+      });
+      return true;
+    }
+
+    const addButton = target.closest('[data-filter-add-dimension]');
+    if (addButton) {
+      const next = createSelectedComponentFilter(
+        buildComponentFilterGroups(registries),
+        addButton.getAttribute('data-filter-add-dimension'),
+        addButton.getAttribute('data-filter-add-value'),
+      );
+      if (next && !state.selectedComponentFilters.some(filter => filter.dimension === next.dimension && filter.value === next.value)) {
+        setState({ selectedComponentFilters: [...state.selectedComponentFilters, next], activePeekId: null });
+      }
+      return true;
+    }
+
+    return false;
+  }
 
   function handleInstallActionClick(target: HTMLElement): boolean {
     const copyButton = target.closest('[data-copy-command]');

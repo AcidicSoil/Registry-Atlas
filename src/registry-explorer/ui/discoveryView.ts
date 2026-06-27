@@ -5,6 +5,10 @@ import type {
   InstallActionState,
   InstallQueueEntry,
 } from '../core/registry.schema';
+import { buildComponentPeekFromCandidate } from '../core/componentPeek';
+import type { ComponentFilterGroup, SelectedComponentFilter } from '../core/componentFilters';
+import { activeFilterLabel } from '../core/componentFilters';
+import { renderComponentPeek } from './componentPeekView';
 import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export interface CopyFeedback {
@@ -45,6 +49,9 @@ export function renderDiscoveryContent(
   searchTerm: string,
   selectedCandidateId: string | null,
   queuedTokens: ReadonlySet<string>,
+  filterGroups: readonly ComponentFilterGroup[] = [],
+  selectedFilters: readonly SelectedComponentFilter[] = [],
+  activePeekId: string | null = null,
 ): void {
   headerRoot.innerHTML = `
     <div>
@@ -54,13 +61,18 @@ export function renderDiscoveryContent(
   `;
 
   if (candidates.length === 0) {
-    bodyRoot.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">⌕</div>
-        <h2>${searchTerm.trim() ? 'No registry or component matches found. Try a component name, capability, namespace, or focus tag.' : 'No verified item matches yet'}</h2>
-        <p>Some registries do not expose a verified item catalog. Results may include inferred or unverified coverage.</p>
-      </div>
-    `;
+    bodyRoot.innerHTML = selectedFilters.length > 0
+      ? `
+        ${renderFilterBar(filterGroups, selectedFilters)}
+        <div class="empty-state"><h2>No components match these filters. Reset filters to see all results.</h2></div>
+      `
+      : `
+        <div class="empty-state">
+          <div class="empty-state-icon">⌕</div>
+          <h2>${searchTerm.trim() ? 'No registry or component matches found. Try a component name, capability, namespace, or focus tag.' : 'No verified item matches yet'}</h2>
+          <p>Some registries do not expose a verified item catalog. Results may include inferred or unverified coverage.</p>
+        </div>
+      `;
     return;
   }
 
@@ -70,8 +82,10 @@ export function renderDiscoveryContent(
 
   bodyRoot.innerHTML = `
     ${partial ? '<div class="partial-data-note">Some registries do not expose a verified item catalog. Results may include inferred or unverified coverage.</div>' : ''}
+    ${renderFilterBar(filterGroups, selectedFilters)}
+    ${selectedFilters.length > 0 && candidates.length === 0 ? '<div class="empty-state"><h2>No components match these filters. Reset filters to see all results.</h2></div>' : ''}
     <div class="discovery-list">
-      ${candidates.map(candidate => renderCandidate(candidate, candidate.id === selectedCandidateId, queuedTokens)).join('')}
+      ${candidates.map(candidate => renderCandidate(candidate, candidate.id === selectedCandidateId, queuedTokens, activePeekId)).join('')}
     </div>
   `;
 }
@@ -83,16 +97,54 @@ function renderChipList(labels: readonly string[] | undefined, className: string
     .join('');
 }
 
+function renderFilterBar(
+  groups: readonly ComponentFilterGroup[],
+  selected: readonly SelectedComponentFilter[],
+): string {
+  if (groups.length === 0) return '';
+  const options = groups.map(group => `
+    <div class="filter-group">
+      <span class="filter-group-label">${escapeHtml(group.label)}</span>
+      ${group.options.map(option => `
+        <button class="filter-option" type="button" data-filter-add-dimension="${escapeHtml(option.dimension)}" data-filter-add-value="${escapeHtml(option.value)}">
+          ${escapeHtml(option.label)} <span>${option.count}</span>
+        </button>
+      `).join('')}
+    </div>
+  `).join('');
+  const badges = selected.map(filter => `
+    <button class="active-filter" type="button" data-filter-remove-dimension="${escapeHtml(filter.dimension)}" data-filter-remove-value="${escapeHtml(filter.value)}" aria-label="Remove ${escapeHtml(activeFilterLabel(filter))}">
+      ${escapeHtml(activeFilterLabel(filter))} ×
+    </button>
+  `).join('');
+
+  return `
+    <div class="filter-bar" aria-label="Component filters">
+      <details class="filter-menu">
+        <summary>+ Filter</summary>
+        <div class="filter-menu-panel">${options}</div>
+      </details>
+      <div class="active-filter-list">
+        ${badges}
+        ${selected.length ? '<button class="filter-reset" type="button" data-filter-reset>Reset filters</button>' : ''}
+      </div>
+    </div>
+  `;
+}
+
 function renderCandidate(
   candidate: ComponentCandidate,
   selected: boolean,
   queuedTokens: ReadonlySet<string>,
+  activePeekId: string | null,
 ): string {
   const itemSlug = candidate.itemSlug ? candidate.itemSlug : 'Item slug unknown';
   const itemLabel = candidate.itemName ?? candidate.matchedLabel;
+  const peek = buildComponentPeekFromCandidate(candidate);
   const componentAction = candidate.routeEligible && candidate.itemSlug
-    ? `<button class="link-button discovery-route" type="button" data-view-item-registry="${escapeHtml(candidate.registry.name)}" data-view-item-slug="${escapeHtml(candidate.itemSlug)}" data-candidate-id="${escapeHtml(candidate.id)}">View component</button>`
+    ? `<button class="link-button discovery-route component-peek-trigger" type="button" data-component-peek-id="${escapeHtml(peek?.id ?? candidate.id)}" data-view-item-registry="${escapeHtml(candidate.registry.name)}" data-view-item-slug="${escapeHtml(candidate.itemSlug)}" data-candidate-id="${escapeHtml(candidate.id)}">View component</button>`
     : `<span class="discovery-route muted">${candidate.catalogStatus === 'unverified' || candidate.catalogStatus === 'unavailable' ? 'Catalog not verified' : 'Component unavailable'}</span>`;
+  const peekMarkup = peek && activePeekId === peek.id ? renderComponentPeek(peek) : '';
   const docs = candidate.docsUrl
     ? renderExternalLink(candidate.docsUrl, 'Docs', 'secondary-link')
     : '';
@@ -122,8 +174,8 @@ function renderCandidate(
       </div>
       <div class="discovery-actions">
         <span class="status-chip status-${escapeHtml(candidate.coverageStatus)}">${escapeHtml(candidate.coverageLabel)}</span>
-        <span class="confidence-chip">${escapeHtml(candidate.confidence)} confidence</span>
         ${componentAction}
+        ${peekMarkup}
         <button class="link-button" type="button" data-profile-registry="${escapeHtml(candidate.registry.name)}" data-candidate-id="${escapeHtml(candidate.id)}">View profile</button>
         <div class="secondary-links">${docs} ${homepage}</div>
       </div>

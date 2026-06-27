@@ -150,6 +150,8 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
     rawItemUrl: item.rawItemUrl,
     docsUrl: item.docsUrl,
     evidenceUrl: item.evidenceUrl,
+    previewUrl: item.previewUrl,
+    componentPageUrl: item.previewUrl ?? item.docsUrl ?? (route?.status === 'available' ? route.url : undefined),
     dependencyCount: item.dependencies?.length ?? 0,
     registryDependencyCount: item.registryDependencies?.length ?? 0,
     fileCount: item.files?.length ?? 0,
