@@ -1,9 +1,9 @@
 # Registry Research and Cataloging
 
-**Created:** 6/26/2026 19:57:12  
-**Updated:** 6/26/2026 23:29:34  
-**Exported:** 6/26/2026 23:34:19  
-**Link:** [https://chatgpt.com/c/6a3f1fdf-38ec-83ea-bab5-6a8970c7ca20](https://chatgpt.com/c/6a3f1fdf-38ec-83ea-bab5-6a8970c7ca20)  
+**Created:** 6/26/2026 19:57:12
+**Updated:** 6/26/2026 23:29:34
+**Exported:** 6/26/2026 23:34:19
+**Link:** [https://chatgpt.com/c/6a3f1fdf-38ec-83ea-bab5-6a8970c7ca20](https://chatgpt.com/c/6a3f1fdf-38ec-83ea-bab5-6a8970c7ca20)
 
 ## Prompt:
 /a
@@ -327,13 +327,13 @@ Here’s a summary of the registry research and the delivered artifacts.
 
 **Registry coverage**
 
-- **Registries catalogued:** 3 (`@delego`, `@delta`, `@diceui`).  
-- **Total items catalogued:** 28 items with 100 % having resolvable installation routes (`@namespace/item` format).  
-- **Evidence sources:** All items were confirmed using the registries’ official machine-readable catalogs (e.g., the Delego JSON shows a theme and five components with descriptions and file paths([raw.githubusercontent.com](https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json#:~:text=%7B%20,tokens%20mapped%20onto%20shadcn%20variables))([raw.githubusercontent.com](https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json#:~:text=,components%2Fui%2Fbutton.tsx)); Delta Components’ registry lists dozens of items, including primitives like `input-otp` and complex elements like `code-block`([deltacomponents.dev](https://deltacomponents.dev/r/registry.json#:~:text=%22name%22%3A%20%22input,%7D%20%5D))([deltacomponents.dev](https://deltacomponents.dev/r/registry.json#:~:text=%22name%22%3A%20%22code,%7D%20%5D)); DiceUI’s registry lists many Radix-based components such as `action-bar`, `angle-slider`, `avatar-group` and others with dependencies and file paths([diceui.com](https://diceui.com/r/registry.json#:~:text=%22name%22%3A%20%22action,refs.ts%22%2C%20%22type%22%3A%20%22registry%3Alib%22))([diceui.com](https://diceui.com/r/registry.json#:~:text=%22name%22%3A%20%22angle,refs.ts%22%2C%20%22type%22%3A%20%22registry%3Alib%22%20%7D))).  
+- **Registries catalogued:** 3 (`@delego`, `@delta`, `@diceui`).
+- **Total items catalogued:** 28 items with 100 % having resolvable installation routes (`@namespace/item` format).
+- **Evidence sources:** All items were confirmed using the registries’ official machine-readable catalogs (e.g., the Delego JSON shows a theme and five components with descriptions and file paths([raw.githubusercontent.com](https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json#:~:text=%7B%20,tokens%20mapped%20onto%20shadcn%20variables))([raw.githubusercontent.com](https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json#:~:text=,components%2Fui%2Fbutton.tsx)); Delta Components’ registry lists dozens of items, including primitives like `input-otp` and complex elements like `code-block`([deltacomponents.dev](https://deltacomponents.dev/r/registry.json#:~:text=%22name%22%3A%20%22input,%7D%20%5D))([deltacomponents.dev](https://deltacomponents.dev/r/registry.json#:~:text=%22name%22%3A%20%22code,%7D%20%5D)); DiceUI’s registry lists many Radix-based components such as `action-bar`, `angle-slider`, `avatar-group` and others with dependencies and file paths([diceui.com](https://diceui.com/r/registry.json#:~:text=%22name%22%3A%20%22action,refs.ts%22%2C%20%22type%22%3A%20%22registry%3Alib%22))([diceui.com](https://diceui.com/r/registry.json#:~:text=%22name%22%3A%20%22angle,refs.ts%22%2C%20%22type%22%3A%20%22registry%3Alib%22%20%7D))).
 
 **Manual follow-up**
 
-- Some registries listed in the index lacked machine-readable catalogs (e.g., `@7ovr` and `@devl`) or returned 404 errors. These registries need manual investigation to extract items from documentation or GitHub sources.  
+- Some registries listed in the index lacked machine-readable catalogs (e.g., `@7ovr` and `@devl`) or returned 404 errors. These registries need manual investigation to extract items from documentation or GitHub sources.
 
 **Schema/taxonomy recommendations**
 
@@ -343,9 +343,9 @@ Here’s a summary of the registry research and the delivered artifacts.
 
 **Artifacts**
 
-- Normalized registry catalog JSON: 
-- Proposed component taxonomy: 
-- Registry coverage matrix: 
+- Normalized registry catalog JSON:
+- Proposed component taxonomy:
+- Registry coverage matrix:
 - Human-readable research report: # Registry Research Report (June 27, 2026)
 
 ## Summary
@@ -773,8 +773,8 @@ I’ve taken another pass at the registry research with the official shadcn dire
 
 **What this means for the larger research effort**
 
-- There are more than just three registries with machine-readable catalogs. At least `@8bitcn` and `@shadcnblocks` expose full JSON indexes similar to those previously processed. However, due to environment restrictions (HTTP 403 responses to non-browser requests), I could not automate parsing those files into the normalized JSON schema.  
-- A proper solution still requires the automated crawler described in the last handoff: it should iterate through the full directory, probe known catalog paths, and log successes and failures. This will ensure coverage of all ~200 registries.  
+- There are more than just three registries with machine-readable catalogs. At least `@8bitcn` and `@shadcnblocks` expose full JSON indexes similar to those previously processed. However, due to environment restrictions (HTTP 403 responses to non-browser requests), I could not automate parsing those files into the normalized JSON schema.
+- A proper solution still requires the automated crawler described in the last handoff: it should iterate through the full directory, probe known catalog paths, and log successes and failures. This will ensure coverage of all ~200 registries.
 - Manual browsing can identify additional accessible registries, but without programmatic access to their JSON, the normalized catalog remains partial.
 
 In summary, I discovered two new registries with accessible catalogs and verified that some others remain blocked. A complete result will require the crawler I previously outlined, which can systematically fetch and normalize each registry’s catalog despite varied hosting behaviors.

@@ -1,0 +1,213 @@
+{
+  "phase": "08",
+  "phase_name": "Component Peek & Alternatives UI",
+  "timestamp": "2026-06-27T13:55:00-05:00",
+  "areas_completed": [
+    "Peek interaction shape",
+    "Peek card content and fallback",
+    "Item type filters and evaluation labels",
+    "Related alternatives behavior"
+  ],
+  "areas_remaining": [],
+  "decisions": {
+    "Peek interaction shape": [
+      {
+        "question": "How should the quick peek open?",
+        "answer": "Hover/focus preview + click opens item page",
+        "options_presented": [
+          "Hover/focus preview + click opens item page",
+          "Click/tap opens a pinned peek card",
+          "Only use the existing item page",
+          "Other"
+        ]
+      },
+      {
+        "question": "When the peek appears, how should it behave?",
+        "answer": "Small anchored popover",
+        "options_presented": [
+          "Small anchored popover",
+          "Larger side preview panel",
+          "Inline expansion inside the card",
+          "Other"
+        ]
+      },
+      {
+        "question": "How should users dismiss or move through peeks?",
+        "answer": "Natural dismiss + keyboard escape",
+        "options_presented": [
+          "Natural dismiss + keyboard escape",
+          "Explicit close button only",
+          "Sticky until another peek opens",
+          "Other"
+        ]
+      },
+      {
+        "question": "What should click/tap do from a peek?",
+        "answer": "Open the Phase 7 item page",
+        "options_presented": [
+          "Open the Phase 7 item page",
+          "Pin the peek in place first",
+          "Open external component/docs page",
+          "Other"
+        ]
+      }
+    ],
+    "Peek card content and fallback": [
+      {
+        "question": "What should the peek show first?",
+        "answer": "Visual area first",
+        "options_presented": [
+          "Visual area first",
+          "Component title and description first",
+          "Actions first",
+          "Other"
+        ]
+      },
+      {
+        "question": "When there is no screenshot or preview image, what should the peek show?",
+        "answer": "Preview placeholder + Open component page",
+        "options_presented": [
+          "Preview placeholder + Open component page",
+          "Metadata-only mini card",
+          "No peek until visual exists",
+          "Other"
+        ]
+      },
+      {
+        "question": "What metadata belongs inside the peek without making it crowded?",
+        "answer": "Almost entirely visual; at most a tiny title/name above it; avoid metadata unless there is no visual; do not recreate item card inside peek",
+        "options_presented": [
+          "Tiny summary only",
+          "Summary plus evaluation counts",
+          "Same details as item page",
+          "Other"
+        ]
+      },
+      {
+        "question": "When the peek is only a placeholder because no visual exists yet, how much explanation should it include?",
+        "answer": "Minimal placeholder: Preview not available yet + Open component page",
+        "options_presented": [
+          "Minimal placeholder",
+          "Placeholder plus reason",
+          "No placeholder body",
+          "Other"
+        ]
+      }
+    ],
+    "Item type filters and evaluation labels": [
+      {
+        "question": "Where should item type filters live?",
+        "answer": "Compact filter bar above results with clear reset; evolved into an extensible filter picker instead of fixed chips",
+        "options_presented": [
+          "Compact filter bar above results",
+          "Inside the sidebar/aside only",
+          "Inline chips on every card",
+          "Other"
+        ]
+      },
+      {
+        "question": "Which item types should be visible as filter options?",
+        "answer": "Do not hardcode a tiny list. Pull dynamically from loaded itemSummaries in public/data/registries.json via loadRegistries.ts. Expose all useful available values from current metadata, including type, category, tags, visual availability, and catalog/status when present.",
+        "options_presented": [
+          "Only types present in current results",
+          "All known shadcn item types",
+          "Grouped simple labels",
+          "Other"
+        ]
+      },
+      {
+        "question": "How should filters behave as the vocabulary grows?",
+        "answer": "Use command-menu style + Filter picker. Selecting a value adds a removable badge/tag. Same filter system should work consistently across discovery, profile, and relevant route/sidebar/component surfaces.",
+        "options_presented": [
+          "Type only",
+          "Type + visual",
+          "Type + visual + status",
+          "Full multi-filter foundation"
+        ]
+      },
+      {
+        "question": "How should evaluation/status labels behave?",
+        "answer": "Remove or demote distracting labels such as verified item and high confidence. Main point is quick component viewing, not confidence/status noise. Keep only useful details and a couple of badges where they help; avoid blowing up cards or sidebars. Long lists and pill groups should become scrollable once long enough.",
+        "options_presented": [
+          "Keep labels compact and mostly off cards",
+          "Show evaluation badges on every card",
+          "Only show evaluation labels on item detail page",
+          "Other"
+        ]
+      },
+      {
+        "question": "What existing route/sidebar areas need cleanup?",
+        "answer": "Existing route views and sidebars are too broad and inconsistent. Expand groupings beyond a handful of broad buckets; make selectors and pill lists more complete, scrollable, and consistent. Registries-by-component badges need a better overflow/disclosure design or should be removed from cramped rows. Docs and registry homepage links are fine; profile/view component/details can remain if they do not distract.",
+        "options_presented": [
+          "Freeform feedback from user with selectors .app-inner > main > aside, aside > #aside > .pill-list, .app-inner > main > .content"
+        ]
+      }
+    ],
+    "Related alternatives behavior": [
+      {
+        "question": "How should similar components show up?",
+        "answer": "Small Related/Similar components strip on item/peek detail surfaces, based on shared type/category/tags and clearly not presented as quality-ranked yet.",
+        "options_presented": [
+          "Small Related components strip on item/peek detail surfaces",
+          "Dedicated alternatives panel",
+          "Inline alternatives inside every discovery card",
+          "Skip visible alternatives for now"
+        ]
+      },
+      {
+        "question": "What should the strip contain?",
+        "answer": "Alternative navigator rather than metadata cards: click a component, see related alternatives, click an alternative and continue browsing to the next related component. Minimal visual/placeholder plus name/registry is enough.",
+        "options_presented": [
+          "Visual mini-cards",
+          "Text links only",
+          "Full metadata cards",
+          "Other"
+        ]
+      },
+      {
+        "question": "What is the long-term alternatives product direction?",
+        "answer": "Production pattern upgrades: help users move from generic AI-generated UI toward more complete, polished, production-style component patterns. Phase 8 prepares the browsing/data seam and must not claim upgrade/better/correct unless evidence exists.",
+        "options_presented": [
+          "Similar components",
+          "Related components",
+          "Alternatives",
+          "Component swaps",
+          "Freeform product-language refinement"
+        ]
+      },
+      {
+        "question": "What should Phase 8 call this in the visible UI?",
+        "answer": "Use safe visible labels such as Similar patterns or Related components for now. Preserve the future concept as production pattern upgrades / upgrade paths in planning so a later evidence-backed recommendation milestone can promote the stronger language.",
+        "options_presented": [
+          "Similar components",
+          "Related components",
+          "Alternatives",
+          "Upgrade paths / production pattern upgrades reserved for future evidence-backed wording"
+        ]
+      }
+    ]
+  },
+  "deferred_ideas": [
+    "Interactive matrix redesign with complete dynamic component/tag coverage belongs to v1.3 Dynamic Coverage Matrix unless Phase 8 planner can make a tiny preparatory consistency cleanup without expanding scope.",
+    "Evidence-backed production pattern upgrades / upgrade paths for replacing generic AI-generated UI belong to a future recommendation milestone after Registry Atlas has enough examples and signals."
+  ],
+  "canonical_refs": [
+    ".planning/PROJECT.md",
+    ".planning/REQUIREMENTS.md",
+    ".planning/ROADMAP.md",
+    ".planning/research/SUMMARY.md",
+    ".planning/research/FEATURES.md",
+    ".planning/research/PITFALLS.md",
+    ".planning/phases/07-item-detail-data-routing/07-CONTEXT.md",
+    ".planning/phases/07-item-detail-data-routing/07-UI-SPEC.md",
+    ".planning/phases/07-item-detail-data-routing/07-VERIFICATION.md",
+    "src/registry-explorer/data/loadRegistries.ts",
+    "src/registry-explorer/core/discovery.ts",
+    "src/registry-explorer/core/registryProfile.ts",
+    "src/registry-explorer/ui/itemDetailView.ts",
+    "src/registry-explorer/ui/discoveryView.ts",
+    "src/registry-explorer/ui/registryProfileView.ts",
+    "src/registry-explorer/ui/shell.ts",
+    "public/styles/registry-explorer.css"
+  ]
+}
