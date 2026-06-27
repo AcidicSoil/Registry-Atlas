@@ -2,130 +2,116 @@
 
 ## Overview
 
-Registry Atlas v1.1 expands the actual component catalog. The imported improvement bundle already contains researched registries, normalized item data, proposed tags, and user notes saying the current app's “actual component” layer is shallow. This milestone uses that work to add more component items and make them discoverable. The in-app component viewer is the next milestone after this catalog foundation.
+Registry Atlas v1.2 turns the expanded catalog from “searchable summaries” into a visual component browsing experience. Users should be able to peek at what a route-eligible component looks like, open a detail route for real item JSON and metadata, and start seeing related/similar alternatives that can later power better component swap recommendations.
+
+The milestone preserves the static Vite/vanilla TypeScript deployment model and copy-only install safety posture. It is not embed-first, does not execute third-party component code, and does not claim quality-ranked recommendations without evidence.
 
 ## Phases
 
 **Phase Numbering:**
 
-- Integer phases (5, 6): Planned v1.1 milestone work continuing from v1.0.
-- Decimal phases (5.1, 5.2): Urgent insertions (marked with INSERTED).
+- Integer phases continue from the completed v1.1 milestone.
+- v1.2 starts at Phase 7.
+- Decimal phases remain reserved for urgent insertions.
 
-Decimal phases appear between their surrounding integers in numeric order.
-
-- [x] **Phase 5: Expanded Component Catalog** - Users can discover newly researched `@delego`, `@delta`, and `@diceui` component items with route, command, dependency, file, and source metadata where available. (completed 2026-06-27)
-- [x] **Phase 6: Component Search & Taxonomy** - Users can find the expanded catalog through new tags, categories, aliases, search behavior, and status-aware registry/profile UI. (completed 2026-06-27)
+- [ ] **Phase 7: Item Detail Data & Routing** - Users can open internal item detail routes backed by typed registry item JSON loading, safe failure states, raw JSON, dependency/file detail, and copy-only view/add commands.
+- [ ] **Phase 8: Component Peek & Alternatives UI** - Users can quickly peek at component visuals/metadata from existing discovery/profile surfaces, filter by item type, and see related/similar alternatives without unsupported quality claims.
 
 ## Phase Details
 
-### Phase 5: Expanded Component Catalog
+### Phase 7: Item Detail Data & Routing
 
-**Goal**: Users can discover newly researched `@delego`, `@delta`, and `@diceui` component items with route, command, dependency, file, and source metadata where available.
+**Goal**: Users can open internal item detail routes backed by typed registry item JSON loading, safe failure states, raw JSON, dependency/file detail, and copy-only view/add commands.
 **Mode:** mvp
-**Depends on**: Phase 4
-**Requirements**: CAT-01, CAT-02, CAT-03, CAT-04, CAT-05, CAT-06
+**Depends on**: Phase 6
+**Requirements**: ITEM-01, ITEM-02, ITEM-03, ITEM-04, ITEM-05, ITEM-06
 **Success Criteria** (what must be TRUE):
 
-  1. Maintainer can import or stage the normalized researched catalog without manually retyping records.
-  2. User can discover component items from `@delego`, `@delta`, and `@diceui` in Registry Atlas.
-  3. Registry/item summaries preserve useful metadata: route eligibility, install/view tokens, item type, dependencies, registry dependencies, files/targets, source/evidence URL, and catalog availability where present.
-  4. Validation distinguishes catalog-backed item data from inferred, unavailable, or manual-follow-up records.
-  5. Existing v1.0 official mirror data still validates and renders correctly.
+  1. URL state can represent and restore an item detail route such as `view=item&registry=@delta&item=code-block`.
+  2. A typed item detail loader can resolve a route-eligible summary, fetch or read item JSON, validate/normalize it, and return explicit loaded/unavailable/error states.
+  3. The item detail page displays overview, taxonomy/status, dependencies, dev dependencies, registry dependencies, files/targets, escaped raw JSON, and safe source/docs/raw links.
+  4. The item detail page provides copy-only shadcn `view` and `add` commands without executing either command in the browser.
+  5. Invalid JSON, failed fetches, CORS/network blocks, unavailable routes, and missing catalogs render safe user-facing fallback states.
+  6. The new route/detail behavior is covered by tests and remains part of `pnpm verify`.
 
 **Canonical refs:**
 
+- `.planning/PROJECT.md`
+- `.planning/REQUIREMENTS.md`
+- `.planning/research/SUMMARY.md`
+- `.planning/research/ARCHITECTURE.md`
 - `registry-altas-improvement-phase/gpt-agent-outputs/(original-seed-idea)registry-atlas-continued-improvements.md`
-- `registry-altas-improvement-phase/gpt-agent-outputs/update-plan.md`
-- `registry-altas-improvement-phase/gpt-agent-outputs/registry-research-report.md`
 - `registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json`
-- `.planning/codebase/STACK.md`
-- `.planning/codebase/STRUCTURE.md`
-- `.planning/codebase/CONVENTIONS.md`
-- `.planning/codebase/TESTING.md`
+- `src/registry-explorer/core/urlState.ts`
+- `src/registry-explorer/core/itemRoutes.ts`
+- `src/registry-explorer/core/registry.schema.ts`
+- `src/registry-explorer/ui/shell.ts`
 
-**Plans:** 3/3 plans complete
-
-Plans:
-**Wave 1**
-
-- [x] 05-01-import-normalized-catalog-PLAN.md — Import researched catalog records into Atlas source/generated data.
-
-**Wave 2** *(blocked on Wave 1 completion)*
-
-- [x] 05-02-rich-item-schema-validation-PLAN.md — Preserve and validate richer imported item metadata.
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 05-03-expanded-catalog-discovery-profile-PLAN.md — Expose catalog-backed components in discovery/profile UI.
+**Plans:** 0/0 plans created
 
 **Cross-cutting constraints:**
 
-- Keep Phase 5 product-facing: add more real components and make them discoverable without implementing the v1.2 raw item viewer.
+- Treat registry item JSON as data only.
+- Escape all imported/raw fields before rendering.
+- Preserve copy-only CLI behavior.
+- Keep the app static and GitHub Pages-compatible.
 
-### Phase 6: Component Search & Taxonomy
+### Phase 8: Component Peek & Alternatives UI
 
-**Goal**: Users can find the expanded catalog through new tags, categories, aliases, search behavior, and status-aware registry/profile UI.
+**Goal**: Users can quickly peek at component visuals/metadata from existing discovery/profile surfaces, filter by item type, and see related/similar alternatives without unsupported quality claims.
 **Mode:** mvp
-**Depends on**: Phase 5
-**Requirements**: DISC-01, DISC-02, DISC-03, DISC-04, DISC-05
+**Depends on**: Phase 7
+**Requirements**: PEEK-01, PEEK-02, PEEK-03, PEEK-04, FILT-01, EVAL-01, EVAL-02, ALT-01, ALT-02, ALT-03
 **Success Criteria** (what must be TRUE):
 
-  1. Proposed component tags from the research bundle are added where they expose actual cataloged items.
-  2. Search finds new components by item name, registry namespace, tag, category, and useful aliases.
-  3. New categories such as AI/chat, code/markdown, OTP/forms, badges/pills, color/media controls, maps, receipts/audit, and themes are discoverable.
-  4. Search results and registry profiles clearly communicate catalog-backed, inferred, unavailable, and manual-follow-up states.
-  5. The new taxonomy/search behavior is tested and included in `pnpm verify`.
+  1. Route-eligible items expose “Peek” or “View component” actions from discovery rows and registry profile item rows.
+  2. Peek cards use the best available visual in a clear fallback order: screenshot/thumbnail, preview image, docs/demo link, raw metadata, or preview-unavailable state.
+  3. Peek cards work with hover/focus and also with click/tap so the experience is not hover-only.
+  4. Visual status, dependency/file/evaluation labels, and catalog-backed/manual states are concise and do not imply Registry Atlas has audited third-party code.
+  5. Users can filter item-capable results by registry item type without losing a clear reset path.
+  6. Peek/detail surfaces show related/similar alternatives by taxonomy tag/category/type/metadata, while explicitly avoiding “best” or quality-ranked claims.
+  7. The peek, filter, evaluation, and alternatives behavior is covered by tests and remains part of `pnpm verify`.
 
 **Canonical refs:**
 
-- `registry-altas-improvement-phase/gpt-agent-outputs/component-taxonomy.proposed.json`
-- `registry-altas-improvement-phase/gpt-agent-outputs/registry-coverage-matrix.json`
-- `registry-altas-improvement-phase/gpt-agent-outputs/update-plan.md`
-- `registry-altas-improvement-phase/gpt-agent-outputs/registry-research-report.md`
-- `.planning/codebase/ARCHITECTURE.md`
-- `.planning/codebase/CONVENTIONS.md`
-- `.planning/codebase/TESTING.md`
+- `.planning/PROJECT.md`
+- `.planning/REQUIREMENTS.md`
+- `.planning/research/SUMMARY.md`
+- `.planning/research/FEATURES.md`
+- `.planning/research/PITFALLS.md`
+- `.planning/phases/06-component-search-and-taxonomy/06-03-SUMMARY.md`
+- `src/registry-explorer/core/componentTaxonomy.ts`
+- `src/registry-explorer/core/discovery.ts`
+- `src/registry-explorer/core/registryProfile.ts`
+- `src/registry-explorer/ui/discoveryView.ts`
+- `src/registry-explorer/ui/registryProfileView.ts`
+- `public/styles/registry-explorer.css`
 
-**Plans:** 3/3 plans complete
-
-Plans:
-**Wave 1**
-
-- [x] 06-01-taxonomy-vocabulary-data-PLAN.md — Add researched taxonomy tags, labels, categories, and generated-data normalization.
-
-**Wave 2** *(blocked on Wave 1 completion)*
-
-- [x] 06-02-search-alias-category-matching-PLAN.md — Add simple aliases, category matching, match reasons, and ranking behavior.
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 06-03-status-aware-taxonomy-ui-PLAN.md — Surface taxonomy/category/status labels in existing discovery/profile UI and docs.
+**Plans:** 0/0 plans created
 
 **Cross-cutting constraints:**
 
-- Use the already-prepared research bundle and Phase 5 outputs.
-- Keep Phase 6 incremental; defer layout audit, item-detail viewer, dynamic matrix, and research automation.
+- This is a “peek,” not embed-first UI.
+- Prefer screenshots/thumbnails/preview images when available, then metadata/link fallbacks.
+- Do not execute third-party component code.
+- Do not claim related alternatives are better unless a future evidence model supports it.
 
 ## Future Milestones
 
-The rest of the imported improvement bundle is intentionally split beyond v1.1:
-
-- **v1.2 Component Item Viewer** — internal `view=item` route, real registry item JSON fetching, item detail tabs, raw JSON, files/dependencies, and first-class view/add copy actions.
-- **v1.3 Dynamic Coverage Matrix** — matrix modes/presets once the expanded catalog and item viewer exist.
-- **v1.4 Registry Research Automation** — browser-assisted/manual registry research and broader coverage expansion.
-
-See `MILESTONES.md` and the Future Requirements section of `REQUIREMENTS.md` for preserved scope.
+- **v1.3 Dynamic Coverage Matrix** — dynamic tag columns, component/tag picker, presets, and status-aware matrix modes.
+- **v1.4 Registry Research Automation** — systematic registry iteration, catalog hydration, browser/manual research, screenshot capture pipelines, and manual follow-up registries such as `@7ovr` and `@devl`.
+- **Future Component Recommendations** — evidence-backed component swap recommendations for improving generic AI-generated UI.
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 5 -> 6
+Phases execute in numeric order: 7 -> 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 5. Expanded Component Catalog | 3/3 | Complete    | 2026-06-27 |
-| 6. Component Search & Taxonomy | 3/3 | Complete    | 2026-06-27 |
+| 7. Item Detail Data & Routing | 0/0 | Pending | — |
+| 8. Component Peek & Alternatives UI | 0/0 | Pending | — |
 
 ## Next
 
-Run `$gsd-execute-phase 6` to implement the component search and taxonomy plans.
+Run `$gsd-discuss-phase 7` to gather implementation context for item detail data and routing.

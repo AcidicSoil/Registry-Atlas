@@ -24,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-06-09)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 7 — Item Detail Data & Routing
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-27 — Milestone v1.2 started
+Status: Ready to discuss Phase 7
+Last activity: 2026-06-27 — v1.2 roadmap created
 
 ## Performance Metrics
 

@@ -18,13 +18,13 @@
 
 ---
 
-## v1.1 Expanded Component Catalog (Planned: 2026-06-27)
+## v1.1 Expanded Component Catalog (Shipped: 2026-06-27)
 
 **Source:** `registry-altas-improvement-phase/`
 
 **Goal:** Add more real component items to Registry Atlas from the imported research bundle and make them discoverable through the existing static app.
 
-**Planned phases:**
+**Phases completed:**
 
 - Phase 5: Expanded Component Catalog
 - Phase 6: Component Search & Taxonomy
@@ -37,21 +37,27 @@
 
 **Exit criteria:** Users can discover the newly researched component items in Atlas, and maintainers can validate that the data is catalog-backed rather than guessed.
 
+**Outcome:** Complete. `@delego`, `@delta`, and `@diceui` catalog summaries were imported, researched taxonomy/search was added, and status-aware discovery/profile UI shipped.
+
 ---
 
-## v1.2 Component Item Viewer (Candidate)
+## v1.2 Component Peek & Alternatives Foundation (Planned: 2026-06-27)
 
-**Goal:** Let users inspect real registry item JSON inside Registry Atlas before copying shadcn view/add commands.
+**Goal:** Let users quickly see what registry components look like from inside Registry Atlas, using visual peeks like screenshots/thumbnails or safe previews, while adding item detail routes and related-component groundwork for future swap recommendations.
 
-**Candidate phases:**
+**Planned phases:**
 
-- Item Detail Data Loader
-- Internal Item View UI
+- Phase 7: Item Detail Data & Routing
+- Phase 8: Component Peek & Alternatives UI
 
 **Key inputs:**
 
 - `registry-altas-improvement-phase/gpt-agent-outputs/(original-seed-idea)registry-atlas-continued-improvements.md`
 - v1.1 expanded catalog data and route metadata
+- `.planning/research/SUMMARY.md`
+- User clarification: this is a “peek”/visual browsing experience, not merely JSON inspection and not embed-first.
+
+**Exit criteria:** Users can peek at or open route-eligible components from Atlas, see useful visuals/metadata/fallback states, and discover related alternatives without unsupported quality claims.
 
 ---
 
