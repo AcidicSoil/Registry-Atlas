@@ -87,7 +87,16 @@ The milestone preserves the static Vite/vanilla TypeScript deployment model and 
 - `src/registry-explorer/ui/registryProfileView.ts`
 - `public/styles/registry-explorer.css`
 
-**Plans:** 0/0 plans created
+**Plans:** 3/3 plans created
+
+**Wave 1**
+
+- `08-01-peek-popover` — quick peek view model, trigger markup, shell events, and compact popover CSS.
+- `08-02-filter-picker-evaluation` — dynamic filter model, `+ Filter` UI, active badges/reset, evaluation/noise cleanup, and scroll constraints.
+
+**Wave 2 *(blocked on Wave 1 completion)*
+
+- `08-03-related-components-verification` — related/similar component derivation, detail navigator, concise evaluation labels, and final phase regression verification.
 
 **Cross-cutting constraints:**
 
@@ -110,8 +119,8 @@ Phases execute in numeric order: 7 -> 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. Item Detail Data & Routing | 2/2 | Complete    | 2026-06-27 |
-| 8. Component Peek & Alternatives UI | 0/0 | Pending | — |
+| 8. Component Peek & Alternatives UI | 0/3 | Planned | — |
 
 ## Next
 
-Run `$gsd-discuss-phase 7` to gather implementation context for item detail data and routing.
+Run `$gsd-execute-phase 8` to implement the three Phase 8 plans.
