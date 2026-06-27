@@ -1,3 +1,11 @@
+import {
+  componentTaxonomyCategory,
+  componentTaxonomyCategoryLabel,
+  componentTaxonomyLabel,
+  componentTaxonomySearchValues,
+  expandComponentSearchTerms,
+  normalizeTaxonomySearchTerm,
+} from './componentTaxonomy';
 import type {
   Registry,
   FocusGroup,
@@ -16,8 +24,9 @@ export function filterRegistries(
   registries: readonly Registry[],
   search: string
 ): Registry[] {
-  const term = search.trim().toLowerCase();
+  const term = normalizeTaxonomySearchTerm(search);
   if (!term) return [...registries];
+  const searchTerms = expandComponentSearchTerms(search);
 
   return registries.filter((r) => {
     const haystack = [
@@ -27,10 +36,21 @@ export function filterRegistries(
       r.license || '',
       ...r.primary_focus,
       ...r.component_tags,
+      ...r.component_tags.map(componentTaxonomyLabel),
+      ...r.component_tags.flatMap(componentTaxonomySearchValues),
+      ...(r.itemSummaries ?? []).flatMap(item => [
+        item.name,
+        item.slug,
+        item.title ?? '',
+        item.description ?? '',
+        item.category ?? '',
+        ...(item.componentTagsExisting ?? []),
+        ...(item.componentTagsProposed ?? []),
+      ]),
     ]
-      .join(' ')
-      .toLowerCase();
-    return haystack.includes(term);
+      .map(value => normalizeTaxonomySearchTerm(String(value)))
+      .filter(Boolean);
+    return haystack.some(value => searchTerms.some(searchTerm => value.includes(searchTerm) || searchTerm.includes(value)));
   });
 }
 
@@ -105,6 +125,7 @@ export function buildComponentGroups(
     result.push({
       componentKey: key,
       label: componentLabel(key),
+      categoryLabel: componentTaxonomyCategoryLabel(componentTaxonomyCategory(key)),
       registries: items.sort((a, b) => a.name.localeCompare(b.name)),
       count: items.length,
       statusCounts: countCoverageStatuses(items),

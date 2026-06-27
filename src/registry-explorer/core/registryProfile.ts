@@ -1,3 +1,9 @@
+import {
+  componentTaxonomyCategoryLabel,
+  componentTaxonomyEntry,
+  componentTaxonomyLabel,
+  taxonomyTagsForValues,
+} from './componentTaxonomy.ts';
 import { coverageStatusLabel } from './coverageStatus.ts';
 import { getInstallActionState } from './installActions.ts';
 import { resolveRegistryItemRoute } from './itemRoutes.ts';
@@ -87,6 +93,16 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
   const route = item.routeEligible && registry.mirror
     ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug, item.rawItemUrl)
     : null;
+  const taxonomyTags = taxonomyTagsForValues([
+    item.category,
+    ...(item.componentTagsExisting ?? []),
+    ...(item.componentTagsProposed ?? []),
+  ]);
+  const taxonomyCategoryLabels = [...new Set(taxonomyTags
+    .map(tag => componentTaxonomyEntry(tag)?.category)
+    .filter(Boolean)
+    .map(category => componentTaxonomyCategoryLabel(category))
+    .filter(Boolean))];
 
   return {
     name: item.name,
@@ -98,6 +114,8 @@ function itemRow(registry: Registry, item: NonNullable<Registry['itemSummaries']
     source: item.source,
     provenance: item.provenance,
     description: item.description ?? item.title,
+    taxonomyTagLabels: taxonomyTags.map(componentTaxonomyLabel),
+    taxonomyCategoryLabels,
     rawItemUrl: item.rawItemUrl,
     docsUrl: item.docsUrl,
     evidenceUrl: item.evidenceUrl,

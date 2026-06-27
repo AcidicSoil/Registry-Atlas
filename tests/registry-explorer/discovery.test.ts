@@ -108,6 +108,30 @@ describe('component discovery', () => {
       id: '@delta:input-otp',
       matchedField: 'item',
       routeEligible: true,
+      taxonomyTagLabels: ['OTP input'],
+      taxonomyCategoryLabels: ['Forms'],
+    }));
+  });
+
+  it('matches simple taxonomy aliases and category concepts for imported items', () => {
+    expect(searchComponentCandidates([richRegistry()], 'qr')[0]).toEqual(expect.objectContaining({
+      id: '@delta:qrcode',
+      matchReasons: ['Taxonomy tag match'],
+    }));
+    expect(searchComponentCandidates([richRegistry()], 'ai chat')[0]).toEqual(expect.objectContaining({
+      id: '@delta:chat',
+      taxonomyCategoryLabels: ['AI & Chat'],
+    }));
+    expect(searchComponentCandidates([richRegistry()], 'map')[0]).toEqual(expect.objectContaining({
+      id: '@delta:mapbox-pointer',
+    }));
+    expect(searchComponentCandidates([richRegistry()], 'color')[0]).toEqual(expect.objectContaining({
+      id: '@delta:color-picker',
+      taxonomyCategoryLabels: ['Forms'],
+    }));
+    expect(searchComponentCandidates([richRegistry()], 'receipt')[0]).toEqual(expect.objectContaining({
+      id: '@delta:signed-receipt',
+      taxonomyCategoryLabels: ['Data Display & Documents'],
     }));
   });
 });
@@ -194,7 +218,7 @@ function richRegistry(): Registry {
     url: 'https://deltacomponents.dev',
     description: 'Delta component registry.',
     primary_focus: ['ai-chat'],
-    component_tags: ['input'],
+    component_tags: ['input', 'otp-input', 'qr-code', 'ai-chat', 'map-pointer', 'color-picker', 'receipt'],
     atlas: {
       aliases: [],
       coverageStatus: 'verified',
@@ -232,6 +256,81 @@ function richRegistry(): Registry {
         dependencies: ['lucide-react'],
         registryDependencies: ['button'],
         files: [{ path: 'registry/delta-ui/delta/input-otp.tsx', type: 'registry:ui', target: 'components/input-otp.tsx' }],
+      },
+      {
+        name: 'QR Code',
+        slug: 'qrcode',
+        title: 'QR Code',
+        description: 'QR code widget.',
+        type: 'registry:ui',
+        category: 'data-generation',
+        componentTagsProposed: ['qr-code'],
+        source: 'registry-json',
+        provenance: 'fixture',
+        catalogStatus: 'available',
+        confidence: 'high',
+        routeEligible: true,
+        rawItemUrl: 'https://deltacomponents.dev/r/qrcode.json',
+      },
+      {
+        name: 'Chat',
+        slug: 'chat',
+        title: 'Chat',
+        description: 'AI chat interface.',
+        type: 'registry:ui',
+        category: 'ai-and-chat',
+        componentTagsProposed: ['chat-interface', 'ai-chat'],
+        source: 'registry-json',
+        provenance: 'fixture',
+        catalogStatus: 'available',
+        confidence: 'high',
+        routeEligible: true,
+        rawItemUrl: 'https://deltacomponents.dev/r/chat.json',
+      },
+      {
+        name: 'Mapbox Pointer',
+        slug: 'mapbox-pointer',
+        title: 'Mapbox Pointer',
+        description: 'Map pointer widget.',
+        type: 'registry:ui',
+        category: 'maps-and-location',
+        componentTagsProposed: ['map-pointer'],
+        source: 'registry-json',
+        provenance: 'fixture',
+        catalogStatus: 'available',
+        confidence: 'high',
+        routeEligible: true,
+        rawItemUrl: 'https://deltacomponents.dev/r/mapbox-pointer.json',
+      },
+      {
+        name: 'Color Picker',
+        slug: 'color-picker',
+        title: 'Color Picker',
+        description: 'Color picker control.',
+        type: 'registry:ui',
+        category: 'form-controls',
+        componentTagsProposed: ['color-picker'],
+        source: 'registry-json',
+        provenance: 'fixture',
+        catalogStatus: 'available',
+        confidence: 'high',
+        routeEligible: true,
+        rawItemUrl: 'https://deltacomponents.dev/r/color-picker.json',
+      },
+      {
+        name: 'Signed Receipt',
+        slug: 'signed-receipt',
+        title: 'Signed Receipt',
+        description: 'Audit receipt record.',
+        type: 'registry:ui',
+        category: 'data-display-and-document',
+        componentTagsProposed: ['receipt', 'audit'],
+        source: 'registry-json',
+        provenance: 'fixture',
+        catalogStatus: 'available',
+        confidence: 'high',
+        routeEligible: true,
+        rawItemUrl: 'https://deltacomponents.dev/r/signed-receipt.json',
       },
     ],
   };

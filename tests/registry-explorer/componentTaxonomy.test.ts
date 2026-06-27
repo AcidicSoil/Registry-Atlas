@@ -6,6 +6,8 @@ import {
   componentTaxonomyCategoryLabel,
   componentTaxonomyEntry,
   componentTaxonomyLabel,
+  componentTaxonomySearchValues,
+  expandComponentSearchTerms,
 } from '../../src/registry-explorer/core/componentTaxonomy';
 import { COMPONENT_TAG_VALUES, type ComponentTag } from '../../src/registry-explorer/core/registry.schema';
 import { componentLabel } from '../../src/registry-explorer/core/labels';
@@ -47,6 +49,23 @@ describe('component taxonomy', () => {
   it('falls back for old component tags that are not in the researched taxonomy table', () => {
     expect(componentTaxonomyEntry('button')).toBeUndefined();
     expect(componentTaxonomyLabel('loading-button' as ComponentTag)).toBe('loading button');
+  });
+
+  it('expands simple aliases for common taxonomy searches', () => {
+    expect(expandComponentSearchTerms('qrcode')).toEqual(expect.arrayContaining(['qr-code']));
+    expect(expandComponentSearchTerms('otp')).toEqual(expect.arrayContaining(['otp-input']));
+    expect(expandComponentSearchTerms('code')).toEqual(expect.arrayContaining(['code-block']));
+    expect(expandComponentSearchTerms('chat')).toEqual(expect.arrayContaining(['ai-chat', 'chat-interface']));
+    expect(expandComponentSearchTerms('map')).toEqual(expect.arrayContaining(['map-pointer']));
+    expect(expandComponentSearchTerms('receipt')).toEqual(expect.arrayContaining(['receipt']));
+    expect(expandComponentSearchTerms('audit')).toEqual(expect.arrayContaining(['audit']));
+    expect(expandComponentSearchTerms('color')).toEqual(expect.arrayContaining(['color-picker', 'color-swatch']));
+    expect(expandComponentSearchTerms('crop')).toEqual(expect.arrayContaining(['cropper']));
+  });
+
+  it('exposes deterministic taxonomy search values', () => {
+    expect(componentTaxonomySearchValues('qr-code')).toEqual(expect.arrayContaining(['qr-code', 'qrcode']));
+    expect(componentTaxonomySearchValues('ai-chat')).toEqual(expect.arrayContaining(['ai-chat', 'ai-and-chat']));
   });
 
   it('keeps category labels reviewable and non-empty', () => {

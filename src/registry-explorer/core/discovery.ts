@@ -1,3 +1,13 @@
+import {
+  componentTaxonomyAliases,
+  componentTaxonomyCategoryLabel,
+  componentTaxonomyEntry,
+  componentTaxonomyLabel,
+  componentTaxonomySearchValues,
+  expandComponentSearchTerms,
+  normalizeTaxonomySearchTerm,
+  taxonomyTagsForValues,
+} from './componentTaxonomy.ts';
 import { coverageStatusLabel, compareCoverageStatus } from './coverageStatus.ts';
 import { getInstallActionState } from './installActions.ts';
 import { resolveRegistryItemRoute } from './itemRoutes.ts';
@@ -7,6 +17,7 @@ import type {
   DiscoveryOverview,
   Registry,
   RegistryItemSummary,
+  ComponentTag,
 } from './registry.schema.ts';
 
 const FIELD_SCORE: Record<CandidateMatchField, number> = {
@@ -20,7 +31,7 @@ const FIELD_SCORE: Record<CandidateMatchField, number> = {
 };
 
 export function normalizeSearchTerm(value: string): string {
-  return value.trim().toLowerCase().replace(/\s+/g, '-');
+  return normalizeTaxonomySearchTerm(value);
 }
 
 export function buildDiscoveryOverview(registries: readonly Registry[]): DiscoveryOverview {
@@ -71,6 +82,12 @@ function atlasOf(registry: Registry): NonNullable<Registry['atlas']> {
 
 function matchesItem(item: RegistryItemSummary, query: string): boolean {
   if (!query) return true;
+  const queryTerms = expandComponentSearchTerms(query);
+  return itemSearchValues(item).some(value => matchesAnyQueryTerm(value, queryTerms));
+}
+
+function itemSearchValues(item: RegistryItemSummary): string[] {
+  const tags = itemTaxonomyTags(item);
   return [
     item.name,
     item.slug,
@@ -83,14 +100,78 @@ function matchesItem(item: RegistryItemSummary, query: string): boolean {
     ...(item.dependencies ?? []),
     ...(item.devDependencies ?? []),
     ...(item.registryDependencies ?? []),
+    ...tags.flatMap(tag => componentTaxonomySearchValues(tag)),
   ]
     .filter(Boolean)
-    .some(value => normalizeSearchTerm(String(value)).includes(query));
+    .map(value => normalizeSearchTerm(String(value)));
+}
+
+function matchesAnyQueryTerm(value: string, queryTerms: readonly string[]): boolean {
+  return queryTerms.some(term => value.includes(term) || term.includes(value));
+}
+
+function matchesDirectQueryTerm(value: string, queryTerms: readonly string[]): boolean {
+  return queryTerms.some(term => value === term || (term.length >= 3 && value.startsWith(term)));
+}
+
+function itemTaxonomyTags(item: RegistryItemSummary): ComponentTag[] {
+  return taxonomyTagsForValues([
+    item.category,
+    ...(item.componentTagsExisting ?? []),
+    ...(item.componentTagsProposed ?? []),
+  ]);
+}
+
+function taxonomyTagLabels(tags: readonly ComponentTag[]): string[] {
+  return tags.map(tag => componentTaxonomyLabel(tag));
+}
+
+function taxonomyCategoryLabels(tags: readonly ComponentTag[]): string[] {
+  return [...new Set(tags
+    .map(tag => componentTaxonomyEntry(tag)?.category)
+    .filter((category): category is NonNullable<ReturnType<typeof componentTaxonomyEntry>>['category'] => Boolean(category))
+    .map(category => componentTaxonomyCategoryLabel(category))
+    .filter(Boolean))];
+}
+
+function taxonomyMatchReason(item: RegistryItemSummary, query: string): string {
+  if (!query) return 'Known item summary match';
+  const queryTerms = expandComponentSearchTerms(query);
+  const tags = itemTaxonomyTags(item);
+  if (tags.some(tag => matchesDirectTaxonomyTerm(tag, queryTerms))) {
+    return 'Taxonomy tag match';
+  }
+  if ([item.category, item.type].filter(Boolean).some(value => matchesDirectQueryTerm(normalizeSearchTerm(String(value)), queryTerms))) {
+    return 'Taxonomy category match';
+  }
+  return 'Known item summary match';
+}
+
+function taxonomyMatchBonus(item: RegistryItemSummary, query: string): number {
+  if (!query) return 0;
+  const queryTerms = expandComponentSearchTerms(query);
+  const tags = itemTaxonomyTags(item);
+  return tags.some(tag => matchesDirectTaxonomyTerm(tag, queryTerms)) ? 60 : 0;
+}
+
+function matchesDirectTaxonomyTerm(tag: ComponentTag, queryTerms: readonly string[]): boolean {
+  const entry = componentTaxonomyEntry(tag);
+  const values = [
+    tag,
+    entry?.label,
+    ...(entry ? entry.exampleItems.map(item => item.slug) : []),
+    ...componentTaxonomyAliases(tag),
+  ]
+    .filter((value): value is string => Boolean(value))
+    .map(normalizeSearchTerm);
+
+  return values.some(value => matchesDirectQueryTerm(value, queryTerms));
 }
 
 function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query: string): ComponentCandidate {
   const atlas = atlasOf(registry);
-  const exact = query.length > 0 && (normalizeSearchTerm(item.name) === query || item.slug === query);
+  const exact = query.length > 0 && (normalizeSearchTerm(item.name) === query || normalizeSearchTerm(item.slug) === query);
+  const tags = itemTaxonomyTags(item);
   const route = item.routeEligible && registry.mirror
     ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.slug, item.rawItemUrl)
     : null;
@@ -105,6 +186,8 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
     itemType: item.type,
     itemCategory: item.category,
     itemDescription: item.description ?? item.title,
+    taxonomyTagLabels: taxonomyTagLabels(tags),
+    taxonomyCategoryLabels: taxonomyCategoryLabels(tags),
     itemSource: item.source,
     itemProvenance: item.provenance,
     rawItemUrl: item.rawItemUrl,
@@ -123,11 +206,11 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
       registryUrlTemplate: registry.mirror?.registryUrlTemplate,
       rawItemUrl: item.rawItemUrl,
     }),
-    matchReasons: [exact ? 'Exact item match' : 'Known item summary match'],
+    matchReasons: [exact ? 'Exact item match' : taxonomyMatchReason(item, query)],
     coverageStatus: atlas.coverageStatus,
     coverageLabel: coverageStatusLabel(atlas.coverageStatus),
     confidence: atlas.confidence,
-    score: FIELD_SCORE.item + (exact ? 100 : 0) + catalogBonus(item.catalogStatus),
+    score: FIELD_SCORE.item + (exact ? 100 : 0) + taxonomyMatchBonus(item, query) + catalogBonus(item.catalogStatus),
     warnings: registry.mirror?.warnings ?? [],
   };
 }
@@ -135,7 +218,7 @@ function buildItemCandidate(registry: Registry, item: RegistryItemSummary, query
 function buildFallbackCandidate(registry: Registry, query: string): ComponentCandidate | null {
   const atlas = atlasOf(registry);
   const checks: Array<[CandidateMatchField, string, string[]]> = [
-    ['component-tag', registry.component_tags.find(tag => !query || normalizeSearchTerm(tag).includes(query)) ?? '', ['Component tag match']],
+    ['component-tag', findRegistryTagMatch(registry.component_tags, query), ['Taxonomy tag match']],
     ['alias', atlas.aliases.find(alias => !query || normalizeSearchTerm(alias).includes(query)) ?? '', ['Why this matched: alias match']],
     ['focus', registry.primary_focus.find(focus => !query || normalizeSearchTerm(focus).includes(query)) ?? '', ['Focus tag match']],
     ['namespace', !query || normalizeSearchTerm(registry.name).includes(query) ? registry.name : '', ['Namespace match']],
@@ -167,6 +250,17 @@ function buildFallbackCandidate(registry: Registry, query: string): ComponentCan
     score: FIELD_SCORE[matchedField] + catalogBonus(atlas.catalogStatus),
     warnings: registry.mirror?.warnings ?? [],
   };
+}
+
+function findRegistryTagMatch(tags: readonly ComponentTag[], query: string): string {
+  if (!query) return tags[0] ?? '';
+  const queryTerms = expandComponentSearchTerms(query);
+  const match = tags.find(tag => {
+    const values = [tag, componentTaxonomyLabel(tag), ...componentTaxonomySearchValues(tag)]
+      .map(value => normalizeSearchTerm(String(value)));
+    return values.some(value => matchesAnyQueryTerm(value, queryTerms));
+  });
+  return match ?? '';
 }
 
 function catalogBonus(status: string): number {

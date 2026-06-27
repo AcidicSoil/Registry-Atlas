@@ -394,3 +394,92 @@ export function componentTaxonomyCategory(tag: ComponentTag): ComponentTaxonomyC
 export function componentTaxonomyCategoryLabel(category: ComponentTaxonomyCategory | undefined | null): string {
   return category ? COMPONENT_TAXONOMY_CATEGORIES[category] : '';
 }
+
+const COMPONENT_TAXONOMY_ALIASES: Readonly<Partial<Record<ComponentTag, readonly string[]>>> = {
+  'qr-code': ['qr', 'qrcode', 'qr code'],
+  'otp-input': ['otp', 'one time password', 'one-time-password', 'auth code'],
+  'code-block': ['code', 'snippet', 'code snippet'],
+  'syntax-highlighting': ['syntax', 'highlight', 'highlighting', 'prism'],
+  'chat-interface': ['chat', 'chatbot', 'conversation'],
+  'ai-chat': ['ai', 'ai chat', 'llm', 'chat'],
+  'map-pointer': ['map', 'maps', 'location', 'mapbox', 'pointer'],
+  'receipt': ['ledger', 'record', 'receipt'],
+  'audit': ['audit trail', 'audit log'],
+  'theme': ['theme', 'design tokens', 'tokens'],
+  'status-pill': ['status', 'status badge', 'status chip'],
+  'decision-pill': ['decision', 'approve', 'deny', 'allow'],
+  'pill': ['chip', 'pill chip'],
+  'utility-button': ['copy', 'copy button', 'clipboard'],
+  'zoomable-image': ['zoom', 'image zoom', 'zoomable'],
+  'card-deck': ['cards', 'deck', 'swipe cards'],
+  'admonition': ['callout', 'note', 'warning'],
+  'angle-slider': ['angle', 'radial slider'],
+  'circular-progress': ['circle progress', 'radial progress'],
+  'color-picker': ['color', 'colour', 'picker', 'palette'],
+  'color-swatch': ['color', 'swatch', 'palette'],
+  'compare-slider': ['compare', 'comparison', 'before after'],
+  'cropper': ['crop', 'image crop', 'image cropper'],
+};
+
+export function normalizeTaxonomySearchTerm(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+export function componentTaxonomyAliases(tag: ComponentTag): readonly string[] {
+  return COMPONENT_TAXONOMY_ALIASES[tag] ?? [];
+}
+
+export function componentTaxonomySearchValues(tag: ComponentTag): readonly string[] {
+  const entry = componentTaxonomyEntry(tag);
+  const values = new Set<string>([tag]);
+  if (entry) {
+    values.add(entry.label);
+    values.add(entry.category);
+    values.add(entry.categoryLabel);
+    entry.exampleItems.forEach(item => values.add(item.slug));
+  }
+  componentTaxonomyAliases(tag).forEach(alias => values.add(alias));
+  return [...values].map(normalizeTaxonomySearchTerm).filter(Boolean);
+}
+
+export function expandComponentSearchTerms(value: string): readonly string[] {
+  const query = normalizeTaxonomySearchTerm(value);
+  if (!query) return [];
+
+  const expanded = new Set<string>([query]);
+  COMPONENT_TAXONOMY.forEach(entry => {
+    const broadValues = componentTaxonomySearchValues(entry.tag);
+    if (broadValues.some(term => term.includes(query) || query.includes(term))) {
+      [
+        entry.tag,
+        entry.label,
+        ...componentTaxonomyAliases(entry.tag),
+        ...entry.exampleItems.map(item => item.slug),
+      ]
+        .map(normalizeTaxonomySearchTerm)
+        .filter(Boolean)
+        .forEach(term => expanded.add(term));
+    }
+  });
+
+  return [...expanded];
+}
+
+export function taxonomyTagsForValues(values: readonly (string | undefined)[]): ComponentTag[] {
+  const tags = new Set<ComponentTag>();
+  values.forEach(value => {
+    if (!value) return;
+    const normalized = normalizeTaxonomySearchTerm(value);
+    COMPONENT_TAXONOMY.forEach(entry => {
+      if (entry.tag === value || componentTaxonomySearchValues(entry.tag).includes(normalized)) {
+        tags.add(entry.tag);
+      }
+    });
+  });
+  return [...tags];
+}

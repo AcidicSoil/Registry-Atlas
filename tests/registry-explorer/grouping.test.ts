@@ -14,7 +14,7 @@ const mockRegistries: Registry[] = [
     url: 'http://a',
     description: 'Alpha desc',
     primary_focus: ['ai-chat'],
-    component_tags: ['chatbot', 'button']
+    component_tags: ['chatbot', 'button', 'ai-chat']
   },
   {
     name: 'Beta',
@@ -62,6 +62,11 @@ describe('grouping', () => {
       expect(res[0].name).toBe('Beta');
     });
 
+    it('filters by taxonomy category aliases', () => {
+      const res = filterRegistries(mockRegistries, 'AI & Chat');
+      expect(res.map(registry => registry.name)).toContain('Alpha');
+    });
+
     it('returns empty array when no matches', () => {
       const res = filterRegistries(mockRegistries, 'zeta');
       expect(res).toHaveLength(0);
@@ -105,6 +110,12 @@ describe('grouping', () => {
       const chatbotGroup = groups.find(g => g.componentKey === 'chatbot');
       expect(chatbotGroup).toBeDefined();
       expect(chatbotGroup?.count).toBe(2);
+
+      const aiChatGroup = groups.find(g => g.componentKey === 'ai-chat');
+      expect(aiChatGroup).toEqual(expect.objectContaining({
+        label: 'AI chat',
+        categoryLabel: 'AI & Chat',
+      }));
       
       const inputGroup = groups.find(g => g.componentKey === 'input');
       expect(inputGroup).toBeDefined();
@@ -135,7 +146,7 @@ describe('grouping', () => {
       expect(metrics.totalRegistries).toBe(3);
       expect(metrics.visibleRegistries).toBe(3);
       expect(metrics.focusGroupCount).toBe(3); // ai-chat, support, misc-utility
-      expect(metrics.componentTypeCount).toBe(3); // chatbot, button, input
+      expect(metrics.componentTypeCount).toBe(4); // chatbot, button, input, ai-chat
     });
 
     it('updates metrics when filtered', () => {
@@ -143,7 +154,7 @@ describe('grouping', () => {
       expect(metrics.totalRegistries).toBe(3);
       expect(metrics.visibleRegistries).toBe(1);
       expect(metrics.focusGroupCount).toBe(1); // ai-chat
-      expect(metrics.componentTypeCount).toBe(2); // chatbot, button
+      expect(metrics.componentTypeCount).toBe(3); // chatbot, button, ai-chat
     });
   });
 });

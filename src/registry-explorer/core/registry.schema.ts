@@ -205,6 +205,7 @@ export interface FocusGroup {
 export interface ComponentGroup {
   componentKey: ComponentTag;
   label: string;
+  categoryLabel?: string;
   registries: Registry[];
   count: number;
   statusCounts: CoverageStatusCounts;
@@ -242,6 +243,8 @@ export interface ComponentCandidate {
   itemType?: string;
   itemCategory?: string;
   itemDescription?: string;
+  taxonomyTagLabels?: readonly string[];
+  taxonomyCategoryLabels?: readonly string[];
   itemSource?: string;
   itemProvenance?: string;
   rawItemUrl?: string;
@@ -322,6 +325,8 @@ export interface RegistryProfileItemRow {
   source: string;
   provenance: string;
   description?: string;
+  taxonomyTagLabels?: readonly string[];
+  taxonomyCategoryLabels?: readonly string[];
   rawItemUrl?: string;
   docsUrl?: string;
   evidenceUrl?: string;
