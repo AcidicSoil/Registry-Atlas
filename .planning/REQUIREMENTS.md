@@ -19,11 +19,11 @@ Requirements for the current milestone. Each maps to roadmap phases.
 
 ### Component Search and Taxonomy
 
-- [ ] **DISC-01**: User can search/filter for the newly added components by item name, registry namespace, proposed tag, category, and useful aliases.
-- [ ] **DISC-02**: User can find new component categories from the research bundle, including AI/chat, code/markdown, OTP/forms, badges/pills, color/media controls, map widgets, receipts/audit, and themes.
-- [ ] **DISC-03**: Component tags from `component-taxonomy.proposed.json` are added with labels/categories where they help expose actual cataloged items.
-- [ ] **DISC-04**: Search and registry profile UI clearly explain whether a component is catalog-backed, inferred, unavailable, or manual-follow-up.
-- [ ] **DISC-05**: New catalog/search behavior is covered by tests and remains part of `pnpm verify`.
+- [x] **DISC-01**: User can search/filter for the newly added components by item name, registry namespace, proposed tag, category, and useful aliases.
+- [x] **DISC-02**: User can find new component categories from the research bundle, including AI/chat, code/markdown, OTP/forms, badges/pills, color/media controls, map widgets, receipts/audit, and themes.
+- [x] **DISC-03**: Component tags from `component-taxonomy.proposed.json` are added with labels/categories where they help expose actual cataloged items.
+- [x] **DISC-04**: Search and registry profile UI clearly explain whether a component is catalog-backed, inferred, unavailable, or manual-follow-up.
+- [x] **DISC-05**: New catalog/search behavior is covered by tests and remains part of `pnpm verify`.
 
 ## Future Requirements
 
@@ -76,11 +76,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CAT-04 | Phase 5 | Complete |
 | CAT-05 | Phase 5 | Complete |
 | CAT-06 | Phase 5 | Complete |
-| DISC-01 | Phase 6 | Planned |
-| DISC-02 | Phase 6 | Planned |
-| DISC-03 | Phase 6 | Planned |
-| DISC-04 | Phase 6 | Planned |
-| DISC-05 | Phase 6 | Planned |
+| DISC-01 | Phase 6 | Complete |
+| DISC-02 | Phase 6 | Complete |
+| DISC-03 | Phase 6 | Complete |
+| DISC-04 | Phase 6 | Complete |
+| DISC-05 | Phase 6 | Complete |
 | ITEM-01 | Future v1.2 | Candidate |
 | ITEM-02 | Future v1.2 | Candidate |
 | ITEM-03 | Future v1.2 | Candidate |

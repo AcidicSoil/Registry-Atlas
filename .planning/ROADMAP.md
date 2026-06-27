@@ -14,7 +14,7 @@ Registry Atlas v1.1 expands the actual component catalog. The imported improveme
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 5: Expanded Component Catalog** - Users can discover newly researched `@delego`, `@delta`, and `@diceui` component items with route, command, dependency, file, and source metadata where available. (completed 2026-06-27)
-- [ ] **Phase 6: Component Search & Taxonomy** - Users can find the expanded catalog through new tags, categories, aliases, search behavior, and status-aware registry/profile UI.
+- [x] **Phase 6: Component Search & Taxonomy** - Users can find the expanded catalog through new tags, categories, aliases, search behavior, and status-aware registry/profile UI. (completed 2026-06-27)
 
 ## Phase Details
 
@@ -86,7 +86,7 @@ Plans:
 - `.planning/codebase/CONVENTIONS.md`
 - `.planning/codebase/TESTING.md`
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -99,7 +99,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 06-03-status-aware-taxonomy-ui-PLAN.md — Surface taxonomy/category/status labels in existing discovery/profile UI and docs.
+- [x] 06-03-status-aware-taxonomy-ui-PLAN.md — Surface taxonomy/category/status labels in existing discovery/profile UI and docs.
 
 **Cross-cutting constraints:**
 
@@ -124,7 +124,7 @@ Phases execute in numeric order: 5 -> 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 5. Expanded Component Catalog | 3/3 | Complete    | 2026-06-27 |
-| 6. Component Search & Taxonomy | 2/3 | In Progress|  |
+| 6. Component Search & Taxonomy | 3/3 | Complete    | 2026-06-27 |
 
 ## Next
 
