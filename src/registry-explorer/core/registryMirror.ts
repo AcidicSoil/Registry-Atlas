@@ -34,7 +34,12 @@ export type MirrorValidationCode =
   | 'atlas-invalid-confidence'
   | 'atlas-invalid-catalog-status'
   | 'atlas-invalid-item-summary'
-  | 'atlas-invalid-item-slug';
+  | 'atlas-invalid-item-slug'
+  | 'atlas-invalid-item-url'
+  | 'atlas-invalid-item-token'
+  | 'atlas-invalid-item-command'
+  | 'atlas-invalid-item-array'
+  | 'atlas-invalid-item-file';
 
 export interface MirrorValidationIssue {
   code: MirrorValidationCode;
@@ -98,6 +103,7 @@ const COVERAGE_STATUS_SET = new Set<CoverageStatus>(COVERAGE_STATUS_VALUES);
 const COVERAGE_CONFIDENCE_SET = new Set<CoverageConfidence>(COVERAGE_CONFIDENCE_VALUES);
 const ITEM_CATALOG_STATUS_SET = new Set<ItemCatalogStatus>(ITEM_CATALOG_STATUS_VALUES);
 const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorValidationResult {
   const result = createResult();
@@ -491,13 +497,183 @@ function validateItemSummaries(
       });
     }
 
-    if (routeEligible === true && (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug) || typeof registryUrlTemplate !== 'string' || !registryUrlTemplate.includes('{name}'))) {
+    const rawItemUrl = record.raw_item_url ?? record.rawItemUrl;
+    if (routeEligible === true && (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug) || !hasRouteSource(registryUrlTemplate, rawItemUrl))) {
       addIssue(result, {
         code: 'atlas-invalid-item-summary',
-        message: `${field}.route_eligible requires a valid slug and registry URL template.`,
+        message: `${field}.route_eligible requires a valid slug and registry URL template or raw item URL.`,
         severity: 'error',
         namespace,
         field: `${field}.route_eligible`,
+      });
+    }
+
+    validateOptionalUrlField(rawItemUrl, `${field}.raw_item_url`, namespace, result);
+    validateOptionalUrlField(record.docs_url ?? record.docsUrl, `${field}.docs_url`, namespace, result);
+    validateOptionalUrlField(record.preview_url ?? record.previewUrl, `${field}.preview_url`, namespace, result);
+    validateOptionalUrlField(record.evidence_url ?? record.evidenceUrl, `${field}.evidence_url`, namespace, result);
+    validateOptionalConfidence(record.confidence, `${field}.confidence`, namespace, result);
+    validateOptionalInstallToken(record.install_token ?? record.installToken, `${field}.install_token`, namespace, result);
+    validateOptionalCommand(record.view_command ?? record.viewCommand, `${field}.view_command`, namespace, result, 'view');
+    validateOptionalCommand(record.install_command ?? record.installCommand, `${field}.install_command`, namespace, result, 'add');
+    validateOptionalStringArray(record.dependencies, `${field}.dependencies`, namespace, result);
+    validateOptionalStringArray(record.devDependencies, `${field}.devDependencies`, namespace, result);
+    validateOptionalStringArray(record.registryDependencies, `${field}.registryDependencies`, namespace, result);
+    validateOptionalStringArray(record.component_tags_existing ?? record.componentTagsExisting, `${field}.component_tags_existing`, namespace, result);
+    validateOptionalStringArray(record.component_tags_proposed ?? record.componentTagsProposed, `${field}.component_tags_proposed`, namespace, result);
+    validateOptionalStringArray(record.warnings, `${field}.warnings`, namespace, result);
+    validateOptionalFiles(record.files, `${field}.files`, namespace, result);
+  });
+}
+
+function hasRouteSource(registryUrlTemplate: unknown, rawItemUrl: unknown): boolean {
+  return (typeof registryUrlTemplate === 'string' && registryUrlTemplate.includes('{name}'))
+    || (typeof rawItemUrl === 'string' && rawItemUrl.trim().length > 0);
+}
+
+function validateOptionalUrlField(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined || value === null || value === '') return;
+  if (typeof value !== 'string') {
+    addIssue(result, {
+      code: 'atlas-invalid-item-url',
+      message: `${field} must be a URL string when present.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: String(value),
+    });
+    return;
+  }
+  const beforeErrors = result.errors.length;
+  validateUrlIntoResult(value, field, namespace, result);
+  if (result.errors.length > beforeErrors) {
+    const issue = result.errors[result.errors.length - 1];
+    if (issue) issue.code = 'atlas-invalid-item-url';
+  }
+}
+
+function validateOptionalConfidence(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined || value === null || value === '') return;
+  if (typeof value !== 'string' || !COVERAGE_CONFIDENCE_SET.has(value as CoverageConfidence)) {
+    addIssue(result, {
+      code: 'atlas-invalid-confidence',
+      message: `${field} contains an unknown value.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: typeof value === 'string' ? value : String(value),
+    });
+  }
+}
+
+function validateOptionalInstallToken(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined || value === null || value === '') return;
+  if (typeof value !== 'string' || !INSTALL_TOKEN_PATTERN.test(value.trim())) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-token',
+      message: `${field} must be a valid @registry/item token.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: typeof value === 'string' ? value : String(value),
+    });
+  }
+}
+
+function validateOptionalCommand(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+  verb: 'add' | 'view',
+): void {
+  if (value === undefined || value === null || value === '') return;
+  const expectedPrefix = `npx shadcn@latest ${verb} `;
+  if (typeof value !== 'string' || !value.startsWith(expectedPrefix) || !INSTALL_TOKEN_PATTERN.test(value.slice(expectedPrefix.length).trim())) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-command',
+      message: `${field} must be a copy-only shadcn ${verb} command with a valid @registry/item token.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: typeof value === 'string' ? value : String(value),
+    });
+  }
+}
+
+function validateOptionalStringArray(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined || value === null) return;
+  if (!Array.isArray(value) || value.some(item => typeof item !== 'string')) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-array',
+      message: `${field} must be an array of strings when present.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: Array.isArray(value) ? undefined : String(value),
+    });
+  }
+}
+
+function validateOptionalFiles(
+  value: unknown,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  if (value === undefined || value === null) return;
+  if (!Array.isArray(value)) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-file',
+      message: `${field} must be an array when present.`,
+      severity: 'error',
+      namespace,
+      field,
+      value: String(value),
+    });
+    return;
+  }
+
+  value.forEach((file, index) => {
+    if (!isObject(file) || typeof file.path !== 'string' || file.path.trim() === '' || typeof file.type !== 'string' || file.type.trim() === '') {
+      addIssue(result, {
+        code: 'atlas-invalid-item-file',
+        message: `${field}[${index}] requires path and type strings.`,
+        severity: 'error',
+        namespace,
+        field: `${field}[${index}]`,
+      });
+      return;
+    }
+
+    if (file.target !== undefined && typeof file.target !== 'string') {
+      addIssue(result, {
+        code: 'atlas-invalid-item-file',
+        message: `${field}[${index}].target must be a string when present.`,
+        severity: 'error',
+        namespace,
+        field: `${field}[${index}].target`,
+        value: String(file.target),
       });
     }
   });

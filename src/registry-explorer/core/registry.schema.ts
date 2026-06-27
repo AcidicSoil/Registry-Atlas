@@ -108,15 +108,39 @@ export type CoverageConfidence = 'high' | 'medium' | 'low' | 'unknown';
 
 export type ItemCatalogStatus = 'available' | 'partial' | 'unavailable' | 'unverified';
 
+export interface RegistryItemSummaryFile {
+  path: string;
+  type: string;
+  target?: string;
+}
+
 export interface RegistryItemSummary {
   name: string;
   slug: string;
+  title?: string;
+  description?: string;
   type?: string;
   category?: string;
+  componentTagsExisting?: readonly string[];
+  componentTagsProposed?: readonly string[];
   source: string;
   provenance: string;
   catalogStatus: ItemCatalogStatus;
+  confidence?: CoverageConfidence;
   routeEligible: boolean;
+  installToken?: string;
+  viewCommand?: string;
+  installCommand?: string;
+  rawItemUrl?: string;
+  docsUrl?: string;
+  previewUrl?: string;
+  evidenceUrl?: string;
+  evidenceNote?: string;
+  dependencies?: readonly string[];
+  devDependencies?: readonly string[];
+  registryDependencies?: readonly string[];
+  files?: readonly RegistryItemSummaryFile[];
+  warnings?: readonly string[];
 }
 
 export interface Registry {

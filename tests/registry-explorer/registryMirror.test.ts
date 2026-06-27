@@ -124,6 +124,65 @@ describe('registryMirror validation', () => {
 
     expect(result.errors).toEqual([]);
   });
+
+  it('accepts rich imported item summaries', () => {
+    const result = validateRegistryMirror(createMirror([
+      createRecord({
+        itemSummaries: [
+          {
+            name: 'Input OTP',
+            slug: 'input-otp',
+            title: 'Input OTP',
+            description: 'OTP input component.',
+            source: 'registry-json',
+            provenance: 'fixture',
+            catalog_status: 'available',
+            confidence: 'high',
+            route_eligible: true,
+            install_token: '@example/input-otp',
+            view_command: 'npx shadcn@latest view @example/input-otp',
+            install_command: 'npx shadcn@latest add @example/input-otp',
+            raw_item_url: 'https://example.com/r/input-otp.json',
+            evidence_url: 'https://example.com/r/registry.json',
+            dependencies: ['lucide-react'],
+            registryDependencies: ['button'],
+            files: [{ path: 'registry/input-otp.tsx', type: 'registry:ui', target: 'components/input-otp.tsx' }],
+          },
+        ],
+      }),
+    ]));
+
+    expect(result.errors).toEqual([]);
+  });
+
+  it('fails invalid rich imported item summary fields', () => {
+    const result = validateRegistryMirror(createMirror([
+      createRecord({
+        itemSummaries: [
+          {
+            name: 'Input OTP',
+            slug: 'input-otp',
+            source: 'registry-json',
+            provenance: 'fixture',
+            catalog_status: 'available',
+            route_eligible: true,
+            install_token: '@example/bad token',
+            view_command: 'npx shadcn@latest view https://example.com/r/input-otp.json',
+            raw_item_url: 'javascript:alert(1)',
+            dependencies: ['lucide-react', 42],
+            files: [{ path: '', type: 'registry:ui' }],
+          },
+        ],
+      }),
+    ]));
+
+    const codes = result.errors.map(error => error.code);
+    expect(codes).toContain('atlas-invalid-item-token');
+    expect(codes).toContain('atlas-invalid-item-command');
+    expect(codes).toContain('atlas-invalid-item-url');
+    expect(codes).toContain('atlas-invalid-item-array');
+    expect(codes).toContain('atlas-invalid-item-file');
+  });
 });
 
 function createMirror(records = [createRecord()]) {

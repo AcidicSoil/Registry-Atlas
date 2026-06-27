@@ -35,4 +35,22 @@ describe('resolveRegistryItemRoute', () => {
     expect(resolveRegistryItemRoute('@example', 'javascript:alert({name})', 'button').status).toBe('invalid-url');
     expect(resolveRegistryItemRoute('@example', '//example.com/r/{name}.json', 'button').status).toBe('invalid-url');
   });
+
+  it('rejects unresolved template placeholders unless a raw item URL is provided', () => {
+    expect(resolveRegistryItemRoute('@diceui', 'https://diceui.com/r/{style}/{name}.json', 'action-bar')).toEqual({
+      status: 'unresolved-template',
+      label: 'Item route unavailable',
+      url: null,
+    });
+    expect(resolveRegistryItemRoute(
+      '@diceui',
+      'https://diceui.com/r/{style}/{name}.json',
+      'action-bar',
+      'https://diceui.com/r/action-bar.json',
+    )).toEqual({
+      status: 'available',
+      label: 'Open item route',
+      url: 'https://diceui.com/r/action-bar.json',
+    });
+  });
 });

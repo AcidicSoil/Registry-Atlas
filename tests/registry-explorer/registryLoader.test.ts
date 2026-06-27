@@ -34,7 +34,16 @@ describe('loadRegistries', () => {
           catalogStatus: 'partial',
         },
         itemSummaries: [
-          expect.objectContaining({ slug: 'button', source: 'known-catalog', provenance: 'fixture' }),
+          expect.objectContaining({
+            slug: 'button',
+            source: 'known-catalog',
+            provenance: 'fixture',
+            rawItemUrl: 'https://example.com/r/button.json',
+            evidenceUrl: 'https://example.com/r/registry.json',
+            registryDependencies: ['card'],
+            dependencies: ['lucide-react'],
+            files: [{ path: 'registry/button.tsx', type: 'registry:ui', target: 'components/button.tsx' }],
+          }),
           expect.objectContaining({ slug: 'card', source: 'known-catalog', provenance: 'fixture' }),
         ],
         mirror: {
@@ -135,6 +144,11 @@ function createMirror(options: {
               provenance: 'fixture',
               catalog_status: 'available',
               route_eligible: true,
+              raw_item_url: 'https://example.com/r/button.json',
+              evidence_url: 'https://example.com/r/registry.json',
+              dependencies: ['lucide-react'],
+              registryDependencies: ['card'],
+              files: [{ path: 'registry/button.tsx', type: 'registry:ui', target: 'components/button.tsx' }],
             },
             {
               name: 'Card',

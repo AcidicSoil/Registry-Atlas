@@ -10,6 +10,7 @@ export interface InstallActionInput {
   itemSlug: string | undefined | null;
   routeEligible: boolean;
   registryUrlTemplate?: string | undefined | null;
+  rawItemUrl?: string | undefined | null;
   isFallbackCandidate?: boolean;
   fallbackReason?: string;
 }
@@ -53,14 +54,15 @@ export function getInstallActionState(input: InstallActionInput): InstallActionS
   }
 
   const template = input.registryUrlTemplate?.trim() ?? '';
-  if (!template) {
+  const rawItemUrl = input.rawItemUrl?.trim() ?? '';
+  if (!template && !rawItemUrl) {
     return disabled('Registry mirror/template is unavailable.');
   }
 
   const token = buildInstallToken(namespace, slug);
   if (!token) return disabled('Invalid install token.');
 
-  const route = resolveRegistryItemRoute(normalizeNamespace(namespace) ?? '', template, slug);
+  const route = resolveRegistryItemRoute(normalizeNamespace(namespace) ?? '', template, slug, input.rawItemUrl);
   if (route.status !== 'available') {
     return disabled(disabledReasonForRoute(route.status));
   }
@@ -147,6 +149,7 @@ function disabledReasonForRoute(status: string): string {
   if (status === 'invalid-template') return 'Registry route template is invalid.';
   if (status === 'invalid-url') return 'Resolved item route URL is invalid.';
   if (status === 'catalog-not-verified') return 'Catalog is not verified.';
+  if (status === 'unresolved-template') return 'Registry route template has unresolved placeholders.';
   if (status === 'missing-item-slug') return 'Missing item slug.';
   if (status === 'invalid-item-slug') return 'Invalid item slug.';
   return 'Item route unavailable.';

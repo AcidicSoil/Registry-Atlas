@@ -46,14 +46,42 @@ interface RegistryMirrorRecord {
     item_summaries?: Array<{
       name: string;
       slug: string;
+      title?: string;
+      description?: string;
       type?: string;
       category?: string;
+      component_tags_existing?: string[];
+      componentTagsExisting?: string[];
+      component_tags_proposed?: string[];
+      componentTagsProposed?: string[];
       source: string;
       provenance: string;
       catalog_status?: ItemCatalogStatus;
       catalogStatus?: ItemCatalogStatus;
+      confidence?: CoverageConfidence;
       route_eligible?: boolean;
       routeEligible?: boolean;
+      install_token?: string;
+      installToken?: string;
+      view_command?: string;
+      viewCommand?: string;
+      install_command?: string;
+      installCommand?: string;
+      raw_item_url?: string;
+      rawItemUrl?: string;
+      docs_url?: string;
+      docsUrl?: string;
+      preview_url?: string;
+      previewUrl?: string;
+      evidence_url?: string;
+      evidenceUrl?: string;
+      evidence_note?: string;
+      evidenceNote?: string;
+      dependencies?: string[];
+      devDependencies?: string[];
+      registryDependencies?: string[];
+      files?: Array<{ path: string; type: string; target?: string }>;
+      warnings?: string[];
     }>;
   };
   status?: {
@@ -125,12 +153,30 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
   return (items ?? []).map(item => ({
     name: item.name,
     slug: item.slug,
+    title: item.title,
+    description: item.description,
     type: item.type,
     category: item.category,
+    componentTagsExisting: item.component_tags_existing ?? item.componentTagsExisting,
+    componentTagsProposed: item.component_tags_proposed ?? item.componentTagsProposed,
     source: item.source,
     provenance: item.provenance,
     catalogStatus: item.catalog_status ?? item.catalogStatus ?? 'unverified',
+    confidence: item.confidence,
     routeEligible: item.route_eligible ?? item.routeEligible ?? false,
+    installToken: item.install_token ?? item.installToken,
+    viewCommand: item.view_command ?? item.viewCommand,
+    installCommand: item.install_command ?? item.installCommand,
+    rawItemUrl: item.raw_item_url ?? item.rawItemUrl,
+    docsUrl: item.docs_url ?? item.docsUrl,
+    previewUrl: item.preview_url ?? item.previewUrl,
+    evidenceUrl: item.evidence_url ?? item.evidenceUrl,
+    evidenceNote: item.evidence_note ?? item.evidenceNote,
+    dependencies: item.dependencies,
+    devDependencies: item.devDependencies,
+    registryDependencies: item.registryDependencies,
+    files: item.files,
+    warnings: item.warnings,
   }));
 }
 

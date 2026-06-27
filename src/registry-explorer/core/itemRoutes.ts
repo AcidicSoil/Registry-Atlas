@@ -5,7 +5,7 @@ export type ResolvedItemRoute =
       url: string;
     }
   | {
-      status: 'missing-item-slug' | 'invalid-item-slug' | 'invalid-template' | 'invalid-url' | 'catalog-not-verified';
+      status: 'missing-item-slug' | 'invalid-item-slug' | 'invalid-template' | 'invalid-url' | 'unresolved-template' | 'catalog-not-verified';
       label: 'Item route unavailable' | 'Catalog not verified';
       url: null;
     };
@@ -16,6 +16,7 @@ export function resolveRegistryItemRoute(
   namespace: string,
   registryUrlTemplate: string,
   itemSlug: string | undefined | null,
+  rawItemUrl?: string | undefined | null,
 ): ResolvedItemRoute {
   if (!itemSlug || itemSlug.trim().length === 0) {
     return unavailable('missing-item-slug');
@@ -26,18 +27,34 @@ export function resolveRegistryItemRoute(
     return unavailable('invalid-item-slug');
   }
 
-  if (!namespace.startsWith('@') || !registryUrlTemplate.includes('{name}')) {
+  if (!namespace.startsWith('@')) {
+    return unavailable('invalid-template');
+  }
+
+  if (rawItemUrl && rawItemUrl.trim().length > 0) {
+    return resolveAbsoluteRoute(rawItemUrl.trim());
+  }
+
+  if (!registryUrlTemplate.includes('{name}')) {
     return unavailable('invalid-template');
   }
 
   const resolved = registryUrlTemplate.replace('{name}', encodeURIComponent(slug));
-  if (resolved.startsWith('//')) {
+  if (/\{[^}]+\}/.test(resolved)) {
+    return unavailable('unresolved-template');
+  }
+
+  return resolveAbsoluteRoute(resolved);
+}
+
+function resolveAbsoluteRoute(value: string): ResolvedItemRoute {
+  if (value.startsWith('//')) {
     return unavailable('invalid-url');
   }
 
   let url: URL;
   try {
-    url = new URL(resolved);
+    url = new URL(value);
   } catch {
     return unavailable('invalid-url');
   }
