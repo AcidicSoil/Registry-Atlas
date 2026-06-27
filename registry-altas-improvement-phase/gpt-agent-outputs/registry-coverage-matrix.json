@@ -1,0 +1,72 @@
+{
+  "meta": {
+    "generated_at": "2026-06-27T00:00:00Z"
+  },
+  "columns": [
+    "button",
+    "badge",
+    "pill",
+    "receipt",
+    "field",
+    "code-block",
+    "card-deck",
+    "admonition",
+    "tabs",
+    "qr-code",
+    "chat",
+    "map"
+  ],
+  "rows": [
+    {
+      "registry": "@delego",
+      "coverage": {
+        "button": {"matched": true, "status": "verified", "item_slugs": ["button"], "evidence_urls": ["https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json"]},
+        "badge": {"matched": true, "status": "verified", "item_slugs": ["status-badge"], "evidence_urls": ["https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json"]},
+        "pill": {"matched": true, "status": "verified", "item_slugs": ["decision-pill"], "evidence_urls": ["https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json"]},
+        "receipt": {"matched": true, "status": "verified", "item_slugs": ["signed-receipt"], "evidence_urls": ["https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json"]},
+        "field": {"matched": true, "status": "verified", "item_slugs": ["field"], "evidence_urls": ["https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json"]},
+        "code-block": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "card-deck": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "admonition": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "tabs": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "qr-code": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "chat": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "map": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []}
+      }
+    },
+    {
+      "registry": "@delta",
+      "coverage": {
+        "button": {"matched": true, "status": "inferred", "item_slugs": ["copy-button"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "badge": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "pill": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "receipt": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "field": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "code-block": {"matched": true, "status": "verified", "item_slugs": ["code-block"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "card-deck": {"matched": true, "status": "verified", "item_slugs": ["card-deck"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "admonition": {"matched": true, "status": "verified", "item_slugs": ["admonition"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "tabs": {"matched": true, "status": "verified", "item_slugs": ["tabs"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "qr-code": {"matched": true, "status": "verified", "item_slugs": ["qrcode"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "chat": {"matched": true, "status": "verified", "item_slugs": ["chat"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]},
+        "map": {"matched": true, "status": "verified", "item_slugs": ["mapbox-pointer"], "evidence_urls": ["https://deltacomponents.dev/r/registry.json"]}
+      }
+    },
+    {
+      "registry": "@diceui",
+      "coverage": {
+        "button": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "badge": {"matched": true, "status": "verified", "item_slugs": ["badge-overflow"], "evidence_urls": ["https://diceui.com/r/registry.json"]},
+        "pill": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "receipt": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "field": {"matched": true, "status": "inferred", "item_slugs": ["checkbox-group", "combobox"], "evidence_urls": ["https://diceui.com/r/registry.json"]},
+        "code-block": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "card-deck": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "admonition": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "tabs": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "qr-code": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "chat": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []},
+        "map": {"matched": false, "status": "unavailable", "item_slugs": [], "evidence_urls": []}
+      }
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "allowedExecutables": ["node"],
+  "maxTimeoutMs": 30000,
+  "allowShell": false,
+  "denyParentTraversal": true
+}

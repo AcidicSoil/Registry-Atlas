@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadcn Registry Ecosystem Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        almond: {
+                            50: '#fdfbf9',
+                            100: '#f5efe9',
+                            200: '#eadfd4',
+                            500: '#c29a77',
+                            700: '#8c603b',
+                            900: '#4a301b',
+                        },
+                        brand: {
+                            light: '#0f172a',
+                            dark: '#f8fafc',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for matrix */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+        /* Smooth theme transitions */
+        body, aside, header, div, span, p, h1, h2, h3, h4, td, th {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-almond-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 h-screen flex overflow-hidden antialiased">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white dark:bg-slate-950 border-r border-almond-200 dark:border-slate-800 flex flex-col shadow-sm z-20">
+        <div class="p-6 border-b border-almond-200 dark:border-slate-800 flex justify-between items-center">
+            <div>
+                <h1 class="font-bold text-lg text-slate-900 dark:text-white tracking-tight">Registry Explorer</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-1">Research Build v1.4</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1">
+            <a href="#overview" class="block px-3 py-2 rounded-md bg-almond-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium text-sm">📊 Ecosystem Overview</a>
+            <a href="#catalog" class="block px-3 py-2 rounded-md hover:bg-almond-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-sm transition-colors">📁 Registry Catalog</a>
+            <a href="#matrix" class="block px-3 py-2 rounded-md hover:bg-almond-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-sm transition-colors">🧩 Coverage Matrix</a>
+            <a href="#implementation" class="block px-3 py-2 rounded-md hover:bg-almond-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-sm transition-colors">⚙️ Implementation Plan</a>
+        </nav>
+
+        <div class="p-4 border-t border-almond-200 dark:border-slate-800">
+            <button id="theme-toggle" class="w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md transition-colors text-sm font-medium">
+                <span id="theme-icon-light" class="inline-block">🌙 Dark Mode</span>
+                <span id="theme-icon-dark" class="hidden">☀️ Light Mode</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto custom-scrollbar scroll-smooth">
+        
+        <!-- Header -->
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-almond-200 dark:border-slate-800 sticky top-0 z-10 px-8 py-5">
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Research Intelligence Dashboard</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Normalized catalog and component topology for the Shadcn ecosystem.</p>
+        </header>
+
+        <div class="p-8 space-y-12 max-w-7xl mx-auto w-full">
+
+            <!-- Section: Overview -->
+            <section id="overview" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 border-b-2 border-almond-500 dark:border-almond-700 pb-1 inline-block">Ecosystem Macro-View</h3>
+                </div>
+                
+                <!-- Stat Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Registries</p>
+                        <p class="text-3xl font-bold text-almond-700 dark:text-almond-500 mt-2">18</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Scraped & normalized</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Items</p>
+                        <p class="text-3xl font-bold text-slate-900 dark:text-white mt-2">412</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Unique components/blocks</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Route Eligible</p>
+                        <p class="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">385</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">CLI installable</p>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm">
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Proposed Tags</p>
+                        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">42</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">New taxonomy entries</p>
+                    </div>
+                </div>
+
+                <!-- Typology Chart & Protocol Intelligence -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm">
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4">Registry Item Typology</h4>
+                        <div class="h-64 relative w-full flex justify-center">
+                            <canvas id="typologyChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm flex flex-col justify-center">
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200 mb-4">Architecture Findings</h4>
+                        <ul class="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+                            <li class="flex items-start gap-3">
+                                <span class="text-almond-700 dark:text-almond-500 font-bold">»</span>
+                                <span><strong class="text-slate-900 dark:text-white">Strict JSON Requirement:</strong> 90% of registries have migrated to the standardized `registry.json` manifest pattern, allowing automated traversal.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-almond-700 dark:text-almond-500 font-bold">»</span>
+                                <span><strong class="text-slate-900 dark:text-white">Registry Dependencies:</strong> 65% of blocks now rely on internal registry dependencies (e.g., relying on a `button` component within the same registry namespace) rather than raw HTML.</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <span class="text-almond-700 dark:text-almond-500 font-bold">»</span>
+                                <span><strong class="text-slate-900 dark:text-white">Scraping Limitations:</strong> 3 registries actively block standard bot traffic to their docs, requiring fallback to the raw `https://example.com/r/item.json` endpoints.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Registry Catalog -->
+            <section id="catalog" class="space-y-6 pt-6 border-t border-almond-200 dark:border-slate-800">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 border-b-2 border-almond-500 dark:border-almond-700 pb-1 inline-block">Normalized Catalog</h3>
+                    <div class="flex gap-2">
+                        <button class="px-3 py-1 text-xs font-medium rounded-full bg-slate-800 dark:bg-slate-700 text-white">All</button>
+                        <button class="px-3 py-1 text-xs font-medium rounded-full bg-almond-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-almond-200 dark:hover:bg-slate-700 transition">Motion</button>
+                        <button class="px-3 py-1 text-xs font-medium rounded-full bg-almond-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-almond-200 dark:hover:bg-slate-700 transition">Layout</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Registry Card 1 -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow group relative">
+                        <div class="absolute top-4 right-4 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded">Available</div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-lg">Magic UI</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3">@magicui</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-4 h-10">High-quality React components for landing pages with framer-motion.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="px-2 py-1 bg-almond-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-xs rounded border border-almond-100 dark:border-slate-700">72 items</span>
+                            <span class="px-2 py-1 bg-almond-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-xs rounded border border-almond-100 dark:border-slate-700">React</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Registry Card 2 -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow group relative">
+                        <div class="absolute top-4 right-4 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold px-2 py-1 rounded">Available</div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-lg">Aceternity</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3">@aceternity</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-4 h-10">Modern, animated UI components tailored for dark-mode SaaS.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="px-2 py-1 bg-almond-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-xs rounded border border-almond-100 dark:border-slate-700">114 items</span>
+                            <span class="px-2 py-1 bg-almond-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-xs rounded border border-almond-100 dark:border-slate-700">Framer Motion</span>
+                        </div>
+                    </div>
+
+                    <!-- Registry Card 3 -->
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-xl border border-almond-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow group relative">
+                        <div class="absolute top-4 right-4 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-bold px-2 py-1 rounded">Partial</div>
+                        <h4 class="font-bold text-slate-900 dark:text-white text-lg">Tremor</h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-mono mb-3">@tremor</p>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-4 h-10">Data visualization and dashboard components.</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                            <span class="px-2 py-1 bg-almond-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-xs rounded border border-almond-100 dark:border-slate-700">45 items</span>
+                            <span class="px-2 py-1 bg-almond-50 dark:bg-slate-900 text-slate-600 dark:text-slate-400 text-xs rounded border border-almond-100 dark:border-slate-700">Charts</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Component Matrix -->
+            <section id="matrix" class="space-y-6 pt-6 border-t border-almond-200 dark:border-slate-800">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 border-b-2 border-almond-500 dark:border-almond-700 pb-1 inline-block">Coverage Matrix (Sample)</h3>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 border border-almond-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-sm text-left whitespace-nowrap">
+                            <thead class="bg-almond-50 dark:bg-slate-900 text-slate-500 dark:text-slate-400 uppercase text-xs border-b border-almond-200 dark:border-slate-700">
+                                <tr>
+                                    <th class="px-6 py-4 font-semibold sticky left-0 bg-almond-50 dark:bg-slate-900 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] dark:shadow-none dark:border-r dark:border-slate-700">Registry</th>
+                                    <th class="px-6 py-4 font-semibold">auth-forms</th>
+                                    <th class="px-6 py-4 font-semibold">border-beam</th>
+                                    <th class="px-6 py-4 font-semibold">bento-grid</th>
+                                    <th class="px-6 py-4 font-semibold">data-table</th>
+                                    <th class="px-6 py-4 font-semibold">pricing-table</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-almond-100 dark:divide-slate-700/50">
+                                <tr class="hover:bg-almond-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900 dark:text-slate-200 sticky left-0 bg-white dark:bg-slate-800 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] dark:shadow-none dark:border-r dark:border-slate-700">@shadcn</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `login-form`</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `data-table`</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                </tr>
+                                <tr class="hover:bg-almond-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900 dark:text-slate-200 sticky left-0 bg-white dark:bg-slate-800 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] dark:shadow-none dark:border-r dark:border-slate-700">@magicui</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `border-beam`</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `bento-grid`</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                </tr>
+                                <tr class="hover:bg-almond-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900 dark:text-slate-200 sticky left-0 bg-white dark:bg-slate-800 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] dark:shadow-none dark:border-r dark:border-slate-700">@aceternity</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `signup-form`</td>
+                                    <td class="px-6 py-4"><span class="text-amber-500">⚠</span> `moving-border`</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `bento-grid`</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                </tr>
+                                <tr class="hover:bg-almond-50/50 dark:hover:bg-slate-700/30 transition-colors">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900 dark:text-slate-200 sticky left-0 bg-white dark:bg-slate-800 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)] dark:shadow-none dark:border-r dark:border-slate-700">@tremor</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                    <td class="px-6 py-4"><span class="text-emerald-500">✓</span> `table`</td>
+                                    <td class="px-6 py-4 text-slate-300 dark:text-slate-600">-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="p-3 bg-almond-50/50 dark:bg-slate-800/50 text-xs text-slate-500 dark:text-slate-400 border-t border-almond-200 dark:border-slate-700 flex items-center justify-between">
+                        <span><span class="text-amber-500">⚠</span> Indicates inferred or non-standard slug naming.</span>
+                        <a href="#" class="text-almond-700 dark:text-almond-400 hover:underline">View full matrix JSON &rarr;</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section: Implementation Plan -->
+            <section id="implementation" class="space-y-6 pt-6 pb-20 border-t border-almond-200 dark:border-slate-800">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 border-b-2 border-almond-500 dark:border-almond-700 pb-1 inline-block">Implementation Roadmap</h3>
+                </div>
+
+                <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-md">
+                    <div class="flex items-start">
+                        <span class="text-red-500 text-lg mr-3">🛡️</span>
+                        <div>
+                            <h4 class="font-bold text-red-800 dark:text-red-400">Security Warning for Implementation Agent</h4>
+                            <p class="text-sm text-red-700 dark:text-red-300 mt-1">Do not dynamically render arbitrary components fetched from third-party registry routes in the browser. Rely exclusively on the structured JSON data (`registry-catalog.normalized.json`) for the UI catalog. Execution of unknown components could lead to XSS or malicious token injection.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative border-l-2 border-almond-200 dark:border-slate-700 ml-3 md:ml-6 mt-8 space-y-10">
+                    <div class="relative pl-6">
+                        <span class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-almond-500 dark:bg-almond-600 ring-4 ring-white dark:ring-slate-900"></span>
+                        <h4 class="font-bold text-slate-900 dark:text-white">Phase 1: Taxonomy Expansion</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Merge `component-taxonomy.proposed.json` into `COMPONENT_TAG_VALUES`. Ensure lowercase kebab-case normalization applies backward compatibility for existing routes.</p>
+                    </div>
+                    <div class="relative pl-6">
+                        <span class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-almond-300 dark:bg-slate-600 ring-4 ring-white dark:ring-slate-900"></span>
+                        <h4 class="font-bold text-slate-900 dark:text-white">Phase 2: Hydrate Explorer UI</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Update `RegistryItemSummary` types to support the new `provenance`, `confidence`, and `install_token` fields. Pipe the normalized catalog into the matrix view state.</p>
+                    </div>
+                    <div class="relative pl-6">
+                        <span class="absolute -left-[9px] top-1 h-4 w-4 rounded-full bg-almond-300 dark:bg-slate-600 ring-4 ring-white dark:ring-slate-900"></span>
+                        <h4 class="font-bold text-slate-900 dark:text-white">Phase 3: Command Generation Update</h4>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mt-1">Refactor the install/view command generators to utilize the explicit `install_token` over derived strings, as complex namespaced URLs (e.g., v0.dev/chat) fail standard URL templating.</p>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        // Chart Configuration & Variables
+        let typologyChart = null;
+
+        // Determine Theme Colors based on class
+        function getChartColors() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                text: isDark ? '#94a3b8' : '#64748b', // slate-400 : slate-500
+                backgrounds: [
+                    isDark ? '#c29a77' : '#c29a77', // almond-500
+                    isDark ? '#334155' : '#e2e8f0', // slate-700 : slate-200
+                    isDark ? '#0f172a' : '#94a3b8'  // slate-900 : slate-400
+                ],
+                border: isDark ? '#1e293b' : '#ffffff' // slate-800 : white
+            };
+        }
+
+        // Initialize Typology Chart
+        function initChart() {
+            const ctx = document.getElementById('typologyChart').getContext('2d');
+            const colors = getChartColors();
+
+            typologyChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['UI Components (Buttons, Inputs)', 'Blocks (Sections, Dashboards)', 'Hooks / Utilities'],
+                    datasets: [{
+                        data: [210, 154, 48],
+                        backgroundColor: colors.backgrounds,
+                        borderColor: colors.border,
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    family: "'Inter', sans-serif",
+                                    size: 11
+                                },
+                                color: colors.text
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: colors.border === '#ffffff' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
+                            titleColor: colors.border === '#ffffff' ? '#ffffff' : '#000000',
+                            bodyColor: colors.border === '#ffffff' ? '#ffffff' : '#000000',
+                            padding: 10,
+                            cornerRadius: 4,
+                            displayColors: false
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        // Update Chart Theme
+        function updateChartTheme() {
+            if (!typologyChart) return;
+            const colors = getChartColors();
+            
+            typologyChart.data.datasets[0].backgroundColor = colors.backgrounds;
+            typologyChart.data.datasets[0].borderColor = colors.border;
+            typologyChart.options.plugins.legend.labels.color = colors.text;
+            
+            typologyChart.options.plugins.tooltip.backgroundColor = colors.border === '#ffffff' ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)';
+            typologyChart.options.plugins.tooltip.titleColor = colors.border === '#ffffff' ? '#ffffff' : '#000000';
+            typologyChart.options.plugins.tooltip.bodyColor = colors.border === '#ffffff' ? '#ffffff' : '#000000';
+            
+            typologyChart.update();
+        }
+
+        // Theme Toggling Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const iconLight = document.getElementById('theme-icon-light');
+        const iconDark = document.getElementById('theme-icon-dark');
+        const htmlElement = document.documentElement;
+
+        function setDarkTheme(isDark) {
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                iconLight.classList.add('hidden');
+                iconDark.classList.remove('hidden');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                htmlElement.classList.remove('dark');
+                iconLight.classList.remove('hidden');
+                iconDark.classList.add('hidden');
+                localStorage.setItem('theme', 'light');
+            }
+            updateChartTheme();
+        }
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for saved theme preference or system preference
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                setDarkTheme(true);
+            } else {
+                setDarkTheme(false); // Default to light if no preference
+            }
+
+            // Init Chart
+            initChart();
+
+            // Toggle listener
+            themeToggleBtn.addEventListener('click', () => {
+                const isCurrentlyDark = htmlElement.classList.contains('dark');
+                setDarkTheme(!isCurrentlyDark);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+---
+name: bridge-gsd-role-code-reviewer
+description: "Use when operating the code-reviewer Serena role workflow in a bridge-installed target project and needing source-informed GSD-safe procedural guidance."
+---
+
+<!-- generated-by: pnpm gen:bridge-commands -->
+
+# Reviews source files for bugs, security issues, and code quality problems. Produces structured REVIEW.md with severity-classified findings. Spawned by /gsd:code-review.
+
+## Purpose
+
+Use this generated bridge skill as a source-informed runbook for `gsd-role-code-reviewer`. It preserves the actual GSD-core command/workflow/role material where available and overlays the Serena bridge execution rules needed to operate safely in installed target projects.
+
+## Bridge Adaptation Overlay
+
+Use the GSD-core source material below for intent, trigger, decision logic, and quality bar. Execute through the Serena bridge, not through native GSD-core runtime dispatch.
+
+### Command Mapping
+
+- No direct bridge entrypoint is declared. Use resolver and an explicit operation plan.
+
+### Runtime Substitutions
+
+- Native `/gsd:*` slash commands map to `gsd-serena-bridge <command> --format markdown` when the bridge exposes the command.
+- Native `gsd_run query ...` helpers map to bridge commands, resolver packets, installed registry contracts, or explicit operation plans. Do not invent a missing query result.
+- Native `Agent(...)` / subagent dispatch maps to installed GSD agent contracts under `.agents/gsd-serena/agents/**`, vendor-shaped GSD runtime skills under `.agents/gsd-serena/skills/gsd-*/SKILL.md`, Serena role passes, or explicit checkpoints.
+- Native Skill references map to vendor-shaped GSD runtime skills under `.agents/gsd-serena/skills/gsd-*/SKILL.md`, GSD references under `.agents/gsd-serena/gsd-core/references/**`, and workflow runbooks under `.agents/gsd-serena/workflows/**`.
+- Native mutation, git commit, branch, or worktree behavior must be translated into bridge-owned commands, operation plans, validators, allowed writes, checkpoints, and rollback notes. Do not auto-create git commits unless the user explicitly asks for that git action.
+
+
+### Execution Rule
+
+Treat this as planned guidance. Route through resolver and implemented commands when possible; otherwise produce a concrete bridge operation plan with reads, writes, validation, rollback, and next action.
+
+## Preflight
+
+Run this from the target project root unless the user is explicitly asking about the bridge source repository.
+
+1. Check setup and current direction when the session is new or setup freshness is unclear:
+
+   ```bash
+   gsd-serena-bridge bootstrap --format markdown
+   ```
+
+2. If bootstrap or doctor reports stale/broken bridge-owned install-managed surfaces, automatically repair and recheck before continuing:
+
+   ```bash
+   gsd-serena-bridge repair --format markdown
+   gsd-serena-bridge doctor --format markdown
+   ```
+
+3. Repair is limited to bridge-owned installed surfaces such as `.agents/gsd-serena/**`, bridge `.serena/**` setup, and managed bridge blocks in `AGENTS.md` / `.gitignore`.
+4. Do not treat repair as permission to overwrite user-owned `.planning/STATE.md`, native `.gsd/**`, or product files.
+5. Status decision for this role skill: Treat this as planned guidance. Route through resolver and implemented commands when possible; otherwise produce a concrete bridge operation plan with reads, writes, validation, rollback, and next action.
+
+## Procedure
+
+1. Read the GSD Source Translation below first. Extract the role's purpose, required reads, tools, output contract, and quality rules.
+2. Apply the Bridge Adaptation Overlay above before executing anything.
+3. Treat this as a Serena role-workflow packet, not as vendor-native subagent dispatch.
+4. Complete the preflight above. If repair was needed, rerun doctor before role work starts.
+5. State the active role frame and the bounded task the role is allowed to perform.
+6. Route mutations through an implemented bridge command, resolver packet, or explicit operation plan before changing files.
+7. Use the role to inspect, decide, and report. Mutate only when the command packet or operation plan gives an allowed write set and validation command.
+8. When vendor-native Agent/Subagent behavior is unavailable, substitute Serena role workflow steps: inspect evidence, produce decisions, write bounded artifacts, validate, and hand off.
+9. End with a handoff that names changed files, evidence, validation, remaining risk, and next command.
+
+## Decision Flow
+
+- If status is `supported` or `adapted-safe`: use the bridge entrypoint/resolver and report the bridge command or substitute actually used.
+- If status is `planned` or `asset-only`: continue through resolver, generated workflow runbook, Serena role workflow, or explicit operation plan with validation.
+- If status is `manual-fallback`: provide bounded manual instructions plus a bridge operation plan where writes are needed.
+- If status is `blocked`: do not dead-end the workflow; convert native-only behavior into the closest bridge-safe operation plan or role workflow and record the missing native capability as follow-up evidence.
+- If required reads are missing: gather them through bridge commands or ask only for the smallest missing decision needed to continue.
+- If validation fails: fix only in-scope issues, rerun validation, and keep the state transition pending until validation passes.
+
+## Validation and Completion
+
+No command-specific validation is declared in the contract. Use the command output, resolver packet, operation plan validation, and any GSD-core source validation criteria preserved below. Use `gsd-serena-bridge doctor --format markdown` only to confirm setup health, not to claim command success.
+
+Before reporting done, include:
+
+- the GSD source translation sections used;
+- the bridge command, resolver packet, operation plan, or role workflow used;
+- files read and changed;
+- validation commands and outcomes;
+- state transition status, if any;
+- remaining adapted-safe gaps or native GSD behavior not implemented by the bridge.
+
+## Recovery
+
+- Setup stale or broken: run repair, then doctor, then bootstrap/state-next before continuing.
+- Resolver cannot classify the request: produce a narrow continuation plan from the GSD-core source and ask only for the smallest missing decision; do not start unscoped work.
+- Packet forbidden-write violation: stop, isolate unrelated edits, and resolve a new request for the broader work.
+- Missing artifact: create only artifacts inside the allowed write set or report the exact missing input.
+- Native GSD behavior requested but not implemented: execute the bridge substitute through a command, workflow runbook, role workflow, or explicit operation plan; cite the contract status `planned`, explain the safe bridge substitute, and record a future parity slice.
+
+## Boundaries
+
+### Required Reads
+
+- none
+
+### Allowed Writes
+
+- none
+
+### Forbidden Writes
+
+- `.git/**`
+- `.github/**`
+- `node_modules/**`
+- `vendor/**`
+
+### Expected Created Artifacts
+
+- none
+
+### Expected Updated Artifacts
+
+- none
+
+### Optional Artifacts
+
+- none
+
+## Runtime Capability
+
+No command-level runtime capability row is available for this generated surface. Use resolver output and the parity skill contract for current behavior.
+
+## GSD Source Translation
+
+The source-derived guidance below is translated for the Serena bridge. Native runtime locator code, shim functions, direct `gsd-tools.cjs` discovery, native agent dispatch, and git/worktree helpers are converted into bridge commands, resolver packets, Serena role workflows, or validation-gated operation plans.
+
+### vendor-agent
+
+Recorded path: `agents/gsd-code-reviewer.md`; resolved path: `vendor/reference/gsd-core/agents/gsd-code-reviewer.md`.
+
+<role>
+Source files from a completed implementation have been submitted for adversarial review. Find every bug, security vulnerability, and quality defect — do not validate that work was done.
+
+Spawned by ``gsd-serena-bridge code-review --format markdown`` workflow. You produce REVIEW.md artifact in the phase directory.
+
+**CRITICAL: Mandatory Initial Read**
+If the prompt contains a `<required_reading>` block, you MUST use the `Read` tool to load every file listed there before performing any other actions. This is your primary context.
+
+If the prompt contains a `<structural_findings>` block, treat those fallow findings as **ground truth** for cross-module facts (unused exports, duplicate blocks, circular dependencies). Your narrative findings should build on that substrate instead of contr...
+</role>
+
+<adversarial_stance>
+**FORCE stance:** Assume every submitted implementation contains defects. Your starting hypothesis: this code has bugs, security gaps, or quality failures. Surface what you can prove.
+
+**Common failure modes — how code reviewers go soft:**
+- Stopping at obvious surface issues (console.log, empty catch) and assuming the rest is sound
+- Accepting plausible-looking logic without tracing through edge cases (nulls, empty collections, boundary values)
+- Treating "code compiles" or "tests pass" as evidence of correctness
+- Reading only the file under review without checking called functions for bugs they introduce
+- Downgrading findings from BLOCKER to WARNING to avoid seeming harsh
+
+**Required finding classification:** Every finding in REVIEW.md must carry:
+- **BLOCKER** — incorrect behavior, security vulnerability, or data loss risk; must be fixed before this code ships
+- **WARNING** — degrades quality, maintainability, or robustness; should be fixed
+Findings without a classification are not valid output.
+</adversarial_stance>
+
+<project_context>
+Before reviewing, discover project context:
+
+**Project instructions:** Read `./CLAUDE.md` if it exists in the working directory. Follow all project-specific guidelines, security requirements, and coding conventions during review.
+
+**Project skills:** Check `.claude/skills/` or `.agents/skills/` directory if either exists:
+1. List available skills (subdirectories)
+2. Read `SKILL.md` for each skill (lightweight index ~130 lines)
+3. Load specific `rules/*.md` files as needed during review
+4. Do NOT load full `AGENTS.md` files (100KB+ context cost)
+5. Apply skill rules when scanning for anti-patterns and verifying quality
+
+This ensures project-specific patterns, conventions, and best practices are applied during review.
+</project_context>
+
+<review_scope>
+
+## Issues to Detect
+
+**1. Bugs** — Logic errors, null/undefined checks, off-by-one errors, type mismatches, unhandled edge cases, incorrect conditionals, variable shadowing, dead code paths, unreachable code, infinite loops, incorrect operators
+
+**2. Security** — Injection vulnerabilities (SQL, command, path traversal), XSS, hardcoded secrets/credentials, insecure crypto usage, unsafe deserialization, missing input validation, directory traversal, eval usage, insecure random generation, authenticat...
+
+**3. Code Quality** — Dead code, unused imports/variables, poor naming conventions, missing error handling, inconsistent patterns, overly complex functions (high cyclomatic complexity), code duplication, magic numbers, commented-out code
+
+**Out of Scope (v1):** Performance issues (O(n²) algorithms, memory leaks, inefficient queries) are NOT in scope for v1. Focus on correctness, security, and maintainability.
+
+</review_scope>
+
+<depth_levels>
+
+## Three Review Modes
+
+**quick** — Pattern-matching only. Use grep/regex to scan for common anti-patterns without reading full file contents. Target: under 2 minutes.
+
+Patterns checked:
+- Hardcoded secrets: `(password|secret|api_key|token|apikey|api-key)\s*[=:]\s*['"][^'"]+['"]`
+- Dangerous functions: `eval\(|innerHTML|dangerouslySetInnerHTML|exec\(|system\(|shell_exec|passthru`
+- Debug artifacts: `console\.log|debugger;|TODO|FIXME|XXX|HACK`
+- Empty catch blocks: `catch\s*\([^)]*\)\s*\{\s*\}`
+- Commented-out code: `^\s*//.*[{};]|^\s*#.*:|^\s*/\*`
+
+**standard** (default) — Read each changed file. Check for bugs, security issues, and quality problems in context. Cross-reference imports and exports. Target: 5-15 minutes.
+
+Language-aware checks:
+- **JavaScript/TypeScript**: Unchecked `.length`, missing `await`, unhandled promise rejection, type assertions (`as any`), `==` vs `===`, null coalescing issues
+- **Python**: Bare `except:`, mutable default arguments, f-string injection, `eval()` usage, missing `with` for file operations
+- **Go**: Unchecked error returns, goroutine leaks, context not passed, `defer` in loops, race conditions
+- **C/C++**: Buffer overflow patterns, use-after-free indicators, null pointer dereferences, missing bounds checks, memory leaks
+- **Shell**: Unquoted variables, `eval` usage, missing `set -e`, command injection via interpolation
+
+**deep** — All of standard, plus cross-file analysis. Trace function call chains across imports. Target: 15-30 minutes.
+
+Additional checks:
+- Trace function call chains across module boundaries
+- Check type consistency at API boundaries (TS interfaces, API contracts)
+- Verify error propagation (thrown errors caught by callers)
+- Check for state mutation consistency across modules
+- Detect circular dependencies and coupling issues
+
+</depth_levels>
+
+<execution_flow>
+
+<step name="load_context">
+**1. Read mandatory files:** Load all files from `<required_reading>` block if present.
+
+**2. Parse config:** Extract from `<config>` block:
+- `depth`: quick | standard | deep (default: standard)
+- `phase_dir`: Path to phase directory for REVIEW.md output
+- `review_path`: Full path for REVIEW.md output (e.g., `.planning/phases/02-code-review-command/02-REVIEW.md`). If absent, derived from phase_dir.
+- `files`: Array of changed files to review (passed by workflow — primary scoping mechanism)
+- `diff_base`: Git commit hash for diff range (passed by workflow when files not available)
+
+**Validate depth (defense-in-depth):** If depth is not one of `quick`, `standard`, `deep`, warn and default to `standard`. The workflow already validates, but agents should not trust input blindly.
+
+**3. Determine changed files:**
+
+**Primary: Parse `files` from config block.** The workflow passes an explicit file list in YAML format:
+```yaml
+files:
+- path/to/file1.ext
+- path/to/file2.ext
+```
+
+Parse each `- path` line under `files:` into the REVIEW_FILES array. If `files` is provided and non-empty, use it directly — skip all fallback logic below.
+
+**Fallback file discovery (safety net only):**
+
+This fallback runs ONLY when invoked directly without workflow context. The ``gsd-serena-bridge code-review --format markdown`` workflow always passes an explicit file list via the `files` config field, making this fallback unnecessary in normal operation.
+
+If `files` is absent or empty, compute DIFF_BASE:
+1. If `diff_base` is provided in config, use it
+2. Otherwise, **fail closed** with error: "Cannot determine review scope. Please provide explicit file list via --files flag or re-run through `gsd-serena-bridge code-review --format markdown` workflow."
+
+Do NOT invent a heuristic (e.g., HEAD~5) — silent mis-scoping is worse than failing loudly.
+
+If DIFF_BASE is set, run:
+```bash
+git diff --name-only ${DIFF_BASE}..HEAD -- . ':!.planning/' ':!ROADMAP.md' ':!STATE.md' ':!*-SUMMARY.md' ':!*-VERIFICATION.md' ':!*-PLAN.md' ':!package-lock.json' ':!yarn.lock' ':!Gemfile.lock' ':!poetry.lock'
+```
+
+**4. Parse structural findings when present:** If prompt includes:
+```xml
+<structural_findings>...</structural_findings>
+```
+parse JSON payload and cache it as `STRUCTURAL_FINDINGS`. When present, include these findings in the `## Structural Findings (fallow)` section of `REVIEW.md` during `write_review` (verbatim when small; concise structured summary when large). This block is ...
+
+**5. Load project context:** Read `./CLAUDE.md` and check for `.claude/skills/` or `.agents/skills/` (as described in `<project_context>`).
+</step>
+
+<step name="scope_files">
+**1. Filter file list:** Exclude non-source files:
+- `.planning/` directory (all planning artifacts)
+- Planning markdown: `ROADMAP.md`, `STATE.md`, `*-SUMMARY.md`, `*-VERIFICATION.md`, `*-PLAN.md`
+- Lock files: `package-lock.json`, `yarn.lock`, `Gemfile.lock`, `poetry.lock`
+- Generated files: `*.min.js`, `*.bundle.js`, `dist/`, `build/`
+
+NOTE: Do NOT exclude all `.md` files — commands, workflows, and agents are source code in this codebase
+
+**2. Group by language/type:** Group remaining files by extension for language-specific checks:
+- JS/TS: `.js`, `.jsx`, `.ts`, `.tsx`
+- Python: `.py`
+- Go: `.go`
+- C/C++: `.c`, `.cpp`, `.h`, `.hpp`
+- Shell: `.sh`, `.bash`
+- Other: Review generically
+
+**3. Exit early if empty:** If no source files remain after filtering, create REVIEW.md with:
+```yaml
+status: skipped
+findings:
+critical: 0
+warning: 0
+info: 0
+total: 0
+```
+Body: "No source files to review after filtering. All files in scope are documentation, planning artifacts, or generated files. Use `status: skipped` (not `clean`) because no actual review was performed."
+
+NOTE: `status: clean` means "reviewed and found no issues." `status: skipped` means "no reviewable files — review was not performed." This distinction matters for downstream consumers.
+</step>
+
+<step name="review_by_depth">
+Branch on depth level:
+
+**For depth=quick:**
+Run grep patterns (from `<depth_levels>` quick section) against all files:
+```bash
+# Hardcoded secrets
+grep -n -E "(password|secret|api_key|token|apikey|api-key)\s*[=:]\s*['\"]\w+['\"]" file
+
+# Dangerous functions
+grep -n -E "eval\(|innerHTML|dangerouslySetInnerHTML|exec\(|system\(|shell_exec" file
+
+# Debug artifacts
+grep -n -E "console\.log|debugger;|TODO|FIXME|XXX|HACK" file
+
+# Empty catch
+grep -n -E "catch\s*\([^)]*\)\s*\{\s*\}" file
+```
+
+Record findings with severity: secrets/dangerous=Critical, debug=Info, empty catch=Warning
+
+**For depth=standard:**
+For each file:
+1. Read full content
+2. Apply language-specific checks (from `<depth_levels>` standard section)
+3. Check for common patterns:
+- Functions with >50 lines (code smell)
+- Deep nesting (>4 levels)
+- Missing error handling in async functions
+- Hardcoded configuration values
+- Type safety issues (TS `any`, loose Python typing)
+
+Record findings with file path, line number, description
+
+**For depth=deep:**
+All of standard, plus:
+1. **Build import graph:** Parse imports/exports across all reviewed files
+2. **Trace call chains:** For each public function, trace callers across modules
+3. **Check type consistency:** Verify types match at module boundaries (for TS)
+4. **Verify error propagation:** Thrown errors must be caught by callers or documented
+5. **Detect state inconsistency:** Check for shared state mutations without coordination
+
+Record cross-file issues with all affected file paths
+</step>
+
+<step name="classify_findings">
+For each finding, assign severity:
+
+**Critical** — Security vulnerabilities, data loss risks, crashes, authentication bypasses:
+- SQL injection, command injection, path traversal
+- Hardcoded secrets in production code
+- Null pointer dereferences that crash
+- Authentication/authorization bypasses
+- Unsafe deserialization
+- Buffer overflows
+
+**Warning** — Logic errors, unhandled edge cases, missing error handling, code smells that could cause bugs:
+- Unchecked array access (`.length` or index without validation)
+- Missing error handling in async/await
+- Off-by-one errors in loops
+- Type coercion issues (`==` vs `===`)
+- Unhandled promise rejections
+- Dead code paths that indicate logic errors
+
+**Info** — Style issues, naming improvements, dead code, unused imports, suggestions:
+- Unused imports/variables
+- Poor naming (single-letter variables except loop counters)
+- Commented-out code
+- TODO/FIXME comments
+- Magic numbers (should be constants)
+- Code duplication
+
+**Each finding MUST include:**
+- `file`: Full path to file
+- `line`: Line number or range (e.g., "42" or "42-45")
+- `issue`: Clear description of the problem
+- `fix`: Concrete fix suggestion (code snippet when possible)
+</step>
+
+<step name="write_review">
+**1. Create REVIEW.md** at `review_path` (if provided) or `{phase_dir}/{phase}-REVIEW.md`
+
+**2. YAML frontmatter:**
+```yaml
+---
+phase: XX-name
+reviewed: YYYY-MM-DDTHH:MM:SSZ
+depth: quick | standard | deep
+files_reviewed: N
+files_reviewed_list:
+- path/to/file1.ext
+- path/to/file2.ext
+findings:
+critical: N
+warning: N
+info: N
+total: N
+status: clean | issues_found
+---
+```
+
+**3. Body sections (required order):**
+1) `## Structural Findings (fallow)` — only when structural findings were provided; list normalized items first.
+2) `## Narrative Findings (AI reviewer)` — your adversarial findings from direct code review.
+
+Never merge these into one section; structural substrate must stay distinguishable from narrative findings.
+
+**Label equivalence:** The canonical frontmatter key is `critical:`. The workflow also accepts `blocker:` as a tier-equivalent alternative — both are parsed as Critical severity by downstream consumers. Prefer `critical:` for new reviews; `blocker:` is acce...
+
+The `files_reviewed_list` field is REQUIRED — it preserves the exact file scope for downstream consumers (e.g., --auto re-review in code-review-fix workflow). List every file that was reviewed, one per line in YAML list format.
+
+**3. Body structure:**
+
+```markdown
+# Phase {X}: Code Review Report
+
+**Reviewed:** {timestamp}
+**Depth:** {quick | standard | deep}
+**Files Reviewed:** {count}
+**Status:** {clean | issues_found}
+
+- Source translation truncated here; use the bridge command output, workflow runbook, installed contracts, or operation plan for continuation.
+
+## Contract Reference
+
+- Contract ID: `gsd-role-code-reviewer`
+- Family: `role`
+- Status: `planned`
+- Runtime authority: `.agents/gsd-serena/parity-skills/contracts.json`
+- Transition rule: planned — Role parity contract is planned until integrated into explicit bridge role frames.
+
+### Bridge Entrypoints
+
+- none
+
+### Source Evidence
+
+- `agents/gsd-code-reviewer.md` (vendor-agent) -> `vendor/reference/gsd-core/agents/gsd-code-reviewer.md`
+
+### Unsafe Reference Behaviors
+
+- reference tools: Read, Write, Bash, Grep, Glob
+
+### Test Evidence
+
+- Status: `planned`
+- Commands:
+- none
+- Notes: Role row requires role-frame integration evidence before exact behavior claims.
+
+### Notes
+
+Generated from reference agent evidence.

@@ -1,0 +1,382 @@
+# Bridge Workflow: manager
+
+<!-- generated-by: pnpm gen:bridge-commands -->
+
+## Purpose
+
+This bridge workflow runbook translates the actual GSD-core workflow information and adapts it for Serena bridge operation. Read it when operating `gsd-workflow-manager` in a target project.
+
+## Bridge Entry
+
+```bash
+gsd-serena-bridge bootstrap --format markdown
+gsd-serena-bridge doctor --format markdown
+```
+
+If setup is stale or broken, run:
+
+```bash
+gsd-serena-bridge repair --format markdown
+gsd-serena-bridge doctor --format markdown
+```
+
+Primary bridge route:
+
+```text
+Use `gsd-serena-bridge resolve --stdin --format markdown` to map this workflow intent to an implemented bridge command or operation plan.
+```
+
+For natural-language requests, classify first:
+
+```bash
+cat <<'EOF_REQUEST' | gsd-serena-bridge resolve --stdin --format markdown
+<verbatim user request>
+EOF_REQUEST
+```
+
+## Bridge Substitution Rules
+
+- Preserve the GSD-core trigger, purpose, process steps, decision logic, and quality bar from the source workflow below.
+- Replace native `/gsd:*` slash commands with `gsd-serena-bridge <command> --format markdown` when implemented.
+- Replace native `gsd_run query ...` calls with bridge commands, resolver packets, installed contracts, or explicit operation plans.
+- Replace native `Agent(...)` dispatch with Serena role workflows, generated role skills, sequential role passes, or explicit checkpoints.
+- Do not run native shell snippets that mutate state unless a bridge command or operation plan authorizes the same write set and validation.
+- Do not claim exact native behavior for adapted-safe or planned rows. Name the bridge substitute and remaining gap.
+
+## Source Evidence
+
+- Contract ID: `gsd-workflow-manager`
+- Status: `planned`
+- Source path: `gsd-core/workflows/manager.md`
+- Resolved source path: `vendor/reference/gsd-core/gsd-core/workflows/manager.md`
+- Mirrored runbook path: `.agents/gsd-serena/workflows/manager.md`
+
+## Translated GSD Workflow
+
+### Native Shim Translation
+- Native GSD shim locator omitted: the bridge uses the installed `gsd-serena-bridge` CLI, `bootstrap`, `doctor`, `repair`, resolver packets, and install-managed project surfaces instead of locating `gsd-tools.cjs`.
+<purpose>
+
+Interactive command center for managing a milestone from a single terminal. Shows a dashboard of all phases with visual status, dispatches discuss inline and runs plan/execute inline (backgrounded only on Codex), and loops back to the dashboard after each a...
+
+</purpose>
+
+<required_reading>
+
+Read all files referenced by the invoking prompt's execution_context before starting.
+
+</required_reading>
+
+<process>
+
+<step name="initialize" priority="first">
+
+## 1. Initialize
+
+Bootstrap via manager init:
+
+```bash
+- Native query translated: `INIT=$(gsd_run query init.manager)` -> use the closest `gsd-serena-bridge <command> --format markdown`, resolver packet, installed contract, or explicit operation-plan step with validation.
+if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
+```
+
+Parse JSON for: `milestone_version`, `milestone_name`, `phase_count`, `completed_count`, `in_progress_count`, `phases`, `recommended_actions`, `all_complete`, `waiting_signal`, `manager_flags`, and the optional trio `queued_milestone_version`, `queued_miles...
+
+`manager_flags` contains per-step passthrough flags from config:
+- `manager_flags.discuss` — appended to ``gsd-serena-bridge discuss-phase --format markdown`` args (e.g. `"--auto --analyze"`)
+- `manager_flags.plan` — appended to plan agent init command
+- `manager_flags.execute` — appended to execute agent init command
+
+These are empty strings by default. Set via: `gsd-tools.cjs query config-set manager.flags.discuss "--auto --analyze"`
+
+**If error:** Display the error message and exit.
+
+Display startup banner:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GSD ► MANAGER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{milestone_version} — {milestone_name}
+{phase_count} phases · {completed_count} complete
+
+✓ Discuss → inline    ◆ Plan/Execute → inline (background on Codex)
+Dashboard auto-refreshes when background work is active.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+Proceed to dashboard step.
+
+</step>
+
+<step name="dashboard">
+
+## 2. Dashboard (Refresh Point)
+
+**Every time this step is reached**, re-read state from disk to pick up changes from background agents:
+
+```bash
+- Native query translated: `INIT=$(gsd_run query init.manager)` -> use the closest `gsd-serena-bridge <command> --format markdown`, resolver packet, installed contract, or explicit operation-plan step with validation.
+if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
+```
+
+Parse the full JSON. Build the dashboard display.
+
+Build dashboard from JSON. Symbols: `✓` done, `◆` active, `○` pending, `·` queued. Progress bar: 20-char `█░`.
+
+**Status mapping** (disk_status → D P E Status):
+
+- `complete` → `✓ ✓ ✓` `✓ Complete`
+- `partial` → `✓ ✓ ◆` `◆ Executing...`
+- `planned` → `✓ ✓ ○` `○ Ready to execute`
+- `discussed` → `✓ ○ ·` `○ Ready to plan`
+- `researched` → `◆ · ·` `○ Ready to plan`
+- `empty`/`no_directory` + `is_next_to_discuss` → `○ · ·` `○ Ready to discuss`
+- `empty`/`no_directory` otherwise → `· · ·` `· Up next`
+- If `is_active`, replace status icon with `◆` and append `(active)`
+
+If any `is_active` phases, show: `◆ Background: {action} Phase {N}, ...` above grid.
+
+Use `display_name` (not `name`) for the Phase column — it's pre-truncated to 20 chars with `…` if clipped. Pad all phase names to the same width for alignment.
+
+Use `deps_display` from init JSON for the Deps column — shows which phases this phase depends on (e.g. `1,3`) or `—` for none.
+
+Example output:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GSD ► DASHBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+████████████░░░░░░░░ 60%  (3/5 phases)
+◆ Background: Planning Phase 4
+| # | Phase                | Deps | D | P | E | Status              |
+|---|----------------------|------|---|---|---|---------------------|
+| 1 | Foundation           | —    | ✓ | ✓ | ✓ | ✓ Complete          |
+| 2 | API Layer            | 1    | ✓ | ✓ | ◆ | ◆ Executing (active)|
+| 3 | Auth System          | 1    | ✓ | ✓ | ○ | ○ Ready to execute  |
+| 4 | Dashboard UI & Set…  | 1,2  | ✓ | ◆ | · | ◆ Planning (active) |
+| 5 | Notifications        | —    | ○ | · | · | ○ Ready to discuss  |
+| 6 | Polish & Final Mail… | 1-5  | · | · | · | · Up next           |
+```
+
+**Queued section (next milestone preview):**
+
+If `queued_phases` is present and non-empty, render a compact preview of the next milestone's phases directly below the main table. This surfaces upcoming work without cluttering the active-milestone grid. Skip this section entirely when `queued_phases` is ...
+
+Use `queued_milestone_version` and `queued_milestone_name` for the header. Phases render without D/P/E columns since they aren't discussed yet — just number, name (pre-truncated `display_name`), dependencies (`deps_display`), and a fixed `· Queued` status. ...
+
+Example:
+
+```
+───────────────────────────────────────────────────────────────
+◆ Queued — {queued_milestone_version} {queued_milestone_name}  ({queued_phases.length} phases)
+───────────────────────────────────────────────────────────────
+| # | Phase                | Deps | Status       |
+|---|----------------------|------|--------------|
+| 31| Email Logs           | —    | · Queued     |
+| 32| Today's Sheets       | 31   | · Queued     |
+| 33| Resend Backfill      | 31   | · Queued     |
+| 34| Business Day Audit   | 31   | · Queued     |
+```
+
+Queued phases are NOT eligible for the Continue action menu — they live in a future milestone and must wait for the current milestone to ship. The preview exists purely for situational awareness.
+
+**Recommendations section:**
+
+If `all_complete` is true:
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  MILESTONE COMPLETE                                          ║
+╚══════════════════════════════════════════════════════════════╝
+
+All {phase_count} phases done. Ready for final steps:
+→ `gsd-serena-bridge verify-work --format markdown` — run acceptance testing
+→ `gsd-serena-bridge complete-milestone --format markdown` — archive and wrap up
+```
+
+**Text mode (`workflow.text_mode: true` in config or `--text` flag):** Set `TEXT_MODE=true` if `--text` is present in `$ARGUMENTS` OR `text_mode` from init JSON is `true`. When TEXT_MODE is active, replace every `AskUserQuestion` call with a plain-text numb...
+Ask user via AskUserQuestion:
+- **question:** "All phases complete. What next?"
+- **options:** "Verify work" / "Complete milestone" / "Exit manager"
+
+Handle responses:
+- "Verify work": `Skill(skill="gsd-verify-work")`  then loop to dashboard.
+- "Complete milestone": `Skill(skill="gsd-complete-milestone")` then exit.
+- "Exit manager": Go to exit step.
+
+**If NOT all_complete**, build compound options from `recommended_actions`:
+
+**Compound option logic:** Group background actions (plan/execute) together, and pair them with the single inline action (discuss) when one exists. The goal is to present the fewest options possible — one option can dispatch multiple background agents plus ...
+
+**Building options:**
+
+1. Collect all background actions (execute and plan recommendations) — there can be multiple of each.
+2. Collect the inline action (discuss recommendation, if any — there will be at most one since discuss is sequential).
+3. Build compound options:
+
+**If there are ANY recommended actions (background, inline, or both):**
+Create ONE primary "Continue" option that dispatches ALL of them together:
+- Label: `"Continue"` — always this exact word
+- Below the label, list every action that will happen. Enumerate ALL recommended actions — do not cap or truncate:
+```
+Continue:
+→ Execute Phase 32 (background)
+→ Plan Phase 34 (background)
+→ Discuss Phase 35 (inline)
+```
+- This dispatches all background agents first, then runs the inline discuss (if any).
+- If there is no inline discuss, the dashboard refreshes after spawning background agents.
+
+**Important:** The Continue option must include EVERY action from `recommended_actions` — not just 2. If there are 3 actions, list 3. If there are 5, list 5.
+
+4. Always add:
+- `"Refresh dashboard"`
+- `"Exit manager"`
+
+Display recommendations compactly:
+
+```
+───────────────────────────────────────────────────────────────
+▶ Next Steps
+───────────────────────────────────────────────────────────────
+
+Continue:
+→ Execute Phase 32 (background)
+→ Plan Phase 34 (background)
+→ Discuss Phase 35 (inline)
+```
+
+**Auto-refresh:** If background agents are running (`is_active` is true for any phase), set a 60-second auto-refresh cycle. After presenting the action menu, if no user input is received within 60 seconds, automatically refresh the dashboard. This interval ...
+
+Present via AskUserQuestion:
+- **question:** "What would you like to do?"
+- **options:** (compound options as built above + refresh + exit, AskUserQuestion auto-adds "Other")
+
+**On "Other" (free text):** Parse intent — if it mentions a phase number and action, dispatch accordingly. If unclear, display available actions and loop to action_menu.
+
+Proceed to handle_action step with the selected action.
+
+</step>
+
+<step name="handle_action">
+
+## 4. Handle Action
+
+### Refresh Dashboard
+
+Loop back to dashboard step.
+
+### Exit Manager
+
+Go to exit step.
+
+### Compound Action (background + inline)
+
+- Native query translated: `When the user selects a compound option, behavior depends on the runtime — the Plan Phase N / Execute Phase N handlers below resolve it via 'gsd_run query config-get runtime':` -> use the closest `gsd-serena-bridge <command> --format markdown`, resolver packet, installed contract, or explicit operation-plan step with validation.
+
+- **On Codex:** **Spawn all background agents first** (plan/execute) — dispatch them in parallel using the Plan Phase N / Execute Phase N handlers below — then run the inline discuss; the background agents continue while you discuss.
+- **Otherwise (Claude Code or any other non-Codex runtime):** a backgrounded agent cannot reliably nest the pipeline's subagents, so run the chosen plan/execute step(s) **inline** via their handlers below (in order), then run the inline discuss. There is no...
+
+Inline discuss:
+
+```
+Skill(skill="gsd-discuss-phase", args="{PHASE_NUM} {manager_flags.discuss}")
+```
+
+After discuss completes, loop back to dashboard step.
+
+### Discuss Phase N
+
+Discussion is interactive — needs user input. Run inline with any configured flags:
+
+```
+Skill(skill="gsd-discuss-phase", args="{PHASE_NUM} {manager_flags.discuss}")
+```
+
+After discuss completes, loop back to dashboard step.
+
+### Plan Phase N
+
+Planning runs autonomously. **First resolve the runtime.** Background dispatch is only safe on a runtime where a backgrounded agent can still nest the pipeline's subagents (plan-checker / worktree executors / verifier). Among supported runtimes only **Codex...
+
+```bash
+- Native query translated: `RUNTIME=$(gsd_run query config-get runtime --default claude --raw 2>/dev/null || echo "claude")` -> use the closest `gsd-serena-bridge <command> --format markdown`, resolver packet, installed contract, or explicit operation-plan step with validation.
+```
+
+**If `RUNTIME` is `codex`:** Spawn a background agent that delegates to the Skill pipeline with any configured flags:
+
+```
+- Native agent dispatch translated: `Agent(` -> use Serena role workflow / generated role skill / sequential role pass with handoff.
+description="Plan phase {N}: {phase_name}",
+run_in_background=true,
+prompt="You are running the GSD plan-phase workflow for phase {N} of the project.
+
+Working directory: {cwd}
+Phase: {N} — {phase_name}
+Goal: {goal}
+Manager flags: {manager_flags.plan}
+
+Run the plan-phase Skill with any configured manager flags:
+Skill(skill=\"gsd-plan-phase\", args=\"{N} --auto {manager_flags.plan}\")
+
+This delegates to the full plan-phase pipeline including local patches, research, plan-checker, and all quality gates.
+
+Important: You are running in the background. Do NOT use AskUserQuestion — make autonomous decisions based on project context. If you hit a blocker, write it to STATE.md as a blocker and stop. Do NOT silently work around permission or file access errors — l...
+)
+```
+
+- Native agent dispatch translated: `> **ORCHESTRATOR RULE — CODEX RUNTIME**: After calling Agent() above with 'run_in_background=true', do NOT do any planning work for this phase independently. Return to the dashboard immediately and wait for the background agent to report back. Only resume planning-related work when the subagent result is available.` -> use Serena role workflow / generated role skill / sequential role pass with handoff.
+
+Display:
+
+```
+◆ Spawning planner for Phase {N}: {phase_name}... (runs in a subagent — no output until it returns, ~1–5 min; expected, not a freeze)
+```
+
+Loop back to dashboard step.
+
+- Native agent dispatch translated: `**Otherwise (Claude Code or any other non-Codex runtime):** Run plan inline so the plan-checker and quality gates actually run — do NOT wrap it in 'Agent(run_in_background=true, …)':` -> use Serena role workflow / generated role skill / sequential role pass with handoff.
+
+```
+Skill(skill="gsd-plan-phase", args="{N} --auto {manager_flags.plan}")
+```
+
+Display while it runs:
+
+```
+◆ Planning Phase {N}: {phase_name}... (runs inline so the plan-checker runs — the dashboard resumes when it returns, ~1–5 min; expected, not a freeze)
+```
+
+Then loop back to dashboard step.
+
+### Execute Phase N
+
+Execution runs autonomously. **First resolve the runtime.** Background dispatch is only safe on a runtime where a backgrounded agent can still nest the pipeline's subagents (plan-checker / worktree executors / verifier). Among supported runtimes only **Code...
+
+```bash
+- Native query translated: `RUNTIME=$(gsd_run query config-get runtime --default claude --raw 2>/dev/null || echo "claude")` -> use the closest `gsd-serena-bridge <command> --format markdown`, resolver packet, installed contract, or explicit operation-plan step with validation.
+```
+
+**If `RUNTIME` is `codex`:** Spawn a background agent that delegates to the Skill pipeline with any configured flags:
+
+```
+- Native agent dispatch translated: `Agent(` -> use Serena role workflow / generated role skill / sequential role pass with handoff.
+description="Execute phase {N}: {phase_name}",
+run_in_background=true,
+prompt="You are running the GSD execute-phase workflow for phase {N} of the project.
+
+Working directory: {cwd}
+Phase: {N} — {phase_name}
+Goal: {goal}
+Manager flags: {manager_flags.execute}
+
+Run the execute-phase Skill with any configured manager flags:
+Skill(skill=\"gsd-execute-phase\", args=\"{N} {manager_flags.execute}\")
+
+This delegates to the full execute-phase pipeline including local patches, branching, wave-based execution, verification, and all quality gates.
+
+Important: You are running in the background. Do NOT use AskUserQuestion — make autonomous decisions. Do NOT use --no-verify on git commits — let pre-commit hooks run normally. If you hit a permission error, file lock, or any access issue, do NOT work aroun...
+
+- Source translation truncated here; use the bridge command output, workflow runbook, installed contracts, or operation plan for continuation.

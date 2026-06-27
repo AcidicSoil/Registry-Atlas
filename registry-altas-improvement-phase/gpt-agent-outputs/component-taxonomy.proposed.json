@@ -1,0 +1,229 @@
+{
+  "meta": {
+    "generated_at": "2026-06-27T00:00:00Z",
+    "existing_component_tag_count": 9,
+    "proposed_component_tag_count": 22
+  },
+  "existing_tags_observed": [
+    "button",
+    "badge",
+    "input",
+    "alert",
+    "slider",
+    "progress",
+    "toolbar",
+    "avatar",
+    "carousel",
+    "tabs"
+  ],
+  "proposed_tags": [
+    {
+      "tag": "theme",
+      "label": "Theme",
+      "category": "styles-and-themes",
+      "reason": "Delego provides a theme component containing design tokens mapped onto shadcn variables, which is not covered by existing tags.",
+      "example_items": [
+        {"registry": "@delego", "slug": "delego-theme", "url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/delego-theme.json"}
+      ]
+    },
+    {
+      "tag": "status-pill",
+      "label": "Status pill",
+      "category": "badges-and-chips",
+      "reason": "The status‑badge component combines a pill‑shaped badge with status colours (allow/deny/approval), so a new tag distinguishes these status chips from generic badges.",
+      "example_items": [
+        {"registry": "@delego", "slug": "status-badge", "url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/status-badge.json"}
+      ]
+    },
+    {
+      "tag": "decision-pill",
+      "label": "Decision pill",
+      "category": "badges-and-chips",
+      "reason": "Delego’s decision-pill component renders an allow/approve/deny decision with icon and colour; no existing tag captures this unique element.",
+      "example_items": [
+        {"registry": "@delego", "slug": "decision-pill", "url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/decision-pill.json"}
+      ]
+    },
+    {
+      "tag": "pill",
+      "label": "Pill/Chip",
+      "category": "badges-and-chips",
+      "reason": "While generic badges exist, pill‑shaped chips are distinct and appear in multiple registries (e.g., decision-pill, status-badge).",
+      "example_items": [
+        {"registry": "@delego", "slug": "decision-pill", "url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/decision-pill.json"}
+      ]
+    },
+    {
+      "tag": "receipt",
+      "label": "Receipt / Audit record",
+      "category": "data-display-and-document",
+      "reason": "Delego’s signed-receipt component produces a hash‑chained ledger record; this unique data‑display item merits its own tag.",
+      "example_items": [
+        {"registry": "@delego", "slug": "signed-receipt", "url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/signed-receipt.json"}
+      ]
+    },
+    {
+      "tag": "audit",
+      "label": "Audit visual",
+      "category": "data-display-and-document",
+      "reason": "Signed receipt functions as an audit trail visual; a dedicated tag helps filter audit‑oriented components.",
+      "example_items": [
+        {"registry": "@delego", "slug": "signed-receipt", "url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/signed-receipt.json"}
+      ]
+    },
+    {
+      "tag": "otp-input",
+      "label": "OTP input",
+      "category": "form-controls",
+      "reason": "Delta’s input‑otp component provides a multi‑field one‑time‑password input; this pattern deserves a separate tag for security and auth flows.",
+      "example_items": [
+        {"registry": "@delta", "slug": "input-otp", "url": "https://deltacomponents.dev/r/input-otp.json"}
+      ]
+    },
+    {
+      "tag": "code-block",
+      "label": "Code block",
+      "category": "code-and-markdown",
+      "reason": "Delta offers a syntax‑highlighted code block with copy functionality; adding a dedicated tag facilitates discovery of developer‑oriented components.",
+      "example_items": [
+        {"registry": "@delta", "slug": "code-block", "url": "https://deltacomponents.dev/r/code-block.json"}
+      ]
+    },
+    {
+      "tag": "syntax-highlighting",
+      "label": "Syntax highlighting",
+      "category": "code-and-markdown",
+      "reason": "The code-block component includes syntax highlighting via Prism libraries; a specific tag enables filtering by this capability.",
+      "example_items": [
+        {"registry": "@delta", "slug": "code-block", "url": "https://deltacomponents.dev/r/code-block.json"}
+      ]
+    },
+    {
+      "tag": "utility-button",
+      "label": "Utility button",
+      "category": "buttons-and-controls",
+      "reason": "Delta’s copy-button component is a specialized button used to copy text to the clipboard; tagging it as a utility button distinguishes it from primary/secondary buttons.",
+      "example_items": [
+        {"registry": "@delta", "slug": "copy-button", "url": "https://deltacomponents.dev/r/copy-button.json"}
+      ]
+    },
+    {
+      "tag": "zoomable-image",
+      "label": "Zoomable image",
+      "category": "media-and-images",
+      "reason": "The cambio-image component implements interactive zooming on images; creating a tag aids in finding advanced image components.",
+      "example_items": [
+        {"registry": "@delta", "slug": "cambio-image", "url": "https://deltacomponents.dev/r/cambio-image.json"}
+      ]
+    },
+    {
+      "tag": "card-deck",
+      "label": "Card deck",
+      "category": "carousels-and-swipers",
+      "reason": "Delta’s card-deck component creates a swipeable stack of cards using framer-motion and swiper; this pattern merits its own tag.",
+      "example_items": [
+        {"registry": "@delta", "slug": "card-deck", "url": "https://deltacomponents.dev/r/card-deck.json"}
+      ]
+    },
+    {
+      "tag": "admonition",
+      "label": "Admonition",
+      "category": "callouts-and-alerts",
+      "reason": "Admonition provides stylized callout boxes for notes or warnings; a tag helps differentiate these from generic alerts.",
+      "example_items": [
+        {"registry": "@delta", "slug": "admonition", "url": "https://deltacomponents.dev/r/admonition.json"}
+      ]
+    },
+    {
+      "tag": "qr-code",
+      "label": "QR code",
+      "category": "data-generation",
+      "reason": "Delta includes a QR code component using qr-code-styling; adding a tag makes it easy to find code‑generation widgets.",
+      "example_items": [
+        {"registry": "@delta", "slug": "qrcode", "url": "https://deltacomponents.dev/r/qrcode.json"}
+      ]
+    },
+    {
+      "tag": "chat-interface",
+      "label": "Chat interface",
+      "category": "ai-and-chat",
+      "reason": "Delta’s chat component is a streaming chat interface for LLM interactions; a dedicated tag supports discovery of AI chat UIs.",
+      "example_items": [
+        {"registry": "@delta", "slug": "chat", "url": "https://deltacomponents.dev/r/chat.json"}
+      ]
+    },
+    {
+      "tag": "ai-chat",
+      "label": "AI chat",
+      "category": "ai-and-chat",
+      "reason": "Some chat components are specifically designed for AI or LLM conversations; this tag captures that specialization.",
+      "example_items": [
+        {"registry": "@delta", "slug": "chat", "url": "https://deltacomponents.dev/r/chat.json"}
+      ]
+    },
+    {
+      "tag": "map-pointer",
+      "label": "Map pointer",
+      "category": "maps-and-location",
+      "reason": "Delta provides a mapbox-pointer component for interactive maps; adding a tag for map pointers aids search for location widgets.",
+      "example_items": [
+        {"registry": "@delta", "slug": "mapbox-pointer", "url": "https://deltacomponents.dev/r/mapbox-pointer.json"}
+      ]
+    },
+    {
+      "tag": "angle-slider",
+      "label": "Angle slider",
+      "category": "form-controls",
+      "reason": "Dice UI’s angle-slider is a radial input not represented by existing slider tags; a dedicated tag differentiates it from linear sliders.",
+      "example_items": [
+        {"registry": "@diceui", "slug": "angle-slider", "url": "https://diceui.com/r/angle-slider.json"}
+      ]
+    },
+    {
+      "tag": "circular-progress",
+      "label": "Circular progress",
+      "category": "feedback-and-progress",
+      "reason": "Dice UI offers a circular-progress indicator with custom animations; introducing a tag helps group radial progress indicators.",
+      "example_items": [
+        {"registry": "@diceui", "slug": "circular-progress", "url": "https://diceui.com/r/circular-progress.json"}
+      ]
+    },
+    {
+      "tag": "color-picker",
+      "label": "Color picker",
+      "category": "form-controls",
+      "reason": "Dice UI supplies a complex color picker built on multiple primitives; a dedicated tag aligns with user expectations and parallels other UI libraries.",
+      "example_items": [
+        {"registry": "@diceui", "slug": "color-picker", "url": "https://diceui.com/r/color-picker.json"}
+      ]
+    },
+    {
+      "tag": "color-swatch",
+      "label": "Color swatch",
+      "category": "form-controls",
+      "reason": "Color swatches are small selectable colour squares used by color pickers; adding this tag captures such mini controls.",
+      "example_items": [
+        {"registry": "@diceui", "slug": "color-swatch", "url": "https://diceui.com/r/color-swatch.json"}
+      ]
+    },
+    {
+      "tag": "compare-slider",
+      "label": "Compare slider",
+      "category": "media-and-comparison",
+      "reason": "Dice UI’s compare-slider allows dragging a handle to reveal one image over another; this pattern needs its own tag for A/B comparison components.",
+      "example_items": [
+        {"registry": "@diceui", "slug": "compare-slider", "url": "https://diceui.com/r/compare-slider.json"}
+      ]
+    },
+    {
+      "tag": "cropper",
+      "label": "Image cropper",
+      "category": "media-and-images",
+      "reason": "Dice UI includes a cropper for selecting image regions; a dedicated tag helps identify image editing controls.",
+      "example_items": [
+        {"registry": "@diceui", "slug": "cropper", "url": "https://diceui.com/r/cropper.json"}
+      ]
+    }
+  ],
+  "aliases": []
+}

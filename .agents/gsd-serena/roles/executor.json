@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "id": "executor",
+  "summary": "Executes packet-scoped implementation work while preserving public behavior unless the packet requires change.",
+  "instructions": "Implement only the packet-defined slice. Keep changes local, reversible, and covered by the packet validation command."
+}

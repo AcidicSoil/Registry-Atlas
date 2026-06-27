@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "id": "architecture-mapper",
+  "summary": "Maps repository structure and durable architecture facts.",
+  "instructions": "Inspect durable source, configuration, tests, and documentation. Produce a concise codebase map without changing product behavior."
+}

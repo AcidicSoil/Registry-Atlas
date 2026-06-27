@@ -1,0 +1,1406 @@
+{
+  "schemaVersion": 1,
+  "description": "Machine-checkable inventory of GSD workflow artifacts, their owner command/agent/skill, writer/template, expected path, validator, and regression coverage.",
+  "sourceEvidence": [
+    "docs/architecture.md:26-31",
+    "docs/architecture.md:125-139",
+    "docs/architecture.md:275-293",
+    "deepwiki-analysis-gsd-core.md:756-786",
+    "deepwiki-analysis-gsd-core.md:928-939"
+  ],
+  "contractRule": "Every required artifact must either have writer/validator/test coverage or carry a documented remaining gap.",
+  "artifacts": [
+    {
+      "id": "project-foundation-project",
+      "artifact": "PROJECT.md",
+      "canonicalPath": ".planning/PROJECT.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:388-425"
+      ],
+      "ownerCommands": [
+        "new-project"
+      ],
+      "ownerAgents": [
+        "gsd-project-researcher",
+        "gsd-roadmapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-new-project/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare new-project --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/PROJECT.md"
+      ],
+      "allowedWrites": [
+        ".planning/PROJECT.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate new-project --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/new-project-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "all agents"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "project-foundation-requirements",
+      "artifact": "REQUIREMENTS.md",
+      "canonicalPath": ".planning/REQUIREMENTS.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:388-425",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "new-project"
+      ],
+      "ownerAgents": [
+        "gsd-project-researcher",
+        "gsd-roadmapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-new-project/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare new-project --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/REQUIREMENTS.md"
+      ],
+      "allowedWrites": [
+        ".planning/REQUIREMENTS.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate new-project --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/new-project-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Verifier",
+        "Auditor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "project-foundation-roadmap",
+      "artifact": "ROADMAP.md",
+      "canonicalPath": ".planning/ROADMAP.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:388-425",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "new-project",
+        "new-milestone",
+        "execute-phase"
+      ],
+      "ownerAgents": [
+        "gsd-roadmapper",
+        "gsd-planner"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-new-project/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare new-project --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/ROADMAP.md"
+      ],
+      "allowedWrites": [
+        ".planning/ROADMAP.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate new-project --format json",
+        "gsd-serena-bridge validate execute-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/new-project-parity.test.ts",
+        "tests/gsd-serena/integration/execute-phase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Orchestrators"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "project-foundation-state",
+      "artifact": "STATE.md",
+      "canonicalPath": ".planning/STATE.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:388-425",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "new-project",
+        "execute-phase",
+        "transition"
+      ],
+      "ownerAgents": [
+        "gsd-roadmapper",
+        "gsd-executor"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-new-project/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "state-manager",
+        "entrypoint": "gsd-serena-bridge transition --from-state --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/STATE.md"
+      ],
+      "allowedWrites": [
+        ".planning/STATE.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate new-project --format json",
+        "gsd-serena-bridge validate execute-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/new-project-parity.test.ts",
+        "tests/gsd-serena/commands/transition-command.test.ts"
+      ],
+      "downstreamConsumers": [
+        "all agents"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "project-foundation-config",
+      "artifact": "config.json",
+      "canonicalPath": ".planning/config.json",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:388-425"
+      ],
+      "ownerCommands": [
+        "new-project"
+      ],
+      "ownerAgents": [
+        "gsd-roadmapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-new-project/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare new-project --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/config.json"
+      ],
+      "allowedWrites": [
+        ".planning/config.json"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate new-project --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/new-project-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Orchestrators",
+        "workflow gates"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-architecture",
+      "artifact": "ARCHITECTURE.md",
+      "canonicalPath": ".planning/codebase/ARCHITECTURE.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/ARCHITECTURE.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor",
+        "Reviewer"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-concerns",
+      "artifact": "CONCERNS.md",
+      "canonicalPath": ".planning/codebase/CONCERNS.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/CONCERNS.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Reviewer"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-conventions",
+      "artifact": "CONVENTIONS.md",
+      "canonicalPath": ".planning/codebase/CONVENTIONS.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/CONVENTIONS.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-integrations",
+      "artifact": "INTEGRATIONS.md",
+      "canonicalPath": ".planning/codebase/INTEGRATIONS.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/INTEGRATIONS.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-stack",
+      "artifact": "STACK.md",
+      "canonicalPath": ".planning/codebase/STACK.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/STACK.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-structure",
+      "artifact": "STRUCTURE.md",
+      "canonicalPath": ".planning/codebase/STRUCTURE.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/STRUCTURE.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "codebase-testing",
+      "artifact": "TESTING.md",
+      "canonicalPath": ".planning/codebase/TESTING.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "map-codebase"
+      ],
+      "ownerAgents": [
+        "mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-map-codebase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare map-codebase --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/codebase/TESTING.md"
+      ],
+      "allowedWrites": [
+        ".planning/codebase/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate map-codebase --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/map-codebase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor",
+        "Verifier"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-context",
+      "artifact": "CONTEXT.md",
+      "canonicalPath": ".planning/phases/<phase>/CONTEXT.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "discuss-phase",
+        "plan-phase"
+      ],
+      "ownerAgents": [
+        "gsd-phase-researcher",
+        "gsd-planner"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-discuss-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge discuss-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/CONTEXT.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/CONTEXT.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate discuss-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/discuss-phase-parity.test.ts",
+        "tests/gsd-serena/commands/discuss-phase.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Researcher",
+        "Planner",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-discussion-log",
+      "artifact": "DISCUSSION-LOG.md",
+      "canonicalPath": ".planning/phases/<phase>/<phase-number>-DISCUSSION-LOG.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "discuss-phase"
+      ],
+      "ownerAgents": [
+        "gsd-phase-researcher"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-discuss-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge discuss-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/<phase-number>-DISCUSSION-LOG.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/<phase-number>-DISCUSSION-LOG.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate discuss-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/discuss-phase-parity.test.ts",
+        "tests/gsd-serena/parity/exact-local-artifact-writes.test.ts"
+      ],
+      "downstreamConsumers": [
+        "human audit trail"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-research",
+      "artifact": "RESEARCH.md",
+      "canonicalPath": ".planning/phases/<phase>/RESEARCH.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "plan-phase"
+      ],
+      "ownerAgents": [
+        "gsd-phase-researcher"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-plan-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare plan-phase --phase <phase> --research --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/RESEARCH.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/RESEARCH.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate plan-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/plan-phase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Plan Checker"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-validation-strategy",
+      "artifact": "VALIDATION.md",
+      "canonicalPath": ".planning/phases/<phase>/VALIDATION.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "plan-phase",
+        "validate-phase"
+      ],
+      "ownerAgents": [
+        "gsd-plan-checker",
+        "gsd-verifier"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-validate-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge validate-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/VALIDATION.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/VALIDATION.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles",
+        "gsd-serena-bridge validate plan-phase --phase <phase> --format json when nyquist validation is enabled"
+      ],
+      "tests": [
+        "tests/gsd-serena/cli/cli.test.ts",
+        "tests/gsd-serena/core/validator.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Verifier"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-patterns",
+      "artifact": "PATTERNS.md",
+      "canonicalPath": ".planning/phases/<phase>/PATTERNS.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "plan-phase"
+      ],
+      "ownerAgents": [
+        "gsd-pattern-mapper"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-plan-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "plan-phase-writer",
+        "entrypoint": "gsd-serena-bridge plan-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/<phase-number>-PATTERNS.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/<phase-number>-PATTERNS.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate plan-phase --phase <phase> --format json when workflow.pattern_mapper is enabled"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/plan-phase.test.ts",
+        "tests/gsd-serena/integration/plan-phase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-plan",
+      "artifact": "PLAN.md",
+      "canonicalPath": ".planning/phases/<phase>/PLAN.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "plan-phase"
+      ],
+      "ownerAgents": [
+        "gsd-planner",
+        "gsd-plan-checker"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-plan-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "packet-writer",
+        "entrypoint": "gsd-serena-bridge prepare plan-phase --phase <phase> --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/PLAN.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/PLAN.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate plan-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/plan-phase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Plan Checker"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-execution",
+      "artifact": "EXECUTION.md",
+      "canonicalPath": ".planning/phases/<phase>/EXECUTION.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "execute-phase"
+      ],
+      "ownerAgents": [
+        "gsd-executor"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-execute-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge execute-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/EXECUTION.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/EXECUTION.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate execute-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/execute-phase-parity.test.ts",
+        "tests/gsd-serena/parity/exact-local-artifact-writes.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Verifier",
+        "State tracking"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-summary",
+      "artifact": "SUMMARY.md",
+      "canonicalPath": ".planning/phases/<phase>/<phase-number>-SUMMARY.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "execute-phase"
+      ],
+      "ownerAgents": [
+        "gsd-executor"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-execute-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge execute-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/<phase-number>-SUMMARY.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/<phase-number>-SUMMARY.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate execute-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/execute-phase-parity.test.ts",
+        "tests/gsd-serena/parity/exact-local-artifact-writes.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Verifier",
+        "State tracking"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-uat",
+      "artifact": "UAT.md",
+      "canonicalPath": ".planning/phases/<phase>/<phase-number>-UAT.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "verify-work"
+      ],
+      "ownerAgents": [
+        "gsd-verifier"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-verify-work/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge verify-work <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/<phase-number>-UAT.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/<phase-number>-UAT.md",
+        ".planning/phases/<phase>/UAT.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate verify-work --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/verify-work-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "ship",
+        "Verifier"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-gap-fix-plan",
+      "artifact": "gaps/FIX-PLAN.md",
+      "canonicalPath": ".planning/phases/<phase>/gaps/**",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:497-504"
+      ],
+      "ownerCommands": [
+        "verify-work",
+        "audit-fix"
+      ],
+      "ownerAgents": [
+        "gsd-verifier",
+        "gsd-debugger"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-verify-work/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "conditional-validator",
+        "entrypoint": "gsd-serena-bridge verify-work <phase> --format json when UAT fails"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/gaps/**"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/gaps/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate verify-work --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/integration/verify-work-parity.test.ts",
+        "tests/gsd-serena/core/validator.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Debugger"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-ui-spec",
+      "artifact": "UI-SPEC.md",
+      "canonicalPath": ".planning/phases/<phase>/UI-SPEC.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786",
+        "deepwiki-analysis-gsd-core.md:928-939"
+      ],
+      "ownerCommands": [
+        "ui-phase",
+        "plan-phase",
+        "execute-phase"
+      ],
+      "ownerAgents": [
+        "gsd-ui-researcher",
+        "gsd-ui-checker"
+      ],
+      "ownerSkills": [
+        ".agents/gsd-serena/skills/gsd-ui-phase/SKILL.md"
+      ],
+      "templates": [
+        "assets/gsd-serena/templates/UI-SPEC.md"
+      ],
+      "writer": {
+        "kind": "template-writer",
+        "entrypoint": "gsd-serena-bridge ui-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/UI-SPEC.md",
+        ".planning/phases/<phase>/*-UI-SPEC.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/UI-SPEC.md"
+      ],
+      "validators": [
+        "gsd-serena-bridge ui-phase <phase> --format json",
+        "gsd-serena-bridge validate plan-phase --phase <phase> --format json",
+        "gsd-serena-bridge validate execute-phase --phase <phase> --format json"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/ui-phase.test.ts",
+        "tests/gsd-serena/integration/plan-phase-parity.test.ts",
+        "tests/gsd-serena/integration/execute-phase-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "UI Auditor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-ui-review",
+      "artifact": "UI-REVIEW.md",
+      "canonicalPath": ".planning/phases/<phase>/UI-REVIEW.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:895-939"
+      ],
+      "ownerCommands": [
+        "ui-review"
+      ],
+      "ownerAgents": [
+        "gsd-ui-auditor"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-ui-review/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge ui-review <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/UI-REVIEW.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/UI-REVIEW.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/ui-review.test.ts",
+        "tests/gsd-serena/cli/cli.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Reviewer"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-security",
+      "artifact": "SECURITY.md",
+      "canonicalPath": ".planning/phases/<phase>/SECURITY.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "secure-phase"
+      ],
+      "ownerAgents": [
+        "gsd-security-auditor"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-secure-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge secure-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/SECURITY.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/SECURITY.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/secure-phase.test.ts",
+        "tests/gsd-serena/cli/cli.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Planner",
+        "Executor",
+        "Auditor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-ai-spec",
+      "artifact": "AI-SPEC.md",
+      "canonicalPath": ".planning/phases/<phase>/AI-SPEC.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "ai-integration-phase"
+      ],
+      "ownerAgents": [
+        "gsd-planner",
+        "gsd-plan-checker"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-ai-integration-phase/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge ai-integration-phase <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/AI-SPEC.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/AI-SPEC.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/ai-integration-phase.test.ts",
+        "tests/gsd-serena/cli/cli.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Evaluator"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-reviews",
+      "artifact": "REVIEWS.md",
+      "canonicalPath": ".planning/phases/<phase>/REVIEWS.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "review"
+      ],
+      "ownerAgents": [
+        "gsd-code-reviewer",
+        "gsd-code-fixer"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-review/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge review <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/REVIEWS.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/REVIEWS.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/review.test.ts",
+        "tests/gsd-serena/cli/cli.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Reviewer"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-code-review",
+      "artifact": "CODE-REVIEW.md",
+      "canonicalPath": ".planning/phases/<phase>/CODE-REVIEW.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "code-review"
+      ],
+      "ownerAgents": [
+        "gsd-code-reviewer",
+        "gsd-code-fixer"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-code-review/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge code-review <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/CODE-REVIEW.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/CODE-REVIEW.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/code-review.test.ts",
+        "tests/gsd-serena/cli/cli.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Executor",
+        "Reviewer"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "phase-debug",
+      "artifact": "DEBUG.md",
+      "canonicalPath": ".planning/phases/<phase>/DEBUG.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:548-602",
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "debug"
+      ],
+      "ownerAgents": [
+        "gsd-debug-session-manager",
+        "gsd-debugger"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-debug/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "concrete-command-writer",
+        "entrypoint": "gsd-serena-bridge debug <phase> --write --format json"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/DEBUG.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/DEBUG.md"
+      ],
+      "validators": [
+        "concrete writer validation.checkedFiles"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/debug-session.test.ts",
+        "tests/gsd-serena/cli/cli.test.ts"
+      ],
+      "downstreamConsumers": [
+        "Debugger",
+        "Executor"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "pause-resume-continue-here",
+      "artifact": ".continue-here.md",
+      "canonicalPath": ".planning/.continue-here.md",
+      "phaseScoped": false,
+      "sourceAnchors": [
+        "deepwiki-analysis-gsd-core.md:756-786"
+      ],
+      "ownerCommands": [
+        "pause-work",
+        "resume-work"
+      ],
+      "ownerAgents": [
+        "orchestrator"
+      ],
+      "ownerSkills": [
+        ".agents/skills/GSD-BRIDGE/commands/gsd-command-pause-work/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "runtime-command",
+        "entrypoint": "gsd-serena-bridge pause-work --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/.continue-here.md"
+      ],
+      "allowedWrites": [
+        ".planning/.continue-here.md",
+        ".planning/HANDOFF.json"
+      ],
+      "validators": [
+        "pause/resume runtime contract checks"
+      ],
+      "tests": [
+        "tests/gsd-serena/commands/pause-resume.test.ts"
+      ],
+      "downstreamConsumers": [
+        "resume-work",
+        "state next"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "ship-direct-main-evidence",
+      "artifact": "DIRECT_MAIN_SHIP.md",
+      "canonicalPath": ".planning/phases/<phase>/shipping/DIRECT_MAIN_SHIP.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "ship"
+      ],
+      "commandContract": {
+        "entrypoint": "gsd-serena-bridge prepare ship --phase <phase> --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/shipping/DIRECT_MAIN_SHIP.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/shipping/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate ship --phase <phase> --format json"
+      ],
+      "notes": "Direct-main shipping evidence replaces PR-body and merge-checklist artifacts when the operator pushes directly to main.",
+      "ownerAgents": [
+        "shipper"
+      ],
+      "ownerSkills": [
+        ".agents/gsd-serena/skills/gsd-ship/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "execution-packet",
+        "entrypoint": "gsd-serena-bridge prepare ship --phase <phase> --format markdown"
+      },
+      "tests": [
+        "tests/gsd-serena/integration/ship-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "ship validator",
+        "state transition"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "ship-release-notes",
+      "artifact": "RELEASE_NOTES.md",
+      "canonicalPath": ".planning/phases/<phase>/shipping/RELEASE_NOTES.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "ship"
+      ],
+      "commandContract": {
+        "entrypoint": "gsd-serena-bridge prepare ship --phase <phase> --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/shipping/RELEASE_NOTES.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/shipping/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate ship --phase <phase> --format json"
+      ],
+      "notes": "Release notes summarize the direct-main ship contents and validation evidence.",
+      "ownerAgents": [
+        "shipper"
+      ],
+      "ownerSkills": [
+        ".agents/gsd-serena/skills/gsd-ship/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "execution-packet",
+        "entrypoint": "gsd-serena-bridge prepare ship --phase <phase> --format markdown"
+      },
+      "tests": [
+        "tests/gsd-serena/integration/ship-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "ship validator",
+        "state transition"
+      ],
+      "status": "implemented"
+    },
+    {
+      "id": "ship-rollback-notes",
+      "artifact": "ROLLBACK.md",
+      "canonicalPath": ".planning/phases/<phase>/shipping/ROLLBACK.md",
+      "phaseScoped": true,
+      "sourceAnchors": [
+        "docs/architecture.md:125-139"
+      ],
+      "ownerCommands": [
+        "ship"
+      ],
+      "commandContract": {
+        "entrypoint": "gsd-serena-bridge prepare ship --phase <phase> --format markdown"
+      },
+      "expectedArtifacts": [
+        ".planning/phases/<phase>/shipping/ROLLBACK.md"
+      ],
+      "allowedWrites": [
+        ".planning/phases/<phase>/shipping/**"
+      ],
+      "validators": [
+        "gsd-serena-bridge validate ship --phase <phase> --format json"
+      ],
+      "notes": "Rollback notes are required for direct-main shipping because there is no PR merge checkpoint.",
+      "ownerAgents": [
+        "shipper"
+      ],
+      "ownerSkills": [
+        ".agents/gsd-serena/skills/gsd-ship/SKILL.md"
+      ],
+      "templates": [],
+      "writer": {
+        "kind": "execution-packet",
+        "entrypoint": "gsd-serena-bridge prepare ship --phase <phase> --format markdown"
+      },
+      "tests": [
+        "tests/gsd-serena/integration/ship-parity.test.ts"
+      ],
+      "downstreamConsumers": [
+        "ship validator",
+        "state transition"
+      ],
+      "status": "implemented"
+    }
+  ]
+}

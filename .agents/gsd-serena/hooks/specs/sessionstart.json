@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-supporting-surfaces",
+  "event": "SessionStart",
+  "sourcePath": "vendor/reference/gsd-core/hooks/hooks.json",
+  "groups": [
+    {
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-ensure-canonical-path.js\"",
+          "timeout": 5
+        },
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-check-update.js\""
+        }
+      ]
+    }
+  ],
+  "bridgePolicy": {
+    "status": "policy-gated-spec",
+    "nativeExecution": false,
+    "evidence": ".planning/.bridge/hooks/SessionStart.json",
+    "rule": "Hook commands are represented as bridge specs. Do not install or execute native hook scripts unless a bridge adapter and policy check explicitly allows it."
+  }
+}

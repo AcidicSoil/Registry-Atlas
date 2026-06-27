@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-supporting-surfaces",
+  "event": "PreToolUse",
+  "sourcePath": "vendor/reference/gsd-core/hooks/hooks.json",
+  "groups": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-prompt-guard.js\"",
+          "timeout": 5
+        },
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-read-guard.js\"",
+          "timeout": 5
+        }
+      ]
+    },
+    {
+      "matcher": "Write|Edit|MultiEdit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-worktree-path-guard.js\"",
+          "timeout": 5
+        }
+      ]
+    }
+  ],
+  "bridgePolicy": {
+    "status": "policy-gated-spec",
+    "nativeExecution": false,
+    "evidence": ".planning/.bridge/hooks/PreToolUse.json",
+    "rule": "Hook commands are represented as bridge specs. Do not install or execute native hook scripts unless a bridge adapter and policy check explicitly allows it."
+  }
+}

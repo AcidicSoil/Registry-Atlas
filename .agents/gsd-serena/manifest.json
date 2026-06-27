@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "commands": {
+    "discuss-phase": "commands/discuss-phase.json",
+    "execute-phase": "commands/execute-phase.json",
+    "map-codebase": "commands/map-codebase.json",
+    "new-project": "commands/new-project.json",
+    "plan-phase": "commands/plan-phase.json",
+    "ship": "commands/ship.json",
+    "verify-work": "commands/verify-work.json"
+  },
+  "roles": {
+    "architecture-mapper": "roles/architecture-mapper.json",
+    "executor": "roles/executor.json",
+    "planner": "roles/planner.json",
+    "reviewer": "roles/reviewer.json",
+    "shipper": "roles/shipper.json"
+  },
+  "policies": {
+    "hook-security": "policies/hook-security.json"
+  },
+  "hooks": {},
+  "packets": {}
+}

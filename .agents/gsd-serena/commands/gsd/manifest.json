@@ -1,0 +1,428 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-commands",
+  "source": ".agents/gsd-serena/parity-skills/contracts.json",
+  "outputRoot": "assets/gsd-serena/commands/gsd",
+  "installTargetRoot": ".agents/gsd-serena/commands/gsd",
+  "qualityContract": "source-informed command Markdown artifacts, not skill runtime objects",
+  "pathShape": "mirrors GSD-core commands/gsd/*.md",
+  "counts": {
+    "command": 69
+  },
+  "commands": [
+    {
+      "id": "gsd-command-add-tests",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/add-tests.md"
+    },
+    {
+      "id": "gsd-command-ai-integration-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ai-integration-phase.md"
+    },
+    {
+      "id": "gsd-command-audit-fix",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/audit-fix.md"
+    },
+    {
+      "id": "gsd-command-audit-milestone",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/audit-milestone.md"
+    },
+    {
+      "id": "gsd-command-audit-uat",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/audit-uat.md"
+    },
+    {
+      "id": "gsd-command-autonomous",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/autonomous.md"
+    },
+    {
+      "id": "gsd-command-capture",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/capture.md"
+    },
+    {
+      "id": "gsd-command-cleanup",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/cleanup.md"
+    },
+    {
+      "id": "gsd-command-code-review",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/code-review.md"
+    },
+    {
+      "id": "gsd-command-complete-milestone",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/complete-milestone.md"
+    },
+    {
+      "id": "gsd-command-config",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/config.md"
+    },
+    {
+      "id": "gsd-command-debug",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/debug.md"
+    },
+    {
+      "id": "gsd-command-discuss-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/discuss-phase.md"
+    },
+    {
+      "id": "gsd-command-docs-update",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/docs-update.md"
+    },
+    {
+      "id": "gsd-command-eval-review",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/eval-review.md"
+    },
+    {
+      "id": "gsd-command-execute-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/execute-phase.md"
+    },
+    {
+      "id": "gsd-command-explore",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/explore.md"
+    },
+    {
+      "id": "gsd-command-extract-learnings",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/extract-learnings.md"
+    },
+    {
+      "id": "gsd-command-fast",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/fast.md"
+    },
+    {
+      "id": "gsd-command-forensics",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/forensics.md"
+    },
+    {
+      "id": "gsd-command-graphify",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/graphify.md"
+    },
+    {
+      "id": "gsd-command-health",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/health.md"
+    },
+    {
+      "id": "gsd-command-help",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/help.md"
+    },
+    {
+      "id": "gsd-command-import",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/import.md"
+    },
+    {
+      "id": "gsd-command-inbox",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/inbox.md"
+    },
+    {
+      "id": "gsd-command-ingest-docs",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ingest-docs.md"
+    },
+    {
+      "id": "gsd-command-manager",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/manager.md"
+    },
+    {
+      "id": "gsd-command-map-codebase",
+      "family": "command",
+      "status": "supported",
+      "path": "assets/gsd-serena/commands/gsd/map-codebase.md"
+    },
+    {
+      "id": "gsd-command-mempalace-capture",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/mempalace-capture.md"
+    },
+    {
+      "id": "gsd-command-mempalace-recall",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/mempalace-recall.md"
+    },
+    {
+      "id": "gsd-command-milestone-summary",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/milestone-summary.md"
+    },
+    {
+      "id": "gsd-command-mvp-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/mvp-phase.md"
+    },
+    {
+      "id": "gsd-command-new-milestone",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/new-milestone.md"
+    },
+    {
+      "id": "gsd-command-new-project",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/new-project.md"
+    },
+    {
+      "id": "gsd-command-ns-context",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ns-context.md"
+    },
+    {
+      "id": "gsd-command-ns-ideate",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ns-ideate.md"
+    },
+    {
+      "id": "gsd-command-ns-manage",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ns-manage.md"
+    },
+    {
+      "id": "gsd-command-ns-project",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ns-project.md"
+    },
+    {
+      "id": "gsd-command-ns-review",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ns-review.md"
+    },
+    {
+      "id": "gsd-command-ns-workflow",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ns-workflow.md"
+    },
+    {
+      "id": "gsd-command-pause-work",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/pause-work.md"
+    },
+    {
+      "id": "gsd-command-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/phase.md"
+    },
+    {
+      "id": "gsd-command-plan-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/plan-phase.md"
+    },
+    {
+      "id": "gsd-command-plan-review-convergence",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/plan-review-convergence.md"
+    },
+    {
+      "id": "gsd-command-pr-branch",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/pr-branch.md"
+    },
+    {
+      "id": "gsd-command-profile-user",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/profile-user.md"
+    },
+    {
+      "id": "gsd-command-progress",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/progress.md"
+    },
+    {
+      "id": "gsd-command-quick",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/quick.md"
+    },
+    {
+      "id": "gsd-command-resume-work",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/resume-work.md"
+    },
+    {
+      "id": "gsd-command-review",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/review.md"
+    },
+    {
+      "id": "gsd-command-review-backlog",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/review-backlog.md"
+    },
+    {
+      "id": "gsd-command-secure-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/secure-phase.md"
+    },
+    {
+      "id": "gsd-command-settings",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/settings.md"
+    },
+    {
+      "id": "gsd-command-ship",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ship.md"
+    },
+    {
+      "id": "gsd-command-sketch",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/sketch.md"
+    },
+    {
+      "id": "gsd-command-spec-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/spec-phase.md"
+    },
+    {
+      "id": "gsd-command-spike",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/spike.md"
+    },
+    {
+      "id": "gsd-command-stats",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/stats.md"
+    },
+    {
+      "id": "gsd-command-surface",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/surface.md"
+    },
+    {
+      "id": "gsd-command-thread",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/thread.md"
+    },
+    {
+      "id": "gsd-command-ui-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ui-phase.md"
+    },
+    {
+      "id": "gsd-command-ui-review",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ui-review.md"
+    },
+    {
+      "id": "gsd-command-ultraplan-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/ultraplan-phase.md"
+    },
+    {
+      "id": "gsd-command-undo",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/undo.md"
+    },
+    {
+      "id": "gsd-command-update",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/update.md"
+    },
+    {
+      "id": "gsd-command-validate-phase",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/validate-phase.md"
+    },
+    {
+      "id": "gsd-command-verify-work",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/verify-work.md"
+    },
+    {
+      "id": "gsd-command-workspace",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/workspace.md"
+    },
+    {
+      "id": "gsd-command-workstreams",
+      "family": "command",
+      "status": "adapted-safe",
+      "path": "assets/gsd-serena/commands/gsd/workstreams.md"
+    }
+  ]
+}

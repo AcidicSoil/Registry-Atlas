@@ -1,0 +1,235 @@
+# Bridge Workflow: check-todos
+
+<!-- generated-by: pnpm gen:bridge-commands -->
+
+## Purpose
+
+This bridge workflow runbook translates the actual GSD-core workflow information and adapts it for Serena bridge operation. Read it when operating `gsd-workflow-check-todos` in a target project.
+
+## Bridge Entry
+
+```bash
+gsd-serena-bridge bootstrap --format markdown
+gsd-serena-bridge doctor --format markdown
+```
+
+If setup is stale or broken, run:
+
+```bash
+gsd-serena-bridge repair --format markdown
+gsd-serena-bridge doctor --format markdown
+```
+
+Primary bridge route:
+
+```text
+Use `gsd-serena-bridge resolve --stdin --format markdown` to map this workflow intent to an implemented bridge command or operation plan.
+```
+
+For natural-language requests, classify first:
+
+```bash
+cat <<'EOF_REQUEST' | gsd-serena-bridge resolve --stdin --format markdown
+<verbatim user request>
+EOF_REQUEST
+```
+
+## Bridge Substitution Rules
+
+- Preserve the GSD-core trigger, purpose, process steps, decision logic, and quality bar from the source workflow below.
+- Replace native `/gsd:*` slash commands with `gsd-serena-bridge <command> --format markdown` when implemented.
+- Replace native `gsd_run query ...` calls with bridge commands, resolver packets, installed contracts, or explicit operation plans.
+- Replace native `Agent(...)` dispatch with Serena role workflows, generated role skills, sequential role passes, or explicit checkpoints.
+- Do not run native shell snippets that mutate state unless a bridge command or operation plan authorizes the same write set and validation.
+- Do not claim exact native behavior for adapted-safe or planned rows. Name the bridge substitute and remaining gap.
+
+## Source Evidence
+
+- Contract ID: `gsd-workflow-check-todos`
+- Status: `planned`
+- Source path: `gsd-core/workflows/check-todos.md`
+- Resolved source path: `vendor/reference/gsd-core/gsd-core/workflows/check-todos.md`
+- Mirrored runbook path: `.agents/gsd-serena/workflows/check-todos.md`
+
+## Translated GSD Workflow
+
+### Native Shim Translation
+- Native GSD shim locator omitted: the bridge uses the installed `gsd-serena-bridge` CLI, `bootstrap`, `doctor`, `repair`, resolver packets, and install-managed project surfaces instead of locating `gsd-tools.cjs`.
+<purpose>
+List all pending todos, allow selection, load full context for the selected todo, and route to appropriate action.
+</purpose>
+
+<required_reading>
+Read all files referenced by the invoking prompt's execution_context before starting.
+</required_reading>
+
+<process>
+
+<step name="init_context">
+Load todo context:
+
+```bash
+- Native query translated: `INIT=$(gsd_run query init.todos)` -> use the closest `gsd-serena-bridge <command> --format markdown`, resolver packet, installed contract, or explicit operation-plan step with validation.
+if [[ "$INIT" == @file:* ]]; then INIT=$(cat "${INIT#@file:}"); fi
+```
+
+Extract from init JSON: `todo_count`, `todos`, `pending_dir`.
+
+If `todo_count` is 0:
+```
+No pending todos.
+
+Todos are captured during work sessions with /gsd-add-todo.
+
+---
+
+Would you like to:
+
+1. Continue with current phase (`gsd-serena-bridge progress --format markdown`)
+2. Add a todo now (/gsd-add-todo)
+```
+
+Exit.
+</step>
+
+<step name="parse_filter">
+Check for area filter in arguments:
+- ``gsd-serena-bridge capture --format markdown` --list` → show all
+- ``gsd-serena-bridge capture --format markdown` --list api` → filter to area:api only
+</step>
+
+<step name="list_todos">
+Use the `todos` array from init context (already filtered by area if specified).
+
+Parse and display as numbered list:
+
+```
+Pending Todos:
+
+1. Add auth token refresh (api, 2d ago)
+2. Fix modal z-index issue (ui, 1d ago)
+3. Refactor database connection pool (database, 5h ago)
+
+---
+
+Reply with a number to view details, or:
+- ``gsd-serena-bridge capture --format markdown` --list [area]` to filter by area
+- `q` to exit
+```
+
+Format age as relative time from created timestamp.
+</step>
+
+<step name="handle_selection">
+Wait for user to reply with a number.
+
+If valid: load selected todo, proceed.
+If invalid: "Invalid selection. Reply with a number (1-[N]) or `q` to exit."
+</step>
+
+<step name="load_context">
+Read the todo file completely. Display:
+
+```
+## [title]
+
+**Area:** [area]
+**Created:** [date] ([relative time] ago)
+**Files:** [list or "None"]
+
+### Problem
+[problem section content]
+
+### Solution
+[solution section content]
+```
+
+If `files` field has entries, read and briefly summarize each.
+</step>
+
+<step name="check_roadmap">
+Check for roadmap (can use init progress or directly check file existence):
+
+If `.planning/ROADMAP.md` exists:
+1. Check if todo's area matches an upcoming phase
+2. Check if todo's files overlap with a phase's scope
+3. Note any match for action options
+</step>
+
+<step name="offer_actions">
+**If todo maps to a roadmap phase:**
+
+**Text mode (`workflow.text_mode: true` in config or `--text` flag):** Set `TEXT_MODE=true` if `--text` is present in `$ARGUMENTS` OR `text_mode` from init JSON is `true`. When TEXT_MODE is active, replace every `AskUserQuestion` call with a plain-text numb...
+Use AskUserQuestion:
+- header: "Action"
+- question: "This todo relates to Phase [N]: [name]. What would you like to do?"
+- options:
+- "Work on it now" — move to done, start working
+- "Add to phase plan" — include when planning Phase [N]
+- "Brainstorm approach" — think through before deciding
+- "Put it back" — return to list
+
+**If no roadmap match:**
+
+Use AskUserQuestion:
+- header: "Action"
+- question: "What would you like to do with this todo?"
+- options:
+- "Work on it now" — move to done, start working
+- "Create a phase" — /gsd-add-phase with this scope
+- "Brainstorm approach" — think through before deciding
+- "Put it back" — return to list
+</step>
+
+<step name="execute_action">
+**Work on it now:**
+```bash
+mv ".planning/todos/pending/[filename]" ".planning/todos/completed/"
+```
+Update STATE.md todo count. Present problem/solution context. Begin work or ask how to proceed.
+
+**Add to phase plan:**
+Note todo reference in phase planning notes. Keep in pending. Return to list or exit.
+
+**Create a phase:**
+Display: `/gsd-add-phase [description from todo]`
+Keep in pending. User runs command in fresh context.
+
+**Brainstorm approach:**
+Keep in pending. Start discussion about problem and approaches.
+
+**Put it back:**
+Return to list_todos step.
+</step>
+
+<step name="update_state">
+After any action that changes todo count:
+
+Re-run `init todos` to get updated count, then update STATE.md "### Pending Todos" section if exists.
+</step>
+
+<step name="git_commit">
+If todo was moved to done/, commit the change:
+
+```bash
+git rm --cached .planning/todos/pending/[filename] 2>/dev/null || true
+- Native commit helper translated: do not auto-commit; only run git commit when the user explicitly asks, after reporting files and validation.
+```
+
+Tool respects `commit_docs` config and gitignore automatically.
+
+Confirm: "Committed: docs: start work on todo - [title]"
+</step>
+
+</process>
+
+<success_criteria>
+- [ ] All pending todos listed with title, area, age
+- [ ] Area filter applied if specified
+- [ ] Selected todo's full context loaded
+- [ ] Roadmap context checked for phase match
+- [ ] Appropriate actions offered
+- [ ] Selected action executed
+- [ ] STATE.md updated if todo count changed
+- [ ] Changes committed to git (if todo moved to done/)
+</success_criteria>

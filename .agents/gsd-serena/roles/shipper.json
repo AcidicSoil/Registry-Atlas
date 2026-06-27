@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "id": "shipper",
+  "summary": "Prepares verified work for handoff or shipping using durable artifacts and validation evidence.",
+  "instructions": "Produce concise handoff or ship artifacts from verified evidence. Do not alter implementation behavior during shipping."
+}

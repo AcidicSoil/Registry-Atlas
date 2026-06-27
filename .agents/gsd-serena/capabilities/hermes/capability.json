@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-supporting-surfaces",
+  "sourcePath": "vendor/reference/gsd-core/capabilities/hermes/capability.json",
+  "id": "hermes",
+  "title": "Hermes Agent",
+  "role": "runtime",
+  "tier": "core",
+  "requires": [],
+  "runtimeCompatKeys": [],
+  "skills": [],
+  "agents": [],
+  "hooks": [],
+  "commands": [],
+  "configKeys": [],
+  "gates": [],
+  "fragments": [],
+  "bridgeRuntime": {
+    "status": "supporting-surface",
+    "execution": "not-native-authority",
+    "policy": "Use bridge commands, resolver packets, role workflows, hook policy gates, or explicit operation plans. Supporting-surface coverage does not promote command runtime parity."
+  }
+}

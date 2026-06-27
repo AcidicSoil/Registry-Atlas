@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-supporting-surfaces",
+  "event": "PostToolUse",
+  "sourcePath": "vendor/reference/gsd-core/hooks/hooks.json",
+  "groups": [
+    {
+      "matcher": "Bash|Edit|Write|MultiEdit|Agent|Task",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-context-monitor.js\"",
+          "timeout": 10
+        }
+      ]
+    },
+    {
+      "matcher": "Read",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/gsd-read-injection-scanner.js\"",
+          "timeout": 5
+        }
+      ]
+    }
+  ],
+  "bridgePolicy": {
+    "status": "policy-gated-spec",
+    "nativeExecution": false,
+    "evidence": ".planning/.bridge/hooks/PostToolUse.json",
+    "rule": "Hook commands are represented as bridge specs. Do not install or execute native hook scripts unless a bridge adapter and policy check explicitly allows it."
+  }
+}

@@ -1,0 +1,213 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-commands",
+  "source": ".agents/gsd-serena/parity-skills/contracts.json",
+  "outputRoot": "assets/gsd-serena/skills/GSD-BRIDGE",
+  "installTargetRoot": ".agents/skills/GSD-BRIDGE",
+  "qualityContract": "source-informed procedural runbooks, not contract-card summaries",
+  "workflowRunbookRoot": ".agents/gsd-serena/workflows",
+  "pathShape": "mirrors GSD-core workflow relative paths",
+  "counts": {
+    "role": 33
+  },
+  "skills": [
+    {
+      "id": "gsd-role-advisor-researcher",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-advisor-researcher/SKILL.md"
+    },
+    {
+      "id": "gsd-role-ai-researcher",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-ai-researcher/SKILL.md"
+    },
+    {
+      "id": "gsd-role-assumptions-analyzer",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-assumptions-analyzer/SKILL.md"
+    },
+    {
+      "id": "gsd-role-code-fixer",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-code-fixer/SKILL.md"
+    },
+    {
+      "id": "gsd-role-code-reviewer",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-code-reviewer/SKILL.md"
+    },
+    {
+      "id": "gsd-role-codebase-mapper",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-codebase-mapper/SKILL.md"
+    },
+    {
+      "id": "gsd-role-debug-session-manager",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-debug-session-manager/SKILL.md"
+    },
+    {
+      "id": "gsd-role-debugger",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-debugger/SKILL.md"
+    },
+    {
+      "id": "gsd-role-doc-classifier",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-doc-classifier/SKILL.md"
+    },
+    {
+      "id": "gsd-role-doc-synthesizer",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-doc-synthesizer/SKILL.md"
+    },
+    {
+      "id": "gsd-role-doc-verifier",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-doc-verifier/SKILL.md"
+    },
+    {
+      "id": "gsd-role-doc-writer",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-doc-writer/SKILL.md"
+    },
+    {
+      "id": "gsd-role-domain-researcher",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-domain-researcher/SKILL.md"
+    },
+    {
+      "id": "gsd-role-eval-auditor",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-eval-auditor/SKILL.md"
+    },
+    {
+      "id": "gsd-role-eval-planner",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-eval-planner/SKILL.md"
+    },
+    {
+      "id": "gsd-role-executor",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-executor/SKILL.md"
+    },
+    {
+      "id": "gsd-role-framework-selector",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-framework-selector/SKILL.md"
+    },
+    {
+      "id": "gsd-role-integration-checker",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-integration-checker/SKILL.md"
+    },
+    {
+      "id": "gsd-role-intel-updater",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-intel-updater/SKILL.md"
+    },
+    {
+      "id": "gsd-role-nyquist-auditor",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-nyquist-auditor/SKILL.md"
+    },
+    {
+      "id": "gsd-role-pattern-mapper",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-pattern-mapper/SKILL.md"
+    },
+    {
+      "id": "gsd-role-phase-researcher",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-phase-researcher/SKILL.md"
+    },
+    {
+      "id": "gsd-role-plan-checker",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-plan-checker/SKILL.md"
+    },
+    {
+      "id": "gsd-role-planner",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-planner/SKILL.md"
+    },
+    {
+      "id": "gsd-role-project-researcher",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-project-researcher/SKILL.md"
+    },
+    {
+      "id": "gsd-role-research-synthesizer",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-research-synthesizer/SKILL.md"
+    },
+    {
+      "id": "gsd-role-roadmapper",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-roadmapper/SKILL.md"
+    },
+    {
+      "id": "gsd-role-security-auditor",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-security-auditor/SKILL.md"
+    },
+    {
+      "id": "gsd-role-ui-auditor",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-ui-auditor/SKILL.md"
+    },
+    {
+      "id": "gsd-role-ui-checker",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-ui-checker/SKILL.md"
+    },
+    {
+      "id": "gsd-role-ui-researcher",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-ui-researcher/SKILL.md"
+    },
+    {
+      "id": "gsd-role-user-profiler",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-user-profiler/SKILL.md"
+    },
+    {
+      "id": "gsd-role-verifier",
+      "family": "role",
+      "status": "planned",
+      "path": "assets/gsd-serena/skills/GSD-BRIDGE/roles/gsd-role-verifier/SKILL.md"
+    }
+  ]
+}

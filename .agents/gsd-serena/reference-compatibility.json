@@ -1,0 +1,2350 @@
+{
+  "version": "2026-05-25",
+  "statuses": [
+    "supported",
+    "adapted-safe",
+    "manual-fallback",
+    "blocked",
+    "pending-coverage"
+  ],
+  "commands": [
+    {
+      "id": "add-tests",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--generate",
+          "status": "blocked",
+          "notes": [
+            "Test generation writes files and remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--commit",
+          "status": "blocked",
+          "notes": [
+            "Committing generated tests remains blocked in the bridge adapter."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge add-tests is adapted as a read-only test-planning evidence report over phase SUMMARY, CONTEXT, and verification/UAT artifacts.",
+        "It reports candidate implementation/test file references and verification/test markers for manual planning.",
+        "It does not generate tests, run RED-GREEN loops, spawn agents, or commit files."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/add-tests.md"
+    },
+    {
+      "id": "ai-integration-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Writing AI-SPEC.md remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "blocked",
+          "notes": [
+            "AI/domain/eval research agent orchestration remains blocked."
+          ]
+        },
+        {
+          "name": "--web",
+          "status": "blocked",
+          "notes": [
+            "Web documentation research remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Agent orchestration remains blocked in the bridge adapter."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ai-integration-phase is adapted as a read-only AI-SPEC readiness and AI marker report over phase artifacts.",
+        "It reports AI-SPEC, PLAN, and verification evidence plus evaluation-related signals for manual review.",
+        "It does not write AI-SPEC.md, perform web research, spawn agents, or update phase artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ai-integration-phase.md"
+    },
+    {
+      "id": "audit-fix",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--source",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a read-only audit source label."
+          ]
+        },
+        {
+          "name": "--severity",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted for read-only filtering: high, medium, or all."
+          ]
+        },
+        {
+          "name": "--max",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a bounded artifact scan limit from 1 to 100."
+          ]
+        },
+        {
+          "name": "--dry-run",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only classification mode; no fixing occurs."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "blocked",
+          "notes": [
+            "Fix mutation remains blocked."
+          ]
+        },
+        {
+          "name": "--commit",
+          "status": "blocked",
+          "notes": [
+            "Committing fixes remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge audit-fix is adapted as a read-only finding classification report over audit, UAT, verification, and review artifacts.",
+        "It reports severity and finding-marker counts for manual triage.",
+        "It does not modify source files, run tests, spawn fixing agents, or create commits."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/audit-fix.md"
+    },
+    {
+      "id": "audit-milestone",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Provides read-only milestone metadata audit findings for scope, duplicates, malformed state, and promotion readiness.",
+        "Implemented as a safe bridge adaptation backed by .planning/.bridge/milestones.json and scoped by .planning/.bridge/workstreams.json; does not mutate .planning/STATE.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/audit-milestone.md"
+    },
+    {
+      "id": "audit-uat",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge audit-uat is adapted as a read-only report over .planning/phases UAT and VERIFICATION artifacts.",
+        "The adapter counts pending, skipped, blocked, and human_needed markers and provides manual review guidance.",
+        "It does not write validation artifacts, execute tests, spawn agents, or update planning state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/audit-uat.md"
+    },
+    {
+      "id": "autonomous",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--from",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a read-only phase-window selector."
+          ]
+        },
+        {
+          "name": "--to",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a read-only phase-window selector."
+          ]
+        },
+        {
+          "name": "--only",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a read-only single-phase selector."
+          ]
+        },
+        {
+          "name": "--interactive",
+          "status": "blocked",
+          "notes": [
+            "Interactive autonomous execution and background agent dispatch remain blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge autonomous is adapted as a read-only phase-dispatch readiness report over ROADMAP, STATE, and phase directories.",
+        "It reports selected phase windows and planning evidence markers for manual review.",
+        "It does not run discuss/plan/execute/audit/complete/cleanup workflows, update planning artifacts, spawn agents, or create commits."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/autonomous.md"
+    },
+    {
+      "id": "capture",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--list",
+          "status": "adapted-safe",
+          "notes": [
+            "Lists local .planning/todos evidence read-only."
+          ]
+        },
+        {
+          "name": "--note",
+          "status": "blocked",
+          "notes": [
+            "Note capture writes planning files and remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--backlog",
+          "status": "blocked",
+          "notes": [
+            "Backlog capture writes planning files and remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--seed",
+          "status": "blocked",
+          "notes": [
+            "Seed capture writes planning files and remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--text",
+          "status": "blocked",
+          "notes": [
+            "Default todo capture writes planning files and remains blocked in the bridge adapter."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge capture is adapted as a read-only --list report over .planning/todos.",
+        "Default todo capture, note, backlog, seed, and interactive todo browser behavior remain blocked/deferred because they mutate planning files or require interaction."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/capture.md"
+    },
+    {
+      "id": "cleanup",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--apply",
+          "status": "blocked",
+          "notes": [
+            "Archive/apply mutation is blocked pending a mutation-safety PRD."
+          ]
+        },
+        {
+          "name": "--archive",
+          "status": "blocked",
+          "notes": [
+            "Archive mutation is blocked pending a mutation-safety PRD."
+          ]
+        },
+        {
+          "name": "--yes",
+          "status": "blocked",
+          "notes": [
+            "Confirmation bypass is blocked because mutation modes are not implemented."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge cleanup is adapted as a read-only dry-run report over planning phase and milestone directories.",
+        "Vendor archive/apply behavior is blocked because it moves planning files and updates project state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/cleanup.md"
+    },
+    {
+      "id": "code-review",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--depth",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a read-only depth label: quick, standard, or deep."
+          ]
+        },
+        {
+          "name": "--files",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted as a comma-separated explicit review scope for reporting only."
+          ]
+        },
+        {
+          "name": "--fix",
+          "status": "blocked",
+          "notes": [
+            "Fix mode mutates source files and remains blocked."
+          ]
+        },
+        {
+          "name": "--all",
+          "status": "blocked",
+          "notes": [
+            "Include-all fix scope is only meaningful with blocked fix mode."
+          ]
+        },
+        {
+          "name": "--auto",
+          "status": "blocked",
+          "notes": [
+            "Iterative fix/re-review automation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge code-review is adapted as a read-only review-scope and REVIEW.md marker report over .planning/phases.",
+        "It can derive file scope from explicit --files, phase SUMMARY.md references, or phase artifact inventory.",
+        "It does not spawn review agents, execute analysis tools, write REVIEW.md, or apply fixes."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/code-review.md"
+    },
+    {
+      "id": "complete-milestone",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Completes the active or selected bridge-owned milestone with immutable terminal-state protection and fail-closed validation.",
+        "Implemented as a safe bridge adaptation backed by .planning/.bridge/milestones.json and scoped by .planning/.bridge/workstreams.json; does not mutate .planning/STATE.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/complete-milestone.md"
+    },
+    {
+      "id": "config",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--advanced",
+          "status": "adapted-safe",
+          "notes": [
+            "Shows read-only advanced configuration group/key summaries."
+          ]
+        },
+        {
+          "name": "--integrations",
+          "status": "adapted-safe",
+          "notes": [
+            "Shows integration key presence with secret values redacted."
+          ]
+        },
+        {
+          "name": "--profile",
+          "status": "blocked",
+          "notes": [
+            "Profile switching mutates config and remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge config is adapted as read-only common, advanced, and integrations configuration inspection over .planning/config.json.",
+        "Interactive settings workflows, config writes, and profile switching are blocked/deferred because they mutate local configuration state.",
+        "Integration values are redacted; only key presence is reported."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/config.md"
+    },
+    {
+      "id": "debug",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--diagnose",
+          "status": "blocked",
+          "notes": [
+            "Diagnose mode spawns investigation flow and remains blocked pending an execution-safety PRD."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge debug is adapted as read-only debug session inspection for list and status subcommands.",
+        "Debug execution, continuation, and diagnose modes are blocked because they can mutate debug state or spawn subagents."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/debug.md"
+    },
+    {
+      "id": "discuss-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Current bridge entrypoint has a packet path; audited reference parity gaps remain explicit at flag level."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/discuss-phase.md"
+    },
+    {
+      "id": "docs-update",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--force",
+          "status": "blocked",
+          "notes": [
+            "Force regeneration can overwrite documentation and remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--verify-only",
+          "status": "adapted-safe",
+          "notes": [
+            "Provides a read-only documentation evidence presence report."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge docs-update is adapted as a read-only --verify-only documentation evidence report.",
+        "Vendor documentation generation, force regeneration, agent verification, commits, and file writes remain blocked/deferred because they mutate project documentation."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/docs-update.md"
+    },
+    {
+      "id": "eval-review",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Writing EVAL-REVIEW.md remediation plans remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Eval audit/remediation agent orchestration remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge eval-review is adapted as a read-only evaluation coverage evidence report over AI-SPEC, EVAL-REVIEW, verification, UAT, and summary artifacts.",
+        "It reports evaluation markers and coverage checks for manual review.",
+        "It does not write EVAL-REVIEW.md, score coverage automatically, spawn agents, or modify phase/source artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/eval-review.md"
+    },
+    {
+      "id": "execute-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--wave",
+          "status": "adapted-safe",
+          "notes": [
+            "Wave mode scopes execute packets to incomplete plans in the selected wave and marks the scope partial."
+          ]
+        },
+        {
+          "name": "--gaps-only",
+          "status": "adapted-safe",
+          "notes": [
+            "Gap-only mode scopes execute packets to incomplete gap_closure plans."
+          ]
+        },
+        {
+          "name": "--interactive",
+          "status": "adapted-safe",
+          "notes": [
+            "Interactive mode serializes scoped plans into explicit user checkpoint metadata without spawning subagents."
+          ]
+        }
+      ],
+      "notes": [
+        "Current bridge entrypoint has a packet path; audited reference parity gaps remain explicit at flag level."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/execute-phase.md"
+    },
+    {
+      "id": "explore",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Writing notes, todos, seeds, or phases remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "blocked",
+          "notes": [
+            "Research-agent execution remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--route",
+          "status": "blocked",
+          "notes": [
+            "Automatic routing into planning artifacts remains blocked in the bridge adapter."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge explore is adapted as a read-only planning-context and Socratic question report.",
+        "It inspects core planning evidence and phase count, then emits manual routing hints for the operator.",
+        "It does not write artifacts, spawn research agents, or route ideas into backlog/requirements/phases."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/explore.md"
+    },
+    {
+      "id": "extract-learnings",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Writing LEARNINGS.md remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Extraction agent orchestration remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge extract-learnings is adapted as a read-only learning-candidate report over phase PLAN, SUMMARY, verification/UAT, STATE, and LEARNINGS artifacts.",
+        "It reports learning markers and extraction readiness checks for manual review.",
+        "It does not write LEARNINGS.md, extract lessons automatically, spawn agents, or modify phase/source artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/extract-learnings.md"
+    },
+    {
+      "id": "fast",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--execute",
+          "status": "blocked",
+          "notes": [
+            "Inline task execution remains blocked in the bridge adapter."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "File writes remain blocked."
+          ]
+        },
+        {
+          "name": "--edit",
+          "status": "blocked",
+          "notes": [
+            "File edits remain blocked."
+          ]
+        },
+        {
+          "name": "--bash",
+          "status": "blocked",
+          "notes": [
+            "Shell execution remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge fast is adapted as a read-only one-sentence task classification report.",
+        "It reports whether a task resembles a trivial fast-mode candidate or should use quick/planned workflow.",
+        "It does not edit files, run shell commands/tests, create commits, spawn agents, or create planning artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/fast.md"
+    },
+    {
+      "id": "forensics",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge forensics is adapted as an inline read-only diagnostic snapshot over Taskmaster, compatibility, planning, and debug-session evidence.",
+        "Vendor forensic report writing, STATE updates, issue creation, and deep agent investigation are deferred/blocked because they mutate project or external state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/forensics.md"
+    },
+    {
+      "id": "graphify",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--build",
+          "status": "blocked",
+          "notes": [
+            "Graph build mutation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge graphify is adapted as a read-only local graph evidence report over .planning/config.json and .planning/graphs artifacts.",
+        "It supports status, query, and diff report modes as positional mode arguments rather than compatibility flags.",
+        "It reports graphify enablement, graph artifact presence, graph counts, markers, and local query matches.",
+        "It does not invoke gsd-tools graphify, build/rebuild graphs, write snapshots, or modify planning artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/graphify.md"
+    },
+    {
+      "id": "health",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--repair",
+          "status": "blocked",
+          "notes": [
+            "Vendor health repair can write project files; the bridge health adapter is read-only. Use `gsd-serena-bridge repair` for bridge-owned setup repair."
+          ]
+        },
+        {
+          "name": "--backfill",
+          "status": "blocked",
+          "notes": [
+            "Vendor milestone backfill is repair behavior and is not available in the read-only bridge health adapter."
+          ]
+        },
+        {
+          "name": "--context",
+          "status": "blocked",
+          "notes": [
+            "Vendor context utilization mode requires session token telemetry and SDK behavior that the bridge adapter does not implement."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge health is adapted as a read-only readiness check that delegates to existing doctor diagnostics.",
+        "The adapter does not create execution packets and does not mutate .planning, .serena, registry, or state files.",
+        "Vendor write/interactive modes are blocked before readiness execution."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/health.md"
+    },
+    {
+      "id": "help",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge help is adapted as a read-only command discovery report over currently covered bridge commands.",
+        "It does not invoke vendor help workflow files and does not mutate project state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/help.md"
+    },
+    {
+      "id": "import",
+      "scope": "bridge-entrypoint",
+      "status": "supported",
+      "flags": [
+        {
+          "name": "--from",
+          "status": "supported",
+          "notes": [
+            "Reads an external plan source and supports checkpointed apply preview/apply into a selected phase PLAN.md."
+          ]
+        },
+        {
+          "name": "--from-gsd2",
+          "status": "supported",
+          "notes": [
+            "Reads a legacy .gsd source tree and supports checkpointed migration staging into .planning/imported-gsd2/**."
+          ]
+        },
+        {
+          "name": "--path",
+          "status": "supported",
+          "notes": [
+            "Selects the legacy/import source root for GSD2 staging or source evidence inspection."
+          ]
+        },
+        {
+          "name": "--phase",
+          "status": "supported",
+          "notes": [
+            "Selects the target phase for external plan import apply."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "supported",
+          "notes": [
+            "Aliases to apply preview; it computes target/ledger paths and requires explicit confirmation before any file write."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "supported",
+          "notes": [
+            "Previews or applies checkpointed import writes for external plan or GSD2 migration staging."
+          ]
+        },
+        {
+          "name": "--confirm-apply",
+          "status": "supported",
+          "notes": [
+            "Required for import apply to write PLAN/imported-gsd2 artifacts and bridge import ledger entries."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge import now supports exact-safe checkpointed local import behavior.",
+        "External plan apply writes only the selected phase PLAN.md and .planning/.bridge/import-ledger/<phase>.json after --confirm-apply.",
+        "GSD2 migration apply stages markdown/text evidence under .planning/imported-gsd2/** and writes a bridge ledger after --confirm-apply.",
+        "--write is a read-only preview alias and never overwrites existing targets.",
+        "Automatic conflict resolution, canonical state transition, shell execution, and external services remain out of scope."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/import.md"
+    },
+    {
+      "id": "inbox",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--issues",
+          "status": "adapted-safe",
+          "notes": [
+            "Limits the read-only readiness report to issue template evidence."
+          ]
+        },
+        {
+          "name": "--prs",
+          "status": "adapted-safe",
+          "notes": [
+            "Limits the read-only readiness report to pull request template evidence."
+          ]
+        },
+        {
+          "name": "--repo",
+          "status": "adapted-safe",
+          "notes": [
+            "Overrides repository evidence without fetching GitHub data."
+          ]
+        },
+        {
+          "name": "--label",
+          "status": "blocked",
+          "notes": [
+            "Applying labels requires GitHub mutation and remains blocked."
+          ]
+        },
+        {
+          "name": "--close-incomplete",
+          "status": "blocked",
+          "notes": [
+            "Commenting on or closing incomplete submissions requires GitHub mutation and remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge inbox is adapted as a read-only GitHub inbox triage readiness report over local repository/template evidence.",
+        "It reports detected/requested repository, issue and pull request template presence, template markers, and scope-specific readiness checks.",
+        "It does not fetch live GitHub issues or pull requests, run gh/network commands, apply labels, comment, close submissions, or modify templates."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/inbox.md"
+    },
+    {
+      "id": "ingest-docs",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--mode",
+          "status": "adapted-safe",
+          "notes": [
+            "Accepted for read-only new/merge readiness mode selection."
+          ]
+        },
+        {
+          "name": "--manifest",
+          "status": "adapted-safe",
+          "notes": [
+            "Manifest presence is inspected without executing ingestion."
+          ]
+        },
+        {
+          "name": "--resolve",
+          "status": "adapted-safe",
+          "notes": [
+            "Only auto is supported read-only; interactive is reported as blocked."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Planning artifact writes remain blocked."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "blocked",
+          "notes": [
+            "Ingest application remains blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Roadmapper/conflict-synthesis agent generation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ingest-docs is adapted as a read-only document ingestion readiness report over conventional ADR/PRD/SPEC/RFC inputs and optional manifest evidence.",
+        "It reports mode inference, planning presence, discovered document counts, marker counts, manifest evidence, and v1 document-limit checks.",
+        "It does not write PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md, or INGEST-CONFLICTS.md; run gsd-roadmapper; mutate planning artifacts; or perform interactive conflict resolution."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ingest-docs.md"
+    },
+    {
+      "id": "manager",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--analyze-deps",
+          "status": "blocked",
+          "notes": [
+            "Dependency analysis workflow execution remains blocked."
+          ]
+        },
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Workflow dispatch and Skill/background agent calls remain blocked."
+          ]
+        },
+        {
+          "name": "--interactive",
+          "status": "blocked",
+          "notes": [
+            "Interactive dashboard refresh loop remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge manager is adapted as a read-only dashboard readiness report over ROADMAP.md, STATE.md, and phase artifact presence.",
+        "It reports planning evidence, phase summaries, status counts, marker counts, and manual coordination checks.",
+        "It does not run the interactive dashboard loop, dispatch workflows, call Skill(), spawn background agents, run gsd-tools init.manager, or write planning artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/manager.md"
+    },
+    {
+      "id": "map-codebase",
+      "scope": "bridge-entrypoint",
+      "status": "supported",
+      "flags": [
+        {
+          "name": "--fast",
+          "status": "adapted-safe",
+          "notes": [
+            "Fast scan is adapted into single-Serena packet mode with deterministic focus-to-document subsets."
+          ]
+        },
+        {
+          "name": "--query",
+          "status": "blocked",
+          "notes": [
+            "Reference intel query/status/diff/refresh mode is unavailable."
+          ]
+        },
+        {
+          "name": "--focus",
+          "status": "adapted-safe",
+          "notes": [
+            "Focus modifier is supported with --fast for tech, arch, quality, concerns, and tech+arch subsets."
+          ]
+        }
+      ],
+      "notes": [
+        "Current bridge entrypoint has a packet path; audited reference parity gaps remain explicit at flag level."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/map-codebase.md"
+    },
+    {
+      "id": "mempalace-capture",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "External memory writes remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "MemPalace capture execution remains blocked."
+          ]
+        },
+        {
+          "name": "--mcp",
+          "status": "blocked",
+          "notes": [
+            "MemPalace MCP calls remain blocked."
+          ]
+        },
+        {
+          "name": "--cli",
+          "status": "blocked",
+          "notes": [
+            "mempalace CLI execution remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge mempalace-capture is adapted as a read-only external-memory capture readiness report over .planning/config.json and local phase CONTEXT/PLAN/SUMMARY artifact evidence.",
+        "It reports MemPalace enablement, capture_artifacts and mirror_kg settings, inferred phase, capture room, routing markers, readiness checks, and manual recommendations.",
+        "It does not call MemPalace MCP tools or the mempalace CLI, file artifacts into external memory, mirror KG facts, deduplicate drawers, or mutate palace state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/mempalace-capture.md"
+    },
+    {
+      "id": "mempalace-recall",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "MEMORY-RECALL.md writes remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "MemPalace recall execution remains blocked."
+          ]
+        },
+        {
+          "name": "--mcp",
+          "status": "blocked",
+          "notes": [
+            "MemPalace MCP queries remain blocked."
+          ]
+        },
+        {
+          "name": "--cli",
+          "status": "blocked",
+          "notes": [
+            "mempalace CLI queries remain blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge mempalace-recall is adapted as a read-only external-memory recall readiness report over .planning/config.json and local phase CONTEXT/MEMORY-RECALL/PLAN/STATE evidence.",
+        "It reports MemPalace enablement, recall_on_plan, mirror_kg, memory_mode, selected phase, artifact presence, memory markers, readiness checks, and manual recommendations.",
+        "It does not call MemPalace MCP tools or the mempalace CLI, wake or search external memory, query MemPalace KG facts, or write MEMORY-RECALL.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/mempalace-recall.md"
+    },
+    {
+      "id": "milestone-summary",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Provides read-only milestone progress summaries with deterministic empty-state and active/completed counts.",
+        "Implemented as a safe bridge adaptation backed by .planning/.bridge/milestones.json and scoped by .planning/.bridge/workstreams.json; does not mutate .planning/STATE.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/milestone-summary.md"
+    },
+    {
+      "id": "mvp-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "ROADMAP MVP mode/goal writes remain blocked."
+          ]
+        },
+        {
+          "name": "--delegate",
+          "status": "blocked",
+          "notes": [
+            "plan-phase delegation remains blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "User-story/SPIDR agent execution remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge mvp-phase is adapted as a read-only MVP planning readiness report for an existing phase.",
+        "It validates phase-number shape, checks ROADMAP and phase-directory evidence, reports phase status guards, artifact presence, and MVP/user-story/SPIDR markers.",
+        "It does not prompt for user-story fields, run SPIDR splitting gates, write Mode: mvp or Goal fields, create/split/reorder phases, delegate to plan-phase, call agents, or run shell commands."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/mvp-phase.md"
+    },
+    {
+      "id": "new-milestone",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Creates bridge-owned milestone metadata scoped to the active workspace/workstream with duplicate active-title protection and fail-closed validation.",
+        "Implemented as a safe bridge adaptation backed by .planning/.bridge/milestones.json and scoped by .planning/.bridge/workstreams.json; does not mutate .planning/STATE.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/new-milestone.md"
+    },
+    {
+      "id": "new-project",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--auto",
+          "status": "adapted-safe",
+          "notes": [
+            "Auto mode is adapted into packet preparation: it requires idea document text or @file context, assumes greenfield/yolo mode, and lists foundation artifacts without claiming generation."
+          ]
+        }
+      ],
+      "notes": [
+        "Current bridge entrypoint has a packet path; audited reference parity gaps remain explicit at flag level."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/new-project.md"
+    },
+    {
+      "id": "ns-context",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Namespace dispatch remains blocked."
+          ]
+        },
+        {
+          "name": "--skill",
+          "status": "blocked",
+          "notes": [
+            "Skill invocation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ns-context is adapted as a read-only context namespace routing readiness report.",
+        "It reports likely route matches, selected route when unambiguous, required route command coverage, and local context evidence directories.",
+        "It does not invoke Skill, run map-codebase/graphify/docs-update/extract-learnings, create intelligence artifacts, ask routing questions, or perform interactive namespace management."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ns-context.md"
+    },
+    {
+      "id": "ns-ideate",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Namespace dispatch remains blocked."
+          ]
+        },
+        {
+          "name": "--skill",
+          "status": "blocked",
+          "notes": [
+            "Skill invocation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ns-ideate is adapted as a read-only exploration/capture namespace routing readiness report.",
+        "It reports likely route matches, selected route when unambiguous, required route command coverage, and local planning evidence.",
+        "It does not invoke Skill, run capture/explore/sketch/spike/spec-phase, create notes/backlog/seeds/spikes/specs/phase artifacts, ask routing questions, or perform interactive namespace management."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ns-ideate.md"
+    },
+    {
+      "id": "ns-manage",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Namespace dispatch remains blocked."
+          ]
+        },
+        {
+          "name": "--skill",
+          "status": "blocked",
+          "notes": [
+            "Skill invocation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ns-manage is adapted as a read-only management namespace routing readiness report.",
+        "It reports likely route matches, selected route when unambiguous, required route command coverage, and local state/workstream/git evidence.",
+        "It does not invoke Skill, run management commands, mutate settings/workspace/workstream/git/inbox/shipping state, ask routing questions, or perform interactive namespace management."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ns-manage.md"
+    },
+    {
+      "id": "ns-project",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Namespace dispatch remains blocked."
+          ]
+        },
+        {
+          "name": "--skill",
+          "status": "blocked",
+          "notes": [
+            "Skill invocation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ns-project is adapted as a read-only project/milestone namespace routing readiness report.",
+        "It reports likely route matches, selected route when unambiguous, required route command coverage, and local project/roadmap/state/phase evidence.",
+        "It does not invoke Skill, run project lifecycle commands, create project foundation files, create/complete milestones, audit gaps, summarize milestone state, ask routing questions, or perform interactive namespace management."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ns-project.md"
+    },
+    {
+      "id": "ns-review",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Namespace dispatch remains blocked."
+          ]
+        },
+        {
+          "name": "--skill",
+          "status": "blocked",
+          "notes": [
+            "Skill invocation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ns-review is adapted as a read-only quality/review namespace routing readiness report.",
+        "It reports likely route matches, selected route when unambiguous, required route command coverage, and local phase validation/UAT/AI-SPEC evidence.",
+        "It does not invoke Skill, run quality commands, auto-fix review findings, mutate validation/UAT/security/eval/UI/debug/forensics artifacts, ask routing questions, or perform interactive namespace management."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ns-review.md"
+    },
+    {
+      "id": "ns-workflow",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--dispatch",
+          "status": "blocked",
+          "notes": [
+            "Namespace dispatch remains blocked."
+          ]
+        },
+        {
+          "name": "--skill",
+          "status": "blocked",
+          "notes": [
+            "Skill invocation remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ns-workflow is adapted as a read-only phase-pipeline namespace routing readiness report.",
+        "It reports likely route matches, selected route when unambiguous, required route command coverage, and local roadmap/state/phase/PLAN/UAT evidence.",
+        "It does not invoke Skill, run workflow commands, create or mutate phase/PLAN/UAT/roadmap/state/cloud-planning/convergence artifacts, ask routing questions, or perform interactive namespace management."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ns-workflow.md"
+    },
+    {
+      "id": "pause-work",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Supported for bridge-owned workstream pause: validates active bridge metadata, rejects terminal workstreams, is idempotent when already paused, and by default writes only .planning/.bridge/workstreams.json. Explicit --save-handoff additionally writes .planning/HANDOFF.json, .planning/.continue-here.md, and .planning/.bridge/handoff-ledger/current.json. Native WIP commit behavior remains out of scope.",
+        "Adapted-safe because pause-work fails closed on missing or malformed bridge-owned metadata, writes only bridge-owned workstream metadata, and does not mutate .planning/STATE.md.",
+        "Milestone lifecycle, broad workstream lifecycle, and autonomous behavior remain pending coverage."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/pause-work.md"
+    },
+    {
+      "id": "phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--insert",
+          "status": "adapted-safe",
+          "notes": [
+            "Insert mode is supported for guarded future-phase writes through --write/--apply."
+          ]
+        },
+        {
+          "name": "--remove",
+          "status": "adapted-safe",
+          "notes": [
+            "Remove mode is supported for guarded future-phase writes through --write/--apply."
+          ]
+        },
+        {
+          "name": "--edit",
+          "status": "adapted-safe",
+          "notes": [
+            "Edit mode is supported for guarded future-phase writes through --write/--apply."
+          ]
+        },
+        {
+          "name": "--force",
+          "status": "blocked",
+          "notes": [
+            "Force override is observed but never executed."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "supported",
+          "notes": [
+            "Writes guarded future phase add, insert, edit, remove, and renumber operations."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "supported",
+          "notes": [
+            "Applies checkpointed guarded future phase mutations and records rollback evidence."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge phase now supports guarded future-phase add, insert, edit, remove, and renumber operations through --write/--apply and explicit ROC phase verbs.",
+        "Bridge phase still blocks unsafe active, completed, in-progress, evidence-bearing, or force-bypassed mutations.",
+        "Bridge phase prepares validation-gated activation packets and includes Serena phase-workflow operation plans with shell/test commands, checkpoints, validation, rollback, and role workflow evidence."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/phase.md"
+    },
+    {
+      "id": "plan-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--gaps",
+          "status": "blocked",
+          "notes": [
+            "Reference gap-closure planning mode is not modeled."
+          ]
+        },
+        {
+          "name": "--ingest",
+          "status": "adapted-safe",
+          "notes": [
+            "Ingest mode supplies context from ADR-like inputs and writes CONTEXT.md plus PLAN.md, bypassing prior discuss-phase."
+          ]
+        },
+        {
+          "name": "--ingest-format",
+          "status": "adapted-safe",
+          "notes": [
+            "Ingest format selects the parser for --ingest inputs."
+          ]
+        },
+        {
+          "name": "--mvp",
+          "status": "adapted-safe",
+          "notes": [
+            "MVP mode adds SKELETON.md alongside PLAN.md for vertical-slice planning."
+          ]
+        },
+        {
+          "name": "--prd",
+          "status": "supported",
+          "notes": [
+            "PRD mode supplies context and writes CONTEXT.md plus PLAN.md, bypassing prior discuss-phase."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "adapted-safe",
+          "notes": [
+            "Research mode adds RESEARCH.md to the phase packet artifact contract."
+          ]
+        },
+        {
+          "name": "--research-phase",
+          "status": "adapted-safe",
+          "notes": [
+            "Research-phase mode is adapted as a research-only packet requiring RESEARCH.md and no PLAN.md."
+          ]
+        },
+        {
+          "name": "--skip-research",
+          "status": "adapted-safe",
+          "notes": [
+            "Skip-research mode is represented as a normalized planning flag without adding RESEARCH.md."
+          ]
+        },
+        {
+          "name": "--skip-verify",
+          "status": "adapted-safe",
+          "notes": [
+            "Skip-verify mode is represented as a normalized planning flag; validation still checks declared artifacts."
+          ]
+        },
+        {
+          "name": "--view",
+          "status": "adapted-safe",
+          "notes": [
+            "View mode is adapted as a research-only packet requiring existing RESEARCH.md and no PLAN.md."
+          ]
+        }
+      ],
+      "notes": [
+        "Current bridge entrypoint has a packet path; audited reference parity gaps remain explicit at flag level."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/plan-phase.md"
+    },
+    {
+      "id": "plan-review-convergence",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--codex",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer readiness selection; Codex is the default reviewer when none is selected."
+          ]
+        },
+        {
+          "name": "--gemini",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer readiness selection; no Gemini CLI is invoked."
+          ]
+        },
+        {
+          "name": "--claude",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer readiness selection; no Claude agent/session is spawned."
+          ]
+        },
+        {
+          "name": "--opencode",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer readiness selection; no OpenCode CLI is invoked."
+          ]
+        },
+        {
+          "name": "--ollama",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only local-model reviewer readiness selection; no Ollama server request is made."
+          ]
+        },
+        {
+          "name": "--lm-studio",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only local-model reviewer readiness selection; no LM Studio server request is made."
+          ]
+        },
+        {
+          "name": "--llama-cpp",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only local-model reviewer readiness selection; no llama.cpp server request is made."
+          ]
+        },
+        {
+          "name": "--text",
+          "status": "adapted-safe",
+          "notes": [
+            "Observed as output-mode intent only; does not alter reviewer execution."
+          ]
+        },
+        {
+          "name": "--ws",
+          "status": "adapted-safe",
+          "notes": [
+            "Workspace name is included in the readiness report only."
+          ]
+        },
+        {
+          "name": "--all",
+          "status": "adapted-safe",
+          "notes": [
+            "Selects all reviewer readiness checks without invoking any reviewer."
+          ]
+        },
+        {
+          "name": "--max-cycles",
+          "status": "adapted-safe",
+          "notes": [
+            "Positive integer max-cycle value is reported only; no convergence loop is run."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "Reviewer/replan convergence execution remains blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Agent/Skill orchestration remains blocked."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Replan, review feedback, and phase artifact writes remain blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge plan-review-convergence is adapted as a read-only convergence readiness report over local config and phase plan/review evidence.",
+        "It reports feature-gate state, reviewer selections, max-cycle intent, phase artifact evidence, concern markers, and manual recommendations.",
+        "It does not spawn Agents or Skills, call external reviewer CLIs or local model servers, run gsd-plan-phase/gsd-review, replan, write review feedback, ask interactive questions, or perform escalation gates."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/plan-review-convergence.md"
+    },
+    {
+      "id": "pr-branch",
+      "scope": "bridge-entrypoint",
+      "status": "supported",
+      "flags": [
+        {
+          "name": "--create",
+          "status": "supported",
+          "notes": [
+            "Creates a local clean PR branch from the target branch when --confirm-local-git is present."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "supported",
+          "notes": [
+            "Alias for confirmed local clean PR branch creation; remote pushes remain out of scope."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "supported",
+          "notes": [
+            "Alias for confirmed local clean PR branch creation; writes local git branch state only."
+          ]
+        },
+        {
+          "name": "--confirm-local-git",
+          "status": "supported",
+          "notes": [
+            "Required safety confirmation for local git branch mutation."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge pr-branch now performs exact-safe local clean branch creation behind --confirm-local-git.",
+        "Dry-run mode remains read-only and classifies code vs planning artifact changes relative to the target branch.",
+        "Confirmed mutation mode creates a local branch from the target branch, reapplies only non-planning code changes, commits them, and leaves remote push/history rewrite out of scope."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/pr-branch.md"
+    },
+    {
+      "id": "profile-user",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--questionnaire",
+          "status": "adapted-safe",
+          "notes": [
+            "Questionnaire path is reported as read-only readiness; no questions are asked."
+          ]
+        },
+        {
+          "name": "--refresh",
+          "status": "adapted-safe",
+          "notes": [
+            "Refresh path is reported as read-only readiness; no backup, diff, or artifact rewrite is performed."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "USER-PROFILE.md, CLAUDE.md, and dev-preferences artifact writes remain blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Profiler agent/session analysis orchestration remains blocked."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "blocked",
+          "notes": [
+            "Personalization artifact application remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge profile-user is adapted as a read-only developer profile readiness report over local USER-PROFILE.md, CLAUDE.md, dev-preferences Skill, handoff, and Taskmaster report evidence.",
+        "It reports questionnaire/refresh/session-analysis readiness modes, artifact presence, session evidence counts, profile markers, and manual recommendations.",
+        "It does not analyze private session transcripts, ask consent/questionnaire questions, spawn profiler agents, or write USER-PROFILE.md, CLAUDE.md, or dev-preferences Skill artifacts."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/profile-user.md"
+    },
+    {
+      "id": "progress",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--forensic",
+          "status": "adapted-safe",
+          "notes": [
+            "Adds read-only integrity summary over bridge evidence."
+          ]
+        },
+        {
+          "name": "--next",
+          "status": "blocked",
+          "notes": [
+            "Vendor automatic next-step routing can dispatch work; the bridge adapter returns blocked guidance instead."
+          ]
+        },
+        {
+          "name": "--auto",
+          "status": "blocked",
+          "notes": [
+            "Automatic chaining is blocked until advanced/autonomous readiness prerequisites exist."
+          ]
+        },
+        {
+          "name": "--do",
+          "status": "blocked",
+          "notes": [
+            "Freeform dispatch is not available in the read-only progress adapter; use resolve --stdin for advisory routing."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge progress is adapted as a read-only situational report with advisory next-step guidance.",
+        "Vendor automatic routing and freeform dispatch modes are blocked until advanced/autonomous prerequisites exist."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/progress.md"
+    },
+    {
+      "id": "quick",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--full",
+          "status": "blocked",
+          "notes": [
+            "Full quick quality pipeline can spawn agents and execution; blocked."
+          ]
+        },
+        {
+          "name": "--validate",
+          "status": "blocked",
+          "notes": [
+            "Quick validation pipeline is execution-coupled; blocked."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "blocked",
+          "notes": [
+            "Quick research pipeline can spawn agents; blocked."
+          ]
+        },
+        {
+          "name": "--discuss",
+          "status": "blocked",
+          "notes": [
+            "Quick discussion pipeline can write decisions/context; blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge quick is adapted as read-only quick session inspection for list and status subcommands.",
+        "Quick run/resume subcommands and quality pipeline flags are blocked because they mutate project state and can spawn execution agents."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/quick.md"
+    },
+    {
+      "id": "resume-work",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Supported for bridge-owned workstream resume: resumes active or selected workstream with terminal-state protection, idempotency, and .planning/.bridge/workstreams.json-only writes. Explicit --from-handoff reads .planning/HANDOFF.json to select the recorded workstream before resuming. Native interactive restoration and SlashCommand routing remain out of scope.",
+        "Adapted-safe because resume-work validates active workspace context, rejects ambiguous or terminal workstreams, writes only bridge-owned workstream metadata, and does not mutate .planning/STATE.md.",
+        "Milestone lifecycle, broad workstream lifecycle, and autonomous behavior remain pending coverage."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/resume-work.md"
+    },
+    {
+      "id": "review",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--phase",
+          "status": "adapted-safe",
+          "notes": [
+            "Phase selection is used only for local plan/review artifact readiness."
+          ]
+        },
+        {
+          "name": "--gemini",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer selection; no Gemini CLI is invoked."
+          ]
+        },
+        {
+          "name": "--claude",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer selection; no Claude session is spawned."
+          ]
+        },
+        {
+          "name": "--codex",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer selection; Codex is default when no reviewer flag is selected."
+          ]
+        },
+        {
+          "name": "--opencode",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer selection; no OpenCode CLI is invoked."
+          ]
+        },
+        {
+          "name": "--qwen",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer selection; no Qwen Code CLI is invoked."
+          ]
+        },
+        {
+          "name": "--cursor",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only reviewer selection; no Cursor agent is invoked."
+          ]
+        },
+        {
+          "name": "--agy",
+          "status": "adapted-safe",
+          "notes": [
+            "Read-only Antigravity reviewer selection; no Antigravity CLI is invoked."
+          ]
+        },
+        {
+          "name": "--antigravity",
+          "status": "adapted-safe",
+          "notes": [
+            "Alias for read-only Antigravity reviewer selection; no Antigravity CLI is invoked."
+          ]
+        },
+        {
+          "name": "--all",
+          "status": "adapted-safe",
+          "notes": [
+            "Selects all reviewer readiness checks without invoking reviewers."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "REVIEWS.md writes remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "External review execution remains blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Reviewer agent/session orchestration remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge review is adapted as a read-only phase review readiness report over local PLAN, REVIEWS, REVIEW, and SUMMARY artifact evidence.",
+        "It reports selected reviewer intent, phase artifact presence, review markers, readiness checks, and manual recommendations.",
+        "It does not detect or invoke external AI CLIs, build/send review prompts, write REVIEWS.md, run shell commands, spawn agents, or start separate AI sessions."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/review.md"
+    },
+    {
+      "id": "review-backlog",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge review-backlog is adapted as a read-only report over .planning/phases/999* backlog phase directories and ROADMAP backlog markers.",
+        "Vendor promotion, removal, ROADMAP writes, commits, and interactive review behavior are deferred because they mutate project state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/review-backlog.md"
+    },
+    {
+      "id": "secure-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "SECURITY.md writes remain blocked."
+          ]
+        },
+        {
+          "name": "--edit",
+          "status": "blocked",
+          "notes": [
+            "SECURITY.md edits remain blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Security audit agent orchestration remains blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "Security scanner/audit execution remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge secure-phase is adapted as a read-only phase security readiness report over local SECURITY, PLAN, SUMMARY, and STATE artifact evidence.",
+        "It classifies whether SECURITY.md exists, PLAN.md contains threat/security evidence, the phase is missing, or phase execution evidence is insufficient.",
+        "It does not run scanners, shell commands, audit agents, interactive questions, mitigation verification, or write/edit SECURITY.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/secure-phase.md"
+    },
+    {
+      "id": "settings",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Settings write mode is blocked pending a mutation-safety PRD."
+          ]
+        },
+        {
+          "name": "--interactive",
+          "status": "blocked",
+          "notes": [
+            "Interactive settings update flow is blocked in the read-only adapter."
+          ]
+        },
+        {
+          "name": "--profile",
+          "status": "blocked",
+          "notes": [
+            "Profile switching mutates config and remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge settings is adapted as a read-only report over .planning/config.json.",
+        "Interactive settings prompts, config writes, and profile switching are blocked/deferred because they mutate local configuration state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/settings.md"
+    },
+    {
+      "id": "ship",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Native GSD ship pushes the branch, creates a PR with generated body, optionally requests review, and tracks merge. Current bridge ship now has a confirmed --apply path for push and PR creation; optional review request and merge tracking remain parity follow-up."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ship.md"
+    },
+    {
+      "id": "sketch",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--quick",
+          "status": "adapted-safe",
+          "notes": [
+            "Quick design direction is reported as read-only idea readiness; no mockups are generated."
+          ]
+        },
+        {
+          "name": "--text",
+          "status": "adapted-safe",
+          "notes": [
+            "Text mode is accepted as read-only reporting context."
+          ]
+        },
+        {
+          "name": "--wrap-up",
+          "status": "adapted-safe",
+          "notes": [
+            "Wrap-up mode reports readiness from existing sketches; no persistent Skill or handoff artifacts are written."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Sketch file and manifest writes remain blocked."
+          ]
+        },
+        {
+          "name": "--edit",
+          "status": "blocked",
+          "notes": [
+            "Sketch edits remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "Sketch execution/build workflows remain blocked."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "blocked",
+          "notes": [
+            "WebSearch/WebFetch/Context7 research remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge sketch is adapted as a read-only sketch landscape and readiness report over local .planning/sketches and .planning/spikes evidence.",
+        "It reports frontier, idea, quick idea, and wrap-up readiness, existing sketch/spike files, marker counts, and manual recommendations.",
+        "It does not create throwaway HTML mockups, update manifests/state/handoffs/commits, run web or Context7 research, execute shell commands, or ask interactive design questions."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/sketch.md"
+    },
+    {
+      "id": "spec-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--text",
+          "status": "adapted-safe",
+          "notes": [
+            "Plain-text mode is reported as read-only spec readiness context."
+          ]
+        },
+        {
+          "name": "--auto",
+          "status": "blocked",
+          "notes": [
+            "Automatic default selection and SPEC.md generation remain blocked."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "SPEC.md writes remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "Spec workflow execution remains blocked."
+          ]
+        },
+        {
+          "name": "--commit",
+          "status": "blocked",
+          "notes": [
+            "SPEC.md commits remain blocked."
+          ]
+        },
+        {
+          "name": "--scout",
+          "status": "blocked",
+          "notes": [
+            "Codebase scouting and shell execution remain blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge spec-phase is adapted as a read-only phase spec readiness report over local .planning context files and phase SPEC/PLAN/DISCUSSION/SUMMARY/STATE evidence.",
+        "It reports context and phase artifact presence, text-mode intent, spec/ambiguity markers, readiness checks, and manual recommendations.",
+        "It does not scout the codebase, ask Socratic questions, score ambiguity dimensions, choose defaults, write SPEC.md, commit changes, or advance downstream workflows."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/spec-phase.md"
+    },
+    {
+      "id": "spike",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--quick",
+          "status": "adapted-safe",
+          "notes": [
+            "Quick idea mode is reported as read-only spike readiness; no experiments are built."
+          ]
+        },
+        {
+          "name": "--text",
+          "status": "adapted-safe",
+          "notes": [
+            "Plain-text mode is reported as read-only readiness context."
+          ]
+        },
+        {
+          "name": "--wrap-up",
+          "status": "adapted-safe",
+          "notes": [
+            "Wrap-up mode reports readiness from existing spikes; no persistent Skill or handoff artifacts are written."
+          ]
+        },
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "Spike file and manifest writes remain blocked."
+          ]
+        },
+        {
+          "name": "--edit",
+          "status": "blocked",
+          "notes": [
+            "Spike edits remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "Experiment/prototype execution remains blocked."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "blocked",
+          "notes": [
+            "WebSearch/WebFetch/Context7 research remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge spike is adapted as a read-only spike landscape and readiness report over local .planning/spikes evidence.",
+        "It reports frontier, idea, quick idea, and wrap-up readiness, existing spike files, marker counts, text-mode intent, and manual recommendations.",
+        "It does not build experiments or prototypes, update manifests/state/handoffs/commits, run web or Context7 research, execute shell commands, or ask interactive questions."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/spike.md"
+    },
+    {
+      "id": "stats",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge stats is adapted as a read-only parity and workload summary over compatibility and Taskmaster state.",
+        "It does not execute shell metrics or inspect git history beyond committed bridge evidence."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/stats.md"
+    },
+    {
+      "id": "surface",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge surface is adapted as read-only skill surface inspection for list/status subcommands.",
+        "Profile switching, enable, disable, and reset behavior is blocked/deferred because it writes runtime config and can re-stage skill directories."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/surface.md"
+    },
+    {
+      "id": "thread",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--open",
+          "status": "adapted-safe",
+          "notes": [
+            "Filters read-only thread list to open threads."
+          ]
+        },
+        {
+          "name": "--resolved",
+          "status": "adapted-safe",
+          "notes": [
+            "Filters read-only thread list to resolved/closed threads."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge thread is adapted as read-only persistent context thread inspection for list and status subcommands.",
+        "Thread creation, close, name, and description mutation behavior is blocked/deferred because it writes persistent context state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/thread.md"
+    },
+    {
+      "id": "ui-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "UI-SPEC.md writes remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "UI phase workflow execution remains blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "UI researcher/checker agent orchestration remains blocked."
+          ]
+        },
+        {
+          "name": "--research",
+          "status": "blocked",
+          "notes": [
+            "WebFetch/Context7 UI research remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ui-phase is adapted as a read-only UI phase readiness report over local phase UI-SPEC, PLAN, SPEC, SUMMARY, and STATE evidence.",
+        "It auto-detects a likely frontend phase when no phase is supplied, reports UI/design markers, artifact presence, readiness checks, and manual recommendations.",
+        "It does not orchestrate UI researcher/checker agents, run WebFetch/Context7/shell commands, ask interactive UI questions, verify UI-SPEC, or write UI-SPEC.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ui-phase.md"
+    },
+    {
+      "id": "ui-review",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--write",
+          "status": "blocked",
+          "notes": [
+            "UI-REVIEW.md writes remain blocked."
+          ]
+        },
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "UI review workflow execution remains blocked."
+          ]
+        },
+        {
+          "name": "--agent",
+          "status": "blocked",
+          "notes": [
+            "Visual audit agent orchestration remains blocked."
+          ]
+        },
+        {
+          "name": "--audit",
+          "status": "blocked",
+          "notes": [
+            "Graded 6-pillar visual audit execution remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ui-review is adapted as a read-only UI review readiness report over local phase UI-REVIEW, UI-SPEC, SUMMARY, VERIFICATION, UAT, and STATE evidence.",
+        "It defaults to the last completed phase, reports visual/pillar markers, artifact presence, readiness checks, and manual recommendations.",
+        "It does not inspect implemented frontend source or runtime screens, orchestrate visual audit agents, assign 1-4 pillar grades, or write UI-REVIEW.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ui-review.md"
+    },
+    {
+      "id": "ultraplan-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--run",
+          "status": "blocked",
+          "notes": [
+            "Ultraplan workflow execution remains blocked."
+          ]
+        },
+        {
+          "name": "--cloud",
+          "status": "blocked",
+          "notes": [
+            "Remote cloud offload remains blocked."
+          ]
+        },
+        {
+          "name": "--import-back",
+          "status": "blocked",
+          "notes": [
+            "Importing reviewed remote plan output remains blocked."
+          ]
+        },
+        {
+          "name": "--open",
+          "status": "blocked",
+          "notes": [
+            "Opening browser review sessions remains blocked."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge ultraplan-phase is adapted as a read-only beta cloud-planning readiness report over local .planning context and phase PLAN/SPEC/DISCUSSION/SUMMARY/STATE evidence.",
+        "It reports selected phase, context and plan artifact presence, cloud/import markers, readiness checks, beta status, and manual recommendations.",
+        "It does not invoke Claude Code ultraplan cloud infrastructure, open browser review sessions, require claude.ai/GitHub access, run shell commands, import remote plan output, or write PLAN.md."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/ultraplan-phase.md"
+    },
+    {
+      "id": "undo",
+      "scope": "bridge-entrypoint",
+      "status": "supported",
+      "flags": [
+        {
+          "name": "--last",
+          "status": "supported",
+          "notes": [
+            "Shows recent git commits as read-only undo candidates; with --apply --confirm-local-git requires exactly one candidate."
+          ]
+        },
+        {
+          "name": "--phase",
+          "status": "supported",
+          "notes": [
+            "Selects all matching phase commits and can apply a confirmed no-commit git revert batch."
+          ]
+        },
+        {
+          "name": "--plan",
+          "status": "supported",
+          "notes": [
+            "Selects all matching plan commits and can apply a confirmed no-commit git revert batch."
+          ]
+        },
+        {
+          "name": "--apply",
+          "status": "supported",
+          "notes": [
+            "Applies git revert --no-commit only with --confirm-local-git and explicit scope."
+          ]
+        },
+        {
+          "name": "--confirm-local-git",
+          "status": "supported",
+          "notes": [
+            "Required safety confirmation for local git revert mutation."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge undo now performs exact-safe local git revert behavior behind --confirm-local-git.",
+        "Dry-run mode remains read-only and previews recent, phase, or plan-scoped candidate commits.",
+        "Confirmed apply mode uses git revert --no-commit for the selected --last single commit or all matching --phase/--plan commits, leaving final commit/abort decisions to the operator.",
+        "Reset, checkout, history rewrite, remote push, and interactive confirmation prompts remain out of scope."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/undo.md"
+    },
+    {
+      "id": "update",
+      "scope": "bridge-entrypoint",
+      "status": "supported",
+      "flags": [
+        {
+          "name": "--next",
+          "status": "supported",
+          "notes": [
+            "Selects the @next release-candidate channel for readiness guidance without package install."
+          ]
+        },
+        {
+          "name": "--rc",
+          "status": "supported",
+          "notes": [
+            "Alias for --next."
+          ]
+        },
+        {
+          "name": "--sync",
+          "status": "supported",
+          "notes": [
+            "Refreshes bridge-owned install-managed target project surfaces through the repair lifecycle, preserving local edits as pending updates or local patches."
+          ]
+        },
+        {
+          "name": "--reapply",
+          "status": "adapted-safe",
+          "notes": [
+            "Renders deterministic local patch reapply guidance without applying custom patch hunks automatically."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge update now supports exact-safe managed-surface sync through the repair lifecycle.",
+        "Standard/latest/next modes remain read-only readiness reports and do not query npm or install packages.",
+        "--sync refreshes bridge-owned installed surfaces, updates install-state hashes, and preserves divergent local edits as pending updates or local patches.",
+        "--reapply remains guidance-only; local patch hunk reapplication is still explicit operator work."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/update.md"
+    },
+    {
+      "id": "validate-phase",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [
+        {
+          "name": "--apply",
+          "status": "blocked",
+          "notes": [
+            "Validation artifact repair and test generation remain blocked in the bridge adapter."
+          ]
+        }
+      ],
+      "notes": [
+        "Bridge validate-phase is adapted as a read-only validation evidence and gap-marker report over .planning/phases.",
+        "It distinguishes validation-present, summary-only, phase-not-executed, and no-phase-found states.",
+        "It does not write VALIDATION.md, generate tests, execute validation commands, or update planning state."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/validate-phase.md"
+    },
+    {
+      "id": "verify-work",
+      "scope": "bridge-entrypoint",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Current bridge entrypoint has a packet path; audited reference parity gaps remain explicit at flag level."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/verify-work.md"
+    },
+    {
+      "id": "workspace",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge implements workspace inspection and workspace select behavior backed by bridge-owned .planning/.bridge/workstreams.json metadata.",
+        "Adapted-safe because workspace selection writes only bridge-owned metadata, reports previous active workspace evidence, and does not mutate .planning/STATE.md.",
+        "Vendor workspace modes beyond inspect/select remain pending future parity slices."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/workspace.md"
+    },
+    {
+      "id": "workstreams",
+      "scope": "reference-inventory",
+      "status": "adapted-safe",
+      "flags": [],
+      "notes": [
+        "Bridge implements deterministic workstream inventory and workstreams select behavior backed by bridge-owned .planning/.bridge/workstreams.json metadata.",
+        "Adapted-safe because workstreams select requires an active workspace, writes only bridge-owned metadata, reports previous active workstream evidence, and does not mutate .planning/STATE.md.",
+        "Exact vendor workstream lifecycle modes, milestone lifecycle, and autonomous behavior remain future parity work."
+      ],
+      "source": "vendor/reference/gsd-core/commands/gsd/workstreams.md"
+    }
+  ]
+}

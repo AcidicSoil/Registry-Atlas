@@ -1,0 +1,3051 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:command-arguments",
+  "source": ".agents/gsd-serena/parity-skills/contracts.json",
+  "outputs": [
+    "assets/gsd-serena/registry/command-arguments.json",
+    ".agents/gsd-serena/command-arguments.json"
+  ],
+  "entries": [
+    {
+      "id": "command:add-tests",
+      "command": "add-tests",
+      "source": "gsd-command-add-tests",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge add-tests {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:add-tests"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/add-tests.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ai-integration-phase",
+      "command": "ai-integration-phase",
+      "source": "gsd-command-ai-integration-phase",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ai-integration-phase --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ai-integration-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ai-integration-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:audit-fix",
+      "command": "audit-fix",
+      "source": "gsd-command-audit-fix",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge audit-fix --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:audit-fix"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/audit-fix.md"
+        ]
+      }
+    },
+    {
+      "id": "command:audit-milestone",
+      "command": "audit-milestone",
+      "source": "gsd-command-audit-milestone",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "id_or_title",
+          "required": false,
+          "placeholder": "{{id_or_title}}",
+          "description": "Milestone id or title."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge audit-milestone {{id_or_title}} --format markdown",
+        "variables": [
+          {
+            "name": "id_or_title",
+            "required": false,
+            "placeholder": "{{id_or_title}}",
+            "description": "Milestone id or title."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:audit-milestone"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/audit-milestone.md"
+        ]
+      }
+    },
+    {
+      "id": "command:audit-uat",
+      "command": "audit-uat",
+      "source": "gsd-command-audit-uat",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge audit-uat --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:audit-uat"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/audit-uat.md"
+        ]
+      }
+    },
+    {
+      "id": "command:autonomous",
+      "command": "autonomous",
+      "source": "gsd-command-autonomous",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge autonomous --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:autonomous"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/autonomous.md"
+        ]
+      }
+    },
+    {
+      "id": "command:capture",
+      "command": "capture",
+      "source": "gsd-command-capture",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "text",
+          "required": false,
+          "placeholder": "{{text}}",
+          "description": "Optional note or capture text."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge capture {{text}} --format markdown",
+        "variables": [
+          {
+            "name": "text",
+            "required": false,
+            "placeholder": "{{text}}",
+            "description": "Optional note or capture text."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:capture"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/capture.md"
+        ]
+      }
+    },
+    {
+      "id": "command:cleanup",
+      "command": "cleanup",
+      "source": "gsd-command-cleanup",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge cleanup --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:cleanup"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/cleanup.md"
+        ]
+      }
+    },
+    {
+      "id": "command:code-review",
+      "command": "code-review",
+      "source": "gsd-command-code-review",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge code-review {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:code-review"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/code-review.md"
+        ]
+      }
+    },
+    {
+      "id": "command:complete-milestone",
+      "command": "complete-milestone",
+      "source": "gsd-command-complete-milestone",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "id_or_title",
+          "required": false,
+          "placeholder": "{{id_or_title}}",
+          "description": "Milestone id or title."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge complete-milestone {{id_or_title}} --format markdown",
+        "variables": [
+          {
+            "name": "id_or_title",
+            "required": false,
+            "placeholder": "{{id_or_title}}",
+            "description": "Milestone id or title."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:complete-milestone"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/complete-milestone.md"
+        ]
+      }
+    },
+    {
+      "id": "command:config",
+      "command": "config",
+      "source": "gsd-command-config",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge config --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:config"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/config.md"
+        ]
+      }
+    },
+    {
+      "id": "command:debug",
+      "command": "debug",
+      "source": "gsd-command-debug",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "slug",
+          "required": false,
+          "placeholder": "{{slug}}",
+          "description": "Optional debug session slug or description."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge debug {{slug}} --format markdown",
+        "variables": [
+          {
+            "name": "slug",
+            "required": false,
+            "placeholder": "{{slug}}",
+            "description": "Optional debug session slug or description."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:debug"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/debug.md"
+        ]
+      }
+    },
+    {
+      "id": "command:discuss-phase",
+      "command": "discuss-phase",
+      "source": "gsd-command-discuss-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge discuss-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:discuss-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/discuss-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:docs-update",
+      "command": "docs-update",
+      "source": "gsd-command-docs-update",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge docs-update --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:docs-update"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/docs-update.md"
+        ]
+      }
+    },
+    {
+      "id": "command:eval-review",
+      "command": "eval-review",
+      "source": "gsd-command-eval-review",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge eval-review --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:eval-review"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/eval-review.md"
+        ]
+      }
+    },
+    {
+      "id": "command:execute-phase",
+      "command": "execute-phase",
+      "source": "gsd-command-execute-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge execute-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:execute-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/execute-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:explore",
+      "command": "explore",
+      "source": "gsd-command-explore",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "topic",
+          "required": false,
+          "placeholder": "{{topic}}",
+          "description": "Optional exploration topic."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge explore {{topic}} --format markdown",
+        "variables": [
+          {
+            "name": "topic",
+            "required": false,
+            "placeholder": "{{topic}}",
+            "description": "Optional exploration topic."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:explore"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/explore.md"
+        ]
+      }
+    },
+    {
+      "id": "command:extract-learnings",
+      "command": "extract-learnings",
+      "source": "gsd-command-extract-learnings",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge extract-learnings --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:extract-learnings"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/extract-learnings.md"
+        ]
+      }
+    },
+    {
+      "id": "command:fast",
+      "command": "fast",
+      "source": "gsd-command-fast",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge fast --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:fast"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/fast.md"
+        ]
+      }
+    },
+    {
+      "id": "command:forensics",
+      "command": "forensics",
+      "source": "gsd-command-forensics",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "problem",
+          "required": false,
+          "placeholder": "{{problem}}",
+          "description": "Optional problem description."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge forensics {{problem}} --format markdown",
+        "variables": [
+          {
+            "name": "problem",
+            "required": false,
+            "placeholder": "{{problem}}",
+            "description": "Optional problem description."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:forensics"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/forensics.md"
+        ]
+      }
+    },
+    {
+      "id": "command:graphify",
+      "command": "graphify",
+      "source": "gsd-command-graphify",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge graphify --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:graphify"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/graphify.md"
+        ]
+      }
+    },
+    {
+      "id": "command:health",
+      "command": "health",
+      "source": "gsd-command-health",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge health --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:health"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/health.md"
+        ]
+      }
+    },
+    {
+      "id": "command:help",
+      "command": "help",
+      "source": "gsd-command-help",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "topic",
+          "required": false,
+          "placeholder": "{{topic}}",
+          "description": "Optional help topic."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge help {{topic}} --format markdown",
+        "variables": [
+          {
+            "name": "topic",
+            "required": false,
+            "placeholder": "{{topic}}",
+            "description": "Optional help topic."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:help"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/help.md"
+        ]
+      }
+    },
+    {
+      "id": "command:import",
+      "command": "import",
+      "source": "gsd-command-import",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge import --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:import"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/import.md"
+        ]
+      }
+    },
+    {
+      "id": "command:inbox",
+      "command": "inbox",
+      "source": "gsd-command-inbox",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge inbox --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:inbox"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/inbox.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ingest-docs",
+      "command": "ingest-docs",
+      "source": "gsd-command-ingest-docs",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ingest-docs --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ingest-docs"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ingest-docs.md"
+        ]
+      }
+    },
+    {
+      "id": "command:manager",
+      "command": "manager",
+      "source": "gsd-command-manager",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge manager --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:manager"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/manager.md"
+        ]
+      }
+    },
+    {
+      "id": "command:map-codebase",
+      "command": "map-codebase",
+      "source": "gsd-command-map-codebase",
+      "status": "supported",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge map-codebase --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:map-codebase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/map-codebase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:mempalace-capture",
+      "command": "mempalace-capture",
+      "source": "gsd-command-mempalace-capture",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "artifact",
+          "required": false,
+          "placeholder": "{{artifact}}",
+          "description": "Optional phase artifact to capture."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        },
+        {
+          "name": "apply",
+          "flag": "--apply",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Apply fake memory capture adapter."
+        },
+        {
+          "name": "fake-memory",
+          "flag": "--fake-memory",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Use fake memory adapter."
+        },
+        {
+          "name": "confirm-external",
+          "flag": "--confirm-external",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Confirm external-style adapter action."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge mempalace-capture {{artifact}} --format markdown",
+        "variables": [
+          {
+            "name": "artifact",
+            "required": false,
+            "placeholder": "{{artifact}}",
+            "description": "Optional phase artifact to capture."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:mempalace-capture"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/mempalace-capture.md"
+        ]
+      }
+    },
+    {
+      "id": "command:mempalace-recall",
+      "command": "mempalace-recall",
+      "source": "gsd-command-mempalace-recall",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        },
+        {
+          "name": "apply",
+          "flag": "--apply",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Apply fake memory recall adapter."
+        },
+        {
+          "name": "fake-memory",
+          "flag": "--fake-memory",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Use fake memory adapter."
+        },
+        {
+          "name": "confirm-external",
+          "flag": "--confirm-external",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Confirm external-style adapter action."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge mempalace-recall {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:mempalace-recall"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/mempalace-recall.md"
+        ]
+      }
+    },
+    {
+      "id": "command:milestone-summary",
+      "command": "milestone-summary",
+      "source": "gsd-command-milestone-summary",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "id_or_title",
+          "required": false,
+          "placeholder": "{{id_or_title}}",
+          "description": "Milestone id or title."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge milestone-summary {{id_or_title}} --format markdown",
+        "variables": [
+          {
+            "name": "id_or_title",
+            "required": false,
+            "placeholder": "{{id_or_title}}",
+            "description": "Milestone id or title."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:milestone-summary"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/milestone-summary.md"
+        ]
+      }
+    },
+    {
+      "id": "command:mvp-phase",
+      "command": "mvp-phase",
+      "source": "gsd-command-mvp-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase number or phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge mvp-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase number or phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:mvp-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/mvp-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:new-milestone",
+      "command": "new-milestone",
+      "source": "gsd-command-new-milestone",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "title",
+          "required": true,
+          "placeholder": "{{title}}",
+          "description": "Milestone title."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge new-milestone {{title}} --format markdown",
+        "variables": [
+          {
+            "name": "title",
+            "required": true,
+            "placeholder": "{{title}}",
+            "description": "Milestone title."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:new-milestone"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/new-milestone.md"
+        ]
+      }
+    },
+    {
+      "id": "command:new-project",
+      "command": "new-project",
+      "source": "gsd-command-new-project",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge new-project --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:new-project"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/new-project.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ns-context",
+      "command": "ns-context",
+      "source": "gsd-command-ns-context",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ns-context --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ns-context"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ns-context.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ns-ideate",
+      "command": "ns-ideate",
+      "source": "gsd-command-ns-ideate",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ns-ideate --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ns-ideate"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ns-ideate.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ns-manage",
+      "command": "ns-manage",
+      "source": "gsd-command-ns-manage",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ns-manage --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ns-manage"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ns-manage.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ns-project",
+      "command": "ns-project",
+      "source": "gsd-command-ns-project",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ns-project --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ns-project"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ns-project.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ns-review",
+      "command": "ns-review",
+      "source": "gsd-command-ns-review",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ns-review --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ns-review"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ns-review.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ns-workflow",
+      "command": "ns-workflow",
+      "source": "gsd-command-ns-workflow",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ns-workflow --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ns-workflow"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ns-workflow.md"
+        ]
+      }
+    },
+    {
+      "id": "command:pause-work",
+      "command": "pause-work",
+      "source": "gsd-command-pause-work",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge pause-work --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:pause-work"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/pause-work.md"
+        ]
+      }
+    },
+    {
+      "id": "command:phase",
+      "command": "phase",
+      "source": "gsd-command-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "target",
+          "required": false,
+          "placeholder": "{{target}}",
+          "description": "Phase target, description, or phase rename expression."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        },
+        {
+          "name": "write",
+          "flag": "--write",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Write future phase artifacts."
+        },
+        {
+          "name": "apply",
+          "flag": "--apply",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Apply phase write with ledger/checkpoint evidence."
+        },
+        {
+          "name": "activate",
+          "flag": "--activate",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Prepare activation packet."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge phase {{target}} --format markdown",
+        "variables": [
+          {
+            "name": "target",
+            "required": false,
+            "placeholder": "{{target}}",
+            "description": "Phase target, description, or phase rename expression."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:plan-phase",
+      "command": "plan-phase",
+      "source": "gsd-command-plan-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge plan-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:plan-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/plan-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:plan-review-convergence",
+      "command": "plan-review-convergence",
+      "source": "gsd-command-plan-review-convergence",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge plan-review-convergence --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:plan-review-convergence"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/plan-review-convergence.md"
+        ]
+      }
+    },
+    {
+      "id": "command:pr-branch",
+      "command": "pr-branch",
+      "source": "gsd-command-pr-branch",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "target",
+          "required": false,
+          "placeholder": "{{target}}",
+          "description": "Target branch to compare against."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        },
+        {
+          "name": "branch",
+          "flag": "--branch <name>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Local branch name."
+        },
+        {
+          "name": "confirm-local-git",
+          "flag": "--confirm-local-git",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Confirm local git branch mutation."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge pr-branch {{target}} --format markdown",
+        "variables": [
+          {
+            "name": "target",
+            "required": false,
+            "placeholder": "{{target}}",
+            "description": "Target branch to compare against."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:pr-branch"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/pr-branch.md"
+        ]
+      }
+    },
+    {
+      "id": "command:profile-user",
+      "command": "profile-user",
+      "source": "gsd-command-profile-user",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge profile-user --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:profile-user"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/profile-user.md"
+        ]
+      }
+    },
+    {
+      "id": "command:progress",
+      "command": "progress",
+      "source": "gsd-command-progress",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge progress --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:progress"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/progress.md"
+        ]
+      }
+    },
+    {
+      "id": "command:quick",
+      "command": "quick",
+      "source": "gsd-command-quick",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "task",
+          "required": false,
+          "placeholder": "{{task}}",
+          "description": "Optional quick task description."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge quick {{task}} --format markdown",
+        "variables": [
+          {
+            "name": "task",
+            "required": false,
+            "placeholder": "{{task}}",
+            "description": "Optional quick task description."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:quick"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/quick.md"
+        ]
+      }
+    },
+    {
+      "id": "command:resume-work",
+      "command": "resume-work",
+      "source": "gsd-command-resume-work",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge resume-work --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:resume-work"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/resume-work.md"
+        ]
+      }
+    },
+    {
+      "id": "command:review",
+      "command": "review",
+      "source": "gsd-command-review",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name supplied by --phase."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge review {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name supplied by --phase."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:review"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/review.md"
+        ]
+      }
+    },
+    {
+      "id": "command:review-backlog",
+      "command": "review-backlog",
+      "source": "gsd-command-review-backlog",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge review-backlog --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:review-backlog"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/review-backlog.md"
+        ]
+      }
+    },
+    {
+      "id": "command:secure-phase",
+      "command": "secure-phase",
+      "source": "gsd-command-secure-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge secure-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:secure-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/secure-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:settings",
+      "command": "settings",
+      "source": "gsd-command-settings",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge settings --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:settings"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/settings.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ship",
+      "command": "ship",
+      "source": "gsd-command-ship",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ship --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ship"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ship.md"
+        ]
+      }
+    },
+    {
+      "id": "command:sketch",
+      "command": "sketch",
+      "source": "gsd-command-sketch",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "idea",
+          "required": false,
+          "placeholder": "{{idea}}",
+          "description": "Optional sketch idea."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge sketch {{idea}} --format markdown",
+        "variables": [
+          {
+            "name": "idea",
+            "required": false,
+            "placeholder": "{{idea}}",
+            "description": "Optional sketch idea."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:sketch"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/sketch.md"
+        ]
+      }
+    },
+    {
+      "id": "command:spec-phase",
+      "command": "spec-phase",
+      "source": "gsd-command-spec-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge spec-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:spec-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/spec-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:spike",
+      "command": "spike",
+      "source": "gsd-command-spike",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "idea",
+          "required": false,
+          "placeholder": "{{idea}}",
+          "description": "Optional spike idea."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge spike {{idea}} --format markdown",
+        "variables": [
+          {
+            "name": "idea",
+            "required": false,
+            "placeholder": "{{idea}}",
+            "description": "Optional spike idea."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:spike"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/spike.md"
+        ]
+      }
+    },
+    {
+      "id": "command:stats",
+      "command": "stats",
+      "source": "gsd-command-stats",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge stats --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:stats"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/stats.md"
+        ]
+      }
+    },
+    {
+      "id": "command:surface",
+      "command": "surface",
+      "source": "gsd-command-surface",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge surface --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:surface"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/surface.md"
+        ]
+      }
+    },
+    {
+      "id": "command:thread",
+      "command": "thread",
+      "source": "gsd-command-thread",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "subcommand",
+          "required": false,
+          "placeholder": "{{subcommand}}",
+          "description": "Thread subcommand or description."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge thread {{subcommand}} --format markdown",
+        "variables": [
+          {
+            "name": "subcommand",
+            "required": false,
+            "placeholder": "{{subcommand}}",
+            "description": "Thread subcommand or description."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:thread"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/thread.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ui-phase",
+      "command": "ui-phase",
+      "source": "gsd-command-ui-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ui-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:ui-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ui-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ui-review",
+      "command": "ui-review",
+      "source": "gsd-command-ui-review",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ui-review --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ui-review"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ui-review.md"
+        ]
+      }
+    },
+    {
+      "id": "command:ultraplan-phase",
+      "command": "ultraplan-phase",
+      "source": "gsd-command-ultraplan-phase",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge ultraplan-phase --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:ultraplan-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/ultraplan-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:undo",
+      "command": "undo",
+      "source": "gsd-command-undo",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "plan",
+          "required": false,
+          "placeholder": "{{plan}}",
+          "description": "Plan id used to select one undo candidate."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        },
+        {
+          "name": "plan",
+          "flag": "--plan <plan>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Filter undo candidates by plan id."
+        },
+        {
+          "name": "confirm-local-git",
+          "flag": "--confirm-local-git",
+          "status": "supported",
+          "takesValue": false,
+          "description": "Confirm local git revert mutation."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge undo {{plan}} --format markdown",
+        "variables": [
+          {
+            "name": "plan",
+            "required": false,
+            "placeholder": "{{plan}}",
+            "description": "Plan id used to select one undo candidate."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:undo"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/undo.md"
+        ]
+      }
+    },
+    {
+      "id": "command:update",
+      "command": "update",
+      "source": "gsd-command-update",
+      "status": "adapted-safe",
+      "variables": [],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge update --format markdown",
+        "variables": [],
+        "slashAliases": [
+          "/gsd:update"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/update.md"
+        ]
+      }
+    },
+    {
+      "id": "command:validate-phase",
+      "command": "validate-phase",
+      "source": "gsd-command-validate-phase",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge validate-phase {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:validate-phase"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/validate-phase.md"
+        ]
+      }
+    },
+    {
+      "id": "command:verify-work",
+      "command": "verify-work",
+      "source": "gsd-command-verify-work",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "phase",
+          "required": false,
+          "placeholder": "{{phase}}",
+          "description": "Phase directory name."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge verify-work {{phase}} --format markdown",
+        "variables": [
+          {
+            "name": "phase",
+            "required": false,
+            "placeholder": "{{phase}}",
+            "description": "Phase directory name."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:verify-work"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/verify-work.md"
+        ]
+      }
+    },
+    {
+      "id": "command:workspace",
+      "command": "workspace",
+      "source": "gsd-command-workspace",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "name_or_id",
+          "required": false,
+          "placeholder": "{{name_or_id}}",
+          "description": "Workspace name or id for select subcommand."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge workspace {{name_or_id}} --format markdown",
+        "variables": [
+          {
+            "name": "name_or_id",
+            "required": false,
+            "placeholder": "{{name_or_id}}",
+            "description": "Workspace name or id for select subcommand."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:workspace"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/workspace.md"
+        ]
+      }
+    },
+    {
+      "id": "command:workstreams",
+      "command": "workstreams",
+      "source": "gsd-command-workstreams",
+      "status": "adapted-safe",
+      "variables": [
+        {
+          "name": "subcommand",
+          "required": false,
+          "placeholder": "{{subcommand}}",
+          "description": "Workstream subcommand."
+        }
+      ],
+      "supportedOptions": [
+        {
+          "name": "format",
+          "flag": "--format <format>",
+          "status": "supported",
+          "takesValue": true,
+          "description": "Output format: markdown or json."
+        }
+      ],
+      "unsupportedOptions": [],
+      "promptSnippet": {
+        "insertText": "gsd-serena-bridge workstreams {{subcommand}} --format markdown",
+        "variables": [
+          {
+            "name": "subcommand",
+            "required": false,
+            "placeholder": "{{subcommand}}",
+            "description": "Workstream subcommand."
+          }
+        ],
+        "slashAliases": [
+          "/gsd:workstreams"
+        ],
+        "skillReferences": [
+          ".agents/gsd-serena/commands/gsd/workstreams.md"
+        ]
+      }
+    }
+  ],
+  "commanderDefinitions": [
+    {
+      "command": "doctor",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "health",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": "command:health",
+      "exclusionReason": null
+    },
+    {
+      "command": "help",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": "command:help",
+      "exclusionReason": null
+    },
+    {
+      "command": "stats",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": "command:stats",
+      "exclusionReason": null
+    },
+    {
+      "command": "progress",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": "command:progress",
+      "exclusionReason": null
+    },
+    {
+      "command": "completion",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "install",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "human",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "capability",
+      "source": "src/cli/diagnostics-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "bootstrap",
+      "source": "src/cli/lifecycle-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "install",
+      "source": "src/cli/lifecycle-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "repair",
+      "source": "src/cli/lifecycle-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "migrate",
+      "source": "src/cli/lifecycle-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "uninstall",
+      "source": "src/cli/lifecycle-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "policy-gateway",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "check",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "runtime",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "discover",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "hooks",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "run",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "inspect",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "list",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "policy",
+      "source": "src/cli/runtime-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "resolve",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "prepare",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "ship",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:ship",
+      "exclusionReason": null
+    },
+    {
+      "command": "validate",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "next",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "planning",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "reset",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "report",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "bug",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "transition",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "pause-work",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:pause-work",
+      "exclusionReason": null
+    },
+    {
+      "command": "resume-work",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:resume-work",
+      "exclusionReason": null
+    },
+    {
+      "command": "mempalace-capture",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:mempalace-capture",
+      "exclusionReason": null
+    },
+    {
+      "command": "mempalace-recall",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:mempalace-recall",
+      "exclusionReason": null
+    },
+    {
+      "command": "mvp-phase",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:mvp-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "phase",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "create",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "status",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "remove",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "activate",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "plan",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "execute",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "verify",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "complete",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "plan-review-convergence",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:plan-review-convergence",
+      "exclusionReason": null
+    },
+    {
+      "command": "pr-branch",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:pr-branch",
+      "exclusionReason": null
+    },
+    {
+      "command": "profile-user",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:profile-user",
+      "exclusionReason": null
+    },
+    {
+      "command": "review",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:review",
+      "exclusionReason": null
+    },
+    {
+      "command": "secure-phase",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:secure-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "sketch",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:sketch",
+      "exclusionReason": null
+    },
+    {
+      "command": "spec-phase",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:spec-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "spike",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:spike",
+      "exclusionReason": null
+    },
+    {
+      "command": "ui-phase",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:ui-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "ui-review",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:ui-review",
+      "exclusionReason": null
+    },
+    {
+      "command": "ultraplan-phase",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:ultraplan-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "thread",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:thread",
+      "exclusionReason": null
+    },
+    {
+      "command": "settings",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:settings",
+      "exclusionReason": null
+    },
+    {
+      "command": "surface",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:surface",
+      "exclusionReason": null
+    },
+    {
+      "command": "config",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:config",
+      "exclusionReason": null
+    },
+    {
+      "command": "runtime-surface",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "phase-writer",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "vendor-core",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "emit",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "docs-update",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:docs-update",
+      "exclusionReason": null
+    },
+    {
+      "command": "update",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:update",
+      "exclusionReason": null
+    },
+    {
+      "command": "new-milestone",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:new-milestone",
+      "exclusionReason": null
+    },
+    {
+      "command": "complete-milestone",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:complete-milestone",
+      "exclusionReason": null
+    },
+    {
+      "command": "audit-milestone",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:audit-milestone",
+      "exclusionReason": null
+    },
+    {
+      "command": "milestone-summary",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:milestone-summary",
+      "exclusionReason": null
+    },
+    {
+      "command": "workstreams",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:workstreams",
+      "exclusionReason": null
+    },
+    {
+      "command": "select",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "workspace",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": "command:workspace",
+      "exclusionReason": null
+    },
+    {
+      "command": "state",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "get",
+      "source": "src/cli/workflow-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "quick",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:quick",
+      "exclusionReason": null
+    },
+    {
+      "command": "debug",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:debug",
+      "exclusionReason": null
+    },
+    {
+      "command": "forensics",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:forensics",
+      "exclusionReason": null
+    },
+    {
+      "command": "capture",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:capture",
+      "exclusionReason": null
+    },
+    {
+      "command": "cleanup",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:cleanup",
+      "exclusionReason": null
+    },
+    {
+      "command": "housekeeping",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    },
+    {
+      "command": "review-backlog",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:review-backlog",
+      "exclusionReason": null
+    },
+    {
+      "command": "undo",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:undo",
+      "exclusionReason": null
+    },
+    {
+      "command": "audit-uat",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:audit-uat",
+      "exclusionReason": null
+    },
+    {
+      "command": "validate-phase",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:validate-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "code-review",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:code-review",
+      "exclusionReason": null
+    },
+    {
+      "command": "add-tests",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:add-tests",
+      "exclusionReason": null
+    },
+    {
+      "command": "explore",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:explore",
+      "exclusionReason": null
+    },
+    {
+      "command": "ai-integration-phase",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:ai-integration-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "audit-fix",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:audit-fix",
+      "exclusionReason": null
+    },
+    {
+      "command": "eval-review",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:eval-review",
+      "exclusionReason": null
+    },
+    {
+      "command": "autonomous",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:autonomous",
+      "exclusionReason": null
+    },
+    {
+      "command": "extract-learnings",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:extract-learnings",
+      "exclusionReason": null
+    },
+    {
+      "command": "fast",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:fast",
+      "exclusionReason": null
+    },
+    {
+      "command": "graphify",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:graphify",
+      "exclusionReason": null
+    },
+    {
+      "command": "import",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:import",
+      "exclusionReason": null
+    },
+    {
+      "command": "inbox",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:inbox",
+      "exclusionReason": null
+    },
+    {
+      "command": "ingest-docs",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:ingest-docs",
+      "exclusionReason": null
+    },
+    {
+      "command": "manager",
+      "source": "src/cli/workflow-readiness-commands.ts",
+      "coveredBy": "command:manager",
+      "exclusionReason": null
+    },
+    {
+      "command": "verify-work",
+      "source": "src/cli/workflow-phase-pipeline-commands.ts",
+      "coveredBy": "command:verify-work",
+      "exclusionReason": null
+    },
+    {
+      "command": "execute-phase",
+      "source": "src/cli/workflow-phase-pipeline-commands.ts",
+      "coveredBy": "command:execute-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "plan-phase",
+      "source": "src/cli/workflow-phase-pipeline-commands.ts",
+      "coveredBy": "command:plan-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "discuss-phase",
+      "source": "src/cli/workflow-phase-pipeline-commands.ts",
+      "coveredBy": "command:discuss-phase",
+      "exclusionReason": null
+    },
+    {
+      "command": "phase-qa",
+      "source": "src/cli/workflow-phase-pipeline-commands.ts",
+      "coveredBy": null,
+      "exclusionReason": "nested subcommand, lifecycle helper, diagnostics helper, or container command documented by generated Commander source inventory"
+    }
+  ]
+}

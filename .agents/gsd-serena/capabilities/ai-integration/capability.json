@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "pnpm gen:bridge-supporting-surfaces",
+  "sourcePath": "vendor/reference/gsd-core/capabilities/ai-integration/capability.json",
+  "id": "ai-integration",
+  "title": "AI design contract",
+  "role": "feature",
+  "tier": "full",
+  "requires": [],
+  "runtimeCompatKeys": [
+    "supported",
+    "unsupported"
+  ],
+  "skills": [
+    "ai-integration-phase"
+  ],
+  "agents": [
+    "gsd-framework-selector",
+    "gsd-ai-researcher",
+    "gsd-domain-researcher",
+    "gsd-eval-planner"
+  ],
+  "hooks": [],
+  "commands": [],
+  "configKeys": [
+    "workflow.ai_integration_phase"
+  ],
+  "gates": [],
+  "fragments": [],
+  "bridgeRuntime": {
+    "status": "supporting-surface",
+    "execution": "not-native-authority",
+    "policy": "Use bridge commands, resolver packets, role workflows, hook policy gates, or explicit operation plans. Supporting-surface coverage does not promote command runtime parity."
+  }
+}
