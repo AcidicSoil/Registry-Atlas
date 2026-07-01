@@ -260,6 +260,14 @@ function isManagedHookCommand(commandText, opts = {}) {
     return false;
 }
 /**
+ * Detect a `"$VAR"/rest` anchored hook-script token — a path whose leading
+ * shell variable is already double-quoted with the remainder left bare (the
+ * shape `projectLocalHookPrefix` emits for local installs, e.g.
+ * `"$CLAUDE_PROJECT_DIR"/.claude/hooks/gsd-x.js`). Such a token is ALREADY a
+ * valid, correctly-quoted shell argument and must never be re-quoted.
+ */
+const ANCHORED_HOOK_SCRIPT_TOKEN = /^"\$[A-Za-z_][A-Za-z0-9_]*"\//;
+/**
  * Projection helper for legacy settings.json hook rewrites.
  *
  * Non-Windows keeps the original script token shape when provided (single
@@ -270,8 +278,20 @@ function projectLegacySettingsHookCommand({ absoluteRunner, scriptPath, scriptTo
     if (!absoluteRunner || !scriptPath)
         return null;
     const normalizedScriptPath = platform === 'win32' ? scriptPath.replace(/\\/g, '/') : scriptPath;
+    // #1693: a script path already carrying a `"$CLAUDE_PROJECT_DIR"`-anchored
+    // quoted prefix (local installs) is already a valid shell token — only the
+    // variable is quoted, the rest is bare. JSON.stringify-ing it on Windows
+    // yields `"\"$CLAUDE_PROJECT_DIR\"/..."` (escaped quotes inside an outer
+    // quote); node then receives an argument that *starts* with a `"`, treats it
+    // as relative, and dies with MODULE_NOT_FOUND. Emit anchored tokens verbatim;
+    // only bare absolute paths (which may contain spaces, e.g. "Program Files")
+    // need the JSON.stringify quoting. Scoped to win32: the non-Windows branch
+    // already preserves the caller's `scriptToken` (which is the bare anchored
+    // token for these inputs), so it never had the double-quote bug.
     const commandScriptToken = platform === 'win32'
-        ? JSON.stringify(normalizedScriptPath)
+        ? (ANCHORED_HOOK_SCRIPT_TOKEN.test(normalizedScriptPath)
+            ? normalizedScriptPath
+            : JSON.stringify(normalizedScriptPath))
         : (scriptToken || JSON.stringify(normalizedScriptPath));
     return projectShellCommandText({
         runnerToken: absoluteRunner,
