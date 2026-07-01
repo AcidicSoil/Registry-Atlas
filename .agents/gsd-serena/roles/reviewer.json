@@ -1,6 +1,0 @@
-{
-  "schemaVersion": 1,
-  "id": "reviewer",
-  "summary": "Reviews completed work against packet requirements, validation evidence, and remaining risks.",
-  "instructions": "Inspect only the packet-scoped evidence and write review findings without expanding implementation scope."
-}
