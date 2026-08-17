@@ -1,58 +1,30 @@
-import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
+import { initAtlasRedesignPrototype } from './prototype/atlas-redesign.prototype';
 
-// Wait for DOM
+type PrototypeVariant = 'A' | 'B' | 'C';
+
+function readVariant(): PrototypeVariant {
+  const value = new URLSearchParams(window.location.search).get('variant');
+  return value === 'B' || value === 'C' ? value : 'A';
+}
+
 async function bootstrap() {
+  const app = document.getElementById('app');
+  if (!app) return;
+
+  app.innerHTML = '<div style="padding:24px;font:14px system-ui;color:#aab2c1;background:#090b10;min-height:100vh">Loading Registry Atlas prototype…</div>';
+
   try {
-    const aside = document.getElementById('aside');
-    const contentHeader = document.getElementById('contentHeader');
-    const contentBody = document.getElementById('contentBody');
-    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    const tabs = document.querySelectorAll('.tab');
-
-    if (aside && contentHeader && contentBody && searchInput && tabs.length) {
-      contentBody.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">...</div>
-          <div>Loading registry mirror...</div>
-        </div>
-      `;
-
-      const loadedData = await loadRegistries();
-
-      initRegistryExplorer({
-        registries: loadedData.registries,
-        mirrorMeta: loadedData.meta,
-        mirrorWarnings: loadedData.warnings,
-        roots: {
-          aside,
-          contentHeader,
-          contentBody,
-          tabs,
-          searchInput,
-        },
-      });
-    } else {
-      console.error('Registry Explorer: Missing DOM roots');
-    }
+    const loadedData = await loadRegistries();
+    initAtlasRedesignPrototype(loadedData.registries, readVariant());
   } catch (error) {
-    console.error('Registry Explorer: Data load failed', error);
-    const contentBody = document.getElementById('contentBody');
-
-    if (contentBody) {
-      contentBody.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">!</div>
-          <div>Registry mirror data is unavailable.</div>
-          <div>Run pnpm sync:registries and pnpm validate:data, then reload.</div>
-        </div>
-      `;
-    }
+    console.error('Registry Atlas prototype: data load failed', error);
+    app.innerHTML = '<div style="padding:24px;font:14px system-ui;color:#d6a8a8;background:#090b10;min-height:100vh">Registry mirror data is unavailable.</div>';
   }
 }
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', bootstrap);
 } else {
-  bootstrap();
+  void bootstrap();
 }
