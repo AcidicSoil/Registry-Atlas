@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prototype:atlas": "vite --open '/?variant=A'",
     "test": "TMPDIR=${TMPDIR:-/tmp} vitest run",
     "test:watch": "TMPDIR=${TMPDIR:-/tmp} vitest",
     "typecheck": "tsc --noEmit",
