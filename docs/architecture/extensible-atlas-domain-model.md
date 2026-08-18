@@ -1,6 +1,6 @@
 # Extensible Registry Atlas Domain Model
 
-Status: prototype-validated design decision
+Status: prototype-backed design decision
 
 Issue: https://github.com/AcidicSoil/Registry-Atlas/issues/3
 
@@ -56,7 +56,7 @@ interface Relationship {
 }
 ```
 
-`type` is intentionally open. Current useful relationships include `contains`, `classified-as`, and `provides-capability`. The prototype also introduced `supersedes` and `variant-of` without changing the model.
+`type` is intentionally open. Current useful relationships include `contains`, `classified-as`, and `provides-capability`. The prototype also introduces `supersedes` and `variant-of` without changing the model.
 
 ### Metadata
 
@@ -99,7 +99,7 @@ Capabilities are not component types and should not be collapsed into taxonomy t
 
 A facet is a data-defined query descriptor. It describes how to derive filter values from entity metadata or graph relationships.
 
-The prototype validated two minimal facet operators:
+The prototype exercises two minimal facet operators:
 
 - metadata value: read a metadata key such as `framework` or `runtime`
 - relationship target: traverse a relationship such as `classified-as` or `provides-capability` and use target entities as values
@@ -128,22 +128,24 @@ Examples:
 
 No projection is allowed to become the canonical storage shape.
 
-## Prototype results
+## Prototype evidence
 
-The LOGIC prototype stress-tested the model against the following cases:
+The LOGIC prototype encodes the following stress cases:
 
-| Case | Result |
+| Case | Prototype behavior |
 | --- | --- |
-| New registry | Added a registry, item, classification, and capability without structural changes. |
-| Unknown entity family | Added an `agent-skill` entity type and `agent-development` family without structural changes. |
+| New registry | Adds a registry, item, classification, and capability without structural changes. |
+| Unknown entity family | Adds an `agent-skill` entity type and `agent-development` family without structural changes. |
 | Overlapping classification | One item participates in multiple families across independent axes. |
 | Multiple capabilities | One item provides several capabilities; capabilities are also shared by other items. |
-| New relationship type | `supersedes` and `variant-of` were introduced as data. |
-| New facet | Runtime filtering was introduced through a facet entity and metadata operator. |
+| New relationship type | `supersedes` and `variant-of` are introduced as data. |
+| New facet | Runtime filtering is introduced through a facet entity and metadata operator. |
 | Multiple projections | Focus-like, family, capability, and registry × capability projections derive from the same graph. |
 | Provenance | Source/confidence remain attached to the entity/relationship facts they qualify. |
 
 The throwaway UI prototype uses the same graph representation to render four substantially different interfaces: graph lanes, a faceted catalog, a capability wall, and a relationship ledger. Variant selection changes presentation without changing the domain representation.
+
+The prototype contains a built-in invariant suite for interactive execution. Runtime browser execution is intentionally separate from this durable decision record.
 
 ## Production implications
 
