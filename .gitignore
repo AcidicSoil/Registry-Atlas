@@ -47,3 +47,6 @@ codefetch.config.mjs
 .ecc-hooks-disable
 .ecc-hooks-disable.bak
 .agents
+
+# Local git worktrees
+.worktrees/
