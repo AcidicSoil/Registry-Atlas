@@ -243,6 +243,7 @@ export interface ComponentCandidate {
   itemType?: string;
   itemCategory?: string;
   itemDescription?: string;
+  componentTags?: readonly ComponentTag[];
   taxonomyTagLabels?: readonly string[];
   taxonomyCategoryLabels?: readonly string[];
   statusDisplayLabel?: string;
