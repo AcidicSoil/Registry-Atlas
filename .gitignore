@@ -50,3 +50,229 @@ codefetch.config.mjs
 
 # Local git worktrees
 .worktrees/
+.repowise/
+
+# Local agent/runtime state
+.instance/
+.ai/working/reports/docs/docs-validation-report.*
+.ai/working/reports/docs/docs-drift-report.*
+.serena/cache/
+.serena/project.local.yml
+
+# Claude/OrchestKit runtime outputs
+.claude/telemetry/
+.claude/hooks/logs/
+.claude/logs/
+.claude/cache/
+.claude/orchestration/
+.claude/state/
+.claude/memory/
+.claude/*.consumed
+
+# Logs
+logs
+dev-debug.log
+# Dependency directories
+# Environment variables
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+
+# Task files
+# tasks.json
+# tasks/
+.live-e2e
+.ck
+*.diff
+
+# Preserve the dated product-surface cleanup archive while keeping general .ai state local-only
+!.ai/
+!.ai/working/
+!.ai/working/docs-archive/
+!.ai/working/docs-archive/2026-05-27-product-surface-cleanup/
+!.ai/working/docs-archive/2026-05-27-product-surface-cleanup/**
+
+# Raw live-profile UAT evidence contains private ChatGPT profile data; keep local only.
+.planning/browser-artifacts/
+# Local tool state / operator-specific data
+.archived/
+
+# Task files
+# tasks.json
+# tasks/
+.ecc-hooks-disable
+.ecc-hooks-disable.bak
+.instance
+.serena/oracle-sop/
+# =============================================================================
+# Claude Code + OrchestKit
+#
+# Project-owned configuration is tracked.
+# Runtime, generated, session, telemetry, cache, report, and local state is not.
+#
+# IMPORTANT:
+# Runtime/generated exclusions MUST remain at the end of this section so
+# earlier ! negation rules cannot accidentally re-include generated artifacts.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Project-owned assets
+# -----------------------------------------------------------------------------
+
+!.claude/settings.json
+
+!.claude/rules/
+!.claude/rules/**
+
+!.claude/skills/
+!.claude/skills/**
+
+!.claude/commands/
+!.claude/commands/**
+
+!.claude/output-styles/
+!.claude/output-styles/**
+
+!.claude/agents/
+!.claude/agents/*.md
+
+!.claude/agent-memory/
+!.claude/agent-memory/**
+
+!.claude/hooks/
+!.claude/hooks/**
+
+!CLAUDE.md
+!.claude/CLAUDE.md
+!.mcp.json
+!.worktreeinclude
+
+
+# =============================================================================
+# Runtime / generated / local-only state
+#
+# KEEP THIS BLOCK AFTER ALL ! NEGATION RULES ABOVE.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Claude Code local-only configuration
+# -----------------------------------------------------------------------------
+
+.claude/settings.local.json
+CLAUDE.local.md
+.claude-local/
+
+# -----------------------------------------------------------------------------
+# Native Claude Code worktrees
+# -----------------------------------------------------------------------------
+
+.claude/worktrees/
+.worktrees/
+
+# -----------------------------------------------------------------------------
+# Sessions / handoffs / chains
+# -----------------------------------------------------------------------------
+
+.claude/HANDOFF.md
+.claude/HANDOFF.md.consumed
+.claude/chain/
+
+**/.claude/HANDOFF.md
+**/.claude/HANDOFF.md.consumed
+
+.claude/session/
+.claude/context/session/
+!.claude/context/session/.gitkeep
+!.claude/session/.gitkeep
+
+.claude/context/handoffs/
+.claude/context/verification-queue/
+.claude/context/quality_gate_review_evidence.json
+
+# -----------------------------------------------------------------------------
+# Telemetry / logs / reports
+# -----------------------------------------------------------------------------
+
+.claude/telemetry/
+.claude/logs/
+
+# Hook-generated output, including security reports such as Bandit.
+.claude/hooks/logs/
+**/.claude/hooks/logs/
+
+# Nested hook runtime state
+**/hooks/.claude/
+
+# Generic generated report/output directories below .claude
+.claude/**/reports/
+.claude/**/report/
+.claude/**/artifacts/
+.claude/**/generated/
+.claude/**/output/
+.claude/**/outputs/
+
+# -----------------------------------------------------------------------------
+# Ephemeral runtime state
+# -----------------------------------------------------------------------------
+
+.claude/state/
+.claude/feedback/
+.claude/orchestration/
+.claude/memory/
+
+**/.claude/memory/
+
+.claude/agents/session-state.json
+.claude/agents/activity/
+
+# -----------------------------------------------------------------------------
+# Coordination runtime
+# -----------------------------------------------------------------------------
+
+.claude/coordination/IMPLEMENTATION_REPORT.json
+.claude/coordination/heartbeats/
+.claude/coordination/locks/
+.claude/coordination/decision-log.json
+.claude/coordination/.decision-sync-state.json
+.claude/coordination/work-registry.json
+.claude/coordination/.claude.db
+
+# -----------------------------------------------------------------------------
+# Local OrchestKit overrides / instance state
+# -----------------------------------------------------------------------------
+
+.claude/hook-overrides.json
+.claude/.instance_env
+.claude/agent-memory-local/
+
+.claude/.negative-count-*
+.claude/.comm-style-counter
+.claude/.satisfaction-counter
+.claude/scheduled_tasks.lock
+
+# -----------------------------------------------------------------------------
+# Generic transient files anywhere below .claude
+# -----------------------------------------------------------------------------
+
+.claude/**/*.lock
+.claude/**/*.tmp
+.claude/**/*.temp
+.claude/**/*.bak
+.claude/**/*.log
+.claude/**/*.pid
+.claude/**/*.db
+.claude/**/*.db-shm
+.claude/**/*.db-wal
+
+.claude/**/.cache/
+.claude/**/cache/
+.claude/**/tmp/
+.claude/**/temp/.codex/config.toml
+graph-infra/.env
+graph-infra/bin/
