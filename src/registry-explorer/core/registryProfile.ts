@@ -1,3 +1,4 @@
+import { CATALOG_CATEGORY_LABELS, catalogCategoriesForRegistry } from './catalogTaxonomy.ts';
 import {
   componentTaxonomyCategoryLabel,
   componentTaxonomyEntry,
@@ -35,7 +36,7 @@ export function buildRegistryProfile(
       facts: atlasFacts(registry),
     },
     {
-      name: 'Item discovery status',
+      name: 'Known items',
       items: (registry.itemSummaries ?? []).map(item => itemRow(registry, item)),
     },
   ];
@@ -80,11 +81,13 @@ function officialFacts(registry: Registry): RegistryProfileFact[] {
 function atlasFacts(registry: Registry): RegistryProfileFact[] {
   const atlas = atlasOf(registry);
   return [
-    { label: 'Focus tags', value: registry.primary_focus },
-    { label: 'Component tags', value: registry.component_tags },
+    {
+      label: 'Categories',
+      value: catalogCategoriesForRegistry(registry).map(category => CATALOG_CATEGORY_LABELS[category]),
+    },
+    { label: 'Components', value: registry.component_tags.map(componentTaxonomyLabel) },
     { label: 'Aliases', value: atlas.aliases },
     { label: 'Notes', value: atlas.notes },
-    { label: 'Confidence', value: atlas.confidence },
     { label: 'Coverage status', value: coverageStatusLabel(atlas.coverageStatus) },
   ];
 }

@@ -1,0 +1,74 @@
+import { describe, expect, it } from 'vitest';
+import type { Registry } from '../../src/registry-explorer/core/registry.schema';
+import { buildRegistryBrowseEntries } from '../../src/registry-explorer/core/registryBrowse';
+import { renderRegistriesContent } from '../../src/registry-explorer/ui/registriesView';
+
+describe('registry browser', () => {
+  it('searches registries and derives real item counts', () => {
+    const entries = buildRegistryBrowseEntries(registries(), 'delta', []);
+    expect(entries.map(entry => entry.registry.name)).toEqual(['@delta']);
+    expect(entries[0]).toMatchObject({ knownItemCount: 2, routeEligibleItemCount: 1, coverageStatus: 'verified' });
+  });
+
+  it('filters by concrete component content and sorts namespace A-Z', () => {
+    const entries = buildRegistryBrowseEntries(registries(), '', [
+      { dimension: 'component', value: 'button', label: 'Button' },
+    ]);
+    expect(entries.map(entry => entry.registry.name)).toEqual(['@alpha', '@delta']);
+    expect(entries.every(entry => entry.components.includes('button'))).toBe(true);
+  });
+
+  it('renders source facts without legacy Focus or fabricated metadata', () => {
+    const body = root();
+    renderRegistriesContent(root(), body, buildRegistryBrowseEntries(registries(), '', []), [], []);
+    expect(body.innerHTML).toContain('@delta');
+    expect(body.innerHTML).toContain('Delta registry');
+    expect(body.innerHTML).toContain('2 known items');    expect(body.innerHTML).toContain('Verified item');
+    expect(body.innerHTML).toContain('View registry');
+    expect(body.innerHTML).not.toContain('Focus');
+    expect(body.innerHTML).not.toContain('React');
+    expect(body.innerHTML).not.toContain('Community');
+  });
+});
+
+function root(): HTMLElement { return { innerHTML: '' } as HTMLElement; }
+
+function registries(): Registry[] {
+  return [
+    registry('@delta', 'Delta registry', 'verified', ['button', 'input'], 2, 1),
+    registry('@alpha', 'Alpha registry', 'inferred', ['button'], 1, 1),
+    registry('@zeta', 'Zeta registry', 'unverified', ['table'], 1, 0),
+  ];
+}
+
+function registry(
+  name: string,
+  description: string,
+  coverageStatus: 'verified' | 'inferred' | 'unverified',
+  componentTags: Registry['component_tags'],
+  itemCount: number,
+  eligibleCount: number,
+): Registry {  return {
+    name,
+    url: `https://${name.slice(1)}.example`,
+    description,
+    primary_focus: ['forms-and-inputs'],
+    component_tags: componentTags,
+    atlas: {
+      aliases: [],
+      coverageStatus,
+      confidence: 'medium',
+      notes: '',
+      catalogStatus: coverageStatus === 'verified' ? 'available' : 'partial',
+    },
+    itemSummaries: Array.from({ length: itemCount }, (_, index) => ({
+      name: `Item ${index + 1}`,
+      slug: `item-${index + 1}`,
+      componentTagsExisting: [componentTags[index % componentTags.length] ?? componentTags[0]],
+      source: 'fixture',
+      provenance: 'fixture',
+      catalogStatus: 'available' as const,
+      routeEligible: index < eligibleCount,
+    })),
+  };
+}

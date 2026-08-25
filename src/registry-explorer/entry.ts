@@ -8,7 +8,7 @@ async function bootstrap() {
     const contentHeader = document.getElementById('contentHeader');
     const contentBody = document.getElementById('contentBody');
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    const tabs = document.querySelectorAll('.tab');
+    const tabs = document.querySelectorAll('.primary-nav [data-view]');
 
     if (aside && contentHeader && contentBody && searchInput && tabs.length) {
       contentBody.innerHTML = `

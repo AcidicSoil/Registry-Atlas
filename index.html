@@ -31,10 +31,6 @@
           </div>
         </div>
         <div class="header-right">
-          <div class="pill-meta">
-            <div class="pill-dot"></div>
-            <span>Interactive SPA · Local data only</span>
-          </div>
           <div class="search-bar">
             <div class="search-icon">⌕</div>
             <input
@@ -44,24 +40,11 @@
               placeholder="Search components, items, registries, or aliases"
             />
           </div>
-          <div class="tabs" role="tablist">
-            <button class="tab tab-active" data-view="discover" role="tab">
-              <span class="label">Discover</span>
-              <span class="badge">Component search</span>
-            </button>
-            <button class="tab" data-view="focus" role="tab">
-              <span class="label">By Focus</span>
-              <span class="badge">Registry clusters</span>
-            </button>
-            <button class="tab" data-view="component" role="tab">
-              <span class="label">By Component</span>
-              <span class="badge">Need-based</span>
-            </button>
-            <button class="tab" data-view="matrix" role="tab">
-              <span class="label">Matrix</span>
-              <span class="badge">Coverage</span>
-            </button>
-          </div>
+          <nav class="primary-nav" aria-label="Primary navigation">
+            <button class="nav-item nav-item-active" data-view="discover">Discover</button>
+            <button class="nav-item" data-view="registries">Registries</button>
+            <button class="nav-item" data-view="compare">Compare</button>
+          </nav>
         </div>
       </header>
 

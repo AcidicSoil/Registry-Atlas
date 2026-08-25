@@ -1,0 +1,4 @@
+# Atlas Scout local data
+# Ignore everything in this local directory
+*
+!.gitignore

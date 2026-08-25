@@ -352,3 +352,28 @@ function registryWithStatus(name: Registry['name'], coverageStatus: NonNullable<
     },
   };
 }
+
+describe('rough description ranking', () => {
+  it('ranks a known item for rough multi-word description search before fallback matches', () => {
+    const itemRegistry: Registry = {
+      name: '@command-kit',
+      url: 'https://command.example',
+      description: 'Component registry.',
+      primary_focus: ['navigation'],
+      component_tags: ['command'],
+      atlas: { aliases: [], coverageStatus: 'verified', confidence: 'high', notes: '', catalogStatus: 'available' },
+      mirror: { officialName: '@command-kit', registryUrlTemplate: 'https://command.example/r/{name}.json', sourceUrl: 'https://ui.shadcn.com/r/registries.json', syncedAt: '2026-08-24T00:00:00.000Z', upstreamCount: 2, localCount: 2, warnings: [] },
+      itemSummaries: [{ name: 'Command Palette', slug: 'command-palette', description: 'A searchable command palette for keyboard workflows', source: 'fixture', provenance: 'fixture', catalogStatus: 'available', routeEligible: true }],
+    };
+    const fallbackRegistry: Registry = {
+      name: '@keyboard-command-docs',
+      url: 'https://fallback.example',
+      description: 'Keyboard command examples and documentation.',
+      primary_focus: ['misc-utility'],
+      component_tags: ['button'],
+    };
+
+    const results = searchComponentCandidates([fallbackRegistry, itemRegistry], 'keyboard command');
+    expect(results[0]).toEqual(expect.objectContaining({ id: '@command-kit:command-palette' }));
+  });
+});

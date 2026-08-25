@@ -123,8 +123,6 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
       description: record.official.description,
       primary_focus: record.atlas?.primary_focus ?? [],
       component_tags: record.atlas?.component_tags ?? [],
-      framework: 'React',
-      license: 'Community',
       atlas: {
         aliases: record.atlas?.aliases ?? [],
         coverageStatus: record.atlas?.coverage_status ?? 'unverified',

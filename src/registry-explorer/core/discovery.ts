@@ -107,7 +107,11 @@ function itemSearchValues(item: RegistryItemSummary): string[] {
 }
 
 function matchesAnyQueryTerm(value: string, queryTerms: readonly string[]): boolean {
-  return queryTerms.some(term => value.includes(term) || term.includes(value));
+  return queryTerms.some(term => {
+    if (value.includes(term) || term.includes(value)) return true;
+    const words = term.split('-').filter(word => word.length >= 3);
+    return words.length > 1 && words.every(word => value.includes(word));
+  });
 }
 
 function matchesDirectQueryTerm(value: string, queryTerms: readonly string[]): boolean {

@@ -1,33 +1,84 @@
 import { describe, expect, it } from 'vitest';
-import type { ComponentCandidate, DiscoveryOverview, Registry } from '../../src/registry-explorer/core/registry.schema';
+import type {
+  ComponentCandidate,
+  DiscoveryOverview,
+  Registry,
+} from '../../src/registry-explorer/core/registry.schema';
+import type { CatalogFacetGroup } from '../../src/registry-explorer/core/catalogFacets';
 import { renderDiscoveryContent } from '../../src/registry-explorer/ui/discoveryView';
 
 describe('renderDiscoveryContent', () => {
-  it('renders filter controls and avoids prominent confidence copy', () => {
+  it('renders the approved catalog facets and sort controls', () => {
     const header = root();
     const body = root();
 
-    renderDiscoveryContent(header, body, [candidateFixture()], overviewFixture(), '', null, new Set(), [
-      { dimension: 'type', label: 'Type', options: [{ dimension: 'type', value: 'registry:ui', label: 'registry:ui', count: 1 }] },
-    ], []);
+    renderDiscoveryContent(header, body, [candidateFixture()], overviewFixture(), {
+      searchTerm: '',
+      facetGroups: facetGroups(),
+      selectedFacets: [],
+      sort: 'relevance',
+      queuedTokens: new Set(),
+      activePeekId: null,
+    });
 
-    expect(body.innerHTML).toContain('+ Filter');
-    expect(body.innerHTML).toContain('registry:ui');
-    expect(body.innerHTML).toContain('View component');
-    expect(body.innerHTML).not.toContain('high confidence');
+    expect(body.innerHTML).toContain('Category');
+    expect(body.innerHTML).toContain('Component');
+    expect(body.innerHTML).toContain('Registry');
+    expect(body.innerHTML).toContain('Relevance');    expect(body.innerHTML).toContain('Name A-Z');
+    expect(body.innerHTML).toContain('View details');
+    expect(body.innerHTML).not.toContain('Type');
+    expect(body.innerHTML).not.toContain('Visual');
+    expect(body.innerHTML).not.toContain('Status');
   });
 
-  it('renders selected filter badges and reset copy', () => {
-    const header = root();
+  it('renders selected facet chips and Clear all', () => {
     const body = root();
+    renderDiscoveryContent(root(), body, [candidateFixture()], overviewFixture(), {
+      searchTerm: 'button',
+      facetGroups: facetGroups(),
+      selectedFacets: [{ dimension: 'component', value: 'button', label: 'Button' }],
+      sort: 'name',
+      queuedTokens: new Set(),
+      activePeekId: null,
+    });
 
-    renderDiscoveryContent(header, body, [], overviewFixture(), 'button', null, new Set(), [
-      { dimension: 'type', label: 'Type', options: [{ dimension: 'type', value: 'registry:ui', label: 'registry:ui', count: 1 }] },
-    ], [{ dimension: 'type', value: 'registry:ui', label: 'registry:ui' }]);
+    expect(body.innerHTML).toContain('Button');
+    expect(body.innerHTML).toContain('Clear all');
+    expect(body.innerHTML).toContain('data-facet-remove-dimension="component"');
+    expect(body.innerHTML).toContain('data-facet-clear');
+  });
+  it('renders real previews and a neutral unavailable state', () => {
+    const withPreviewBody = root();
+    renderDiscoveryContent(root(), withPreviewBody, [candidateFixture('https://example.com/button.png')], overviewFixture(), {
+      searchTerm: '',
+      facetGroups: facetGroups(),
+      selectedFacets: [],
+      sort: 'relevance',
+      queuedTokens: new Set(),
+      activePeekId: null,
+    });
+    expect(withPreviewBody.innerHTML).toContain('<img');
+    expect(withPreviewBody.innerHTML).toContain('https://example.com/button.png');
 
-    expect(body.innerHTML).toContain('Type: registry:ui');
-    expect(body.innerHTML).toContain('Reset filters');
-    expect(body.innerHTML).toContain('No components match these filters. Reset filters to see all results.');
+    const withoutPreviewBody = root();
+    renderDiscoveryContent(root(), withoutPreviewBody, [candidateFixture()], overviewFixture(), {
+      searchTerm: '',
+      facetGroups: facetGroups(),
+      selectedFacets: [],
+      sort: 'relevance',
+      queuedTokens: new Set(),
+      activePeekId: null,
+    });
+    expect(withoutPreviewBody.innerHTML).toContain('Preview unavailable');
+    expect(withoutPreviewBody.innerHTML).not.toContain('<svg');
+  });
+
+  it('offers a current URL copy action for discovery state', () => {
+    const header = root();
+    renderDiscoveryContent(header, root(), [candidateFixture()], overviewFixture(), {
+      searchTerm: 'button', facetGroups: [], selectedFacets: [], sort: 'relevance', queuedTokens: new Set(), activePeekId: null,
+    });
+    expect(header.innerHTML).toContain('data-copy-current-url');
   });
 });
 
@@ -45,7 +96,14 @@ function overviewFixture(): DiscoveryOverview {
   };
 }
 
-function candidateFixture(): ComponentCandidate {
+function facetGroups(): CatalogFacetGroup[] {
+  return [
+    { dimension: 'category', label: 'Category', options: [{ dimension: 'category', value: 'developer-tools', label: 'Developer Tools', count: 1 }] },
+    { dimension: 'component', label: 'Component', options: [{ dimension: 'component', value: 'code-block', label: 'Code Block', count: 1 }] },
+    { dimension: 'registry', label: 'Registry', options: [{ dimension: 'registry', value: '@delta', label: '@delta', count: 1 }] },
+  ];
+}
+function candidateFixture(previewUrl?: string): ComponentCandidate {
   return {
     id: '@delta:code-block',
     registry: registryFixture(),
@@ -61,7 +119,8 @@ function candidateFixture(): ComponentCandidate {
     statusDisplayLabel: 'catalog-backed',
     statusExplanation: 'Registry Atlas has a concrete catalog item for this result.',
     docsUrl: 'https://delta.example/components/code-block',
-    componentPageUrl: 'https://delta.example/components/code-block',
+    previewUrl,
+    componentPageUrl: previewUrl ?? 'https://delta.example/components/code-block',
     catalogStatus: 'available',
     routeEligible: true,
     route: 'https://delta.example/r/code-block.json',

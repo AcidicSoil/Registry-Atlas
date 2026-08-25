@@ -9,7 +9,7 @@ describe('buildRegistryProfile', () => {
     expect(profile.sections.map(section => section.name)).toEqual([
       'Official shadcn facts',
       'Registry Atlas enrichment',
-      'Item discovery status',
+      'Known items',
     ]);
     expect(profile.sections[0]?.facts).toEqual(expect.arrayContaining([
       { label: 'Namespace', value: '@profile' },

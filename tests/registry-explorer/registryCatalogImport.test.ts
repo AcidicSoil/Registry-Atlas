@@ -83,6 +83,16 @@ describe('registry catalog import', () => {
     expect(report.skipped).toEqual([]);
   });
 
+  it('preserves reviewed preview URLs during normalization', () => {
+    const imported = normalizeImportedItem('@example', {
+      name: 'button',
+      route_eligible: true,
+      preview_url: 'https://example.com/previews/button.png',
+    });
+
+    expect(imported?.preview_url).toBe('https://example.com/previews/button.png');
+  });
+
   it('skips invalid imported item slugs', () => {
     const warnings: string[] = [];
 

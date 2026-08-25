@@ -1,22 +1,31 @@
-import type { InstallQueueEntry, Registry, PrimaryFocus, ComponentTag } from '../core/registry.schema';
-import { COMPONENT_TAG_VALUES, PRIMARY_FOCUS_VALUES } from '../core/registry.schema';
+import type {
+  ComponentTag,
+  InstallQueueEntry,
+  Registry,
+} from '../core/registry.schema';
 import type { MirrorValidationIssue } from '../core/registryMirror';
 import type { RegistryMirrorMeta } from '../data/loadRegistries';
 import {
-  buildFocusGroups,
-  buildComponentGroups,
-  buildMatrixRows,
-  computeMetrics
-} from '../core/grouping';
-import { searchComponentCandidates, buildDiscoveryOverview } from '../core/discovery';
-import { buildRegistryProfile } from '../core/registryProfile';
+  searchComponentCandidates,
+  buildDiscoveryOverview,
+} from '../core/discovery';
 import {
-  applyComponentFiltersToCandidates,
-  applyComponentFiltersToProfileRows,
-  buildComponentFilterGroups,
-  createSelectedComponentFilter,
-  type SelectedComponentFilter,
-} from '../core/componentFilters';
+  buildCatalogFacetGroups,
+  applyCatalogFacetsToCandidates,
+  applyCatalogFacetsToProfileRows,
+  createSelectedCatalogFacet,
+  type SelectedCatalogFacet,
+} from '../core/catalogFacets';
+import type { CatalogSort } from '../core/catalogSort';
+import { sortCatalogCandidates } from '../core/catalogSort';
+import { buildRegistryBrowseEntries } from '../core/registryBrowse';
+import { buildCompareModel } from '../core/compare';
+import {
+  parseRegistryExplorerUrlState,
+  serializeRegistryExplorerUrlState,
+} from '../core/urlState';
+import { buildRegistryProfile } from '../core/registryProfile';
+import { resolveRegistryItemDetailFromSummary } from '../core/registryItemDetail';
 import {
   addToInstallQueue,
   buildInstallQueueBatchState,
@@ -24,18 +33,14 @@ import {
   removeFromInstallQueue,
 } from '../core/installQueue';
 import {
-  parseRegistryExplorerUrlState,
-  serializeRegistryExplorerUrlState,
-  type ParsedRegistryExplorerUrlState,
-} from '../core/urlState';
-import { MATRIX_COLUMNS } from '../core/matrixColumns';
-import { renderFocusAside, renderFocusContent } from './focusView';
-import { renderComponentAside, renderComponentContent } from './componentView';
-import { renderMatrixAside, renderMatrixContent } from './matrixView';
-import { type CopyFeedback, renderDiscoveryAside, renderDiscoveryContent } from './discoveryView';
-import { resolveRegistryItemDetailFromSummary } from '../core/registryItemDetail';
-import { renderItemDetailView } from './itemDetailView';
+  renderDiscoveryAside,
+  renderDiscoveryContent,
+  type CopyFeedback,
+} from './discoveryView';
+import { renderRegistriesContent } from './registriesView';
+import { renderCompareContent } from './compareView';
 import { renderRegistryProfile } from './registryProfileView';
+import { renderItemDetailView } from './itemDetailView';
 import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export interface ShellOptions {
@@ -46,492 +51,429 @@ export interface ShellOptions {
     aside: HTMLElement;
     contentHeader: HTMLElement;
     contentBody: HTMLElement;
-    tabs: NodeListOf<Element>; // More generic for flexibility
+    tabs: NodeListOf<Element>;
     searchInput: HTMLInputElement;
   };
 }
-
 interface AppState {
-  currentView: 'discover' | 'focus' | 'component' | 'matrix' | 'item';
-  selectedFocus: PrimaryFocus | null;
-  selectedComponent: ComponentTag | null;
+  currentView: 'discover' | 'registries' | 'compare' | 'item';
+  selectedFacets: SelectedCatalogFacet[];
+  sort: CatalogSort;
+  compareRegistryNames: string[];
+  compareComponentKeys: ComponentTag[];
   selectedCandidateId: string | null;
   selectedProfileRegistryName: string | null;
   selectedItemSlug: string | null;
   searchTerm: string;
   installQueue: InstallQueueEntry[];
   copyFeedback: CopyFeedback | null;
-  selectedComponentFilters: SelectedComponentFilter[];
   activePeekId: string | null;
 }
-
 function isView(value: string | null): value is AppState['currentView'] {
-  return value === 'discover' || value === 'focus' || value === 'component' || value === 'matrix' || value === 'item';
+  return (
+    value === 'discover' ||
+    value === 'registries' ||
+    value === 'compare' ||
+    value === 'item'
+  );
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
-  const { registries, mirrorMeta, mirrorWarnings, roots } = options;
-
-  const hydratedState = hydrateStateFromUrl(registries);
-
-  // Initial State
+  const { registries, roots } = options;
+  const parsed = hydrateStateFromUrl(registries);
   let state: AppState = {
-    currentView: hydratedState.view,
-    selectedFocus: hydratedState.selectedFocus,
-    selectedComponent: hydratedState.selectedComponent,
-    selectedCandidateId: hydratedState.selectedCandidateId,
-    selectedProfileRegistryName: hydratedState.selectedProfileRegistryName,
-    selectedItemSlug: hydratedState.selectedItemSlug,
-    searchTerm: hydratedState.searchTerm,
+    ...parsed,
     installQueue: [],
     copyFeedback: null,
-    selectedComponentFilters: [],
     activePeekId: null,
   };
   roots.searchInput.value = state.searchTerm;
-
-  // State Update Logic
-  function setState(partial: Partial<AppState>) {
+  const setState = (partial: Partial<AppState>) => {
     state = { ...state, ...partial };
     syncUrlState(state);
     render();
-  }
-
-  // Render Loop
-  function render() {
+  };
+  function render(): void {
     try {
-      // 1. Update Tabs
-      roots.tabs.forEach(tab => {
-        const view = tab.getAttribute('data-view');
-        if (view === state.currentView) {
-          tab.classList.add('tab-active');
-        } else {
-          tab.classList.remove('tab-active');
-        }
-      });
-
-      // 2. Compute Data
-      const metrics = computeMetrics(registries, state.searchTerm);
-      const queuedTokens = new Set(state.installQueue.map(entry => entry.token));
-      const queueBatch = buildInstallQueueBatchState(state.installQueue);
-      const filterGroups = buildComponentFilterGroups(registries);
-
-      // 3. Delegate to Views
+      roots.tabs.forEach((tab) =>
+        tab.classList.toggle(
+          'nav-item-active',
+          tab.getAttribute('data-view') === state.currentView,
+        ),
+      );
+      const queued = new Set(state.installQueue.map((entry) => entry.token));
+      const batch = buildInstallQueueBatchState(state.installQueue);
       if (state.currentView === 'item') {
-        const result = resolveRegistryItemDetailFromSummary(registries, state.selectedProfileRegistryName, state.selectedItemSlug);
-        renderItemDetailView(roots.contentHeader, roots.contentBody, result, queuedTokens, registries);
-        roots.aside.innerHTML = `
-          <div class="aside-section-title">Component item</div>
-          <div class="aside-hint">Component-first detail route. JSON powers the page but stays out of the normal UI.</div>
-        `;
-      } else if (state.selectedProfileRegistryName) {
-        const candidates = searchComponentCandidates(registries, state.searchTerm);
-        const candidate = candidates.find(item => item.id === state.selectedCandidateId);
-        const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
-        if (registry) {
-          const profile = buildRegistryProfile(registry, { candidate });
-          const filteredProfile = {
-            ...profile,
-            sections: profile.sections.map(section => section.items
-              ? { ...section, items: applyComponentFiltersToProfileRows(section.items, state.selectedComponentFilters) }
-              : section),
-          };
-          renderRegistryProfile(roots.contentHeader, roots.contentBody, filteredProfile, queuedTokens, filterGroups, state.selectedComponentFilters, state.activePeekId);
-          roots.aside.innerHTML = `
-            <div class="aside-section-title">Registry profile</div>
-            <div class="aside-hint">Official facts and Atlas enrichment are separated. Install queue state stays local to this page session.</div>
-          `;
-        }
-      } else if (state.currentView === 'discover') {
-        const overview = buildDiscoveryOverview(registries);
-        const candidates = applyComponentFiltersToCandidates(
-          searchComponentCandidates(registries, state.searchTerm),
-          state.selectedComponentFilters,
+        renderItemDetailView(
+          roots.contentHeader,
+          roots.contentBody,
+          resolveRegistryItemDetailFromSummary(
+            registries,
+            state.selectedProfileRegistryName,
+            state.selectedItemSlug,
+          ),
+          queued,
+          registries,
         );
-        renderDiscoveryAside(roots.aside, overview, state.selectedCandidateId, {
-          entries: state.installQueue,
-          batch: queueBatch,
-          feedback: state.copyFeedback,
+        roots.aside.innerHTML =
+          '<div class="aside-section-title">Component item</div>';
+      } else if (state.selectedProfileRegistryName) {
+        const registry = registries.find(
+          (item) => item.name === state.selectedProfileRegistryName,
+        );
+        if (!registry) return;
+        const candidates = searchComponentCandidates(
+          registries,
+          state.searchTerm,
+        );
+        const profile = buildRegistryProfile(registry, {
+          candidate: candidates.find(
+            (item) => item.id === state.selectedCandidateId,
+          ),
         });
+        const groups = buildCatalogFacetGroups(registries, candidates);
+        const filteredProfile = {
+          ...profile,
+          sections: profile.sections.map((section) =>
+            section.items
+              ? {
+                  ...section,
+                  items: applyCatalogFacetsToProfileRows(
+                    section.items,
+                    state.selectedFacets,
+                  ),
+                }
+              : section,
+          ),
+        };
+        renderRegistryProfile(
+          roots.contentHeader,
+          roots.contentBody,
+          filteredProfile,
+          queued,
+          groups,
+          state.selectedFacets,
+          state.activePeekId,
+        );
+        roots.aside.innerHTML =
+          '<div class="aside-section-title">Registry profile</div>';
+      } else if (state.currentView === 'discover') {
+        const candidates = searchComponentCandidates(
+          registries,
+          state.searchTerm,
+        );
+        const groups = buildCatalogFacetGroups(registries, candidates);
+        renderDiscoveryAside(
+          roots.aside,
+          buildDiscoveryOverview(registries),
+          state.selectedCandidateId,
+          { entries: state.installQueue, batch, feedback: state.copyFeedback },
+        );
         renderDiscoveryContent(
           roots.contentHeader,
           roots.contentBody,
-          candidates,
-          overview,
-          state.searchTerm,
-          state.selectedCandidateId,
-          queuedTokens,
-          filterGroups,
-          state.selectedComponentFilters,
-          state.activePeekId,
+          sortCatalogCandidates(
+            applyCatalogFacetsToCandidates(candidates, state.selectedFacets),
+            state.sort,
+          ),
+          buildDiscoveryOverview(registries),
+          {
+            searchTerm: state.searchTerm,
+            facetGroups: groups,
+            selectedFacets: state.selectedFacets,
+            sort: state.sort,
+            queuedTokens: queued,
+            activePeekId: state.activePeekId,
+            selectedCandidateId: state.selectedCandidateId,
+          },
         );
-
-      } else if (state.currentView === 'focus') {
-        const groups = buildFocusGroups(registries, state.searchTerm);
-        
-        let effectiveFocus = state.selectedFocus;
-        if (!effectiveFocus && groups.length > 0) {
-          effectiveFocus = groups[0].focusKey;
-        }
-
-        renderFocusAside(roots.aside, groups, effectiveFocus);
-        
-        const selectedGroup = groups.find(g => g.focusKey === effectiveFocus);
-        const itemsToShow = selectedGroup ? selectedGroup.registries : [];
-        
-        renderFocusContent(roots.contentHeader, roots.contentBody, itemsToShow, metrics);
-
-      } else if (state.currentView === 'component') {
-        const groups = buildComponentGroups(registries, state.searchTerm);
-        
-        let effectiveComponent = state.selectedComponent;
-        if (!effectiveComponent && groups.length > 0) {
-          effectiveComponent = groups[0].componentKey;
-        }
-
-        renderComponentAside(roots.aside, groups, effectiveComponent);
-        
-        const selectedGroup = groups.find(g => g.componentKey === effectiveComponent);
-        
-        renderComponentContent(roots.contentHeader, roots.contentBody, selectedGroup || null, metrics);
-
-      } else if (state.currentView === 'matrix') {
-        const rows = buildMatrixRows(registries, state.searchTerm, MATRIX_COLUMNS);
-        
-        renderMatrixAside(roots.aside, MATRIX_COLUMNS, metrics);
-        renderMatrixContent(roots.contentHeader, roots.contentBody, rows, MATRIX_COLUMNS, metrics);
+      } else if (state.currentView === 'registries') {
+        const groups = buildCatalogFacetGroups(
+          registries,
+          searchComponentCandidates(registries, state.searchTerm),
+        );
+        renderRegistriesContent(
+          roots.contentHeader,
+          roots.contentBody,
+          buildRegistryBrowseEntries(
+            registries,
+            state.searchTerm,
+            state.selectedFacets,
+          ),
+          groups,
+          state.selectedFacets,
+        );
+      } else {
+        const selection = {
+          registryNames: state.compareRegistryNames,
+          componentKeys: state.compareComponentKeys,
+        };
+        renderCompareContent(
+          roots.contentHeader,
+          roots.contentBody,
+          buildCompareModel(registries, state.searchTerm, selection),
+          selection,
+        );
       }
-
-      renderMirrorStatus(roots.contentHeader, mirrorMeta, mirrorWarnings);
+      const source = renderExternalLink(options.mirrorMeta.source_url, 'Official shadcn directory', 'secondary-link');
+      const syncedAt = escapeHtml(options.mirrorMeta.synced_at);
+      roots.contentHeader.insertAdjacentHTML(
+        'beforeend',
+        `<div class="mirror-status"><span>Source: ${source}</span><span>Synced ${syncedAt}</span><span>${options.mirrorMeta.local_count} / ${options.mirrorMeta.upstream_count} registries mirrored</span><span>Review: ${escapeHtml(options.mirrorMeta.validation_status)}</span><span>${options.mirrorWarnings.length} warning(s)</span></div>`,
+      );
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);
-      roots.contentBody.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-state-icon">!</div>
-          <div>Something went wrong while rendering this view. Try clearing the search or reloading the page.</div>
-        </div>
-      `;
+      roots.contentBody.innerHTML =
+        '<div class="empty-state">Something went wrong while rendering this view.</div>';
     }
   }
-
-  // Event Listeners
-
-  // Tabs
-  roots.tabs.forEach(tab => {
+  roots.tabs.forEach((tab) =>
     tab.addEventListener('click', () => {
       const view = tab.getAttribute('data-view');
-      if (isView(view) && view !== state.currentView) {
-        setState({ currentView: view, selectedProfileRegistryName: null, selectedCandidateId: null, selectedItemSlug: null });
-      }
-    });
+      if (isView(view))
+        setState({
+          currentView: view,
+          selectedFacets:
+            view === 'registries'
+              ? state.selectedFacets.filter((f) => f.dimension !== 'registry')
+              : state.selectedFacets,
+          selectedProfileRegistryName: null,
+          selectedCandidateId: null,
+          selectedItemSlug: null,
+        });
+    }),
+  );
+  roots.searchInput.addEventListener('input', () =>
+    setState({ searchTerm: roots.searchInput.value, copyFeedback: null }),
+  );
+  roots.aside.addEventListener('click', (event) =>
+    handleClick(event.target as HTMLElement),
+  );
+  roots.contentBody.addEventListener('click', (event) =>
+    handleClick(event.target as HTMLElement),
+  );
+  roots.contentBody.addEventListener('mouseover', (event) => {
+    const id = (event.target as HTMLElement)
+      .closest('[data-component-peek-id]')
+      ?.getAttribute('data-component-peek-id');
+    if (id) setState({ activePeekId: id });
   });
-
-  // Search
-  roots.searchInput.addEventListener('input', (e) => {
-    const target = e.target as HTMLInputElement;
-    setState({ searchTerm: target.value || '', copyFeedback: null });
-  });
-
-  roots.aside.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    if (handleInstallActionClick(target)) return;
-
-    const focusButton = target.closest('[data-focus]');
-    if (focusButton) {
-      const focusKey = focusButton.getAttribute('data-focus') as PrimaryFocus;
-      if (focusKey && focusKey !== state.selectedFocus) {
-        setState({ selectedFocus: focusKey, currentView: 'focus' });
-      }
+  function handleClick(target: HTMLElement): void {
+    if (handleInstall(target)) return;
+    const add = target.closest('[data-facet-add-dimension]');
+    const remove = target.closest('[data-facet-remove-dimension]');
+    if (add) {
+      const next = createSelectedCatalogFacet(
+        buildCatalogFacetGroups(
+          registries,
+          searchComponentCandidates(registries, state.searchTerm),
+        ),
+        add.getAttribute('data-facet-add-dimension'),
+        add.getAttribute('data-facet-add-value'),
+      );
+      if (
+        next &&
+        !state.selectedFacets.some(
+          (f) => f.dimension === next.dimension && f.value === next.value,
+        )
+      )
+        setState({ selectedFacets: [...state.selectedFacets, next] });
       return;
     }
-
-    const componentButton = target.closest('[data-component]');
-    if (componentButton) {
-      const tagKey = componentButton.getAttribute('data-component') as ComponentTag;
-      if (tagKey && tagKey !== state.selectedComponent) {
-        setState({ selectedComponent: tagKey, currentView: 'component' });
-      }
+    if (remove) {
+      setState({
+        selectedFacets: state.selectedFacets.filter(
+          (f) =>
+            f.dimension !==
+              remove.getAttribute('data-facet-remove-dimension') ||
+            f.value !== remove.getAttribute('data-facet-remove-value'),
+        ),
+      });
+      return;
     }
-  });
-
-  roots.contentBody.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    if (handleInstallActionClick(target)) return;
-    if (handleFilterClick(target)) return;
-
-    const itemButton = target.closest('[data-view-item-registry]');
-    if (itemButton) {
+    if (target.closest('[data-facet-clear]')) {
+      setState({ selectedFacets: [] });
+      return;
+    }
+    const sort = target.closest('[data-sort]')?.getAttribute('data-sort');
+    if (sort === 'name' || sort === 'relevance') {
+      setState({ sort });
+      return;
+    }
+    const registry = target
+      .closest('[data-compare-registry]')
+      ?.getAttribute('data-compare-registry');
+    if (registry) {
+      setState({
+        compareRegistryNames: toggle(state.compareRegistryNames, registry),
+      });
+      return;
+    }
+    const component = target
+      .closest('[data-compare-component]')
+      ?.getAttribute('data-compare-component') as ComponentTag | null;
+    if (component) {
+      setState({
+        compareComponentKeys: toggle(state.compareComponentKeys, component),
+      });
+      return;
+    }
+    const profile = target
+      .closest('[data-profile-registry]')
+      ?.getAttribute('data-profile-registry');
+    if (profile) {
+      setState({
+        currentView: 'discover',
+        selectedProfileRegistryName: profile,
+        selectedFacets: state.selectedFacets.filter(
+          (f) => f.dimension !== 'registry',
+        ),
+      });
+      return;
+    }
+    const item = target.closest('[data-view-item-registry]');
+    if (item) {
       setState({
         currentView: 'item',
-        selectedProfileRegistryName: itemButton.getAttribute('data-view-item-registry'),
-        selectedItemSlug: itemButton.getAttribute('data-view-item-slug'),
-        selectedCandidateId: itemButton.getAttribute('data-candidate-id'),
-      });
-      return;
-    }
-
-    const profileButton = target.closest('[data-profile-registry]');
-    if (profileButton) {
-      setState({
-        currentView: 'discover',
-        selectedProfileRegistryName: profileButton.getAttribute('data-profile-registry'),
-        selectedCandidateId: profileButton.getAttribute('data-candidate-id'),
-      });
-      return;
-    }
-
-    const backFromItem = target.closest('[data-back-from-item]');
-    if (backFromItem) {
-      setState({ currentView: 'discover', selectedItemSlug: null, selectedProfileRegistryName: null });
-      return;
-    }
-
-    const backButton = target.closest('[data-back-to-results]');
-    if (backButton) {
-      setState({ selectedProfileRegistryName: null, selectedItemSlug: null });
-      return;
-    }
-
-    const discoverComponent = target.closest('[data-discover-component]');
-    if (discoverComponent) {
-      const component = discoverComponent.getAttribute('data-discover-component') ?? '';
-      roots.searchInput.value = component;
-      setState({
-        currentView: 'discover',
-        searchTerm: component,
-        selectedProfileRegistryName: null,
-        selectedCandidateId: null,
-      });
-    }
-  });
-
-  roots.contentBody.addEventListener('mouseover', (e) => {
-    const trigger = (e.target as HTMLElement).closest('[data-component-peek-id]');
-    const peekId = trigger?.getAttribute('data-component-peek-id') ?? null;
-    if (peekId && peekId !== state.activePeekId) setState({ activePeekId: peekId });
-  });
-
-  roots.contentBody.addEventListener('focusin', (e) => {
-    const trigger = (e.target as HTMLElement).closest('[data-component-peek-id]');
-    const peekId = trigger?.getAttribute('data-component-peek-id') ?? null;
-    if (peekId && peekId !== state.activePeekId) setState({ activePeekId: peekId });
-  });
-
-  roots.contentBody.addEventListener('mouseout', (e) => {
-    const target = e.target as HTMLElement;
-    if (!target.closest('[data-component-peek-id]') && !target.closest('[data-component-peek-popover]')) return;
-    const related = e.relatedTarget as HTMLElement | null;
-    if (related?.closest?.('[data-component-peek-id], [data-component-peek-popover]')) return;
-    if (state.activePeekId) setState({ activePeekId: null });
-  });
-
-  roots.contentBody.addEventListener('focusout', (e) => {
-    const target = e.target as HTMLElement;
-    if (!target.closest('[data-component-peek-id]') && !target.closest('[data-component-peek-popover]')) return;
-    window.setTimeout(() => {
-      if (!roots.contentBody.querySelector('[data-component-peek-id]:focus, [data-component-peek-popover]:focus')) {
-        setState({ activePeekId: null });
-      }
-    }, 0);
-  });
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && state.activePeekId) setState({ activePeekId: null });
-  });
-
-  document.addEventListener('pointerdown', (e) => {
-    const target = e.target as HTMLElement;
-    if (target.closest('[data-component-peek-id], [data-component-peek-popover]')) return;
-    if (state.activePeekId) setState({ activePeekId: null });
-  });
-
-  function handleFilterClick(target: HTMLElement): boolean {
-    const resetButton = target.closest('[data-filter-reset]');
-    if (resetButton) {
-      setState({ selectedComponentFilters: [], activePeekId: null });
-      return true;
-    }
-
-    const removeButton = target.closest('[data-filter-remove-dimension]');
-    if (removeButton) {
-      const dimension = removeButton.getAttribute('data-filter-remove-dimension');
-      const value = removeButton.getAttribute('data-filter-remove-value');
-      setState({
-        selectedComponentFilters: state.selectedComponentFilters.filter(filter =>
-          filter.dimension !== dimension || filter.value !== value
+        selectedProfileRegistryName: item.getAttribute(
+          'data-view-item-registry',
         ),
-        activePeekId: null,
+        selectedItemSlug: item.getAttribute('data-view-item-slug'),
+        selectedCandidateId: item.getAttribute('data-candidate-id'),
       });
-      return true;
+      return;
     }
-
-    const addButton = target.closest('[data-filter-add-dimension]');
-    if (addButton) {
-      const next = createSelectedComponentFilter(
-        buildComponentFilterGroups(registries),
-        addButton.getAttribute('data-filter-add-dimension'),
-        addButton.getAttribute('data-filter-add-value'),
-      );
-      if (next && !state.selectedComponentFilters.some(filter => filter.dimension === next.dimension && filter.value === next.value)) {
-        setState({ selectedComponentFilters: [...state.selectedComponentFilters, next], activePeekId: null });
-      }
-      return true;
-    }
-
-    return false;
-  }
-
-  function handleInstallActionClick(target: HTMLElement): boolean {
-    const copyButton = target.closest('[data-copy-command]');
-    if (copyButton) {
-      const command = copyButton.getAttribute('data-copy-command') ?? '';
-      if (command) void copyCommand(command);
-      return true;
-    }
-
-    const addButton = target.closest('[data-queue-add]');
-    if (addButton) {
-      const token = addButton.getAttribute('data-queue-add') ?? '';
-      const installCommand = addButton.getAttribute('data-queue-install') ?? '';
-      const inspectCommand = addButton.getAttribute('data-queue-inspect') ?? '';
-      const route = addButton.getAttribute('data-queue-route') ?? '';
-      const nextQueue = addToInstallQueue(state.installQueue, {
-        action: {
-          status: 'enabled',
-          token,
-          installCommand,
-          inspectCommand,
-          route,
-          disabledReason: null,
-        },
-        label: addButton.getAttribute('data-queue-label') ?? token,
-        registry: addButton.getAttribute('data-queue-registry') ?? '',
-        item: addButton.getAttribute('data-queue-item') ?? token,
-      });
-      setState({ installQueue: nextQueue, copyFeedback: null });
-      return true;
-    }
-
-    const removeButton = target.closest('[data-queue-remove]');
-    if (removeButton) {
+    if (target.closest('[data-back-from-item]'))
       setState({
-        installQueue: removeFromInstallQueue(state.installQueue, removeButton.getAttribute('data-queue-remove') ?? ''),
-        copyFeedback: null,
+        currentView: 'discover',
+        selectedProfileRegistryName: null,
+        selectedItemSlug: null,
+      });
+    else if (target.closest('[data-back-to-results]'))
+      setState({ selectedProfileRegistryName: null, selectedItemSlug: null });
+  }
+  function handleInstall(target: HTMLElement): boolean {
+    const copy = target.closest(
+      '[data-copy-text], [data-copy-current-url], [data-copy-command]',
+    );
+    if (copy) {
+      const text = copy.hasAttribute('data-copy-current-url')
+        ? window.location.href
+        : (copy.getAttribute('data-copy-text') ??
+          copy.getAttribute('data-copy-command') ??
+          '');
+      if (text)
+        void copyText(text, copy.getAttribute('data-copy-label') ?? 'Copied.');
+      return true;
+    }
+    const add = target.closest('[data-queue-add]');
+    if (add) {
+      setState({
+        installQueue: addToInstallQueue(state.installQueue, {
+          action: {
+            status: 'enabled',
+            token: add.getAttribute('data-queue-add') ?? '',
+            installCommand: add.getAttribute('data-queue-install') ?? '',
+            inspectCommand: add.getAttribute('data-queue-inspect') ?? '',
+            route: add.getAttribute('data-queue-route') ?? '',
+            disabledReason: null,
+          },
+          label: add.getAttribute('data-queue-label') ?? '',
+          registry: add.getAttribute('data-queue-registry') ?? '',
+          item: add.getAttribute('data-queue-item') ?? '',
+        }),
       });
       return true;
     }
-
-    const clearButton = target.closest('[data-queue-clear]');
-    if (clearButton) {
-      setState({ installQueue: clearInstallQueue(), copyFeedback: null });
+    const remove = target.closest('[data-queue-remove]');
+    if (remove) {
+      setState({
+        installQueue: removeFromInstallQueue(
+          state.installQueue,
+          remove.getAttribute('data-queue-remove') ?? '',
+        ),
+      });
       return true;
     }
-
+    if (target.closest('[data-queue-clear]')) {
+      setState({ installQueue: clearInstallQueue() });
+      return true;
+    }
     return false;
   }
-
-  async function copyCommand(command: string): Promise<void> {
+  async function copyText(text: string, message: string): Promise<void> {
     try {
-      if (!navigator.clipboard?.writeText) {
-        throw new Error('Clipboard API unavailable');
-      }
-      await navigator.clipboard.writeText(command);
-      setState({ copyFeedback: { status: 'success', message: 'Command copied.', command } });
+      if (!navigator.clipboard?.writeText) throw new Error();
+      await navigator.clipboard.writeText(text);
+      setState({ copyFeedback: { status: 'success', message, command: text } });
     } catch {
       setState({
         copyFeedback: {
           status: 'error',
-          message: 'Clipboard unavailable. Select and copy the command manually.',
-          command,
+          message: 'Clipboard unavailable. Select and copy the text manually.',
+          command: text,
         },
       });
     }
   }
-
-  // Initial Render
   syncUrlState(state);
   render();
 }
-
-function hydrateStateFromUrl(registries: readonly Registry[]): ParsedRegistryExplorerUrlState {
-  const parsed = parseRegistryExplorerUrlState(new URLSearchParams(window.location.search));
-  const registryExists = parsed.selectedProfileRegistryName
-    ? registries.some(registry => registry.name === parsed.selectedProfileRegistryName)
-    : false;
-  const selectedFocus = parsed.selectedFocus && PRIMARY_FOCUS_VALUES.includes(parsed.selectedFocus)
-    ? parsed.selectedFocus
-    : null;
-  const selectedComponent = parsed.selectedComponent && COMPONENT_TAG_VALUES.includes(parsed.selectedComponent)
-    ? parsed.selectedComponent
-    : null;
-
+function toggle<T>(values: readonly T[], value: T): T[] {
+  return values.includes(value)
+    ? values.filter((item) => item !== value)
+    : [...values, value];
+}
+function hydrateStateFromUrl(
+  registries: readonly Registry[],
+): Omit<
+  AppState,
+  'installQueue' | 'copyFeedback' | 'selectedComponentFilters' | 'activePeekId'
+> {
+  const parsed = parseRegistryExplorerUrlState(
+    new URLSearchParams(window.location.search),
+  );
+  const registry =
+    parsed.selectedProfileRegistryName &&
+    registries.some((item) => item.name === parsed.selectedProfileRegistryName)
+      ? parsed.selectedProfileRegistryName
+      : null;
+  const names = parsed.compareRegistryNames.filter((name) =>
+    registries.some((item) => item.name === name),
+  );
+  const components = new Set(registries.flatMap((item) => item.component_tags));
   return {
     ...parsed,
-    selectedProfileRegistryName: registryExists ? parsed.selectedProfileRegistryName : null,
-    selectedCandidateId: registryExists ? parsed.selectedCandidateId : null,
-    selectedFocus,
-    selectedComponent,
-    selectedItemSlug: registryExists ? parsed.selectedItemSlug : null,
+    currentView: parsed.view,
+    selectedProfileRegistryName: registry,
+    selectedCandidateId: registry ? parsed.selectedCandidateId : null,
+    selectedItemSlug: registry ? parsed.selectedItemSlug : null,
+    compareRegistryNames: names,
+    compareComponentKeys: parsed.compareComponentKeys.filter((key) =>
+      components.has(key),
+    ),
   };
 }
-
 function syncUrlState(state: AppState): void {
   const params = serializeRegistryExplorerUrlState({
     view: state.currentView,
     searchTerm: state.searchTerm,
+    selectedFacets: state.selectedFacets,
+    sort: state.sort,
     selectedProfileRegistryName: state.selectedProfileRegistryName,
-    selectedCandidateId: state.selectedProfileRegistryName ? state.selectedCandidateId : null,
-    selectedFocus: state.currentView === 'focus' ? state.selectedFocus : null,
-    selectedComponent: state.currentView === 'component' ? state.selectedComponent : null,
-    selectedItemSlug: state.currentView === 'item' ? state.selectedItemSlug : null,
+    selectedCandidateId: state.selectedProfileRegistryName
+      ? state.selectedCandidateId
+      : null,
+    selectedItemSlug:
+      state.currentView === 'item' ? state.selectedItemSlug : null,
+    compareRegistryNames: state.compareRegistryNames,
+    compareComponentKeys: state.compareComponentKeys,
   });
   const query = params.toString();
-  const nextUrl = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
-
-  if (nextUrl !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
-    window.history.replaceState(null, '', nextUrl);
-  }
-}
-
-function renderMirrorStatus(
-  root: HTMLElement,
-  meta: RegistryMirrorMeta,
-  warnings: readonly MirrorValidationIssue[]
-): void {
-  const countMatches = meta.upstream_count === meta.local_count;
-  const countText = `${meta.local_count} / ${meta.upstream_count} registries mirrored`;
-  const synced = formatSyncTime(meta.synced_at);
-  const statusText = countMatches ? countText : `${countText}; counts need review`;
-  const warningText = warnings.length > 0
-    ? `${warnings.length} official fields need review`
-    : 'No mirror warnings';
-
-  root.insertAdjacentHTML('beforeend', `
-    <div class="mirror-status" aria-label="Registry mirror status">
-      <div class="mirror-source">
-        <span class="mirror-source-label">Official shadcn directory</span>
-        ${renderExternalLink(meta.source_url, 'Source', 'mirror-source-link')}
-      </div>
-      <div class="mirror-facts">
-        <span>Synced <strong>${escapeHtml(synced)}</strong></span>
-        <span>Upstream <strong>${meta.upstream_count}</strong></span>
-        <span>Local <strong>${meta.local_count}</strong></span>
-        <span class="${countMatches ? 'mirror-ok' : 'mirror-review'}">${escapeHtml(statusText)}</span>
-        <span class="${warnings.length > 0 ? 'mirror-review' : 'mirror-ok'}">${escapeHtml(warningText)}</span>
-      </div>
-    </div>
-  `);
-}
-
-function formatSyncTime(value: string): string {
-  const timestamp = Date.parse(value);
-
-  if (Number.isNaN(timestamp)) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(timestamp);
+  const next = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
+  if (
+    next !==
+    `${window.location.pathname}${window.location.search}${window.location.hash}`
+  )
+    window.history.replaceState(null, '', next);
 }

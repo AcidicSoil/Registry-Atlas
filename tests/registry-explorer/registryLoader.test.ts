@@ -24,8 +24,6 @@ describe('loadRegistries', () => {
         description: 'Example registry.',
         primary_focus: ['support'],
         component_tags: ['button'],
-        framework: 'React',
-        license: 'Community',
         atlas: {
           aliases: ['example-ui'],
           coverageStatus: 'inferred',
@@ -57,6 +55,12 @@ describe('loadRegistries', () => {
         },
       }),
     ]);
+
+    expect(data.registries[0]?.framework).toBeUndefined();
+    expect(data.registries[0]?.license).toBeUndefined();
+    expect(data.registries[0]?.itemSummaries?.[0]?.previewUrl).toBe(
+      'https://example.com/previews/button.png',
+    );
   });
 
   it('preserves mirror metadata and validation warnings separately', async () => {
@@ -144,6 +148,7 @@ function createMirror(options: {
               provenance: 'fixture',
               catalog_status: 'available',
               route_eligible: true,
+              preview_url: 'https://example.com/previews/button.png',
               raw_item_url: 'https://example.com/r/button.json',
               evidence_url: 'https://example.com/r/registry.json',
               dependencies: ['lucide-react'],

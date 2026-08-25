@@ -12,11 +12,12 @@ describe('renderItemDetailView', () => {
     renderItemDetailView(header, body, result, new Set());
 
     expect(header.innerHTML).toContain('Code Block');
-    expect(body.innerHTML).toContain('Preview not available yet');
+    expect(body.innerHTML).toContain('Preview unavailable');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Copy install');
     expect(body.innerHTML).toContain('Dependencies');
+    expect(body.innerHTML).toContain('<dt>Warnings</dt>');
     expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Raw JSON');
     expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Open raw item route');
   });
@@ -62,7 +63,7 @@ function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;
 }
 
-function registryFixture(options: { title?: string; description?: string; filePath?: string } = {}): Registry {
+function registryFixture(options: { title?: string; description?: string; filePath?: string; previewUrl?: string } = {}): Registry {
   return {
     name: '@delta',
     url: 'https://delta.example',
@@ -101,9 +102,55 @@ function registryFixture(options: { title?: string; description?: string; filePa
         routeEligible: true,
         rawItemUrl: 'https://delta.example/r/code-block.json',
         docsUrl: 'https://delta.example/components/code-block',
+        previewUrl: options.previewUrl,
+        evidenceUrl: 'https://delta.example/evidence',
+        warnings: ['review generated styles'],
         dependencies: ['shiki'],
         files: [{ path: options.filePath ?? 'registry/code-block.tsx', type: 'registry:ui', target: 'components/code-block.tsx' }],
       },
     ],
+  };
+}
+
+describe('enriched detail actions', () => {
+  it('renders grounded prompts, copy link, related registries, and real previews', () => {
+    const delta = registryFixture({ previewUrl: 'https://delta.example/preview.png' });
+    const gamma = relatedRegistryFixture();
+    const result = resolveRegistryItemDetailFromSummary([delta, gamma], '@delta', 'code-block');
+    const body = root();
+
+    renderItemDetailView(root(), body, result, new Set(), [delta, gamma]);
+
+    expect(body.innerHTML).toContain('<img');
+    expect(body.innerHTML).not.toContain('Preview unavailable');
+    expect(body.innerHTML).toContain('Alternate terminology');
+    expect(body.innerHTML).toContain('Copy agent prompt');
+    expect(body.innerHTML).toContain('Copy inspection prompt');
+    expect(body.innerHTML).toContain('Copy link');
+    expect(body.innerHTML).toContain('Related registries');
+    expect(body.innerHTML).toContain('@gamma');
+    expect(body.innerHTML).toContain('data-copy-current-url');
+  });
+});
+
+function relatedRegistryFixture(): Registry {
+  return {
+    name: '@gamma',
+    url: 'https://gamma.example',
+    description: 'Gamma registry fixture.',
+    primary_focus: ['support'],
+    component_tags: ['code-block'],
+    itemSummaries: [{
+      name: 'Code Snippet',
+      slug: 'code-snippet',
+      type: 'registry:ui',
+      category: 'code',
+      componentTagsProposed: ['code-block'],
+      source: 'fixture',
+      provenance: 'fixture',
+      catalogStatus: 'available',
+      routeEligible: true,
+      docsUrl: 'https://gamma.example/code-snippet',
+    }],
   };
 }

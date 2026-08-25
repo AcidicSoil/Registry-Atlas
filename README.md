@@ -2,7 +2,7 @@
 
 A modular, interactive explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory) ecosystem.
 
-Registry Atlas provides a structured way to discover and compare community registries based on their primary focus (e.g., AI Chat, Admin Dashboards) or specific component availability (e.g., specific table implementations, authentication forms).
+Registry Atlas provides a search-first way to discover community registry items, browse registry sources, and compare component coverage.
 
 <p>
 <img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-0.png" alt="" />
@@ -18,10 +18,9 @@ Registry Atlas provides a structured way to discover and compare community regis
 
 ## Features
 
-- **Focus View**: Browse registries clustered by their dominant use-case (e.g., "AI & Chatbot", "Marketing Sections").
-- **Component View**: Find registries that provide specific components (e.g., "Who ships a `data-grid`?").
-- **Matrix View**: A dense table view comparing coverage of key component families across all registries.
-- **Real-time Filtering**: Instantly filter by name, description, tags, or framework across all views.
+- **Discover**: Search components and registries with rough-language queries, multi-select Category/Component/Registry filters, and relevance or name sorting.
+- **Registries**: Browse registry sources, inspect profiles, and review known items and coverage.
+- **Compare**: Select registries and components in a verification-aware coverage table.
 
 ## Getting Started
 
@@ -121,15 +120,17 @@ src/registry-explorer/
 │   ├── registry.schema.ts  # Type definitions & vocabularies
 │   ├── grouping.ts         # Pure functions for filtering/grouping
 │   ├── labels.ts           # UI label mappers
-│   └── matrixColumns.ts    # Configuration for Matrix view
+│   └── matrixColumns.ts    # Component columns used by Compare
 ├── data/
 │   ├── loadRegistries.ts   # Runtime loader for generated registry mirror JSON
 │   └── registries.data.ts  # Legacy enrichment seed used by sync tooling
 ├── ui/                 # DOM rendering modules
 │   ├── shell.ts            # State management & event orchestration
-│   ├── focusView.ts        # Renderer for Focus view
-│   ├── componentView.ts    # Renderer for Component view
-│   └── matrixView.ts       # Renderer for Matrix view
+│   ├── discoveryView.ts    # Renderer for Discover
+│   ├── registriesView.ts   # Renderer for Registries
+│   ├── compareView.ts      # Renderer for Compare
+│   ├── registryProfileView.ts # Renderer for registry profiles
+│   └── itemDetailView.ts   # Renderer for item details
 └── entry.ts            # Application bootstrap
 ```
 
@@ -137,7 +138,7 @@ src/registry-explorer/
 
 - **Registry**: The fundamental unit of data, defined in `src/registry-explorer/core/registry.schema.ts`.
 - **Pure Logic**: All filtering, grouping, and metrics calculations are pure functions located in `src/registry-explorer/core/grouping.ts`. This ensures logic is easily testable independent of the UI.
-- **State Management**: The `shell.ts` module implements a simple state store pattern to manage the current view, search term, and active selections, coordinating updates across the isolated view modules.
+- **State Management**: The `shell.ts` module manages the current route, search term, facets, sort, comparison selections, queue, and detail/profile state across the view modules.
 
 ## Maintenance
 
