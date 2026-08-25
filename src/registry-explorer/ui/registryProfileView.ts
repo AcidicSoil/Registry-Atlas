@@ -1,7 +1,6 @@
 import type { InstallActionState, RegistryProfile, RegistryProfileFact, RegistryProfileItemRow } from '../core/registry.schema';
+import type { CatalogFacetGroup, SelectedCatalogFacet } from '../core/catalogFacets';
 import { buildComponentPeekFromProfileRow } from '../core/componentPeek';
-import type { ComponentFilterGroup, SelectedComponentFilter } from '../core/componentFilters';
-import { activeFilterLabel } from '../core/componentFilters';
 import { renderComponentPeek } from './componentPeekView';
 import { escapeHtml, renderExternalLink } from './renderSafety';
 
@@ -10,8 +9,8 @@ export function renderRegistryProfile(
   bodyRoot: HTMLElement,
   profile: RegistryProfile,
   queuedTokens: ReadonlySet<string>,
-  filterGroups: readonly ComponentFilterGroup[] = [],
-  selectedFilters: readonly SelectedComponentFilter[] = [],
+  filterGroups: readonly CatalogFacetGroup[] = [],
+  selectedFilters: readonly SelectedCatalogFacet[] = [],
   activePeekId: string | null = null,
 ): void {
   const registry = profile.registry;
@@ -20,6 +19,7 @@ export function renderRegistryProfile(
       <button class="link-button" type="button" data-back-to-results>← Back to results</button>
       <h1>${escapeHtml(registry.name)}</h1>
       <p>${escapeHtml(registry.description)}</p>
+      <button class="link-button" type="button" data-copy-current-url data-copy-label="Profile link copied">Copy profile link</button>
       <div class="profile-chips">
         <span class="status-chip status-${escapeHtml(registry.atlas?.coverageStatus ?? 'unverified')}">${escapeHtml(profileCoverage(profile))}</span>
         <span>${escapeHtml(String(registry.mirror?.warnings.length ?? 0))} warning(s)</span>
@@ -64,23 +64,23 @@ function renderChipList(labels: readonly string[] | undefined, className: string
 }
 
 function renderFilterBar(
-  groups: readonly ComponentFilterGroup[],
-  selected: readonly SelectedComponentFilter[],
+  groups: readonly CatalogFacetGroup[],
+  selected: readonly SelectedCatalogFacet[],
 ): string {
   if (groups.length === 0) return '';
   const options = groups.map(group => `
     <div class="filter-group">
       <span class="filter-group-label">${escapeHtml(group.label)}</span>
       ${group.options.map(option => `
-        <button class="filter-option" type="button" data-filter-add-dimension="${escapeHtml(option.dimension)}" data-filter-add-value="${escapeHtml(option.value)}">
+        <button class="filter-option" type="button" data-facet-add-dimension="${escapeHtml(option.dimension)}" data-facet-add-value="${escapeHtml(option.value)}">
           ${escapeHtml(option.label)} <span>${option.count}</span>
         </button>
       `).join('')}
     </div>
   `).join('');
   const badges = selected.map(filter => `
-    <button class="active-filter" type="button" data-filter-remove-dimension="${escapeHtml(filter.dimension)}" data-filter-remove-value="${escapeHtml(filter.value)}" aria-label="Remove ${escapeHtml(activeFilterLabel(filter))}">
-      ${escapeHtml(activeFilterLabel(filter))} ×
+    <button class="active-filter" type="button" data-facet-remove-dimension="${escapeHtml(filter.dimension)}" data-facet-remove-value="${escapeHtml(filter.value)}" aria-label="Remove ${escapeHtml(filter.label)}">
+      ${escapeHtml(filter.label)} ×
     </button>
   `).join('');
 
@@ -92,7 +92,7 @@ function renderFilterBar(
       </details>
       <div class="active-filter-list">
         ${badges}
-        ${selected.length ? '<button class="filter-reset" type="button" data-filter-reset>Reset filters</button>' : ''}
+        ${selected.length ? '<button class="filter-reset" type="button" data-facet-clear>Reset filters</button>' : ''}
       </div>
     </div>
   `;

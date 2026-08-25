@@ -12,6 +12,7 @@ export function renderCompareContent(
     <div>
       <h1>Compare</h1>
       <p>Compare registry coverage using the current verification-aware catalog data.</p>
+      <button class="link-button" type="button" data-copy-current-url data-copy-label="Comparison link copied">Copy comparison link</button>
     </div>
   `;
 

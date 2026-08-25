@@ -72,6 +72,14 @@ describe('renderDiscoveryContent', () => {
     expect(withoutPreviewBody.innerHTML).toContain('Preview unavailable');
     expect(withoutPreviewBody.innerHTML).not.toContain('<svg');
   });
+
+  it('offers a current URL copy action for discovery state', () => {
+    const header = root();
+    renderDiscoveryContent(header, root(), [candidateFixture()], overviewFixture(), {
+      searchTerm: 'button', facetGroups: [], selectedFacets: [], sort: 'relevance', queuedTokens: new Set(), activePeekId: null,
+    });
+    expect(header.innerHTML).toContain('data-copy-current-url');
+  });
 });
 
 function root(): HTMLElement {

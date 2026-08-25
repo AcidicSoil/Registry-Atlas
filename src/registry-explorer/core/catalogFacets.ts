@@ -9,7 +9,7 @@ import {
 } from './componentTaxonomy.ts';
 import { COMPONENT_TAG_VALUES } from './registry.schema.ts';
 import type { CatalogCategory } from './catalogTaxonomy.ts';
-import type { ComponentCandidate, ComponentTag, Registry } from './registry.schema.ts';
+import type { ComponentCandidate, ComponentTag, Registry, RegistryProfileItemRow } from './registry.schema.ts';
 
 export type CatalogFacetDimension = 'category' | 'component' | 'registry';
 
@@ -95,6 +95,15 @@ export function createSelectedCatalogFacet(
     : null;
 }
 
+export function applyCatalogFacetsToProfileRows(rows: readonly RegistryProfileItemRow[], selected: readonly SelectedCatalogFacet[]): RegistryProfileItemRow[] {
+  if (selected.length === 0) return [...rows];
+  return rows.filter(row => selected.every(facet => {
+    if (facet.dimension === 'registry') return true;
+    if (facet.dimension === 'category') return row.taxonomyCategoryLabels?.some(label => CATALOG_CATEGORY_LABELS[facet.value as CatalogCategory] === label) ?? false;
+    return [...(row.taxonomyTagLabels ?? []), ...(row.taxonomyCategoryLabels ?? [])].some(label => normalizeFacetValue(label) === normalizeFacetValue(facet.label));
+  }));
+}
+
 function addValue(
   counts: Map<CatalogFacetDimension, Map<string, number>>,
   dimension: CatalogFacetDimension,
@@ -125,6 +134,10 @@ function labelFor(dimension: CatalogFacetDimension, value: string): string {
 
 function titleCase(value: string): string {
   return value.replace(/-/g, ' ').replace(/\b\w/g, character => character.toUpperCase());
+}
+
+function normalizeFacetValue(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
 function candidateMatchesCatalogFacet(

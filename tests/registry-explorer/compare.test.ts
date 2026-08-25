@@ -29,9 +29,10 @@ describe('compare', () => {
       registryNames: ['@alpha', '@delta'],
       componentKeys: ['button', 'table'],
     });
+    const header = root();
     const body = root();
 
-    renderCompareContent(root(), body, model, {
+    renderCompareContent(header, body, model, {
       registryNames: ['@alpha', '@delta'],
       componentKeys: ['button', 'table'],
     });
@@ -41,6 +42,7 @@ describe('compare', () => {
     expect(body.innerHTML).toContain('@alpha');
     expect(body.innerHTML).toContain('data-compare-registry');
     expect(body.innerHTML).toContain('data-compare-component');
+    expect(header.innerHTML).toContain('data-copy-current-url');
     expect(body.innerHTML).not.toContain('Matrix axes');
   });
 });

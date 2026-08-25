@@ -2,13 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { buildRegistryProfile } from '../../src/registry-explorer/core/registryProfile';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
 import { renderRegistryProfile } from '../../src/registry-explorer/ui/registryProfileView';
+import { buildCatalogFacetGroups } from '../../src/registry-explorer/core/catalogFacets';
 
 describe('renderRegistryProfile', () => {
   it('shows source and known-item facts without legacy Focus wording', () => {
     const registry = fixture();
     const header = root();
     const body = root();
-    renderRegistryProfile(header, body, buildRegistryProfile(registry), new Set());
+    renderRegistryProfile(header, body, buildRegistryProfile(registry), new Set(), buildCatalogFacetGroups([registry], []));
 
     expect(header.innerHTML).toContain('@delta');
     expect(body.innerHTML).toContain('Official shadcn facts');
@@ -17,6 +18,9 @@ describe('renderRegistryProfile', () => {
     expect(body.innerHTML).toContain('View details');
     expect(body.innerHTML).not.toContain('Focus tags');
     expect(body.innerHTML).not.toContain('high confidence');
+    expect(body.innerHTML).toContain('data-facet-add-dimension');
+    expect(body.innerHTML).not.toContain('data-filter-add-dimension');
+    expect(header.innerHTML).toContain('data-copy-current-url');
   });
 });
 
