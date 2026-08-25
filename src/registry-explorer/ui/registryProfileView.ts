@@ -22,7 +22,6 @@ export function renderRegistryProfile(
       <p>${escapeHtml(registry.description)}</p>
       <div class="profile-chips">
         <span class="status-chip status-${escapeHtml(registry.atlas?.coverageStatus ?? 'unverified')}">${escapeHtml(profileCoverage(profile))}</span>
-        <span class="confidence-chip">${escapeHtml(registry.atlas?.confidence ?? 'unknown')} confidence</span>
         <span>${escapeHtml(String(registry.mirror?.warnings.length ?? 0))} warning(s)</span>
       </div>
     </div>
@@ -114,7 +113,7 @@ function renderItems(
   return `<div class="profile-items">${items.map(item => {
     const peek = buildComponentPeekFromProfileRow(registryName, item);
     const componentAction = item.routeEligible
-      ? `<button class="link-button discovery-route component-peek-trigger" type="button" data-component-peek-id="${escapeHtml(peek?.id ?? `${registryName}:${item.slug}`)}" data-view-item-registry="${escapeHtml(registryName)}" data-view-item-slug="${escapeHtml(item.slug)}">View component</button>`
+      ? `<button class="link-button discovery-route component-peek-trigger" type="button" data-component-peek-id="${escapeHtml(peek?.id ?? `${registryName}:${item.slug}`)}" data-view-item-registry="${escapeHtml(registryName)}" data-view-item-slug="${escapeHtml(item.slug)}">View details</button>`
       : `<span class="discovery-route muted">${escapeHtml(item.routeLabel === 'Open item route' ? 'Component unavailable' : item.routeLabel)}</span>`;
     const peekMarkup = peek && activePeekId === peek.id ? renderComponentPeek(peek) : '';
     const docs = item.docsUrl ? renderExternalLink(item.docsUrl, 'Docs', 'secondary-link') : '';
