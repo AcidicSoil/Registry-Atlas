@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "discover": {
+      "targetKind": "existing-ui",
+      "projectId": "0d4c5ddb-45ce-4b71-85c8-aedc9d9ebafe",
+      "baselineDraftId": "08636c14-d340-4990-bfb8-95d96f07bad6",
+      "activeDraftId": "08636c14-d340-4990-bfb8-95d96f07bad6",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "92f908a2-68de-411d-a712-b38a6ec4a857"
+      ],
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "index.html",
+        "src/registry-explorer/ui/discoveryView.ts",
+        "src/registry-explorer/ui/shell.ts",
+        "src/registry-explorer/core/registry.schema.ts"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "1f257511d665d9cc3cdb7a296073af49e7f20ebc97c06e639bab5c6a8e196cc6",
+        "index.html": "e0c0a341513e63d378d5cae7d71fb5aae90ed8f8dd727e3aa2722aef0b52f5da",
+        "src/registry-explorer/ui/discoveryView.ts": "d102ce540ec9dab66242851829630a9d971db2208417a26ad0ca38e96e8f1fd8",
+        "src/registry-explorer/ui/shell.ts": "9a3d391cbbb174b4c0d03a74503aed51d1994040cd9a3012517cce72d3bdf534",
+        "src/registry-explorer/core/registry.schema.ts": "8bf8fce321be28ce0d73bea70e11527b85613ead3e0782a6f8ee320efe6dc05e"
+      },
+      "components": [],
+      "drafts": {
+        "08636c14-d340-4990-bfb8-95d96f07bad6": {
+          "title": "Current Registry Atlas \u2014 Discover Baseline",
+          "visualDirection": "legacy structure baseline",
+          "currentVersion": 1
+        },
+        "fdcf0080-91df-4b2c-9d0f-d0ea46e024d5": {
+          "title": "Registry Atlas | Visual Dictionary - Navigation Refinement",
+          "visualDirection": "Direction A \u2014 conventional Discover / Registries / Compare IA with Category / Component / Registry facets",
+          "parentDraftId": "08636c14-d340-4990-bfb8-95d96f07bad6",
+          "currentVersion": 3
+        },
+        "2563a70b-fc71-455a-96bc-97ba661fbdb1": {
+          "title": "Registry Atlas: Discover View",
+          "visualDirection": "Direction B \u2014 Atlas hybrid with persistent facet rail",
+          "parentDraftId": "08636c14-d340-4990-bfb8-95d96f07bad6",
+          "currentVersion": 1
+        }
+      },
+      "updatedAt": "2026-08-24T22:21:03.289930+00:00"
+    }
+  }
+}
