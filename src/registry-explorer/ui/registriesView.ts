@@ -64,7 +64,8 @@ function renderFacetBar(
       ${group.options.map(option => `
         <button class="facet-option" type="button"
           data-facet-add-dimension="${escapeHtml(option.dimension)}"
-          data-facet-add-value="${escapeHtml(option.value)}">
+          data-facet-add-value="${escapeHtml(option.value)}"
+          aria-pressed="${selected.some(facet => facet.dimension === option.dimension && facet.value === option.value)}">
           ${escapeHtml(option.label)} <span>${option.count}</span>
         </button>
       `).join('')}
@@ -76,7 +77,8 @@ function renderFacetBar(
     .map(facet => `
       <button class="active-filter" type="button"
         data-facet-remove-dimension="${escapeHtml(facet.dimension)}"
-        data-facet-remove-value="${escapeHtml(facet.value)}">
+        data-facet-remove-value="${escapeHtml(facet.value)}"
+        aria-label="Remove ${escapeHtml(facet.label)} filter">
         ${escapeHtml(facet.label)} ×
       </button>
     `).join('');

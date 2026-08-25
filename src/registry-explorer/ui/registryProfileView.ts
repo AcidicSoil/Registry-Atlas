@@ -72,14 +72,14 @@ function renderFilterBar(
     <div class="filter-group">
       <span class="filter-group-label">${escapeHtml(group.label)}</span>
       ${group.options.map(option => `
-        <button class="filter-option" type="button" data-facet-add-dimension="${escapeHtml(option.dimension)}" data-facet-add-value="${escapeHtml(option.value)}">
+        <button class="filter-option" type="button" data-facet-add-dimension="${escapeHtml(option.dimension)}" data-facet-add-value="${escapeHtml(option.value)}" aria-pressed="${selected.some(facet => facet.dimension === option.dimension && facet.value === option.value)}">
           ${escapeHtml(option.label)} <span>${option.count}</span>
         </button>
       `).join('')}
     </div>
   `).join('');
   const badges = selected.map(filter => `
-    <button class="active-filter" type="button" data-facet-remove-dimension="${escapeHtml(filter.dimension)}" data-facet-remove-value="${escapeHtml(filter.value)}" aria-label="Remove ${escapeHtml(filter.label)}">
+    <button class="active-filter" type="button" data-facet-remove-dimension="${escapeHtml(filter.dimension)}" data-facet-remove-value="${escapeHtml(filter.value)}" aria-label="Remove ${escapeHtml(filter.label)} filter">
       ${escapeHtml(filter.label)} ×
     </button>
   `).join('');

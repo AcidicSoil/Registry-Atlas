@@ -22,6 +22,23 @@ describe('renderRegistryProfile', () => {
     expect(body.innerHTML).not.toContain('data-filter-add-dimension');
     expect(header.innerHTML).toContain('data-copy-current-url');
   });
+
+  it('exposes selected facet options and removal labels', () => {
+    const registry = fixture();
+    const header = root();
+    const body = root();
+    renderRegistryProfile(
+      header,
+      body,
+      buildRegistryProfile(registry),
+      new Set(),
+      buildCatalogFacetGroups([registry], []),
+      [{ dimension: 'component', value: 'code-block', label: 'Code Block' }],
+    );
+
+    expect(body.innerHTML).toContain('data-facet-add-value="code-block" aria-pressed="true"');
+    expect(body.innerHTML).toContain('aria-label="Remove Code Block filter"');
+  });
 });
 
 function root(): HTMLElement {

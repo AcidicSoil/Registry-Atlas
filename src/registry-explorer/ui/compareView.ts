@@ -68,7 +68,7 @@ function renderComparisonTable(model: CompareModel): string {
   }
 
   const headers = model.columns
-    .map(column => `<th>${escapeHtml(componentLabel(column))}</th>`)
+    .map(column => `<th scope="col">${escapeHtml(componentLabel(column))}</th>`)
     .join('');
   const rows = model.rows.map(row => `
     <tr>
@@ -85,7 +85,7 @@ function renderComparisonTable(model: CompareModel): string {
   return `
     <div class="compare-table-scroll">
       <table class="compare-table">
-        <thead><tr><th>Registry · Verification</th>${headers}</tr></thead>
+        <thead><tr><th scope="col">Registry · Verification</th>${headers}</tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>

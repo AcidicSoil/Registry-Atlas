@@ -104,7 +104,8 @@ function renderCatalogToolbar(
         ${group.options.map(option => `
           <button type="button" class="catalog-facet-option"
             data-facet-add-dimension="${escapeHtml(option.dimension)}"
-            data-facet-add-value="${escapeHtml(option.value)}">
+            data-facet-add-value="${escapeHtml(option.value)}"
+            aria-pressed="${selected.some(facet => facet.dimension === option.dimension && facet.value === option.value)}">
             ${escapeHtml(option.label)} <span>${option.count}</span>
           </button>
         `).join('')}

@@ -29,6 +29,20 @@ describe('registry browser', () => {
     expect(body.innerHTML).not.toContain('React');
     expect(body.innerHTML).not.toContain('Community');
   });
+
+  it('exposes selected facet options and removal labels', () => {
+    const body = root();
+    renderRegistriesContent(
+      root(),
+      body,
+      buildRegistryBrowseEntries(registries(), '', []),
+      [{ dimension: 'component', label: 'Component', options: [{ dimension: 'component', value: 'button', label: 'Button', count: 2 }] }],
+      [{ dimension: 'component', value: 'button', label: 'Button' }],
+    );
+
+    expect(body.innerHTML).toMatch(/data-facet-add-value="button"[\s\S]*?aria-pressed="true"/);
+    expect(body.innerHTML).toContain('aria-label="Remove Button filter"');
+  });
 });
 
 function root(): HTMLElement { return { innerHTML: '' } as HTMLElement; }

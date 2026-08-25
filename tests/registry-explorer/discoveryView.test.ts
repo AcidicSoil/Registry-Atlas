@@ -47,6 +47,21 @@ describe('renderDiscoveryContent', () => {
     expect(body.innerHTML).toContain('data-facet-remove-dimension="component"');
     expect(body.innerHTML).toContain('data-facet-clear');
   });
+
+  it('exposes selected facet options and removal labels', () => {
+    const body = root();
+    renderDiscoveryContent(root(), body, [candidateFixture()], overviewFixture(), {
+      searchTerm: '',
+      facetGroups: facetGroups(),
+      selectedFacets: [{ dimension: 'category', value: 'developer-tools', label: 'Developer Tools' }],
+      sort: 'relevance',
+      queuedTokens: new Set(),
+      activePeekId: null,
+    });
+
+    expect(body.innerHTML).toMatch(/data-facet-add-value="developer-tools"[\s\S]*?aria-pressed="true"/);
+    expect(body.innerHTML).toContain('aria-label="Remove Developer Tools filter"');
+  });
   it('renders real previews and a neutral unavailable state', () => {
     const withPreviewBody = root();
     renderDiscoveryContent(root(), withPreviewBody, [candidateFixture('https://example.com/button.png')], overviewFixture(), {
