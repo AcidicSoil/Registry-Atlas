@@ -36,3 +36,13 @@ export function renderExternalLink(
 
   return `<a href="${escapeHtml(safeUrl.href)}" class="${escapeHtml(className)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
 }
+
+export function renderSafeExternalImage(
+  url: string,
+  alt: string,
+  className = 'external-image',
+): string {
+  const safeUrl = toSafeExternalUrl(url);
+  if (!safeUrl) return '';
+  return `<img src="${escapeHtml(safeUrl.href)}" alt="${escapeHtml(alt)}" class="${escapeHtml(className)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`;
+}
