@@ -349,7 +349,7 @@ export interface RegistryProfileItemRow {
 }
 
 export interface RegistryProfileSection {
-  name: 'Official shadcn facts' | 'Registry Atlas enrichment' | 'Item discovery status' | 'Why this matched';
+  name: 'Official shadcn facts' | 'Registry Atlas enrichment' | 'Item discovery status' | 'Known items' | 'Why this matched';
   facts?: readonly RegistryProfileFact[];
   items?: readonly RegistryProfileItemRow[];
 }
