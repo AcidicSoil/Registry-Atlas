@@ -174,7 +174,7 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
     docsUrl,
     previewUrl,
     evidenceUrl: summary.evidenceUrl ?? null,
-    componentPageUrl: previewUrl ?? docsUrl ?? null,
+    componentPageUrl: docsUrl,
     dependencies: summary.dependencies ?? [],
     devDependencies: summary.devDependencies ?? [],
     registryDependencies: summary.registryDependencies ?? [],

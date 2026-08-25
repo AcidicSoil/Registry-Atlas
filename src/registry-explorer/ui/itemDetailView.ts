@@ -106,7 +106,7 @@ function renderPreview(detail: RegistryItemDetail): string {
       return `
         <div class="item-preview-panel">
           ${image}
-          ${renderExternalLink(detail.previewUrl, 'Open component page', 'secondary-link')}
+          ${renderExternalLink(detail.previewUrl, 'Open preview', 'secondary-link')}
         </div>
       `;
     }
