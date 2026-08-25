@@ -1,7 +1,15 @@
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const css = readFileSync('public/styles/registry-explorer.css', 'utf8').toLowerCase();
+interface NodeFsLike {
+  readFileSync(path: string, encoding: 'utf8'): string;
+}
+
+const nodeProcess = (globalThis as typeof globalThis & {
+  process?: { getBuiltinModule?: (specifier: string) => unknown };
+}).process;
+const fs = nodeProcess?.getBuiltinModule?.('node:fs') as NodeFsLike | undefined;
+if (!fs) throw new Error('Node filesystem module is unavailable.');
+const css = fs.readFileSync('public/styles/registry-explorer.css', 'utf8').toLowerCase();
 
 describe('visual dictionary design contract', () => {
   it('uses the approved dark visual system and removes legacy effects', () => {

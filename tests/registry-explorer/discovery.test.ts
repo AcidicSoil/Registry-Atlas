@@ -360,7 +360,7 @@ describe('rough description ranking', () => {
       url: 'https://command.example',
       description: 'Component registry.',
       primary_focus: ['navigation'],
-      component_tags: ['command-menu'],
+      component_tags: ['command'],
       atlas: { aliases: [], coverageStatus: 'verified', confidence: 'high', notes: '', catalogStatus: 'available' },
       mirror: { officialName: '@command-kit', registryUrlTemplate: 'https://command.example/r/{name}.json', sourceUrl: 'https://ui.shadcn.com/r/registries.json', syncedAt: '2026-08-24T00:00:00.000Z', upstreamCount: 2, localCount: 2, warnings: [] },
       itemSummaries: [{ name: 'Command Palette', slug: 'command-palette', description: 'A searchable command palette for keyboard workflows', source: 'fixture', provenance: 'fixture', catalogStatus: 'available', routeEligible: true }],
