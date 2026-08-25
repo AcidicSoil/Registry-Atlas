@@ -63,3 +63,19 @@ function registryFixture(
     })),
   };
 }
+
+describe('related registries', () => {
+  it('groups grounded related-component matches by registry', async () => {
+    const { buildRelatedRegistries } = await import('../../src/registry-explorer/core/relatedComponents');
+    const related = buildRelatedRegistries(registriesFixture(), {
+      registryName: '@delta',
+      itemSlug: 'code-block',
+    });
+
+    expect(related[0]).toEqual(expect.objectContaining({
+      registryName: '@gamma',
+      matchReasons: expect.arrayContaining(['Shared component']),
+    }));
+    expect(related[0]?.matchedItems).toContain('code-snippet');
+  });
+});

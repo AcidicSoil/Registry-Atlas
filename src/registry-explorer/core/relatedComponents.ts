@@ -106,3 +106,33 @@ function taxonomyLabels(item: RegistryItemSummary): readonly string[] {
       .map(category => componentTaxonomyCategoryLabel(category)),
   ])];
 }
+
+export interface RelatedRegistry {
+  registryName: string;
+  matchedItems: readonly string[];
+  matchReasons: readonly ['Shared component'];
+}
+
+export function buildRelatedRegistries(
+  registries: readonly Registry[],
+  current: { registryName: string; itemSlug: string },
+  limit = 4,
+): RelatedRegistry[] {
+  const grouped = new Map<string, Set<string>>();
+  buildRelatedComponents(registries, current, Number.MAX_SAFE_INTEGER)
+    .filter(item => item.registryName !== current.registryName)
+    .forEach(item => {
+      const slugs = grouped.get(item.registryName) ?? new Set<string>();
+      slugs.add(item.itemSlug);
+      grouped.set(item.registryName, slugs);
+    });
+
+  return [...grouped.entries()]
+    .map(([registryName, matchedItems]) => ({
+      registryName,
+      matchedItems: [...matchedItems],
+      matchReasons: ['Shared component'] as const,
+    }))
+    .sort((a, b) => b.matchedItems.length - a.matchedItems.length || a.registryName.localeCompare(b.registryName))
+    .slice(0, limit);
+}

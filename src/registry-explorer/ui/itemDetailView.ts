@@ -1,7 +1,13 @@
+import { buildInstallAgentPrompt, buildInspectionPrompt } from '../core/itemPrompts.ts';
 import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/registryItemDetail.ts';
-import { buildRelatedComponents, type RelatedComponent } from '../core/relatedComponents.ts';
+import {
+  buildRelatedComponents,
+  buildRelatedRegistries,
+  type RelatedComponent,
+  type RelatedRegistry,
+} from '../core/relatedComponents.ts';
 import type { InstallActionState, Registry, RegistryItemSummaryFile } from '../core/registry.schema.ts';
-import { escapeHtml, renderExternalLink } from './renderSafety.ts';
+import { escapeHtml, renderExternalLink, renderSafeExternalImage } from './renderSafety.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -12,8 +18,9 @@ export function renderItemDetailView(
 ): void {
   const detail = result.detail;
   const related = detail ? buildRelatedComponents(registries, { registryName: detail.namespace, itemSlug: detail.slug }) : [];
+  const relatedRegistries = detail ? buildRelatedRegistries(registries, { registryName: detail.namespace, itemSlug: detail.slug }) : [];
   headerRoot.innerHTML = renderHeader(detail, result.status);
-  bodyRoot.innerHTML = detail ? renderDetailBody(detail, result, queuedTokens, related) : renderMissingBody(result);
+  bodyRoot.innerHTML = detail ? renderDetailBody(detail, result, queuedTokens, related, relatedRegistries) : renderMissingBody(result);
 }
 
 function renderHeader(detail: RegistryItemDetail | null, status: RegistryItemDetailResult['status']): string {
@@ -47,6 +54,7 @@ function renderDetailBody(
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
   related: readonly RelatedComponent[],
+  relatedRegistries: readonly RelatedRegistry[],
 ): string {
   const fallback = result.status === 'loaded' || result.status === 'summary-only'
     ? ''
@@ -62,12 +70,14 @@ function renderDetailBody(
             ${renderComponentPageAction(detail)}
             ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           </div>
+          ${renderPromptActions(detail)}
           ${renderEvaluationLabels(detail)}
           ${renderTaxonomy(detail.taxonomyLabels)}
           ${fallback}
         </div>
       </section>
       ${renderRelatedComponents(related)}
+      ${renderRelatedRegistries(relatedRegistries)}
       <section class="item-detail-cards" aria-label="Component details">
         ${renderListCard('Dependencies', detail.dependencies)}
         ${renderListCard('Dev dependencies', detail.devDependencies)}
@@ -91,17 +101,21 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
 
 function renderPreview(detail: RegistryItemDetail): string {
   if (detail.previewUrl) {
-    return `
-      <div class="item-preview-panel">
-        ${renderExternalLink(detail.previewUrl, 'Open component page', 'install-button install-button-primary')}
-      </div>
-    `;
+    const image = renderSafeExternalImage(detail.previewUrl, `${detail.title} preview`, 'item-preview-image');
+    if (image) {
+      return `
+        <div class="item-preview-panel">
+          ${image}
+          ${renderExternalLink(detail.previewUrl, 'Open component page', 'secondary-link')}
+        </div>
+      `;
+    }
   }
 
   return `
     <div class="item-preview-panel item-preview-placeholder">
-      <strong>Preview not available yet</strong>
-      <span>Open the component page to see the live example.</span>
+      <strong>Preview unavailable</strong>
+      <span>No verified visual preview is available in the current catalog data.</span>
       ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'install-button install-button-primary') : ''}
     </div>
   `;
@@ -138,17 +152,34 @@ function renderInstallActions(action: InstallActionState, detail: RegistryItemDe
   return `
     <div class="install-actions" aria-label="Install actions for ${escapeHtml(detail.title)}">
       <code class="install-token">${escapeHtml(action.token)}</code>
-      <button class="install-button" type="button" data-copy-command="${escapeHtml(action.inspectCommand)}">Inspect first</button>
-      <button class="install-button install-button-primary" type="button" data-copy-command="${escapeHtml(action.installCommand)}">Copy install</button>
+      <button class="install-button" type="button" data-copy-text="${escapeHtml(action.inspectCommand)}" data-copy-label="Inspect command copied">Inspect first</button>
+      <button class="install-button install-button-primary" type="button" data-copy-text="${escapeHtml(action.installCommand)}" data-copy-label="Install command copied">Copy install</button>
       ${queueButton}
       <span class="install-safety-note">Copy-only. Review source before installing third-party registry code.</span>
     </div>
   `;
 }
 
+function renderPromptActions(detail: RegistryItemDetail): string {
+  const agentPrompt = buildInstallAgentPrompt(detail);
+  const inspectionPrompt = buildInspectionPrompt(detail);
+  return `
+    <div class="item-prompt-actions" aria-label="Copy component context">
+      ${agentPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(agentPrompt)}" data-copy-label="Agent prompt copied">Copy agent prompt</button>` : ''}
+      ${inspectionPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(inspectionPrompt)}" data-copy-label="Inspection prompt copied">Copy inspection prompt</button>` : ''}
+      <button class="install-button" type="button" data-copy-current-url>Copy link</button>
+    </div>
+  `;
+}
+
 function renderTaxonomy(labels: readonly string[]): string {
   if (labels.length === 0) return '';
-  return `<div class="discovery-item-meta">${labels.slice(0, 4).map(label => `<span class="taxonomy-tag-chip">${escapeHtml(label)}</span>`).join('')}</div>`;
+  return `
+    <div class="item-taxonomy" aria-label="Alternate terminology">
+      <strong>Alternate terminology</strong>
+      <div class="discovery-item-meta">${labels.slice(0, 4).map(label => `<span class="taxonomy-tag-chip">${escapeHtml(label)}</span>`).join('')}</div>
+    </div>
+  `;
 }
 
 function renderEvaluationLabels(detail: RegistryItemDetail): string {
@@ -194,6 +225,25 @@ function renderRelatedComponents(related: readonly RelatedComponent[]): string {
   `;
 }
 
+function renderRelatedRegistries(related: readonly RelatedRegistry[]): string {
+  if (related.length === 0) return '';
+  return `
+    <section class="related-registries" aria-label="Related registries">
+      <h2>Related registries</h2>
+      <div class="related-registry-list">
+        ${related.map(item => `
+          <article class="related-registry-card">
+            <strong>${escapeHtml(item.registryName)}</strong>
+            <span>${escapeHtml(item.matchReasons.join(', '))}</span>
+            <span>${escapeHtml(item.matchedItems.join(', '))}</span>
+            <button class="link-button" type="button" data-profile-registry="${escapeHtml(item.registryName)}">View registry</button>
+          </article>
+        `).join('')}
+      </div>
+    </section>
+  `;
+}
+
 function renderListCard(title: string, items: readonly string[]): string {
   return `
     <section class="item-detail-card">
@@ -230,6 +280,7 @@ function renderSourceCard(detail: RegistryItemDetail): string {
       <dl class="profile-facts">
         <div class="profile-fact"><dt>Source</dt><dd>${escapeHtml(detail.source)}</dd></div>
         <div class="profile-fact"><dt>Provenance</dt><dd>${escapeHtml(detail.provenance)}</dd></div>
+        ${detail.warnings.length ? `<div class="profile-fact"><dt>Warnings</dt><dd>${escapeHtml(detail.warnings.join(', '))}</dd></div>` : ''}
       </dl>
       <div class="secondary-links">${links}</div>
     </section>
