@@ -1,8 +1,8 @@
 # Future Enhancements
 
-## Dynamic Component Deep-Linking
+## Dynamic Component Deep-Linking from Discover
 
-We can significantly improve the user experience in the "By Component" view by generating direct links to component documentation, rather than just linking to the registry homepage.
+Discover can be improved by generating direct links to component documentation, rather than just linking to the registry homepage.
 
 ### Implementation Strategy
 
@@ -11,7 +11,7 @@ We can significantly improve the user experience in the "By Component" view by g
     *   This data can be collected by the web agent (using the `docBaseUrl` field in the extraction schema) or manually curated.
 
 2.  **Dynamic URL Generation**:
-    *   In `componentView.ts`, modify the "Visit" link logic.
+    *   In `discoveryView.ts`, modify the component-page link logic.
     *   If `docBaseUrl` exists, append the current `componentKey` (slugified if necessary) to the base URL.
     *   Example: `${registry.docBaseUrl}/${componentKey}` -> `https://ui.example.com/docs/components/button`
 
