@@ -23,6 +23,9 @@ describe('componentPeek', () => {
 
     expect(html).toContain('Preview not available yet');
     expect(html).toContain('Open component page');
+    expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).toContain('id="component-peek-@delta-code-block"');
+    expect(html).not.toContain('role="dialog"');
     expect(html).not.toContain('Dependencies');
     expect(html).not.toContain('Files');
     expect(html).not.toContain('Raw JSON');

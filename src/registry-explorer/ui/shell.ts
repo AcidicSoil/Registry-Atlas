@@ -57,6 +57,7 @@ export interface ShellOptions {
 }
 interface AppState {
   currentView: 'discover' | 'registries' | 'compare' | 'item';
+  returnView: 'discover' | 'registries';
   selectedFacets: SelectedCatalogFacet[];
   sort: CatalogSort;
   compareRegistryNames: string[];
@@ -83,14 +84,19 @@ export function initRegistryExplorer(options: ShellOptions): void {
   const parsed = hydrateStateFromUrl(registries);
   let state: AppState = {
     ...parsed,
+    returnView: parsed.currentView === 'registries' ? 'registries' : 'discover',
     installQueue: [],
     copyFeedback: null,
     activePeekId: null,
   };
+  let pinnedPeekId: string | null = null;
   roots.searchInput.value = state.searchTerm;
-  const setState = (partial: Partial<AppState>) => {
+  const setState = (
+    partial: Partial<AppState>,
+    historyMode: 'push' | 'replace' = 'replace',
+  ) => {
     state = { ...state, ...partial };
-    syncUrlState(state);
+    syncUrlState(state, historyMode);
     render();
   };
   function render(): void {
@@ -117,7 +123,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
         );
         roots.aside.innerHTML =
           '<div class="aside-section-title">Component item</div>';
-      } else if (state.selectedProfileRegistryName) {
+      } else if (state.currentView !== 'compare' && state.selectedProfileRegistryName) {
         const registry = registries.find(
           (item) => item.name === state.selectedProfileRegistryName,
         );
@@ -167,7 +173,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           roots.aside,
           buildDiscoveryOverview(registries),
           state.selectedCandidateId,
-          { entries: state.installQueue, batch, feedback: state.copyFeedback },
+          { entries: state.installQueue, batch, feedback: null },
         );
         renderDiscoveryContent(
           roots.contentHeader,
@@ -215,6 +221,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
           selection,
         );
       }
+      syncPeekTriggerSemantics();
+      roots.contentHeader.insertAdjacentHTML('beforeend', renderCopyFeedback(state.copyFeedback));
       const source = renderExternalLink(options.mirrorMeta.source_url, 'Official shadcn directory', 'secondary-link');
       const syncedAt = escapeHtml(options.mirrorMeta.synced_at);
       roots.contentHeader.insertAdjacentHTML(
@@ -230,7 +238,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.tabs.forEach((tab) =>
     tab.addEventListener('click', () => {
       const view = tab.getAttribute('data-view');
-      if (isView(view))
+      if (isView(view)) {
+        pinnedPeekId = null;
         setState({
           currentView: view,
           selectedFacets:
@@ -240,7 +249,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
           selectedProfileRegistryName: null,
           selectedCandidateId: null,
           selectedItemSlug: null,
-        });
+          returnView: view === 'discover' || view === 'registries' ? view : state.returnView,
+          activePeekId: null,
+        }, 'push');
+      }
     }),
   );
   roots.searchInput.addEventListener('input', () =>
@@ -249,16 +261,47 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.aside.addEventListener('click', (event) =>
     handleClick(event.target as HTMLElement),
   );
+  roots.contentHeader.addEventListener('click', (event) =>
+    handleClick(event.target as HTMLElement),
+  );
   roots.contentBody.addEventListener('click', (event) =>
     handleClick(event.target as HTMLElement),
   );
   roots.contentBody.addEventListener('mouseover', (event) => {
-    const id = (event.target as HTMLElement)
-      .closest('[data-component-peek-id]')
-      ?.getAttribute('data-component-peek-id');
-    if (id) setState({ activePeekId: id });
+    const id = peekIdFromTarget(event.target);
+    if (id && pinnedPeekId === null) setState({ activePeekId: id });
+  });
+  roots.contentBody.addEventListener('mouseout', (event) => {
+    if (pinnedPeekId !== null) return;
+    const id = peekIdFromTarget(event.target) ?? popoverIdFromTarget(event.target);
+    if (!id || state.activePeekId !== id) return;
+    const relatedId = peekIdFromTarget(event.relatedTarget) ?? popoverIdFromTarget(event.relatedTarget);
+    if (relatedId !== id) setState({ activePeekId: null });
+  });
+  roots.contentBody.addEventListener('keydown', (event) => {
+    const keyboardEvent = event as KeyboardEvent;
+    if (keyboardEvent.key !== 'Escape' || !state.activePeekId) return;
+    const id = state.activePeekId;
+    pinnedPeekId = null;
+    keyboardEvent.preventDefault();
+    setState({ activePeekId: null });
+    focusPeekTrigger(id);
   });
   function handleClick(target: HTMLElement): void {
+    const peekTrigger = target.closest('[data-component-peek-id]');
+    if (peekTrigger?.classList.contains('component-peek-trigger')) {
+      const id = peekTrigger.getAttribute('data-component-peek-id');
+      if (!id) return;
+      if (state.activePeekId === id && pinnedPeekId === id) {
+        pinnedPeekId = null;
+        setState({ activePeekId: null });
+        focusPeekTrigger(id);
+      } else {
+        pinnedPeekId = id;
+        setState({ activePeekId: id });
+      }
+      return;
+    }
     if (handleInstall(target)) return;
     const add = target.closest('[data-facet-add-dimension]');
     const remove = target.closest('[data-facet-remove-dimension]');
@@ -277,7 +320,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           (f) => f.dimension === next.dimension && f.value === next.value,
         )
       )
-        setState({ selectedFacets: [...state.selectedFacets, next] });
+        setState({ selectedFacets: [...state.selectedFacets, next] }, 'push');
       return;
     }
     if (remove) {
@@ -288,16 +331,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
               remove.getAttribute('data-facet-remove-dimension') ||
             f.value !== remove.getAttribute('data-facet-remove-value'),
         ),
-      });
+      }, 'push');
       return;
     }
     if (target.closest('[data-facet-clear]')) {
-      setState({ selectedFacets: [] });
+      setState({ selectedFacets: [] }, 'push');
       return;
     }
     const sort = target.closest('[data-sort]')?.getAttribute('data-sort');
     if (sort === 'name' || sort === 'relevance') {
-      setState({ sort });
+      setState({ sort }, 'push');
       return;
     }
     const registry = target
@@ -306,7 +349,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (registry) {
       setState({
         compareRegistryNames: toggle(state.compareRegistryNames, registry),
-      });
+      }, 'push');
       return;
     }
     const component = target
@@ -315,42 +358,65 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (component) {
       setState({
         compareComponentKeys: toggle(state.compareComponentKeys, component),
-      });
+      }, 'push');
       return;
     }
     const profile = target
       .closest('[data-profile-registry]')
       ?.getAttribute('data-profile-registry');
     if (profile) {
+      const surface = state.currentView === 'registries'
+        ? 'registries'
+        : state.currentView === 'discover'
+          ? 'discover'
+          : state.returnView;
       setState({
-        currentView: 'discover',
+        currentView: surface,
+        returnView: surface,
         selectedProfileRegistryName: profile,
         selectedFacets: state.selectedFacets.filter(
           (f) => f.dimension !== 'registry',
         ),
-      });
+        activePeekId: null,
+      }, 'push');
+      pinnedPeekId = null;
       return;
     }
     const item = target.closest('[data-view-item-registry]');
     if (item) {
+      const surface = state.currentView === 'registries'
+        ? 'registries'
+        : state.currentView === 'discover'
+          ? 'discover'
+          : state.returnView;
       setState({
         currentView: 'item',
+        returnView: surface,
         selectedProfileRegistryName: item.getAttribute(
           'data-view-item-registry',
         ),
         selectedItemSlug: item.getAttribute('data-view-item-slug'),
         selectedCandidateId: item.getAttribute('data-candidate-id'),
-      });
+        activePeekId: null,
+      }, 'push');
+      pinnedPeekId = null;
       return;
     }
     if (target.closest('[data-back-from-item]'))
       setState({
-        currentView: 'discover',
+        currentView: state.returnView,
         selectedProfileRegistryName: null,
+        selectedCandidateId: null,
         selectedItemSlug: null,
+        activePeekId: null,
       });
     else if (target.closest('[data-back-to-results]'))
-      setState({ selectedProfileRegistryName: null, selectedItemSlug: null });
+      setState({
+        selectedProfileRegistryName: null,
+        selectedCandidateId: null,
+        selectedItemSlug: null,
+        activePeekId: null,
+      });
   }
   function handleInstall(target: HTMLElement): boolean {
     const copy = target.closest(
@@ -401,6 +467,30 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
     return false;
   }
+  function syncPeekTriggerSemantics(): void {
+    const popovers = Array.from(
+      roots.contentBody.querySelectorAll<HTMLElement>('[data-component-peek-popover]'),
+    );
+    roots.contentBody
+      .querySelectorAll<HTMLElement>('[data-component-peek-id]')
+      .forEach((trigger) => {
+        const id = trigger.getAttribute('data-component-peek-id');
+        const popover = popovers.find(
+          (item) => item.getAttribute('data-component-peek-popover') === id,
+        );
+        trigger.setAttribute('aria-haspopup', 'true');
+        trigger.setAttribute('aria-expanded', String(state.activePeekId === id));
+        if (popover?.id) trigger.setAttribute('aria-controls', popover.id);
+      });
+  }
+
+  function focusPeekTrigger(id: string): void {
+    const trigger = Array.from(
+      roots.contentBody.querySelectorAll<HTMLElement>('[data-component-peek-id]'),
+    ).find((item) => item.getAttribute('data-component-peek-id') === id);
+    trigger?.focus();
+  }
+
   async function copyText(text: string, message: string): Promise<void> {
     try {
       if (!navigator.clipboard?.writeText) throw new Error();
@@ -416,9 +506,62 @@ export function initRegistryExplorer(options: ShellOptions): void {
       });
     }
   }
+  window.addEventListener('popstate', (event) => {
+    const parsed = hydrateStateFromUrl(registries);
+    state = {
+      ...state,
+      ...parsed,
+      returnView: historyReturnView(event.state, parsed.currentView),
+      copyFeedback: null,
+      activePeekId: null,
+    };
+    pinnedPeekId = null;
+    roots.searchInput.value = state.searchTerm;
+    render();
+  });
   syncUrlState(state);
   render();
 }
+function renderCopyFeedback(feedback: CopyFeedback | null): string {
+  if (!feedback) return '';
+  return `
+    <div class="copy-feedback copy-feedback-${escapeHtml(feedback.status)}" role="status" aria-live="polite" aria-atomic="true">
+      <span>${escapeHtml(feedback.message)}</span>
+      ${feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ''}
+    </div>
+  `;
+}
+
+function peekIdFromTarget(target: EventTarget | null): string | null {
+  return attributeFromTarget(target, '[data-component-peek-id]', 'data-component-peek-id');
+}
+
+function popoverIdFromTarget(target: EventTarget | null): string | null {
+  return attributeFromTarget(target, '[data-component-peek-popover]', 'data-component-peek-popover');
+}
+
+function attributeFromTarget(
+  target: EventTarget | null,
+  selector: string,
+  attribute: string,
+): string | null {
+  const closest = (target as { closest?: (value: string) => Element | null } | null)?.closest;
+  return typeof closest === 'function'
+    ? closest.call(target, selector)?.getAttribute(attribute) ?? null
+    : null;
+}
+
+function historyReturnView(
+  historyState: unknown,
+  currentView: AppState['currentView'],
+): 'discover' | 'registries' {
+  if (typeof historyState === 'object' && historyState !== null) {
+    const returnView = (historyState as { returnView?: unknown }).returnView;
+    if (returnView === 'discover' || returnView === 'registries') return returnView;
+  }
+  return currentView === 'registries' ? 'registries' : 'discover';
+}
+
 function toggle<T>(values: readonly T[], value: T): T[] {
   return values.includes(value)
     ? values.filter((item) => item !== value)
@@ -426,14 +569,13 @@ function toggle<T>(values: readonly T[], value: T): T[] {
 }
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<
-  AppState,
-  'installQueue' | 'copyFeedback' | 'selectedComponentFilters' | 'activePeekId'
-> {
+): Omit<AppState, 'installQueue' | 'copyFeedback' | 'activePeekId' | 'returnView'> {
   const parsed = parseRegistryExplorerUrlState(
     new URLSearchParams(window.location.search),
   );
+  const profileStateAllowed = parsed.view === 'discover' || parsed.view === 'item';
   const registry =
+    profileStateAllowed &&
     parsed.selectedProfileRegistryName &&
     registries.some((item) => item.name === parsed.selectedProfileRegistryName)
       ? parsed.selectedProfileRegistryName
@@ -446,34 +588,41 @@ function hydrateStateFromUrl(
     ...parsed,
     currentView: parsed.view,
     selectedProfileRegistryName: registry,
-    selectedCandidateId: registry ? parsed.selectedCandidateId : null,
-    selectedItemSlug: registry ? parsed.selectedItemSlug : null,
+    selectedCandidateId: parsed.view === 'discover' && registry ? parsed.selectedCandidateId : null,
+    selectedItemSlug: parsed.view === 'item' && registry ? parsed.selectedItemSlug : null,
     compareRegistryNames: names,
     compareComponentKeys: parsed.compareComponentKeys.filter((key) =>
       components.has(key),
     ),
   };
 }
-function syncUrlState(state: AppState): void {
+function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replace'): void {
+  const profileStateAllowed = state.currentView === 'discover' || state.currentView === 'item';
   const params = serializeRegistryExplorerUrlState({
     view: state.currentView,
     searchTerm: state.searchTerm,
     selectedFacets: state.selectedFacets,
     sort: state.sort,
-    selectedProfileRegistryName: state.selectedProfileRegistryName,
-    selectedCandidateId: state.selectedProfileRegistryName
-      ? state.selectedCandidateId
+    selectedProfileRegistryName: profileStateAllowed
+      ? state.selectedProfileRegistryName
       : null,
+    selectedCandidateId:
+      state.currentView === 'discover' && state.selectedProfileRegistryName
+        ? state.selectedCandidateId
+        : null,
     selectedItemSlug:
-      state.currentView === 'item' ? state.selectedItemSlug : null,
+      state.currentView === 'item' && state.selectedProfileRegistryName
+        ? state.selectedItemSlug
+        : null,
     compareRegistryNames: state.compareRegistryNames,
     compareComponentKeys: state.compareComponentKeys,
   });
   const query = params.toString();
   const next = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
   if (
-    next !==
+    next ===
     `${window.location.pathname}${window.location.search}${window.location.hash}`
-  )
-    window.history.replaceState(null, '', next);
+  ) return;
+  const history = historyMode === 'push' ? window.history.pushState : window.history.replaceState;
+  history.call(window.history, { returnView: state.returnView }, '', next);
 }
