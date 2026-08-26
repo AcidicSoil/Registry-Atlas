@@ -15,6 +15,8 @@ describe('renderRegistryProfile', () => {
     expect(body.innerHTML).toContain('Official shadcn facts');
     expect(body.innerHTML).toContain('Known items');
     expect(body.innerHTML).toContain('Code Block');
+    expect(body.innerHTML).toContain('Quick preview');
+    expect(body.innerHTML).toContain('data-component-peek-id="@delta:code-block"');
     expect(body.innerHTML).toContain('View details');
     expect(body.innerHTML).not.toContain('Focus tags');
     expect(body.innerHTML).not.toContain('high confidence');

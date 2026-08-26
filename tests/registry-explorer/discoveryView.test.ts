@@ -25,6 +25,8 @@ describe('renderDiscoveryContent', () => {
     expect(body.innerHTML).toContain('Component');
     expect(body.innerHTML).toContain('Registry');
     expect(body.innerHTML).toContain('Relevance');    expect(body.innerHTML).toContain('Name A-Z');
+    expect(body.innerHTML).toContain('Quick preview');
+    expect(body.innerHTML).toContain('data-component-peek-id="@delta:code-block"');
     expect(body.innerHTML).toContain('View details');
     expect(body.innerHTML).not.toContain('Type');
     expect(body.innerHTML).not.toContain('Visual');
@@ -135,7 +137,7 @@ function candidateFixture(previewUrl?: string): ComponentCandidate {
     statusExplanation: 'Registry Atlas has a concrete catalog item for this result.',
     docsUrl: 'https://delta.example/components/code-block',
     previewUrl,
-    componentPageUrl: previewUrl ?? 'https://delta.example/components/code-block',
+    componentPageUrl: 'https://delta.example/components/code-block',
     catalogStatus: 'available',
     routeEligible: true,
     route: 'https://delta.example/r/code-block.json',

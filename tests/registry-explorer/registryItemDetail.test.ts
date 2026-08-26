@@ -23,6 +23,20 @@ describe('registry item detail', () => {
     expect(result.detail?.installAction.status === 'enabled' ? result.detail.installAction.installCommand : null).toBe('npx shadcn@latest add @delta/code-block');
   });
 
+  it('uses an available registry route when docs are absent', () => {
+    const registry = registryFixture();
+    const routeOnlyRegistry: Registry = {
+      ...registry,
+      itemSummaries: registry.itemSummaries?.map(item => item.slug === 'code-block'
+        ? { ...item, docsUrl: undefined }
+        : item),
+    };
+
+    const result = resolveRegistryItemDetailFromSummary([routeOnlyRegistry], '@delta', 'code-block');
+
+    expect(result.detail?.componentPageUrl).toBe('https://delta.example/r/code-block.json');
+  });
+
   it('loads and normalizes valid registry item JSON without making raw data required for UI', async () => {
     const result = await loadRegistryItemDetail([registryFixture()], '@delta', 'code-block', async () => jsonResponse({
       name: 'code-block',

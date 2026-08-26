@@ -67,6 +67,19 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentHeader.innerHTML).toContain('<h1>Compare</h1>');
   });
 
+  it('keeps registry profiles deep-linkable from Registries', () => {
+    const harness = setup('?view=registries');
+
+    harness.contentBody.dispatch('click', target({ 'data-profile-registry': '@delta' }));
+
+    expect(harness.contentHeader.innerHTML).toContain('<h1>@delta</h1>');
+    expect(harness.location.search).toContain('registry=%40delta');
+    expect(harness.history.pushes.at(-1)).toContain('registry=%40delta');
+
+    const reloaded = setup('?view=registries&registry=%40delta');
+    expect(reloaded.contentHeader.innerHTML).toContain('<h1>@delta</h1>');
+  });
+
   it('keeps registry navigation on Registries and returns there from an item', () => {
     const harness = setup('?view=registries');
 
@@ -105,6 +118,7 @@ describe('registry explorer shell interactions', () => {
     harness.contentBody.dispatch('click', trigger);
     expect(harness.contentBody.innerHTML).toContain('data-component-peek-popover');
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    expect(trigger.getAttribute('aria-haspopup')).toBeNull();
     expect(harness.contentHeader.innerHTML).toContain('@delta');
 
     harness.contentBody.dispatch('keydown', trigger, { key: 'Escape' });

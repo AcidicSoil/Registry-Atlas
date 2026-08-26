@@ -112,8 +112,11 @@ function renderItems(
   }
   return `<div class="profile-items">${items.map(item => {
     const peek = buildComponentPeekFromProfileRow(registryName, item);
+    const peekAction = peek
+      ? `<button class="link-button component-peek-trigger" type="button" data-component-peek-id="${escapeHtml(peek.id)}">Quick preview</button>`
+      : '';
     const componentAction = item.routeEligible
-      ? `<button class="link-button discovery-route component-peek-trigger" type="button" data-component-peek-id="${escapeHtml(peek?.id ?? `${registryName}:${item.slug}`)}" data-view-item-registry="${escapeHtml(registryName)}" data-view-item-slug="${escapeHtml(item.slug)}">View details</button>`
+      ? `<button class="link-button discovery-route" type="button" data-view-item-registry="${escapeHtml(registryName)}" data-view-item-slug="${escapeHtml(item.slug)}">View details</button>`
       : `<span class="discovery-route muted">${escapeHtml(item.routeLabel === 'Open item route' ? 'Component unavailable' : item.routeLabel)}</span>`;
     const peekMarkup = peek && activePeekId === peek.id ? renderComponentPeek(peek) : '';
     const docs = item.docsUrl ? renderExternalLink(item.docsUrl, 'Docs', 'secondary-link') : '';
@@ -139,7 +142,7 @@ function renderItems(
           queued: item.installAction.status === 'enabled' && queuedTokens.has(item.installAction.token),
         })}
       </div>
-      <div>${componentAction}${peekMarkup}</div>
+      <div>${peekAction}${componentAction}${peekMarkup}</div>
     </div>
   `}).join('')}</div>`;
 }

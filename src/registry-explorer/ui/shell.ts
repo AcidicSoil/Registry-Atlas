@@ -478,7 +478,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
         const popover = popovers.find(
           (item) => item.getAttribute('data-component-peek-popover') === id,
         );
-        trigger.setAttribute('aria-haspopup', 'true');
         trigger.setAttribute('aria-expanded', String(state.activePeekId === id));
         if (popover?.id) trigger.setAttribute('aria-controls', popover.id);
       });
@@ -573,7 +572,7 @@ function hydrateStateFromUrl(
   const parsed = parseRegistryExplorerUrlState(
     new URLSearchParams(window.location.search),
   );
-  const profileStateAllowed = parsed.view === 'discover' || parsed.view === 'item';
+  const profileStateAllowed = parsed.view !== 'compare';
   const registry =
     profileStateAllowed &&
     parsed.selectedProfileRegistryName &&
@@ -597,7 +596,7 @@ function hydrateStateFromUrl(
   };
 }
 function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replace'): void {
-  const profileStateAllowed = state.currentView === 'discover' || state.currentView === 'item';
+  const profileStateAllowed = state.currentView !== 'compare';
   const params = serializeRegistryExplorerUrlState({
     view: state.currentView,
     searchTerm: state.searchTerm,
