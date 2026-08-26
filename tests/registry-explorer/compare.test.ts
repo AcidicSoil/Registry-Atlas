@@ -42,6 +42,8 @@ describe('compare', () => {
     expect(body.innerHTML).toContain('@alpha');
     expect(body.innerHTML).toContain('data-compare-registry');
     expect(body.innerHTML).toContain('data-compare-component');
+    expect(body.innerHTML).toContain('<th scope="col">Registry · Verification</th>');
+    expect(body.innerHTML).toMatch(/<th scope="col">[^<]*button[^<]*<\/th>/i);
     expect(header.innerHTML).toContain('data-copy-current-url');
     expect(body.innerHTML).not.toContain('Matrix axes');
   });

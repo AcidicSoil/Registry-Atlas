@@ -23,11 +23,28 @@ describe('componentPeek', () => {
 
     expect(html).toContain('Preview not available yet');
     expect(html).toContain('Open component page');
+    expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).toContain('id="component-peek-%40delta%3Acode-block"');
+    expect(html).toContain('role="region"');
+    expect(html).not.toContain('role="dialog"');
     expect(html).not.toContain('Dependencies');
     expect(html).not.toContain('Files');
     expect(html).not.toContain('Raw JSON');
     expect(html).not.toContain('install-queue');
     expect(html).not.toContain('<iframe');
+  });
+
+
+  it('keeps preview and component-page actions distinct', () => {
+    const model = buildComponentPeekFromCandidate(candidateFixture({ previewUrl: 'https://delta.example/preview.png' }));
+    expect(model).not.toBeNull();
+
+    const html = model ? renderComponentPeek(model) : '';
+
+    expect(html).toContain('href="https://delta.example/preview.png"');
+    expect(html).toContain('>Open preview</a>');
+    expect(html).toContain('href="https://delta.example/components/code-block"');
+    expect(html).toContain('>Open component page</a>');
   });
 
   it('escapes title text in peek markup', () => {
@@ -61,7 +78,7 @@ function candidateFixture(options: { itemSlug?: string; itemName?: string; previ
     rawItemUrl: 'https://delta.example/r/code-block.json',
     docsUrl: 'https://delta.example/components/code-block',
     previewUrl: options.previewUrl,
-    componentPageUrl: options.previewUrl ?? 'https://delta.example/components/code-block',
+    componentPageUrl: 'https://delta.example/components/code-block',
     dependencyCount: 1,
     registryDependencyCount: 0,
     fileCount: 1,

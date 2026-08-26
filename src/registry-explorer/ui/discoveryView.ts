@@ -104,7 +104,8 @@ function renderCatalogToolbar(
         ${group.options.map(option => `
           <button type="button" class="catalog-facet-option"
             data-facet-add-dimension="${escapeHtml(option.dimension)}"
-            data-facet-add-value="${escapeHtml(option.value)}">
+            data-facet-add-value="${escapeHtml(option.value)}"
+            aria-pressed="${selected.some(facet => facet.dimension === option.dimension && facet.value === option.value)}">
             ${escapeHtml(option.label)} <span>${option.count}</span>
           </button>
         `).join('')}
@@ -147,6 +148,9 @@ function renderCandidate(candidate: ComponentCandidate, options: DiscoveryConten
   const specimen = preview || '<div class="discovery-preview-unavailable">Preview unavailable</div>';
   const peek = buildComponentPeekFromCandidate(candidate);
   const peekMarkup = peek && options.activePeekId === peek.id ? renderComponentPeek(peek) : '';
+  const peekAction = peek
+    ? `<button class="link-button component-peek-trigger" type="button" data-component-peek-id="${escapeHtml(peek.id)}">Quick preview</button>`
+    : '';
   const details = candidate.routeEligible && itemSlug
     ? `<button class="link-button discovery-route" type="button"
         data-view-item-registry="${escapeHtml(candidate.registry.name)}"
@@ -171,7 +175,7 @@ function renderCandidate(candidate: ComponentCandidate, options: DiscoveryConten
           item: itemSlug || 'unknown',
           queued: candidate.installAction.status === 'enabled' && options.queuedTokens.has(candidate.installAction.token),
         })}
-        <div class="discovery-actions">${details}${peekMarkup}</div>
+        <div class="discovery-actions">${peekAction}${details}${peekMarkup}</div>
         <div class="secondary-links">${docs} ${homepage}</div>
       </div>
     </article>
