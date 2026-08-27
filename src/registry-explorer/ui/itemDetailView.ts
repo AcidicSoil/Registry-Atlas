@@ -7,7 +7,7 @@ import {
   type RelatedRegistry,
 } from '../core/relatedComponents.ts';
 import type { InstallActionState, Registry, RegistryItemSummaryFile } from '../core/registry.schema.ts';
-import { escapeHtml, renderExternalLink, renderSafeExternalImage } from './renderSafety.ts';
+import { escapeHtml, renderExternalLink, renderSafeExternalImage, toSafeExternalUrl } from './renderSafety.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -59,25 +59,24 @@ function renderDetailBody(
   const fallback = result.status === 'loaded' || result.status === 'summary-only'
     ? ''
     : renderFallback(result);
+  const previewUrl = detail.previewUrl ? toSafeExternalUrl(detail.previewUrl)?.href ?? null : null;
 
   return `
     <article class="item-detail-page">
       <section class="item-detail-hero">
-        ${renderPreview(detail)}
+        ${renderPreview(detail, previewUrl)}
         <div class="item-detail-summary">
           ${detail.description ? `<p>${escapeHtml(detail.description)}</p>` : '<p class="muted">No component description is available yet.</p>'}
           <div class="item-action-row">
-            ${renderComponentPageAction(detail)}
+            ${renderComponentPageAction(detail, detail.installAction.status === 'enabled')}
             ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           </div>
           ${renderPromptActions(detail)}
-          ${renderEvaluationLabels(detail)}
+          ${renderEvaluationLabels(detail, previewUrl !== null)}
           ${renderTaxonomy(detail.taxonomyLabels)}
           ${fallback}
         </div>
       </section>
-      ${renderRelatedComponents(related)}
-      ${renderRelatedRegistries(relatedRegistries)}
       <section class="item-detail-cards" aria-label="Component details">
         ${renderListCard('Dependencies', detail.dependencies)}
         ${renderListCard('Dev dependencies', detail.devDependencies)}
@@ -85,6 +84,8 @@ function renderDetailBody(
         ${renderFilesCard(detail.files)}
         ${renderSourceCard(detail)}
       </section>
+      ${renderRelatedComponents(related)}
+      ${renderRelatedRegistries(relatedRegistries)}
     </article>
   `;
 }
@@ -99,35 +100,35 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
   `;
 }
 
-function renderPreview(detail: RegistryItemDetail): string {
-  if (detail.previewUrl) {
-    const image = renderSafeExternalImage(detail.previewUrl, `${detail.title} preview`, 'item-preview-image');
+function renderPreview(detail: RegistryItemDetail, previewUrl: string | null): string {
+  if (previewUrl) {
+    const image = renderSafeExternalImage(previewUrl, `${detail.title} preview`, 'item-preview-image');
     if (image) {
       return `
         <div class="item-preview-panel">
           ${image}
-          ${renderExternalLink(detail.previewUrl, 'Open preview', 'secondary-link')}
+          ${renderExternalLink(previewUrl, 'Open preview', 'secondary-link')}
         </div>
       `;
     }
   }
 
   return `
-    <div class="item-preview-panel item-preview-placeholder">
+    <div class="item-preview-unavailable">
       <strong>Preview unavailable</strong>
-      <span>No verified visual preview is available in the current catalog data.</span>
-      ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'install-button install-button-primary') : ''}
+      ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'secondary-link') : ''}
     </div>
   `;
 }
 
-function renderComponentPageAction(detail: RegistryItemDetail): string {
+function renderComponentPageAction(detail: RegistryItemDetail, installationEnabled: boolean): string {
+  const className = installationEnabled ? 'secondary-link' : 'install-button install-button-primary';
   if (detail.componentPageUrl) {
-    return renderExternalLink(detail.componentPageUrl, 'Open component page', 'install-button install-button-primary');
+    return renderExternalLink(detail.componentPageUrl, 'Open component page', className);
   }
 
   if (detail.registry.url) {
-    return renderExternalLink(detail.registry.url, 'Open registry homepage', 'install-button install-button-primary');
+    return renderExternalLink(detail.registry.url, 'Open registry homepage', className);
   }
 
   return '<span class="muted">Component page unavailable</span>';
@@ -155,7 +156,6 @@ function renderInstallActions(action: InstallActionState, detail: RegistryItemDe
       <button class="install-button" type="button" data-copy-text="${escapeHtml(action.inspectCommand)}" data-copy-label="Inspect command copied">Inspect first</button>
       <button class="install-button install-button-primary" type="button" data-copy-text="${escapeHtml(action.installCommand)}" data-copy-label="Install command copied">Copy install</button>
       ${queueButton}
-      <span class="install-safety-note">Copy-only. Review source before installing third-party registry code.</span>
     </div>
   `;
 }
@@ -182,15 +182,15 @@ function renderTaxonomy(labels: readonly string[]): string {
   `;
 }
 
-function renderEvaluationLabels(detail: RegistryItemDetail): string {
+function renderEvaluationLabels(detail: RegistryItemDetail, previewAvailable: boolean): string {
   const labels = [
     `${detail.dependencies.length} dependencies`,
     `${detail.registryDependencies.length} registry deps`,
     `${detail.files.length} files`,
-    detail.visualStatus === 'available' ? 'visual available' : 'preview unavailable',
+    previewAvailable ? 'visual available' : 'preview unavailable',
     detail.catalogStatus === 'available' ? 'catalog-backed' : detail.catalogStatus,
   ];
-  return `<div class="discovery-item-meta" aria-label="Component evaluation context">${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}<span>Review third-party registry code before installing.</span></div>`;
+  return `<div class="discovery-item-meta" aria-label="Component evaluation context">${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}</div>`;
 }
 
 function renderRelatedComponents(related: readonly RelatedComponent[]): string {
@@ -245,24 +245,26 @@ function renderRelatedRegistries(related: readonly RelatedRegistry[]): string {
 }
 
 function renderListCard(title: string, items: readonly string[]): string {
+  if (items.length === 0) return '';
   return `
     <section class="item-detail-card">
       <h2>${escapeHtml(title)}</h2>
-      ${items.length ? `<div class="item-dependency-list">${items.map(item => `<code>${escapeHtml(item)}</code>`).join('')}</div>` : '<p class="muted">None listed.</p>'}
+      <div class="item-dependency-list">${items.map(item => `<code>${escapeHtml(item)}</code>`).join('')}</div>
     </section>
   `;
 }
 
 function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
+  if (files.length === 0) return '';
   return `
     <section class="item-detail-card">
       <h2>Files</h2>
-      ${files.length ? `<div class="item-file-list">${files.map(file => `
+      <div class="item-file-list">${files.map(file => `
         <div>
           <code>${escapeHtml(file.path)}</code>
           <span>${escapeHtml(file.type)}${file.target ? ` → ${escapeHtml(file.target)}` : ''}</span>
         </div>
-      `).join('')}</div>` : '<p class="muted">No files listed.</p>'}
+      `).join('')}</div>
     </section>
   `;
 }

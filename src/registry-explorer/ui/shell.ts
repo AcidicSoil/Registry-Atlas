@@ -299,6 +299,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       } else {
         pinnedPeekId = id;
         setState({ activePeekId: id });
+        focusPeekTrigger(id);
       }
       return;
     }

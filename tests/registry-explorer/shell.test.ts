@@ -105,6 +105,24 @@ describe('registry explorer shell interactions', () => {
     expect(harness.history.pushes.length).toBe(pushesAfterNavigation);
   });
 
+  it('restores focus to the newly rendered quick preview trigger after activation', () => {
+    const harness = setup('?view=discover&registry=%40delta');
+    const clickedTrigger = target({
+      class: 'component-peek-trigger',
+      'data-component-peek-id': '@delta:code-block',
+    });
+    const renderedTrigger = target({
+      class: 'component-peek-trigger',
+      'data-component-peek-id': '@delta:code-block',
+    });
+    harness.contentBody.querySelectorAll = () => [renderedTrigger];
+
+    harness.contentBody.dispatch('click', clickedTrigger);
+
+    expect(renderedTrigger.focus).toHaveBeenCalledTimes(1);
+    expect(clickedTrigger.focus).not.toHaveBeenCalled();
+  });
+
   it('opens peek explicitly, dismisses it with Escape, and restores trigger focus', () => {
     const harness = setup('?view=discover&registry=%40delta');
     const trigger = target({

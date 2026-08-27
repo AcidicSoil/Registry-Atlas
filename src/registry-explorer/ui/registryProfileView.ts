@@ -172,7 +172,6 @@ function renderInstallActions(
       <button class="install-button install-button-primary" type="button" data-copy-command="${escapeHtml(action.installCommand)}">Copy install</button>
       <button class="install-button" type="button" data-copy-command="${escapeHtml(action.inspectCommand)}">Inspect first</button>
       ${queueButton}
-      <span class="install-safety-note">Copy-only. Review source before installing third-party registry code.</span>
     </div>
   `;
 }

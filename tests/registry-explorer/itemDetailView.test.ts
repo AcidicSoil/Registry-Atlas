@@ -14,12 +14,38 @@ describe('renderItemDetailView', () => {
     expect(header.innerHTML).toContain('Code Block');
     expect(body.innerHTML).toContain('Preview unavailable');
     expect(body.innerHTML).toContain('Open component page');
+    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="secondary-link"');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Copy install');
+    expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(1);
     expect(body.innerHTML).toContain('Dependencies');
     expect(body.innerHTML).toContain('<dt>Warnings</dt>');
     expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Raw JSON');
     expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Open raw item route');
+  });
+
+  it('uses the component page as the sole primary action when installation is unavailable', () => {
+    const result = resolveRegistryItemDetailFromSummary([registryFixture({ routeEligible: false })], '@delta', 'code-block');
+    const body = root();
+
+    renderItemDetailView(root(), body, result, new Set());
+
+    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="install-button install-button-primary"');
+    expect(body.innerHTML).toContain('<button class="install-button" type="button" disabled>Copy install</button>');
+    expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(1);
+  });
+
+  it.each(['javascript:alert(1)', 'not a URL'])('treats unsafe preview URLs (%s) as unavailable in both imagery and status copy', (previewUrl) => {
+    const result = resolveRegistryItemDetailFromSummary([registryFixture({ previewUrl })], '@delta', 'code-block');
+    const body = root();
+
+    renderItemDetailView(root(), body, result, new Set());
+
+    expect(body.innerHTML).toContain('Preview unavailable');
+    expect(body.innerHTML).not.toContain('<img');
+    expect(body.innerHTML).not.toContain('Open preview');
+    expect(body.innerHTML).not.toContain('visual available');
+    expect(body.innerHTML).toContain('preview unavailable');
   });
 
   it('escapes imported item text and file fields', () => {
@@ -37,6 +63,23 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).toContain('A&amp;B &lt;script&gt;alert(1)&lt;/script&gt;');
     expect(body.innerHTML).toContain('registry/&lt;bad&gt;.tsx');
     expect(body.innerHTML).not.toContain('<script>alert(1)</script>');
+  });
+
+  it('omits empty technical groups and puts source details before recommendations', () => {
+    const registry = registryFixture({ emptyTechnicalDetails: true });
+    const result = resolveRegistryItemDetailFromSummary([registry, relatedRegistryFixture()], '@delta', 'code-block');
+    const body = root();
+
+    renderItemDetailView(root(), body, result, new Set(), [registry, relatedRegistryFixture()]);
+
+    expect(body.innerHTML).not.toContain('<h2>Dependencies</h2>');
+    expect(body.innerHTML).not.toContain('<h2>Dev dependencies</h2>');
+    expect(body.innerHTML).not.toContain('<h2>Registry dependencies</h2>');
+    expect(body.innerHTML).not.toContain('<h2>Files</h2>');
+    expect(body.innerHTML).toContain('<h2>Source context</h2>');
+    expect(body.innerHTML).not.toContain('Review third-party registry code before installing.');
+    expect(body.innerHTML).not.toContain('install-safety-note');
+    expect(body.innerHTML.indexOf('Source context')).toBeLessThan(body.innerHTML.indexOf('Similar patterns'));
   });
 
   it('renders safe fallback states for failed detail loading', () => {
@@ -63,7 +106,7 @@ function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;
 }
 
-function registryFixture(options: { title?: string; description?: string; filePath?: string; previewUrl?: string } = {}): Registry {
+function registryFixture(options: { title?: string; description?: string; filePath?: string; previewUrl?: string; emptyTechnicalDetails?: boolean; routeEligible?: boolean } = {}): Registry {
   return {
     name: '@delta',
     url: 'https://delta.example',
@@ -99,14 +142,16 @@ function registryFixture(options: { title?: string; description?: string; filePa
         provenance: 'fixture',
         catalogStatus: 'available',
         confidence: 'high',
-        routeEligible: true,
+        routeEligible: options.routeEligible ?? true,
         rawItemUrl: 'https://delta.example/r/code-block.json',
         docsUrl: 'https://delta.example/components/code-block',
         previewUrl: options.previewUrl,
         evidenceUrl: 'https://delta.example/evidence',
         warnings: ['review generated styles'],
-        dependencies: ['shiki'],
-        files: [{ path: options.filePath ?? 'registry/code-block.tsx', type: 'registry:ui', target: 'components/code-block.tsx' }],
+        dependencies: options.emptyTechnicalDetails ? [] : ['shiki'],
+        devDependencies: [],
+        registryDependencies: [],
+        files: options.emptyTechnicalDetails ? [] : [{ path: options.filePath ?? 'registry/code-block.tsx', type: 'registry:ui', target: 'components/code-block.tsx' }],
       },
     ],
   };
