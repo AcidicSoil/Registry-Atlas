@@ -19,10 +19,6 @@ export function renderCompareContent(
 
   bodyRoot.innerHTML = `
     <section class="compare-controls" aria-label="Compare registries">
-      <div class="compare-heading">
-        <h2>Compare registries</h2>
-        <p>Choose registries and component capabilities. Verification remains visible in every cell.</p>
-      </div>
       ${renderRegistryControls(model, selection, searchTerms.registry)}
       ${renderComponentControls(model, selection, searchTerms.component)}
     </section>

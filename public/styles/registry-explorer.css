@@ -166,12 +166,6 @@ h2 {
   text-transform: uppercase;
 }
 
-.brand-subtitle {
-  color: var(--muted-foreground);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
 
 .header-right {
   display: flex;
@@ -1080,11 +1074,6 @@ aside {
   background: transparent;
 }
 
-.compare-heading p {
-  margin-bottom: 0;
-  color: var(--muted-foreground);
-  font-size: 13px;
-}
 
 .compare-control-group {
   display: grid;
@@ -1345,17 +1334,6 @@ aside {
   color: var(--muted-foreground);
 }
 
-.component-peek-popover {
-  position: absolute;
-  z-index: 20;
-  right: 0;
-  width: min(360px, calc(100vw - 32px));
-  margin-top: var(--space-2);
-  padding: var(--space-3);
-  border: 1px solid var(--input);
-  border-radius: var(--radius-card);
-  background: var(--popover);
-}
 
 .component-peek-title {
   margin-bottom: var(--space-2);
@@ -1495,11 +1473,6 @@ aside {
 @media (max-width: 640px) {
   .app-inner {
     padding: var(--space-4) var(--space-3) var(--space-5);
-  }
-
-  .brand-subtitle {
-    max-width: 24ch;
-    white-space: normal;
   }
 
   .primary-nav {

@@ -38,7 +38,7 @@ describe('compare', () => {
       componentKeys: ['button', 'table'],
     });
 
-    expect(body.innerHTML).toContain('Compare registries');
+    expect(body.innerHTML).toContain('aria-label="Compare registries"');
     expect(body.innerHTML).toContain('Verification');
     expect(body.innerHTML).toContain('@alpha');
     expect(body.innerHTML).toContain('data-compare-registry');

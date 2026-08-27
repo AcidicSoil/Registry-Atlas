@@ -62,13 +62,11 @@ export function renderDiscoveryContent(
   headerRoot: HTMLElement,
   bodyRoot: HTMLElement,
   candidates: readonly ComponentCandidate[],
-  overview: DiscoveryOverview,
   options: DiscoveryContentOptions,
 ): void {
   headerRoot.innerHTML = `
     <div>
       <h1>Discover components</h1>
-      <p>Search components and registries across ${overview.totalRegistries} mirrored sources.</p>
       <button class="link-button" type="button" data-copy-current-url data-copy-label="Search link copied">Copy search link</button>
     </div>
   `;

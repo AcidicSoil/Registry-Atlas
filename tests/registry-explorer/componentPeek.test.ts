@@ -21,7 +21,7 @@ describe('componentPeek', () => {
 
     const html = model ? renderComponentPeek(model) : '';
 
-    expect(html).toContain('Preview not available yet');
+    expect(html).toContain('Preview unavailable');
     expect(html).toContain('component-peek-unavailable');
     expect(html).not.toContain('component-peek-placeholder');
     expect(html).toContain('Open component page');

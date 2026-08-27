@@ -22,7 +22,7 @@ export function renderRegistryProfile(
       <button class="link-button" type="button" data-copy-current-url data-copy-label="Profile link copied">Copy profile link</button>
       <div class="profile-chips">
         <span class="status-chip status-${escapeHtml(registry.atlas?.coverageStatus ?? 'unverified')}">${escapeHtml(profileCoverage(profile))}</span>
-        <span>${escapeHtml(String(registry.mirror?.warnings.length ?? 0))} warning(s)</span>
+        ${(registry.mirror?.warnings.length ?? 0) > 0 ? `<span>${escapeHtml(String(registry.mirror?.warnings.length))} warning(s)</span>` : ''}
       </div>
     </div>
   `;

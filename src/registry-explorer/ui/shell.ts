@@ -252,7 +252,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
             applyCatalogFacetsToCandidates(candidates, state.selectedFacets),
             state.sort,
           ),
-          buildDiscoveryOverview(registries),
           {
             searchTerm: state.searchTerm,
             facetGroups: groups,
@@ -302,7 +301,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const syncedAt = escapeHtml(options.mirrorMeta.synced_at);
       roots.contentHeader.insertAdjacentHTML(
         'beforeend',
-        `<div class="mirror-status"><span>Source: ${source}</span><span>Synced ${syncedAt}</span><span>${options.mirrorMeta.local_count} / ${options.mirrorMeta.upstream_count} registries mirrored</span><span>Review: ${escapeHtml(options.mirrorMeta.validation_status)}</span><span>${options.mirrorWarnings.length} warning(s)</span></div>`,
+        `<div class="mirror-status"><span>Source: ${source}</span><span>Synced ${syncedAt}</span><span>${options.mirrorMeta.local_count} / ${options.mirrorMeta.upstream_count} mirrored</span>${options.mirrorMeta.validation_status !== 'valid' ? `<span>Review: ${escapeHtml(options.mirrorMeta.validation_status)}</span>` : ''}${options.mirrorWarnings.length > 0 ? `<span>${options.mirrorWarnings.length} warning(s)</span>` : ''}</div>`,
       );
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);

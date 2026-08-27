@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type {
   ComponentCandidate,
-  DiscoveryOverview,
   Registry,
 } from '../../src/registry-explorer/core/registry.schema';
 import type { CatalogFacetGroup } from '../../src/registry-explorer/core/catalogFacets';
@@ -12,7 +11,7 @@ describe('renderDiscoveryContent', () => {
     const header = root();
     const body = root();
 
-    renderDiscoveryContent(header, body, [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(header, body, [candidateFixture()], {
       searchTerm: '',
       facetGroups: facetGroups(),
       selectedFacets: [],
@@ -35,7 +34,7 @@ describe('renderDiscoveryContent', () => {
 
   it('renders selected facet chips and Clear all', () => {
     const body = root();
-    renderDiscoveryContent(root(), body, [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
       searchTerm: 'button',
       facetGroups: facetGroups(),
       selectedFacets: [{ dimension: 'component', value: 'button', label: 'Button' }],
@@ -52,7 +51,7 @@ describe('renderDiscoveryContent', () => {
 
   it('exposes selected facet options and removal labels', () => {
     const body = root();
-    renderDiscoveryContent(root(), body, [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
       searchTerm: '',
       facetGroups: facetGroups(),
       selectedFacets: [{ dimension: 'category', value: 'developer-tools', label: 'Developer Tools' }],
@@ -66,7 +65,7 @@ describe('renderDiscoveryContent', () => {
   });
   it('renders real previews and a neutral unavailable state', () => {
     const withPreviewBody = root();
-    renderDiscoveryContent(root(), withPreviewBody, [candidateFixture({ previewUrl: 'https://example.com/button.png' })], overviewFixture(), {
+    renderDiscoveryContent(root(), withPreviewBody, [candidateFixture({ previewUrl: 'https://example.com/button.png' })], {
       searchTerm: '',
       facetGroups: facetGroups(),
       selectedFacets: [],
@@ -78,7 +77,7 @@ describe('renderDiscoveryContent', () => {
     expect(withPreviewBody.innerHTML).toContain('https://example.com/button.png');
 
     const withoutPreviewBody = root();
-    renderDiscoveryContent(root(), withoutPreviewBody, [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(root(), withoutPreviewBody, [candidateFixture()], {
       searchTerm: '',
       facetGroups: facetGroups(),
       selectedFacets: [],
@@ -94,7 +93,7 @@ describe('renderDiscoveryContent', () => {
   it('keeps unavailable result previews compact and removes repeated safety prose', () => {
     const body = root();
 
-    renderDiscoveryContent(root(), body, [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
       searchTerm: '',
       facetGroups: [],
       selectedFacets: [],
@@ -116,7 +115,7 @@ describe('renderDiscoveryContent', () => {
   it('keeps one details route when quick preview is active', () => {
     const body = root();
 
-    renderDiscoveryContent(root(), body, [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
       searchTerm: '',
       facetGroups: [],
       selectedFacets: [],
@@ -133,7 +132,7 @@ describe('renderDiscoveryContent', () => {
     const header = root();
     const body = root();
 
-    renderDiscoveryContent(header, body, [candidateFixture({ installEnabled: true })], overviewFixture(), {
+    renderDiscoveryContent(header, body, [candidateFixture({ installEnabled: true })], {
       searchTerm: '',
       facetGroups: [],
       selectedFacets: [],
@@ -161,7 +160,7 @@ describe('renderDiscoveryContent', () => {
 
   it('offers a current URL copy action for discovery state', () => {
     const header = root();
-    renderDiscoveryContent(header, root(), [candidateFixture()], overviewFixture(), {
+    renderDiscoveryContent(header, root(), [candidateFixture()], {
       searchTerm: 'button', facetGroups: [], selectedFacets: [], sort: 'relevance', queuedTokens: new Set(), activePeekId: null,
     });
     expect(header.innerHTML).toContain('data-copy-current-url');
@@ -170,16 +169,6 @@ describe('renderDiscoveryContent', () => {
 
 function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;
-}
-
-function overviewFixture(): DiscoveryOverview {
-  return {
-    totalRegistries: 1,
-    knownItemCount: 1,
-    routeEligibleItemCount: 1,
-    verifiedRegistryCount: 1,
-    unverifiedRegistryCount: 0,
-  };
 }
 
 function facetGroups(): CatalogFacetGroup[] {

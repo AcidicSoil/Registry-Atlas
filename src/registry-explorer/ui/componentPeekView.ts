@@ -19,7 +19,7 @@ export function renderComponentPeek(peek: ComponentPeekViewModel): string {
     `
     : `
       <div class="component-peek-unavailable">
-        <strong>Preview not available yet</strong>
+        <strong>Preview unavailable</strong>
         ${componentPageUrl
           ? renderExternalLink(componentPageUrl, 'Open component page', 'install-button install-button-primary')
           : '<span class="muted">Preview unavailable</span>'}
