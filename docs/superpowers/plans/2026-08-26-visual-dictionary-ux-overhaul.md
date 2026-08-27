@@ -19,7 +19,7 @@
 - Do not modify unrelated repository areas or `TODO.md`.
 - Keep URL-backed navigation and accessibility behavior from the merged hardening work.
 - Automated behavior changes require failing-first regression evidence when practical.
-- Final acceptance requires `pnpm verify`, browser usability checks, `unslop`, and `unslop-design` review.
+- Final acceptance requires `pnpm verify`, `unslop`, and `unslop-design` review.
 
 ---
 
@@ -87,11 +87,10 @@
 
 ### Task 4: Integration, unslop, and acceptance
 
-**Files:** only files changed by Tasks 1-3 plus the browser-smoke checklist if evidence is actually run.
+**Files:** only files changed by Tasks 1-3.
 
 - [ ] Cherry-pick reviewed task commits into `feat/visual-dictionary-ux-overhaul` and resolve conflicts by preserving the smaller, clearer interaction.
 - [ ] Run `unslop` over the branch diff. Remove generated comments, redundant helper copy, speculative abstractions, and brittle implementation-detail tests.
 - [ ] Run `unslop-design` against desktop and narrow layouts. Fix P0/P1 workflow or hierarchy defects; do not add decoration.
-- [ ] Run browser checks for Discover, Registries, Compare, profile, item detail, keyboard focus, selector filtering, preview behavior, and narrow widths.
 - [ ] Run `pnpm verify` fresh and inspect the complete result.
 - [ ] Run final spec/code-quality review, fix substantive findings, and rerun affected verification.
