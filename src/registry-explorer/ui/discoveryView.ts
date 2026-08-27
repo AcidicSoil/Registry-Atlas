@@ -62,13 +62,11 @@ export function renderDiscoveryContent(
   headerRoot: HTMLElement,
   bodyRoot: HTMLElement,
   candidates: readonly ComponentCandidate[],
-  overview: DiscoveryOverview,
   options: DiscoveryContentOptions,
 ): void {
   headerRoot.innerHTML = `
     <div>
       <h1>Discover components</h1>
-      <p>Search components and registries across ${overview.totalRegistries} mirrored sources.</p>
       <button class="link-button" type="button" data-copy-current-url data-copy-label="Search link copied">Copy search link</button>
     </div>
   `;
@@ -145,7 +143,7 @@ function renderCandidate(candidate: ComponentCandidate, options: DiscoveryConten
   const preview = candidate.previewUrl
     ? renderSafeExternalImage(candidate.previewUrl, `${itemLabel} preview`, 'discovery-preview-image')
     : '';
-  const specimen = preview || '<div class="discovery-preview-unavailable">Preview unavailable</div>';
+  const specimen = preview ? `<div class="discovery-specimen">${preview}</div>` : '';
   const peek = buildComponentPeekFromCandidate(candidate);
   const peekMarkup = peek && options.activePeekId === peek.id ? renderComponentPeek(peek) : '';
   const peekAction = peek
@@ -161,14 +159,13 @@ function renderCandidate(candidate: ComponentCandidate, options: DiscoveryConten
 
   return `
     <article class="discovery-card ${selected ? 'selected' : ''}" data-candidate-id="${escapeHtml(candidate.id)}">
-      <div class="discovery-specimen">${specimen}</div>
+      ${specimen}
       <div class="discovery-card-body">
         <div class="discovery-title">${escapeHtml(candidate.matchedLabel)}</div>
         <button class="registry-namespace" type="button" data-profile-registry="${escapeHtml(candidate.registry.name)}">
           ${escapeHtml(candidate.registry.name)}
         </button>
         ${candidate.itemDescription ? `<p class="discovery-description">${escapeHtml(candidate.itemDescription)}</p>` : ''}
-        <div class="discovery-reason"><strong>Why this matched:</strong> ${escapeHtml(candidate.matchReasons[0] ?? candidate.matchedField)}</div>
         ${renderInstallActions(candidate.installAction, {
           label: itemLabel,
           registry: candidate.registry.name,
@@ -207,7 +204,6 @@ function renderInstallActions(
       <button class="install-button install-button-primary" type="button" data-copy-text="${escapeHtml(action.installCommand)}" data-copy-label="Install command copied">Copy install</button>
       <button class="install-button" type="button" data-copy-text="${escapeHtml(action.inspectCommand)}" data-copy-label="Inspect command copied">Inspect first</button>
       ${queueButton}
-      <span class="install-safety-note">Copy-only. Review third-party registry code before installing.</span>
     </div>
   `;
 }

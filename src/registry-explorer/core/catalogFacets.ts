@@ -7,7 +7,9 @@ import {
   componentTaxonomyEntry,
   taxonomyTagsForValues,
 } from './componentTaxonomy.ts';
+import { buildRegistryBrowseEntries } from './registryBrowse.ts';
 import { COMPONENT_TAG_VALUES } from './registry.schema.ts';
+import type { RegistryBrowseEntry } from './registryBrowse.ts';
 import type { CatalogCategory } from './catalogTaxonomy.ts';
 import type { ComponentCandidate, ComponentTag, Registry, RegistryProfileItemRow } from './registry.schema.ts';
 
@@ -67,6 +69,47 @@ export function buildCatalogFacetGroups(
   }));
 }
 
+export function buildRegistryFacetGroups(
+  registries: readonly Registry[],
+  searchTerm: string,
+  selectedFacets: readonly SelectedCatalogFacet[],
+): CatalogFacetGroup[] {
+  const currentCounts = countsForBrowseEntries(
+    buildRegistryBrowseEntries(registries, searchTerm, []),
+  );
+  const allCounts = searchTerm.trim()
+    ? countsForBrowseEntries(buildRegistryBrowseEntries(registries, '', []))
+    : currentCounts;
+
+  selectedFacets.forEach(facet => {
+    const currentDimensionCounts = currentCounts.get(facet.dimension) ?? new Map<string, number>();
+    if (currentDimensionCounts.has(facet.value)) return;
+    currentDimensionCounts.set(
+      facet.value,
+      allCounts.get(facet.dimension)?.get(facet.value) ?? 0,
+    );
+    currentCounts.set(facet.dimension, currentDimensionCounts);
+  });
+
+  return (Object.keys(GROUP_LABELS) as CatalogFacetDimension[]).map(dimension => ({
+    dimension,
+    label: GROUP_LABELS[dimension],
+    options: toOptions(dimension, currentCounts.get(dimension)),
+  }));
+}
+
+function countsForBrowseEntries(
+  entries: readonly RegistryBrowseEntry[],
+): Map<CatalogFacetDimension, Map<string, number>> {
+  const counts = new Map<CatalogFacetDimension, Map<string, number>>();
+  entries.forEach(entry => {
+    entry.categories.forEach(category => addValue(counts, 'category', category));
+    entry.components.forEach(component => addValue(counts, 'component', component));
+    addValue(counts, 'registry', entry.registry.name);
+  });
+  return counts;
+}
+
 export function applyCatalogFacetsToCandidates(
   candidates: readonly ComponentCandidate[],
   selected: readonly SelectedCatalogFacet[],
@@ -97,11 +140,15 @@ export function createSelectedCatalogFacet(
 
 export function applyCatalogFacetsToProfileRows(rows: readonly RegistryProfileItemRow[], selected: readonly SelectedCatalogFacet[]): RegistryProfileItemRow[] {
   if (selected.length === 0) return [...rows];
-  return rows.filter(row => selected.every(facet => {
-    if (facet.dimension === 'registry') return true;
-    if (facet.dimension === 'category') return row.taxonomyCategoryLabels?.some(label => CATALOG_CATEGORY_LABELS[facet.value as CatalogCategory] === label) ?? false;
-    return [...(row.taxonomyTagLabels ?? []), ...(row.taxonomyCategoryLabels ?? [])].some(label => normalizeFacetValue(label) === normalizeFacetValue(facet.label));
-  }));
+  const byDimension = new Map<CatalogFacetDimension, SelectedCatalogFacet[]>();
+  selected.forEach(facet => byDimension.set(facet.dimension, [...(byDimension.get(facet.dimension) ?? []), facet]));
+  return rows.filter(row => [...byDimension.entries()].every(([dimension, facets]) =>
+    facets.some(facet => {
+      if (dimension === 'registry') return true;
+      if (dimension === 'category') return row.taxonomyCategoryLabels?.some(label => CATALOG_CATEGORY_LABELS[facet.value as CatalogCategory] === label) ?? false;
+      return [...(row.taxonomyTagLabels ?? []), ...(row.taxonomyCategoryLabels ?? [])].some(label => normalizeFacetValue(label) === normalizeFacetValue(facet.label));
+    }),
+  ));
 }
 
 function addValue(

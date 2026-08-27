@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   applyCatalogFacetsToCandidates,
+  applyCatalogFacetsToProfileRows,
   buildCatalogFacetGroups,
+  buildRegistryFacetGroups,
   createSelectedCatalogFacet,
 } from '../../src/registry-explorer/core/catalogFacets';
 import type { SelectedCatalogFacet } from '../../src/registry-explorer/core/catalogFacets';
@@ -43,6 +45,50 @@ describe('catalog facets', () => {
       'component',
       'button',
     )).toEqual({ dimension: 'component', value: 'button', label: 'Button' });
+  });
+
+  it('builds registry facets from one browse row per registry, including item-only tags', () => {
+    const itemOnly = registryFixture('@item-only', ['forms-and-inputs'], [
+      { name: 'Button', slug: 'button', tag: 'button' },
+      { name: 'Table', slug: 'table', tag: 'table' },
+    ]);
+    itemOnly.component_tags = ['button'];
+
+    const groups = buildRegistryFacetGroups([itemOnly], '', []);
+    const componentOptions = groups.find(group => group.dimension === 'component')?.options ?? [];
+    const categoryOptions = groups.find(group => group.dimension === 'category')?.options ?? [];
+    const registryOptions = groups.find(group => group.dimension === 'registry')?.options ?? [];
+
+    expect(componentOptions.find(option => option.value === 'button')?.count).toBe(1);
+    expect(componentOptions.find(option => option.value === 'table')?.count).toBe(1);
+    expect(categoryOptions.find(option => option.value === 'forms-and-inputs')?.count).toBe(1);
+    expect(registryOptions.find(option => option.value === '@item-only')?.count).toBe(1);
+  });
+
+  it('keeps selected registry options when global search removes their browse row', () => {
+    const { registries } = fixtures();
+    const selected = [facet('registry', '@gamma')];
+
+    const groups = buildRegistryFacetGroups(registries, '@delta', selected);
+    const options = groups.find(group => group.dimension === 'registry')?.options ?? [];
+
+    expect(options.find(option => option.value === '@gamma')).toMatchObject({ count: 1 });
+  });
+
+  it('uses OR semantics within profile dimensions and AND semantics across dimensions', () => {
+    const rows = [
+      { taxonomyTagLabels: ['Button'], taxonomyCategoryLabels: ['Forms & Inputs'] },
+      { taxonomyTagLabels: ['Input'], taxonomyCategoryLabels: ['Forms & Inputs'] },
+      { taxonomyTagLabels: ['Button'], taxonomyCategoryLabels: ['Data Display'] },
+    ] as unknown as Parameters<typeof applyCatalogFacetsToProfileRows>[0];
+
+    const result = applyCatalogFacetsToProfileRows(rows, [
+      facet('component', 'button'),
+      facet('component', 'input'),
+      facet('category', 'forms-and-inputs'),
+    ]);
+
+    expect(result).toHaveLength(2);
   });
 
   it('does not expose or match raw type, preview, or catalog status metadata', () => {

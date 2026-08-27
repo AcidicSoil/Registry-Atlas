@@ -2,18 +2,12 @@
 <html lang="en">
 <head>
   <script type="module">
-      // first npm i react-grab
-      // then in head:
-      if (import.meta.env.DEV) {
-        import("react-grab");
-      }
-    </script>
+    if (import.meta.env.DEV) import("react-grab");
+  </script>
   <meta charset="UTF-8" />
   <title>Registry Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Optional: custom font -->
-  <!-- <link href="https://fonts.googleapis.com/css2?family=Chivo:wght@300;400;600;700&display=swap" rel="stylesheet"> -->
 
   <link rel="stylesheet" href="/styles/registry-explorer.css" />
 </head>
@@ -27,7 +21,6 @@
           </div>
           <div class="brand-text">
             <div class="brand-title">Registry Atlas</div>
-            <div class="brand-subtitle">Shadcn-Based Component Index</div>
           </div>
         </div>
         <div class="header-right">

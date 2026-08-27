@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildCompareModel } from '../../src/registry-explorer/core/compare';
 import { MATRIX_COLUMNS } from '../../src/registry-explorer/core/matrixColumns';
+import { COMPONENT_TAG_VALUES } from '../../src/registry-explorer/core/registry.schema';
 import type { ComponentTag, Registry } from '../../src/registry-explorer/core/registry.schema';
 import { renderCompareContent } from '../../src/registry-explorer/ui/compareView';
 
@@ -37,7 +38,7 @@ describe('compare', () => {
       componentKeys: ['button', 'table'],
     });
 
-    expect(body.innerHTML).toContain('Compare registries');
+    expect(body.innerHTML).toContain('aria-label="Compare registries"');
     expect(body.innerHTML).toContain('Verification');
     expect(body.innerHTML).toContain('@alpha');
     expect(body.innerHTML).toContain('data-compare-registry');
@@ -46,8 +47,64 @@ describe('compare', () => {
     expect(body.innerHTML).toMatch(/<th scope="col">[^<]*button[^<]*<\/th>/i);
     expect(header.innerHTML).toContain('data-copy-current-url');
     expect(body.innerHTML).not.toContain('Matrix axes');
+
+    const defaults = { registryNames: [], componentKeys: [] };
+    renderCompareContent(header, body, buildCompareModel(registries(), '', defaults), defaults);
+    expect(body.innerHTML).toContain(`All matching registries (${registries().length})`);
+    expect(body.innerHTML).toContain(`Default capabilities (${MATRIX_COLUMNS.length})`);
+    expect(body.innerHTML).not.toContain('All capabilities');
+    expect(body.innerHTML).toContain('tabindex="0"');
+    expect(body.innerHTML).toContain('aria-label="Comparison results"');
+
+    const manyRegistries = Array.from({ length: 30 }, (_, index) =>
+      registry(`@registry-${index}`, ['button'], 'verified'),
+    );
+    renderCompareContent(
+      header,
+      body,
+      buildCompareModel(manyRegistries, '', defaults),
+      defaults,
+      { registry: 'registry-2' },
+    );
+    expect(body.innerHTML).toContain('data-compare-search="registry"');
+    expect((body.innerHTML.match(/data-compare-registry=/g) ?? []).length).toBeLessThanOrEqual(24);
+  });
+
+  it('distinguishes stale registry selections from all matching registries', () => {
+    const selection = { registryNames: ['@missing'], componentKeys: [] };
+    const header = root();
+    const body = root();
+    renderCompareContent(header, body, buildCompareModel(registries(), '', selection), selection);
+
+    expect(body.innerHTML).toContain('No selected registries match');
+    expect(body.innerHTML).not.toContain('All matching registries');
+  });
+
+  it('renders every selected component while capping only unselected matches', () => {
+    const available = [...COMPONENT_TAG_VALUES.slice(0, 50)];
+    const selection = {
+      registryNames: [],
+      componentKeys: available.slice(0, 25),
+    };
+    const header = root();
+    const body = root();
+
+    renderCompareContent(
+      header,
+      body,
+      buildCompareModel([registry('@many', available, 'verified')], '', selection),
+      selection,
+    );
+
+    expect((body.innerHTML.match(/data-compare-component=/g) ?? []).length).toBe(25);
+    expect(body.innerHTML).toContain('25 capabilities selected');
+    expect(body.innerHTML).not.toContain('All capabilities');
+    available.slice(0, 25).forEach(key => {
+      expect(body.innerHTML).toContain(`data-compare-component="${key}"`);
+    });
   });
 });
+
 
 function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;

@@ -1,7 +1,6 @@
 import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
 
-// Wait for DOM
 async function bootstrap() {
   try {
     const aside = document.getElementById('aside');
@@ -12,7 +11,7 @@ async function bootstrap() {
 
     if (aside && contentHeader && contentBody && searchInput && tabs.length) {
       contentBody.innerHTML = `
-        <div class="empty-state">
+        <div class="empty-state" role="status" aria-live="polite">
           <div class="empty-state-icon">...</div>
           <div>Loading registry mirror...</div>
         </div>
@@ -41,7 +40,7 @@ async function bootstrap() {
 
     if (contentBody) {
       contentBody.innerHTML = `
-        <div class="empty-state">
+        <div class="empty-state" role="alert">
           <div class="empty-state-icon">!</div>
           <div>Registry mirror data is unavailable.</div>
           <div>Run pnpm sync:registries and pnpm validate:data, then reload.</div>

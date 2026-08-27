@@ -21,9 +21,11 @@ describe('componentPeek', () => {
 
     const html = model ? renderComponentPeek(model) : '';
 
-    expect(html).toContain('Preview not available yet');
+    expect(html).toContain('Preview unavailable');
+    expect(html).toContain('component-peek-unavailable');
+    expect(html).not.toContain('component-peek-placeholder');
     expect(html).toContain('Open component page');
-    expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).not.toContain('data-view-item-registry');
     expect(html).toContain('id="component-peek-%40delta%3Acode-block"');
     expect(html).toContain('role="region"');
     expect(html).not.toContain('role="dialog"');
@@ -34,6 +36,29 @@ describe('componentPeek', () => {
     expect(html).not.toContain('<iframe');
   });
 
+
+  it('renders the preview inline instead of as an overlay popover', () => {
+    const model = buildComponentPeekFromCandidate(candidateFixture({ previewUrl: undefined }));
+    expect(model).not.toBeNull();
+
+    const html = model ? renderComponentPeek(model) : '';
+
+    expect(html).toContain('class="component-peek-inline"');
+    expect(html).not.toContain('class="component-peek-popover"');
+    expect(html).not.toContain('role="dialog"');
+  });
+
+  it.each(['javascript:alert(1)', 'not a URL'])('treats an unsafe preview URL (%s) as unavailable', (previewUrl) => {
+    const model = buildComponentPeekFromCandidate(candidateFixture({ previewUrl }));
+    expect(model).not.toBeNull();
+
+    const html = model ? renderComponentPeek(model) : '';
+
+    expect(html).toContain('component-peek-unavailable');
+    expect(html).not.toContain('component-peek-visual');
+    expect(html).not.toContain('Open preview');
+    expect(html).toContain('Open component page');
+  });
 
   it('keeps preview and component-page actions distinct', () => {
     const model = buildComponentPeekFromCandidate(candidateFixture({ previewUrl: 'https://delta.example/preview.png' }));

@@ -22,7 +22,32 @@ describe('renderRegistryProfile', () => {
     expect(body.innerHTML).not.toContain('high confidence');
     expect(body.innerHTML).toContain('data-facet-add-dimension');
     expect(body.innerHTML).not.toContain('data-filter-add-dimension');
-    expect(header.innerHTML).toContain('data-copy-current-url');
+    expect(header.innerHTML).toContain('data-copy-current-url data-copy-label="Profile link copied"');
+  });
+
+  it('preserves enabled shell action contracts with exact values', () => {
+    const body = root();
+
+    renderRegistryProfile(body, body, buildRegistryProfile(fixture()), new Set());
+
+    expect(body.innerHTML).toContain('data-copy-command="npx shadcn@latest add @delta/code-block"');
+    expect(body.innerHTML).toContain('data-copy-command="npx shadcn@latest view @delta/code-block"');
+    expect(body.innerHTML).toContain('data-queue-add="@delta/code-block"');
+    expect(body.innerHTML).toContain('data-queue-label="Code Block"');
+    expect(body.innerHTML).toContain('data-queue-registry="@delta"');
+    expect(body.innerHTML).toContain('data-queue-item="code-block"');
+    expect(body.innerHTML).toContain('data-queue-install="npx shadcn@latest add @delta/code-block"');
+    expect(body.innerHTML).toContain('data-queue-inspect="npx shadcn@latest view @delta/code-block"');
+    expect(body.innerHTML).toContain('data-queue-route="https://delta.example/r/code-block.json"');
+    expect(body.innerHTML).toContain('data-view-item-registry="@delta"');
+    expect(body.innerHTML).toContain('data-view-item-slug="code-block"');
+    expect(body.innerHTML).not.toContain('install-actions-disabled');
+    expect(body.innerHTML).not.toMatch(/<button[^>]+disabled/);
+    expect(body.innerHTML).toContain('Copy install');
+    expect(body.innerHTML).toContain('Inspect first');
+    expect(body.innerHTML).toContain('Add to queue');
+    expect(body.innerHTML).toContain('Quick preview');
+    expect(body.innerHTML).toContain('View details');
   });
 
   it('exposes selected facet options and removal labels', () => {

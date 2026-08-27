@@ -65,6 +65,80 @@ describe('registry explorer shell interactions', () => {
 
     expect(harness.searchInput.value).toBe('table');
     expect(harness.contentHeader.innerHTML).toContain('<h1>Compare</h1>');
+    expect(harness.tabs[2].getAttribute('aria-current')).toBe('page');
+  });
+
+  it('toggles a selected facet off from the same option button and retains focus', () => {
+    const harness = setup('?view=discover');
+    const facet = target({
+      'data-facet-add-dimension': 'component',
+      'data-facet-add-value': 'code-block',
+    });
+    const replacement = target({
+      'data-facet-add-dimension': 'component',
+      'data-facet-add-value': 'code-block',
+    });
+    harness.contentBody.querySelectorAll = selector =>
+      selector.includes('[data-facet-add-dimension]') ? [replacement] : [];
+
+    harness.contentBody.dispatch('click', facet);
+    expect(harness.contentBody.innerHTML).toContain('aria-pressed="true"');
+    expect(replacement.focus).toHaveBeenCalled();
+
+    harness.contentBody.dispatch('click', facet);
+    expect(harness.contentBody.innerHTML).toContain('aria-pressed="false"');
+  });
+
+  it('retains focus while toggling a Compare option twice', () => {
+    const harness = setup('?view=compare');
+    const option = target({ 'data-compare-registry': '@delta' });
+    const replacement = target({ 'data-compare-registry': '@delta' });
+    harness.contentBody.querySelectorAll = selector =>
+      selector.includes('[data-compare-registry]') ? [replacement] : [];
+
+    harness.contentBody.dispatch('click', option);
+    expect(replacement.focus).toHaveBeenCalled();
+    expect(harness.contentBody.innerHTML).toContain('aria-pressed="true"');
+
+    harness.contentBody.dispatch('click', option);
+    expect(harness.contentBody.innerHTML).toContain('aria-pressed="false"');
+  });
+
+  it('retains focus when removing an active facet filter', () => {
+    const harness = setup('?view=registries&component=code-block');
+    const remove = target({
+      'data-facet-remove-dimension': 'component',
+      'data-facet-remove-value': 'code-block',
+    });
+    const replacement = target({
+      'data-facet-remove-dimension': 'component',
+      'data-facet-remove-value': 'code-block',
+    });
+    harness.contentBody.querySelectorAll = selector =>
+      selector.includes('[data-facet-remove-dimension]') ? [replacement] : [];
+
+    harness.contentBody.dispatch('click', remove);
+
+    expect(replacement.focus).toHaveBeenCalled();
+  });
+
+  it('preserves opened and deliberately closed facet disclosure through popstate rerenders', () => {
+    const harness = setup('?view=registries');
+    const group = details('registries:component');
+    harness.contentBody.querySelectorAll = selector =>
+      selector.includes('[data-facet-group]') ? [group] : [];
+
+    group.open = true;
+    const popstate = harness.windowListeners.get('popstate')?.[0];
+    popstate?.({ state: null });
+    expect(group.open).toBe(true);
+
+    group.open = false;
+    group.dispatch('toggle', {});
+    harness.searchInput.value = 'delta';
+    harness.searchInput.dispatch('input', {});
+
+    expect(group.open).toBe(false);
   });
 
   it('keeps registry profiles deep-linkable from Registries', () => {
@@ -103,6 +177,24 @@ describe('registry explorer shell interactions', () => {
     harness.searchInput.value = 'button';
     harness.searchInput.dispatch('input', {});
     expect(harness.history.pushes.length).toBe(pushesAfterNavigation);
+  });
+
+  it('restores focus to the newly rendered quick preview trigger after activation', () => {
+    const harness = setup('?view=discover&registry=%40delta');
+    const clickedTrigger = target({
+      class: 'component-peek-trigger',
+      'data-component-peek-id': '@delta:code-block',
+    });
+    const renderedTrigger = target({
+      class: 'component-peek-trigger',
+      'data-component-peek-id': '@delta:code-block',
+    });
+    harness.contentBody.querySelectorAll = () => [renderedTrigger];
+
+    harness.contentBody.dispatch('click', clickedTrigger);
+
+    expect(renderedTrigger.focus).toHaveBeenCalledTimes(1);
+    expect(clickedTrigger.focus).not.toHaveBeenCalled();
   });
 
   it('opens peek explicitly, dismisses it with Escape, and restores trigger focus', () => {
@@ -237,8 +329,16 @@ function root(): FakeRoot {
 }
 
 function tab(view: string) {
-  const item = root() as FakeRoot & { getAttribute: (name: string) => string | null; classList: { toggle: () => void } };
-  item.getAttribute = name => name === 'data-view' ? view : null;
+  const attrs: Record<string, string> = { 'data-view': view };
+  const item = root() as FakeRoot & {
+    getAttribute: (name: string) => string | null;
+    setAttribute: (name: string, value: string) => void;
+    removeAttribute: (name: string) => void;
+    classList: { toggle: () => void };
+  };
+  item.getAttribute = name => attrs[name] ?? null;
+  item.setAttribute = (name, value) => { attrs[name] = value; };
+  item.removeAttribute = name => { delete attrs[name]; };
   item.classList = { toggle: vi.fn() };
   return item;
 }
@@ -275,6 +375,20 @@ function targetWithFocus(attributes: Record<string, string>, focus: ReturnType<t
     setAttribute: (name: string, value: string) => { attributes[name] = value; },
     hasAttribute: (name: string) => name in attributes,
     closest: () => null,
+  };
+}
+
+function details(key: string) {
+  const listeners = new Map<string, ((event: any) => void)[]>();
+  return {
+    open: false,
+    getAttribute: (name: string) => name === 'data-facet-group' ? key : null,
+    addEventListener(type: string, listener: (event: any) => void) {
+      listeners.set(type, [...(listeners.get(type) ?? []), listener]);
+    },
+    dispatch(type: string, event: any) {
+      listeners.get(type)?.forEach(listener => listener({ target: this, ...event }));
+    },
   };
 }
 
