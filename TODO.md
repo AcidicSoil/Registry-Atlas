@@ -17,3 +17,9 @@
 
 * add a way to sync up components from those registries so that we can have a fuller amount of components to filter for etc...
 
+---
+
+## unslop-design/unslop 8.26.26
+
+* run multiple passes over ui/ux until it makes logical sense
+* compare against other sites and improve 
