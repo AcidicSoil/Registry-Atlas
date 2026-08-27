@@ -19,17 +19,18 @@ const COMPONENT_SET = new Set<string>(COMPONENT_TAG_VALUES);
 
 export function buildCompareModel(
   registries: readonly Registry[],
-  searchTerm: string,
+  _searchTerm: string,
   selection: CompareSelection,
 ): CompareModel {
   const selectedColumns = selection.componentKeys.filter(key => COMPONENT_SET.has(key));
   const columns = selectedColumns.length > 0 ? selectedColumns : MATRIX_COLUMNS;
-  const selectedRegistries = selection.registryNames.length > 0
-    ? registries.filter(registry => selection.registryNames.includes(registry.name))
-    : registries;
+  const selectedNames = selection.registryNames.slice(0, 4);
+  const selectedRegistries = selectedNames.length > 0
+    ? registries.filter(registry => selectedNames.includes(registry.name))
+    : [];
 
   return {
-    rows: buildMatrixRows(selectedRegistries, searchTerm, columns),
+    rows: buildMatrixRows(selectedRegistries, '', columns),
     columns,
     availableRegistryNames: [...registries].map(registry => registry.name).sort(),
     availableComponentKeys: availableComponents(registries),

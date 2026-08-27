@@ -169,8 +169,8 @@ describe('enriched detail actions', () => {
     expect(body.innerHTML).toContain('<img');
     expect(body.innerHTML).not.toContain('Preview unavailable');
     expect(body.innerHTML).toContain('Alternate terminology');
-    expect(body.innerHTML).toContain('Copy agent prompt');
-    expect(body.innerHTML).toContain('Copy inspection prompt');
+    expect(body.innerHTML).toContain('Copy install-agent prompt');
+    expect(body.innerHTML).toContain('Copy review prompt');
     expect(body.innerHTML).toContain('Copy link');
     expect(body.innerHTML).toContain('Related registries');
     expect(body.innerHTML).toContain('@gamma');

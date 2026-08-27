@@ -71,6 +71,7 @@ interface AppState {
   copyFeedback: CopyFeedback | null;
   activePeekId: string | null;
   facetSearchTerms: Record<string, string>;
+  discoveryPage: number;
 }
 interface FocusIdentity {
   selector: string;
@@ -95,6 +96,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     copyFeedback: null,
     activePeekId: null,
     facetSearchTerms: {},
+    discoveryPage: 1,
   };
   let pinnedPeekId: string | null = null;
   const openFacetGroups = new Set<string>();
@@ -105,7 +107,12 @@ export function initRegistryExplorer(options: ShellOptions): void {
     focusIdentity: FocusIdentity | null = null,
   ) => {
     rememberFacetDisclosureState();
+    const routeContextChanged =
+      (partial.currentView !== undefined && partial.currentView !== state.currentView)
+      || (partial.selectedProfileRegistryName !== undefined && partial.selectedProfileRegistryName !== state.selectedProfileRegistryName)
+      || (partial.selectedItemSlug !== undefined && partial.selectedItemSlug !== state.selectedItemSlug);
     state = { ...state, ...partial };
+    if (routeContextChanged && partial.copyFeedback === undefined) state.copyFeedback = null;
     syncUrlState(state, historyMode);
     render();
     if (focusIdentity) restoreControlFocus(focusIdentity);
@@ -144,7 +151,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       });
   }
 
-  function searchTermsFor(scope: 'registries' | 'compare'): Record<string, string> {
+  function searchTermsFor(scope: 'discover' | 'registries' | 'compare'): Record<string, string> {
     const prefix = `${scope}:`;
     return Object.fromEntries(
       Object.entries(state.facetSearchTerms)
@@ -242,7 +249,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
         renderDiscoveryAside(
           roots.aside,
           buildDiscoveryOverview(registries),
-          state.selectedCandidateId,
           { entries: state.installQueue, batch, feedback: null },
         );
         renderDiscoveryContent(
@@ -259,7 +265,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
             sort: state.sort,
             queuedTokens: queued,
             activePeekId: state.activePeekId,
-            selectedCandidateId: state.selectedCandidateId,
+            page: state.discoveryPage,
+            facetSearchTerms: searchTermsFor('discover'),
           },
         );
       } else if (state.currentView === 'registries') {
@@ -285,12 +292,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
           registryNames: state.compareRegistryNames,
           componentKeys: state.compareComponentKeys,
         };
+        const compareSearchTerms = searchTermsFor('compare');
         renderCompareContent(
           roots.contentHeader,
           roots.contentBody,
           buildCompareModel(registries, state.searchTerm, selection),
           selection,
-          searchTermsFor('compare'),
+          {
+            ...compareSearchTerms,
+            registry: compareSearchTerms.registry ?? state.searchTerm,
+          },
         );
       }
       trackFacetDisclosureState();
@@ -322,12 +333,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
           selectedItemSlug: null,
           returnView: view === 'discover' || view === 'registries' ? view : state.returnView,
           activePeekId: null,
+          discoveryPage: view === 'discover' ? 1 : state.discoveryPage,
         }, 'push');
       }
     }),
   );
   roots.searchInput.addEventListener('input', () =>
-    setState({ searchTerm: roots.searchInput.value, copyFeedback: null }),
+    setState({ searchTerm: roots.searchInput.value, copyFeedback: null, discoveryPage: 1 }),
   );
   roots.contentBody.addEventListener('input', (event) => {
     const target = event.target as HTMLInputElement;
@@ -336,7 +348,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const compareSearch = facet.getAttribute('data-compare-search');
     const dimension = facet.getAttribute('data-facet-search') ?? compareSearch;
     if (!dimension) return;
-    const scope = compareSearch ? 'compare' : 'registries';
+    const scope = compareSearch ? 'compare' : state.currentView === 'discover' ? 'discover' : 'registries';
     const key = `${scope}:${dimension}`;
     const value = target.value;
     const focusIdentity = createFocusIdentity(
@@ -345,7 +357,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       [compareSearch ? 'data-compare-search' : 'data-facet-search'],
     );
     setState(
-      { facetSearchTerms: { ...state.facetSearchTerms, [key]: value } },
+      { facetSearchTerms: { ...state.facetSearchTerms, [key]: value }, discoveryPage: scope === 'discover' ? 1 : state.discoveryPage },
       'replace',
       focusIdentity,
     );
@@ -424,6 +436,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           ['data-facet-add-dimension', 'data-facet-add-value'],
         );
         setState({
+          discoveryPage: 1,
           selectedFacets: selected
             ? state.selectedFacets.filter(
                 (f) => f.dimension !== next.dimension || f.value !== next.value,
@@ -440,6 +453,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
         ['data-facet-remove-dimension', 'data-facet-remove-value'],
       );
       setState({
+        discoveryPage: 1,
         selectedFacets: state.selectedFacets.filter(
           (f) =>
             f.dimension !==
@@ -452,7 +466,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const clear = target.closest('[data-facet-clear]');
     if (clear) {
       setState(
-        { selectedFacets: [] },
+        { selectedFacets: [], discoveryPage: 1 },
         'push',
         createFocusIdentity(clear, '[data-facet-clear]', ['data-facet-clear']),
       );
@@ -460,13 +474,21 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
     const sort = target.closest('[data-sort]')?.getAttribute('data-sort');
     if (sort === 'name' || sort === 'relevance') {
-      setState({ sort }, 'push');
+      setState({ sort, discoveryPage: 1 }, 'push');
+      return;
+    }
+    const discoveryPage = target.closest('[data-discovery-page]')?.getAttribute('data-discovery-page');
+    if (discoveryPage) {
+      const nextPage = Number(discoveryPage);
+      if (Number.isInteger(nextPage) && nextPage > 0) setState({ discoveryPage: nextPage, copyFeedback: null });
       return;
     }
     const registry = target
       .closest('[data-compare-registry]')
       ?.getAttribute('data-compare-registry');
     if (registry) {
+      const alreadySelected = state.compareRegistryNames.includes(registry);
+      if (!alreadySelected && state.compareRegistryNames.length >= 4) return;
       setState({
         compareRegistryNames: toggle(state.compareRegistryNames, registry),
       }, 'push', createFocusIdentity(
@@ -655,7 +677,7 @@ function renderCopyFeedback(feedback: CopyFeedback | null): string {
   return `
     <div class="copy-feedback copy-feedback-${escapeHtml(feedback.status)}" role="status" aria-live="polite" aria-atomic="true">
       <span>${escapeHtml(feedback.message)}</span>
-      ${feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ''}
+      ${feedback.status === 'error' && feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ''}
     </div>
   `;
 }
@@ -712,7 +734,7 @@ function toggle<T>(values: readonly T[], value: T): T[] {
 }
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<AppState, 'installQueue' | 'copyFeedback' | 'activePeekId' | 'returnView' | 'facetSearchTerms'> {
+): Omit<AppState, 'installQueue' | 'copyFeedback' | 'activePeekId' | 'returnView' | 'facetSearchTerms' | 'discoveryPage'> {
   const parsed = parseRegistryExplorerUrlState(
     new URLSearchParams(window.location.search),
   );
@@ -733,7 +755,7 @@ function hydrateStateFromUrl(
     selectedProfileRegistryName: registry,
     selectedCandidateId: parsed.view === 'discover' && registry ? parsed.selectedCandidateId : null,
     selectedItemSlug: parsed.view === 'item' && registry ? parsed.selectedItemSlug : null,
-    compareRegistryNames: names,
+    compareRegistryNames: names.slice(0, 4),
     compareComponentKeys: parsed.compareComponentKeys.filter((key) =>
       components.has(key),
     ),

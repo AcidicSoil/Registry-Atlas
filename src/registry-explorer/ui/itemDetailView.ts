@@ -165,8 +165,8 @@ function renderPromptActions(detail: RegistryItemDetail): string {
   const inspectionPrompt = buildInspectionPrompt(detail);
   return `
     <div class="item-prompt-actions" aria-label="Copy component context">
-      ${agentPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(agentPrompt)}" data-copy-label="Agent prompt copied">Copy agent prompt</button>` : ''}
-      ${inspectionPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(inspectionPrompt)}" data-copy-label="Inspection prompt copied">Copy inspection prompt</button>` : ''}
+      ${agentPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(agentPrompt)}" data-copy-label="Agent prompt copied">Copy install-agent prompt</button>` : ''}
+      ${inspectionPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(inspectionPrompt)}" data-copy-label="Review prompt copied">Copy review prompt</button>` : ''}
       <button class="install-button" type="button" data-copy-current-url>Copy link</button>
     </div>
   `;

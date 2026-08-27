@@ -1,110 +1,78 @@
 import { describe, expect, it } from 'vitest';
 import { buildCompareModel } from '../../src/registry-explorer/core/compare';
-import { MATRIX_COLUMNS } from '../../src/registry-explorer/core/matrixColumns';
-import { COMPONENT_TAG_VALUES } from '../../src/registry-explorer/core/registry.schema';
 import type { ComponentTag, Registry } from '../../src/registry-explorer/core/registry.schema';
 import { renderCompareContent } from '../../src/registry-explorer/ui/compareView';
 
 describe('compare', () => {
-  it('selects requested registries and component columns', () => {
-    const model = buildCompareModel(registries(), '', {
-      registryNames: ['@alpha', '@delta'],
-      componentKeys: ['button', 'table'],
-    });
-
-    expect(model.rows.map(row => row.registry.name)).toEqual(['@alpha', '@delta']);
-    expect(model.columns).toEqual(['button', 'table']);
-  });
-
-  it('ignores unknown selections and falls back to representative columns', () => {
-    const model = buildCompareModel(registries(), '', {
-      registryNames: ['@missing'],
-      componentKeys: ['not-real' as ComponentTag],
-    });
-
-    expect(model.rows.map(row => row.registry.name)).toEqual([]);
-    expect(model.columns).toEqual(MATRIX_COLUMNS);
-  });
-  it('renders deliberate comparison controls and verification context', () => {
-    const model = buildCompareModel(registries(), '', {
-      registryNames: ['@alpha', '@delta'],
-      componentKeys: ['button', 'table'],
-    });
+  it('keeps Compare empty until at least two registries are selected', () => {
+    const selection = { registryNames: [], componentKeys: [] };
+    const model = buildCompareModel(registries(), '', selection);
     const header = root();
     const body = root();
 
-    renderCompareContent(header, body, model, {
-      registryNames: ['@alpha', '@delta'],
-      componentKeys: ['button', 'table'],
-    });
+    renderCompareContent(header, body, model, selection);
 
-    expect(body.innerHTML).toContain('aria-label="Compare registries"');
-    expect(body.innerHTML).toContain('Verification');
-    expect(body.innerHTML).toContain('@alpha');
-    expect(body.innerHTML).toContain('data-compare-registry');
-    expect(body.innerHTML).toContain('data-compare-component');
-    expect(body.innerHTML).toContain('<th scope="col">Registry · Verification</th>');
-    expect(body.innerHTML).toMatch(/<th scope="col">[^<]*button[^<]*<\/th>/i);
-    expect(header.innerHTML).toContain('data-copy-current-url');
-    expect(body.innerHTML).not.toContain('Matrix axes');
-
-    const defaults = { registryNames: [], componentKeys: [] };
-    renderCompareContent(header, body, buildCompareModel(registries(), '', defaults), defaults);
-    expect(body.innerHTML).toContain(`All matching registries (${registries().length})`);
-    expect(body.innerHTML).toContain(`Default capabilities (${MATRIX_COLUMNS.length})`);
-    expect(body.innerHTML).not.toContain('All capabilities');
-    expect(body.innerHTML).toContain('tabindex="0"');
-    expect(body.innerHTML).toContain('aria-label="Comparison results"');
-
-    const manyRegistries = Array.from({ length: 30 }, (_, index) =>
-      registry(`@registry-${index}`, ['button'], 'verified'),
-    );
-    renderCompareContent(
-      header,
-      body,
-      buildCompareModel(manyRegistries, '', defaults),
-      defaults,
-      { registry: 'registry-2' },
-    );
-    expect(body.innerHTML).toContain('data-compare-search="registry"');
-    expect((body.innerHTML.match(/data-compare-registry=/g) ?? []).length).toBeLessThanOrEqual(24);
+    expect(body.innerHTML).toContain('Choose 2–4 registries');
+    expect(body.innerHTML).not.toContain('<table');
+    expect(body.innerHTML).not.toContain('>No known tag match<');
   });
 
-  it('distinguishes stale registry selections from all matching registries', () => {
-    const selection = { registryNames: ['@missing'], componentKeys: [] };
-    const header = root();
-    const body = root();
-    renderCompareContent(header, body, buildCompareModel(registries(), '', selection), selection);
-
-    expect(body.innerHTML).toContain('No selected registries match');
-    expect(body.innerHTML).not.toContain('All matching registries');
-  });
-
-  it('renders every selected component while capping only unselected matches', () => {
-    const available = [...COMPONENT_TAG_VALUES.slice(0, 50)];
+  it('renders selected registries as columns and capabilities as rows', () => {
     const selection = {
-      registryNames: [],
-      componentKeys: available.slice(0, 25),
+      registryNames: ['@alpha', '@delta'],
+      componentKeys: ['button', 'table'] as ComponentTag[],
     };
-    const header = root();
+    const model = buildCompareModel(registries(), '', selection);
     const body = root();
 
-    renderCompareContent(
-      header,
-      body,
-      buildCompareModel([registry('@many', available, 'verified')], '', selection),
-      selection,
-    );
+    renderCompareContent(root(), body, model, selection);
 
-    expect((body.innerHTML.match(/data-compare-component=/g) ?? []).length).toBe(25);
-    expect(body.innerHTML).toContain('25 capabilities selected');
-    expect(body.innerHTML).not.toContain('All capabilities');
-    available.slice(0, 25).forEach(key => {
-      expect(body.innerHTML).toContain(`data-compare-component="${key}"`);
-    });
+    expect(body.innerHTML).toMatch(/<th scope="col"[^>]*>@alpha<\/th>/);
+    expect(body.innerHTML).toMatch(/<th scope="col"[^>]*>@delta<\/th>/);
+    expect(body.innerHTML).toMatch(/<th scope="row"[^>]*>Button<\/th>/i);
+    expect(body.innerHTML).toMatch(/<th scope="row"[^>]*>Table<\/th>/i);
+    expect(body.innerHTML).not.toContain('Registry · Verification');
+    expect(body.innerHTML).not.toContain('>No known tag match<');
+  });
+
+  it('uses a compact unknown state instead of repeating prose', () => {
+    const selection = {
+      registryNames: ['@alpha', '@zeta'],
+      componentKeys: ['button'] as ComponentTag[],
+    };
+    const body = root();
+    renderCompareContent(root(), body, buildCompareModel(registries(), '', selection), selection);
+
+    expect(body.innerHTML).toContain('aria-label="No known tag match"');
+    expect(body.innerHTML).toContain('>—<');
+    expect(body.innerHTML).not.toContain('>No known tag match<');
+  });
+
+  it('keeps the picker compact and disables additional registries at four selections', () => {
+    const many = Array.from({ length: 30 }, (_, index) => registry(`@registry-${index}`, ['button'], 'verified'));
+    const selection = {
+      registryNames: many.slice(0, 4).map(item => item.name),
+      componentKeys: [] as ComponentTag[],
+    };
+    const body = root();
+    renderCompareContent(root(), body, buildCompareModel(many, '', selection), selection, { registry: 'registry' });
+
+    expect(body.innerHTML).toContain('4 of 4 selected');
+    expect(body.innerHTML).toContain('data-compare-search="registry"');
+    expect((body.innerHTML.match(/class="compare-picker-result"[^>]*data-compare-registry=/g) ?? []).length).toBeLessThanOrEqual(8);
+    expect(body.innerHTML).toMatch(/data-compare-registry="@registry-[^"]+"[^>]*disabled/);
+  });
+
+  it('keeps capability refinement behind a disclosure instead of a chip wall', () => {
+    const selection = { registryNames: ['@alpha', '@delta'], componentKeys: [] };
+    const body = root();
+    renderCompareContent(root(), body, buildCompareModel(registries(), '', selection), selection);
+
+    expect(body.innerHTML).toContain('<details class="compare-capability-filter"');
+    expect(body.innerHTML).toContain('Refine capabilities');
+    expect(body.innerHTML).toContain('Default capabilities');
   });
 });
-
 
 function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;

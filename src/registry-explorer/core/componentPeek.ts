@@ -5,21 +5,21 @@ export interface ComponentPeekViewModel {
   registryName: string;
   itemSlug: string;
   title: string;
-  previewUrl: string | null;
+  previewUrl: string;
   componentPageUrl: string | null;
-  visualStatus: 'available' | 'unavailable';
+  visualStatus: 'available';
 }
 
 export function buildComponentPeekFromCandidate(candidate: ComponentCandidate): ComponentPeekViewModel | null {
-  if (!candidate.routeEligible || !candidate.itemSlug) return null;
+  if (!candidate.routeEligible || !candidate.itemSlug || !isRenderablePreviewUrl(candidate.previewUrl)) return null;
   return {
     id: `${candidate.registry.name}:${candidate.itemSlug}`,
     registryName: candidate.registry.name,
     itemSlug: candidate.itemSlug,
     title: candidate.itemName ?? candidate.matchedLabel,
-    previewUrl: candidate.previewUrl ?? null,
-    componentPageUrl: candidate.componentPageUrl ?? candidate.docsUrl ?? candidate.route ?? null,
-    visualStatus: candidate.previewUrl ? 'available' : 'unavailable',
+    previewUrl: candidate.previewUrl,
+    componentPageUrl: candidate.componentPageUrl ?? candidate.docsUrl ?? null,
+    visualStatus: 'available',
   };
 }
 
@@ -27,14 +27,25 @@ export function buildComponentPeekFromProfileRow(
   registryName: string,
   row: RegistryProfileItemRow,
 ): ComponentPeekViewModel | null {
-  if (!row.routeEligible) return null;
+  if (!row.routeEligible || !isRenderablePreviewUrl(row.previewUrl)) return null;
   return {
     id: `${registryName}:${row.slug}`,
     registryName,
     itemSlug: row.slug,
     title: row.name,
-    previewUrl: row.previewUrl ?? null,
-    componentPageUrl: row.componentPageUrl ?? row.docsUrl ?? row.route ?? null,
-    visualStatus: row.previewUrl ? 'available' : 'unavailable',
+    previewUrl: row.previewUrl,
+    componentPageUrl: row.componentPageUrl ?? row.docsUrl ?? null,
+    visualStatus: 'available',
   };
+}
+
+function isRenderablePreviewUrl(value: string | undefined): value is string {
+  if (!value) return false;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+    return !url.pathname.toLocaleLowerCase().endsWith('.json');
+  } catch {
+    return false;
+  }
 }

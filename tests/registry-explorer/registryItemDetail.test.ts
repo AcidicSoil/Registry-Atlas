@@ -23,7 +23,7 @@ describe('registry item detail', () => {
     expect(result.detail?.installAction.status === 'enabled' ? result.detail.installAction.installCommand : null).toBe('npx shadcn@latest add @delta/code-block');
   });
 
-  it('uses an available registry route when docs are absent', () => {
+  it('does not mislabel registry JSON as a component page when docs are absent', () => {
     const registry = registryFixture();
     const routeOnlyRegistry: Registry = {
       ...registry,
@@ -34,7 +34,7 @@ describe('registry item detail', () => {
 
     const result = resolveRegistryItemDetailFromSummary([routeOnlyRegistry], '@delta', 'code-block');
 
-    expect(result.detail?.componentPageUrl).toBe('https://delta.example/r/code-block.json');
+    expect(result.detail?.componentPageUrl).toBeNull();
   });
 
   it('loads and normalizes valid registry item JSON without making raw data required for UI', async () => {
