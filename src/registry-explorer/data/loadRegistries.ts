@@ -43,6 +43,9 @@ interface RegistryMirrorRecord {
     confidence?: CoverageConfidence;
     notes?: string;
     catalog_status?: ItemCatalogStatus;
+    comparison_evidence?: 'catalog' | 'stale-catalog' | 'none';
+    catalog_item_count?: number;
+    catalog_evidence_url?: string;
     item_summaries?: Array<{
       name: string;
       slug: string;
@@ -129,6 +132,9 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
         confidence: record.atlas?.confidence ?? 'unknown',
         notes: record.atlas?.notes ?? '',
         catalogStatus: record.atlas?.catalog_status ?? 'unverified',
+        comparisonEvidence: record.atlas?.comparison_evidence ?? 'none',
+        catalogItemCount: record.atlas?.catalog_item_count ?? 0,
+        catalogEvidenceUrl: record.atlas?.catalog_evidence_url || undefined,
       },
       itemSummaries: mapItemSummaries(record.atlas?.item_summaries ?? []),
       mirror: {

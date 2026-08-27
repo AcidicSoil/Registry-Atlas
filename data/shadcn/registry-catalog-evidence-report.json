@@ -1,0 +1,220 @@
+{
+  "generated_at": "2026-08-27T10:01:07.041Z",
+  "registry_count": 290,
+  "fetched_catalog_count": 247,
+  "fetched_item_count": 40464,
+  "evidence_registry_count": 248,
+  "stale_registry_count": 0,
+  "failure_count": 43,
+  "failures": [
+    {
+      "namespace": "@abstract",
+      "reason": "http-404",
+      "catalog_url": "https://build.abs.xyz/r/registry/json"
+    },
+    {
+      "namespace": "@ai-blocks",
+      "reason": "http-404",
+      "catalog_url": "https://webllm.org/r/registry.json"
+    },
+    {
+      "namespace": "@aliimam",
+      "reason": "http-404",
+      "catalog_url": "https://aliimam.in/r/registry.json"
+    },
+    {
+      "namespace": "@amicro",
+      "reason": "SyntaxError",
+      "catalog_url": "https://amicro.vercel.app/r/registry.json"
+    },
+    {
+      "namespace": "@aniui",
+      "reason": "http-404",
+      "catalog_url": "https://aniui.dev/r/registry.json"
+    },
+    {
+      "namespace": "@better-auth-ui",
+      "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@creative-tim",
+      "reason": "http-400",
+      "catalog_url": "https://www.creative-tim.com/ui/r/registry.json"
+    },
+    {
+      "namespace": "@cult-ui",
+      "reason": "http-429",
+      "catalog_url": "https://cult-ui.com/r/registry.json"
+    },
+    {
+      "namespace": "@devl",
+      "reason": "http-404",
+      "catalog_url": "https://devl.dev/r/registry.json"
+    },
+    {
+      "namespace": "@diceui",
+      "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@doras-ui",
+      "reason": "http-404",
+      "catalog_url": "https://ui.doras.to/r/registry.json"
+    },
+    {
+      "namespace": "@elevenlabs-ui",
+      "reason": "http-429",
+      "catalog_url": "https://ui.elevenlabs.io/r/registry.json"
+    },
+    {
+      "namespace": "@emerald-ui",
+      "reason": "http-404",
+      "catalog_url": "https://emerald-ui.com/r/registry.json"
+    },
+    {
+      "namespace": "@evilbuttons",
+      "reason": "http-404",
+      "catalog_url": "https://evilbuttons.radiumcoders.com/r/registry.json"
+    },
+    {
+      "namespace": "@fonttrio",
+      "reason": "http-404",
+      "catalog_url": "https://www.fonttrio.xyz/r/registry.json"
+    },
+    {
+      "namespace": "@grainly-icons",
+      "reason": "http-404",
+      "catalog_url": "https://grainlyicons.abhii.space/r/registry.json"
+    },
+    {
+      "namespace": "@headcodecms",
+      "reason": "http-404",
+      "catalog_url": "https://headcodecms.com/r/registry.json"
+    },
+    {
+      "namespace": "@heatmap",
+      "reason": "SyntaxError",
+      "catalog_url": "https://shadcn-heatmap.pages.dev/r/registry.json"
+    },
+    {
+      "namespace": "@icons-animated",
+      "reason": "http-404",
+      "catalog_url": "https://icons.lndev.me/r/registry.json"
+    },
+    {
+      "namespace": "@initium",
+      "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@jalco",
+      "reason": "http-404",
+      "catalog_url": "https://ui.justinlevine.me/r/registry.json"
+    },
+    {
+      "namespace": "@moleculeui",
+      "reason": "TypeError",
+      "catalog_url": "https://www.moleculeui.design/r/registry.json"
+    },
+    {
+      "namespace": "@motion-primitives",
+      "reason": "http-429",
+      "catalog_url": "https://motion-primitives.com/c/registry.json"
+    },
+    {
+      "namespace": "@neobrutalism",
+      "reason": "http-404",
+      "catalog_url": "https://www.neobrutalism.dev/r/registry.json"
+    },
+    {
+      "namespace": "@nessra-ui",
+      "reason": "http-404",
+      "catalog_url": "https://nessra-ui.vercel.app/r/registry.json"
+    },
+    {
+      "namespace": "@nexus-elements",
+      "reason": "http-404",
+      "catalog_url": "https://elements.nexus.availproject.org/r/registry.json"
+    },
+    {
+      "namespace": "@openpolicy",
+      "reason": "http-404",
+      "catalog_url": "https://www.openpolicy.sh/r/registry.json"
+    },
+    {
+      "namespace": "@phucbm",
+      "reason": "http-404",
+      "catalog_url": "https://phucbm.com/r/registry.json"
+    },
+    {
+      "namespace": "@pureui",
+      "reason": "TimeoutError",
+      "catalog_url": "https://pure.kam-ui.com/r/registry.json"
+    },
+    {
+      "namespace": "@react-easy-modals",
+      "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@remotionui",
+      "reason": "http-404",
+      "catalog_url": "https://remotionui.com/r/registry.json"
+    },
+    {
+      "namespace": "@reui",
+      "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@saaskit",
+      "reason": "http-404",
+      "catalog_url": "https://saaskit-theta.vercel.app/r/registry.json"
+    },
+    {
+      "namespace": "@sabraman",
+      "reason": "http-404",
+      "catalog_url": "https://sabraman.ru/r/registry.json"
+    },
+    {
+      "namespace": "@shadcn-studio",
+      "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@shark",
+      "reason": "http-404",
+      "catalog_url": "https://shark.vini.one/r/registry.json"
+    },
+    {
+      "namespace": "@shieldcn",
+      "reason": "http-404",
+      "catalog_url": "https://shieldcn.dev/r/registry.json"
+    },
+    {
+      "namespace": "@square-ui",
+      "reason": "http-404",
+      "catalog_url": "https://square.lndev.me/registry/registry.json"
+    },
+    {
+      "namespace": "@tailwind-builder",
+      "reason": "http-404",
+      "catalog_url": "https://tailwindbuilder.ai/r/registry.json"
+    },
+    {
+      "namespace": "@untld",
+      "reason": "http-404",
+      "catalog_url": "https://ui.untldlabs.com/r/registry.json"
+    },
+    {
+      "namespace": "@w3-kit",
+      "reason": "http-404",
+      "catalog_url": "https://w3-kit.com/registry/registry.json"
+    },
+    {
+      "namespace": "@wandry-ui",
+      "reason": "TypeError",
+      "catalog_url": "https://ui.wandry.com.ua/r/registry.json"
+    },
+    {
+      "namespace": "@xcn",
+      "reason": "http-404",
+      "catalog_url": "https://ui.radiumcoders.com/r/xcn/registry.json"
+    }
+  ]
+}

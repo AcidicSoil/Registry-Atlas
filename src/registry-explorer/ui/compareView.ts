@@ -150,7 +150,7 @@ function renderComparisonTable(model: CompareModel): string {
 
 function renderCell(cell: MatrixCell): string {
   if (!cell.matched || cell.status === 'absent') {
-    return '<td class="compare-cell compare-cell-unknown"><span class="compare-state" aria-label="No known tag match" title="No known tag match">—</span></td>';
+    return `<td class="compare-cell compare-cell-unknown"><span class="compare-state" aria-label="${escapeHtml(cell.label)}" title="${escapeHtml(cell.label)}">Not listed</span></td>`;
   }
 
   const display = cell.status === 'verified'

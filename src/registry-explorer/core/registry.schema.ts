@@ -179,6 +179,9 @@ export interface Registry {
     confidence: CoverageConfidence;
     notes: string;
     catalogStatus: ItemCatalogStatus;
+    comparisonEvidence?: 'catalog' | 'stale-catalog' | 'none';
+    catalogItemCount?: number;
+    catalogEvidenceUrl?: string;
   };
   mirror?: {
     officialName: string;

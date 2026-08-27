@@ -1,5 +1,6 @@
 import { buildMatrixRows } from './grouping.ts';
 import { MATRIX_COLUMNS } from './matrixColumns.ts';
+import { catalogComponentKeysForRegistry } from './componentEvidence.ts';
 import { COMPONENT_TAG_VALUES } from './registry.schema.ts';
 import type { ComponentTag, MatrixRow, Registry } from './registry.schema.ts';
 
@@ -24,27 +25,26 @@ export function buildCompareModel(
 ): CompareModel {
   const selectedColumns = selection.componentKeys.filter(key => COMPONENT_SET.has(key));
   const columns = selectedColumns.length > 0 ? selectedColumns : MATRIX_COLUMNS;
+  const comparableRegistries = registries.filter(registry =>
+    registry.atlas?.comparisonEvidence === 'catalog'
+    && catalogComponentKeysForRegistry(registry).length > 0,
+  );
   const selectedNames = selection.registryNames.slice(0, 4);
   const selectedRegistries = selectedNames.length > 0
-    ? registries.filter(registry => selectedNames.includes(registry.name))
+    ? comparableRegistries.filter(registry => selectedNames.includes(registry.name))
     : [];
 
   return {
     rows: buildMatrixRows(selectedRegistries, '', columns),
     columns,
-    availableRegistryNames: [...registries].map(registry => registry.name).sort(),
-    availableComponentKeys: availableComponents(registries),
+    availableRegistryNames: comparableRegistries.map(registry => registry.name).sort(),
+    availableComponentKeys: availableComponents(comparableRegistries),
   };
 }
 function availableComponents(registries: readonly Registry[]): ComponentTag[] {
   const values = new Set<ComponentTag>();
   registries.forEach(registry => {
-    registry.component_tags.forEach(tag => values.add(tag));
-    (registry.itemSummaries ?? []).forEach(item => {
-      [...(item.componentTagsExisting ?? []), ...(item.componentTagsProposed ?? [])]
-        .filter(value => COMPONENT_SET.has(value))
-        .forEach(value => values.add(value as ComponentTag));
-    });
+    catalogComponentKeysForRegistry(registry).forEach(tag => values.add(tag));
   });
   return [...values].sort();
 }

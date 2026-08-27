@@ -423,6 +423,9 @@ function registryFixture(): Registry {
       confidence: 'high',
       notes: 'Fixture notes.',
       catalogStatus: 'available',
+      comparisonEvidence: 'catalog',
+      catalogItemCount: 1,
+      catalogEvidenceUrl: 'https://delta.example/r/registry.json',
     },
     itemSummaries: [{
       name: 'Code Block',

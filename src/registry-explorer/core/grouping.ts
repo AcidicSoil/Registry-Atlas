@@ -18,6 +18,7 @@ import type {
   MatrixCell,
 } from './registry.schema';
 import { focusLabel, componentLabel } from './labels';
+import { catalogComponentKeysForRegistry } from './componentEvidence.ts';
 import { coverageStatusLabel } from './coverageStatus';
 
 export function filterRegistries(
@@ -149,13 +150,15 @@ export function buildMatrixRows(
 
   return sorted.map((r) => {
     const cells: MatrixCell[] = columns.map((col) => {
-      const matched = r.component_tags.includes(col);
+      const matched = catalogComponentKeysForRegistry(r).includes(col);
       const status: MatrixCell['status'] = matched ? (r.atlas?.coverageStatus ?? 'unverified') : 'absent';
       return {
         componentKey: col,
         matched,
         status,
-        label: status === 'absent' ? 'No known tag match' : coverageStatusLabel(status),
+        label: status === 'absent'
+          ? (r.atlas?.comparisonEvidence === 'catalog' ? 'Not in synced catalog' : 'Unknown coverage')
+          : coverageStatusLabel(status),
       };
     });
     return {

@@ -4,6 +4,29 @@ import type { ComponentTag, Registry } from '../../src/registry-explorer/core/re
 import { renderCompareContent } from '../../src/registry-explorer/ui/compareView';
 
 describe('compare', () => {
+  it('does not compare legacy tag enrichment as if it were a complete catalog', () => {
+    const legacy = registry('@legacy', ['button'], 'inferred');
+    legacy.atlas = { ...legacy.atlas!, comparisonEvidence: 'none' } as typeof legacy.atlas;
+    const model = buildCompareModel([...registries(), legacy], '', {
+      registryNames: ['@alpha', '@legacy'],
+      componentKeys: ['button'],
+    });
+
+    expect(model.availableRegistryNames).not.toContain('@legacy');
+    expect(model.rows.map(row => row.registry.name)).toEqual(['@alpha']);
+  });
+
+  it('offers only registries with real component evidence for comparison', () => {
+    const noEvidence = registry('@unknown', [], 'unverified');
+    const model = buildCompareModel([...registries(), noEvidence], '', {
+      registryNames: ['@alpha', '@unknown'],
+      componentKeys: ['button'],
+    });
+
+    expect(model.availableRegistryNames).not.toContain('@unknown');
+    expect(model.rows.map(row => row.registry.name)).toEqual(['@alpha']);
+  });
+
   it('keeps Compare empty until at least two registries are selected', () => {
     const selection = { registryNames: [], componentKeys: [] };
     const model = buildCompareModel(registries(), '', selection);
@@ -14,7 +37,7 @@ describe('compare', () => {
 
     expect(body.innerHTML).toContain('Choose 2–4 registries');
     expect(body.innerHTML).not.toContain('<table');
-    expect(body.innerHTML).not.toContain('>No known tag match<');
+    expect(body.innerHTML).not.toContain('No known tag match');
   });
 
   it('renders selected registries as columns and capabilities as rows', () => {
@@ -32,7 +55,7 @@ describe('compare', () => {
     expect(body.innerHTML).toMatch(/<th scope="row"[^>]*>Button<\/th>/i);
     expect(body.innerHTML).toMatch(/<th scope="row"[^>]*>Table<\/th>/i);
     expect(body.innerHTML).not.toContain('Registry · Verification');
-    expect(body.innerHTML).not.toContain('>No known tag match<');
+    expect(body.innerHTML).not.toContain('No known tag match');
   });
 
   it('uses a compact unknown state instead of repeating prose', () => {
@@ -43,9 +66,9 @@ describe('compare', () => {
     const body = root();
     renderCompareContent(root(), body, buildCompareModel(registries(), '', selection), selection);
 
-    expect(body.innerHTML).toContain('aria-label="No known tag match"');
-    expect(body.innerHTML).toContain('>—<');
-    expect(body.innerHTML).not.toContain('>No known tag match<');
+    expect(body.innerHTML).toContain('aria-label="Not in synced catalog"');
+    expect(body.innerHTML).toContain('>Not listed<');
+    expect(body.innerHTML).not.toContain('No known tag match');
   });
 
   it('keeps the picker compact and disables additional registries at four selections', () => {
@@ -102,6 +125,8 @@ function registry(
       confidence: 'medium',
       notes: '',
       catalogStatus: coverageStatus === 'verified' ? 'available' : 'partial',
+      comparisonEvidence: 'catalog',
+      catalogItemCount: 1,
     },
   };
 }
