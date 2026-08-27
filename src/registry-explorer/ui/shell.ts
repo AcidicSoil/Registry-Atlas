@@ -11,6 +11,7 @@ import {
 } from '../core/discovery';
 import {
   buildCatalogFacetGroups,
+  buildRegistryFacetGroups,
   applyCatalogFacetsToCandidates,
   applyCatalogFacetsToProfileRows,
   createSelectedCatalogFacet,
@@ -69,6 +70,11 @@ interface AppState {
   installQueue: InstallQueueEntry[];
   copyFeedback: CopyFeedback | null;
   activePeekId: string | null;
+  facetSearchTerms: Record<string, string>;
+}
+interface FocusIdentity {
+  selector: string;
+  attributes: ReadonlyArray<readonly [string, string]>;
 }
 function isView(value: string | null): value is AppState['currentView'] {
   return (
@@ -88,25 +94,89 @@ export function initRegistryExplorer(options: ShellOptions): void {
     installQueue: [],
     copyFeedback: null,
     activePeekId: null,
+    facetSearchTerms: {},
   };
   let pinnedPeekId: string | null = null;
+  const openFacetGroups = new Set<string>();
   roots.searchInput.value = state.searchTerm;
   const setState = (
     partial: Partial<AppState>,
     historyMode: 'push' | 'replace' = 'replace',
+    focusIdentity: FocusIdentity | null = null,
   ) => {
+    rememberFacetDisclosureState();
     state = { ...state, ...partial };
     syncUrlState(state, historyMode);
     render();
+    if (focusIdentity) restoreControlFocus(focusIdentity);
   };
+
+  function rememberFacetDisclosureState(): void {
+    roots.contentBody
+      .querySelectorAll<HTMLDetailsElement>('[data-facet-group]')
+      .forEach((group) => {
+        const key = group.getAttribute('data-facet-group');
+        if (!key) return;
+        if (group.open) openFacetGroups.add(key);
+        else openFacetGroups.delete(key);
+      });
+  }
+
+  function trackFacetDisclosureState(): void {
+    roots.contentBody
+      .querySelectorAll<HTMLDetailsElement>('[data-facet-group]')
+      .forEach((group) => {
+        const key = group.getAttribute('data-facet-group');
+        if (!key) return;
+        group.addEventListener('toggle', () => {
+          if (group.open) openFacetGroups.add(key);
+          else openFacetGroups.delete(key);
+        });
+      });
+  }
+
+  function restoreFacetDisclosureState(): void {
+    roots.contentBody
+      .querySelectorAll<HTMLDetailsElement>('[data-facet-group]')
+      .forEach((group) => {
+        const key = group.getAttribute('data-facet-group');
+        if (key) group.open = openFacetGroups.has(key);
+      });
+  }
+
+  function searchTermsFor(scope: 'registries' | 'compare'): Record<string, string> {
+    const prefix = `${scope}:`;
+    return Object.fromEntries(
+      Object.entries(state.facetSearchTerms)
+        .filter(([key]) => key.startsWith(prefix))
+        .map(([key, value]) => [key.slice(prefix.length), value]),
+    );
+  }
+
+  function restoreControlFocus(identity: FocusIdentity): void {
+    const candidates = Array.from(
+      roots.contentBody.querySelectorAll<HTMLElement>(identity.selector),
+    );
+    const equivalent = candidates.find(candidate =>
+      identity.attributes.every(([name, value]) => candidate.getAttribute(name) === value),
+    );
+    const fallback = equivalent ?? candidates[0];
+    fallback?.focus();
+  }
+
   function render(): void {
     try {
-      roots.tabs.forEach((tab) =>
+      roots.tabs.forEach((tab) => {
         tab.classList.toggle(
           'nav-item-active',
           tab.getAttribute('data-view') === state.currentView,
-        ),
-      );
+        );
+        if (tab.getAttribute('data-view') === state.currentView) {
+          tab.setAttribute('aria-current', 'page');
+        } else {
+          tab.removeAttribute('aria-current');
+        }
+      });
       const queued = new Set(state.installQueue.map((entry) => entry.token));
       const batch = buildInstallQueueBatchState(state.installQueue);
       if (state.currentView === 'item') {
@@ -194,9 +264,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
           },
         );
       } else if (state.currentView === 'registries') {
-        const groups = buildCatalogFacetGroups(
+        const groups = buildRegistryFacetGroups(
           registries,
-          searchComponentCandidates(registries, state.searchTerm),
+          state.searchTerm,
+          state.selectedFacets,
         );
         renderRegistriesContent(
           roots.contentHeader,
@@ -208,6 +279,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           ),
           groups,
           state.selectedFacets,
+          searchTermsFor('registries'),
         );
       } else {
         const selection = {
@@ -219,8 +291,11 @@ export function initRegistryExplorer(options: ShellOptions): void {
           roots.contentBody,
           buildCompareModel(registries, state.searchTerm, selection),
           selection,
+          searchTermsFor('compare'),
         );
       }
+      trackFacetDisclosureState();
+      restoreFacetDisclosureState();
       syncPeekTriggerSemantics();
       roots.contentHeader.insertAdjacentHTML('beforeend', renderCopyFeedback(state.copyFeedback));
       const source = renderExternalLink(options.mirrorMeta.source_url, 'Official shadcn directory', 'secondary-link');
@@ -242,10 +317,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
         pinnedPeekId = null;
         setState({
           currentView: view,
-          selectedFacets:
-            view === 'registries'
-              ? state.selectedFacets.filter((f) => f.dimension !== 'registry')
-              : state.selectedFacets,
+          selectedFacets: state.selectedFacets,
           selectedProfileRegistryName: null,
           selectedCandidateId: null,
           selectedItemSlug: null,
@@ -258,6 +330,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.searchInput.addEventListener('input', () =>
     setState({ searchTerm: roots.searchInput.value, copyFeedback: null }),
   );
+  roots.contentBody.addEventListener('input', (event) => {
+    const target = event.target as HTMLInputElement;
+    const facet = target.closest('[data-facet-search], [data-compare-search]');
+    if (!facet) return;
+    const compareSearch = facet.getAttribute('data-compare-search');
+    const dimension = facet.getAttribute('data-facet-search') ?? compareSearch;
+    if (!dimension) return;
+    const scope = compareSearch ? 'compare' : 'registries';
+    const key = `${scope}:${dimension}`;
+    const value = target.value;
+    const focusIdentity = createFocusIdentity(
+      facet,
+      compareSearch ? '[data-compare-search]' : '[data-facet-search]',
+      [compareSearch ? 'data-compare-search' : 'data-facet-search'],
+    );
+    setState(
+      { facetSearchTerms: { ...state.facetSearchTerms, [key]: value } },
+      'replace',
+      focusIdentity,
+    );
+    const nextInput = Array.from(
+      roots.contentBody.querySelectorAll<HTMLInputElement>('[data-facet-search], [data-compare-search]'),
+    ).find(item =>
+      item.getAttribute('data-facet-search') === dimension || item.getAttribute('data-compare-search') === dimension,
+    );
+    nextInput?.focus();
+    nextInput?.setSelectionRange(value.length, value.length);
+  });
   roots.aside.addEventListener('click', (event) =>
     handleClick(event.target as HTMLElement),
   );
@@ -315,16 +415,31 @@ export function initRegistryExplorer(options: ShellOptions): void {
         add.getAttribute('data-facet-add-dimension'),
         add.getAttribute('data-facet-add-value'),
       );
-      if (
-        next &&
-        !state.selectedFacets.some(
+      if (next) {
+        const selected = state.selectedFacets.some(
           (f) => f.dimension === next.dimension && f.value === next.value,
-        )
-      )
-        setState({ selectedFacets: [...state.selectedFacets, next] }, 'push');
+        );
+        const focusIdentity = createFocusIdentity(
+          add,
+          '[data-facet-add-dimension]',
+          ['data-facet-add-dimension', 'data-facet-add-value'],
+        );
+        setState({
+          selectedFacets: selected
+            ? state.selectedFacets.filter(
+                (f) => f.dimension !== next.dimension || f.value !== next.value,
+              )
+            : [...state.selectedFacets, next],
+        }, 'push', focusIdentity);
+      }
       return;
     }
     if (remove) {
+      const focusIdentity = createFocusIdentity(
+        remove,
+        '[data-facet-remove-dimension]',
+        ['data-facet-remove-dimension', 'data-facet-remove-value'],
+      );
       setState({
         selectedFacets: state.selectedFacets.filter(
           (f) =>
@@ -332,11 +447,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
               remove.getAttribute('data-facet-remove-dimension') ||
             f.value !== remove.getAttribute('data-facet-remove-value'),
         ),
-      }, 'push');
+      }, 'push', focusIdentity);
       return;
     }
-    if (target.closest('[data-facet-clear]')) {
-      setState({ selectedFacets: [] }, 'push');
+    const clear = target.closest('[data-facet-clear]');
+    if (clear) {
+      setState(
+        { selectedFacets: [] },
+        'push',
+        createFocusIdentity(clear, '[data-facet-clear]', ['data-facet-clear']),
+      );
       return;
     }
     const sort = target.closest('[data-sort]')?.getAttribute('data-sort');
@@ -350,7 +470,11 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (registry) {
       setState({
         compareRegistryNames: toggle(state.compareRegistryNames, registry),
-      }, 'push');
+      }, 'push', createFocusIdentity(
+        target.closest('[data-compare-registry]'),
+        '[data-compare-registry]',
+        ['data-compare-registry'],
+      ));
       return;
     }
     const component = target
@@ -359,7 +483,11 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (component) {
       setState({
         compareComponentKeys: toggle(state.compareComponentKeys, component),
-      }, 'push');
+      }, 'push', createFocusIdentity(
+        target.closest('[data-compare-component]'),
+        '[data-compare-component]',
+        ['data-compare-component'],
+      ));
       return;
     }
     const profile = target
@@ -507,6 +635,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
   }
   window.addEventListener('popstate', (event) => {
+    rememberFacetDisclosureState();
     const parsed = hydrateStateFromUrl(registries);
     state = {
       ...state,
@@ -530,6 +659,21 @@ function renderCopyFeedback(feedback: CopyFeedback | null): string {
       ${feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ''}
     </div>
   `;
+}
+
+function createFocusIdentity(
+  control: Element | null,
+  selector: string,
+  attributes: readonly string[],
+): FocusIdentity | null {
+  if (!control) return null;
+  const values: Array<readonly [string, string]> = [];
+  for (const name of attributes) {
+    const value = control.getAttribute(name);
+    if (value === null) return null;
+    values.push([name, value] as const);
+  }
+  return { selector, attributes: values };
 }
 
 function peekIdFromTarget(target: EventTarget | null): string | null {
@@ -569,7 +713,7 @@ function toggle<T>(values: readonly T[], value: T): T[] {
 }
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<AppState, 'installQueue' | 'copyFeedback' | 'activePeekId' | 'returnView'> {
+): Omit<AppState, 'installQueue' | 'copyFeedback' | 'activePeekId' | 'returnView' | 'facetSearchTerms'> {
   const parsed = parseRegistryExplorerUrlState(
     new URLSearchParams(window.location.search),
   );

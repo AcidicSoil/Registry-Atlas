@@ -18,6 +18,21 @@ describe('registry browser', () => {
     expect(entries.every(entry => entry.components.includes('button'))).toBe(true);
   });
 
+  it('uses OR within registry selections and AND across registry and component filters', () => {
+    const registryOnly = buildRegistryBrowseEntries(registries(), '', [
+      { dimension: 'registry', value: '@alpha', label: '@alpha' },
+      { dimension: 'registry', value: '@delta', label: '@delta' },
+    ]);
+    expect(registryOnly.map(entry => entry.registry.name)).toEqual(['@alpha', '@delta']);
+
+    const narrowed = buildRegistryBrowseEntries(registries(), '', [
+      { dimension: 'registry', value: '@alpha', label: '@alpha' },
+      { dimension: 'registry', value: '@delta', label: '@delta' },
+      { dimension: 'component', value: 'input', label: 'Input' },
+    ]);
+    expect(narrowed.map(entry => entry.registry.name)).toEqual(['@delta']);
+  });
+
   it('renders source facts without legacy Focus or fabricated metadata', () => {
     const body = root();
     renderRegistriesContent(root(), body, buildRegistryBrowseEntries(registries(), '', []), [], []);
@@ -36,12 +51,29 @@ describe('registry browser', () => {
       root(),
       body,
       buildRegistryBrowseEntries(registries(), '', []),
-      [{ dimension: 'component', label: 'Component', options: [{ dimension: 'component', value: 'button', label: 'Button', count: 2 }] }],
+      [
+        { dimension: 'component', label: 'Component', options: [{ dimension: 'component', value: 'button', label: 'Button', count: 2 }] },
+        { dimension: 'registry', label: 'Registry', options: [{ dimension: 'registry', value: '@delta', label: '@delta', count: 1 }] },
+      ],
       [{ dimension: 'component', value: 'button', label: 'Button' }],
     );
 
     expect(body.innerHTML).toMatch(/data-facet-add-value="button"[\s\S]*?aria-pressed="true"/);
     expect(body.innerHTML).toContain('aria-label="Remove Button filter"');
+    expect(body.innerHTML).toContain('<details');
+
+    renderRegistriesContent(
+      root(),
+      body,
+      buildRegistryBrowseEntries(registries(), '', [
+        { dimension: 'registry', value: '@delta', label: '@delta' },
+      ]),
+      [{ dimension: 'registry', label: 'Registry', options: [{ dimension: 'registry', value: '@delta', label: '@delta', count: 1 }] }],
+      [{ dimension: 'registry', value: '@delta', label: '@delta' }],
+    );
+    expect(body.innerHTML).toContain('@delta');
+    expect(body.innerHTML).not.toContain('@alpha');
+    expect(body.innerHTML).toContain('aria-pressed="true"');
   });
 });
 

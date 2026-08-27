@@ -10,6 +10,7 @@ export function renderRegistriesContent(
   entries: readonly RegistryBrowseEntry[],
   facetGroups: readonly CatalogFacetGroup[],
   selectedFacets: readonly SelectedCatalogFacet[],
+  facetSearchTerms: Readonly<Record<string, string>> = {},
 ): void {
   headerRoot.innerHTML = `
     <div>
@@ -19,7 +20,7 @@ export function renderRegistriesContent(
   `;
 
   bodyRoot.innerHTML = `
-    ${renderFacetBar(facetGroups, selectedFacets)}
+    ${renderFacetBar(facetGroups, selectedFacets, facetSearchTerms)}
     ${entries.length ? `<div class="registry-browser-list">${entries.map(renderEntry).join('')}</div>`
       : '<div class="empty-state"><h2>No registries match this search and filter combination.</h2></div>'}
   `;
@@ -54,34 +55,54 @@ function renderEntry(entry: RegistryBrowseEntry): string {
 function renderFacetBar(
   groups: readonly CatalogFacetGroup[],
   selected: readonly SelectedCatalogFacet[],
+  searchTerms: Readonly<Record<string, string>>,
 ): string {
-  const allowedGroups = groups.filter(group => group.dimension !== 'registry');
-  if (allowedGroups.length === 0 && selected.length === 0) return '';
+  const groupsWithOptions = groups.filter(group => group.options.length > 0);
+  if (groupsWithOptions.length === 0 && selected.length === 0) return '';
 
-  const controls = allowedGroups.map(group => `
-    <div class="facet-group">
-      <span class="facet-group-label">${escapeHtml(group.label)}</span>
-      ${group.options.map(option => `
-        <button class="facet-option" type="button"
-          data-facet-add-dimension="${escapeHtml(option.dimension)}"
-          data-facet-add-value="${escapeHtml(option.value)}"
-          aria-pressed="${selected.some(facet => facet.dimension === option.dimension && facet.value === option.value)}">
-          ${escapeHtml(option.label)} <span>${option.count}</span>
-        </button>
-      `).join('')}
-    </div>
+  const controls = groupsWithOptions.map(group => {
+    const rawSearch = searchTerms[group.dimension] ?? '';
+    const query = rawSearch.trim().toLocaleLowerCase();
+    const selectedValues = new Set(
+      selected
+        .filter(facet => facet.dimension === group.dimension)
+        .map(facet => facet.value),
+    );
+    const selectedOptions = group.options.filter(option => selectedValues.has(option.value));
+    const matchingOptions = group.options.filter(option =>
+      !selectedValues.has(option.value)
+      && option.label.toLocaleLowerCase().includes(query),
+    );
+    const options = [
+      ...selectedOptions,
+      ...matchingOptions.slice(0, Math.max(0, 24 - selectedOptions.length)),
+    ];
+
+    return `
+      <details class="catalog-facet" data-facet-group="registries:${escapeHtml(group.dimension)}">
+        <summary>${escapeHtml(group.label)}${selectedValues.size ? ` (${selectedValues.size})` : ''}</summary>
+        <div class="catalog-facet-options">
+          ${group.options.length > 8 ? `<label>Search ${escapeHtml(group.label)}<input type="search" data-facet-search="${escapeHtml(group.dimension)}" value="${escapeHtml(rawSearch)}"></label>` : ''}
+          ${options.map(option => `
+            <button class="facet-option" type="button"
+              data-facet-add-dimension="${escapeHtml(option.dimension)}"
+              data-facet-add-value="${escapeHtml(option.value)}"
+              aria-pressed="${selectedValues.has(option.value)}">
+              ${escapeHtml(option.label)} <span>${option.count}</span>
+            </button>
+          `).join('')}
+        </div>
+      </details>
+    `;
+  }).join('');
+  const chips = selected.map(facet => `
+    <button class="active-filter" type="button"
+      data-facet-remove-dimension="${escapeHtml(facet.dimension)}"
+      data-facet-remove-value="${escapeHtml(facet.value)}"
+      aria-label="Remove ${escapeHtml(facet.label)} filter">
+      ${escapeHtml(facet.label)} ×
+    </button>
   `).join('');
-
-  const chips = selected
-    .filter(facet => facet.dimension !== 'registry')
-    .map(facet => `
-      <button class="active-filter" type="button"
-        data-facet-remove-dimension="${escapeHtml(facet.dimension)}"
-        data-facet-remove-value="${escapeHtml(facet.value)}"
-        aria-label="Remove ${escapeHtml(facet.label)} filter">
-        ${escapeHtml(facet.label)} ×
-      </button>
-    `).join('');
 
   return `
     <div class="catalog-facet-bar" aria-label="Registry filters">

@@ -58,18 +58,22 @@ function matchesContentFacets(
   entry: RegistryBrowseEntry,
   selectedFacets: readonly SelectedCatalogFacet[],
 ): boolean {
-  const relevant = selectedFacets.filter(facet => facet.dimension !== 'registry');
-  const categoryValues = relevant
+  const registryValues = selectedFacets
+    .filter(facet => facet.dimension === 'registry')
+    .map(facet => facet.value);
+  const categoryValues = selectedFacets
     .filter(facet => facet.dimension === 'category')
     .map(facet => facet.value);
-  const componentValues = relevant
+  const componentValues = selectedFacets
     .filter(facet => facet.dimension === 'component')
     .map(facet => facet.value);
 
+  const registryMatch = registryValues.length === 0
+    || registryValues.includes(entry.registry.name);
   const categoryMatch = categoryValues.length === 0
     || categoryValues.some(value => entry.categories.includes(value as CatalogCategory));
   const componentMatch = componentValues.length === 0
     || componentValues.some(value => entry.components.includes(value as ComponentTag));
 
-  return categoryMatch && componentMatch;
+  return registryMatch && categoryMatch && componentMatch;
 }
