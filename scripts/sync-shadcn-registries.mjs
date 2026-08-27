@@ -1,3 +1,4 @@
+import { applyCatalogEvidenceToAtlas, syncCatalogEvidenceForRegistries } from './sync-registry-catalog-evidence.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -7,6 +8,7 @@ const REPORT_OUTPUT_PATH = 'data/shadcn/sync-report.json';
 const RUNTIME_OUTPUT_PATH = 'public/data/registries.json';
 const LEGACY_DATA_PATH = 'src/registry-explorer/data/registries.data.ts';
 const REGISTRY_ITEMS_PATH = 'data/shadcn/registry-items.json';
+const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.json'; const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   primary_focus: [],
@@ -121,23 +123,6 @@ function optionalString(value) {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
 }
 
-function itemSummaryComponentTags(item) {
-  return [
-    ...normalizeStringArray(item.component_tags_existing),
-    ...normalizeStringArray(item.componentTagsExisting),
-    ...normalizeStringArray(item.component_tags_proposed),
-    ...normalizeStringArray(item.componentTagsProposed),
-  ];
-}
-
-function mergedComponentTags(atlas, itemSummaries) {
-  const tags = new Set(normalizeStringArray(atlas.component_tags));
-  itemSummaries.forEach(item => {
-    itemSummaryComponentTags(item).forEach(tag => tags.add(tag));
-  });
-  return [...tags].sort((a, b) => a.localeCompare(b));
-}
-
 function normalizeItemSummary(item) {
   return {
     name: item.name,
@@ -169,7 +154,7 @@ function normalizeItemSummary(item) {
   };
 }
 
-function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrichment, itemSummariesByNamespace) {
+function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrichment, itemSummariesByNamespace, catalogEvidenceByNamespace) {
   const name = normalizeNamespace(registry.name);
   const atlas =
     enrichmentByNamespace.get(name) ||
@@ -179,6 +164,8 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrich
   const itemSummaries = Array.isArray(itemSummariesByNamespace?.[name])
     ? itemSummariesByNamespace[name].map(normalizeItemSummary)
     : [];
+  const catalogEvidence = catalogEvidenceByNamespace?.[name] ?? null;
+  const componentEvidence = applyCatalogEvidenceToAtlas(atlas, itemSummaries, catalogEvidence);
   const catalogStatus = itemSummaries.length > 0
     ? (itemSummaries.some(item => item.catalog_status === 'partial') ? 'partial' : 'available')
     : (typeof atlas.catalog_status === 'string' ? atlas.catalog_status : 'unavailable');
@@ -192,11 +179,14 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrich
     },
     atlas: {
       primary_focus: Array.isArray(atlas.primary_focus) ? atlas.primary_focus : [],
-      component_tags: mergedComponentTags(atlas, itemSummaries),
+      component_tags: componentEvidence.component_tags,
       aliases: Array.isArray(atlas.aliases) ? atlas.aliases : [],
-      coverage_status: itemSummaries.length > 0 ? 'verified' : (typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified'),
-      confidence: itemSummaries.length > 0 ? 'high' : (typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown'),
+      coverage_status: componentEvidence.coverage_status,
+      confidence: componentEvidence.confidence,
       catalog_status: catalogStatus,
+      comparison_evidence: componentEvidence.comparison_evidence,
+      catalog_item_count: componentEvidence.catalog_item_count,
+      catalog_evidence_url: componentEvidence.catalog_evidence_url,
       item_summaries: itemSummaries,
       notes: typeof atlas.notes === 'string' ? atlas.notes : '',
     },
@@ -249,10 +239,15 @@ async function main() {
   const previousEnrichment = readPreviousEnrichment(previousRuntimeData);
   const legacyEnrichment = await readLegacyEnrichment();
   const itemSummariesByNamespace = await readJsonIfExists(REGISTRY_ITEMS_PATH) ?? {};
+  const previousCatalogEvidence = await readJsonIfExists(REGISTRY_CATALOG_EVIDENCE_PATH) ?? {};
+  const catalogSync = await syncCatalogEvidenceForRegistries(upstream, {
+    previous: previousCatalogEvidence,
+  });
+  const catalogEvidenceByNamespace = catalogSync.evidence;
   const syncedAt = new Date().toISOString();
 
   const registries = upstream.map(registry =>
-    normalizeOfficialRegistry(registry, previousEnrichment, legacyEnrichment, itemSummariesByNamespace)
+    normalizeOfficialRegistry(registry, previousEnrichment, legacyEnrichment, itemSummariesByNamespace, catalogEvidenceByNamespace)
   );
 
   const runtimeData = {
@@ -285,10 +280,13 @@ async function main() {
   };
 
   await writeJson(RAW_OUTPUT_PATH, upstream);
+  await writeJson(REGISTRY_CATALOG_EVIDENCE_PATH, catalogEvidenceByNamespace);
+  await writeJson(REGISTRY_CATALOG_EVIDENCE_REPORT_PATH, catalogSync.report);
   await writeJson(RUNTIME_OUTPUT_PATH, runtimeData);
   await writeJson(REPORT_OUTPUT_PATH, report);
 
   console.log(`Synced ${registries.length} registries from ${SOURCE_URL}`);
+  console.log(`Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`);
   console.log(`Raw: ${RAW_OUTPUT_PATH}`);
   console.log(`Runtime: ${RUNTIME_OUTPUT_PATH}`);
   console.log(`Report: ${REPORT_OUTPUT_PATH}`);

@@ -15,7 +15,8 @@
     "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm validate:data && pnpm build",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "all": "pnpm sync:registries && pnpm verify"
+    "all": "pnpm sync:registries && pnpm verify",
+    "sync:catalog-evidence": "node scripts/sync-registry-catalog-evidence.mjs"
   },
   "devDependencies": {
     "react-grab": "^0.1.47",

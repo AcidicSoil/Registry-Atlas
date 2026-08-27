@@ -30,6 +30,9 @@ describe('loadRegistries', () => {
           confidence: 'medium',
           notes: 'Fixture notes',
           catalogStatus: 'partial',
+          comparisonEvidence: 'catalog',
+          catalogItemCount: 2,
+          catalogEvidenceUrl: 'https://example.com/r/registry.json',
         },
         itemSummaries: [
           expect.objectContaining({
@@ -140,6 +143,9 @@ function createMirror(options: {
           confidence: 'medium',
           notes: 'Fixture notes',
           catalog_status: 'partial',
+          comparison_evidence: 'catalog',
+          catalog_item_count: 2,
+          catalog_evidence_url: 'https://example.com/r/registry.json',
           item_summaries: [
             {
               name: 'Button',

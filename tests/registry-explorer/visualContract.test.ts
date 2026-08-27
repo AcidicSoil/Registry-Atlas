@@ -28,10 +28,13 @@ describe('visual dictionary design contract', () => {
 
   it('keeps dense controls bounded and puts primary content first on narrow screens', () => {
     expect(css).toContain('.component-peek-inline');
-    expect(css).toContain('.component-peek-unavailable');
+    expect(css).toContain('.component-peek-image');
+    expect(css).not.toContain('.component-peek-unavailable');
     expect(css).toContain('.item-preview-unavailable');
-    expect(css).toMatch(/\.compare-option-list\s*\{[\s\S]*?max-height:/);
-    expect(css).toMatch(/\.compare-option-list\s*\{[\s\S]*?overflow-y:\s*auto/);
+    expect(css).toMatch(/\.compare-picker-results\s*\{[\s\S]*?max-height:/);
+    expect(css).toMatch(/\.compare-picker-results\s*\{[\s\S]*?overflow-y:\s*auto/);
+    expect(css).toContain('.discovery-pagination');
+    expect(css).not.toContain('.discovery-card.selected');
     expect(css).toMatch(/@media \(max-width:\s*860px\)[\s\S]*?\.content\s*\{[\s\S]*?order:\s*1/);
     expect(css).toMatch(/@media \(max-width:\s*860px\)[\s\S]*?aside\s*\{[\s\S]*?order:\s*2/);
   });

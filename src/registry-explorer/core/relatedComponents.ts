@@ -84,7 +84,7 @@ function toRelated(
     itemSlug: summary.slug,
     title: summary.title ?? summary.name,
     previewUrl: summary.previewUrl ?? null,
-    componentPageUrl: summary.docsUrl ?? summary.rawItemUrl ?? null,
+    componentPageUrl: summary.docsUrl ?? null,
     type: summary.type ?? null,
     category: summary.category ?? null,
     matchReasons: reasons,

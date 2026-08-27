@@ -18,6 +18,9 @@ import {
   renderSafeExternalImage,
 } from './renderSafety';
 
+const DISCOVERY_PAGE_SIZE = 12;
+const FACET_RESULT_LIMIT = 8;
+
 export interface CopyFeedback {
   message: string;
   status: 'success' | 'error';
@@ -37,13 +40,13 @@ export interface DiscoveryContentOptions {
   sort: CatalogSort;
   queuedTokens: ReadonlySet<string>;
   activePeekId: string | null;
-  selectedCandidateId?: string | null;
+  page?: number;
+  facetSearchTerms?: Readonly<Record<string, string>>;
 }
 
 export function renderDiscoveryAside(
   root: HTMLElement,
   overview: DiscoveryOverview,
-  selectedCandidateId: string | null,
   queuePanel: DiscoveryQueuePanel,
 ): void {
   root.innerHTML = `
@@ -53,7 +56,6 @@ export function renderDiscoveryAside(
       <strong>${overview.routeEligibleItemCount}</strong> installable routes<br />
       <strong>${overview.totalRegistries}</strong> registries
     </div>
-    <div class="aside-hint">${escapeHtml(selectedCandidateId ? 'Component selected' : 'Search by component, capability, or registry.')}</div>
     ${renderInstallQueuePanel(queuePanel)}
   `;
 }
@@ -76,16 +78,21 @@ export function renderDiscoveryContent(
     || candidate.catalogStatus === 'unavailable'
     || candidate.catalogStatus === 'unverified',
   );
-
+  const totalPages = Math.max(1, Math.ceil(candidates.length / DISCOVERY_PAGE_SIZE));
+  const page = Math.min(Math.max(options.page ?? 1, 1), totalPages);
+  const start = (page - 1) * DISCOVERY_PAGE_SIZE;
+  const visibleCandidates = candidates.slice(start, start + DISCOVERY_PAGE_SIZE);
   const emptyCopy = options.searchTerm.trim() || options.selectedFacets.length
     ? 'No components match this search and filter combination.'
     : 'No component results are available yet.';
 
   bodyRoot.innerHTML = `
-    ${renderCatalogToolbar(options.facetGroups, options.selectedFacets, options.sort)}
+    ${renderCatalogToolbar(options.facetGroups, options.selectedFacets, options.sort, options.facetSearchTerms ?? {})}
     ${partial ? '<div class="partial-data-note">Some registry metadata is incomplete or unverified.</div>' : ''}
     ${candidates.length
-      ? `<div class="discovery-grid">${candidates.map(candidate => renderCandidate(candidate, options)).join('')}</div>`
+      ? `<div class="discovery-result-meta">Showing ${start + 1}–${Math.min(start + DISCOVERY_PAGE_SIZE, candidates.length)} of ${candidates.length}</div>
+         <div class="discovery-grid">${visibleCandidates.map(candidate => renderCandidate(candidate, options)).join('')}</div>
+         ${renderPagination(page, totalPages)}`
       : `<div class="empty-state"><h2>${escapeHtml(emptyCopy)}</h2><p>Try a component name, capability, or registry namespace.</p></div>`}
   `;
 }
@@ -94,22 +101,34 @@ function renderCatalogToolbar(
   groups: readonly CatalogFacetGroup[],
   selected: readonly SelectedCatalogFacet[],
   sort: CatalogSort,
+  searchTerms: Readonly<Record<string, string>>,
 ): string {
-  const facets = groups.map(group => `
-    <details class="catalog-facet">
-      <summary>${escapeHtml(group.label)}</summary>
-      <div class="catalog-facet-options">
-        ${group.options.map(option => `
-          <button type="button" class="catalog-facet-option"
-            data-facet-add-dimension="${escapeHtml(option.dimension)}"
-            data-facet-add-value="${escapeHtml(option.value)}"
-            aria-pressed="${selected.some(facet => facet.dimension === option.dimension && facet.value === option.value)}">
-            ${escapeHtml(option.label)} <span>${option.count}</span>
-          </button>
-        `).join('')}
-      </div>
-    </details>
-  `).join('');
+  const facets = groups.map(group => {
+    const selectedValues = new Set(selected.filter(facet => facet.dimension === group.dimension).map(facet => facet.value));
+    const query = (searchTerms[group.dimension] ?? '').trim().toLocaleLowerCase();
+    const selectedOptions = group.options.filter(option => selectedValues.has(option.value));
+    const matchingOptions = group.options.filter(option =>
+      !selectedValues.has(option.value) && (!query || option.label.toLocaleLowerCase().includes(query)),
+    );
+    const visibleOptions = [...selectedOptions, ...matchingOptions.slice(0, Math.max(0, FACET_RESULT_LIMIT - selectedOptions.length))];
+    const selectedCount = selectedOptions.length;
+    return `
+      <details class="catalog-facet" data-facet-group="discover:${escapeHtml(group.dimension)}">
+        <summary><span>${escapeHtml(group.label)}</span>${selectedCount ? `<span>${selectedCount} selected</span>` : ''}</summary>
+        <div class="catalog-facet-options">
+          ${group.options.length > FACET_RESULT_LIMIT ? `<label class="catalog-facet-search"><span>Find ${escapeHtml(group.label.toLowerCase())}</span><input type="search" data-facet-search="${escapeHtml(group.dimension)}" value="${escapeHtml(searchTerms[group.dimension] ?? '')}"></label>` : ''}
+          ${visibleOptions.map(option => `
+            <button type="button" class="catalog-facet-option"
+              data-facet-add-dimension="${escapeHtml(option.dimension)}"
+              data-facet-add-value="${escapeHtml(option.value)}"
+              aria-pressed="${selectedValues.has(option.value)}">
+              <span>${escapeHtml(option.label)}</span><span>${option.count}</span>
+            </button>
+          `).join('')}
+        </div>
+      </details>
+    `;
+  }).join('');
 
   const chips = selected.map(facet => `
     <button type="button" class="active-filter"
@@ -128,16 +147,23 @@ function renderCatalogToolbar(
         <button type="button" data-sort="relevance" aria-pressed="${sort === 'relevance'}">Relevance</button>
         <button type="button" data-sort="name" aria-pressed="${sort === 'name'}">Name A-Z</button>
       </div>
-      <div class="active-filter-list">
-        ${chips}
-        ${selected.length ? '<button type="button" class="filter-reset" data-facet-clear>Clear all</button>' : ''}
-      </div>
+      ${selected.length ? `<div class="active-filter-list">${chips}<button type="button" class="filter-reset" data-facet-clear>Clear all</button></div>` : ''}
     </section>
   `;
 }
 
+function renderPagination(page: number, totalPages: number): string {
+  if (totalPages <= 1) return '';
+  return `
+    <nav class="discovery-pagination" aria-label="Discovery pages">
+      <button type="button" data-discovery-page="${page - 1}" ${page === 1 ? 'disabled' : ''}>Previous</button>
+      <span>Page ${page} of ${totalPages}</span>
+      <button type="button" data-discovery-page="${page + 1}" ${page === totalPages ? 'disabled' : ''}>Next</button>
+    </nav>
+  `;
+}
+
 function renderCandidate(candidate: ComponentCandidate, options: DiscoveryContentOptions): string {
-  const selected = candidate.id === options.selectedCandidateId;
   const itemSlug = candidate.itemSlug ?? '';
   const itemLabel = candidate.itemName ?? candidate.matchedLabel;
   const preview = candidate.previewUrl
@@ -158,13 +184,11 @@ function renderCandidate(candidate: ComponentCandidate, options: DiscoveryConten
   const homepage = renderExternalLink(candidate.registry.url, 'Registry homepage', 'secondary-link');
 
   return `
-    <article class="discovery-card ${selected ? 'selected' : ''}" data-candidate-id="${escapeHtml(candidate.id)}">
+    <article class="discovery-card" data-candidate-id="${escapeHtml(candidate.id)}">
       ${specimen}
       <div class="discovery-card-body">
         <div class="discovery-title">${escapeHtml(candidate.matchedLabel)}</div>
-        <button class="registry-namespace" type="button" data-profile-registry="${escapeHtml(candidate.registry.name)}">
-          ${escapeHtml(candidate.registry.name)}
-        </button>
+        <button class="registry-namespace" type="button" data-profile-registry="${escapeHtml(candidate.registry.name)}">${escapeHtml(candidate.registry.name)}</button>
         ${candidate.itemDescription ? `<p class="discovery-description">${escapeHtml(candidate.itemDescription)}</p>` : ''}
         ${renderInstallActions(candidate.installAction, {
           label: itemLabel,

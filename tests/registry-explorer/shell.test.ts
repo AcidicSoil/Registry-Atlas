@@ -31,6 +31,7 @@ describe('registry explorer shell interactions', () => {
     expect(clipboard.writeText).toHaveBeenCalledWith(harness.location.href);
     expect(harness.contentHeader.innerHTML).toContain('role="status"');
     expect(harness.contentHeader.innerHTML).toContain('aria-live="polite"');
+    expect(harness.contentHeader.innerHTML).not.toContain(`<code>${harness.location.href}</code>`);
   });
 
   it('announces clipboard denial on the item surface', async () => {
@@ -44,6 +45,23 @@ describe('registry explorer shell interactions', () => {
 
     expect(harness.contentHeader.innerHTML).toContain('Clipboard unavailable');
     expect(harness.contentHeader.innerHTML).toContain('role="status"');
+  });
+
+
+  it('clears copied prompt feedback when navigating to another route', async () => {
+    const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
+    const harness = setup('?view=item&registry=%40delta&item=code-block');
+    vi.stubGlobal('navigator', { clipboard });
+
+    harness.contentBody.dispatch('click', target({ 'data-copy-text': 'LONG AGENT PROMPT', 'data-copy-label': 'Agent prompt copied' }));
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(harness.contentHeader.innerHTML).toContain('Agent prompt copied');
+    expect(harness.contentHeader.innerHTML).not.toContain('LONG AGENT PROMPT');
+
+    harness.tabs[2].dispatch('click', {});
+    expect(harness.contentHeader.innerHTML).not.toContain('Agent prompt copied');
+    expect(harness.contentHeader.innerHTML).not.toContain('LONG AGENT PROMPT');
   });
 
   it('ignores stale profile fields when the URL requests Compare', () => {
@@ -405,6 +423,9 @@ function registryFixture(): Registry {
       confidence: 'high',
       notes: 'Fixture notes.',
       catalogStatus: 'available',
+      comparisonEvidence: 'catalog',
+      catalogItemCount: 1,
+      catalogEvidenceUrl: 'https://delta.example/r/registry.json',
     },
     itemSummaries: [{
       name: 'Code Block',
@@ -421,6 +442,7 @@ function registryFixture(): Registry {
       routeEligible: true,
       rawItemUrl: 'https://delta.example/r/code-block.json',
       docsUrl: 'https://delta.example/components/code-block',
+      previewUrl: 'https://delta.example/preview.png',
       installCommand: 'npx shadcn add @delta/code-block',
       viewCommand: 'npx shadcn view @delta/code-block',
       dependencies: [],

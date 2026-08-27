@@ -10,6 +10,28 @@ describe('registry browser', () => {
     expect(entries[0]).toMatchObject({ knownItemCount: 2, routeEligibleItemCount: 1, coverageStatus: 'verified' });
   });
 
+  it('derives component evidence from catalog item names when explicit tags are absent', () => {
+    const catalogOnly: Registry = {
+      name: '@catalog-only',
+      url: 'https://catalog-only.example',
+      description: 'Catalog-only registry',
+      primary_focus: [],
+      component_tags: [],
+      itemSummaries: [{
+        name: 'Button',
+        slug: 'button',
+        title: 'Button',
+        source: 'registry-json',
+        provenance: 'catalog sync',
+        catalogStatus: 'available',
+        routeEligible: true,
+      }],
+    };
+
+    const [entry] = buildRegistryBrowseEntries([catalogOnly], '', []);
+    expect(entry.components).toContain('button');
+  });
+
   it('filters by concrete component content and sorts namespace A-Z', () => {
     const entries = buildRegistryBrowseEntries(registries(), '', [
       { dimension: 'component', value: 'button', label: 'Button' },

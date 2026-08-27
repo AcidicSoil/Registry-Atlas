@@ -24,8 +24,8 @@ describe('renderDiscoveryContent', () => {
     expect(body.innerHTML).toContain('Component');
     expect(body.innerHTML).toContain('Registry');
     expect(body.innerHTML).toContain('Relevance');    expect(body.innerHTML).toContain('Name A-Z');
-    expect(body.innerHTML).toContain('Quick preview');
-    expect(body.innerHTML).toContain('data-component-peek-id="@delta:code-block"');
+    expect(body.innerHTML).not.toContain('Quick preview');
+    expect(body.innerHTML).not.toContain('data-component-peek-id="@delta:code-block"');
     expect(body.innerHTML).toContain('View details');
     expect(body.innerHTML).not.toContain('Type');
     expect(body.innerHTML).not.toContain('Visual');
@@ -108,7 +108,7 @@ describe('renderDiscoveryContent', () => {
     expect(body.innerHTML).toContain('Copy install');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Add to queue');
-    expect(body.innerHTML).toContain('Quick preview');
+    expect(body.innerHTML).not.toContain('Quick preview');
     expect(body.innerHTML).toContain('View details');
   });
 
@@ -158,6 +158,46 @@ describe('renderDiscoveryContent', () => {
     expect(body.innerHTML).not.toMatch(/<button[^>]+disabled/);
   });
 
+
+  it('pages long result sets instead of rendering an endless card wall', () => {
+    const body = root();
+    const candidates = Array.from({ length: 25 }, (_, index) => candidateFixture({ itemName: `Component ${index + 1}`, itemSlug: `component-${index + 1}` }));
+
+    renderDiscoveryContent(root(), body, candidates, {
+      searchTerm: '', facetGroups: [], selectedFacets: [], sort: 'relevance', queuedTokens: new Set(), activePeekId: null, page: 1,
+    });
+
+    expect((body.innerHTML.match(/<article class="discovery-card"/g) ?? []).length).toBe(12);
+    expect(body.innerHTML).toContain('Showing 1–12 of 25');
+    expect(body.innerHTML).toContain('data-discovery-page="2"');
+    expect(body.innerHTML).not.toContain('Component 25');
+  });
+
+  it('keeps large facet groups behind searchable bounded disclosures', () => {
+    const body = root();
+    const largeGroup: CatalogFacetGroup = {
+      dimension: 'registry', label: 'Registry',
+      options: Array.from({ length: 20 }, (_, index) => ({ dimension: 'registry' as const, value: `@registry-${index}`, label: `@registry-${index}`, count: 1 })),
+    };
+
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
+      searchTerm: '', facetGroups: [largeGroup], selectedFacets: [], sort: 'relevance', queuedTokens: new Set(), activePeekId: null,
+    });
+
+    expect(body.innerHTML).toContain('data-facet-group="discover:registry"');
+    expect(body.innerHTML).toContain('data-facet-search="registry"');
+    expect((body.innerHTML.match(/data-facet-add-value=/g) ?? []).length).toBeLessThanOrEqual(8);
+    expect(body.innerHTML).not.toContain('class="active-filter-list"');
+  });
+
+  it('does not visually persist a previously opened result as selected', () => {
+    const body = root();
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
+      searchTerm: '', facetGroups: [], selectedFacets: [], sort: 'relevance', queuedTokens: new Set(), activePeekId: null,
+    });
+    expect(body.innerHTML).not.toContain('discovery-card selected');
+  });
+
   it('offers a current URL copy action for discovery state', () => {
     const header = root();
     renderDiscoveryContent(header, root(), [candidateFixture()], {
@@ -178,14 +218,14 @@ function facetGroups(): CatalogFacetGroup[] {
     { dimension: 'registry', label: 'Registry', options: [{ dimension: 'registry', value: '@delta', label: '@delta', count: 1 }] },
   ];
 }
-function candidateFixture(options: { previewUrl?: string; installEnabled?: boolean } = {}): ComponentCandidate {
+function candidateFixture(options: { previewUrl?: string; installEnabled?: boolean; itemName?: string; itemSlug?: string } = {}): ComponentCandidate {
   return {
-    id: '@delta:code-block',
+    id: `@delta:${options.itemSlug ?? 'code-block'}`,
     registry: registryFixture(),
-    matchedLabel: 'Code Block',
+    matchedLabel: options.itemName ?? 'Code Block',
     matchedField: 'item',
-    itemName: 'Code Block',
-    itemSlug: 'code-block',
+    itemName: options.itemName ?? 'Code Block',
+    itemSlug: options.itemSlug ?? 'code-block',
     itemType: 'registry:ui',
     itemCategory: 'code',
     itemDescription: 'Syntax highlighted code block.',

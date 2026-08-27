@@ -1,6 +1,10 @@
 import { componentLabel } from '../core/labels.ts';
 import type { CompareModel, CompareSelection } from '../core/compare.ts';
+import type { MatrixCell } from '../core/registry.schema.ts';
 import { escapeHtml } from './renderSafety.ts';
+
+const MAX_COMPARE_REGISTRIES = 4;
+const PICKER_RESULT_LIMIT = 8;
 
 export function renderCompareContent(
   headerRoot: HTMLElement,
@@ -12,119 +16,149 @@ export function renderCompareContent(
   headerRoot.innerHTML = `
     <div>
       <h1>Compare</h1>
-      <p>Compare registry coverage using the current verification-aware catalog data.</p>
+      <p>Select 2–4 registries, then compare their known component coverage side by side.</p>
       <button class="link-button" type="button" data-copy-current-url data-copy-label="Comparison link copied">Copy comparison link</button>
     </div>
   `;
 
+  const selectedNames = selection.registryNames.filter(name => model.availableRegistryNames.includes(name)).slice(0, MAX_COMPARE_REGISTRIES);
   bodyRoot.innerHTML = `
     <section class="compare-controls" aria-label="Compare registries">
-      ${renderRegistryControls(model, selection, searchTerms.registry)}
-      ${renderComponentControls(model, selection, searchTerms.component)}
+      ${renderRegistryPicker(model, selectedNames, searchTerms.registry)}
+      ${renderCapabilityFilter(model, selection, searchTerms.component)}
     </section>
-    ${renderComparisonTable(model)}
+    ${selectedNames.length >= 2
+      ? renderComparisonTable(model)
+      : renderCompareEmptyState(selectedNames.length)}
   `;
 }
-function renderRegistryControls(model: CompareModel, selection: CompareSelection, search = ''): string {
-  const selectedNames = new Set(
-    selection.registryNames.filter(name => model.availableRegistryNames.includes(name)),
-  );
-  const query = search.trim().toLocaleLowerCase();
-  const selectedOptions = model.availableRegistryNames.filter(name => selectedNames.has(name));
-  const matchingOptions = model.availableRegistryNames.filter(name =>
-    !selectedNames.has(name) && name.toLocaleLowerCase().includes(query),
-  );
-  const names = [
-    ...selectedOptions,
-    ...matchingOptions.slice(0, Math.max(0, 24 - selectedOptions.length)),
-  ];
 
-  const registrySummary = selection.registryNames.length === 0
-    ? `All matching registries (${model.rows.length})`
-    : selectedNames.size === 0
-      ? 'No selected registries match'
-      : `${selectedNames.size} selected${model.rows.length === selectedNames.size ? '' : ` (${model.rows.length} matching)`}`;
+function renderRegistryPicker(model: CompareModel, selectedNames: readonly string[], search = ''): string {
+  const selected = new Set(selectedNames);
+  const query = search.trim().toLocaleLowerCase();
+  const candidates = model.availableRegistryNames
+    .filter(name => !selected.has(name) && (!query || name.toLocaleLowerCase().includes(query)))
+    .slice(0, PICKER_RESULT_LIMIT);
+  const full = selected.size >= MAX_COMPARE_REGISTRIES;
 
   return `
-    <div class="compare-control-group">
-      <span class="compare-control-label">Registries</span>
-      <p>${registrySummary}</p>
-      ${model.availableRegistryNames.length > 8 ? `<label>Search registries<input type="search" data-compare-search="registry" value="${escapeHtml(search)}"></label>` : ''}
-      <div class="compare-option-list">
-        ${names.map(name => `
-          <button class="compare-option" type="button"
-            data-compare-registry="${escapeHtml(name)}"
-            aria-pressed="${selectedNames.has(name)}">
-            ${escapeHtml(name)}
-          </button>
-        `).join('')}
+    <div class="compare-registry-picker">
+      <div class="compare-picker-heading">
+        <div>
+          <strong>Registries</strong>
+          <span>${selected.size} of ${MAX_COMPARE_REGISTRIES} selected</span>
+        </div>
+        <span class="muted">Choose at least 2.</span>
+      </div>
+      ${selected.size ? `
+        <div class="compare-selected-list" aria-label="Selected registries">
+          ${selectedNames.map(name => `
+            <button class="compare-selected-chip" type="button" data-compare-registry="${escapeHtml(name)}" aria-pressed="true" aria-label="Remove ${escapeHtml(name)} from comparison">
+              ${escapeHtml(name)} <span aria-hidden="true">×</span>
+            </button>
+          `).join('')}
+        </div>
+      ` : ''}
+      <label class="compare-search-label">
+        <span>Find a registry</span>
+        <input type="search" data-compare-search="registry" value="${escapeHtml(search)}" placeholder="Search registry names">
+      </label>
+      <div class="compare-picker-results" aria-label="Registry search results">
+        ${candidates.length
+          ? candidates.map(name => `
+              <button class="compare-picker-result" type="button" data-compare-registry="${escapeHtml(name)}" aria-pressed="false" ${full ? 'disabled' : ''}>
+                <span>${escapeHtml(name)}</span><span aria-hidden="true">+</span>
+              </button>
+            `).join('')
+          : `<span class="muted">${full ? 'Remove a registry to choose another.' : 'No registries match this search.'}</span>`}
       </div>
     </div>
   `;
 }
 
-function renderComponentControls(model: CompareModel, selection: CompareSelection, search = ''): string {
-  const selectedKeys = new Set(
-    selection.componentKeys.filter(key => model.availableComponentKeys.includes(key)),
-  );
+function renderCapabilityFilter(model: CompareModel, selection: CompareSelection, search = ''): string {
+  const selectedKeys = selection.componentKeys.filter(key => model.availableComponentKeys.includes(key));
+  const selected = new Set(selectedKeys);
   const query = search.trim().toLocaleLowerCase();
-  const selectedOptions = model.availableComponentKeys.filter(key => selectedKeys.has(key));
-  const matchingOptions = model.availableComponentKeys.filter(key =>
-    !selectedKeys.has(key) && componentLabel(key).toLocaleLowerCase().includes(query),
-  );
-  const keys = [
-    ...selectedOptions,
-    ...matchingOptions.slice(0, Math.max(0, 24 - selectedOptions.length)),
-  ];
-
-  const componentSummary = selectedKeys.size > 0
-    ? `${model.columns.length} capabilities selected`
+  const candidates = model.availableComponentKeys
+    .filter(key => !selected.has(key) && (!query || componentLabel(key).toLocaleLowerCase().includes(query)))
+    .slice(0, PICKER_RESULT_LIMIT);
+  const summary = selected.size
+    ? `${selected.size} selected`
     : `Default capabilities (${model.columns.length})`;
 
   return `
-    <div class="compare-control-group">
-      <span class="compare-control-label">Components</span>
-      <p>${componentSummary}</p>
-      ${model.availableComponentKeys.length > 8 ? `<label>Search components<input type="search" data-compare-search="component" value="${escapeHtml(search)}"></label>` : ''}
-      <div class="compare-option-list">
-        ${keys.map(key => `
-          <button class="compare-option" type="button"
-            data-compare-component="${escapeHtml(key)}"
-            aria-pressed="${selectedKeys.has(key)}">
-            ${escapeHtml(componentLabel(key))}
-          </button>
-        `).join('')}
+    <details class="compare-capability-filter">
+      <summary><span>Refine capabilities</span><span>${escapeHtml(summary)}</span></summary>
+      <div class="compare-capability-body">
+        ${selected.size ? `
+          <div class="compare-selected-list" aria-label="Selected capabilities">
+            ${selectedKeys.map(key => `
+              <button class="compare-selected-chip" type="button" data-compare-component="${escapeHtml(key)}" aria-pressed="true" aria-label="Remove ${escapeHtml(componentLabel(key))} from comparison">
+                ${escapeHtml(componentLabel(key))} <span aria-hidden="true">×</span>
+              </button>
+            `).join('')}
+          </div>
+        ` : ''}
+        <label class="compare-search-label">
+          <span>Find a capability</span>
+          <input type="search" data-compare-search="component" value="${escapeHtml(search)}" placeholder="Search capabilities">
+        </label>
+        <div class="compare-picker-results" aria-label="Capability search results">
+          ${candidates.length
+            ? candidates.map(key => `
+                <button class="compare-picker-result" type="button" data-compare-component="${escapeHtml(key)}" aria-pressed="false">
+                  <span>${escapeHtml(componentLabel(key))}</span><span aria-hidden="true">+</span>
+                </button>
+              `).join('')
+            : '<span class="muted">No capabilities match this search.</span>'}
+        </div>
       </div>
+    </details>
+  `;
+}
+
+function renderCompareEmptyState(selectedCount: number): string {
+  return `
+    <div class="compare-empty-state">
+      <strong>Choose 2–4 registries to compare.</strong>
+      <span>${selectedCount === 0 ? 'Start by searching for a registry above.' : 'Choose one more registry to build the comparison.'}</span>
     </div>
   `;
 }
 
 function renderComparisonTable(model: CompareModel): string {
-  if (model.rows.length === 0) {
-    return '<div class="empty-state"><h2>No registries match the current comparison selection.</h2></div>';
-  }
-
-  const headers = model.columns
-    .map(column => `<th scope="col">${escapeHtml(componentLabel(column))}</th>`)
+  const registryHeaders = model.rows
+    .map(row => `<th scope="col" class="compare-registry-heading">${escapeHtml(row.registry.name)}</th>`)
     .join('');
-  const rows = model.rows.map(row => `
+  const capabilityRows = model.columns.map((componentKey, index) => `
     <tr>
-      <th scope="row">${escapeHtml(row.registry.name)}</th>
-      ${row.cells.map(cell => `
-        <td class="compare-cell compare-cell-${escapeHtml(cell.status)}">
-          <span class="compare-match">${cell.matched ? 'Yes' : '—'}</span>
-          <span class="compare-verification">${escapeHtml(cell.label)}</span>
-        </td>
-      `).join('')}
+      <th scope="row" class="compare-capability-heading">${escapeHtml(componentLabel(componentKey))}</th>
+      ${model.rows.map(row => renderCell(row.cells[index])).join('')}
     </tr>
   `).join('');
 
   return `
-    <div class="compare-table-scroll" tabindex="0" role="region" aria-label="Comparison results">
+    <div class="compare-table-scroll" tabindex="0" role="region" aria-label="Registry comparison table">
       <table class="compare-table">
-        <thead><tr><th scope="col">Registry · Verification</th>${headers}</tr></thead>
-        <tbody>${rows}</tbody>
+        <thead><tr><th scope="col" class="compare-capability-heading">Capability</th>${registryHeaders}</tr></thead>
+        <tbody>${capabilityRows}</tbody>
       </table>
     </div>
   `;
+}
+
+function renderCell(cell: MatrixCell): string {
+  if (!cell.matched || cell.status === 'absent') {
+    return `<td class="compare-cell compare-cell-unknown"><span class="compare-state" aria-label="${escapeHtml(cell.label)}" title="${escapeHtml(cell.label)}">Not listed</span></td>`;
+  }
+
+  const display = cell.status === 'verified'
+    ? ['✓', 'Verified']
+    : cell.status === 'inferred'
+      ? ['~', 'Inferred']
+      : cell.status === 'partial'
+        ? ['◐', 'Partial']
+        : ['?', 'Unverified'];
+  return `<td class="compare-cell compare-cell-${escapeHtml(cell.status)}"><span class="compare-state"><strong>${display[0]}</strong> ${display[1]}</span></td>`;
 }
