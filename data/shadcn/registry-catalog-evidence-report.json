@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-08-27T10:01:07.041Z",
-  "registry_count": 290,
-  "fetched_catalog_count": 247,
-  "fetched_item_count": 40464,
-  "evidence_registry_count": 248,
-  "stale_registry_count": 0,
-  "failure_count": 43,
+  "generated_at": "2026-09-23T09:54:06.206Z",
+  "registry_count": 382,
+  "fetched_catalog_count": 334,
+  "fetched_item_count": 89913,
+  "evidence_registry_count": 340,
+  "stale_registry_count": 5,
+  "failure_count": 48,
   "failures": [
     {
       "namespace": "@abstract",
@@ -18,16 +18,6 @@
       "catalog_url": "https://webllm.org/r/registry.json"
     },
     {
-      "namespace": "@aliimam",
-      "reason": "http-404",
-      "catalog_url": "https://aliimam.in/r/registry.json"
-    },
-    {
-      "namespace": "@amicro",
-      "reason": "SyntaxError",
-      "catalog_url": "https://amicro.vercel.app/r/registry.json"
-    },
-    {
       "namespace": "@aniui",
       "reason": "http-404",
       "catalog_url": "https://aniui.dev/r/registry.json"
@@ -35,6 +25,11 @@
     {
       "namespace": "@better-auth-ui",
       "reason": "unsupported-template"
+    },
+    {
+      "namespace": "@blockus",
+      "reason": "SyntaxError",
+      "catalog_url": "https://blockus.lndevui.com/r/registry.json"
     },
     {
       "namespace": "@creative-tim",
@@ -45,6 +40,11 @@
       "namespace": "@cult-ui",
       "reason": "http-429",
       "catalog_url": "https://cult-ui.com/r/registry.json"
+    },
+    {
+      "namespace": "@darx",
+      "reason": "TypeError",
+      "catalog_url": "https://darshitdev.in/r/registry.json"
     },
     {
       "namespace": "@devl",
@@ -96,6 +96,11 @@
       "catalog_url": "https://shadcn-heatmap.pages.dev/r/registry.json"
     },
     {
+      "namespace": "@hextaui",
+      "reason": "http-404",
+      "catalog_url": "https://hextaui.com/r/registry.json"
+    },
+    {
       "namespace": "@icons-animated",
       "reason": "http-404",
       "catalog_url": "https://icons.lndev.me/r/registry.json"
@@ -110,14 +115,24 @@
       "catalog_url": "https://ui.justinlevine.me/r/registry.json"
     },
     {
+      "namespace": "@lema-ds",
+      "reason": "http-502",
+      "catalog_url": "https://ds.lema.ufpb.br/r/registry.json"
+    },
+    {
       "namespace": "@moleculeui",
       "reason": "TypeError",
       "catalog_url": "https://www.moleculeui.design/r/registry.json"
     },
     {
-      "namespace": "@motion-primitives",
-      "reason": "http-429",
-      "catalog_url": "https://motion-primitives.com/c/registry.json"
+      "namespace": "@motion-menu",
+      "reason": "http-404",
+      "catalog_url": "https://motion-menu-two.vercel.app/r/registry.json"
+    },
+    {
+      "namespace": "@n3wth",
+      "reason": "SyntaxError",
+      "catalog_url": "https://kit.n3wth.com/r/registry.json"
     },
     {
       "namespace": "@neobrutalism",
@@ -135,6 +150,11 @@
       "catalog_url": "https://elements.nexus.availproject.org/r/registry.json"
     },
     {
+      "namespace": "@nysgpt",
+      "reason": "http-403",
+      "catalog_url": "https://gov.nysgpt.com/r/registry.json"
+    },
+    {
       "namespace": "@openpolicy",
       "reason": "http-404",
       "catalog_url": "https://www.openpolicy.sh/r/registry.json"
@@ -143,6 +163,11 @@
       "namespace": "@phucbm",
       "reason": "http-404",
       "catalog_url": "https://phucbm.com/r/registry.json"
+    },
+    {
+      "namespace": "@pulkitxm",
+      "reason": "http-404",
+      "catalog_url": "https://pulkit.page/components/registry.json"
     },
     {
       "namespace": "@pureui",
@@ -169,7 +194,7 @@
     },
     {
       "namespace": "@sabraman",
-      "reason": "http-404",
+      "reason": "TypeError",
       "catalog_url": "https://sabraman.ru/r/registry.json"
     },
     {

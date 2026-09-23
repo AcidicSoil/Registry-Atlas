@@ -1,4 +1,60 @@
 {
+  "@000h-cojeev": {
+    "namespace": "@000h-cojeev",
+    "catalog_url": "https://000h.cojeev.com/r/registry.json",
+    "item_count": 174,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "code-block",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "dropzone",
+      "hover-card",
+      "input",
+      "menubar",
+      "modal",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "stepper",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:41.278Z"
+  },
   "@1st-pouf": {
     "namespace": "@1st-pouf",
     "catalog_url": "https://1st-pouf.worksonmy.dev/r/registry.json",
@@ -38,22 +94,22 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.812Z"
+    "synced_at": "2026-09-23T09:53:41.350Z"
   },
   "@23rd": {
     "namespace": "@23rd",
     "catalog_url": "https://23rd.dev/r/registry.json",
-    "item_count": 20,
+    "item_count": 28,
     "component_tags": [
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.664Z"
+    "synced_at": "2026-09-23T09:53:41.327Z"
   },
   "@7ovr": {
     "namespace": "@7ovr",
     "catalog_url": "https://7ovr.com/r/registry.json",
-    "item_count": 242,
+    "item_count": 248,
     "component_tags": [
       "accordion",
       "admonition",
@@ -88,7 +144,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.890Z"
+    "synced_at": "2026-09-23T09:53:42.248Z"
   },
   "@8bitcn": {
     "namespace": "@8bitcn",
@@ -140,7 +196,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.907Z"
+    "synced_at": "2026-09-23T09:53:41.534Z"
   },
   "@8starlabs-ui": {
     "namespace": "@8starlabs-ui",
@@ -157,7 +213,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.818Z"
+    "synced_at": "2026-09-23T09:53:41.596Z"
   },
   "@abui": {
     "namespace": "@abui",
@@ -177,12 +233,12 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.112Z"
+    "synced_at": "2026-09-23T09:53:42.135Z"
   },
   "@aceternity": {
     "namespace": "@aceternity",
     "catalog_url": "https://ui.aceternity.com/registry/registry.json",
-    "item_count": 278,
+    "item_count": 284,
     "component_tags": [
       "accordion",
       "badge",
@@ -207,7 +263,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.786Z"
+    "synced_at": "2026-09-23T09:53:41.666Z"
   },
   "@aevr": {
     "namespace": "@aevr",
@@ -218,7 +274,66 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.810Z"
+    "synced_at": "2026-09-23T09:53:41.710Z"
+  },
+  "@afterglow": {
+    "namespace": "@afterglow",
+    "catalog_url": "https://afterglow.thebuilder.dk/r/registry.json",
+    "item_count": 66,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "chart",
+      "checkbox",
+      "code-block",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "dropdown",
+      "hover-card",
+      "input",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:57.551Z"
+  },
+  "@agentblog": {
+    "namespace": "@agentblog",
+    "catalog_url": "https://agentblog.dev/r/registry.json",
+    "item_count": 13,
+    "component_tags": [
+      "theme"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:57.610Z"
   },
   "@agentcn": {
     "namespace": "@agentcn",
@@ -229,18 +344,32 @@
       "chatbot"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.292Z"
+    "synced_at": "2026-09-23T09:53:43.126Z"
   },
   "@agents-ui": {
     "namespace": "@agents-ui",
     "catalog_url": "https://livekit.com/ui/r/registry.json",
-    "item_count": 17,
+    "item_count": 18,
     "component_tags": [
       "button",
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.851Z"
+    "synced_at": "2026-09-23T09:53:42.217Z"
+  },
+  "@agentui": {
+    "namespace": "@agentui",
+    "catalog_url": "https://www.agentui.pro/r/registry.json",
+    "item_count": 19,
+    "component_tags": [
+      "card",
+      "code-block",
+      "input",
+      "progress",
+      "sidebar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.608Z"
   },
   "@ai-elements": {
     "namespace": "@ai-elements",
@@ -256,7 +385,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.229Z"
+    "synced_at": "2026-09-23T09:53:42.559Z"
   },
   "@ai2": {
     "namespace": "@ai2",
@@ -312,12 +441,12 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.272Z"
+    "synced_at": "2026-09-23T09:53:57.236Z"
   },
   "@aicanvas": {
     "namespace": "@aicanvas",
     "catalog_url": "https://aicanvas.me/r/registry.json",
-    "item_count": 126,
+    "item_count": 183,
     "component_tags": [
       "alert",
       "avatar",
@@ -352,7 +481,20 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.871Z"
+    "synced_at": "2026-09-23T09:53:42.858Z"
+  },
+  "@akoder": {
+    "namespace": "@akoder",
+    "catalog_url": "https://akoder.xyz/r/registry.json",
+    "item_count": 17,
+    "component_tags": [
+      "card",
+      "carousel",
+      "command",
+      "progress"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.788Z"
   },
   "@algolia": {
     "namespace": "@algolia",
@@ -362,7 +504,58 @@
       "dropdown"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:46.915Z"
+    "synced_at": "2026-09-23T09:53:41.944Z"
+  },
+  "@amap": {
+    "namespace": "@amap",
+    "catalog_url": "https://map.ling.pub/r/registry.json",
+    "item_count": 1,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.283Z"
+  },
+  "@amarjay-ui": {
+    "namespace": "@amarjay-ui",
+    "catalog_url": "https://ui.amarjay.com/r/registry.json",
+    "item_count": 18,
+    "component_tags": [
+      "alert",
+      "audio-player",
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "chart",
+      "context-menu",
+      "dialog",
+      "dropdown",
+      "input",
+      "popover",
+      "slider",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.076Z"
+  },
+  "@amicro": {
+    "namespace": "@amicro",
+    "catalog_url": "https://amicro.vercel.app/r/registry.json",
+    "item_count": 169,
+    "component_tags": [
+      "accordion",
+      "button",
+      "card",
+      "carousel",
+      "chart",
+      "progress",
+      "scroll-progress",
+      "skeleton",
+      "spinner",
+      "typing-indicator",
+      "waveform"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.309Z"
   },
   "@amplo": {
     "namespace": "@amplo",
@@ -372,7 +565,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.237Z"
+    "synced_at": "2026-09-23T09:53:42.471Z"
   },
   "@animate-ui": {
     "namespace": "@animate-ui",
@@ -411,7 +604,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.078Z"
+    "synced_at": "2026-09-23T09:53:42.352Z"
   },
   "@animbits": {
     "namespace": "@animbits",
@@ -431,7 +624,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.659Z"
+    "synced_at": "2026-09-23T09:53:42.935Z"
   },
   "@approvals-ui": {
     "namespace": "@approvals-ui",
@@ -439,7 +632,7 @@
     "item_count": 6,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.068Z"
+    "synced_at": "2026-09-23T09:53:42.523Z"
   },
   "@arc": {
     "namespace": "@arc",
@@ -449,7 +642,57 @@
       "carousel"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.572Z"
+    "synced_at": "2026-09-23T09:53:43.352Z"
+  },
+  "@ark-cn": {
+    "namespace": "@ark-cn",
+    "catalog_url": "https://ark-cn.vercel.app/r/registry.json",
+    "item_count": 76,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "angle-slider",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "carousel",
+      "checkbox",
+      "collapsible",
+      "color-picker",
+      "combobox",
+      "command",
+      "cropper",
+      "dialog",
+      "file-upload",
+      "hover-card",
+      "input",
+      "pagination",
+      "password-input",
+      "popover",
+      "progress",
+      "qr-code",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "tabs",
+      "textarea",
+      "toast",
+      "toggle",
+      "tooltip",
+      "zoomable-image"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.592Z"
   },
   "@asanshay": {
     "namespace": "@asanshay",
@@ -467,12 +710,12 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.374Z"
+    "synced_at": "2026-09-23T09:53:43.003Z"
   },
   "@assistant-ui": {
     "namespace": "@assistant-ui",
     "catalog_url": "https://r.assistant-ui.com/registry.json",
-    "item_count": 141,
+    "item_count": 156,
     "component_tags": [
       "accordion",
       "badge",
@@ -497,7 +740,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.177Z"
+    "synced_at": "2026-09-23T09:53:42.992Z"
   },
   "@atelier": {
     "namespace": "@atelier",
@@ -505,7 +748,15 @@
     "item_count": 51,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.217Z"
+    "synced_at": "2026-09-23T09:53:57.142Z"
+  },
+  "@atomloader": {
+    "namespace": "@atomloader",
+    "catalog_url": "https://atomloader.roothq.tech/r/registry.json",
+    "item_count": 591,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:57.997Z"
   },
   "@atroui": {
     "namespace": "@atroui",
@@ -530,7 +781,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.626Z"
+    "synced_at": "2026-09-23T09:53:57.521Z"
   },
   "@auth0": {
     "namespace": "@auth0",
@@ -540,7 +791,56 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.051Z"
+    "synced_at": "2026-09-23T09:53:42.786Z"
+  },
+  "@avertra-ui": {
+    "namespace": "@avertra-ui",
+    "catalog_url": "https://micomponents.micustomer.io/r/registry.json",
+    "item_count": 31,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "input",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "spinner",
+      "stepper",
+      "table",
+      "tabs",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.799Z"
+  },
+  "@awwwardedui": {
+    "namespace": "@awwwardedui",
+    "catalog_url": "https://awwwardedui.vercel.app/r/registry.json",
+    "item_count": 5,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.806Z"
+  },
+  "@axicharts": {
+    "namespace": "@axicharts",
+    "catalog_url": "https://axidify.github.io/axicharts/registry/registry.json",
+    "item_count": 10,
+    "component_tags": [
+      "chart"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.889Z"
   },
   "@baraile-loader": {
     "namespace": "@baraile-loader",
@@ -548,7 +848,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.124Z"
+    "synced_at": "2026-09-23T09:53:42.944Z"
   },
   "@basecn": {
     "namespace": "@basecn",
@@ -596,7 +896,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.280Z"
+    "synced_at": "2026-09-23T09:53:41.432Z"
   },
   "@baselayer": {
     "namespace": "@baselayer",
@@ -625,7 +925,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.254Z"
+    "synced_at": "2026-09-23T09:53:43.077Z"
   },
   "@benday": {
     "namespace": "@benday",
@@ -633,12 +933,12 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.252Z"
+    "synced_at": "2026-09-23T09:53:43.139Z"
   },
   "@beste-ui": {
     "namespace": "@beste-ui",
     "catalog_url": "https://ui.beste.co/r/registry.json",
-    "item_count": 1935,
+    "item_count": 2095,
     "component_tags": [
       "accordion",
       "admonition",
@@ -648,6 +948,7 @@
       "avatar",
       "badge",
       "breadcrumb",
+      "button",
       "calendar",
       "card",
       "card-deck",
@@ -692,7 +993,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.402Z"
+    "synced_at": "2026-09-23T09:53:41.607Z"
   },
   "@better-upload": {
     "namespace": "@better-upload",
@@ -704,18 +1005,20 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.300Z"
+    "synced_at": "2026-09-23T09:53:43.173Z"
   },
   "@beui": {
     "namespace": "@beui",
     "catalog_url": "https://beui.dev/r/registry.json",
-    "item_count": 111,
+    "item_count": 124,
     "component_tags": [
       "accordion",
       "badge",
       "button",
+      "calendar",
       "card",
       "carousel",
+      "chart",
       "checkbox",
       "code-block",
       "combobox",
@@ -735,6 +1038,7 @@
       "sheet",
       "sidebar",
       "slider",
+      "stepper",
       "switch",
       "table",
       "tabs",
@@ -744,7 +1048,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.508Z"
+    "synced_at": "2026-09-23T09:53:43.270Z"
   },
   "@billingsdk": {
     "namespace": "@billingsdk",
@@ -757,7 +1061,56 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.379Z"
+    "synced_at": "2026-09-23T09:53:43.337Z"
+  },
+  "@bits-ui": {
+    "namespace": "@bits-ui",
+    "catalog_url": "https://bits-ui.netlify.app/r/registry.json",
+    "item_count": 6,
+    "component_tags": [
+      "carousel"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.698Z"
+  },
+  "@bjork-ui": {
+    "namespace": "@bjork-ui",
+    "catalog_url": "https://ui.isaiahbjork.com/registry.json",
+    "item_count": 74,
+    "component_tags": [
+      "accordion",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "dialog",
+      "dropdown",
+      "hover-card",
+      "input",
+      "modal",
+      "otp-input",
+      "pagination",
+      "popover",
+      "radio",
+      "radio-group",
+      "select",
+      "sheet",
+      "slider",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:41.386Z"
   },
   "@bklit": {
     "namespace": "@bklit",
@@ -769,7 +1122,18 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.711Z"
+    "synced_at": "2026-09-23T09:53:41.758Z"
+  },
+  "@blobatar": {
+    "namespace": "@blobatar",
+    "catalog_url": "https://blobatar.dev/r/registry.json",
+    "item_count": 6,
+    "component_tags": [
+      "avatar",
+      "table"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:43.409Z"
   },
   "@blockforge": {
     "namespace": "@blockforge",
@@ -787,12 +1151,12 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.500Z"
+    "synced_at": "2026-09-23T09:53:41.370Z"
   },
   "@blocks-so": {
     "namespace": "@blocks-so",
     "catalog_url": "https://blocks.so/r/registry.json",
-    "item_count": 77,
+    "item_count": 82,
     "component_tags": [
       "accordion",
       "ai-chat",
@@ -816,7 +1180,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.521Z"
+    "synced_at": "2026-09-23T09:53:42.622Z"
   },
   "@blockus": {
     "namespace": "@blockus",
@@ -850,13 +1214,13 @@
       "toggle",
       "zoomable-image"
     ],
-    "status": "available",
+    "status": "stale",
     "synced_at": "2026-08-27T10:00:47.587Z"
   },
   "@blode": {
     "namespace": "@blode",
     "catalog_url": "https://blode.co/ui/r/registry.json",
-    "item_count": 99,
+    "item_count": 100,
     "component_tags": [
       "accordion",
       "alert",
@@ -906,12 +1270,12 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.715Z"
+    "synced_at": "2026-09-23T09:53:41.692Z"
   },
   "@boldkit": {
     "namespace": "@boldkit",
     "catalog_url": "https://boldkit.dev/r/registry.json",
-    "item_count": 94,
+    "item_count": 96,
     "component_tags": [
       "accordion",
       "alert",
@@ -962,7 +1326,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.693Z"
+    "synced_at": "2026-09-23T09:53:41.489Z"
   },
   "@brainless": {
     "namespace": "@brainless",
@@ -970,7 +1334,7 @@
     "item_count": 40,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.698Z"
+    "synced_at": "2026-09-23T09:53:41.595Z"
   },
   "@brut-ui": {
     "namespace": "@brut-ui",
@@ -1021,7 +1385,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.706Z"
+    "synced_at": "2026-09-23T09:53:41.519Z"
   },
   "@bundui": {
     "namespace": "@bundui",
@@ -1069,15 +1433,34 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.644Z"
+    "synced_at": "2026-09-23T09:53:42.150Z"
+  },
+  "@buzzform": {
+    "namespace": "@buzzform",
+    "catalog_url": "https://form.buildnbuzz.com/r/registry.json",
+    "item_count": 48,
+    "component_tags": [
+      "checkbox",
+      "collapsible",
+      "dialog",
+      "popover",
+      "radio",
+      "select",
+      "sheet",
+      "switch",
+      "tabs",
+      "textarea"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:41.554Z"
   },
   "@canvas-ui": {
     "namespace": "@canvas-ui",
     "catalog_url": "https://canvasui.dev/r/registry.json",
-    "item_count": 210,
+    "item_count": 420,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.618Z"
+    "synced_at": "2026-09-23T09:53:41.533Z"
   },
   "@cardcn": {
     "namespace": "@cardcn",
@@ -1087,7 +1470,89 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.610Z"
+    "synced_at": "2026-09-23T09:53:41.574Z"
+  },
+  "@catalogs": {
+    "namespace": "@catalogs",
+    "catalog_url": "https://api.catalogs.dev/shadcn/registry.json",
+    "item_count": 2103,
+    "component_tags": [
+      "accordion",
+      "admonition",
+      "alert",
+      "angle-slider",
+      "audio-player",
+      "audit",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "card-deck",
+      "carousel",
+      "chart",
+      "chatbot",
+      "checkbox",
+      "circular-progress",
+      "code-block",
+      "collapsible",
+      "color-picker",
+      "color-swatch",
+      "combobox",
+      "command",
+      "compare-slider",
+      "context-menu",
+      "cropper",
+      "data-grid",
+      "datepicker",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "dropzone",
+      "error-message",
+      "file-upload",
+      "hero-section",
+      "hover-card",
+      "input",
+      "menubar",
+      "modal",
+      "otp-input",
+      "pagination",
+      "pill",
+      "popover",
+      "progress",
+      "qr-code",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "scroll-progress",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "stepper",
+      "switch",
+      "table",
+      "tabs",
+      "testimonial",
+      "textarea",
+      "theme",
+      "timeline",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip",
+      "transcript-viewer",
+      "voice-picker",
+      "waveform",
+      "zoomable-image"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:41.806Z"
   },
   "@chamaac": {
     "namespace": "@chamaac",
@@ -1102,7 +1567,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.033Z"
+    "synced_at": "2026-09-23T09:53:42.271Z"
   },
   "@channel3": {
     "namespace": "@channel3",
@@ -1115,7 +1580,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.614Z"
+    "synced_at": "2026-09-23T09:53:41.895Z"
   },
   "@clerk": {
     "namespace": "@clerk",
@@ -1125,7 +1590,17 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.851Z"
+    "synced_at": "2026-09-23T09:53:41.918Z"
+  },
+  "@cligentic": {
+    "namespace": "@cligentic",
+    "catalog_url": "https://cligentic.railly.dev/r/registry.json",
+    "item_count": 24,
+    "component_tags": [
+      "audit"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:41.971Z"
   },
   "@cnippet": {
     "namespace": "@cnippet",
@@ -1175,7 +1650,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.782Z"
+    "synced_at": "2026-09-23T09:53:42.090Z"
   },
   "@cognicatch": {
     "namespace": "@cognicatch",
@@ -1185,7 +1660,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.754Z"
+    "synced_at": "2026-09-23T09:53:42.036Z"
   },
   "@commercn": {
     "namespace": "@commercn",
@@ -1196,26 +1671,21 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.232Z"
+    "synced_at": "2026-09-23T09:53:42.858Z"
   },
   "@componentry": {
     "namespace": "@componentry",
     "catalog_url": "https://componentry.fun/r/registry.json",
-    "item_count": 67,
+    "item_count": 55,
     "component_tags": [
-      "button",
       "calendar",
       "card",
       "card-deck",
       "carousel",
-      "command",
-      "input",
-      "modal",
-      "slider",
-      "testimonial"
+      "slider"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.241Z"
+    "synced_at": "2026-09-23T09:53:42.798Z"
   },
   "@contentbit": {
     "namespace": "@contentbit",
@@ -1226,12 +1696,62 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.020Z"
+    "synced_at": "2026-09-23T09:53:42.251Z"
+  },
+  "@corecn": {
+    "namespace": "@corecn",
+    "catalog_url": "https://corecn.vercel.app/r/registry.json",
+    "item_count": 67,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.143Z"
   },
   "@corr": {
     "namespace": "@corr",
     "catalog_url": "https://ui.corr.sh/r/registry.json",
-    "item_count": 59,
+    "item_count": 60,
     "component_tags": [
       "accordion",
       "alert",
@@ -1262,7 +1782,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.362Z"
+    "synced_at": "2026-09-23T09:53:42.695Z"
   },
   "@coss": {
     "namespace": "@coss",
@@ -1309,7 +1829,47 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.914Z"
+    "synced_at": "2026-09-23T09:53:42.281Z"
+  },
+  "@crafterui": {
+    "namespace": "@crafterui",
+    "catalog_url": "https://crafterui.com/r/registry.json",
+    "item_count": 18,
+    "component_tags": [
+      "accordion",
+      "carousel",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.914Z"
+  },
+  "@craftui": {
+    "namespace": "@craftui",
+    "catalog_url": "https://www.craftui.space/r/registry.json",
+    "item_count": 158,
+    "component_tags": [
+      "accordion",
+      "ai-chat",
+      "alert",
+      "avatar",
+      "badge",
+      "button",
+      "calendar",
+      "card",
+      "dialog",
+      "drawer",
+      "input",
+      "modal",
+      "navbar",
+      "otp-input",
+      "product-card",
+      "spinner",
+      "switch",
+      "theme",
+      "typing-indicator"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.982Z"
   },
   "@cubby-ui": {
     "namespace": "@cubby-ui",
@@ -1361,7 +1921,27 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.980Z"
+    "synced_at": "2026-09-23T09:53:42.427Z"
+  },
+  "@d2": {
+    "namespace": "@d2",
+    "catalog_url": "https://ui.d2studio.dev/r/registry.json",
+    "item_count": 40,
+    "component_tags": [
+      "alert",
+      "button",
+      "card",
+      "checkbox",
+      "drawer",
+      "hero-section",
+      "input",
+      "progress",
+      "select",
+      "spinner",
+      "tabs"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.624Z"
   },
   "@darx": {
     "namespace": "@darx",
@@ -1370,8 +1950,39 @@
     "component_tags": [
       "tabs"
     ],
-    "status": "available",
+    "status": "stale",
     "synced_at": "2026-08-27T10:00:48.030Z"
+  },
+  "@dashboardcn": {
+    "namespace": "@dashboardcn",
+    "catalog_url": "https://dashboardcn.com/r/registry.json",
+    "item_count": 54,
+    "component_tags": [
+      "badge",
+      "card",
+      "chart",
+      "command",
+      "progress",
+      "table",
+      "tabs",
+      "timeline"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.593Z"
+  },
+  "@data-table-filters": {
+    "namespace": "@data-table-filters",
+    "catalog_url": "https://data-table.openstatus.dev/r/registry.json",
+    "item_count": 15,
+    "component_tags": [
+      "chart",
+      "command",
+      "sheet",
+      "table",
+      "timeline"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:43.336Z"
   },
   "@delego": {
     "namespace": "@delego",
@@ -1386,38 +1997,124 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:47.872Z"
+    "synced_at": "2026-09-23T09:53:42.825Z"
   },
   "@delta": {
     "namespace": "@delta",
     "catalog_url": "https://deltacomponents.dev/r/registry.json",
-    "item_count": 93,
+    "item_count": 20,
     "component_tags": [
-      "admonition",
-      "ai-chat",
-      "auth-form",
+      "alert",
       "button",
       "card",
-      "card-deck",
-      "chatbot",
-      "code-block",
-      "collapsible",
-      "input",
-      "map-pointer",
-      "otp-input",
-      "pill",
       "product-card",
-      "qr-code",
-      "scroll-area",
-      "separator",
-      "sidebar",
-      "slider",
       "tabs",
-      "theme",
-      "utility-button"
+      "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.095Z"
+    "synced_at": "2026-09-23T09:53:43.221Z"
+  },
+  "@designali": {
+    "namespace": "@designali",
+    "catalog_url": "https://designali.com/r/registry.json",
+    "item_count": 245,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "testimonial",
+      "textarea",
+      "toast",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:42.064Z"
+  },
+  "@diarmuradi": {
+    "namespace": "@diarmuradi",
+    "catalog_url": "https://diarmuradi.com/r/registry.json",
+    "item_count": 119,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "qr-code",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toast",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:43.557Z"
   },
   "@diklein": {
     "namespace": "@diklein",
@@ -1428,7 +2125,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.117Z"
+    "synced_at": "2026-09-23T09:53:43.172Z"
   },
   "@dominik-ui": {
     "namespace": "@dominik-ui",
@@ -1439,7 +2136,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.162Z"
+    "synced_at": "2026-09-23T09:53:43.862Z"
   },
   "@dotmatrix": {
     "namespace": "@dotmatrix",
@@ -1447,7 +2144,7 @@
     "item_count": 91,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.150Z"
+    "synced_at": "2026-09-23T09:53:43.179Z"
   },
   "@dsikeres1": {
     "namespace": "@dsikeres1",
@@ -1455,20 +2152,59 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.025Z"
+    "synced_at": "2026-09-23T09:53:43.068Z"
+  },
+  "@easeui": {
+    "namespace": "@easeui",
+    "catalog_url": "https://easeui.dev/r/registry.json",
+    "item_count": 50,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "checkbox",
+      "code-block",
+      "command",
+      "drawer",
+      "dropdown",
+      "file-upload",
+      "input",
+      "modal",
+      "otp-input",
+      "popover",
+      "progress",
+      "select",
+      "skeleton",
+      "slider",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "tooltip",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:44.259Z"
   },
   "@efferd": {
     "namespace": "@efferd",
     "catalog_url": "https://efferd.com/r/registry.json",
-    "item_count": 201,
+    "item_count": 231,
     "component_tags": [
       "app-shell",
       "button",
+      "sidebar",
       "slider",
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.248Z"
+    "synced_at": "2026-09-23T09:53:43.342Z"
   },
   "@einui": {
     "namespace": "@einui",
@@ -1505,7 +2241,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.529Z"
+    "synced_at": "2026-09-23T09:53:43.582Z"
   },
   "@eldoraui": {
     "namespace": "@eldoraui",
@@ -1520,7 +2256,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.806Z"
+    "synced_at": "2026-09-23T09:53:44.070Z"
   },
   "@elements": {
     "namespace": "@elements",
@@ -1546,12 +2282,50 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.434Z"
+    "synced_at": "2026-09-23T09:53:43.733Z"
+  },
+  "@elsecase": {
+    "namespace": "@elsecase",
+    "catalog_url": "https://elsecase.vercel.app/r/registry.json",
+    "item_count": 3,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:43.642Z"
+  },
+  "@emailcn": {
+    "namespace": "@emailcn",
+    "catalog_url": "https://emailcn.vercel.app/r/registry.json",
+    "item_count": 338,
+    "component_tags": [
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "otp-input",
+      "progress",
+      "receipt",
+      "table",
+      "testimonial",
+      "theme",
+      "timeline"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:44.912Z"
+  },
+  "@emstein-ui": {
+    "namespace": "@emstein-ui",
+    "catalog_url": "https://ui.emstein.com/r/registry.json",
+    "item_count": 1,
+    "component_tags": [
+      "table"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:43.984Z"
   },
   "@ericts": {
     "namespace": "@ericts",
     "catalog_url": "https://ui.ericts.com/r/registry.json",
-    "item_count": 51,
+    "item_count": 55,
     "component_tags": [
       "badge",
       "button",
@@ -1571,15 +2345,15 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.347Z"
+    "synced_at": "2026-09-23T09:53:44.160Z"
   },
   "@evex": {
     "namespace": "@evex",
     "catalog_url": "https://evex.sh/r/registry.json",
-    "item_count": 13,
+    "item_count": 23,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.736Z"
+    "synced_at": "2026-09-23T09:53:44.511Z"
   },
   "@evilcharts": {
     "namespace": "@evilcharts",
@@ -1591,7 +2365,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.620Z"
+    "synced_at": "2026-09-23T09:53:44.769Z"
   },
   "@exabase": {
     "namespace": "@exabase",
@@ -1642,12 +2416,12 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.931Z"
+    "synced_at": "2026-09-23T09:53:44.314Z"
   },
   "@extend": {
     "namespace": "@extend",
     "catalog_url": "https://ui.extend.ai/r/registry.json",
-    "item_count": 55,
+    "item_count": 67,
     "component_tags": [
       "accordion",
       "alert",
@@ -1671,12 +2445,14 @@
       "sidebar",
       "skeleton",
       "spinner",
+      "switch",
       "tabs",
+      "toast",
       "toggle",
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.726Z"
+    "synced_at": "2026-09-23T09:53:44.456Z"
   },
   "@fab-ui": {
     "namespace": "@fab-ui",
@@ -1714,7 +2490,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.784Z"
+    "synced_at": "2026-09-23T09:53:44.584Z"
   },
   "@flagcn": {
     "namespace": "@flagcn",
@@ -1727,15 +2503,15 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.581Z"
+    "synced_at": "2026-09-23T09:53:44.048Z"
   },
   "@flightcn": {
     "namespace": "@flightcn",
     "catalog_url": "https://flightcn.yencheng.dev/r/registry.json",
-    "item_count": 2,
+    "item_count": 13,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.754Z"
+    "synced_at": "2026-09-23T09:53:44.220Z"
   },
   "@flowkit-ui": {
     "namespace": "@flowkit-ui",
@@ -1745,7 +2521,7 @@
       "combobox"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.833Z"
+    "synced_at": "2026-09-23T09:53:45.544Z"
   },
   "@flowui": {
     "namespace": "@flowui",
@@ -1760,12 +2536,51 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.677Z"
+    "synced_at": "2026-09-23T09:53:44.233Z"
+  },
+  "@fluent2-react-kit": {
+    "namespace": "@fluent2-react-kit",
+    "catalog_url": "https://fluent2-react-kit.graund.io/r/registry.json",
+    "item_count": 37,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "checkbox",
+      "combobox",
+      "command",
+      "dialog",
+      "dropdown",
+      "input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "separator",
+      "skeleton",
+      "spinner",
+      "switch",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:44.416Z"
   },
   "@fluid": {
     "namespace": "@fluid",
     "catalog_url": "https://www.fluidfunctionalism.com/r/registry.json",
-    "item_count": 56,
+    "item_count": 70,
     "component_tags": [
       "accordion",
       "badge",
@@ -1773,6 +2588,8 @@
       "card",
       "checkbox",
       "color-picker",
+      "combobox",
+      "command",
       "dialog",
       "drawer",
       "dropdown",
@@ -1789,7 +2606,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.790Z"
+    "synced_at": "2026-09-23T09:53:44.482Z"
   },
   "@flx": {
     "namespace": "@flx",
@@ -1835,7 +2652,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.901Z"
+    "synced_at": "2026-09-23T09:53:44.562Z"
   },
   "@forgeui": {
     "namespace": "@forgeui",
@@ -1848,7 +2665,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.831Z"
+    "synced_at": "2026-09-23T09:53:44.540Z"
   },
   "@formcn": {
     "namespace": "@formcn",
@@ -1862,7 +2679,28 @@
       "tag-input"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.920Z"
+    "synced_at": "2026-09-23T09:53:44.643Z"
+  },
+  "@formscn": {
+    "namespace": "@formscn",
+    "catalog_url": "https://www.formscn.space/r/registry.json",
+    "item_count": 30,
+    "component_tags": [
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "input",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "switch",
+      "textarea"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:44.698Z"
   },
   "@framecn": {
     "namespace": "@framecn",
@@ -1879,12 +2717,12 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.433Z"
+    "synced_at": "2026-09-23T09:53:46.159Z"
   },
   "@gaia": {
     "namespace": "@gaia",
     "catalog_url": "https://ui.heygaia.io/r/registry.json",
-    "item_count": 28,
+    "item_count": 29,
     "component_tags": [
       "button",
       "card",
@@ -1897,7 +2735,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.041Z"
+    "synced_at": "2026-09-23T09:53:44.758Z"
   },
   "@gamekitui": {
     "namespace": "@gamekitui",
@@ -1905,7 +2743,7 @@
     "item_count": 12,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.264Z"
+    "synced_at": "2026-09-23T09:53:45.124Z"
   },
   "@gamifykit": {
     "namespace": "@gamifykit",
@@ -1913,7 +2751,7 @@
     "item_count": 3,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.095Z"
+    "synced_at": "2026-09-23T09:53:44.860Z"
   },
   "@gammaui": {
     "namespace": "@gammaui",
@@ -1928,7 +2766,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.121Z"
+    "synced_at": "2026-09-23T09:53:44.906Z"
   },
   "@gc-solid": {
     "namespace": "@gc-solid",
@@ -1978,7 +2816,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:48.921Z"
+    "synced_at": "2026-09-23T09:53:44.785Z"
   },
   "@glass-ui": {
     "namespace": "@glass-ui",
@@ -2026,7 +2864,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.193Z"
+    "synced_at": "2026-09-23T09:53:44.953Z"
   },
   "@glasscn": {
     "namespace": "@glasscn",
@@ -2062,7 +2900,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.046Z"
+    "synced_at": "2026-09-23T09:53:44.882Z"
   },
   "@gooseui": {
     "namespace": "@gooseui",
@@ -2079,7 +2917,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.292Z"
+    "synced_at": "2026-09-23T09:53:45.684Z"
   },
   "@gpt-vis": {
     "namespace": "@gpt-vis",
@@ -2090,7 +2928,20 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.022Z"
+    "synced_at": "2026-09-23T09:53:45.034Z"
+  },
+  "@gridcn": {
+    "namespace": "@gridcn",
+    "catalog_url": "https://gridcn.vercel.app/r/registry.json",
+    "item_count": 44,
+    "component_tags": [
+      "context-menu",
+      "data-grid",
+      "pagination",
+      "toolbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:45.880Z"
   },
   "@grootstudio": {
     "namespace": "@grootstudio",
@@ -2105,7 +2956,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.485Z"
+    "synced_at": "2026-09-23T09:53:45.794Z"
   },
   "@gymnopedies": {
     "namespace": "@gymnopedies",
@@ -2146,7 +2997,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.404Z"
+    "synced_at": "2026-09-23T09:53:45.315Z"
   },
   "@ha-components": {
     "namespace": "@ha-components",
@@ -2161,7 +3012,59 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.109Z"
+    "synced_at": "2026-09-23T09:53:45.289Z"
+  },
+  "@herocn": {
+    "namespace": "@herocn",
+    "catalog_url": "https://herocn.dev/r/registry.json",
+    "item_count": 559,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "modal",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toast",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:45.384Z"
   },
   "@heroicons-animated": {
     "namespace": "@heroicons-animated",
@@ -2181,7 +3084,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.340Z"
+    "synced_at": "2026-09-23T09:53:45.497Z"
   },
   "@hextaui": {
     "namespace": "@hextaui",
@@ -2231,7 +3134,7 @@
       "toggle",
       "tooltip"
     ],
-    "status": "available",
+    "status": "stale",
     "synced_at": "2026-08-27T10:00:49.710Z"
   },
   "@hexui": {
@@ -2242,12 +3145,12 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.425Z"
+    "synced_at": "2026-09-23T09:53:45.592Z"
   },
   "@hirael": {
     "namespace": "@hirael",
     "catalog_url": "https://hirael.com/r/registry.json",
-    "item_count": 184,
+    "item_count": 243,
     "component_tags": [
       "accordion",
       "admonition",
@@ -2262,6 +3165,7 @@
       "code-block",
       "color-picker",
       "combobox",
+      "command",
       "compare-slider",
       "cropper",
       "dialog",
@@ -2284,12 +3188,12 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.276Z"
+    "synced_at": "2026-09-23T09:53:45.580Z"
   },
   "@honestui": {
     "namespace": "@honestui",
     "catalog_url": "https://www.honestui.com/r/registry.json",
-    "item_count": 83,
+    "item_count": 84,
     "component_tags": [
       "accordion",
       "alert",
@@ -2332,7 +3236,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.172Z"
+    "synced_at": "2026-09-23T09:53:46.413Z"
   },
   "@hugeicons-animated": {
     "namespace": "@hugeicons-animated",
@@ -2347,7 +3251,86 @@
       "qr-code"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.451Z"
+    "synced_at": "2026-09-23T09:53:45.655Z"
+  },
+  "@hugeicons-animated-vue": {
+    "namespace": "@hugeicons-animated-vue",
+    "catalog_url": "https://hugeicons-animated-vue.rebeaumickael.fr/r/registry.json",
+    "item_count": 6122,
+    "component_tags": [
+      "ai-chat",
+      "alert",
+      "audit",
+      "badge",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "color-picker",
+      "command",
+      "dropdown",
+      "file-upload",
+      "input",
+      "map-pointer",
+      "pill",
+      "progress",
+      "qr-code",
+      "radio",
+      "receipt",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "switch",
+      "table",
+      "timeline",
+      "toggle",
+      "waveform"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:45.918Z"
+  },
+  "@iandefined": {
+    "namespace": "@iandefined",
+    "catalog_url": "https://ui.iandefined.com/r/registry.json",
+    "item_count": 56,
+    "component_tags": [
+      "accordion",
+      "avatar",
+      "badge",
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "input",
+      "otp-input",
+      "pagination",
+      "popover",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toast",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:45.703Z"
   },
   "@iconiq": {
     "namespace": "@iconiq",
@@ -2395,7 +3378,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.442Z"
+    "synced_at": "2026-09-23T09:53:45.890Z"
   },
   "@ilinxa": {
     "namespace": "@ilinxa",
@@ -2414,35 +3397,48 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.563Z"
+    "synced_at": "2026-09-23T09:53:46.168Z"
   },
   "@indiacn": {
     "namespace": "@indiacn",
     "catalog_url": "https://indiacn.in/r/registry.json",
-    "item_count": 26,
+    "item_count": 48,
     "component_tags": [
       "accordion",
       "alert",
+      "avatar",
       "badge",
       "breadcrumb",
       "button",
+      "calendar",
       "card",
+      "carousel",
+      "chart",
+      "checkbox",
       "dropdown",
+      "input",
       "modal",
+      "navbar",
       "pagination",
       "popover",
       "progress",
+      "radio",
+      "radio-group",
       "separator",
       "skeleton",
+      "slider",
       "spinner",
       "stepper",
+      "switch",
+      "table",
       "tabs",
+      "textarea",
       "theme",
       "toast",
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.652Z"
+    "synced_at": "2026-09-23T09:53:46.242Z"
   },
   "@inferencesh": {
     "namespace": "@inferencesh",
@@ -2456,12 +3452,12 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.176Z"
+    "synced_at": "2026-09-23T09:53:47.253Z"
   },
   "@intentui": {
     "namespace": "@intentui",
     "catalog_url": "https://intentui.com/r/registry",
-    "item_count": 580,
+    "item_count": 592,
     "component_tags": [
       "alert",
       "avatar",
@@ -2506,7 +3502,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.663Z"
+    "synced_at": "2026-09-23T09:53:46.258Z"
   },
   "@interior": {
     "namespace": "@interior",
@@ -2539,7 +3535,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.694Z"
+    "synced_at": "2026-09-23T09:53:46.454Z"
   },
   "@jolyui": {
     "namespace": "@jolyui",
@@ -2565,7 +3561,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.771Z"
+    "synced_at": "2026-09-23T09:53:46.367Z"
   },
   "@joyco": {
     "namespace": "@joyco",
@@ -2593,7 +3589,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.961Z"
+    "synced_at": "2026-09-23T09:53:47.987Z"
   },
   "@kanpeki": {
     "namespace": "@kanpeki",
@@ -2642,7 +3638,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.698Z"
+    "synced_at": "2026-09-23T09:53:46.383Z"
   },
   "@kapwa": {
     "namespace": "@kapwa",
@@ -2652,7 +3648,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.708Z"
+    "synced_at": "2026-09-23T09:53:46.363Z"
   },
   "@kaui": {
     "namespace": "@kaui",
@@ -2666,7 +3662,31 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.904Z"
+    "synced_at": "2026-09-23T09:53:56.137Z"
+  },
+  "@keyline": {
+    "namespace": "@keyline",
+    "catalog_url": "https://keylineicons.com/r/registry.json",
+    "item_count": 8912,
+    "component_tags": [
+      "alert",
+      "badge",
+      "calendar",
+      "card",
+      "chart",
+      "circular-progress",
+      "command",
+      "map-pointer",
+      "progress",
+      "qr-code",
+      "radio",
+      "receipt",
+      "table",
+      "toggle",
+      "waveform"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:46.837Z"
   },
   "@kibo-ui": {
     "namespace": "@kibo-ui",
@@ -2689,7 +3709,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.946Z"
+    "synced_at": "2026-09-23T09:53:46.618Z"
   },
   "@kinetic": {
     "namespace": "@kinetic",
@@ -2697,22 +3717,84 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.821Z"
+    "synced_at": "2026-09-23T09:53:46.492Z"
   },
   "@knock-codes": {
     "namespace": "@knock-codes",
     "catalog_url": "https://knock.codes/r/react/registry.json",
-    "item_count": 24,
+    "item_count": 19,
+    "component_tags": [
+      "pill"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:57.670Z"
+  },
+  "@knot-ui": {
+    "namespace": "@knot-ui",
+    "catalog_url": "https://knot-ui.trupal.me/r/registry.json",
+    "item_count": 15,
     "component_tags": [
       "button",
       "card",
-      "dialog",
-      "input",
-      "modal",
-      "receipt"
+      "navbar",
+      "theme",
+      "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.266Z"
+    "synced_at": "2026-09-23T09:53:57.549Z"
+  },
+  "@kobra": {
+    "namespace": "@kobra",
+    "catalog_url": "https://kobra.systems/r/registry.json",
+    "item_count": 73,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "code-block",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "dropzone",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toast",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.255Z"
   },
   "@kokonutui": {
     "namespace": "@kokonutui",
@@ -2735,7 +3817,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.800Z"
+    "synced_at": "2026-09-23T09:53:46.580Z"
   },
   "@launchui": {
     "namespace": "@launchui",
@@ -2752,7 +3834,15 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.898Z"
+    "synced_at": "2026-09-23T09:53:46.569Z"
+  },
+  "@layish": {
+    "namespace": "@layish",
+    "catalog_url": "https://layish.vercel.app/r/registry.json",
+    "item_count": 2,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:46.668Z"
   },
   "@lens-blocks": {
     "namespace": "@lens-blocks",
@@ -2767,7 +3857,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.941Z"
+    "synced_at": "2026-09-23T09:53:47.584Z"
   },
   "@limeplay": {
     "namespace": "@limeplay",
@@ -2779,12 +3869,12 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.967Z"
+    "synced_at": "2026-09-23T09:53:46.787Z"
   },
   "@liquefy-ui": {
     "namespace": "@liquefy-ui",
     "catalog_url": "https://liquefy-ui.com/r/registry.json",
-    "item_count": 37,
+    "item_count": 39,
     "component_tags": [
       "accordion",
       "alert",
@@ -2810,7 +3900,24 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.921Z"
+    "synced_at": "2026-09-23T09:53:47.259Z"
+  },
+  "@livedocs": {
+    "namespace": "@livedocs",
+    "catalog_url": "https://livedocs.xyz/r/registry.json",
+    "item_count": 41,
+    "component_tags": [
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "chart",
+      "input",
+      "separator",
+      "theme"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.724Z"
   },
   "@lmscn": {
     "namespace": "@lmscn",
@@ -2820,7 +3927,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:49.919Z"
+    "synced_at": "2026-09-23T09:53:47.324Z"
   },
   "@loading-ui": {
     "namespace": "@loading-ui",
@@ -2832,7 +3939,34 @@
       "spinner"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.025Z"
+    "synced_at": "2026-09-23T09:53:47.369Z"
+  },
+  "@localmode": {
+    "namespace": "@localmode",
+    "catalog_url": "https://localmode.ai/r/registry.json",
+    "item_count": 147,
+    "component_tags": [
+      "alert",
+      "badge",
+      "button",
+      "card",
+      "chart",
+      "code-block",
+      "command",
+      "compare-slider",
+      "drawer",
+      "dropzone",
+      "input",
+      "slider",
+      "table",
+      "timeline",
+      "transcript-viewer",
+      "utility-button",
+      "voice-picker",
+      "waveform"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:48.207Z"
   },
   "@lucide-animated": {
     "namespace": "@lucide-animated",
@@ -2851,7 +3985,7 @@
       "switch"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.010Z"
+    "synced_at": "2026-09-23T09:53:47.526Z"
   },
   "@lumiui": {
     "namespace": "@lumiui",
@@ -2896,7 +4030,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.065Z"
+    "synced_at": "2026-09-23T09:53:47.519Z"
   },
   "@lytenyte": {
     "namespace": "@lytenyte",
@@ -2904,12 +4038,12 @@
     "item_count": 2,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.159Z"
+    "synced_at": "2026-09-23T09:53:48.295Z"
   },
   "@magicui": {
     "namespace": "@magicui",
     "catalog_url": "https://magicui.design/r/registry",
-    "item_count": 247,
+    "item_count": 250,
     "component_tags": [
       "alert",
       "avatar",
@@ -2923,7 +4057,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.339Z"
+    "synced_at": "2026-09-23T09:53:47.709Z"
   },
   "@manifest": {
     "namespace": "@manifest",
@@ -2939,7 +4073,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.256Z"
+    "synced_at": "2026-09-23T09:53:47.459Z"
   },
   "@mapcn": {
     "namespace": "@mapcn",
@@ -2949,7 +4083,46 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.516Z"
+    "synced_at": "2026-09-23T09:53:47.885Z"
+  },
+  "@materialcn": {
+    "namespace": "@materialcn",
+    "catalog_url": "https://guillermo-rebolledo.github.io/materialcn/r/registry.json",
+    "item_count": 66,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "checkbox",
+      "circular-progress",
+      "dialog",
+      "dropdown",
+      "input",
+      "pagination",
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "separator",
+      "sheet",
+      "skeleton",
+      "slider",
+      "switch",
+      "tabs",
+      "theme",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.543Z"
   },
   "@mediadrop": {
     "namespace": "@mediadrop",
@@ -2961,7 +4134,68 @@
       "file-upload"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.298Z"
+    "synced_at": "2026-09-23T09:53:57.135Z"
+  },
+  "@mewo": {
+    "namespace": "@mewo",
+    "catalog_url": "https://mewo-ui.vercel.app/r/registry.json",
+    "item_count": 10,
+    "component_tags": [
+      "card",
+      "collapsible",
+      "tabs"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.502Z"
+  },
+  "@microkit": {
+    "namespace": "@microkit",
+    "catalog_url": "https://microkit.co/r/registry.json",
+    "item_count": 49,
+    "component_tags": [
+      "button",
+      "input",
+      "tabs",
+      "toolbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.658Z"
+  },
+  "@mischief": {
+    "namespace": "@mischief",
+    "catalog_url": "https://ui.tinkererslabs.com/r/registry.json",
+    "item_count": 234,
+    "component_tags": [
+      "accordion",
+      "audio-player",
+      "avatar",
+      "button",
+      "card",
+      "checkbox",
+      "code-block",
+      "combobox",
+      "command",
+      "file-upload",
+      "input",
+      "otp-input",
+      "pagination",
+      "pill",
+      "skeleton",
+      "slider",
+      "spinner",
+      "status-pill",
+      "stepper",
+      "table",
+      "tabs",
+      "tag-input",
+      "theme",
+      "timeline",
+      "toggle",
+      "transcript-viewer",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.630Z"
   },
   "@mksingh": {
     "namespace": "@mksingh",
@@ -2975,12 +4209,12 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.356Z"
+    "synced_at": "2026-09-23T09:53:47.919Z"
   },
   "@moduix-react": {
     "namespace": "@moduix-react",
     "catalog_url": "https://moduix.dev/r/react/registry.json",
-    "item_count": 95,
+    "item_count": 96,
     "component_tags": [
       "accordion",
       "alert",
@@ -3027,7 +4261,15 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.164Z"
+    "synced_at": "2026-09-23T09:53:47.702Z"
+  },
+  "@morphiq": {
+    "namespace": "@morphiq",
+    "catalog_url": "https://morphiq.prathampatel.design/r/registry.json",
+    "item_count": 20,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.935Z"
   },
   "@motion-lexicon": {
     "namespace": "@motion-lexicon",
@@ -3067,7 +4309,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.148Z"
+    "synced_at": "2026-09-23T09:53:47.875Z"
   },
   "@motion-menu": {
     "namespace": "@motion-menu",
@@ -3109,8 +4351,25 @@
       "tooltip",
       "waveform"
     ],
-    "status": "available",
+    "status": "stale",
     "synced_at": "2026-08-27T10:00:50.189Z"
+  },
+  "@motion-primitives": {
+    "namespace": "@motion-primitives",
+    "catalog_url": "https://motion-primitives.com/c/registry.json",
+    "item_count": 33,
+    "component_tags": [
+      "accordion",
+      "carousel",
+      "dialog",
+      "popover",
+      "progress",
+      "scroll-progress",
+      "slider",
+      "toolbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:47.893Z"
   },
   "@motiq": {
     "namespace": "@motiq",
@@ -3131,7 +4390,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.364Z"
+    "synced_at": "2026-09-23T09:53:48.083Z"
   },
   "@motokoui": {
     "namespace": "@motokoui",
@@ -3149,7 +4408,22 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.510Z"
+    "synced_at": "2026-09-23T09:53:48.160Z"
+  },
+  "@moumenlab": {
+    "namespace": "@moumenlab",
+    "catalog_url": "https://lab.moumen.dev/r/registry.json",
+    "item_count": 14,
+    "component_tags": [
+      "command",
+      "file-upload",
+      "input",
+      "otp-input",
+      "popover",
+      "theme"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:48.196Z"
   },
   "@mozaika": {
     "namespace": "@mozaika",
@@ -3162,7 +4436,7 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.598Z"
+    "synced_at": "2026-09-23T09:53:48.392Z"
   },
   "@mui-treasury": {
     "namespace": "@mui-treasury",
@@ -3206,7 +4480,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.725Z"
+    "synced_at": "2026-09-23T09:53:48.558Z"
   },
   "@navui": {
     "namespace": "@navui",
@@ -3222,12 +4496,12 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.588Z"
+    "synced_at": "2026-09-23T09:53:49.072Z"
   },
   "@ncdai": {
     "namespace": "@ncdai",
     "catalog_url": "https://chanhdai.com/r/registry.json",
-    "item_count": 64,
+    "item_count": 69,
     "component_tags": [
       "button",
       "card",
@@ -3241,7 +4515,21 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.448Z"
+    "synced_at": "2026-09-23T09:53:48.260Z"
+  },
+  "@nekode": {
+    "namespace": "@nekode",
+    "catalog_url": "https://ui.nekode.id/r/registry.json",
+    "item_count": 22,
+    "component_tags": [
+      "combobox",
+      "radio",
+      "select",
+      "switch",
+      "textarea"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:48.269Z"
   },
   "@neon-ui": {
     "namespace": "@neon-ui",
@@ -3268,7 +4556,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.435Z"
+    "synced_at": "2026-09-23T09:53:48.419Z"
   },
   "@nexus-labs": {
     "namespace": "@nexus-labs",
@@ -3296,7 +4584,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.978Z"
+    "synced_at": "2026-09-23T09:53:49.033Z"
   },
   "@nexus-ui": {
     "namespace": "@nexus-ui",
@@ -3306,7 +4594,22 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.649Z"
+    "synced_at": "2026-09-23T09:53:50.060Z"
+  },
+  "@niko-table": {
+    "namespace": "@niko-table",
+    "catalog_url": "https://niko-table.com/r/registry.json",
+    "item_count": 34,
+    "component_tags": [
+      "button",
+      "column-resize",
+      "data-grid",
+      "pagination",
+      "slider",
+      "table"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:48.570Z"
   },
   "@nordaun": {
     "namespace": "@nordaun",
@@ -3314,7 +4617,111 @@
     "item_count": 8,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.643Z"
+    "synced_at": "2026-09-23T09:53:48.646Z"
+  },
+  "@nostalgia-ui": {
+    "namespace": "@nostalgia-ui",
+    "catalog_url": "https://nostalgia-ui.com/r/registry.json",
+    "item_count": 60,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:49.242Z"
+  },
+  "@ns-ui": {
+    "namespace": "@ns-ui",
+    "catalog_url": "https://design.helpmarq.com/r/registry.json",
+    "item_count": 542,
+    "component_tags": [
+      "accordion",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "feature-grid",
+      "file-upload",
+      "hover-card",
+      "input",
+      "otp-input",
+      "pagination",
+      "pill",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "sheet",
+      "skeleton",
+      "slider",
+      "stepper",
+      "switch",
+      "table",
+      "tabs",
+      "tag-input",
+      "testimonial",
+      "textarea",
+      "theme",
+      "timeline",
+      "toast",
+      "toggle",
+      "tooltip",
+      "typing-indicator",
+      "utility-button",
+      "waveform"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:48.841Z"
   },
   "@nteract": {
     "namespace": "@nteract",
@@ -3325,15 +4732,15 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.628Z"
+    "synced_at": "2026-09-23T09:53:48.684Z"
   },
   "@nuqs": {
     "namespace": "@nuqs",
     "catalog_url": "https://nuqs.dev/r/registry.json",
-    "item_count": 5,
+    "item_count": 6,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.724Z"
+    "synced_at": "2026-09-23T09:53:48.773Z"
   },
   "@nusaiba": {
     "namespace": "@nusaiba",
@@ -3343,7 +4750,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.647Z"
+    "synced_at": "2026-09-23T09:53:53.666Z"
   },
   "@odysseyui": {
     "namespace": "@odysseyui",
@@ -3382,7 +4789,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.707Z"
+    "synced_at": "2026-09-23T09:53:48.948Z"
   },
   "@ogimagecn": {
     "namespace": "@ogimagecn",
@@ -3390,18 +4797,27 @@
     "item_count": 22,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.030Z"
+    "synced_at": "2026-09-23T09:53:50.753Z"
+  },
+  "@oidc": {
+    "namespace": "@oidc",
+    "catalog_url": "https://ui.shadcn.com/oidc/r/registry.json",
+    "item_count": 78,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:49.093Z"
   },
   "@onchain-ui": {
     "namespace": "@onchain-ui",
     "catalog_url": "https://onchain-ui.dev/r/registry.json",
-    "item_count": 16,
+    "item_count": 18,
     "component_tags": [
       "button",
+      "input",
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.456Z"
+    "synced_at": "2026-09-23T09:53:57.714Z"
   },
   "@openmirai": {
     "namespace": "@openmirai",
@@ -3409,7 +4825,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.849Z"
+    "synced_at": "2026-09-23T09:53:49.284Z"
   },
   "@openstatus": {
     "namespace": "@openstatus",
@@ -3420,7 +4836,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.129Z"
+    "synced_at": "2026-09-23T09:53:49.835Z"
   },
   "@optics": {
     "namespace": "@optics",
@@ -3471,7 +4887,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.872Z"
+    "synced_at": "2026-09-23T09:53:50.588Z"
   },
   "@oui": {
     "namespace": "@oui",
@@ -3505,7 +4921,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.788Z"
+    "synced_at": "2026-09-23T09:53:49.247Z"
   },
   "@pacekit": {
     "namespace": "@pacekit",
@@ -3521,7 +4937,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.058Z"
+    "synced_at": "2026-09-23T09:53:49.432Z"
   },
   "@paceui": {
     "namespace": "@paceui",
@@ -3537,7 +4953,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.877Z"
+    "synced_at": "2026-09-23T09:53:49.305Z"
   },
   "@paceui-gsap": {
     "namespace": "@paceui-gsap",
@@ -3549,7 +4965,7 @@
       "modal"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.929Z"
+    "synced_at": "2026-09-23T09:53:49.350Z"
   },
   "@paddle": {
     "namespace": "@paddle",
@@ -3562,7 +4978,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:50.954Z"
+    "synced_at": "2026-09-23T09:53:49.498Z"
   },
   "@paletteui": {
     "namespace": "@paletteui",
@@ -3570,7 +4986,59 @@
     "item_count": 65,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.275Z"
+    "synced_at": "2026-09-23T09:53:49.755Z"
+  },
+  "@pane": {
+    "namespace": "@pane",
+    "catalog_url": "https://pane.theui.company/r/registry.json",
+    "item_count": 15,
+    "component_tags": [
+      "badge",
+      "button",
+      "card",
+      "dialog",
+      "input",
+      "sheet",
+      "switch",
+      "tabs",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:49.472Z"
+  },
+  "@pantoken": {
+    "namespace": "@pantoken",
+    "catalog_url": "https://pantoken.app/r/registry.json",
+    "item_count": 80,
+    "component_tags": [
+      "admonition",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "drawer",
+      "input",
+      "modal",
+      "pagination",
+      "pill",
+      "popover",
+      "progress",
+      "radio",
+      "select",
+      "spinner",
+      "table",
+      "tabs",
+      "testimonial",
+      "theme",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:49.738Z"
   },
   "@pastecn": {
     "namespace": "@pastecn",
@@ -3578,7 +5046,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.060Z"
+    "synced_at": "2026-09-23T09:53:50.250Z"
   },
   "@paykit-sdk": {
     "namespace": "@paykit-sdk",
@@ -3586,26 +5054,27 @@
     "item_count": 21,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.108Z"
+    "synced_at": "2026-09-23T09:53:50.303Z"
   },
   "@payload-components": {
     "namespace": "@payload-components",
     "catalog_url": "https://www.payload-components.xyz/r/registry.json",
-    "item_count": 73,
+    "item_count": 82,
     "component_tags": [
       "accordion",
+      "admonition",
       "card",
       "feature-grid",
       "table",
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.033Z"
+    "synced_at": "2026-09-23T09:53:49.982Z"
   },
   "@persianlabsui": {
     "namespace": "@persianlabsui",
     "catalog_url": "https://ui.persian-labs.ir/r/registry.json",
-    "item_count": 102,
+    "item_count": 105,
     "component_tags": [
       "accordion",
       "alert",
@@ -3654,7 +5123,19 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.205Z"
+    "synced_at": "2026-09-23T09:53:50.737Z"
+  },
+  "@pipecat": {
+    "namespace": "@pipecat",
+    "catalog_url": "https://ui.pipecat.ai/r/registry.json",
+    "item_count": 21,
+    "component_tags": [
+      "button",
+      "input",
+      "select"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:50.772Z"
   },
   "@pixelact-ui": {
     "namespace": "@pixelact-ui",
@@ -3687,7 +5168,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.370Z"
+    "synced_at": "2026-09-23T09:53:50.497Z"
   },
   "@plate": {
     "namespace": "@plate",
@@ -3709,12 +5190,24 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.179Z"
+    "synced_at": "2026-09-23T09:53:50.214Z"
+  },
+  "@plotcn": {
+    "namespace": "@plotcn",
+    "catalog_url": "https://plotcn.vercel.app/r/registry.json",
+    "item_count": 49,
+    "component_tags": [
+      "chart",
+      "theme",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:50.106Z"
   },
   "@preskok": {
     "namespace": "@preskok",
     "catalog_url": "https://ui-three-mu.vercel.app/r/registry.json",
-    "item_count": 271,
+    "item_count": 260,
     "component_tags": [
       "avatar",
       "badge",
@@ -3724,7 +5217,6 @@
       "carousel",
       "chart",
       "checkbox",
-      "collapsible",
       "color-picker",
       "color-swatch",
       "command",
@@ -3759,7 +5251,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.375Z"
+    "synced_at": "2026-09-23T09:53:50.415Z"
   },
   "@prompt-kit": {
     "namespace": "@prompt-kit",
@@ -3773,7 +5265,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.214Z"
+    "synced_at": "2026-09-23T09:53:50.184Z"
   },
   "@prosekit": {
     "namespace": "@prosekit",
@@ -3788,7 +5280,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.477Z"
+    "synced_at": "2026-09-23T09:53:50.851Z"
   },
   "@pulkitxm": {
     "namespace": "@pulkitxm",
@@ -3804,13 +5296,13 @@
       "theme",
       "toggle"
     ],
-    "status": "available",
+    "status": "stale",
     "synced_at": "2026-08-27T10:00:51.715Z"
   },
   "@pulld": {
     "namespace": "@pulld",
     "catalog_url": "https://pulld.pages.dev/r/registry.json",
-    "item_count": 70,
+    "item_count": 94,
     "component_tags": [
       "avatar",
       "button",
@@ -3825,6 +5317,7 @@
       "otp-input",
       "password-input",
       "progress",
+      "qr-code",
       "scroll-progress",
       "search-input",
       "select",
@@ -3836,10 +5329,46 @@
       "timeline",
       "toast",
       "toggle",
-      "utility-button"
+      "utility-button",
+      "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.265Z"
+    "synced_at": "2026-09-23T09:53:50.430Z"
+  },
+  "@quill": {
+    "namespace": "@quill",
+    "catalog_url": "https://www.quilldesignsystem.com/r/registry.json",
+    "item_count": 59,
+    "component_tags": [
+      "alert",
+      "badge",
+      "calendar",
+      "card",
+      "command",
+      "file-upload",
+      "navbar",
+      "otp-input",
+      "sidebar",
+      "table",
+      "tabs",
+      "testimonial",
+      "theme"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:50.881Z"
+  },
+  "@quiz-ui": {
+    "namespace": "@quiz-ui",
+    "catalog_url": "https://quiz-ui-phi.vercel.app/r/registry.json",
+    "item_count": 15,
+    "component_tags": [
+      "dialog",
+      "input",
+      "progress",
+      "slider"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:57.588Z"
   },
   "@ramonclaudio-coderabbit": {
     "namespace": "@ramonclaudio-coderabbit",
@@ -3849,12 +5378,66 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.320Z"
+    "synced_at": "2026-09-23T09:53:50.554Z"
+  },
+  "@ratneshc": {
+    "namespace": "@ratneshc",
+    "catalog_url": "https://ratneshc.com/r/registry.json",
+    "item_count": 6,
+    "component_tags": [
+      "button",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:51.883Z"
+  },
+  "@rawkitui": {
+    "namespace": "@rawkitui",
+    "catalog_url": "https://rawkitui.zerodegree.tech/r/registry.json",
+    "item_count": 39,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "command",
+      "dialog",
+      "dropdown",
+      "input",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "sheet",
+      "skeleton",
+      "slider",
+      "stepper",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toast",
+      "toggle",
+      "tooltip",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:50.581Z"
   },
   "@react-aria": {
     "namespace": "@react-aria",
     "catalog_url": "https://react-aria.adobe.com/registry/registry.json",
-    "item_count": 156,
+    "item_count": 158,
     "component_tags": [
       "button",
       "calendar",
@@ -3877,18 +5460,18 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.224Z"
+    "synced_at": "2026-09-23T09:53:50.939Z"
   },
   "@react-bits": {
     "namespace": "@react-bits",
     "catalog_url": "https://reactbits.dev/r/registry.json",
-    "item_count": 672,
+    "item_count": 824,
     "component_tags": [
       "carousel",
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.337Z"
+    "synced_at": "2026-09-23T09:53:50.677Z"
   },
   "@react-slot": {
     "namespace": "@react-slot",
@@ -3896,12 +5479,118 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.403Z"
+    "synced_at": "2026-09-23T09:53:50.780Z"
+  },
+  "@registrydirectory": {
+    "namespace": "@registrydirectory",
+    "catalog_url": "https://registry.directory/r/registry.json",
+    "item_count": 24663,
+    "component_tags": [
+      "accordion",
+      "admonition",
+      "ai-chat",
+      "alert",
+      "app-shell",
+      "audio-player",
+      "audit",
+      "auth-form",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "card-deck",
+      "carousel",
+      "cart-drawer",
+      "chart",
+      "chat-interface",
+      "chat-window",
+      "chatbot",
+      "checkbox",
+      "circular-progress",
+      "code-block",
+      "collapsible",
+      "color-picker",
+      "color-swatch",
+      "combobox",
+      "command",
+      "compare-slider",
+      "context-menu",
+      "cropper",
+      "cta-section",
+      "data-grid",
+      "datepicker",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "dropzone",
+      "error-message",
+      "feature-grid",
+      "file-upload",
+      "filter-bar",
+      "hero-section",
+      "hover-card",
+      "icon-button",
+      "input",
+      "loading-button",
+      "map-pointer",
+      "menubar",
+      "message-list",
+      "modal",
+      "navbar",
+      "otp-input",
+      "pagination",
+      "password-input",
+      "pill",
+      "popover",
+      "pricing-table",
+      "product-card",
+      "progress",
+      "qr-code",
+      "radio",
+      "radio-group",
+      "receipt",
+      "scroll-area",
+      "scroll-progress",
+      "search-input",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "status-pill",
+      "stepper",
+      "submit-button",
+      "switch",
+      "syntax-highlighting",
+      "table",
+      "tabs",
+      "tag-input",
+      "testimonial",
+      "textarea",
+      "theme",
+      "timeline",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip",
+      "transcript-viewer",
+      "typing-indicator",
+      "utility-button",
+      "voice-picker",
+      "waveform",
+      "zoomable-image"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:51.148Z"
   },
   "@remocn": {
     "namespace": "@remocn",
     "catalog_url": "https://www.remocn.dev/r/registry.json",
-    "item_count": 283,
+    "item_count": 313,
     "component_tags": [
       "accordion",
       "alert",
@@ -3918,6 +5607,7 @@
       "drawer",
       "dropdown",
       "input",
+      "pill",
       "popover",
       "progress",
       "radio",
@@ -3935,12 +5625,12 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.651Z"
+    "synced_at": "2026-09-23T09:53:52.722Z"
   },
   "@rescript-shadcn": {
     "namespace": "@rescript-shadcn",
     "catalog_url": "https://rescript-shadcn.miriad.studio/r/registry.json",
-    "item_count": 465,
+    "item_count": 535,
     "component_tags": [
       "accordion",
       "alert",
@@ -3979,7 +5669,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.654Z"
+    "synced_at": "2026-09-23T09:53:50.921Z"
   },
   "@retab": {
     "namespace": "@retab",
@@ -4006,7 +5696,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.556Z"
+    "synced_at": "2026-09-23T09:53:50.960Z"
   },
   "@retroui": {
     "namespace": "@retroui",
@@ -4055,12 +5745,12 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.633Z"
+    "synced_at": "2026-09-23T09:53:52.001Z"
   },
   "@roiui": {
     "namespace": "@roiui",
     "catalog_url": "https://roiui.com/r/registry.json",
-    "item_count": 124,
+    "item_count": 122,
     "component_tags": [
       "accordion",
       "ai-chat",
@@ -4100,7 +5790,55 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.114Z"
+    "synced_at": "2026-09-23T09:53:52.131Z"
+  },
+  "@saastro": {
+    "namespace": "@saastro",
+    "catalog_url": "https://ui.saastro.io/r/registry.json",
+    "item_count": 53,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "context-menu",
+      "dialog",
+      "dropdown",
+      "input",
+      "navbar",
+      "otp-input",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "skeleton",
+      "slider",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:55.952Z"
+  },
+  "@sans": {
+    "namespace": "@sans",
+    "catalog_url": "https://sans.sansorigin.com/r/registry.json",
+    "item_count": 1,
+    "component_tags": [
+      "spinner"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:51.117Z"
   },
   "@satoriui": {
     "namespace": "@satoriui",
@@ -4112,7 +5850,65 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.110Z"
+    "synced_at": "2026-09-23T09:53:52.301Z"
+  },
+  "@sc1m": {
+    "namespace": "@sc1m",
+    "catalog_url": "https://sc1m.vercel.app/r/registry.json",
+    "item_count": 43,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "input",
+      "menubar",
+      "otp-input",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "slider",
+      "switch",
+      "tabs",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:51.885Z"
+  },
+  "@scrimui": {
+    "namespace": "@scrimui",
+    "catalog_url": "https://scrimui.dev/r/registry.json",
+    "item_count": 68,
+    "component_tags": [
+      "ai-chat",
+      "card",
+      "error-message",
+      "file-upload",
+      "input",
+      "popover",
+      "sidebar",
+      "timeline",
+      "toast",
+      "toggle",
+      "waveform"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.057Z"
   },
   "@scrollxui": {
     "namespace": "@scrollxui",
@@ -4157,7 +5953,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.100Z"
+    "synced_at": "2026-09-23T09:53:52.378Z"
   },
   "@seamui": {
     "namespace": "@seamui",
@@ -4209,14 +6005,109 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.701Z"
+    "synced_at": "2026-09-23T09:53:52.104Z"
+  },
+  "@sevenui": {
+    "namespace": "@sevenui",
+    "catalog_url": "https://sevenui.dev/r/registry.json",
+    "item_count": 67,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:52.099Z"
+  },
+  "@sf-fleet-hud": {
+    "namespace": "@sf-fleet-hud",
+    "catalog_url": "https://sf-fleet-hud.vercel.app/r/registry.json",
+    "item_count": 47,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "chart",
+      "checkbox",
+      "command",
+      "context-menu",
+      "dialog",
+      "dropzone",
+      "input",
+      "otp-input",
+      "pagination",
+      "popover",
+      "radio",
+      "radio-group",
+      "select",
+      "sheet",
+      "skeleton",
+      "slider",
+      "stepper",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "timeline",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:52.080Z"
   },
   "@shadcn-dashboard": {
     "namespace": "@shadcn-dashboard",
     "catalog_url": "https://shadcndashboard.dev/r/registry.json",
-    "item_count": 448,
+    "item_count": 508,
     "component_tags": [
       "accordion",
+      "ai-chat",
       "alert",
       "avatar",
       "badge",
@@ -4260,12 +6151,13 @@
       "tabs",
       "textarea",
       "theme",
+      "timeline",
       "toast",
       "toggle",
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.387Z"
+    "synced_at": "2026-09-23T09:53:57.108Z"
   },
   "@shadcn-editor": {
     "namespace": "@shadcn-editor",
@@ -4273,7 +6165,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.397Z"
+    "synced_at": "2026-09-23T09:53:52.217Z"
   },
   "@shadcn-map": {
     "namespace": "@shadcn-map",
@@ -4283,14 +6175,15 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.790Z"
+    "synced_at": "2026-09-23T09:53:52.369Z"
   },
   "@shadcn-space": {
     "namespace": "@shadcn-space",
     "catalog_url": "https://shadcnspace.com/r/registry.json",
-    "item_count": 881,
+    "item_count": 941,
     "component_tags": [
       "accordion",
+      "ai-chat",
       "alert",
       "avatar",
       "badge",
@@ -4303,6 +6196,7 @@
       "checkbox",
       "code-block",
       "collapsible",
+      "color-picker",
       "combobox",
       "command",
       "context-menu",
@@ -4350,7 +6244,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.034Z"
+    "synced_at": "2026-09-23T09:53:52.322Z"
   },
   "@shadcn-ui-blocks": {
     "namespace": "@shadcn-ui-blocks",
@@ -4414,12 +6308,12 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:51.815Z"
+    "synced_at": "2026-09-23T09:53:52.396Z"
   },
   "@shadcnblocks": {
     "namespace": "@shadcnblocks",
     "catalog_url": "https://shadcnblocks.com/r/registry.json",
-    "item_count": 4161,
+    "item_count": 4171,
     "component_tags": [
       "accordion",
       "ai-chat",
@@ -4496,25 +6390,41 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.401Z"
+    "synced_at": "2026-09-23T09:53:53.397Z"
   },
   "@shadcncraft": {
     "namespace": "@shadcncraft",
     "catalog_url": "https://shadcncraft.com/r/registry.json",
-    "item_count": 26,
+    "item_count": 300,
     "component_tags": [
       "accordion",
       "admonition",
+      "app-shell",
+      "audit",
       "avatar",
       "badge",
       "card",
       "carousel",
+      "code-block",
+      "dialog",
+      "dropdown",
+      "file-upload",
+      "input",
+      "modal",
+      "pagination",
+      "pill",
+      "product-card",
+      "progress",
+      "separator",
       "sidebar",
+      "table",
+      "tabs",
       "testimonial",
+      "timeline",
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.023Z"
+    "synced_at": "2026-09-23T09:53:52.697Z"
   },
   "@shadcndesign": {
     "namespace": "@shadcndesign",
@@ -4527,7 +6437,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.122Z"
+    "synced_at": "2026-09-23T09:53:52.375Z"
   },
   "@shadcnhooks": {
     "namespace": "@shadcnhooks",
@@ -4537,7 +6447,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.025Z"
+    "synced_at": "2026-09-23T09:53:52.371Z"
   },
   "@shadcnloaders": {
     "namespace": "@shadcnloaders",
@@ -4545,7 +6455,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.144Z"
+    "synced_at": "2026-09-23T09:53:56.848Z"
   },
   "@shadcnmaps": {
     "namespace": "@shadcnmaps",
@@ -4553,32 +6463,29 @@
     "item_count": 361,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.743Z"
+    "synced_at": "2026-09-23T09:53:52.960Z"
   },
   "@shadcnstore": {
     "namespace": "@shadcnstore",
     "catalog_url": "https://shadcnstore.com/r/registry.json",
-    "item_count": 228,
+    "item_count": 274,
     "component_tags": [
-      "ai-chat",
       "app-shell",
+      "avatar",
       "calendar",
       "card",
       "chart",
-      "command",
+      "checkbox",
       "cta-section",
-      "filter-bar",
       "hero-section",
       "navbar",
       "product-card",
-      "sidebar",
-      "skeleton",
-      "table",
+      "tabs",
       "testimonial",
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.667Z"
+    "synced_at": "2026-09-23T09:53:53.014Z"
   },
   "@shadcnui-blocks": {
     "namespace": "@shadcnui-blocks",
@@ -4630,12 +6537,12 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.717Z"
+    "synced_at": "2026-09-23T09:53:53.171Z"
   },
   "@shadcnuikit": {
     "namespace": "@shadcnuikit",
     "catalog_url": "https://shadcnuikit.com/r/registry.json",
-    "item_count": 875,
+    "item_count": 936,
     "component_tags": [
       "accordion",
       "alert",
@@ -4681,7 +6588,17 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.265Z"
+    "synced_at": "2026-09-23T09:53:53.806Z"
+  },
+  "@shivraj-roy": {
+    "namespace": "@shivraj-roy",
+    "catalog_url": "https://www.shivrajroy.in/r/registry.json",
+    "item_count": 1,
+    "component_tags": [
+      "color-picker"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:52.764Z"
   },
   "@shoogle": {
     "namespace": "@shoogle",
@@ -4689,7 +6606,32 @@
     "item_count": 0,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.645Z"
+    "synced_at": "2026-09-23T09:53:53.865Z"
+  },
+  "@simple-ai": {
+    "namespace": "@simple-ai",
+    "catalog_url": "https://www.simple-ai.dev/r/registry.json",
+    "item_count": 6,
+    "component_tags": [
+      "input"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:52.829Z"
+  },
+  "@skecher-ui": {
+    "namespace": "@skecher-ui",
+    "catalog_url": "https://skecher-ui.com/r/registry.json",
+    "item_count": 25,
+    "component_tags": [
+      "ai-chat",
+      "card",
+      "carousel",
+      "slider",
+      "tabs",
+      "toolbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.062Z"
   },
   "@skiper-ui": {
     "namespace": "@skiper-ui",
@@ -4697,7 +6639,7 @@
     "item_count": 37,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.371Z"
+    "synced_at": "2026-09-23T09:53:53.064Z"
   },
   "@slide-cn": {
     "namespace": "@slide-cn",
@@ -4711,14 +6653,27 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.901Z"
+    "synced_at": "2026-09-23T09:53:53.663Z"
+  },
+  "@slidecn": {
+    "namespace": "@slidecn",
+    "catalog_url": "https://slidecn.vercel.app/r/registry.json",
+    "item_count": 26,
+    "component_tags": [
+      "code-block",
+      "theme",
+      "timeline"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.866Z"
   },
   "@smoothui": {
     "namespace": "@smoothui",
     "catalog_url": "https://smoothui.dev/r/registry.json",
-    "item_count": 178,
+    "item_count": 246,
     "component_tags": [
       "accordion",
+      "auth-form",
       "avatar",
       "badge",
       "breadcrumb",
@@ -4726,7 +6681,9 @@
       "card",
       "card-deck",
       "carousel",
+      "chart",
       "checkbox",
+      "code-block",
       "combobox",
       "context-menu",
       "dialog",
@@ -4736,12 +6693,14 @@
       "hover-card",
       "input",
       "modal",
+      "navbar",
       "pagination",
       "popover",
       "product-card",
       "progress",
       "radio",
       "radio-group",
+      "scroll-progress",
       "select",
       "skeleton",
       "slider",
@@ -4750,10 +6709,11 @@
       "theme",
       "toast",
       "toggle",
+      "toolbar",
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.690Z"
+    "synced_at": "2026-09-23T09:53:53.683Z"
   },
   "@snap-cn": {
     "namespace": "@snap-cn",
@@ -4769,13 +6729,14 @@
   "@snapcn": {
     "namespace": "@snapcn",
     "catalog_url": "https://snapcn.dev/r/registry.json",
-    "item_count": 32,
+    "item_count": 94,
     "component_tags": [
+      "card",
       "input",
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.796Z"
+    "synced_at": "2026-09-23T09:53:53.919Z"
   },
   "@solaceui": {
     "namespace": "@solaceui",
@@ -4787,47 +6748,54 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.740Z"
+    "synced_at": "2026-09-23T09:53:53.385Z"
   },
   "@sona-ui": {
     "namespace": "@sona-ui",
-    "catalog_url": "https://sona-ui.vercel.app/r/registry.json",
-    "item_count": 34,
+    "catalog_url": "https://sonaui.com/r/registry.json",
+    "item_count": 46,
     "component_tags": [
       "accordion",
       "avatar",
       "button",
       "card",
+      "checkbox",
+      "code-block",
+      "context-menu",
       "dialog",
       "dropdown",
       "slider",
+      "stepper",
       "switch",
       "tabs",
       "theme",
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.646Z"
+    "synced_at": "2026-09-23T09:53:54.177Z"
   },
   "@soralabs": {
     "namespace": "@soralabs",
     "catalog_url": "https://ui.soralabs.studio/r/registry.json",
-    "item_count": 135,
+    "item_count": 68,
     "component_tags": [
       "accordion",
+      "alert",
       "button",
       "card",
       "carousel",
       "checkbox",
+      "context-menu",
       "dialog",
+      "dropdown",
       "input",
-      "sheet",
       "skeleton",
+      "switch",
       "tabs",
-      "textarea"
+      "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.819Z"
+    "synced_at": "2026-09-23T09:53:53.374Z"
   },
   "@soundcn": {
     "namespace": "@soundcn",
@@ -4843,15 +6811,88 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.427Z"
+    "synced_at": "2026-09-23T09:53:54.262Z"
+  },
+  "@spaceui": {
+    "namespace": "@spaceui",
+    "catalog_url": "https://www.spaceui.one/r/registry.json",
+    "item_count": 1100,
+    "component_tags": [
+      "accordion",
+      "admonition",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "checkbox",
+      "code-block",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "data-grid",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "file-upload",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "pill",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "timeline",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.613Z"
+  },
+  "@spark-ui": {
+    "namespace": "@spark-ui",
+    "catalog_url": "https://spark-ui-olive.vercel.app/r/registry.json",
+    "item_count": 18,
+    "component_tags": [
+      "card",
+      "carousel",
+      "qr-code",
+      "receipt"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:54.358Z"
   },
   "@spectrumui": {
     "namespace": "@spectrumui",
     "catalog_url": "https://ui.spectrumhq.in/r/registry.json",
-    "item_count": 205,
+    "item_count": 315,
     "component_tags": [
       "accordion",
+      "ai-chat",
       "alert",
+      "audit",
       "avatar",
       "badge",
       "button",
@@ -4870,6 +6911,7 @@
       "pill",
       "product-card",
       "progress",
+      "receipt",
       "select",
       "sidebar",
       "skeleton",
@@ -4877,12 +6919,15 @@
       "spinner",
       "stepper",
       "switch",
+      "table",
+      "tabs",
       "textarea",
+      "theme",
       "toast",
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.840Z"
+    "synced_at": "2026-09-23T09:53:53.846Z"
   },
   "@spell": {
     "namespace": "@spell",
@@ -4902,7 +6947,88 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.373Z"
+    "synced_at": "2026-09-23T09:53:53.841Z"
+  },
+  "@ssych": {
+    "namespace": "@ssych",
+    "catalog_url": "https://ui.ssych.com/r/registry.json",
+    "item_count": 72,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "calendar",
+      "card",
+      "card-deck",
+      "chart",
+      "pill",
+      "sidebar",
+      "table"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.869Z"
+  },
+  "@starck": {
+    "namespace": "@starck",
+    "catalog_url": "https://ui.starck.studio/r/registry.json",
+    "item_count": 16,
+    "component_tags": [
+      "button",
+      "card",
+      "command",
+      "dialog",
+      "navbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.975Z"
+  },
+  "@starseam": {
+    "namespace": "@starseam",
+    "catalog_url": "https://starseam.astroicers.link/r/registry.json",
+    "item_count": 56,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "code-block",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "sheet",
+      "skeleton",
+      "slider",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "tooltip",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:53.939Z"
   },
   "@stepper": {
     "namespace": "@stepper",
@@ -4912,48 +7038,85 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.900Z"
+    "synced_at": "2026-09-23T09:53:54.015Z"
+  },
+  "@styleui": {
+    "namespace": "@styleui",
+    "catalog_url": "https://www.styleui.dev/r/registry.json",
+    "item_count": 4,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:54.109Z"
+  },
+  "@stylexui": {
+    "namespace": "@stylexui",
+    "catalog_url": "https://stylexui.dev/r/registry.json",
+    "item_count": 18,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "dialog"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:54.201Z"
   },
   "@supabase": {
     "namespace": "@supabase",
     "catalog_url": "https://supabase.com/ui/r/registry.json",
-    "item_count": 65,
+    "item_count": 67,
     "component_tags": [
       "avatar",
       "dropzone",
       "file-upload"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.218Z"
+    "synced_at": "2026-09-23T09:53:54.889Z"
   },
   "@svelte-bits": {
     "namespace": "@svelte-bits",
     "catalog_url": "https://sveltebits.xyz/r/registry.json",
-    "item_count": 128,
+    "item_count": 164,
     "component_tags": [
+      "button",
       "card",
       "carousel",
       "pill",
+      "radio",
+      "select",
       "slider",
-      "stepper"
+      "stepper",
+      "switch",
+      "toast",
+      "toggle",
+      "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.919Z"
+    "synced_at": "2026-09-23T09:53:56.246Z"
   },
   "@svgl": {
     "namespace": "@svgl",
     "catalog_url": "https://svgl.app/r/registry.json",
-    "item_count": 666,
+    "item_count": 670,
     "component_tags": [
       "calendar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.872Z"
+    "synced_at": "2026-09-23T09:53:54.708Z"
   },
   "@systaliko-ui": {
     "namespace": "@systaliko-ui",
     "catalog_url": "https://systaliko-ui.vercel.app/r/registry.json",
-    "item_count": 173,
+    "item_count": 174,
     "component_tags": [
       "avatar",
       "badge",
@@ -4976,12 +7139,12 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.903Z"
+    "synced_at": "2026-09-23T09:53:54.210Z"
   },
   "@tailark": {
     "namespace": "@tailark",
     "catalog_url": "https://tailark.com/r/registry.json",
-    "item_count": 469,
+    "item_count": 476,
     "component_tags": [
       "accordion",
       "ai-chat",
@@ -4993,6 +7156,7 @@
       "chart",
       "chat-interface",
       "context-menu",
+      "dialog",
       "file-upload",
       "hero-section",
       "hover-card",
@@ -5005,7 +7169,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.016Z"
+    "synced_at": "2026-09-23T09:53:54.460Z"
   },
   "@tailgrids": {
     "namespace": "@tailgrids",
@@ -5052,7 +7216,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.036Z"
+    "synced_at": "2026-09-23T09:53:54.305Z"
   },
   "@tailwind-admin": {
     "namespace": "@tailwind-admin",
@@ -5071,7 +7235,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.152Z"
+    "synced_at": "2026-09-23T09:53:54.342Z"
   },
   "@taki": {
     "namespace": "@taki",
@@ -5121,12 +7285,12 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.091Z"
+    "synced_at": "2026-09-23T09:53:54.408Z"
   },
   "@termcn": {
     "namespace": "@termcn",
     "catalog_url": "https://termcn.vercel.app/r/registry.json",
-    "item_count": 342,
+    "item_count": 344,
     "component_tags": [
       "alert",
       "app-shell",
@@ -5163,7 +7327,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.700Z"
+    "synced_at": "2026-09-23T09:53:55.592Z"
   },
   "@terrae": {
     "namespace": "@terrae",
@@ -5171,12 +7335,12 @@
     "item_count": 40,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.215Z"
+    "synced_at": "2026-09-23T09:53:54.648Z"
   },
   "@tetra-ui": {
     "namespace": "@tetra-ui",
     "catalog_url": "https://tetra-ui.com/r/registry.json",
-    "item_count": 42,
+    "item_count": 45,
     "component_tags": [
       "accordion",
       "alert",
@@ -5203,7 +7367,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.607Z"
+    "synced_at": "2026-09-23T09:53:55.784Z"
   },
   "@text-ui": {
     "namespace": "@text-ui",
@@ -5211,7 +7375,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.003Z"
+    "synced_at": "2026-09-23T09:53:54.607Z"
   },
   "@thegridcn": {
     "namespace": "@thegridcn",
@@ -5267,7 +7431,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.204Z"
+    "synced_at": "2026-09-23T09:53:54.601Z"
   },
   "@threecn": {
     "namespace": "@threecn",
@@ -5277,7 +7441,58 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.193Z"
+    "synced_at": "2026-09-23T09:53:56.420Z"
+  },
+  "@tile-ui": {
+    "namespace": "@tile-ui",
+    "catalog_url": "https://react.tileui.zmorg.cn/r/registry.json",
+    "item_count": 71,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:56.493Z"
   },
   "@toc-cn": {
     "namespace": "@toc-cn",
@@ -5287,7 +7502,19 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.214Z"
+    "synced_at": "2026-09-23T09:53:54.608Z"
+  },
+  "@toggles": {
+    "namespace": "@toggles",
+    "catalog_url": "https://toggles.dev/r/registry.json",
+    "item_count": 14,
+    "component_tags": [
+      "switch",
+      "theme",
+      "toggle"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:54.443Z"
   },
   "@tokenui": {
     "namespace": "@tokenui",
@@ -5299,7 +7526,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.363Z"
+    "synced_at": "2026-09-23T09:53:54.738Z"
   },
   "@tool-ui": {
     "namespace": "@tool-ui",
@@ -5315,7 +7542,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.287Z"
+    "synced_at": "2026-09-23T09:53:54.808Z"
   },
   "@tour": {
     "namespace": "@tour",
@@ -5323,7 +7550,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.295Z"
+    "synced_at": "2026-09-23T09:53:54.811Z"
   },
   "@trophy-ui": {
     "namespace": "@trophy-ui",
@@ -5337,7 +7564,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.353Z"
+    "synced_at": "2026-09-23T09:53:55.133Z"
   },
   "@tuiparts": {
     "namespace": "@tuiparts",
@@ -5361,7 +7588,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:52.986Z"
+    "synced_at": "2026-09-23T09:53:54.426Z"
   },
   "@turbopills-ui": {
     "namespace": "@turbopills-ui",
@@ -5374,7 +7601,26 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.421Z"
+    "synced_at": "2026-09-23T09:53:55.046Z"
+  },
+  "@tween-ui": {
+    "namespace": "@tween-ui",
+    "catalog_url": "https://tween-ui.vercel.app/r/registry.json",
+    "item_count": 38,
+    "component_tags": [
+      "accordion",
+      "avatar",
+      "button",
+      "card",
+      "carousel",
+      "modal",
+      "slider",
+      "switch",
+      "tabs",
+      "testimonial"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:54.978Z"
   },
   "@typedora-ui": {
     "namespace": "@typedora-ui",
@@ -5387,7 +7633,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.336Z"
+    "synced_at": "2026-09-23T09:53:55.545Z"
   },
   "@ui-layouts": {
     "namespace": "@ui-layouts",
@@ -5416,12 +7662,25 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.660Z"
+    "synced_at": "2026-09-23T09:53:55.353Z"
+  },
+  "@ui-shrushank": {
+    "namespace": "@ui-shrushank",
+    "catalog_url": "https://raw.githubusercontent.com/Shrootiiii/ui/main/r/registry.json",
+    "item_count": 8,
+    "component_tags": [
+      "badge",
+      "button",
+      "switch",
+      "toggle"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:54.813Z"
   },
   "@uiable": {
     "namespace": "@uiable",
     "catalog_url": "https://uiable.com/r/registry.json",
-    "item_count": 795,
+    "item_count": 986,
     "component_tags": [
       "accordion",
       "alert",
@@ -5436,6 +7695,7 @@
       "checkbox",
       "circular-progress",
       "collapsible",
+      "color-picker",
       "combobox",
       "command",
       "context-menu",
@@ -5451,6 +7711,7 @@
       "pill",
       "popover",
       "progress",
+      "qr-code",
       "radio",
       "radio-group",
       "scroll-area",
@@ -5468,17 +7729,18 @@
       "testimonial",
       "textarea",
       "theme",
+      "timeline",
       "toggle",
       "toolbar",
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.155Z"
+    "synced_at": "2026-09-23T09:53:56.451Z"
   },
   "@uicapsule": {
     "namespace": "@uicapsule",
     "catalog_url": "https://uicapsule.com/r/registry.json",
-    "item_count": 36,
+    "item_count": 38,
     "component_tags": [
       "button",
       "card",
@@ -5492,7 +7754,21 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.782Z"
+    "synced_at": "2026-09-23T09:53:55.555Z"
+  },
+  "@uiception": {
+    "namespace": "@uiception",
+    "catalog_url": "https://uiception.com/r/registry.json",
+    "item_count": 119,
+    "component_tags": [
+      "chatbot",
+      "code-block",
+      "cta-section",
+      "hero-section",
+      "navbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:55.328Z"
   },
   "@uitripled": {
     "namespace": "@uitripled",
@@ -5540,7 +7816,32 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.480Z"
+    "synced_at": "2026-09-23T09:53:55.137Z"
+  },
+  "@uniquel": {
+    "namespace": "@uniquel",
+    "catalog_url": "https://uniquel.io/r/registry.json",
+    "item_count": 41,
+    "component_tags": [
+      "accordion",
+      "avatar",
+      "badge",
+      "button",
+      "card",
+      "card-deck",
+      "input",
+      "pagination",
+      "pill",
+      "progress",
+      "scroll-progress",
+      "search-input",
+      "skeleton",
+      "spinner",
+      "stepper",
+      "toggle"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:55.321Z"
   },
   "@unlumen-ui": {
     "namespace": "@unlumen-ui",
@@ -5571,24 +7872,31 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.523Z"
+    "synced_at": "2026-09-23T09:53:55.276Z"
   },
   "@uselayouts": {
     "namespace": "@uselayouts",
     "catalog_url": "https://uselayouts.com/r/registry.json",
-    "item_count": 26,
+    "item_count": 64,
     "component_tags": [
       "button",
       "card",
+      "card-deck",
       "carousel",
+      "drawer",
       "dropdown",
       "input",
+      "navbar",
+      "prompt-box",
+      "slider",
       "tabs",
       "testimonial",
+      "theme",
+      "toggle",
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.580Z"
+    "synced_at": "2026-09-23T09:53:55.384Z"
   },
   "@usva": {
     "namespace": "@usva",
@@ -5624,7 +7932,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.290Z"
+    "synced_at": "2026-09-23T09:53:58.173Z"
   },
   "@utilcn": {
     "namespace": "@utilcn",
@@ -5632,7 +7940,7 @@
     "item_count": 17,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.948Z"
+    "synced_at": "2026-09-23T09:53:55.903Z"
   },
   "@uui": {
     "namespace": "@uui",
@@ -5643,7 +7951,57 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.573Z"
+    "synced_at": "2026-09-23T09:53:55.340Z"
+  },
+  "@vectorstudio-ir": {
+    "namespace": "@vectorstudio-ir",
+    "catalog_url": "https://raw.githubusercontent.com/vectorstudio-ir/ui/develop/public/r/registry.json",
+    "item_count": 66,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "command",
+      "context-menu",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "hover-card",
+      "input",
+      "menubar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "scroll-area",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "toggle",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:55.202Z"
   },
   "@velobits": {
     "namespace": "@velobits",
@@ -5681,7 +8039,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.068Z"
+    "synced_at": "2026-09-23T09:53:56.299Z"
   },
   "@vernostudio": {
     "namespace": "@vernostudio",
@@ -5693,7 +8051,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.431Z"
+    "synced_at": "2026-09-23T09:53:57.445Z"
   },
   "@vllnt-ui": {
     "namespace": "@vllnt-ui",
@@ -5760,18 +8118,28 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.668Z"
+    "synced_at": "2026-09-23T09:53:57.215Z"
+  },
+  "@voraui": {
+    "namespace": "@voraui",
+    "catalog_url": "https://voraui.vercel.app/r/registry.json",
+    "item_count": 4,
+    "component_tags": [
+      "chart"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:56.793Z"
   },
   "@vue-bits": {
     "namespace": "@vue-bits",
     "catalog_url": "https://vue-bits.dev/r/registry.json",
-    "item_count": 137,
+    "item_count": 197,
     "component_tags": [
       "carousel",
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.913Z"
+    "synced_at": "2026-09-23T09:53:56.205Z"
   },
   "@wa-ui": {
     "namespace": "@wa-ui",
@@ -5786,7 +8154,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.410Z"
+    "synced_at": "2026-09-23T09:53:56.302Z"
   },
   "@washiveil": {
     "namespace": "@washiveil",
@@ -5834,17 +8202,17 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.011Z"
+    "synced_at": "2026-09-23T09:53:56.330Z"
   },
   "@waves-cn": {
     "namespace": "@waves-cn",
     "catalog_url": "https://waves-cn.vercel.app/r/registry.json",
-    "item_count": 7,
+    "item_count": 12,
     "component_tags": [
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.684Z"
+    "synced_at": "2026-09-23T09:53:55.652Z"
   },
   "@wds": {
     "namespace": "@wds",
@@ -5857,11 +8225,11 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.695Z"
+    "synced_at": "2026-09-23T09:53:55.678Z"
   },
   "@wensity": {
     "namespace": "@wensity",
-    "catalog_url": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/registry.json",
+    "catalog_url": "https://raw.githubusercontent.com/wensity/registry/main/registry.json",
     "item_count": 91,
     "component_tags": [
       "accordion",
@@ -5907,12 +8275,12 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.561Z"
+    "synced_at": "2026-09-23T09:53:55.668Z"
   },
   "@whiskeyjack": {
     "namespace": "@whiskeyjack",
     "catalog_url": "https://whiskeyjack.net/r/registry.json",
-    "item_count": 59,
+    "item_count": 62,
     "component_tags": [
       "app-shell",
       "badge",
@@ -5928,12 +8296,13 @@
       "sidebar",
       "slider",
       "tabs",
+      "textarea",
       "theme",
       "toast",
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:54.214Z"
+    "synced_at": "2026-09-23T09:53:57.205Z"
   },
   "@wigggle-ui": {
     "namespace": "@wigggle-ui",
@@ -5960,7 +8329,70 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.824Z"
+    "synced_at": "2026-09-23T09:53:55.701Z"
+  },
+  "@wxcn": {
+    "namespace": "@wxcn",
+    "catalog_url": "https://wxcn.dev/r/react/registry.json",
+    "item_count": 4,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:55.925Z"
+  },
+  "@yukihi": {
+    "namespace": "@yukihi",
+    "catalog_url": "https://design.yukihi.tokyo/v1/r/registry.json",
+    "item_count": 113,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "app-shell",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "dialog",
+      "dropdown",
+      "file-upload",
+      "icon-button",
+      "input",
+      "pagination",
+      "popover",
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "theme",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:55.995Z"
+  },
+  "@zenoadmin": {
+    "namespace": "@zenoadmin",
+    "catalog_url": "https://shadcn-editor-nu.vercel.app/r/registry.json",
+    "item_count": 1,
+    "component_tags": [],
+    "status": "available",
+    "synced_at": "2026-09-23T09:53:56.061Z"
   },
   "@zippystarter": {
     "namespace": "@zippystarter",
@@ -5970,6 +8402,6 @@
       "avatar"
     ],
     "status": "available",
-    "synced_at": "2026-08-27T10:00:53.929Z"
+    "synced_at": "2026-09-23T09:53:56.200Z"
   }
 }

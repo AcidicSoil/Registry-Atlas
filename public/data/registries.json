@@ -1,14 +1,86 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-08-27T10:01:07.041Z",
-    "upstream_count": 290,
-    "registry_count": 290,
-    "local_count": 290,
+    "synced_at": "2026-09-23T09:54:06.207Z",
+    "upstream_count": 382,
+    "registry_count": 382,
+    "local_count": 382,
     "validation_status": "not_run",
     "report_path": "data/shadcn/sync-report.json"
   },
   "registries": [
+    {
+      "official": {
+        "name": "@000h-cojeev",
+        "homepage": "https://000h.cojeev.com",
+        "registry_url_template": "https://000h.cojeev.com/r/{name}.json",
+        "description": "Expressive React components with organic shapes, purposeful motion, and source you can make your own."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "code-block",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "dropzone",
+          "hover-card",
+          "input",
+          "menubar",
+          "modal",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 174,
+        "catalog_evidence_url": "https://000h.cojeev.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
     {
       "official": {
         "name": "@1st-pouf",
@@ -83,7 +155,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 20,
+        "catalog_item_count": 28,
         "catalog_evidence_url": "https://23rd.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -97,7 +169,7 @@
         "name": "@7ovr",
         "homepage": "https://7ovr.com",
         "registry_url_template": "https://7ovr.com/r/{name}.json",
-        "description": "Free, production-ready UI blocks for marketing pages and application dashboards, built on Base UI and installable with the shadcn CLI."
+        "description": "A collection of shadcn/ui blocks and page templates for building modern, fast, and beautiful websites. Built on Base UI. Works with CLI and presets."
       },
       "atlas": {
         "primary_focus": [],
@@ -139,7 +211,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 242,
+        "catalog_item_count": 248,
         "catalog_evidence_url": "https://7ovr.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -420,7 +492,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 278,
+        "catalog_item_count": 284,
         "catalog_evidence_url": "https://ui.aceternity.com/registry/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -504,8 +576,38 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 17,
+        "catalog_item_count": 18,
         "catalog_evidence_url": "https://livekit.com/ui/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@agentui",
+        "homepage": "https://www.agentui.pro",
+        "registry_url_template": "https://www.agentui.pro/r/{name}.json",
+        "description": "Open-source React components for AI agent conversations, reasoning, tools, approvals, and streamed responses."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "card",
+          "code-block",
+          "input",
+          "progress",
+          "sidebar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 19,
+        "catalog_evidence_url": "https://www.agentui.pro/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -628,8 +730,37 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 126,
+        "catalog_item_count": 183,
         "catalog_evidence_url": "https://aicanvas.me/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@akoder",
+        "homepage": "https://akoder.xyz",
+        "registry_url_template": "https://akoder.xyz/r/{name}.json",
+        "description": "Motion-rich React components and data visualizations — dotted world maps, GitHub activity maps, sliders, carousels, and terminal-style blocks built on Tailwind CSS v4 and Radix UI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "card",
+          "carousel",
+          "command",
+          "progress"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 17,
+        "catalog_evidence_url": "https://akoder.xyz/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -669,26 +800,126 @@
     },
     {
       "official": {
-        "name": "@aliimam",
-        "homepage": "https://aliimam.in",
-        "registry_url_template": "https://aliimam.in/r/{name}.json",
-        "description": "I create digital experiences that connect and inspire. I build apps, websites, brands, and products end-to-end."
+        "name": "@amap",
+        "homepage": "https://map.ling.pub",
+        "registry_url_template": "https://map.ling.pub/r/{name}.json",
+        "description": "Beautiful map components with amap. 100% Free, Zero config, one command setup."
       },
       "atlas": {
-        "primary_focus": [
-          "marketing-sections"
-        ],
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 1,
+        "catalog_evidence_url": "https://map.ling.pub/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@amarjay-ui",
+        "homepage": "https://ui.amarjay.com",
+        "registry_url_template": "https://ui.amarjay.com/r/{name}.json",
+        "description": "Customizable UI components and interactive blocks built with React, Tailwind CSS, and shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
         "component_tags": [
+          "alert",
+          "audio-player",
+          "avatar",
+          "badge",
+          "button",
           "card",
-          "hero-section"
+          "chart",
+          "context-menu",
+          "dialog",
+          "dropdown",
+          "input",
+          "popover",
+          "slider",
+          "tooltip"
         ],
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "none",
-        "catalog_item_count": 0,
-        "catalog_evidence_url": "",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 18,
+        "catalog_evidence_url": "https://ui.amarjay.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@designali",
+        "homepage": "https://designali.com",
+        "registry_url_template": "https://designali.com/r/{name}.json",
+        "description": "Where thoughtful design meets production-ready code. I design and build digital experiences that look great, feel intuitive, and work beautifully."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "testimonial",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 245,
+        "catalog_evidence_url": "https://designali.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -705,14 +936,26 @@
       },
       "atlas": {
         "primary_focus": [],
-        "component_tags": [],
+        "component_tags": [
+          "accordion",
+          "button",
+          "card",
+          "carousel",
+          "chart",
+          "progress",
+          "scroll-progress",
+          "skeleton",
+          "spinner",
+          "typing-indicator",
+          "waveform"
+        ],
         "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
+        "coverage_status": "inferred",
+        "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "none",
-        "catalog_item_count": 0,
-        "catalog_evidence_url": "",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 169,
+        "catalog_evidence_url": "https://amicro.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -893,6 +1136,72 @@
     },
     {
       "official": {
+        "name": "@ark-cn",
+        "homepage": "https://ark-cn.vercel.app",
+        "registry_url_template": "https://ark-cn.vercel.app/r/{name}.json",
+        "description": "Accessible shadcn/ui components built with React, TypeScript, and Tailwind CSS. Copy-paste ready, and customizable. Built by ARK UI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "angle-slider",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "card",
+          "carousel",
+          "checkbox",
+          "collapsible",
+          "color-picker",
+          "combobox",
+          "command",
+          "cropper",
+          "dialog",
+          "file-upload",
+          "hover-card",
+          "input",
+          "pagination",
+          "password-input",
+          "popover",
+          "progress",
+          "qr-code",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "tabs",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip",
+          "zoomable-image"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 76,
+        "catalog_evidence_url": "https://ark-cn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@asanshay",
         "homepage": "https://ds.asanshay.com",
         "registry_url_template": "https://ds.asanshay.com/r/{name}.json",
@@ -965,7 +1274,7 @@
         "confidence": "high",
         "catalog_status": "available",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 141,
+        "catalog_item_count": 156,
         "catalog_evidence_url": "https://r.assistant-ui.com/registry.json",
         "item_summaries": [
           {
@@ -1028,6 +1337,103 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 6,
         "catalog_evidence_url": "https://ui.auth0.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@avertra-ui",
+        "homepage": "https://micomponents.micustomer.io",
+        "registry_url_template": "https://micomponents.micustomer.io/r/{name}.json",
+        "description": "A collection of React components built with Tailwind CSS, designed to help you create beautiful and responsive user interfaces with ease."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "input",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "spinner",
+          "stepper",
+          "table",
+          "tabs",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 31,
+        "catalog_evidence_url": "https://micomponents.micustomer.io/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@awwwardedui",
+        "homepage": "https://awwwardedui.vercel.app",
+        "registry_url_template": "https://awwwardedui.vercel.app/r/{name}.json",
+        "description": "A curated registry of production-ready creative components and motion effects for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 5,
+        "catalog_evidence_url": "https://awwwardedui.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@axicharts",
+        "homepage": "https://axidify.github.io/axicharts/shadcn/registry",
+        "registry_url_template": "https://axidify.github.io/axicharts/registry/{name}.json",
+        "description": "MIT React chart blocks for dashboards — composable ChartContainer + shadcn-compatible chartConfig, live uPlot canvas, and ECharts adapters. Six installable registry items."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "chart"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 10,
+        "catalog_evidence_url": "https://axidify.github.io/axicharts/registry/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -1217,6 +1623,7 @@
           "avatar",
           "badge",
           "breadcrumb",
+          "button",
           "calendar",
           "card",
           "card-deck",
@@ -1265,7 +1672,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 1935,
+        "catalog_item_count": 2095,
         "catalog_evidence_url": "https://ui.beste.co/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1361,8 +1768,10 @@
           "accordion",
           "badge",
           "button",
+          "calendar",
           "card",
           "carousel",
+          "chart",
           "checkbox",
           "code-block",
           "combobox",
@@ -1382,6 +1791,7 @@
           "sheet",
           "sidebar",
           "slider",
+          "stepper",
           "switch",
           "table",
           "tabs",
@@ -1395,7 +1805,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 111,
+        "catalog_item_count": 124,
         "catalog_evidence_url": "https://beui.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1439,6 +1849,87 @@
     },
     {
       "official": {
+        "name": "@bits-ui",
+        "homepage": "https://bits-ui.netlify.app",
+        "registry_url_template": "https://bits-ui.netlify.app/r/{name}.json",
+        "description": "Bits UI — a curated, open-source registry of reusable React & Next.js components, hooks, and utilities (shadcn-compatible). Focused on accessibility, composability, and production-ready primitives to accelerate design systems and developer workflows."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "carousel"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 6,
+        "catalog_evidence_url": "https://bits-ui.netlify.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@bjork-ui",
+        "homepage": "https://ui.isaiahbjork.com",
+        "registry_url_template": "https://ui.isaiahbjork.com/{name}.json",
+        "description": "Production-ready animated interface components, primitives, and WebGL shader studies for React and Tailwind CSS."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "dialog",
+          "dropdown",
+          "hover-card",
+          "input",
+          "modal",
+          "otp-input",
+          "pagination",
+          "popover",
+          "radio",
+          "radio-group",
+          "select",
+          "sheet",
+          "slider",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 74,
+        "catalog_evidence_url": "https://ui.isaiahbjork.com/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@bklit",
         "homepage": "https://ui.bklit.com",
         "registry_url_template": "https://ui.bklit.com/r/{name}.json",
@@ -1458,6 +1949,33 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 56,
         "catalog_evidence_url": "https://ui.bklit.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@blobatar",
+        "homepage": "https://blobatar.dev",
+        "registry_url_template": "https://blobatar.dev/r/{name}.json",
+        "description": "Deterministic geometric avatars generated from any string — an Avatar that falls back to a blobatar when a user has no picture."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "avatar",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 6,
+        "catalog_evidence_url": "https://blobatar.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -1501,7 +2019,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 77,
+        "catalog_item_count": 82,
         "catalog_evidence_url": "https://blocks.so/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1585,7 +2103,7 @@
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "catalog",
+        "comparison_evidence": "stale-catalog",
         "catalog_item_count": 500,
         "catalog_evidence_url": "https://blockus.lndevui.com/r/registry.json",
         "item_summaries": [],
@@ -1657,7 +2175,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 99,
+        "catalog_item_count": 100,
         "catalog_evidence_url": "https://blode.co/ui/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1729,7 +2247,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 94,
+        "catalog_item_count": 96,
         "catalog_evidence_url": "https://boldkit.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1895,6 +2413,41 @@
     },
     {
       "official": {
+        "name": "@buzzform",
+        "homepage": "https://form.buildnbuzz.com",
+        "registry_url_template": "https://form.buildnbuzz.com/r/{name}.json",
+        "description": "Type-safe, schema-based forms for shadcn/ui apps. Auto-generate UI with validation and state out-of-the-box with minimal boilerplate."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "checkbox",
+          "collapsible",
+          "dialog",
+          "popover",
+          "radio",
+          "select",
+          "sheet",
+          "switch",
+          "tabs",
+          "textarea"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 48,
+        "catalog_evidence_url": "https://form.buildnbuzz.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@canvas-ui",
         "homepage": "https://canvasui.dev/",
         "registry_url_template": "https://canvasui.dev/r/{name}.json",
@@ -1908,7 +2461,7 @@
         "confidence": "unknown",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 210,
+        "catalog_item_count": 420,
         "catalog_evidence_url": "https://canvasui.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1936,6 +2489,104 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 27,
         "catalog_evidence_url": "https://cardcn.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@catalogs",
+        "homepage": "https://catalogs.dev",
+        "registry_url_template": "https://api.catalogs.dev/shadcn/{name}.json",
+        "description": "Discover components, blocks, and more from independent teams. Browse previews and bring the source into your project."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "admonition",
+          "alert",
+          "angle-slider",
+          "audio-player",
+          "audit",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "card-deck",
+          "carousel",
+          "chart",
+          "chatbot",
+          "checkbox",
+          "circular-progress",
+          "code-block",
+          "collapsible",
+          "color-picker",
+          "color-swatch",
+          "combobox",
+          "command",
+          "compare-slider",
+          "context-menu",
+          "cropper",
+          "data-grid",
+          "datepicker",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "dropzone",
+          "error-message",
+          "file-upload",
+          "hero-section",
+          "hover-card",
+          "input",
+          "menubar",
+          "modal",
+          "otp-input",
+          "pagination",
+          "pill",
+          "popover",
+          "progress",
+          "qr-code",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "scroll-progress",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "testimonial",
+          "textarea",
+          "theme",
+          "timeline",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip",
+          "transcript-viewer",
+          "voice-picker",
+          "waveform",
+          "zoomable-image"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 2103,
+        "catalog_evidence_url": "https://api.catalogs.dev/shadcn/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -2026,6 +2677,32 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 12,
         "catalog_evidence_url": "https://clerk.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@cligentic",
+        "homepage": "https://cligentic.railly.dev",
+        "registry_url_template": "https://cligentic.railly.dev/r/{name}.json",
+        "description": "Copy-paste TypeScript primitives for agent-first CLIs: trust ladders, killswitches, JSON mode, audit logs, and cross-platform utilities."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "audit"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 24,
+        "catalog_evidence_url": "https://cligentic.railly.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -2182,7 +2859,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 67,
+        "catalog_item_count": 55,
         "catalog_evidence_url": "https://componentry.fun/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -2211,6 +2888,72 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 20,
         "catalog_evidence_url": "https://contentbit.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@corecn",
+        "homepage": "https://corecn.vercel.app",
+        "registry_url_template": "https://corecn.vercel.app/r/{name}.json",
+        "description": "A collection of shadcn-based React components, charts, animated components, and blocks built by corecn."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 67,
+        "catalog_evidence_url": "https://corecn.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -2261,7 +3004,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 59,
+        "catalog_item_count": 60,
         "catalog_evidence_url": "https://ui.corr.sh/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -2331,6 +3074,78 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 577,
         "catalog_evidence_url": "https://coss.com/ui/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@crafterui",
+        "homepage": "https://crafterui.com",
+        "registry_url_template": "https://crafterui.com/r/{name}.json",
+        "description": "Motion and interaction components for React and Tailwind. 3D carousels, scroll letter reveals, a Dynamic Island, cursor hit-testing and rolling countdowns, installed with the CLI and owned as source."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "carousel",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 18,
+        "catalog_evidence_url": "https://crafterui.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@craftui",
+        "homepage": "https://www.craftui.space",
+        "registry_url_template": "https://www.craftui.space/r/{name}.json",
+        "description": "Animated, interaction-first components for React: 70+ loaders, interactive SVG icons, plus blocks, sections and UI primitives. Built with Tailwind CSS v4 and Motion, with every animation hand-tuned rather than generated."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "ai-chat",
+          "alert",
+          "avatar",
+          "badge",
+          "button",
+          "calendar",
+          "card",
+          "dialog",
+          "drawer",
+          "input",
+          "modal",
+          "navbar",
+          "otp-input",
+          "product-card",
+          "spinner",
+          "switch",
+          "theme",
+          "typing-indicator"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 158,
+        "catalog_evidence_url": "https://www.craftui.space/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -2473,6 +3288,42 @@
     },
     {
       "official": {
+        "name": "@d2",
+        "homepage": "https://ui.d2studio.dev",
+        "registry_url_template": "https://ui.d2studio.dev/r/{name}.json",
+        "description": "Ultra modern monospace component library for React and Tailwind CSS v4 — AI cards, bento grids, dashboards, hero sections and animated pixel spinners."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "alert",
+          "button",
+          "card",
+          "checkbox",
+          "drawer",
+          "hero-section",
+          "input",
+          "progress",
+          "select",
+          "spinner",
+          "tabs"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 40,
+        "catalog_evidence_url": "https://ui.d2studio.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@darx",
         "homepage": "https://darshitdev.in/arts",
         "registry_url_template": "https://darshitdev.in/r/{name}.json",
@@ -2487,9 +3338,72 @@
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "catalog",
+        "comparison_evidence": "stale-catalog",
         "catalog_item_count": 1,
         "catalog_evidence_url": "https://darshitdev.in/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@dashboardcn",
+        "homepage": "https://dashboardcn.com",
+        "registry_url_template": "https://dashboardcn.com/r/{name}.json",
+        "description": "Dashboard and analytics components for shadcn/ui. KPI cards, charts, funnels, ranked lists, heatmaps, data tables, and the cards that combine them. Free and MIT licensed."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "badge",
+          "card",
+          "chart",
+          "command",
+          "progress",
+          "table",
+          "tabs",
+          "timeline"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 54,
+        "catalog_evidence_url": "https://dashboardcn.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@data-table-filters",
+        "homepage": "https://data-table.openstatus.dev",
+        "registry_url_template": "https://data-table.openstatus.dev/r/{name}.json",
+        "description": "Data tables for React and shadcn/ui: faceted filters, sorting, infinite scroll, row detail sheet, and server-side filtering with Drizzle. Built on TanStack Table. Powered by openstatus."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "chart",
+          "command",
+          "sheet",
+          "table",
+          "timeline"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 15,
+        "catalog_evidence_url": "https://data-table.openstatus.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -2795,6 +3709,7 @@
           "syntax-highlighting",
           "tabs",
           "theme",
+          "tooltip",
           "utility-button",
           "zoomable-image"
         ],
@@ -2803,7 +3718,7 @@
         "confidence": "high",
         "catalog_status": "available",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 93,
+        "catalog_item_count": 20,
         "catalog_evidence_url": "https://deltacomponents.dev/r/registry.json",
         "item_summaries": [
           {
@@ -3228,6 +4143,74 @@
         "comparison_evidence": "none",
         "catalog_item_count": 0,
         "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@diarmuradi",
+        "homepage": "https://diarmuradi.com",
+        "registry_url_template": "https://diarmuradi.com/r/{name}.json",
+        "description": "A shadcn/ui registry for blocks & templates."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "qr-code",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 119,
+        "catalog_evidence_url": "https://diarmuradi.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -3941,6 +4924,60 @@
     },
     {
       "official": {
+        "name": "@easeui",
+        "homepage": "https://easeui.dev",
+        "registry_url_template": "https://easeui.dev/r/{name}.json",
+        "description": "Open-source React components with natural motion, installable as source."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "button",
+          "card",
+          "checkbox",
+          "code-block",
+          "command",
+          "drawer",
+          "dropdown",
+          "file-upload",
+          "input",
+          "modal",
+          "otp-input",
+          "popover",
+          "progress",
+          "select",
+          "skeleton",
+          "slider",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "tooltip",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 50,
+        "catalog_evidence_url": "https://easeui.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@efferd",
         "homepage": "https://efferd.com/",
         "registry_url_template": "https://efferd.com/r/{name}.json",
@@ -3955,6 +4992,7 @@
           "button",
           "cta-section",
           "hero-section",
+          "sidebar",
           "slider",
           "table",
           "testimonial",
@@ -3965,7 +5003,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 201,
+        "catalog_item_count": 231,
         "catalog_evidence_url": "https://efferd.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -4155,6 +5193,66 @@
     },
     {
       "official": {
+        "name": "@elsecase",
+        "homepage": "https://elsecase.vercel.app",
+        "registry_url_template": "https://elsecase.vercel.app/r/{name}.json",
+        "description": "Production React workflows for loading, empty, error, responsive data, form validation, retry, and recovery."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 3,
+        "catalog_evidence_url": "https://elsecase.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@emailcn",
+        "homepage": "https://emailcn.vercel.app",
+        "registry_url_template": "https://emailcn.vercel.app/r/{name}.json",
+        "description": "Beautiful emails, made simple. Ready to use, customizable email components for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "avatar",
+          "badge",
+          "button",
+          "card",
+          "otp-input",
+          "progress",
+          "receipt",
+          "table",
+          "testimonial",
+          "theme",
+          "timeline"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 338,
+        "catalog_evidence_url": "https://emailcn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@emerald-ui",
         "homepage": "https://emerald-ui.com",
         "registry_url_template": "https://emerald-ui.com/r/{name}.json",
@@ -4170,6 +5268,32 @@
         "comparison_evidence": "none",
         "catalog_item_count": 0,
         "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@emstein-ui",
+        "homepage": "https://ui.emstein.com",
+        "registry_url_template": "https://ui.emstein.com/r/{name}.json",
+        "description": "Virtualized table components for shadcn/ui with sorting, resizing, and row selection."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 1,
+        "catalog_evidence_url": "https://ui.emstein.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -4209,7 +5333,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 51,
+        "catalog_item_count": 55,
         "catalog_evidence_url": "https://ui.ericts.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -4233,7 +5357,7 @@
         "confidence": "unknown",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 13,
+        "catalog_item_count": 23,
         "catalog_evidence_url": "https://evex.sh/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -4393,7 +5517,9 @@
           "sidebar",
           "skeleton",
           "spinner",
+          "switch",
           "tabs",
+          "toast",
           "toggle",
           "tooltip"
         ],
@@ -4402,7 +5528,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 55,
+        "catalog_item_count": 67,
         "catalog_evidence_url": "https://ui.extend.ai/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -4509,7 +5635,7 @@
         "confidence": "unknown",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 2,
+        "catalog_item_count": 13,
         "catalog_evidence_url": "https://flightcn.yencheng.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -4542,6 +5668,61 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 10,
         "catalog_evidence_url": "https://flowui-registry.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@fluent2-react-kit",
+        "homepage": "https://fluent2-react-kit.graund.io",
+        "registry_url_template": "https://fluent2-react-kit.graund.io/r/{name}.json",
+        "description": "Fluent 2-inspired React components with shadcn-style APIs. Design tokens with light, dark, and high-contrast themes, Base UI primitives, Tailwind CSS v4. Independent open-source project, not affiliated with Microsoft."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "card",
+          "checkbox",
+          "combobox",
+          "command",
+          "dialog",
+          "dropdown",
+          "input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "separator",
+          "skeleton",
+          "spinner",
+          "switch",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 37,
+        "catalog_evidence_url": "https://fluent2-react-kit.graund.io/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -4591,6 +5772,8 @@
           "card",
           "checkbox",
           "color-picker",
+          "combobox",
+          "command",
           "dialog",
           "drawer",
           "dropdown",
@@ -4611,7 +5794,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 56,
+        "catalog_item_count": 70,
         "catalog_evidence_url": "https://www.fluidfunctionalism.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -4772,6 +5955,43 @@
     },
     {
       "official": {
+        "name": "@formscn",
+        "homepage": "https://www.formscn.space",
+        "registry_url_template": "https://www.formscn.space/r/{name}.json",
+        "description": "Production-ready shadcn/ui forms visually with drag-and-drop."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "input",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "switch",
+          "textarea"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 30,
+        "catalog_evidence_url": "https://www.formscn.space/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@framecn",
         "homepage": "https://framecn.vercel.app",
         "registry_url_template": "https://framecn.vercel.app/r/{name}.json",
@@ -4833,7 +6053,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 28,
+        "catalog_item_count": 29,
         "catalog_evidence_url": "https://ui.heygaia.io/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -5169,6 +6389,35 @@
     },
     {
       "official": {
+        "name": "@gridcn",
+        "homepage": "https://gridcn.vercel.app",
+        "registry_url_template": "https://gridcn.vercel.app/r/{name}.json",
+        "description": "An editable, composable data grid for the shadcn/ui ecosystem: range selection, spreadsheet clipboard, fill handle, pinning, undo/redo, and streaming updates. Real DOM cells, shadcn styling."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "context-menu",
+          "data-grid",
+          "pagination",
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 44,
+        "catalog_evidence_url": "https://gridcn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@gymnopedies",
         "homepage": "https://gymnopedies.shoota.work",
         "registry_url_template": "https://gymnopedies.shoota.work/r/{name}.json",
@@ -5315,6 +6564,74 @@
     },
     {
       "official": {
+        "name": "@herocn",
+        "homepage": "https://herocn.dev/",
+        "registry_url_template": "https://herocn.dev/r/{name}.json",
+        "description": "HeroUI's design system, shadcn's abstraction."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "modal",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 559,
+        "catalog_evidence_url": "https://herocn.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@heroicons-animated",
         "homepage": "https://www.heroicons-animated.com/",
         "registry_url_template": "https://www.heroicons-animated.com/r/{name}.json",
@@ -5411,7 +6728,7 @@
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "catalog",
+        "comparison_evidence": "stale-catalog",
         "catalog_item_count": 139,
         "catalog_evidence_url": "https://hextaui.com/r/registry.json",
         "item_summaries": [],
@@ -5470,6 +6787,7 @@
           "code-block",
           "color-picker",
           "combobox",
+          "command",
           "compare-slider",
           "cropper",
           "dialog",
@@ -5496,7 +6814,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 184,
+        "catalog_item_count": 243,
         "catalog_evidence_url": "https://hirael.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -5560,7 +6878,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 83,
+        "catalog_item_count": 84,
         "catalog_evidence_url": "https://www.honestui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -5593,6 +6911,117 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 165,
         "catalog_evidence_url": "https://hugeicons-animated.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@hugeicons-animated-vue",
+        "homepage": "https://hugeicons-animated-vue.rebeaumickael.fr",
+        "registry_url_template": "https://hugeicons-animated-vue.rebeaumickael.fr/r/{name}.json",
+        "description": "An open-source collection of animated Hugeicons for Vue 3."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "ai-chat",
+          "alert",
+          "audit",
+          "badge",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "color-picker",
+          "command",
+          "dropdown",
+          "file-upload",
+          "input",
+          "map-pointer",
+          "pill",
+          "progress",
+          "qr-code",
+          "radio",
+          "receipt",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "switch",
+          "table",
+          "timeline",
+          "toggle",
+          "waveform"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 6122,
+        "catalog_evidence_url": "https://hugeicons-animated-vue.rebeaumickael.fr/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@iandefined",
+        "homepage": "https://ui.iandefined.com",
+        "registry_url_template": "https://ui.iandefined.com/r/{name}.json",
+        "description": "Thoughtful React components, blocks, hooks, and utilities for product engineers, built with Base UI and Tailwind CSS v4."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "avatar",
+          "badge",
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "input",
+          "otp-input",
+          "pagination",
+          "popover",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toast",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 56,
+        "catalog_evidence_url": "https://ui.iandefined.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -5735,20 +7164,33 @@
         "component_tags": [
           "accordion",
           "alert",
+          "avatar",
           "badge",
           "breadcrumb",
           "button",
+          "calendar",
           "card",
+          "carousel",
+          "chart",
+          "checkbox",
           "dropdown",
+          "input",
           "modal",
+          "navbar",
           "pagination",
           "popover",
           "progress",
+          "radio",
+          "radio-group",
           "separator",
           "skeleton",
+          "slider",
           "spinner",
           "stepper",
+          "switch",
+          "table",
           "tabs",
+          "textarea",
           "theme",
           "toast",
           "tooltip"
@@ -5758,7 +7200,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 26,
+        "catalog_item_count": 48,
         "catalog_evidence_url": "https://indiacn.in/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -5881,7 +7323,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 580,
+        "catalog_item_count": 592,
         "catalog_evidence_url": "https://intentui.com/r/registry",
         "item_summaries": [],
         "notes": ""
@@ -6145,6 +7587,46 @@
     },
     {
       "official": {
+        "name": "@keyline",
+        "homepage": "https://keylineicons.com",
+        "registry_url_template": "https://keylineicons.com/r/{name}.json",
+        "description": "1,000 icons on one 24×24 grid as React components, in stroke, two-tone, duotone and fill, each with rounded or sharp corners. Free under MIT."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "alert",
+          "badge",
+          "calendar",
+          "card",
+          "chart",
+          "circular-progress",
+          "command",
+          "map-pointer",
+          "progress",
+          "qr-code",
+          "radio",
+          "receipt",
+          "table",
+          "toggle",
+          "waveform"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 8912,
+        "catalog_evidence_url": "https://keylineicons.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@kibo-ui",
         "homepage": "https://www.kibo-ui.com/",
         "registry_url_template": "https://www.kibo-ui.com/r/{name}.json",
@@ -6204,6 +7686,75 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 1,
         "catalog_evidence_url": "https://kinetic.itsjay.in/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@kobra",
+        "homepage": "https://kobra.systems",
+        "registry_url_template": "https://kobra.systems/r/{name}.json",
+        "description": "Polished components for teams building exceptional products and experiences."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "code-block",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "dropzone",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 73,
+        "catalog_evidence_url": "https://kobra.systems/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -6281,6 +7832,54 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 24,
         "catalog_evidence_url": "https://www.launchuicomponents.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@layish",
+        "homepage": "https://layish.vercel.app",
+        "registry_url_template": "https://layish.vercel.app/r/{name}.json",
+        "description": "Composed shadcn blocks. Ask wraps Questionnaire with review, cancel, auto-advance, and HITL results for AI SDK addToolOutput."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 2,
+        "catalog_evidence_url": "https://layish.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@lema-ds",
+        "homepage": "https://ds.lema.ufpb.br",
+        "registry_url_template": "https://ds.lema.ufpb.br/r/{name}.json",
+        "description": "Enterprise-grade design system and component library for LEMA-UFPB"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "none",
+        "catalog_item_count": 0,
+        "catalog_evidence_url": "",
         "item_summaries": [],
         "notes": ""
       },
@@ -6390,8 +7989,41 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 37,
+        "catalog_item_count": 39,
         "catalog_evidence_url": "https://liquefy-ui.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@livedocs",
+        "homepage": "https://livedocs.xyz",
+        "registry_url_template": "https://livedocs.xyz/r/{name}.json",
+        "description": "Dashboard-grade charts and UI primitives on semantic tokens: area, line, bar, pie, radar, sankey, KPI cards, meters, plus button, card, badge, input."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "avatar",
+          "badge",
+          "button",
+          "card",
+          "chart",
+          "input",
+          "separator",
+          "theme"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 41,
+        "catalog_evidence_url": "https://livedocs.xyz/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -6446,6 +8078,49 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 50,
         "catalog_evidence_url": "https://loading-ui.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@localmode",
+        "homepage": "https://localmode.ai",
+        "registry_url_template": "https://localmode.ai/r/{name}.json",
+        "description": "Local-first, offline AI UI primitives + blocks - run ML models (chat, RAG, vision, audio) entirely in the browser. No servers, no API keys."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "alert",
+          "badge",
+          "button",
+          "card",
+          "chart",
+          "code-block",
+          "command",
+          "compare-slider",
+          "drawer",
+          "dropzone",
+          "input",
+          "slider",
+          "table",
+          "timeline",
+          "transcript-viewer",
+          "utility-button",
+          "voice-picker",
+          "waveform"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 147,
+        "catalog_evidence_url": "https://localmode.ai/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -6613,7 +8288,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 247,
+        "catalog_item_count": 250,
         "catalog_evidence_url": "https://magicui.design/r/registry",
         "item_summaries": [],
         "notes": ""
@@ -6673,6 +8348,170 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 9,
         "catalog_evidence_url": "https://mapcn.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@materialcn",
+        "homepage": "https://github.com/guillermo-rebolledo/materialcn",
+        "registry_url_template": "https://guillermo-rebolledo.github.io/materialcn/r/{name}.json",
+        "description": "Material 3 Expressive for shadcn/ui. Base UI primitives restyled with M3 tokens extracted from the official Figma kit, so stock shadcn markup renders as Material — retheme an existing project with a single item."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "checkbox",
+          "circular-progress",
+          "dialog",
+          "dropdown",
+          "input",
+          "pagination",
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "switch",
+          "tabs",
+          "theme",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 66,
+        "catalog_evidence_url": "https://guillermo-rebolledo.github.io/materialcn/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@mewo",
+        "homepage": "https://mewo-ui.vercel.app",
+        "registry_url_template": "https://mewo-ui.vercel.app/r/{name}.json",
+        "description": "Animated React components and page sections built on Tailwind CSS v4, powered by Motion and GSAP. Every item respects prefers-reduced-motion and installs only the dependency it needs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "card",
+          "collapsible",
+          "tabs"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 10,
+        "catalog_evidence_url": "https://mewo-ui.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@microkit",
+        "homepage": "https://microkit.co",
+        "registry_url_template": "https://microkit.co/r/{name}.json",
+        "description": "Copy-paste microinteractions for React: animated buttons, hover effects, tabs and inputs. Each one installs as a single self-contained TypeScript and Tailwind file. MIT licensed."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "input",
+          "tabs",
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 49,
+        "catalog_evidence_url": "https://microkit.co/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@mischief",
+        "homepage": "https://ui.tinkererslabs.com",
+        "registry_url_template": "https://ui.tinkererslabs.com/r/{name}.json",
+        "description": "A playful, high-utility shadcn registry: PDF, DOCX and JSON viewers, redaction and bounding boxes, agent chat with tool calls, data tables, command palettes, OTP inputs, and shader fields."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "audio-player",
+          "avatar",
+          "button",
+          "card",
+          "checkbox",
+          "code-block",
+          "combobox",
+          "command",
+          "file-upload",
+          "input",
+          "otp-input",
+          "pagination",
+          "pill",
+          "skeleton",
+          "slider",
+          "spinner",
+          "status-pill",
+          "stepper",
+          "table",
+          "tabs",
+          "tag-input",
+          "theme",
+          "timeline",
+          "toggle",
+          "transcript-viewer",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 234,
+        "catalog_evidence_url": "https://ui.tinkererslabs.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -6769,7 +8608,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 95,
+        "catalog_item_count": 96,
         "catalog_evidence_url": "https://moduix.dev/r/react/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -6806,6 +8645,30 @@
         "comparison_evidence": "none",
         "catalog_item_count": 0,
         "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@morphiq",
+        "homepage": "https://morphiq.prathampatel.design",
+        "registry_url_template": "https://morphiq.prathampatel.design/r/{name}.json",
+        "description": "Interfaces that move. Refractive glass, motion and depth for React — a GPU-accelerated prism lens and a cursor-reactive ASCII field, with every setting exposed as a prop."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 20,
+        "catalog_evidence_url": "https://morphiq.prathampatel.design/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -6862,7 +8725,7 @@
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "catalog",
+        "comparison_evidence": "stale-catalog",
         "catalog_item_count": 598,
         "catalog_evidence_url": "https://motion-menu-two.vercel.app/r/registry.json",
         "item_summaries": [],
@@ -6940,16 +8803,24 @@
           "buttons-and-primitives"
         ],
         "component_tags": [
+          "accordion",
           "button",
-          "toggle"
+          "carousel",
+          "dialog",
+          "popover",
+          "progress",
+          "scroll-progress",
+          "slider",
+          "toggle",
+          "toolbar"
         ],
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "none",
-        "catalog_item_count": 0,
-        "catalog_evidence_url": "",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 33,
+        "catalog_evidence_url": "https://motion-primitives.com/c/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -7123,6 +8994,61 @@
     },
     {
       "official": {
+        "name": "@moumenlab",
+        "homepage": "https://lab.moumen.dev",
+        "registry_url_template": "https://lab.moumen.dev/r/{name}.json",
+        "description": "A small lab of the components we build every day, rethought for better feel."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "command",
+          "file-upload",
+          "input",
+          "otp-input",
+          "popover",
+          "theme"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 14,
+        "catalog_evidence_url": "https://lab.moumen.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@n3wth",
+        "homepage": "https://kit.n3wth.com",
+        "registry_url_template": "https://kit.n3wth.com/r/{name}.json",
+        "description": "Flat, minimal, iOS-inspired design system. 49 components, hooks, and blocks installable with the shadcn CLI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "none",
+        "catalog_item_count": 0,
+        "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@navui",
         "homepage": "https://ui.navdeepsingh.dev",
         "registry_url_template": "https://ui.navdeepsingh.dev/r/{name}.json",
@@ -7184,8 +9110,38 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 64,
+        "catalog_item_count": 69,
         "catalog_evidence_url": "https://chanhdai.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nekode",
+        "homepage": "https://ui.nekode.id",
+        "registry_url_template": "https://ui.nekode.id/r/{name}.json",
+        "description": "Composed ready to use shadcn components, just plug and play."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "combobox",
+          "radio",
+          "select",
+          "switch",
+          "textarea"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 22,
+        "catalog_evidence_url": "https://ui.nekode.id/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -7391,6 +9347,37 @@
     },
     {
       "official": {
+        "name": "@niko-table",
+        "homepage": "https://niko-table.com",
+        "registry_url_template": "https://niko-table.com/r/{name}.json",
+        "description": "Composable, open-code data tables and an editable data grid built on TanStack Table: faceted and advanced filters, sorting, row and column drag-and-drop, virtualization, column resizing, and server-side pagination, installed a la carte."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "column-resize",
+          "data-grid",
+          "pagination",
+          "slider",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 34,
+        "catalog_evidence_url": "https://niko-table.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@nordaun",
         "homepage": "https://ui.nordaun.com",
         "registry_url_template": "https://ui.nordaun.com/r/{name}.json",
@@ -7406,6 +9393,142 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 8,
         "catalog_evidence_url": "https://ui.nordaun.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nostalgia-ui",
+        "homepage": "https://nostalgia-ui.com",
+        "registry_url_template": "https://nostalgia-ui.com/r/{name}.json",
+        "description": "Mac OS 9 styled components for React. 60 retro UI primitives with platinum bevels, system fonts, and pixel-perfect details. Pure CSS, zero images."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 60,
+        "catalog_evidence_url": "https://nostalgia-ui.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ns-ui",
+        "homepage": "https://design.helpmarq.com",
+        "registry_url_template": "https://design.helpmarq.com/r/{name}.json",
+        "description": "389 animated React components for Tailwind v4 and React 19, with a CLI and an MCP server."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "feature-grid",
+          "file-upload",
+          "hover-card",
+          "input",
+          "otp-input",
+          "pagination",
+          "pill",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "sheet",
+          "skeleton",
+          "slider",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "tag-input",
+          "testimonial",
+          "textarea",
+          "theme",
+          "timeline",
+          "toast",
+          "toggle",
+          "tooltip",
+          "typing-indicator",
+          "utility-button",
+          "waveform"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 542,
+        "catalog_evidence_url": "https://design.helpmarq.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -7459,7 +9582,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 5,
+        "catalog_item_count": 6,
         "catalog_evidence_url": "https://nuqs.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -7487,6 +9610,30 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 119,
         "catalog_evidence_url": "https://nusaiba.dev/r/base-nova/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@nysgpt",
+        "homepage": "https://gov.nysgpt.com",
+        "registry_url_template": "https://gov.nysgpt.com/r/{name}.json",
+        "description": "The legislative record as installable parts: flags and seals for every U.S. jurisdiction, state district boundaries with a point-to-representative join, and the policy filters, imagery and directory search every GovBlock page reads."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "none",
+        "catalog_item_count": 0,
+        "catalog_evidence_url": "",
         "item_summaries": [],
         "notes": ""
       },
@@ -7566,6 +9713,30 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 22,
         "catalog_evidence_url": "https://ogimagecn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@oidc",
+        "homepage": "https://ui.shadcn.com/oidc",
+        "registry_url_template": "https://ui.shadcn.com/oidc/r/{name}.json",
+        "description": "A component registry for OIDC policy forms. Pick identity providers, a form library, and a validation library, preview in the builder, then copy the code into your app."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 78,
+        "catalog_evidence_url": "https://ui.shadcn.com/oidc/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -7919,6 +10090,90 @@
     },
     {
       "official": {
+        "name": "@pane",
+        "homepage": "https://pane.theui.company",
+        "registry_url_template": "https://pane.theui.company/r/{name}.json",
+        "description": "Liquid glass components for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "badge",
+          "button",
+          "card",
+          "dialog",
+          "input",
+          "sheet",
+          "switch",
+          "tabs",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 15,
+        "catalog_evidence_url": "https://pane.theui.company/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pantoken",
+        "homepage": "https://pantoken.app",
+        "registry_url_template": "https://pantoken.app/r/{name}.json",
+        "description": "InstUI design tokens, themes, components, and interactions."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "admonition",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "drawer",
+          "input",
+          "modal",
+          "pagination",
+          "pill",
+          "popover",
+          "progress",
+          "radio",
+          "select",
+          "spinner",
+          "table",
+          "tabs",
+          "testimonial",
+          "theme",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 80,
+        "catalog_evidence_url": "https://pantoken.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@payload-components",
         "homepage": "https://www.payload-components.xyz",
         "registry_url_template": "https://www.payload-components.xyz/r/{name}.json",
@@ -7928,6 +10183,7 @@
         "primary_focus": [],
         "component_tags": [
           "accordion",
+          "admonition",
           "card",
           "feature-grid",
           "table",
@@ -7938,7 +10194,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 73,
+        "catalog_item_count": 82,
         "catalog_evidence_url": "https://www.payload-components.xyz/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8022,6 +10278,34 @@
         "comparison_evidence": "none",
         "catalog_item_count": 0,
         "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@pipecat",
+        "homepage": "https://ui.pipecat.ai",
+        "registry_url_template": "https://ui.pipecat.ai/r/{name}.json",
+        "description": "Components, hooks, visualizers, and composable blocks for Pipecat and voice AI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "input",
+          "select"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 21,
+        "catalog_evidence_url": "https://ui.pipecat.ai/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -8120,6 +10404,34 @@
     },
     {
       "official": {
+        "name": "@plotcn",
+        "homepage": "https://plotcn.vercel.app",
+        "registry_url_template": "https://plotcn.vercel.app/r/{name}.json",
+        "description": "Source-first React visualization components for Recharts, D3.js, and Google Charts"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "chart",
+          "theme",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 49,
+        "catalog_evidence_url": "https://plotcn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@preskok",
         "homepage": "https://ui-three-mu.vercel.app",
         "registry_url_template": "https://ui-three-mu.vercel.app/r/{name}.json",
@@ -8175,7 +10487,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 271,
+        "catalog_item_count": 260,
         "catalog_evidence_url": "https://ui-three-mu.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8245,7 +10557,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 102,
+        "catalog_item_count": 105,
         "catalog_evidence_url": "https://ui.persian-labs.ir/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8343,7 +10655,7 @@
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "catalog",
+        "comparison_evidence": "stale-catalog",
         "catalog_item_count": 31,
         "catalog_evidence_url": "https://pulkit.page/components/registry.json",
         "item_summaries": [],
@@ -8376,6 +10688,7 @@
           "otp-input",
           "password-input",
           "progress",
+          "qr-code",
           "scroll-progress",
           "search-input",
           "select",
@@ -8387,14 +10700,15 @@
           "timeline",
           "toast",
           "toggle",
-          "utility-button"
+          "utility-button",
+          "zoomable-image"
         ],
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 70,
+        "catalog_item_count": 94,
         "catalog_evidence_url": "https://pulld.pages.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8429,6 +10743,44 @@
     },
     {
       "official": {
+        "name": "@quill",
+        "homepage": "https://www.quilldesignsystem.com",
+        "registry_url_template": "https://www.quilldesignsystem.com/r/{name}.json",
+        "description": "An editorial design system for digital products — warm neutral grounds, ink-toned type, five themes and four accents, 51 blocks, WCAG 2.1 AA, and agent-ready docs (llms.txt, usage guides, Claude Code rules)."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "alert",
+          "badge",
+          "calendar",
+          "card",
+          "command",
+          "file-upload",
+          "navbar",
+          "otp-input",
+          "sidebar",
+          "table",
+          "tabs",
+          "testimonial",
+          "theme"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 59,
+        "catalog_evidence_url": "https://www.quilldesignsystem.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@ramonclaudio-coderabbit",
         "homepage": "https://ramonclaudio.com/registries/coderabbit",
         "registry_url_template": "https://coderabbit-shadcn-registry.vercel.app/r/{name}.json",
@@ -8446,6 +10798,92 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 19,
         "catalog_evidence_url": "https://coderabbit-shadcn-registry.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@ratneshc",
+        "homepage": "https://ratneshc.com/components",
+        "registry_url_template": "https://ratneshc.com/r/{name}.json",
+        "description": "A curated component registry built on shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 6,
+        "catalog_evidence_url": "https://ratneshc.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@rawkitui",
+        "homepage": "https://rawkitui.zerodegree.tech",
+        "registry_url_template": "https://rawkitui.zerodegree.tech/r/{name}.json",
+        "description": "Pop-Brutalist UI primitives for React: 30 components with hard shadows, high-contrast borders, motion spring physics, and Lucide icons. MIT."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "command",
+          "dialog",
+          "dropdown",
+          "input",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "sheet",
+          "skeleton",
+          "slider",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toast",
+          "toggle",
+          "tooltip",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 39,
+        "catalog_evidence_url": "https://rawkitui.zerodegree.tech/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -8488,7 +10926,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 156,
+        "catalog_item_count": 158,
         "catalog_evidence_url": "https://react-aria.adobe.com/registry/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8519,7 +10957,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 672,
+        "catalog_item_count": 824,
         "catalog_evidence_url": "https://reactbits.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8578,6 +11016,128 @@
     },
     {
       "official": {
+        "name": "@registrydirectory",
+        "homepage": "https://registry.directory",
+        "registry_url_template": "https://registry.directory/r/{name}.json",
+        "description": "The explorer for the shadcn registry ecosystem."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "admonition",
+          "ai-chat",
+          "alert",
+          "app-shell",
+          "audio-player",
+          "audit",
+          "auth-form",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "card-deck",
+          "carousel",
+          "cart-drawer",
+          "chart",
+          "chat-interface",
+          "chat-window",
+          "chatbot",
+          "checkbox",
+          "circular-progress",
+          "code-block",
+          "collapsible",
+          "color-picker",
+          "color-swatch",
+          "combobox",
+          "command",
+          "compare-slider",
+          "context-menu",
+          "cropper",
+          "cta-section",
+          "data-grid",
+          "datepicker",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "dropzone",
+          "error-message",
+          "feature-grid",
+          "file-upload",
+          "filter-bar",
+          "hero-section",
+          "hover-card",
+          "icon-button",
+          "input",
+          "loading-button",
+          "map-pointer",
+          "menubar",
+          "message-list",
+          "modal",
+          "navbar",
+          "otp-input",
+          "pagination",
+          "password-input",
+          "pill",
+          "popover",
+          "pricing-table",
+          "product-card",
+          "progress",
+          "qr-code",
+          "radio",
+          "radio-group",
+          "receipt",
+          "scroll-area",
+          "scroll-progress",
+          "search-input",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "status-pill",
+          "stepper",
+          "submit-button",
+          "switch",
+          "syntax-highlighting",
+          "table",
+          "tabs",
+          "tag-input",
+          "testimonial",
+          "textarea",
+          "theme",
+          "timeline",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip",
+          "transcript-viewer",
+          "typing-indicator",
+          "utility-button",
+          "voice-picker",
+          "waveform",
+          "zoomable-image"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 24663,
+        "catalog_evidence_url": "https://registry.directory/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@remocn",
         "homepage": "https://www.remocn.dev/",
         "registry_url_template": "https://www.remocn.dev/r/{name}.json",
@@ -8601,6 +11161,7 @@
           "drawer",
           "dropdown",
           "input",
+          "pill",
           "popover",
           "progress",
           "radio",
@@ -8622,7 +11183,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 283,
+        "catalog_item_count": 313,
         "catalog_evidence_url": "https://www.remocn.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8682,7 +11243,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 465,
+        "catalog_item_count": 535,
         "catalog_evidence_url": "https://rescript-shadcn.miriad.studio/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8894,7 +11455,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 124,
+        "catalog_item_count": 122,
         "catalog_evidence_url": "https://roiui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -8929,6 +11490,32 @@
     },
     {
       "official": {
+        "name": "@sans",
+        "homepage": "https://sans.sansorigin.com",
+        "registry_url_template": "https://sans.sansorigin.com/r/{name}.json",
+        "description": "UI components and effects from sans's personal site, including a reverse-engineered Claude Code CLI terminal spinner."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "spinner"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 1,
+        "catalog_evidence_url": "https://sans.sansorigin.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@satoriui",
         "homepage": "https://satoriui.site",
         "registry_url_template": "https://satoriui.site/r/{name}.json",
@@ -8948,6 +11535,96 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 15,
         "catalog_evidence_url": "https://satoriui.site/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@sc1m",
+        "homepage": "https://sc1m.vercel.app",
+        "registry_url_template": "https://sc1m.vercel.app/r/{name}.json",
+        "description": "Multi-brand design system components built on Base UI and Tailwind CSS v4 — semantic tokens, swappable brand layers, dark mode out of the box."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "button",
+          "card",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "input",
+          "menubar",
+          "otp-input",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "slider",
+          "switch",
+          "tabs",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 43,
+        "catalog_evidence_url": "https://sc1m.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@scrimui",
+        "homepage": "https://scrimui.dev",
+        "registry_url_template": "https://scrimui.dev/r/{name}.json",
+        "description": "Free, open-source React components and patterns for AI interfaces, including prompts, streaming messages, reasoning, tool calls, citations, agents, memory, voice, and safety."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "ai-chat",
+          "card",
+          "error-message",
+          "file-upload",
+          "input",
+          "popover",
+          "sidebar",
+          "timeline",
+          "toast",
+          "toggle",
+          "waveform"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 68,
+        "catalog_evidence_url": "https://scrimui.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -9089,6 +11766,132 @@
     },
     {
       "official": {
+        "name": "@sevenui",
+        "homepage": "https://sevenui.dev",
+        "registry_url_template": "https://sevenui.dev/r/{name}.json",
+        "description": "Base UI powered components, distributed through the shadcn registry."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 67,
+        "catalog_evidence_url": "https://sevenui.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@sf-fleet-hud",
+        "homepage": "https://sf-fleet-hud.vercel.app",
+        "registry_url_template": "https://sf-fleet-hud.vercel.app/r/{name}.json",
+        "description": "A dark sci-fi fleet-ops UI kit. Restyled primitives plus HUD widgets: radar, gauges, telemetry bars, an interactive dot globe and dependency-free charts. Dark-only, radius 0."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "chart",
+          "checkbox",
+          "command",
+          "context-menu",
+          "dialog",
+          "dropzone",
+          "input",
+          "otp-input",
+          "pagination",
+          "popover",
+          "radio",
+          "radio-group",
+          "select",
+          "sheet",
+          "skeleton",
+          "slider",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "timeline",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 47,
+        "catalog_evidence_url": "https://sf-fleet-hud.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@shadcn-editor",
         "homepage": "https://shadcn-editor.vercel.app",
         "registry_url_template": "https://raw.githubusercontent.com/htmujahid/shadcn-editor/refs/heads/main/public/r/{name}.json",
@@ -9155,6 +11958,7 @@
         "primary_focus": [],
         "component_tags": [
           "accordion",
+          "ai-chat",
           "alert",
           "avatar",
           "badge",
@@ -9167,6 +11971,7 @@
           "checkbox",
           "code-block",
           "collapsible",
+          "color-picker",
           "combobox",
           "command",
           "context-menu",
@@ -9218,7 +12023,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 881,
+        "catalog_item_count": 941,
         "catalog_evidence_url": "https://shadcnspace.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9434,7 +12239,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 4161,
+        "catalog_item_count": 4171,
         "catalog_evidence_url": "https://shadcnblocks.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9455,12 +12260,28 @@
         "component_tags": [
           "accordion",
           "admonition",
+          "app-shell",
+          "audit",
           "avatar",
           "badge",
           "card",
           "carousel",
+          "code-block",
+          "dialog",
+          "dropdown",
+          "file-upload",
+          "input",
+          "modal",
+          "pagination",
+          "pill",
+          "product-card",
+          "progress",
+          "separator",
           "sidebar",
+          "table",
+          "tabs",
           "testimonial",
+          "timeline",
           "zoomable-image"
         ],
         "aliases": [],
@@ -9468,7 +12289,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 26,
+        "catalog_item_count": 300,
         "catalog_evidence_url": "https://shadcncraft.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9570,9 +12391,11 @@
         "component_tags": [
           "ai-chat",
           "app-shell",
+          "avatar",
           "calendar",
           "card",
           "chart",
+          "checkbox",
           "command",
           "cta-section",
           "filter-bar",
@@ -9582,6 +12405,7 @@
           "sidebar",
           "skeleton",
           "table",
+          "tabs",
           "testimonial",
           "timeline"
         ],
@@ -9590,7 +12414,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 228,
+        "catalog_item_count": 274,
         "catalog_evidence_url": "https://shadcnstore.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9729,7 +12553,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 875,
+        "catalog_item_count": 936,
         "catalog_evidence_url": "https://shadcnuikit.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9788,6 +12612,32 @@
     },
     {
       "official": {
+        "name": "@shivraj-roy",
+        "homepage": "https://www.shivrajroy.in",
+        "registry_url_template": "https://www.shivrajroy.in/r/{name}.json",
+        "description": "Playful on the surface. Precise underneath."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "color-picker"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 1,
+        "catalog_evidence_url": "https://www.shivrajroy.in/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@shoogle",
         "homepage": "https://shoogle.dev",
         "registry_url_template": "https://shoogle.dev/r/{name}.json",
@@ -9803,6 +12653,63 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 0,
         "catalog_evidence_url": "https://shoogle.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@simple-ai",
+        "homepage": "https://www.simple-ai.dev",
+        "registry_url_template": "https://www.simple-ai.dev/r/{name}.json",
+        "description": "Curated agent examples you can copy into your app. Chat page, input, tools, and a worked fold."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "input"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 6,
+        "catalog_evidence_url": "https://www.simple-ai.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@skecher-ui",
+        "homepage": "https://skecher-ui.com",
+        "registry_url_template": "https://skecher-ui.com/r/{name}.json",
+        "description": "React animated components that contains life, built with Tailwind CSS v4 and motion."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "ai-chat",
+          "card",
+          "carousel",
+          "slider",
+          "tabs",
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 25,
+        "catalog_evidence_url": "https://skecher-ui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -9866,6 +12773,34 @@
     },
     {
       "official": {
+        "name": "@slidecn",
+        "homepage": "https://slidecn.vercel.app",
+        "registry_url_template": "https://slidecn.vercel.app/r/{name}.json",
+        "description": "Beautiful presentations, made simple. Ready to use, customizable presentation components for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "code-block",
+          "theme",
+          "timeline"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 26,
+        "catalog_evidence_url": "https://slidecn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@smoothui",
         "homepage": "https://smoothui.dev",
         "registry_url_template": "https://smoothui.dev/r/{name}.json",
@@ -9877,6 +12812,7 @@
         ],
         "component_tags": [
           "accordion",
+          "auth-form",
           "avatar",
           "badge",
           "breadcrumb",
@@ -9884,7 +12820,9 @@
           "card",
           "card-deck",
           "carousel",
+          "chart",
           "checkbox",
+          "code-block",
           "combobox",
           "context-menu",
           "dialog",
@@ -9894,12 +12832,14 @@
           "hover-card",
           "input",
           "modal",
+          "navbar",
           "pagination",
           "popover",
           "product-card",
           "progress",
           "radio",
           "radio-group",
+          "scroll-progress",
           "select",
           "skeleton",
           "slider",
@@ -9908,6 +12848,7 @@
           "theme",
           "toast",
           "toggle",
+          "toolbar",
           "tooltip"
         ],
         "aliases": [],
@@ -9915,7 +12856,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 178,
+        "catalog_item_count": 246,
         "catalog_evidence_url": "https://smoothui.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9934,6 +12875,7 @@
       "atlas": {
         "primary_focus": [],
         "component_tags": [
+          "card",
           "input",
           "select"
         ],
@@ -9942,7 +12884,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 32,
+        "catalog_item_count": 94,
         "catalog_evidence_url": "https://snapcn.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9985,8 +12927,8 @@
     {
       "official": {
         "name": "@sona-ui",
-        "homepage": "https://sona-ui.vercel.app",
-        "registry_url_template": "https://sona-ui.vercel.app/r/{name}.json",
+        "homepage": "https://sonaui.com",
+        "registry_url_template": "https://sonaui.com/r/{name}.json",
         "description": "A modern UI component library built with React and TailwindCSS to help you build beautiful and accessible web applications faster."
       },
       "atlas": {
@@ -9996,9 +12938,13 @@
           "avatar",
           "button",
           "card",
+          "checkbox",
+          "code-block",
+          "context-menu",
           "dialog",
           "dropdown",
           "slider",
+          "stepper",
           "switch",
           "tabs",
           "theme",
@@ -10009,8 +12955,8 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 34,
-        "catalog_evidence_url": "https://sona-ui.vercel.app/r/registry.json",
+        "catalog_item_count": 46,
+        "catalog_evidence_url": "https://sonaui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -10029,23 +12975,28 @@
         "primary_focus": [],
         "component_tags": [
           "accordion",
+          "alert",
           "button",
           "card",
           "carousel",
           "checkbox",
+          "context-menu",
           "dialog",
+          "dropdown",
           "input",
           "sheet",
           "skeleton",
+          "switch",
           "tabs",
-          "textarea"
+          "textarea",
+          "tooltip"
         ],
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 135,
+        "catalog_item_count": 68,
         "catalog_evidence_url": "https://ui.soralabs.studio/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10088,6 +13039,109 @@
     },
     {
       "official": {
+        "name": "@spaceui",
+        "homepage": "https://www.spaceui.one",
+        "registry_url_template": "https://www.spaceui.one/r/{name}.json",
+        "description": "An open-source design library built for humans and AI to create expressive, polished, and high-quality interfaces, helping you build better products, faster"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "admonition",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "checkbox",
+          "code-block",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "data-grid",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "file-upload",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "pill",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "timeline",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 1100,
+        "catalog_evidence_url": "https://www.spaceui.one/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@spark-ui",
+        "homepage": "https://spark-ui-olive.vercel.app",
+        "registry_url_template": "https://spark-ui-olive.vercel.app/r/{name}.json",
+        "description": "Open-source React components and animated UI building blocks, installable as source with the shadcn CLI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "card",
+          "carousel",
+          "qr-code",
+          "receipt"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 18,
+        "catalog_evidence_url": "https://spark-ui-olive.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@spectrumui",
         "homepage": "https://ui.spectrumhq.in",
         "registry_url_template": "https://ui.spectrumhq.in/r/{name}.json",
@@ -10100,7 +13154,9 @@
         ],
         "component_tags": [
           "accordion",
+          "ai-chat",
           "alert",
+          "audit",
           "avatar",
           "badge",
           "button",
@@ -10119,6 +13175,7 @@
           "pill",
           "product-card",
           "progress",
+          "receipt",
           "select",
           "sidebar",
           "skeleton",
@@ -10126,8 +13183,10 @@
           "spinner",
           "stepper",
           "switch",
+          "table",
           "tabs",
           "textarea",
+          "theme",
           "toast",
           "toggle"
         ],
@@ -10136,7 +13195,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 205,
+        "catalog_item_count": 315,
         "catalog_evidence_url": "https://ui.spectrumhq.in/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10213,6 +13272,135 @@
     },
     {
       "official": {
+        "name": "@ssych",
+        "homepage": "https://ui.ssych.com",
+        "registry_url_template": "https://ui.ssych.com/r/{name}.json",
+        "description": "Dark, data-dense React components for high-stakes decision surfaces: trading books, screeners, clinical dashboards. Hand-drawn SVG charts, no chart runtime."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "calendar",
+          "card",
+          "card-deck",
+          "chart",
+          "pill",
+          "sidebar",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 72,
+        "catalog_evidence_url": "https://ui.ssych.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@starck",
+        "homepage": "https://ui.starck.studio",
+        "registry_url_template": "https://ui.starck.studio/r/{name}.json",
+        "description": "Product-proven React components from STARCK, built on shadcn with polished motion, responsive behavior, and accessible defaults."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "card",
+          "command",
+          "dialog",
+          "navbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 16,
+        "catalog_evidence_url": "https://ui.starck.studio/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@starseam",
+        "homepage": "https://starseam.astroicers.link",
+        "registry_url_template": "https://starseam.astroicers.link/r/{name}.json",
+        "description": "A registry modelled on the star-riveted helmet: plates on a lacquer ground, rivets only on real seams, console/report as two materials, ink-only code highlighting, and first-class CJK typography."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "code-block",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "sheet",
+          "skeleton",
+          "slider",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "tooltip",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 56,
+        "catalog_evidence_url": "https://starseam.astroicers.link/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@stepper",
         "homepage": "https://francozeta-stepper.vercel.app",
         "registry_url_template": "https://francozeta-stepper.vercel.app/{name}.json",
@@ -10230,6 +13418,68 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 3,
         "catalog_evidence_url": "https://francozeta-stepper.vercel.app/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@styleui",
+        "homepage": "https://www.styleui.dev/",
+        "registry_url_template": "https://www.styleui.dev/r/{name}.json",
+        "description": "Expertly crafted layouts and components for your next big idea"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 4,
+        "catalog_evidence_url": "https://www.styleui.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@stylexui",
+        "homepage": "https://stylexui.dev",
+        "registry_url_template": "https://stylexui.dev/r/{name}.json",
+        "description": "High-performance StyleX & Base UI toolkit for modern dashboards. Modular blocks and production templates, built with zero runtime CSS overhead."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "dialog"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 18,
+        "catalog_evidence_url": "https://stylexui.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -10264,7 +13514,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 65,
+        "catalog_item_count": 67,
         "catalog_evidence_url": "https://supabase.com/ui/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10293,7 +13543,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 666,
+        "catalog_item_count": 670,
         "catalog_evidence_url": "https://svgl.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10339,7 +13589,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 173,
+        "catalog_item_count": 174,
         "catalog_evidence_url": "https://systaliko-ui.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10371,6 +13621,7 @@
           "chat-interface",
           "context-menu",
           "cta-section",
+          "dialog",
           "file-upload",
           "hero-section",
           "hover-card",
@@ -10389,7 +13640,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 469,
+        "catalog_item_count": 476,
         "catalog_evidence_url": "https://tailark.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10654,8 +13905,36 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 342,
+        "catalog_item_count": 344,
         "catalog_evidence_url": "https://termcn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@toggles",
+        "homepage": "https://toggles.dev",
+        "registry_url_template": "https://toggles.dev/r/{name}.json",
+        "description": "Animated dark/light mode toggles"
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "switch",
+          "theme",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 14,
+        "catalog_evidence_url": "https://toggles.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -10766,7 +14045,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 42,
+        "catalog_item_count": 45,
         "catalog_evidence_url": "https://tetra-ui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11046,6 +14325,41 @@
     },
     {
       "official": {
+        "name": "@tween-ui",
+        "homepage": "https://tween-ui.vercel.app",
+        "registry_url_template": "https://tween-ui.vercel.app/r/{name}.json",
+        "description": "GSAP & CSS animated React components and blocks. One file each, no shared runtime, reduced-motion handled."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "avatar",
+          "button",
+          "card",
+          "carousel",
+          "modal",
+          "slider",
+          "switch",
+          "tabs",
+          "testimonial"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 38,
+        "catalog_evidence_url": "https://tween-ui.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@typedora-ui",
         "homepage": "https://typedora-ui.netlify.app",
         "registry_url_template": "https://typedora-ui.netlify.app/r/{name}.json",
@@ -11124,6 +14438,35 @@
     },
     {
       "official": {
+        "name": "@ui-shrushank",
+        "homepage": "https://www.shrutishankarnarayanan.com/components",
+        "registry_url_template": "https://raw.githubusercontent.com/Shrootiiii/ui/main/r/{name}.json",
+        "description": "Free React and Tailwind components with Framer Motion interaction states and Tailwind CSS styling: buttons, badge, text field, toggle switch and breadcrumbs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "badge",
+          "button",
+          "switch",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 8,
+        "catalog_evidence_url": "https://raw.githubusercontent.com/Shrootiiii/ui/main/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@uicapsule",
         "homepage": "https://uicapsule.com",
         "registry_url_template": "https://uicapsule.com/r/{name}.json",
@@ -11151,8 +14494,38 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 36,
+        "catalog_item_count": 38,
         "catalog_evidence_url": "https://uicapsule.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uiception",
+        "homepage": "https://uiception.com",
+        "registry_url_template": "https://uiception.com/r/{name}.json",
+        "description": "Launch with everything built. Just make it yours."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "chatbot",
+          "code-block",
+          "cta-section",
+          "hero-section",
+          "navbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 119,
+        "catalog_evidence_url": "https://uiception.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -11220,6 +14593,47 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 282,
         "catalog_evidence_url": "https://ui.tripled.work/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@uniquel",
+        "homepage": "https://uniquel.io",
+        "registry_url_template": "https://uniquel.io/r/{name}.json",
+        "description": "Minimalist components for React / Next.js: animated backgrounds, galleries, badges, and conversion blocks. Built with Tailwind CSS and Motion, installable with the shadcn CLI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "avatar",
+          "badge",
+          "button",
+          "card",
+          "card-deck",
+          "input",
+          "pagination",
+          "pill",
+          "progress",
+          "scroll-progress",
+          "search-input",
+          "skeleton",
+          "spinner",
+          "stepper",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 41,
+        "catalog_evidence_url": "https://uniquel.io/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -11310,11 +14724,18 @@
         "component_tags": [
           "button",
           "card",
+          "card-deck",
           "carousel",
+          "drawer",
           "dropdown",
           "input",
+          "navbar",
+          "prompt-box",
+          "slider",
           "tabs",
           "testimonial",
+          "theme",
+          "toggle",
           "toolbar"
         ],
         "aliases": [],
@@ -11322,7 +14743,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 26,
+        "catalog_item_count": 64,
         "catalog_evidence_url": "https://uselayouts.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11351,6 +14772,72 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 6,
         "catalog_evidence_url": "https://uui.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@vectorstudio-ir",
+        "homepage": "https://github.com/vectorstudio-ir/ui",
+        "registry_url_template": "https://raw.githubusercontent.com/vectorstudio-ir/ui/develop/public/r/{name}.json",
+        "description": "Vectorstudio UI design system: 60 shadcn-compatible primitives on @base-ui/react, RTL/Persian first, 578-icon pixel-icon library, Tailwind v4 + orange brand palette."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 66,
+        "catalog_evidence_url": "https://raw.githubusercontent.com/vectorstudio-ir/ui/develop/public/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -11554,7 +15041,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 7,
+        "catalog_item_count": 12,
         "catalog_evidence_url": "https://waves-cn.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11595,9 +15082,9 @@
     {
       "official": {
         "name": "@wensity",
-        "homepage": "https://wensity.com",
-        "registry_url_template": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/{name}.json",
-        "description": "Motion-rich React components for AI interfaces, SaaS blocks, and cinematic interactions. Free Wensity components only."
+        "homepage": "https://ui.wensity.com/components",
+        "registry_url_template": "https://raw.githubusercontent.com/wensity/registry/main/{name}.json",
+        "description": "React and Next.js UI primitives, components, and motion, themeable end to end from one design token contract. Built on Base UI and Tailwind CSS v4. Free Wensity components."
       },
       "atlas": {
         "primary_focus": [],
@@ -11650,7 +15137,7 @@
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
         "catalog_item_count": 91,
-        "catalog_evidence_url": "https://raw.githubusercontent.com/ksparth12/wensity-shadcn-registry/main/registry.json",
+        "catalog_evidence_url": "https://raw.githubusercontent.com/wensity/registry/main/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -11730,6 +15217,30 @@
     },
     {
       "official": {
+        "name": "@wxcn",
+        "homepage": "https://wxcn.dev/react",
+        "registry_url_template": "https://wxcn.dev/r/react/{name}.json",
+        "description": "Theme-aware React weather, tide, and moon forecast components built with shadcn/ui."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 4,
+        "catalog_evidence_url": "https://wxcn.dev/r/react/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@xcn",
         "homepage": "https://ui.radiumcoders.com",
         "registry_url_template": "https://ui.radiumcoders.com/r/xcn/{name}.json",
@@ -11769,6 +15280,147 @@
         "comparison_evidence": "none",
         "catalog_item_count": 0,
         "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@saastro",
+        "homepage": "https://ui.saastro.io",
+        "registry_url_template": "https://ui.saastro.io/r/{name}.json",
+        "description": "Landing page blocks for Astro. Zero-JS .astro blocks with no dependencies — installable in an Astro project without React — plus interactive React blocks on Base UI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "context-menu",
+          "dialog",
+          "dropdown",
+          "input",
+          "navbar",
+          "otp-input",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 53,
+        "catalog_evidence_url": "https://ui.saastro.io/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@yukihi",
+        "homepage": "https://github.com/yukihito-jokyu/design-system",
+        "registry_url_template": "https://design.yukihi.tokyo/v1/r/{name}.json",
+        "description": "An accessible React design system with scoped themes, reusable application patterns, and character icons, built for Tailwind CSS v4."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "app-shell",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "dialog",
+          "dropdown",
+          "file-upload",
+          "icon-button",
+          "input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 113,
+        "catalog_evidence_url": "https://design.yukihi.tokyo/v1/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@zenoadmin",
+        "homepage": "https://github.com/zeno-admin/shadcn-editor",
+        "registry_url_template": "https://shadcn-editor-nu.vercel.app/r/{name}.json",
+        "description": "A bilingual Lexical rich text editor built with shadcn/ui, with extensible plugins, nodes, and toolbar controls."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 1,
+        "catalog_evidence_url": "https://shadcn-editor-nu.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -11862,6 +15514,7 @@
           "checkbox",
           "circular-progress",
           "collapsible",
+          "color-picker",
           "combobox",
           "command",
           "context-menu",
@@ -11877,6 +15530,7 @@
           "pill",
           "popover",
           "progress",
+          "qr-code",
           "radio",
           "radio-group",
           "scroll-area",
@@ -11894,6 +15548,7 @@
           "testimonial",
           "textarea",
           "theme",
+          "timeline",
           "toggle",
           "toolbar",
           "tooltip"
@@ -11903,7 +15558,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 795,
+        "catalog_item_count": 986,
         "catalog_evidence_url": "https://uiable.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11984,7 +15639,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 137,
+        "catalog_item_count": 197,
         "catalog_evidence_url": "https://vue-bits.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12003,18 +15658,25 @@
       "atlas": {
         "primary_focus": [],
         "component_tags": [
+          "button",
           "card",
           "carousel",
           "pill",
+          "radio",
+          "select",
           "slider",
-          "stepper"
+          "stepper",
+          "switch",
+          "toast",
+          "toggle",
+          "tooltip"
         ],
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 128,
+        "catalog_item_count": 164,
         "catalog_evidence_url": "https://sveltebits.xyz/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12066,6 +15728,73 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 28,
         "catalog_evidence_url": "https://threecn.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tile-ui",
+        "homepage": "https://github.com/zmide/tile-ui",
+        "registry_url_template": "https://react.tileui.zmorg.cn/r/{name}.json",
+        "description": "A lightweight React component library built around a shared SCSS design system and distributed as editable source through the shadcn CLI."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "hover-card",
+          "input",
+          "menubar",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 71,
+        "catalog_evidence_url": "https://react.tileui.zmorg.cn/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -12158,6 +15887,32 @@
     },
     {
       "official": {
+        "name": "@voraui",
+        "homepage": "https://voraui.vercel.app",
+        "registry_url_template": "https://voraui.vercel.app/r/{name}.json",
+        "description": "Open source crypto market analytics components for shadcn/ui - candlestick trading charts, BTC rainbow chart, Fear & Greed and Altseason gauges, live from free public APIs."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "chart"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 4,
+        "catalog_evidence_url": "https://voraui.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@grainly-icons",
         "homepage": "https://grainlyicons.abhii.space",
         "registry_url_template": "https://grainlyicons.abhii.space/r/{name}.json",
@@ -12215,6 +15970,7 @@
         "primary_focus": [],
         "component_tags": [
           "accordion",
+          "ai-chat",
           "alert",
           "avatar",
           "badge",
@@ -12258,6 +16014,7 @@
           "tabs",
           "textarea",
           "theme",
+          "timeline",
           "toast",
           "toggle",
           "tooltip"
@@ -12267,7 +16024,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 448,
+        "catalog_item_count": 508,
         "catalog_evidence_url": "https://shadcndashboard.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12345,6 +16102,30 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 51,
         "catalog_evidence_url": "https://www.atelier-ui.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@atomloader",
+        "homepage": "https://atomloader.roothq.tech",
+        "registry_url_template": "https://atomloader.roothq.tech/r/{name}.json",
+        "description": "Lightweight, customizable CSS-animated atoms loaders for React."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 591,
+        "catalog_evidence_url": "https://atomloader.roothq.tech/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -12476,6 +16257,7 @@
           "sidebar",
           "slider",
           "tabs",
+          "textarea",
           "theme",
           "toast",
           "toggle"
@@ -12485,7 +16267,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 59,
+        "catalog_item_count": 62,
         "catalog_evidence_url": "https://whiskeyjack.net/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12550,6 +16332,7 @@
           "dialog",
           "input",
           "modal",
+          "pill",
           "receipt"
         ],
         "aliases": [],
@@ -12557,8 +16340,38 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 24,
+        "catalog_item_count": 19,
         "catalog_evidence_url": "https://knock.codes/r/react/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@knot-ui",
+        "homepage": "https://knot-ui.trupal.me",
+        "registry_url_template": "https://knot-ui.trupal.me/r/{name}.json",
+        "description": "A registry of animated, cinematic React components and UI blocks for shadcn — buttons, cards, folders, navbars and more, built with Tailwind CSS v4 and Motion."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "card",
+          "navbar",
+          "theme",
+          "toggle"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 15,
+        "catalog_evidence_url": "https://knot-ui.trupal.me/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -12629,6 +16442,7 @@
         "primary_focus": [],
         "component_tags": [
           "button",
+          "input",
           "select"
         ],
         "aliases": [],
@@ -12636,8 +16450,128 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 16,
+        "catalog_item_count": 18,
         "catalog_evidence_url": "https://onchain-ui.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@afterglow",
+        "homepage": "https://afterglow.thebuilder.dk",
+        "registry_url_template": "https://afterglow.thebuilder.dk/r/{name}.json",
+        "description": "A complete terminal UI system for shadcn with Base UI components, terminal-specific building blocks, and eight phosphor color themes."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "chart",
+          "checkbox",
+          "code-block",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "dropdown",
+          "hover-card",
+          "input",
+          "otp-input",
+          "pagination",
+          "popover",
+          "progress",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 66,
+        "catalog_evidence_url": "https://afterglow.thebuilder.dk/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@agentblog",
+        "homepage": "https://agentblog.dev",
+        "registry_url_template": "https://agentblog.dev/r/{name}.json",
+        "description": "A complete blog for Next.js, installed like a component. Built to be read and cited by AI search engines."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "theme"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 13,
+        "catalog_evidence_url": "https://agentblog.dev/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@quiz-ui",
+        "homepage": "https://quiz-ui-phi.vercel.app",
+        "registry_url_template": "https://quiz-ui-phi.vercel.app/r/{name}.json",
+        "description": "Headless, Radix-based components for building quiz funnels — shadcn-style distribution, style entirely via className."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "dialog",
+          "input",
+          "progress",
+          "slider"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 15,
+        "catalog_evidence_url": "https://quiz-ui-phi.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
