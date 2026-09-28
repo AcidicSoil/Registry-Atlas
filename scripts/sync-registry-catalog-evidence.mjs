@@ -5,6 +5,15 @@ import { pathToFileURL } from 'node:url';
 const DEFAULT_SOURCE_PATH = 'data/shadcn/registries.raw.json';
 const DEFAULT_OUTPUT_PATH = 'data/shadcn/registry-catalog-evidence.json';
 const DEFAULT_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
+const DEFAULT_ITEMS_PATH = 'public/data/registry-catalog-items.json';
+
+export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
+  'registry:block',
+  'registry:component',
+  'registry:ui',
+  'registry:page',
+  'registry:item',
+]);
 
 export const COMPONENT_TAGS = Object.freeze([
   "chatbot", "chat-window", "message-list", "typing-indicator", "prompt-box", "button", "input", "badge",
@@ -93,6 +102,41 @@ export function buildCatalogEvidence(namespace, template, catalog, syncedAt = ne
     status: 'available',
     synced_at: syncedAt,
   };
+}
+
+export function buildCompactCatalogItems(catalog) {
+  const allowedTypes = new Set(DISCOVERABLE_REGISTRY_ITEM_TYPES);
+  const items = [];
+
+  for (const item of Array.isArray(catalog?.items) ? catalog.items : []) {
+    if (!item || typeof item !== 'object') continue;
+    const name = typeof item.name === 'string' ? item.name.trim() : '';
+    const type = typeof item.type === 'string' ? item.type.trim() : '';
+    if (!name || !allowedTypes.has(type)) continue;
+
+    const compact = { name, type };
+    if (typeof item.title === 'string' && item.title.trim()) compact.title = item.title.trim();
+
+    const categories = [
+      ...(Array.isArray(item.categories) ? item.categories : []),
+      ...(typeof item.category === 'string' ? [item.category] : []),
+    ].filter(value => typeof value === 'string' && value.trim()).map(value => value.trim());
+    if (categories.length) compact.categories = [...new Set(categories)];
+
+    items.push(compact);
+  }
+
+  return items;
+}
+
+export function mergeCatalogItems(previous = {}, fresh = {}, failures = []) {
+  const output = { ...fresh };
+  for (const failure of failures) {
+    const namespace = failure?.namespace;
+    if (!namespace || fresh[namespace] || !previous[namespace]) continue;
+    output[namespace] = previous[namespace];
+  }
+  return Object.fromEntries(Object.entries(output).sort(([a], [b]) => a.localeCompare(b)));
 }
 
 function itemSummaryTags(item) {
@@ -184,7 +228,10 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
       if (!Array.isArray(catalog?.items)) {
         return { failure: { namespace, reason: 'invalid-registry-catalog', catalog_url: catalogUrl } };
       }
-      return { evidence: buildCatalogEvidence(namespace, registry.url, catalog) };
+      return {
+        evidence: buildCatalogEvidence(namespace, registry.url, catalog),
+        items: buildCompactCatalogItems(catalog),
+      };
     } catch (error) {
       if (attempt === 0) continue;
       return { failure: { namespace, reason: error?.name ?? 'fetch-error', catalog_url: catalogUrl } };
@@ -195,11 +242,12 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
 
 export async function syncCatalogEvidenceForRegistries(
   registries,
-  { previous = {}, concurrency = 16, timeoutMs = 8000, fetchImpl = fetch } = {},
+  { previous = {}, previousItems = {}, concurrency = 16, timeoutMs = 8000, fetchImpl = fetch } = {},
 ) {
   if (!Array.isArray(registries)) throw new Error('Registry directory must be an array.');
   const queue = [...registries];
   const fresh = {};
+  const freshItems = {};
   const failures = [];
   let itemCount = 0;
 
@@ -209,6 +257,7 @@ export async function syncCatalogEvidenceForRegistries(
       const result = await fetchCatalog(registry, timeoutMs, fetchImpl);
       if (result.evidence) {
         fresh[result.evidence.namespace] = result.evidence;
+        freshItems[result.evidence.namespace] = result.items ?? [];
         itemCount += result.evidence.item_count;
       } else if (result.failure) failures.push(result.failure);
     }
@@ -216,27 +265,32 @@ export async function syncCatalogEvidenceForRegistries(
 
   await Promise.all(Array.from({ length: Math.min(concurrency, registries.length) }, worker));
   const evidence = mergeCatalogEvidence(previous, fresh, failures);
+  const itemsByNamespace = mergeCatalogItems(previousItems, freshItems, failures);
   const staleCount = Object.values(evidence).filter(item => item.status === 'stale').length;
+  const discoverableItemCount = Object.values(itemsByNamespace)
+    .reduce((count, items) => count + (Array.isArray(items) ? items.length : 0), 0);
   const report = {
     generated_at: new Date().toISOString(),
     registry_count: registries.length,
     fetched_catalog_count: Object.keys(fresh).length,
     fetched_item_count: itemCount,
+    discoverable_item_count: discoverableItemCount,
     evidence_registry_count: Object.keys(evidence).length,
     stale_registry_count: staleCount,
     failure_count: failures.length,
     failures: failures.sort((a, b) => String(a.namespace).localeCompare(String(b.namespace))),
   };
-  return { evidence, report };
+  return { evidence, itemsByNamespace, report };
 }
 
 function parseArgs(argv) {
-  const options = { source: DEFAULT_SOURCE_PATH, output: DEFAULT_OUTPUT_PATH, report: DEFAULT_REPORT_PATH, concurrency: 16, timeoutMs: 8000 };
+  const options = { source: DEFAULT_SOURCE_PATH, output: DEFAULT_OUTPUT_PATH, report: DEFAULT_REPORT_PATH, items: DEFAULT_ITEMS_PATH, concurrency: 16, timeoutMs: 8000 };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === '--source') options.source = argv[++index] ?? options.source;
     else if (arg === '--output') options.output = argv[++index] ?? options.output;
     else if (arg === '--report') options.report = argv[++index] ?? options.report;
+    else if (arg === '--items') options.items = argv[++index] ?? options.items;
     else if (arg === '--concurrency') options.concurrency = Math.max(1, Number(argv[++index]) || options.concurrency);
     else if (arg === '--timeout-ms') options.timeoutMs = Math.max(1000, Number(argv[++index]) || options.timeoutMs);
   }
@@ -248,12 +302,23 @@ async function main(argv = process.argv.slice(2)) {
   const registries = await readJsonIfExists(options.source);
   if (!Array.isArray(registries)) throw new Error(`${options.source} must contain the official registry array.`);
   const previous = await readJsonIfExists(options.output) ?? {};
-  const { evidence, report } = await syncCatalogEvidenceForRegistries(registries, {
+  const previousIndex = await readJsonIfExists(options.items);
+  const { evidence, itemsByNamespace, report } = await syncCatalogEvidenceForRegistries(registries, {
     previous,
+    previousItems: previousIndex?.registries ?? {},
     concurrency: options.concurrency,
     timeoutMs: options.timeoutMs,
   });
   await writeJson(options.output, evidence);
+  await writeJson(options.items, {
+    meta: {
+      generated_at: report.generated_at,
+      source: options.source,
+      registry_count: Object.keys(itemsByNamespace).length,
+      item_count: report.discoverable_item_count,
+    },
+    registries: itemsByNamespace,
+  });
   await writeJson(options.report, report);
   console.log(`Fetched ${report.fetched_catalog_count}/${report.registry_count} registry catalogs (${report.fetched_item_count} items).`);
   console.log(`Comparable evidence retained for ${report.evidence_registry_count} registries; stale: ${report.stale_registry_count}; failures: ${report.failure_count}.`);

@@ -8,7 +8,9 @@ const REPORT_OUTPUT_PATH = 'data/shadcn/sync-report.json';
 const RUNTIME_OUTPUT_PATH = 'public/data/registries.json';
 const LEGACY_DATA_PATH = 'src/registry-explorer/data/registries.data.ts';
 const REGISTRY_ITEMS_PATH = 'data/shadcn/registry-items.json';
-const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.json'; const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
+const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.json';
+const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
+const REGISTRY_CATALOG_ITEMS_PATH = 'public/data/registry-catalog-items.json';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   primary_focus: [],
@@ -240,8 +242,10 @@ async function main() {
   const legacyEnrichment = await readLegacyEnrichment();
   const itemSummariesByNamespace = await readJsonIfExists(REGISTRY_ITEMS_PATH) ?? {};
   const previousCatalogEvidence = await readJsonIfExists(REGISTRY_CATALOG_EVIDENCE_PATH) ?? {};
+  const previousCatalogIndex = await readJsonIfExists(REGISTRY_CATALOG_ITEMS_PATH);
   const catalogSync = await syncCatalogEvidenceForRegistries(upstream, {
     previous: previousCatalogEvidence,
+    previousItems: previousCatalogIndex?.registries ?? {},
   });
   const catalogEvidenceByNamespace = catalogSync.evidence;
   const syncedAt = new Date().toISOString();
@@ -282,6 +286,15 @@ async function main() {
   await writeJson(RAW_OUTPUT_PATH, upstream);
   await writeJson(REGISTRY_CATALOG_EVIDENCE_PATH, catalogEvidenceByNamespace);
   await writeJson(REGISTRY_CATALOG_EVIDENCE_REPORT_PATH, catalogSync.report);
+  await writeJson(REGISTRY_CATALOG_ITEMS_PATH, {
+    meta: {
+      source_url: SOURCE_URL,
+      synced_at: syncedAt,
+      registry_count: Object.keys(catalogSync.itemsByNamespace).length,
+      item_count: catalogSync.report.discoverable_item_count,
+    },
+    registries: catalogSync.itemsByNamespace,
+  });
   await writeJson(RUNTIME_OUTPUT_PATH, runtimeData);
   await writeJson(REPORT_OUTPUT_PATH, report);
 

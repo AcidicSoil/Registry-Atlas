@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { COMPONENT_TAG_VALUES } from '../../src/registry-explorer/core/registry.schema';
 // @ts-expect-error The synchronizer is an executable Node .mjs script with runtime exports tested here.
-import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, COMPONENT_TAGS, deriveCatalogUrl, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
+import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, buildCompactCatalogItems, COMPONENT_TAGS, deriveCatalogUrl, DISCOVERABLE_REGISTRY_ITEM_TYPES, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
 
 describe('registry catalog evidence sync', () => {
   it('keeps the sync capability vocabulary aligned with the runtime schema', () => {
@@ -80,6 +80,41 @@ describe('registry catalog evidence sync', () => {
     expect(result.report.fetched_catalog_count).toBe(2);
     expect(result.evidence['@alpha'].component_tags).toContain('button');
     expect(result.evidence['@beta'].component_tags).toContain('input');
+  });
+
+  it('keeps only user-facing registry item types in the compact catalog index', () => {
+    expect(DISCOVERABLE_REGISTRY_ITEM_TYPES).toEqual([
+      'registry:block',
+      'registry:component',
+      'registry:ui',
+      'registry:page',
+      'registry:item',
+    ]);
+
+    expect(buildCompactCatalogItems({ items: [
+      { name: 'hero-grid', title: 'Hero Grid', type: 'registry:block', categories: ['marketing'] },
+      { name: 'button', type: 'registry:ui', category: 'forms' },
+      { name: 'theme', type: 'registry:theme' },
+      { name: 'helpers', type: 'registry:lib' },
+    ] })).toEqual([
+      { name: 'hero-grid', title: 'Hero Grid', type: 'registry:block', categories: ['marketing'] },
+      { name: 'button', type: 'registry:ui', categories: ['forms'] },
+    ]);
+  });
+
+  it('preserves failed namespaces and replaces successfully refreshed compact items', () => {
+    const previous = {
+      '@alpha': [{ name: 'old-alpha', type: 'registry:ui' }],
+      '@beta': [{ name: 'old-beta', type: 'registry:ui' }],
+    };
+    const fresh = {
+      '@beta': [{ name: 'new-beta', type: 'registry:block' }],
+    };
+
+    expect(mergeCatalogItems(previous, fresh, [{ namespace: '@alpha', reason: 'http-429' }])).toEqual({
+      '@alpha': [{ name: 'old-alpha', type: 'registry:ui' }],
+      '@beta': [{ name: 'new-beta', type: 'registry:block' }],
+    });
   });
 
   it('preserves prior evidence when a later network sync fails', () => {
