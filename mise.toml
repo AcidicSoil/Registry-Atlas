@@ -1,0 +1,59 @@
+[tools]
+node = "24.21.0"
+pnpm = "11.24.0"
+
+[tasks.install]
+description = "Install dependencies from the pnpm lockfile"
+run = "pnpm install --frozen-lockfile"
+
+[tasks.dev]
+description = "Start the Vite development server"
+run = "pnpm dev"
+
+[tasks.test]
+description = "Run the test suite"
+run = "pnpm test"
+
+[tasks."test:watch"]
+description = "Run the test suite in watch mode"
+run = "pnpm test:watch"
+
+[tasks.typecheck]
+description = "Type-check application source"
+run = "pnpm typecheck"
+
+[tasks."typecheck:test"]
+description = "Type-check application and test source"
+run = "pnpm typecheck:test"
+
+[tasks."validate:data"]
+description = "Validate generated registry data"
+run = "pnpm validate:data"
+
+[tasks.verify]
+description = "Run the full maintainer verification gate"
+run = "pnpm verify"
+
+[tasks.build]
+description = "Build the production bundle"
+run = "pnpm build"
+
+[tasks.preview]
+description = "Preview the production build locally"
+run = "pnpm preview"
+
+[tasks."import:catalog"]
+description = "Import the reviewed registry catalog"
+run = "pnpm import:catalog"
+
+[tasks."sync:registries"]
+description = "Refresh the official shadcn registry mirror"
+run = "pnpm sync:registries"
+
+[tasks."sync:catalog-evidence"]
+description = "Refresh registry catalog evidence"
+run = "pnpm sync:catalog-evidence"
+
+[tasks.all]
+description = "Refresh registry data and run the full verification gate"
+run = "pnpm all"
