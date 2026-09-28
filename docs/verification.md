@@ -5,16 +5,18 @@ Registry Atlas uses local verification as the authoritative project gate. Run ve
 ## Full gate
 
 ```bash
-pnpm verify
+mise run verify
 ```
 
-The full gate runs source type-checking, test type-checking, the Vitest suite, generated registry-data validation, and the production build. It validates the current generated mirror but does not refresh registry data.
+The full gate runs source type-checking, test type-checking, the Vitest suite, generated registry-data validation, and the production build using the Node and pnpm versions pinned in `mise.toml`. It validates the current generated mirror but does not refresh registry data.
 
 For a narrower test-only check:
 
 ```bash
-pnpm test
+mise run test
 ```
+
+The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is the preferred project entrypoint so local and CI toolchains stay aligned.
 
 ## Git worktree isolation
 
@@ -29,10 +31,10 @@ The exclusion was added after canonical root discovery was shown to collect a du
 Verification does not mutate or refresh the generated registry mirror. When intentionally reviewing upstream registry changes, use the documented refresh sequence:
 
 ```bash
-pnpm import:catalog
-pnpm sync:registries
-pnpm validate:data
-pnpm verify
+mise run import:catalog
+mise run sync:registries
+mise run validate:data
+mise run verify
 ```
 
 Review the generated reports and runtime mirror before accepting regenerated data. See `docs/registry-explorer-data.md` for the data authority and maintenance workflow.

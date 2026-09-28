@@ -63,9 +63,33 @@ describe('urlState', () => {
     expect(state.compareComponentKeys).toEqual(['button', 'table']);
   });
 
+  it('preserves open-vocabulary Component facet values in copied and reloaded URLs', () => {
+    const parsed = parseRegistryExplorerUrlState(new URLSearchParams(
+      'view=discover&component=neon-command-palette&component=eve%2Fbrowser-agent',
+    ));
+    const serialized = serializeRegistryExplorerUrlState(parsed);
+
+    expect(parsed.selectedFacets).toEqual([
+      {
+        dimension: 'component',
+        value: 'neon-command-palette',
+        label: 'Neon Command Palette',
+      },
+      {
+        dimension: 'component',
+        value: 'eve/browser-agent',
+        label: 'Eve/Browser Agent',
+      },
+    ]);
+    expect(serialized.getAll('component')).toEqual([
+      'neon-command-palette',
+      'eve/browser-agent',
+    ]);
+  });
+
   it('falls back safely for invalid params and rejects invalid allowlisted values', () => {
     const state = parseRegistryExplorerUrlState(new URLSearchParams(
-      'view=javascript%3Aalert(1)&q=%20%20&category=bogus&component=bogus&source=&sort=popular&registry=&candidate=&compareComponent=bogus',
+      'view=javascript%3Aalert(1)&q=%20%20&category=bogus&component=javascript%3Aalert(1)&source=&sort=popular&registry=&candidate=&compareComponent=bogus',
     ));
 
     expect(state).toEqual({

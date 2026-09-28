@@ -1,22 +1,17 @@
 # Future Enhancements
 
-## Dynamic Component Deep-Linking from Discover
+## Direct external documentation discovery
 
-Discover can be improved by generating direct links to component documentation, rather than just linking to the registry homepage.
+Registry Atlas already resolves known and indexed catalog items through each registry's item URL template, and reviewed item summaries may provide direct documentation URLs.
 
-### Implementation Strategy
+The remaining enhancement is narrower: discover and verify direct human-facing documentation URLs for catalog items when registries publish them but do not expose them in the current reviewed enrichment.
 
-1.  **Data Augmentation**:
-    *   Update `Registry` schema to include an optional `docBaseUrl` field (e.g., `https://ui.shadcn.com/docs/components/`).
-    *   This data can be collected by the web agent (using the `docBaseUrl` field in the extraction schema) or manually curated.
+Any future implementation should:
 
-2.  **Dynamic URL Generation**:
-    *   In `discoveryView.ts`, modify the component-page link logic.
-    *   If `docBaseUrl` exists, append the current `componentKey` (slugified if necessary) to the base URL.
-    *   Example: `${registry.docBaseUrl}/${componentKey}` -> `https://ui.example.com/docs/components/button`
+- prefer explicit upstream documentation URLs over generated URL guesses;
+- keep raw registry JSON routes distinct from human documentation pages;
+- fall back to the registry homepage when no verified documentation URL exists;
+- avoid introducing a registry-wide `docBaseUrl` unless a registry explicitly documents a stable URL contract;
+- validate links during maintenance/sync work rather than at browser runtime.
 
-3.  **Fallback**:
-    *   If `docBaseUrl` is missing, or if the generated link returns a 404 (advanced: link checking), fall back to the generic `registry.url`.
-
-### Benefit
-This allows users to jump straight from "I need a Button" in our UI to the "Button" documentation page on the external registry, saving them a navigation step.
+This is enrichment work, not a blocker for item discovery or install/detail routes.

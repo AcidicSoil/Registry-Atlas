@@ -1,11 +1,12 @@
 {
-  "generated_at": "2026-09-23T09:54:06.206Z",
-  "registry_count": 382,
-  "fetched_catalog_count": 334,
-  "fetched_item_count": 89913,
-  "evidence_registry_count": 340,
-  "stale_registry_count": 5,
-  "failure_count": 48,
+  "generated_at": "2026-09-28T17:52:50.790Z",
+  "registry_count": 392,
+  "fetched_catalog_count": 342,
+  "fetched_item_count": 82302,
+  "discoverable_item_count": 76506,
+  "evidence_registry_count": 349,
+  "stale_registry_count": 6,
+  "failure_count": 50,
   "failures": [
     {
       "namespace": "@abstract",
@@ -45,6 +46,10 @@
       "namespace": "@darx",
       "reason": "TypeError",
       "catalog_url": "https://darshitdev.in/r/registry.json"
+    },
+    {
+      "namespace": "@dashboardblocks",
+      "reason": "unsupported-template"
     },
     {
       "namespace": "@devl",
@@ -115,11 +120,6 @@
       "catalog_url": "https://ui.justinlevine.me/r/registry.json"
     },
     {
-      "namespace": "@lema-ds",
-      "reason": "http-502",
-      "catalog_url": "https://ds.lema.ufpb.br/r/registry.json"
-    },
-    {
       "namespace": "@moleculeui",
       "reason": "TypeError",
       "catalog_url": "https://www.moleculeui.design/r/registry.json"
@@ -148,6 +148,11 @@
       "namespace": "@nexus-elements",
       "reason": "http-404",
       "catalog_url": "https://elements.nexus.availproject.org/r/registry.json"
+    },
+    {
+      "namespace": "@nordaun",
+      "reason": "TypeError",
+      "catalog_url": "https://ui.nordaun.com/r/registry.json"
     },
     {
       "namespace": "@nysgpt",
@@ -215,6 +220,10 @@
       "namespace": "@square-ui",
       "reason": "http-404",
       "catalog_url": "https://square.lndev.me/registry/registry.json"
+    },
+    {
+      "namespace": "@tablecn",
+      "reason": "unsupported-template"
     },
     {
       "namespace": "@tailwind-builder",

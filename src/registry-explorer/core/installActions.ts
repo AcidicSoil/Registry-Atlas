@@ -1,9 +1,7 @@
-import { resolveRegistryItemRoute } from './itemRoutes.ts';
+import { isSafeRegistryItemName, resolveRegistryItemRoute } from './itemRoutes.ts';
 import type { BatchInstallCommandState, InstallActionState } from './registry.schema.ts';
 
-const NAMESPACE_PATTERN = /^@?[a-z0-9][a-z0-9-]*$/;
-const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const NAMESPACE_PATTERN = /^@?[a-z0-9][a-z0-9_-]*$/;
 
 export interface InstallActionInput {
   namespace: string | undefined | null;
@@ -19,7 +17,7 @@ export function buildInstallToken(namespace: string, itemSlug: string): string |
   const normalizedNamespace = normalizeNamespace(namespace);
   const slug = itemSlug.trim();
 
-  if (!normalizedNamespace || !ITEM_SLUG_PATTERN.test(slug)) {
+  if (!normalizedNamespace || !isSafeRegistryItemName(slug)) {
     return null;
   }
 
@@ -47,7 +45,7 @@ export function getInstallActionState(input: InstallActionInput): InstallActionS
 
   const slug = input.itemSlug?.trim() ?? '';
   if (!slug) return disabled('Missing item slug.');
-  if (!ITEM_SLUG_PATTERN.test(slug)) return disabled('Invalid item slug.');
+  if (!isSafeRegistryItemName(slug)) return disabled('Invalid item slug.');
 
   if (!input.routeEligible) {
     return disabled('Item is not route eligible in the validated registry catalog.');
@@ -116,7 +114,15 @@ function dedupeInstallTokens(tokens: readonly string[]): string[] {
 }
 
 export function isValidInstallToken(token: string): boolean {
-  return INSTALL_TOKEN_PATTERN.test(token.trim());
+  const trimmed = token.trim();
+  const separator = trimmed.indexOf('/');
+  if (separator <= 1) return false;
+
+  const namespace = trimmed.slice(0, separator);
+  const itemName = trimmed.slice(separator + 1);
+  return namespace.startsWith('@')
+    && normalizeNamespace(namespace) === namespace
+    && isSafeRegistryItemName(itemName);
 }
 
 function normalizeInstallToken(token: string): string | null {
@@ -130,7 +136,7 @@ function normalizeNamespace(namespace: string): string | null {
   if (!NAMESPACE_PATTERN.test(trimmed)) return null;
 
   const withoutAt = trimmed.replace(/^@+/, '');
-  if (!withoutAt || !/^[a-z0-9][a-z0-9-]*$/.test(withoutAt)) return null;
+  if (!withoutAt || !/^[a-z0-9][a-z0-9_-]*$/.test(withoutAt)) return null;
   return `@${withoutAt}`;
 }
 

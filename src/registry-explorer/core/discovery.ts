@@ -11,7 +11,7 @@ import {
 import { coverageStatusLabel, compareCoverageStatus } from './coverageStatus.ts';
 import { getInstallActionState } from './installActions.ts';
 import { resolveRegistryItemRoute } from './itemRoutes.ts';
-import { compactCatalogItemToSummary, searchRegistryCatalog } from './registryCatalogIndex.ts';
+import { compactCatalogItemToSummary, registryCatalogItemIdentity, searchRegistryCatalog } from './registryCatalogIndex.ts';
 import type {
   CandidateMatchField,
   ComponentCandidate,
@@ -94,7 +94,7 @@ export function searchComponentCandidatesWithIndex(
 
   const reviewedKeys = new Set(
     registries.flatMap(registry => (registry.itemSummaries ?? [])
-      .map(item => `${registry.name}:${normalizeSearchTerm(item.slug)}`)),
+      .map(item => `${registry.name}:${registryCatalogItemIdentity(item.slug)}`)),
   );
   const indexed = searchRegistryCatalog(catalogIndex, search, selectedComponentValues, limit, reviewedKeys);
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));

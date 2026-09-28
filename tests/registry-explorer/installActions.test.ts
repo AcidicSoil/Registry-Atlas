@@ -14,9 +14,34 @@ describe('install actions', () => {
     expect(buildInspectCommand('@8bitcn/button')).toBe('npx shadcn@latest view @8bitcn/button');
   });
 
+  it('builds commands for nested item names accepted by the current shadcn CLI', () => {
+    expect(buildInstallToken('@agentcn', 'eve/browser-agent')).toBe('@agentcn/eve/browser-agent');
+    expect(buildSingleInstallCommand('@agentcn/eve/browser-agent')).toBe(
+      'npx shadcn@latest add @agentcn/eve/browser-agent',
+    );
+    expect(buildInspectCommand('@agentcn/eve/browser-agent')).toBe(
+      'npx shadcn@latest view @agentcn/eve/browser-agent',
+    );
+
+    expect(getInstallActionState({
+      namespace: '@agentcn',
+      itemSlug: 'eve/browser-agent',
+      routeEligible: true,
+      registryUrlTemplate: 'https://agentcn.vercel.app/r/{name}.json',
+    })).toEqual({
+      status: 'enabled',
+      token: '@agentcn/eve/browser-agent',
+      installCommand: 'npx shadcn@latest add @agentcn/eve/browser-agent',
+      inspectCommand: 'npx shadcn@latest view @agentcn/eve/browser-agent',
+      route: 'https://agentcn.vercel.app/r/eve/browser-agent.json',
+      disabledReason: null,
+    });
+  });
+
   it('normalizes namespaces to exactly one leading at sign', () => {
     expect(buildInstallToken('@8bitcn', 'button')).toBe('@8bitcn/button');
     expect(buildInstallToken('8bitcn', 'button')).toBe('@8bitcn/button');
+    expect(buildInstallToken('@my_company', 'button')).toBe('@my_company/button');
     expect(buildInstallToken('@@8bitcn', 'button')).toBeNull();
   });
 

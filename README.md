@@ -26,13 +26,14 @@ Registry Atlas provides a search-first way to discover community registry items,
 
 ### Prerequisites
 
-- Node.js (Latest LTS recommended)
-- pnpm (or npm/yarn)
+- mise
+
+The project pins Node 24.21.0 and pnpm 11.24.0 in `mise.toml`.
 
 ### Installation
 
 ```bash
-pnpm install
+mise run install
 ```
 
 ### Running Locally
@@ -40,7 +41,7 @@ pnpm install
 Start the Vite development server:
 
 ```bash
-pnpm dev
+mise run dev
 ```
 
 Visit `http://localhost:5173` in your browser.
@@ -50,28 +51,28 @@ Visit `http://localhost:5173` in your browser.
 Validate the generated registry mirror data:
 
 ```bash
-pnpm validate:data
+mise run validate:data
 ```
 
 Run the test suite:
 
 ```bash
-pnpm test
+mise run test
 ```
 
 Type-check the test files and source files together:
 
 ```bash
-pnpm typecheck:test
+mise run typecheck:test
 ```
 
 Run the full maintainer verification gate:
 
 ```bash
-pnpm verify
+mise run verify
 ```
 
-`pnpm verify` runs source type-checking, test type-checking, tests, data validation, and the production build. It does not refresh generated registry data.
+`mise run verify` runs source type-checking, test type-checking, tests, data validation, and the production build. It does not refresh generated registry data.
 
 For release browser checks, use `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md`. It covers install-command copy behavior, disabled states, queue flow, URL restoration, safe links, and the keyboard/focus baseline against the `/Registry-Atlas/` base path.
 
@@ -80,26 +81,26 @@ For release browser checks, use `.planning/phases/04-install-actions-release-har
 Registry Atlas mirrors the official shadcn directory into generated local artifacts. Refresh them explicitly when you want to review upstream changes:
 
 ```bash
-pnpm import:catalog
-pnpm sync:registries
-pnpm validate:data
-pnpm verify
+mise run import:catalog
+mise run sync:registries
+mise run validate:data
+mise run verify
 ```
 
-`pnpm import:catalog` imports the reviewed v1.1 sample catalog into `data/shadcn/registry-items.json` and writes `data/shadcn/registry-catalog-import-report.json`. `pnpm sync:registries` then merges that Atlas item-summary enrichment with the official shadcn directory mirror.
+`mise run import:catalog` imports the reviewed v1.1 sample catalog into `data/shadcn/registry-items.json` and writes `data/shadcn/registry-catalog-import-report.json`. `mise run sync:registries` then merges that Atlas item-summary enrichment with the official shadcn directory mirror and refreshes the compact open-vocabulary item index.
 
 Taxonomy/search labels come from the controlled vocabulary in `src/registry-explorer/core/componentTaxonomy.ts`. Keep proposed tags backed by imported item examples, and use catalog-backed, inferred, unavailable, or manual-follow-up wording when coverage is incomplete.
 
-Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json` before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
+Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, `data/shadcn/registry-catalog-evidence-report.json`, `public/data/registries.json`, and `public/data/registry-catalog-items.json` before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
 
 ### Building for Production
 
-`pnpm build` remains the production output check. It type-checks source files and builds the Vite bundle.
-The generated `dist/` directory is ignored by `.gitignore`; regenerate it with `pnpm build` instead of editing or committing generated output.
+`mise run build` remains the production output check. It type-checks source files and builds the Vite bundle.
+The generated `dist/` directory is ignored by `.gitignore`; regenerate it instead of editing or committing generated output.
 
 ```bash
-pnpm build
-pnpm preview
+mise run build
+mise run preview
 ```
 
 ## Architecture

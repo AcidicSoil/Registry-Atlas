@@ -186,6 +186,22 @@ describe('component discovery', () => {
     expect(result.truncated).toBe(false);
   });
 
+  it('keeps punctuation-distinct indexed identities separate when a raw component is selected', () => {
+    const result = searchComponentCandidatesWithIndex(
+      [verifiedRegistry()],
+      catalogIndex([
+        { name: 'foo/bar', type: 'registry:ui' },
+        { name: 'foo-bar', type: 'registry:ui' },
+      ]),
+      '',
+      ['foo/bar'],
+    );
+
+    expect(result.candidates
+      .filter(candidate => candidate.itemSource === 'registry-catalog-index')
+      .map(candidate => candidate.itemSlug)).toEqual(['foo/bar']);
+  });
+
   it('caps broad indexed searches and reports truncation truthfully', () => {
     const items = Array.from({ length: 1002 }, (_, index) => ({
       name: `indexed-result-${index}`,

@@ -204,6 +204,12 @@ async function writeJson(filePath, value) {
 `);
 }
 
+async function writeCompactJson(filePath, value) {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, `${JSON.stringify(value)}
+`);
+}
+
 function normalizeNamespace(value) {
   if (typeof value !== 'string' || !value.trim()) return '';
   const valueLower = value.trim().toLowerCase();
@@ -310,7 +316,7 @@ async function main(argv = process.argv.slice(2)) {
     timeoutMs: options.timeoutMs,
   });
   await writeJson(options.output, evidence);
-  await writeJson(options.items, {
+  await writeCompactJson(options.items, {
     meta: {
       generated_at: report.generated_at,
       source: options.source,

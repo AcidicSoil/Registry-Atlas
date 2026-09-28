@@ -238,6 +238,25 @@ describe('registry explorer shell interactions', () => {
     expect(trigger.focus).toHaveBeenCalled();
   });
 
+  it('searches and routes an indexed-only catalog item through the shell', () => {
+    const harness = setup('?view=discover');
+
+    harness.searchInput.value = 'catalog only';
+    harness.searchInput.dispatch('input', {});
+
+    expect(harness.contentBody.innerHTML).toContain('Catalog Only');
+    expect(harness.contentBody.innerHTML).toContain('@delta/catalog-only');
+    expect(harness.contentBody.innerHTML).toContain('data-view-item-slug="catalog-only"');
+
+    harness.contentBody.dispatch(
+      'click',
+      target({ 'data-view-item-registry': '@delta', 'data-view-item-slug': 'catalog-only' }),
+    );
+
+    expect(harness.contentHeader.innerHTML).toContain('Catalog Only');
+    expect(harness.location.search).toContain('item=catalog-only');
+  });
+
   it('clears a hover peek when the pointer leaves the trigger', () => {
     const harness = setup('?view=discover&registry=%40delta');
     const trigger = target({
@@ -432,6 +451,15 @@ function registryFixture(): Registry {
       comparisonEvidence: 'catalog',
       catalogItemCount: 1,
       catalogEvidenceUrl: 'https://delta.example/r/registry.json',
+    },
+    mirror: {
+      officialName: '@delta',
+      registryUrlTemplate: 'https://delta.example/r/{name}.json',
+      sourceUrl: 'https://atlas.example/source',
+      syncedAt: '2026-09-28T00:00:00.000Z',
+      upstreamCount: 1,
+      localCount: 1,
+      warnings: [],
     },
     itemSummaries: [{
       name: 'Code Block',

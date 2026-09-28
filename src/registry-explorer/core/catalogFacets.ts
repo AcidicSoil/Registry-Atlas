@@ -170,7 +170,8 @@ export function applyCatalogFacetsToProfileRows(rows: readonly RegistryProfileIt
     facets.some(facet => {
       if (dimension === 'registry') return true;
       if (dimension === 'category') return row.taxonomyCategoryLabels?.some(label => CATALOG_CATEGORY_LABELS[facet.value as CatalogCategory] === label) ?? false;
-      if (row.slug && normalizeFacetValue(row.slug) === normalizeFacetValue(facet.value)) return true;
+      if (row.slug && row.slug.trim().toLowerCase() === facet.value.trim().toLowerCase()) return true;
+      if (!COMPONENT_TAG_SET.has(facet.value)) return false;
       return [...(row.taxonomyTagLabels ?? []), ...(row.taxonomyCategoryLabels ?? [])].some(label => normalizeFacetValue(label) === normalizeFacetValue(facet.label));
     }),
   ));
@@ -221,12 +222,29 @@ function candidateMatchesCatalogFacet(
     return catalogCategoriesForCandidate(candidate).includes(value as CatalogCategory);
   }
   if (dimension === 'registry') return candidate.registry.name === value;
-  const normalized = normalizeFacetValue(value);
-  return candidateComponentValues(candidate)
-    .some(component => normalizeFacetValue(component) === normalized);
+  if (
+    candidate.itemSlug
+    && candidate.itemSlug.trim().toLowerCase() === value.trim().toLowerCase()
+  ) {
+    return true;
+  }
+  if (!COMPONENT_TAG_SET.has(value)) return false;
+  return candidateComponentTags(candidate).includes(value as ComponentTag);
 }
 
 function candidateComponentValues(candidate: ComponentCandidate): string[] {
+  const tags = candidateComponentTags(candidate);
+  const values = new Set<string>(tags);
+  if (
+    candidate.itemSlug
+    && (candidate.itemSource === 'registry-catalog-index' || tags.length === 0)
+  ) {
+    values.add(candidate.itemSlug);
+  }
+  return [...values];
+}
+
+function candidateComponentTags(candidate: ComponentCandidate): ComponentTag[] {
   const item = candidate.registry.itemSummaries?.find(summary => summary.slug === candidate.itemSlug);
   const evidenceValues = [
     ...(item?.componentTagsExisting ?? []),
@@ -245,9 +263,5 @@ function candidateComponentValues(candidate: ComponentCandidate): string[] {
     candidate.registry.component_tags.forEach(tag => tags.add(tag));
   }
 
-  const values = new Set<string>(tags);
-  if (candidate.itemSlug && (candidate.itemSource === 'registry-catalog-index' || tags.size === 0)) {
-    values.add(candidate.itemSlug);
-  }
-  return [...values];
+  return [...tags];
 }

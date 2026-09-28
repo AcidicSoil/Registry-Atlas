@@ -105,6 +105,28 @@ describe('loadRegistries', () => {
     })))).rejects.toThrow('Registry mirror validation failed');
   });
 
+  it('ignores unsupported compact-index item types', async () => {
+    const catalog = createCatalogIndex();
+    catalog.registries['@example'].push({
+      name: 'theme-only',
+      title: 'Theme Only',
+      type: 'registry:theme',
+      categories: ['theme'],
+    });
+    const data = await loadRegistries(fetchFixture(createMirror(), catalog));
+
+    expect(data.catalogIndex.registries['@example']).toHaveLength(1);
+    expect(data.catalogIndex.registries['@example']?.[0]?.name).toBe('command-palette-pro');
+  });
+
+  it('rejects compact-index metadata count mismatches', async () => {
+    const catalog = createCatalogIndex();
+    catalog.meta.item_count = 2;
+
+    await expect(loadRegistries(fetchFixture(createMirror(), catalog)))
+      .rejects.toThrow('Registry catalog index validation failed');
+  });
+
   it('throws when the compact catalog index is malformed', async () => {
     await expect(loadRegistries(fetchFixture(createMirror(), {
       meta: { item_count: 1 },

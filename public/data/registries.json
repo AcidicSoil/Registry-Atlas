@@ -1,10 +1,10 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-09-23T09:54:06.207Z",
-    "upstream_count": 382,
-    "registry_count": 382,
-    "local_count": 382,
+    "synced_at": "2026-09-28T17:52:50.790Z",
+    "upstream_count": 392,
+    "registry_count": 392,
+    "local_count": 392,
     "validation_status": "not_run",
     "report_path": "data/shadcn/sync-report.json"
   },
@@ -473,6 +473,7 @@
           "carousel",
           "code-block",
           "collapsible",
+          "feature-grid",
           "file-upload",
           "hero-section",
           "input",
@@ -492,7 +493,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 284,
+        "catalog_item_count": 292,
         "catalog_evidence_url": "https://ui.aceternity.com/registry/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -606,7 +607,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 19,
+        "catalog_item_count": 21,
         "catalog_evidence_url": "https://www.agentui.pro/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -918,7 +919,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 245,
+        "catalog_item_count": 277,
         "catalog_evidence_url": "https://designali.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1672,7 +1673,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 2095,
+        "catalog_item_count": 2189,
         "catalog_evidence_url": "https://ui.beste.co/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -1767,6 +1768,7 @@
         "component_tags": [
           "accordion",
           "badge",
+          "breadcrumb",
           "button",
           "calendar",
           "card",
@@ -1805,7 +1807,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 124,
+        "catalog_item_count": 127,
         "catalog_evidence_url": "https://beui.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -2510,6 +2512,7 @@
           "admonition",
           "alert",
           "angle-slider",
+          "app-shell",
           "audio-player",
           "audit",
           "avatar",
@@ -2533,6 +2536,7 @@
           "compare-slider",
           "context-menu",
           "cropper",
+          "cta-section",
           "data-grid",
           "datepicker",
           "dialog",
@@ -2540,16 +2544,20 @@
           "dropdown",
           "dropzone",
           "error-message",
+          "feature-grid",
           "file-upload",
           "hero-section",
           "hover-card",
           "input",
           "menubar",
+          "mini-cart",
           "modal",
+          "navbar",
           "otp-input",
           "pagination",
           "pill",
           "popover",
+          "product-card",
           "progress",
           "qr-code",
           "radio",
@@ -2585,7 +2593,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 2103,
+        "catalog_item_count": 2910,
         "catalog_evidence_url": "https://api.catalogs.dev/shadcn/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -2767,7 +2775,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 1130,
+        "catalog_item_count": 1132,
         "catalog_evidence_url": "https://ui.cnippet.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -2859,7 +2867,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 55,
+        "catalog_item_count": 56,
         "catalog_evidence_url": "https://componentry.fun/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -3072,7 +3080,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 577,
+        "catalog_item_count": 579,
         "catalog_evidence_url": "https://coss.com/ui/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -3144,7 +3152,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 158,
+        "catalog_item_count": 170,
         "catalog_evidence_url": "https://www.craftui.space/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -3341,6 +3349,30 @@
         "comparison_evidence": "stale-catalog",
         "catalog_item_count": 1,
         "catalog_evidence_url": "https://darshitdev.in/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@dashboardblocks",
+        "homepage": "https://www.dashboardblocks.com",
+        "registry_url_template": "https://www.dashboardblocks.com/r/{style}/{name}.json",
+        "description": "Dashboard blocks for shadcn/ui: KPIs, charts, tables, funnels, heatmaps and full dashboards. Works with Base UI, Radix UI and React Aria, and every style and icon library."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "none",
+        "catalog_item_count": 0,
+        "catalog_evidence_url": "",
         "item_summaries": [],
         "notes": ""
       },
@@ -4143,6 +4175,34 @@
         "comparison_evidence": "none",
         "catalog_item_count": 0,
         "catalog_evidence_url": "",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@dgit",
+        "homepage": "https://ui.dgit.co",
+        "registry_url_template": "https://ui.dgit.co/r/{name}.json",
+        "description": "Quiet, sharp React components for dashboards and sign-in screens: a neutral light and dark theme, pill buttons, menus, an account menu, an app header, a sidebar layout, and a sign-in page."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "sidebar",
+          "theme"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 11,
+        "catalog_evidence_url": "https://ui.dgit.co/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -4978,6 +5038,36 @@
     },
     {
       "official": {
+        "name": "@ecomcn",
+        "homepage": "https://ecomcn.vercel.app",
+        "registry_url_template": "https://ecomcn.vercel.app/r/{name}.json",
+        "description": "E-commerce blocks for shadcn/ui, organised by the purchase funnel — product cards and grids, URL-driven filters, sort, load more, quick view, empty states and the order summary."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "card",
+          "product-card",
+          "sheet",
+          "theme",
+          "toolbar"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 11,
+        "catalog_evidence_url": "https://ecomcn.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@efferd",
         "homepage": "https://efferd.com/",
         "registry_url_template": "https://efferd.com/r/{name}.json",
@@ -5333,7 +5423,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 55,
+        "catalog_item_count": 56,
         "catalog_evidence_url": "https://ui.ericts.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -5593,6 +5683,36 @@
     },
     {
       "official": {
+        "name": "@fibo",
+        "homepage": "https://fibo.toribryan.com",
+        "registry_url_template": "https://fibo.toribryan.com/r/{name}.json",
+        "description": "An achromatic design system on Base UI: the standard parts plus playful niche components, with semantic tokens that match Figma variables one to one."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "badge",
+          "button",
+          "checkbox",
+          "input",
+          "textarea"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 11,
+        "catalog_evidence_url": "https://fibo.toribryan.com/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@flagcn",
         "homepage": "https://flagcn.dev",
         "registry_url_template": "https://flagcn.dev/r/{name}.json",
@@ -5770,6 +5890,7 @@
           "badge",
           "button",
           "card",
+          "carousel",
           "checkbox",
           "color-picker",
           "combobox",
@@ -5794,7 +5915,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 70,
+        "catalog_item_count": 71,
         "catalog_evidence_url": "https://www.fluidfunctionalism.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -6399,6 +6520,7 @@
         "component_tags": [
           "context-menu",
           "data-grid",
+          "dropzone",
           "pagination",
           "toolbar"
         ],
@@ -6407,7 +6529,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 44,
+        "catalog_item_count": 60,
         "catalog_evidence_url": "https://gridcn.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -6784,6 +6906,9 @@
           "button",
           "calendar",
           "card",
+          "carousel",
+          "chart",
+          "checkbox",
           "code-block",
           "color-picker",
           "combobox",
@@ -6791,17 +6916,23 @@
           "compare-slider",
           "cropper",
           "dialog",
+          "dropdown",
           "dropzone",
+          "feature-grid",
           "input",
           "otp-input",
           "password-input",
+          "pill",
           "progress",
           "qr-code",
           "scroll-progress",
           "select",
+          "sidebar",
           "spinner",
           "stepper",
+          "switch",
           "table",
+          "tabs",
           "tag-input",
           "testimonial",
           "theme",
@@ -6814,7 +6945,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 243,
+        "catalog_item_count": 278,
         "catalog_evidence_url": "https://hirael.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -7616,7 +7747,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 8912,
+        "catalog_item_count": 9736,
         "catalog_evidence_url": "https://keylineicons.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -7716,6 +7847,7 @@
           "checkbox",
           "code-block",
           "collapsible",
+          "color-picker",
           "combobox",
           "command",
           "context-menu",
@@ -7730,6 +7862,7 @@
           "pagination",
           "popover",
           "progress",
+          "qr-code",
           "radio",
           "radio-group",
           "scroll-area",
@@ -7753,7 +7886,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 73,
+        "catalog_item_count": 78,
         "catalog_evidence_url": "https://kobra.systems/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -7872,14 +8005,77 @@
       },
       "atlas": {
         "primary_focus": [],
-        "component_tags": [],
+        "component_tags": [
+          "accordion",
+          "admonition",
+          "ai-chat",
+          "alert",
+          "audio-player",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "collapsible",
+          "color-picker",
+          "combobox",
+          "command",
+          "compare-slider",
+          "context-menu",
+          "datepicker",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "file-upload",
+          "hero-section",
+          "hover-card",
+          "icon-button",
+          "input",
+          "menubar",
+          "modal",
+          "navbar",
+          "otp-input",
+          "pagination",
+          "pill",
+          "popover",
+          "product-card",
+          "progress",
+          "qr-code",
+          "radio",
+          "radio-group",
+          "receipt",
+          "scroll-area",
+          "select",
+          "separator",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "spinner",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "tag-input",
+          "testimonial",
+          "textarea",
+          "theme",
+          "timeline",
+          "toggle",
+          "tooltip",
+          "zoomable-image"
+        ],
         "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
+        "coverage_status": "inferred",
+        "confidence": "medium",
         "catalog_status": "unavailable",
-        "comparison_evidence": "none",
-        "catalog_item_count": 0,
-        "catalog_evidence_url": "",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 378,
+        "catalog_evidence_url": "https://ds.lema.ufpb.br/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -9140,7 +9336,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 22,
+        "catalog_item_count": 23,
         "catalog_evidence_url": "https://ui.nekode.id/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9390,7 +9586,7 @@
         "coverage_status": "unverified",
         "confidence": "unknown",
         "catalog_status": "unavailable",
-        "comparison_evidence": "catalog",
+        "comparison_evidence": "stale-catalog",
         "catalog_item_count": 8,
         "catalog_evidence_url": "https://ui.nordaun.com/r/registry.json",
         "item_summaries": [],
@@ -9457,7 +9653,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 60,
+        "catalog_item_count": 91,
         "catalog_evidence_url": "https://nostalgia-ui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9737,6 +9933,52 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 78,
         "catalog_evidence_url": "https://ui.shadcn.com/oidc/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@opaline",
+        "homepage": "https://opaline.buildlab.in",
+        "registry_url_template": "https://opaline.buildlab.in/r/{name}.json",
+        "description": "Liquid glass components for React — real backdrop refraction, Apple-inspired, minimal and premium. Docks, sheets, command palette, knobs and more."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "badge",
+          "button",
+          "calendar",
+          "card",
+          "command",
+          "context-menu",
+          "dialog",
+          "input",
+          "otp-input",
+          "popover",
+          "select",
+          "sheet",
+          "sidebar",
+          "slider",
+          "stepper",
+          "switch",
+          "tabs",
+          "theme",
+          "toast",
+          "toolbar",
+          "tooltip"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 40,
+        "catalog_evidence_url": "https://opaline.buildlab.in/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -10708,7 +10950,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 94,
+        "catalog_item_count": 99,
         "catalog_evidence_url": "https://pulld.pages.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -10957,7 +11199,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 824,
+        "catalog_item_count": 844,
         "catalog_evidence_url": "https://reactbits.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11007,6 +11249,86 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 1,
         "catalog_evidence_url": "https://react-slot.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@reactframe",
+        "homepage": "https://reactframe.com",
+        "registry_url_template": "https://reactframe.com/r/{name}.json",
+        "description": "Animated React components, blocks and elements built with Tailwind CSS and Motion. 150+ free, open-source items install with the shadcn CLI; premium components are sold separately."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "admonition",
+          "alert",
+          "avatar",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "code-block",
+          "color-picker",
+          "combobox",
+          "command",
+          "compare-slider",
+          "context-menu",
+          "cropper",
+          "dialog",
+          "drawer",
+          "dropdown",
+          "file-upload",
+          "hover-card",
+          "input",
+          "menubar",
+          "modal",
+          "navbar",
+          "otp-input",
+          "pagination",
+          "password-input",
+          "popover",
+          "progress",
+          "qr-code",
+          "radio",
+          "scroll-area",
+          "scroll-progress",
+          "select",
+          "sheet",
+          "sidebar",
+          "skeleton",
+          "slider",
+          "stepper",
+          "switch",
+          "table",
+          "tabs",
+          "tag-input",
+          "testimonial",
+          "textarea",
+          "theme",
+          "timeline",
+          "toast",
+          "toggle",
+          "toolbar",
+          "tooltip",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 230,
+        "catalog_evidence_url": "https://reactframe.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -11085,6 +11407,7 @@
           "pricing-table",
           "product-card",
           "progress",
+          "prompt-box",
           "qr-code",
           "radio",
           "radio-group",
@@ -11127,7 +11450,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 24663,
+        "catalog_item_count": 14207,
         "catalog_evidence_url": "https://registry.directory/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11183,7 +11506,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 313,
+        "catalog_item_count": 332,
         "catalog_evidence_url": "https://www.remocn.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -11766,6 +12089,30 @@
     },
     {
       "official": {
+        "name": "@sekei",
+        "homepage": "https://www.sekei.xyz/shad-fx",
+        "registry_url_template": "https://www.sekei.xyz/registry/{name}.json",
+        "description": "Canvas effects for React, copied into your project as source. Starts with ordered dither: fire, lightning, sonar rings, a light beam, a sloshing fluid, rain and snow."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 11,
+        "catalog_evidence_url": "https://www.sekei.xyz/registry/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
         "name": "@sevenui",
         "homepage": "https://sevenui.dev",
         "registry_url_template": "https://sevenui.dev/r/{name}.json",
@@ -12137,7 +12484,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 4002,
+        "catalog_item_count": 4007,
         "catalog_evidence_url": "https://www.shadcn-ui-blocks.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12522,6 +12869,7 @@
           "dialog",
           "drawer",
           "dropdown",
+          "file-upload",
           "hover-card",
           "input",
           "menubar",
@@ -12553,7 +12901,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 936,
+        "catalog_item_count": 962,
         "catalog_evidence_url": "https://shadcnuikit.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12708,7 +13056,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 25,
+        "catalog_item_count": 26,
         "catalog_evidence_url": "https://skecher-ui.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -12884,7 +13232,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 94,
+        "catalog_item_count": 47,
         "catalog_evidence_url": "https://snapcn.dev/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -13283,6 +13631,7 @@
           "accordion",
           "alert",
           "avatar",
+          "badge",
           "calendar",
           "card",
           "card-deck",
@@ -13296,7 +13645,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 72,
+        "catalog_item_count": 80,
         "catalog_evidence_url": "https://ui.ssych.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -13591,6 +13940,30 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 174,
         "catalog_evidence_url": "https://systaliko-ui.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tablecn",
+        "homepage": "https://table-cn.vercel.app",
+        "registry_url_template": "https://table-cn.vercel.app/r/{style}/{name}.json",
+        "description": "Data table and filter builder blocks with search, sorting, pagination and URL-synced filters. Built for Radix UI, Base UI and React Aria."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [],
+        "aliases": [],
+        "coverage_status": "unverified",
+        "confidence": "unknown",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "none",
+        "catalog_item_count": 0,
+        "catalog_evidence_url": "",
         "item_summaries": [],
         "notes": ""
       },
@@ -14349,8 +14722,44 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 38,
+        "catalog_item_count": 82,
         "catalog_evidence_url": "https://tween-ui.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@tweenly",
+        "homepage": "https://trytweenly.vercel.app",
+        "registry_url_template": "https://trytweenly.vercel.app/r/{name}.json",
+        "description": "Animated React components built on Motion and GSAP. Tweak every prop live, copy the code, and own it."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "button",
+          "card",
+          "chart",
+          "input",
+          "navbar",
+          "otp-input",
+          "product-card",
+          "progress",
+          "stepper",
+          "switch",
+          "table"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 61,
+        "catalog_evidence_url": "https://trytweenly.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },
@@ -14482,6 +14891,7 @@
           "card-deck",
           "carousel",
           "chatbot",
+          "context-menu",
           "filter-bar",
           "sidebar",
           "slider",
@@ -14494,7 +14904,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 38,
+        "catalog_item_count": 52,
         "catalog_evidence_url": "https://uicapsule.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -14524,7 +14934,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 119,
+        "catalog_item_count": 124,
         "catalog_evidence_url": "https://uiception.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -14616,6 +15026,8 @@
           "button",
           "card",
           "card-deck",
+          "carousel",
+          "file-upload",
           "input",
           "pagination",
           "pill",
@@ -14623,6 +15035,7 @@
           "scroll-progress",
           "search-input",
           "skeleton",
+          "slider",
           "spinner",
           "stepper",
           "toggle"
@@ -14632,7 +15045,7 @@
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 41,
+        "catalog_item_count": 55,
         "catalog_evidence_url": "https://uniquel.io/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -16572,6 +16985,77 @@
         "comparison_evidence": "catalog",
         "catalog_item_count": 15,
         "catalog_evidence_url": "https://quiz-ui-phi.vercel.app/r/registry.json",
+        "item_summaries": [],
+        "notes": ""
+      },
+      "status": {
+        "warnings": []
+      }
+    },
+    {
+      "official": {
+        "name": "@corsair-ui",
+        "homepage": "https://corsairui.vercel.app",
+        "registry_url_template": "https://kevingirelli.github.io/corsair-ui/r/{name}.json",
+        "description": "Copy-and-own React components for Tailwind CSS 3 and 4: forms, overlays, site chrome, motion, animated text and backgrounds."
+      },
+      "atlas": {
+        "primary_focus": [],
+        "component_tags": [
+          "accordion",
+          "alert",
+          "avatar",
+          "badge",
+          "breadcrumb",
+          "button",
+          "calendar",
+          "card",
+          "carousel",
+          "chart",
+          "checkbox",
+          "code-block",
+          "collapsible",
+          "combobox",
+          "command",
+          "context-menu",
+          "dialog",
+          "dropdown",
+          "feature-grid",
+          "hover-card",
+          "input",
+          "otp-input",
+          "pagination",
+          "password-input",
+          "popover",
+          "progress",
+          "qr-code",
+          "radio",
+          "radio-group",
+          "scroll-area",
+          "scroll-progress",
+          "select",
+          "separator",
+          "sheet",
+          "skeleton",
+          "slider",
+          "spinner",
+          "switch",
+          "table",
+          "tabs",
+          "textarea",
+          "theme",
+          "toast",
+          "toggle",
+          "tooltip",
+          "utility-button"
+        ],
+        "aliases": [],
+        "coverage_status": "inferred",
+        "confidence": "medium",
+        "catalog_status": "unavailable",
+        "comparison_evidence": "catalog",
+        "catalog_item_count": 109,
+        "catalog_evidence_url": "https://kevingirelli.github.io/corsair-ui/r/registry.json",
         "item_summaries": [],
         "notes": ""
       },

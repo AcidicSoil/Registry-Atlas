@@ -38,6 +38,8 @@ const VALID_SORTS: readonly CatalogSort[] = ['relevance', 'name'];
 const CATEGORY_SET = new Set<string>(Object.keys(CATALOG_CATEGORY_LABELS));
 const COMPONENT_SET = new Set<string>(COMPONENT_TAG_VALUES);
 const PRIMARY_FOCUS_SET = new Set<string>(PRIMARY_FOCUS_VALUES);
+const MAX_COMPONENT_FACET_VALUE_LENGTH = 128;
+const COMPONENT_FACET_VALUE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
 
 const LEGACY_FOCUS_CATEGORY_MAP: Record<PrimaryFocus, CatalogCategory> = {
   'ai-chat': 'ai-and-chat',
@@ -108,7 +110,7 @@ function parseSelectedFacets(params: URLSearchParams): SelectedCatalogFacet[] {
     }));
 
   uniqueNonEmpty(params.getAll('component'))
-    .filter(value => COMPONENT_SET.has(value))
+    .filter(isSafeComponentFacetValue)
     .forEach(value => facets.push({
       dimension: 'component',
       value,
@@ -165,8 +167,21 @@ function isValidFacetValue(dimension: CatalogFacetDimension, value: string): boo
   const normalized = value.trim();
   if (!normalized) return false;
   if (dimension === 'category') return CATEGORY_SET.has(normalized);
-  if (dimension === 'component') return COMPONENT_SET.has(normalized);
+  if (dimension === 'component') return isSafeComponentFacetValue(normalized);
   return true;
+}
+
+function isSafeComponentFacetValue(value: string): boolean {
+  const normalized = value.trim();
+  if (
+    !normalized
+    || normalized.length > MAX_COMPONENT_FACET_VALUE_LENGTH
+    || !COMPONENT_FACET_VALUE_PATTERN.test(normalized)
+  ) {
+    return false;
+  }
+
+  return normalized.split('/').every(segment => segment && segment !== '.' && segment !== '..');
 }
 
 function componentFacetLabel(value: string): string {

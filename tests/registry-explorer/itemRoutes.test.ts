@@ -10,6 +10,28 @@ describe('resolveRegistryItemRoute', () => {
     });
   });
 
+  it('resolves safe nested and punctuation-bearing registry item names', () => {
+    expect(resolveRegistryItemRoute(
+      '@agentcn',
+      'https://agentcn.vercel.app/r/{name}.json',
+      'eve/browser-agent',
+    )).toEqual({
+      status: 'available',
+      label: 'Open item route',
+      url: 'https://agentcn.vercel.app/r/eve/browser-agent.json',
+    });
+
+    expect(resolveRegistryItemRoute(
+      '@example',
+      'https://example.com/r/{name}.json',
+      'icons.v2/button_primary',
+    )).toEqual({
+      status: 'available',
+      label: 'Open item route',
+      url: 'https://example.com/r/icons.v2/button_primary.json',
+    });
+  });
+
   it('rejects missing and invalid item slugs', () => {
     expect(resolveRegistryItemRoute('@example', 'https://example.com/r/{name}.json', '')).toEqual({
       status: 'missing-item-slug',

@@ -37,6 +37,11 @@ async function writeJson(filePath, value) {
   await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
+async function writeCompactJson(filePath, value) {
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, `${JSON.stringify(value)}\n`);
+}
+
 function normalizeNamespace(value) {
   if (typeof value !== 'string') return '';
   return value.startsWith('@') ? value : `@${value}`;
@@ -286,7 +291,7 @@ async function main() {
   await writeJson(RAW_OUTPUT_PATH, upstream);
   await writeJson(REGISTRY_CATALOG_EVIDENCE_PATH, catalogEvidenceByNamespace);
   await writeJson(REGISTRY_CATALOG_EVIDENCE_REPORT_PATH, catalogSync.report);
-  await writeJson(REGISTRY_CATALOG_ITEMS_PATH, {
+  await writeCompactJson(REGISTRY_CATALOG_ITEMS_PATH, {
     meta: {
       source_url: SOURCE_URL,
       synced_at: syncedAt,

@@ -1,25 +1,28 @@
-# todo
+# TODO
 
-## web-browsing agent for searching connected registries
+## Deferred registry coverage work
 
-### potential candidates and fallbacks to utilize this functionality
+- Investigate registries whose machine-readable catalogs fail, rate-limit, or use unsupported URL templates.
+- Prefer direct registry/catalog APIs first. Use managed-browser research only when machine-readable sources cannot answer the question.
+- Preserve stale last-known catalog evidence during transient failures; do not silently erase prior coverage.
 
-* browser-use
-* ?
+## Preview and specimen evidence
 
-## improve the component list with a wider selection of component types
+- Expand trustworthy item preview/specimen coverage where registries publish stable preview URLs.
+- Keep generated screenshots as a separate reviewed evidence workflow if they are introduced.
+- Do not infer that a component has a real preview from its catalog entry alone.
 
-* currently there's a limited scope
+## Domain-model research
 
-* a lot of components are not even mentioned
+- GitHub issue #3 tracks the proposed extensible entity/relationship rethink.
+- Treat that as a fresh product/domain decision. The earlier prototypes were rejected and are not an implementation baseline.
 
-* in addition, we want a way to render those components also
+## Completed backlog
 
-* add a way to sync up components from those registries so that we can have a fuller amount of components to filter for etc...
+The dated notes below are superseded by newer implementation evidence:
 
----
+- GitHub Pages task notes date to December 12, 2025 and are implemented.
+- The component-sync TODO was added/expanded June 17–23, 2026; the wider catalog sync and open-vocabulary item discovery are now implemented.
+- The UI/UX cleanup TODO was last added August 27, 2026; the visual-dictionary redesign and follow-up UX work landed afterward.
 
-## unslop-design/unslop 8.26.26
-
-* run multiple passes over ui/ux until it makes logical sense
-* compare against other sites and improve 
+Use the current specs, plans, tests, generated data, and verification docs as the authority for completed work.

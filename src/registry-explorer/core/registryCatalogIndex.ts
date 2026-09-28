@@ -7,6 +7,14 @@ import type {
   RegistryItemSummary,
 } from './registry.schema';
 
+const DISCOVERABLE_REGISTRY_ITEM_TYPES = new Set([
+  'registry:block',
+  'registry:component',
+  'registry:ui',
+  'registry:page',
+  'registry:item',
+]);
+
 export interface RegistryCatalogMatch {
   namespace: string;
   item: RegistryCatalogItem;
@@ -36,12 +44,24 @@ export function parseRegistryCatalogIndex(value: unknown): RegistryCatalogIndex 
   }
 
   const registries: Record<string, RegistryCatalogItem[]> = {};
+  let parsedItemCount = 0;
   for (const [namespace, rawItems] of Object.entries(value.registries)) {
     if (!namespace.startsWith('@') || !Array.isArray(rawItems)) {
       throw new Error('Registry catalog index validation failed: invalid registry bucket');
     }
 
-    registries[namespace] = rawItems.map(rawItem => parseCatalogItem(rawItem));
+    const items = rawItems
+      .map(rawItem => parseCatalogItem(rawItem))
+      .filter((item): item is RegistryCatalogItem => item !== null);
+    registries[namespace] = items;
+    parsedItemCount += items.length;
+  }
+
+  if (
+    Object.keys(registries).length !== registryCount
+    || parsedItemCount !== itemCount
+  ) {
+    throw new Error('Registry catalog index validation failed: metadata counts do not match content');
   }
 
   return {
@@ -65,7 +85,7 @@ export function searchRegistryCatalog(
   excludedKeys: ReadonlySet<string> = new Set(),
 ): RegistryCatalogSearchResult {
   const query = normalize(search);
-  const selected = new Set(selectedComponentValues.map(normalize).filter(Boolean));
+  const selected = new Set(selectedComponentValues.map(registryCatalogItemIdentity).filter(Boolean));
   if (!query && selected.size === 0) {
     return { matches: [], totalMatches: 0, truncated: false };
   }
@@ -77,8 +97,8 @@ export function searchRegistryCatalog(
     for (const item of items) {
       const values = [item.name, item.title].filter(Boolean).map(value => normalize(String(value)));
       const matchesQuery = !query || values.some(value => matchesSearch(value, query));
-      const matchesSelection = selected.size === 0 || selected.has(normalize(item.name));
-      const key = `${namespace}:${normalize(item.name)}`;
+      const matchesSelection = selected.size === 0 || selected.has(registryCatalogItemIdentity(item.name));
+      const key = `${namespace}:${registryCatalogItemIdentity(item.name)}`;
       if (!matchesQuery || !matchesSelection || excludedKeys.has(key)) continue;
 
       totalMatches += 1;
@@ -107,7 +127,7 @@ export function searchRegistryCatalogComponentOptions(
       const values = [item.name, item.title].filter(Boolean).map(value => normalize(String(value)));
       if (!values.some(value => matchesSearch(value, query))) continue;
 
-      const key = normalize(item.name);
+      const key = registryCatalogItemIdentity(item.name);
       const existing = options.get(key);
       if (existing) {
         existing.count += 1;
@@ -131,8 +151,8 @@ export function findRegistryCatalogItem(
   namespace: string,
   slug: string,
 ): RegistryCatalogItem | undefined {
-  const wanted = normalize(slug);
-  return index.registries[namespace]?.find(item => normalize(item.name) === wanted);
+  const wanted = registryCatalogItemIdentity(slug);
+  return index.registries[namespace]?.find(item => registryCatalogItemIdentity(item.name) === wanted);
 }
 
 export function compactCatalogItemToSummary(
@@ -166,15 +186,20 @@ export function compactCatalogItemToSummary(
   };
 }
 
-function parseCatalogItem(value: unknown): RegistryCatalogItem {
+function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
   if (!isRecord(value)) {
     throw new Error('Registry catalog index validation failed: item is not an object');
-
   }
-  const name = optionalString(value.name);
+
   const type = optionalString(value.type);
-  if (!name || !type) {
-    throw new Error('Registry catalog index validation failed: item requires name and type');
+  if (!type) {
+    throw new Error('Registry catalog index validation failed: item requires a type');
+  }
+  if (!DISCOVERABLE_REGISTRY_ITEM_TYPES.has(type)) return null;
+
+  const name = optionalString(value.name);
+  if (!name) {
+    throw new Error('Registry catalog index validation failed: discoverable item requires a name');
   }
 
   const title = optionalString(value.title);
@@ -192,6 +217,10 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem {
     ...(title ? { title } : {}),
     ...(categories?.length ? { categories } : {}),
   };
+}
+
+export function registryCatalogItemIdentity(value: string): string {
+  return value.trim().toLowerCase();
 }
 
 function matchesSearch(value: string, query: string): boolean {

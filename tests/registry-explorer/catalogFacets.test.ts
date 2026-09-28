@@ -109,6 +109,45 @@ describe('catalog facets', () => {
     )).toEqual([candidate]);
   });
 
+  it('keeps punctuation-distinct open-vocabulary component identities separate', () => {
+    const registry = registryFixture('@delta', ['misc-utility'], []);
+    const slash = {
+      ...candidateFixture(registry, 'foo/bar', 'Foo Slash Bar'),
+      itemSource: 'registry-catalog-index' as const,
+    };
+    const dash = {
+      ...candidateFixture(registry, 'foo-bar', 'Foo Dash Bar'),
+      itemSource: 'registry-catalog-index' as const,
+    };
+
+    expect(applyCatalogFacetsToCandidates(
+      [slash, dash],
+      [facet('component', 'foo/bar')],
+    ).map(candidate => candidate.itemSlug)).toEqual(['foo/bar']);
+  });
+
+  it('surfaces indexed component identities only when the Component facet is searched', () => {
+    const index = {
+      meta: { registry_count: 1, item_count: 2 },
+      registries: {
+        '@delta': [
+          { name: 'neon-command-palette', title: 'Neon Command Palette', type: 'registry:ui' },
+          { name: 'quiet-panel', title: 'Quiet Panel', type: 'registry:ui' },
+        ],
+      },
+    };
+
+    const groups = buildCatalogFacetGroups([], [], {
+      catalogIndex: index,
+      componentSearchTerm: 'neon',
+    });
+    const options = groups.find(group => group.dimension === 'component')?.options ?? [];
+
+    expect(options).toEqual([
+      expect.objectContaining({ value: 'neon-command-palette', label: 'Neon Command Palette', count: 1 }),
+    ]);
+  });
+
   it('does not expose or match raw type, preview, or catalog status metadata', () => {
     const { candidates } = fixtures();
 

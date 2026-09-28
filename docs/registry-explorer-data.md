@@ -4,15 +4,18 @@ Registry Atlas mirrors the official shadcn registry directory and layers local A
 
 ## Generated Artifacts
 
-Run `pnpm sync:registries` to refresh the generated mirror from `https://ui.shadcn.com/r/registries.json`.
+Run `mise run sync:registries` to refresh the generated mirror from `https://ui.shadcn.com/r/registries.json`. The equivalent package script is `pnpm sync:registries`.
 
-The sync command writes three reviewable artifacts:
+The sync command writes the official mirror plus catalog evidence:
 
 - `data/shadcn/registries.raw.json` - Raw upstream registry array from the official shadcn directory.
 - `data/shadcn/sync-report.json` - Maintainer report with source URL, sync timestamp, counts, and added/removed/changed deltas.
-- `public/data/registries.json` - Normalized runtime data fetched by the browser app.
+- `data/shadcn/registry-catalog-evidence.json` - Per-registry catalog counts, derived reviewed taxonomy evidence, freshness state, and source URL.
+- `data/shadcn/registry-catalog-evidence-report.json` - Catalog fetch/failure report, including discoverable item counts.
+- `public/data/registries.json` - Normalized registry runtime data.
+- `public/data/registry-catalog-items.json` - Compact open-vocabulary catalog index used for item-name discovery.
 
-The browser loads `public/data/registries.json` through `src/registry-explorer/data/loadRegistries.ts`.
+The browser loads both public runtime files through `src/registry-explorer/data/loadRegistries.ts`. The compact index contains item identity facts only: name, registry item type, optional title, and optional upstream categories. Full item detail remains fetched from the registry item route when requested.
 
 ## Field Provenance
 
@@ -50,32 +53,40 @@ Validation warns on official HTTP fields under the current policy. Valid officia
 Use this sequence when refreshing official registry data:
 
 ```bash
-pnpm sync:registries
-pnpm validate:data
-pnpm verify
+mise run sync:registries
+mise run validate:data
+mise run verify
 ```
 
 Review these before committing regenerated data:
 
-- `data/shadcn/sync-report.json` for count and delta changes.
+- `data/shadcn/sync-report.json` for directory count and delta changes.
+- `data/shadcn/registry-catalog-evidence-report.json` for fetched, stale, failed, and discoverable-item counts.
+- `public/data/registry-catalog-items.json` for compact-index size and namespace coverage.
 - `public/data/registries.json` for normalized `official`, `atlas`, and `status` fields.
-- `pnpm validate:data` output for errors and warnings.
+- validation output for errors and warnings.
 
-`pnpm verify` runs type-checking, test type-checking, tests, data validation, and the production build. It intentionally does not run `pnpm sync:registries`; refreshes should remain explicit and reviewable.
+`mise run verify` runs source type-checking, test type-checking, tests, data validation, and the production build. It intentionally does not refresh registry data; refreshes remain explicit and reviewable.
 
-## Controlled Vocabularies
+## Controlled Vocabularies and Open Catalog Identities
 
-Atlas enrichment uses controlled vocabularies from `src/registry-explorer/core/registry.schema.ts`:
+Atlas enrichment still uses controlled vocabularies from `src/registry-explorer/core/registry.schema.ts`:
 
 - `PRIMARY_FOCUS_VALUES`
 - `COMPONENT_TAG_VALUES`
 
-When adding a new Atlas focus or component tag:
+Those vocabularies support curated grouping and aliases; they are no longer a gate on whether a real upstream item can be discovered. Open-vocabulary names come from `public/data/registry-catalog-items.json`. Reviewed rich summaries remain authoritative when a compact index entry has the same namespace and slug.
+
+Only user-facing registry item types enter the compact discovery index: `registry:block`, `registry:component`, `registry:ui`, `registry:page`, and `registry:item`. Other registry records remain available from their upstream sources but are not primary component-search results.
+
+If a catalog refresh fails for a namespace, sync preserves its previous compact entries and marks its catalog evidence stale. A successful refresh replaces that namespace's prior compact entries.
+
+When adding a new Atlas focus or curated component tag:
 
 1. Update `src/registry-explorer/core/registry.schema.ts`.
 2. Update `src/registry-explorer/core/labels.ts` if a custom label is needed.
 3. Update relevant tests in `tests/registry-explorer/`.
-4. Run `pnpm validate:data` and `pnpm verify`.
+4. Run `mise run validate:data` and `mise run verify`.
 
 ## Legacy Seed Data
 

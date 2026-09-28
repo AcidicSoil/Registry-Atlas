@@ -10,7 +10,8 @@ export type ResolvedItemRoute =
       url: null;
     };
 
-const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const MAX_ITEM_NAME_LENGTH = 128;
+const ITEM_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
 
 export function resolveRegistryItemRoute(
   namespace: string,
@@ -23,7 +24,7 @@ export function resolveRegistryItemRoute(
   }
 
   const slug = itemSlug.trim();
-  if (!ITEM_SLUG_PATTERN.test(slug)) {
+  if (!isSafeRegistryItemName(slug)) {
     return unavailable('invalid-item-slug');
   }
 
@@ -39,12 +40,25 @@ export function resolveRegistryItemRoute(
     return unavailable('invalid-template');
   }
 
-  const resolved = registryUrlTemplate.replace('{name}', encodeURIComponent(slug));
+  const encodedName = slug.split('/').map(segment => encodeURIComponent(segment)).join('/');
+  const resolved = registryUrlTemplate.replace('{name}', encodedName);
   if (/\{[^}]+\}/.test(resolved)) {
     return unavailable('unresolved-template');
   }
 
   return resolveAbsoluteRoute(resolved);
+}
+
+export function isSafeRegistryItemName(value: string): boolean {
+  if (
+    !value
+    || value.length > MAX_ITEM_NAME_LENGTH
+    || !ITEM_NAME_PATTERN.test(value)
+  ) {
+    return false;
+  }
+
+  return value.split('/').every(segment => segment && segment !== '.' && segment !== '..');
 }
 
 function resolveAbsoluteRoute(value: string): ResolvedItemRoute {

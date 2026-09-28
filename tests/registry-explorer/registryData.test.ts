@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import mirrorData from '../../public/data/registries.json';
+import catalogIndexData from '../../public/data/registry-catalog-items.json';
+import { parseRegistryCatalogIndex } from '../../src/registry-explorer/core/registryCatalogIndex';
 import {
   COMPONENT_TAG_VALUES,
   PRIMARY_FOCUS_VALUES,
@@ -83,6 +85,19 @@ describe('registryData mirror artifact', () => {
       'compare-slider',
       'cropper',
     ]));
+  });
+
+  it('validates the committed compact catalog index and its declared counts', () => {
+    const index = parseRegistryCatalogIndex(catalogIndexData);
+    const items = Object.values(index.registries).flat();
+
+    expect(index.meta.registry_count).toBe(Object.keys(index.registries).length);
+    expect(index.meta.item_count).toBe(items.length);
+    const reviewedItemCount = mirrorData.registries.reduce(
+      (count, registry) => count + registry.atlas.item_summaries.length,
+      0,
+    );
+    expect(items.length).toBeGreaterThan(reviewedItemCount);
   });
 
   it('retains existing v1.0 seeded item summaries after the v1.1 catalog import', () => {
