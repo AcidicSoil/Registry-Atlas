@@ -42,6 +42,11 @@ export interface DiscoveryContentOptions {
   activePeekId: string | null;
   page?: number;
   facetSearchTerms?: Readonly<Record<string, string>>;
+  indexedSearch?: {
+    indexedMatchCount: number;
+    indexedMaterializedCount: number;
+    truncated: boolean;
+  };
 }
 
 export function renderDiscoveryAside(
@@ -85,10 +90,14 @@ export function renderDiscoveryContent(
   const emptyCopy = options.searchTerm.trim() || options.selectedFacets.length
     ? 'No components match this search and filter combination.'
     : 'No component results are available yet.';
+  const indexedTruncation = options.indexedSearch?.truncated
+    ? `<div class="discovery-result-meta">Showing the first ${options.indexedSearch.indexedMaterializedCount.toLocaleString()} indexed matches of ${options.indexedSearch.indexedMatchCount.toLocaleString()}.</div>`
+    : '';
 
   bodyRoot.innerHTML = `
     ${renderCatalogToolbar(options.facetGroups, options.selectedFacets, options.sort, options.facetSearchTerms ?? {})}
     ${partial ? '<div class="partial-data-note">Some registry metadata is incomplete or unverified.</div>' : ''}
+    ${indexedTruncation}
     ${candidates.length
       ? `<div class="discovery-result-meta">Showing ${start + 1}–${Math.min(start + DISCOVERY_PAGE_SIZE, candidates.length)} of ${candidates.length}</div>
          <div class="discovery-grid">${visibleCandidates.map(candidate => renderCandidate(candidate, options)).join('')}</div>

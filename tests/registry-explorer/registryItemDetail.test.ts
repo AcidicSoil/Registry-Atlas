@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  resolveRegistryItemDetailFromCatalogIndex,
   resolveRegistryItemDetailFromSummary,
 } from '../../src/registry-explorer/core/registryItemDetail';
 import { loadRegistryItemDetail } from '../../src/registry-explorer/data/loadRegistryItemDetail';
@@ -21,6 +22,22 @@ describe('registry item detail', () => {
     expect(result.detail?.installAction.status === 'enabled' ? result.detail.installAction.token : null).toBe('@delta/code-block');
     expect(result.detail?.installAction.status === 'enabled' ? result.detail.installAction.inspectCommand : null).toBe('npx shadcn@latest view @delta/code-block');
     expect(result.detail?.installAction.status === 'enabled' ? result.detail.installAction.installCommand : null).toBe('npx shadcn@latest add @delta/code-block');
+  });
+
+  it('resolves indexed-only catalog items through the existing detail contract', () => {
+    const result = resolveRegistryItemDetailFromCatalogIndex(
+      [registryFixture()],
+      {
+        meta: { registry_count: 1, item_count: 1 },
+        registries: { '@delta': [{ name: 'catalog-only', type: 'registry:ui' }] },
+      },
+      '@delta',
+      'catalog-only',
+    );
+
+    expect(result.status).toBe('summary-only');
+    expect(result.detail?.slug).toBe('catalog-only');
+    expect(result.detail?.installAction.status).toBe('enabled');
   });
 
   it('does not mislabel registry JSON as a component page when docs are absent', () => {

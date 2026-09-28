@@ -11,11 +11,13 @@ import {
 import { coverageStatusLabel, compareCoverageStatus } from './coverageStatus.ts';
 import { getInstallActionState } from './installActions.ts';
 import { resolveRegistryItemRoute } from './itemRoutes.ts';
+import { compactCatalogItemToSummary, searchRegistryCatalog } from './registryCatalogIndex.ts';
 import type {
   CandidateMatchField,
   ComponentCandidate,
   DiscoveryOverview,
   Registry,
+  RegistryCatalogIndex,
   RegistryItemSummary,
   ComponentTag,
 } from './registry.schema.ts';
@@ -68,6 +70,46 @@ export function searchComponentCandidates(
   });
 
   return candidates.sort(compareCandidates);
+}
+
+export interface IndexedCandidateSearchResult {
+  candidates: ComponentCandidate[];
+  indexedMatchCount: number;
+  indexedMaterializedCount: number;
+  truncated: boolean;
+}
+
+export function searchComponentCandidatesWithIndex(
+  registries: readonly Registry[],
+  catalogIndex: RegistryCatalogIndex,
+  search: string,
+  selectedComponentValues: readonly string[] = [],
+  limit = 1000,
+): IndexedCandidateSearchResult {
+  const candidates = searchComponentCandidates(registries, search);
+  const shouldSearchIndex = normalizeSearchTerm(search).length > 0 || selectedComponentValues.length > 0;
+  if (!shouldSearchIndex) {
+    return { candidates, indexedMatchCount: 0, indexedMaterializedCount: 0, truncated: false };
+  }
+
+  const reviewedKeys = new Set(
+    registries.flatMap(registry => (registry.itemSummaries ?? [])
+      .map(item => `${registry.name}:${normalizeSearchTerm(item.slug)}`)),
+  );
+  const indexed = searchRegistryCatalog(catalogIndex, search, selectedComponentValues, limit, reviewedKeys);
+  const registryByName = new Map(registries.map(registry => [registry.name, registry]));
+  const indexedCandidates = indexed.matches.flatMap(match => {
+    const registry = registryByName.get(match.namespace);
+    if (!registry) return [];
+    return [buildItemCandidate(registry, compactCatalogItemToSummary(registry, match.item), normalizeSearchTerm(search))];
+  });
+
+  return {
+    candidates: [...candidates, ...indexedCandidates].sort(compareCandidates),
+    indexedMatchCount: indexed.totalMatches,
+    indexedMaterializedCount: indexedCandidates.length,
+    truncated: indexed.truncated,
+  };
 }
 
 function atlasOf(registry: Registry): NonNullable<Registry['atlas']> {

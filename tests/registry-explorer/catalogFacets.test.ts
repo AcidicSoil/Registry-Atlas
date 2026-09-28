@@ -91,6 +91,24 @@ describe('catalog facets', () => {
     expect(result).toHaveLength(2);
   });
 
+  it('supports open-vocabulary item slugs as component facets', () => {
+    const registry = registryFixture('@delta', ['misc-utility'], []);
+    const candidate = candidateFixture(registry, 'neon-command-palette', 'Neon Command Palette');
+
+    const groups = buildCatalogFacetGroups([registry], [candidate]);
+    const option = groups.find(group => group.dimension === 'component')
+      ?.options.find(item => item.value === 'neon-command-palette');
+
+    expect(option).toEqual(expect.objectContaining({
+      label: 'Neon Command Palette',
+      count: 1,
+    }));
+    expect(applyCatalogFacetsToCandidates(
+      [candidate],
+      [facet('component', 'neon-command-palette')],
+    )).toEqual([candidate]);
+  });
+
   it('does not expose or match raw type, preview, or catalog status metadata', () => {
     const { candidates } = fixtures();
 

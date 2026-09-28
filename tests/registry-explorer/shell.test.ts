@@ -305,6 +305,12 @@ function setup(search: string) {
   const searchInput = input();
   initRegistryExplorer({
     registries: [registryFixture()],
+    catalogIndex: {
+      meta: { registry_count: 1, item_count: 1 },
+      registries: {
+        '@delta': [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui' }],
+      },
+    },
     mirrorMeta: {
       source_url: 'https://atlas.example/source',
       synced_at: '2026-08-25T00:00:00.000Z',

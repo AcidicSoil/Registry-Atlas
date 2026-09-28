@@ -2,11 +2,13 @@ import type {
   ComponentTag,
   InstallQueueEntry,
   Registry,
+  RegistryCatalogIndex,
 } from '../core/registry.schema';
 import type { MirrorValidationIssue } from '../core/registryMirror';
 import type { RegistryMirrorMeta } from '../data/loadRegistries';
 import {
   searchComponentCandidates,
+  searchComponentCandidatesWithIndex,
   buildDiscoveryOverview,
 } from '../core/discovery';
 import {
@@ -26,7 +28,7 @@ import {
   serializeRegistryExplorerUrlState,
 } from '../core/urlState';
 import { buildRegistryProfile } from '../core/registryProfile';
-import { resolveRegistryItemDetailFromSummary } from '../core/registryItemDetail';
+import { resolveRegistryItemDetailFromCatalogIndex } from '../core/registryItemDetail';
 import {
   addToInstallQueue,
   buildInstallQueueBatchState,
@@ -46,6 +48,7 @@ import { escapeHtml, renderExternalLink } from './renderSafety';
 
 export interface ShellOptions {
   registries: readonly Registry[];
+  catalogIndex: RegistryCatalogIndex;
   mirrorMeta: RegistryMirrorMeta;
   mirrorWarnings: readonly MirrorValidationIssue[];
   roots: {
@@ -87,7 +90,7 @@ function isView(value: string | null): value is AppState['currentView'] {
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
-  const { registries, roots } = options;
+  const { registries, catalogIndex, roots } = options;
   const parsed = hydrateStateFromUrl(registries);
   let state: AppState = {
     ...parsed,
@@ -190,8 +193,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
         renderItemDetailView(
           roots.contentHeader,
           roots.contentBody,
-          resolveRegistryItemDetailFromSummary(
+          resolveRegistryItemDetailFromCatalogIndex(
             registries,
+            catalogIndex,
             state.selectedProfileRegistryName,
             state.selectedItemSlug,
           ),
@@ -241,11 +245,21 @@ export function initRegistryExplorer(options: ShellOptions): void {
         roots.aside.innerHTML =
           '<div class="aside-section-title">Registry profile</div>';
       } else if (state.currentView === 'discover') {
-        const candidates = searchComponentCandidates(
+        const selectedComponentValues = state.selectedFacets
+          .filter(facet => facet.dimension === 'component')
+          .map(facet => facet.value);
+        const indexedSearch = searchComponentCandidatesWithIndex(
           registries,
+          catalogIndex,
           state.searchTerm,
+          selectedComponentValues,
         );
-        const groups = buildCatalogFacetGroups(registries, candidates);
+        const candidates = indexedSearch.candidates;
+        const discoverFacetSearch = searchTermsFor('discover');
+        const groups = buildCatalogFacetGroups(registries, candidates, {
+          catalogIndex,
+          componentSearchTerm: discoverFacetSearch.component,
+        });
         renderDiscoveryAside(
           roots.aside,
           buildDiscoveryOverview(registries),
@@ -266,7 +280,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
             queuedTokens: queued,
             activePeekId: state.activePeekId,
             page: state.discoveryPage,
-            facetSearchTerms: searchTermsFor('discover'),
+            facetSearchTerms: discoverFacetSearch,
+            indexedSearch,
           },
         );
       } else if (state.currentView === 'registries') {
@@ -418,10 +433,23 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const add = target.closest('[data-facet-add-dimension]');
     const remove = target.closest('[data-facet-remove-dimension]');
     if (add) {
+      const selectedComponentValues = state.selectedFacets
+        .filter(facet => facet.dimension === 'component')
+        .map(facet => facet.value);
+      const indexedSearch = searchComponentCandidatesWithIndex(
+        registries,
+        catalogIndex,
+        state.searchTerm,
+        selectedComponentValues,
+      );
       const next = createSelectedCatalogFacet(
         buildCatalogFacetGroups(
           registries,
-          searchComponentCandidates(registries, state.searchTerm),
+          indexedSearch.candidates,
+          {
+            catalogIndex,
+            componentSearchTerm: searchTermsFor('discover').component,
+          },
         ),
         add.getAttribute('data-facet-add-dimension'),
         add.getAttribute('data-facet-add-value'),

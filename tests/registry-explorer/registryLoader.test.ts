@@ -6,16 +6,21 @@ describe('loadRegistries', () => {
     const calls: string[] = [];
     const fetchImpl = async (input: RequestInfo | URL) => {
       calls.push(String(input));
-      return jsonResponse(createMirror());
+      return jsonResponse(String(input).endsWith('registry-catalog-items.json')
+        ? createCatalogIndex()
+        : createMirror());
     };
 
     await loadRegistries(fetchImpl);
 
-    expect(calls).toEqual(['/data/registries.json']);
+    expect(calls).toEqual([
+      '/data/registries.json',
+      '/data/registry-catalog-items.json',
+    ]);
   });
 
   it('converts normalized mirror records into display registries', async () => {
-    const data = await loadRegistries(async () => jsonResponse(createMirror()));
+    const data = await loadRegistries(fetchFixture());
 
     expect(data.registries).toEqual([
       expect.objectContaining({
@@ -67,7 +72,7 @@ describe('loadRegistries', () => {
   });
 
   it('preserves mirror metadata and validation warnings separately', async () => {
-    const data = await loadRegistries(async () => jsonResponse(createMirror({
+    const data = await loadRegistries(fetchFixture(createMirror({
       homepage: 'http://example.com',
     })));
 
@@ -77,7 +82,7 @@ describe('loadRegistries', () => {
   });
 
   it('handles empty Atlas enrichment arrays without throwing', async () => {
-    const data = await loadRegistries(async () => jsonResponse(createMirror({
+    const data = await loadRegistries(fetchFixture(createMirror({
       primaryFocus: [],
       componentTags: [],
     })));
@@ -95,9 +100,18 @@ describe('loadRegistries', () => {
   });
 
   it('throws when runtime mirror validation fails', async () => {
-    await expect(loadRegistries(async () => jsonResponse(createMirror({
+    await expect(loadRegistries(fetchFixture(createMirror({
       name: 'example',
     })))).rejects.toThrow('Registry mirror validation failed');
+  });
+
+  it('throws when the compact catalog index is malformed', async () => {
+    await expect(loadRegistries(fetchFixture(createMirror(), {
+      meta: { item_count: 1 },
+      registries: {
+        '@example': [{ name: '', type: 'registry:ui' }],
+      },
+    }))).rejects.toThrow('Registry catalog index validation failed');
   });
 });
 
@@ -108,6 +122,28 @@ function jsonResponse(data: unknown): Response {
     statusText: 'OK',
     json: async () => data,
   } as Response;
+}
+
+function fetchFixture(mirror: unknown = createMirror(), catalog: unknown = createCatalogIndex()) {
+  return async (input: RequestInfo | URL) => jsonResponse(
+    String(input).endsWith('registry-catalog-items.json') ? catalog : mirror,
+  );
+}
+
+function createCatalogIndex() {
+  return {
+    meta: {
+      source_url: 'https://ui.shadcn.com/r/registries.json',
+      synced_at: '2026-09-28T00:00:00.000Z',
+      registry_count: 1,
+      item_count: 1,
+    },
+    registries: {
+      '@example': [
+        { name: 'command-palette-pro', title: 'Command Palette Pro', type: 'registry:ui', categories: ['navigation'] },
+      ],
+    },
+  };
 }
 
 function createMirror(options: {

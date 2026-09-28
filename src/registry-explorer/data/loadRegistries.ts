@@ -5,8 +5,10 @@ import type {
   ItemCatalogStatus,
   PrimaryFocus,
   Registry,
+  RegistryCatalogIndex,
   RegistryItemSummary,
 } from '../core/registry.schema';
+import { parseRegistryCatalogIndex } from '../core/registryCatalogIndex';
 import {
   type MirrorValidationIssue,
   validateRegistryMirror,
@@ -24,6 +26,7 @@ export interface RegistryMirrorMeta {
 
 export interface LoadedRegistryData {
   registries: Registry[];
+  catalogIndex: RegistryCatalogIndex;
   meta: RegistryMirrorMeta;
   warnings: MirrorValidationIssue[];
 }
@@ -100,14 +103,23 @@ interface RegistryMirrorData {
 type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
-  const url = `${import.meta.env.BASE_URL}data/registries.json`;
-  const response = await fetchImpl(url);
+  const mirrorUrl = `${import.meta.env.BASE_URL}data/registries.json`;
+  const catalogUrl = `${import.meta.env.BASE_URL}data/registry-catalog-items.json`;
+  const [response, catalogResponse] = await Promise.all([
+    fetchImpl(mirrorUrl),
+    fetchImpl(catalogUrl),
+  ]);
 
   if (!response.ok) {
     throw new Error(`Registry mirror fetch failed: ${response.status} ${response.statusText}`);
   }
+  if (!catalogResponse.ok) {
+    throw new Error(`Registry catalog index fetch failed: ${catalogResponse.status} ${catalogResponse.statusText}`);
+  }
 
   const mirrorData = await response.json() as unknown;
+  const catalogData = await catalogResponse.json() as unknown;
+  const catalogIndex = parseRegistryCatalogIndex(catalogData);
   const validation = validateRegistryMirror(mirrorData);
 
   if (validation.errors.length > 0) {
@@ -119,6 +131,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
 
   return {
     meta: typedMirror.meta,
+    catalogIndex,
     warnings: validation.warnings,
     registries: typedMirror.registries.map(record => ({
       name: record.official.name,

@@ -1,9 +1,11 @@
 import { getInstallActionState } from './installActions.ts';
+import { compactCatalogItemToSummary, findRegistryCatalogItem } from './registryCatalogIndex.ts';
 import { resolveRegistryItemRoute, type ResolvedItemRoute } from './itemRoutes.ts';
 import type {
   InstallActionState,
   CoverageConfidence,
   Registry,
+  RegistryCatalogIndex,
   RegistryItemSummary,
   RegistryItemSummaryFile,
 } from './registry.schema.ts';
@@ -129,6 +131,41 @@ export function resolveRegistryItemDetailFromSummary(
     detail: mergeDetailJson(base, normalized.item, sourceJson),
     message: null,
   };
+}
+
+export function resolveRegistryItemDetailFromCatalogIndex(
+  registries: readonly Registry[],
+  catalogIndex: RegistryCatalogIndex,
+  namespace: string | null | undefined,
+  itemSlug: string | null | undefined,
+  sourceJson?: unknown,
+): RegistryItemDetailResult {
+  const registryName = namespace?.trim() ?? '';
+  const slug = itemSlug?.trim() ?? '';
+  const registry = registries.find(item => item.name === registryName);
+  if (!registry) return notFound('Registry not found.', 'missing-registry');
+
+  if (registry.itemSummaries?.some(item => item.slug === slug)) {
+    return resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson);
+  }
+
+  const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
+  if (!compactItem) return notFound('Item not found in registry catalog.', 'missing-item');
+
+  const summary = compactCatalogItemToSummary(registry, compactItem);
+  const base = buildBaseDetail(registry, summary);
+  if (base.route.status !== 'available') {
+    return { status: 'route-unavailable', detail: base, message: 'Item route unavailable.', reason: base.route.status };
+  }
+  if (sourceJson === undefined) {
+    return { status: 'summary-only', detail: base, message: 'Full item JSON was not loaded; showing catalog summary details.' };
+  }
+
+  const normalized = normalizeRegistryItemDetailJson(sourceJson);
+  if (!normalized.valid) {
+    return { status: 'invalid-schema', detail: base, message: 'Registry item data did not match the expected safe shape.', reason: normalized.reason };
+  }
+  return { status: 'loaded', detail: mergeDetailJson(base, normalized.item, sourceJson), message: null };
 }
 
 export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary): RegistryItemDetail {

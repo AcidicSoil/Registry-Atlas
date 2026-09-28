@@ -159,6 +159,26 @@ describe('renderDiscoveryContent', () => {
   });
 
 
+  it('discloses when indexed search results were truncated', () => {
+    const body = root();
+
+    renderDiscoveryContent(root(), body, [candidateFixture()], {
+      searchTerm: 'button',
+      facetGroups: [],
+      selectedFacets: [],
+      sort: 'relevance',
+      queuedTokens: new Set(),
+      activePeekId: null,
+      indexedSearch: {
+        indexedMatchCount: 1250,
+        indexedMaterializedCount: 1000,
+        truncated: true,
+      },
+    });
+
+    expect(body.innerHTML).toContain('Showing the first 1,000 indexed matches of 1,250');
+  });
+
   it('pages long result sets instead of rendering an endless card wall', () => {
     const body = root();
     const candidates = Array.from({ length: 25 }, (_, index) => candidateFixture({ itemName: `Component ${index + 1}`, itemSlug: `component-${index + 1}` }));

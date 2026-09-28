@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildDiscoveryOverview,
   searchComponentCandidates,
+  searchComponentCandidatesWithIndex,
 } from '../../src/registry-explorer/core/discovery';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
 
@@ -134,7 +135,87 @@ describe('component discovery', () => {
       taxonomyCategoryLabels: ['Data Display & Documents'],
     }));
   });
+
+  it('finds open-vocabulary catalog items outside the reviewed summary set', () => {
+    const result = searchComponentCandidatesWithIndex(
+      [verifiedRegistry()],
+      catalogIndex([
+        { name: 'neon-command-palette', title: 'Neon Command Palette', type: 'registry:ui', categories: ['navigation'] },
+      ]),
+      'neon command',
+    );
+
+    expect(result.candidates[0]).toEqual(expect.objectContaining({
+      id: '@verified:neon-command-palette',
+      itemSlug: 'neon-command-palette',
+      itemSource: 'registry-catalog-index',
+      route: 'https://verified.example/r/neon-command-palette.json',
+      installAction: expect.objectContaining({
+        status: 'enabled',
+        token: '@verified/neon-command-palette',
+      }),
+    }));
+    expect(result.indexedMatchCount).toBe(1);
+    expect(result.truncated).toBe(false);
+  });
+
+  it('keeps reviewed item summaries authoritative over compact indexed duplicates', () => {
+    const result = searchComponentCandidatesWithIndex(
+      [verifiedRegistry()],
+      catalogIndex([{ name: 'thread', title: 'Indexed Thread', type: 'registry:ui' }]),
+      'thread',
+    );
+
+    expect(result.candidates.filter(candidate => candidate.id === '@verified:thread')).toHaveLength(1);
+    expect(result.candidates[0]).toEqual(expect.objectContaining({
+      itemSource: 'known-catalog',
+      matchedLabel: 'Thread',
+    }));
+  });
+
+  it('does not materialize compact index items for an empty default search', () => {
+    const registry = verifiedRegistry();
+    const result = searchComponentCandidatesWithIndex(
+      [registry],
+      catalogIndex([{ name: 'indexed-only', type: 'registry:ui' }]),
+      '',
+    );
+
+    expect(result.candidates).toEqual(searchComponentCandidates([registry], ''));
+    expect(result.indexedMatchCount).toBe(0);
+    expect(result.truncated).toBe(false);
+  });
+
+  it('caps broad indexed searches and reports truncation truthfully', () => {
+    const items = Array.from({ length: 1002 }, (_, index) => ({
+      name: `indexed-result-${index}`,
+      type: 'registry:ui',
+    }));
+    const result = searchComponentCandidatesWithIndex(
+      [verifiedRegistry()],
+      catalogIndex(items),
+      'indexed result',
+    );
+
+    expect(result.indexedMatchCount).toBe(1002);
+    expect(result.indexedMaterializedCount).toBe(1000);
+    expect(result.truncated).toBe(true);
+  });
 });
+
+function catalogIndex(items: Array<{ name: string; type: string; title?: string; categories?: string[] }>) {
+  return {
+    meta: {
+      source_url: 'https://ui.shadcn.com/r/registries.json',
+      synced_at: '2026-09-28T00:00:00.000Z',
+      registry_count: 1,
+      item_count: items.length,
+    },
+    registries: {
+      '@verified': items,
+    },
+  };
+}
 
 function verifiedRegistry(): Registry {
   return {

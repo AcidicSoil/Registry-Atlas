@@ -165,7 +165,29 @@ export interface RegistryItemSummary {
   warnings?: readonly string[];
 }
 
+export interface RegistryCatalogItem {
+  name: string;
+  type: string;
+  title?: string;
+  categories?: readonly string[];
+}
+
+export interface RegistryCatalogIndexMeta {
+  source_url?: string;
+  source?: string;
+  synced_at?: string;
+  generated_at?: string;
+  registry_count: number;
+  item_count: number;
+}
+
+export interface RegistryCatalogIndex {
+  meta: RegistryCatalogIndexMeta;
+  registries: Readonly<Record<string, readonly RegistryCatalogItem[]>>;
+}
+
 export interface Registry {
+
   name: string;
   url: string;
   description: string;

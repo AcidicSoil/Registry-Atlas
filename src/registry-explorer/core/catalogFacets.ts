@@ -8,10 +8,11 @@ import {
   taxonomyTagsForValues,
 } from './componentTaxonomy.ts';
 import { buildRegistryBrowseEntries } from './registryBrowse.ts';
+import { searchRegistryCatalogComponentOptions } from './registryCatalogIndex.ts';
 import { COMPONENT_TAG_VALUES } from './registry.schema.ts';
 import type { RegistryBrowseEntry } from './registryBrowse.ts';
 import type { CatalogCategory } from './catalogTaxonomy.ts';
-import type { ComponentCandidate, ComponentTag, Registry, RegistryProfileItemRow } from './registry.schema.ts';
+import type { ComponentCandidate, ComponentTag, Registry, RegistryCatalogIndex, RegistryProfileItemRow } from './registry.schema.ts';
 
 export type CatalogFacetDimension = 'category' | 'component' | 'registry';
 
@@ -45,13 +46,14 @@ const COMPONENT_TAG_SET = new Set<string>(COMPONENT_TAG_VALUES);
 export function buildCatalogFacetGroups(
   registries: readonly Registry[],
   candidates: readonly ComponentCandidate[],
+  options: { catalogIndex?: RegistryCatalogIndex; componentSearchTerm?: string } = {},
 ): CatalogFacetGroup[] {
   const counts = new Map<CatalogFacetDimension, Map<string, number>>();
 
   if (candidates.length > 0) {
     candidates.forEach(candidate => {
       catalogCategoriesForCandidate(candidate).forEach(category => addValue(counts, 'category', category));
-      candidateComponentTags(candidate).forEach(tag => addValue(counts, 'component', tag));
+      candidateComponentValues(candidate).forEach(value => addValue(counts, 'component', value));
       addValue(counts, 'registry', candidate.registry.name);
     });
   } else {
@@ -62,11 +64,33 @@ export function buildCatalogFacetGroups(
     });
   }
 
-  return (Object.keys(GROUP_LABELS) as CatalogFacetDimension[]).map(dimension => ({
+  const groups = (Object.keys(GROUP_LABELS) as CatalogFacetDimension[]).map(dimension => ({
     dimension,
     label: GROUP_LABELS[dimension],
     options: toOptions(dimension, counts.get(dimension)),
   }));
+
+  const componentSearchTerm = options.componentSearchTerm?.trim() ?? '';
+  if (componentSearchTerm && options.catalogIndex) {
+    const componentGroup = groups.find(group => group.dimension === 'component');
+    if (componentGroup) {
+      const merged = new Map(componentGroup.options.map(option => [normalizeFacetValue(option.value), option]));
+      searchRegistryCatalogComponentOptions(options.catalogIndex, componentSearchTerm).forEach(option => {
+        const key = normalizeFacetValue(option.value);
+        const existing = merged.get(key);
+        merged.set(key, existing ?? {
+          dimension: 'component',
+          value: option.value,
+          label: option.label,
+          count: option.count,
+        });
+      });
+      componentGroup.options = [...merged.values()]
+        .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
+    }
+  }
+
+  return groups;
 }
 
 export function buildRegistryFacetGroups(
@@ -146,6 +170,7 @@ export function applyCatalogFacetsToProfileRows(rows: readonly RegistryProfileIt
     facets.some(facet => {
       if (dimension === 'registry') return true;
       if (dimension === 'category') return row.taxonomyCategoryLabels?.some(label => CATALOG_CATEGORY_LABELS[facet.value as CatalogCategory] === label) ?? false;
+      if (row.slug && normalizeFacetValue(row.slug) === normalizeFacetValue(facet.value)) return true;
       return [...(row.taxonomyTagLabels ?? []), ...(row.taxonomyCategoryLabels ?? [])].some(label => normalizeFacetValue(label) === normalizeFacetValue(facet.label));
     }),
   ));
@@ -196,12 +221,14 @@ function candidateMatchesCatalogFacet(
     return catalogCategoriesForCandidate(candidate).includes(value as CatalogCategory);
   }
   if (dimension === 'registry') return candidate.registry.name === value;
-  return candidateComponentTags(candidate).includes(value as ComponentTag);
+  const normalized = normalizeFacetValue(value);
+  return candidateComponentValues(candidate)
+    .some(component => normalizeFacetValue(component) === normalized);
 }
 
-function candidateComponentTags(candidate: ComponentCandidate): ComponentTag[] {
+function candidateComponentValues(candidate: ComponentCandidate): string[] {
   const item = candidate.registry.itemSummaries?.find(summary => summary.slug === candidate.itemSlug);
-  const values = [
+  const evidenceValues = [
     ...(item?.componentTagsExisting ?? []),
     ...(item?.componentTagsProposed ?? []),
     ...(candidate.componentTags ?? []),
@@ -209,7 +236,7 @@ function candidateComponentTags(candidate: ComponentCandidate): ComponentTag[] {
   ];
   const tags = new Set<ComponentTag>();
 
-  values.forEach(value => {
+  evidenceValues.forEach(value => {
     if (COMPONENT_TAG_SET.has(value)) tags.add(value as ComponentTag);
     taxonomyTagsForValues([value]).forEach(tag => tags.add(tag));
   });
@@ -218,5 +245,9 @@ function candidateComponentTags(candidate: ComponentCandidate): ComponentTag[] {
     candidate.registry.component_tags.forEach(tag => tags.add(tag));
   }
 
-  return [...tags];
+  const values = new Set<string>(tags);
+  if (candidate.itemSlug && (candidate.itemSource === 'registry-catalog-index' || tags.size === 0)) {
+    values.add(candidate.itemSlug);
+  }
+  return [...values];
 }
