@@ -53,7 +53,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.078Z"
+    "synced_at": "2026-09-28T23:21:43.665Z"
   },
   "@1st-pouf": {
     "namespace": "@1st-pouf",
@@ -94,7 +94,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.145Z"
+    "synced_at": "2026-09-28T23:21:43.785Z"
   },
   "@23rd": {
     "namespace": "@23rd",
@@ -104,7 +104,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.113Z"
+    "synced_at": "2026-09-28T23:21:43.770Z"
   },
   "@7ovr": {
     "namespace": "@7ovr",
@@ -144,7 +144,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.274Z"
+    "synced_at": "2026-09-28T23:21:44.668Z"
   },
   "@8bitcn": {
     "namespace": "@8bitcn",
@@ -196,7 +196,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.155Z"
+    "synced_at": "2026-09-28T23:21:43.966Z"
   },
   "@8starlabs-ui": {
     "namespace": "@8starlabs-ui",
@@ -213,7 +213,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.657Z"
+    "synced_at": "2026-09-28T23:21:44.186Z"
   },
   "@abui": {
     "namespace": "@abui",
@@ -233,7 +233,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.587Z"
+    "synced_at": "2026-09-28T23:21:44.638Z"
   },
   "@aceternity": {
     "namespace": "@aceternity",
@@ -264,7 +264,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.242Z"
+    "synced_at": "2026-09-28T23:21:44.149Z"
   },
   "@aevr": {
     "namespace": "@aevr",
@@ -275,7 +275,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.239Z"
+    "synced_at": "2026-09-28T23:21:44.198Z"
   },
   "@afterglow": {
     "namespace": "@afterglow",
@@ -324,7 +324,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.630Z"
+    "synced_at": "2026-09-28T23:22:01.096Z"
   },
   "@agentblog": {
     "namespace": "@agentblog",
@@ -334,7 +334,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.732Z"
+    "synced_at": "2026-09-28T23:22:01.286Z"
   },
   "@agentcn": {
     "namespace": "@agentcn",
@@ -345,7 +345,7 @@
       "chatbot"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.602Z"
+    "synced_at": "2026-09-28T23:21:45.611Z"
   },
   "@agents-ui": {
     "namespace": "@agents-ui",
@@ -356,7 +356,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.193Z"
+    "synced_at": "2026-09-28T23:21:44.686Z"
   },
   "@agentui": {
     "namespace": "@agentui",
@@ -370,7 +370,7 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.315Z"
+    "synced_at": "2026-09-28T23:21:45.092Z"
   },
   "@ai-elements": {
     "namespace": "@ai-elements",
@@ -386,7 +386,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.665Z"
+    "synced_at": "2026-09-28T23:21:45.027Z"
   },
   "@ai2": {
     "namespace": "@ai2",
@@ -442,7 +442,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.466Z"
+    "synced_at": "2026-09-28T23:22:01.216Z"
   },
   "@aicanvas": {
     "namespace": "@aicanvas",
@@ -482,7 +482,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.303Z"
+    "synced_at": "2026-09-28T23:21:45.273Z"
   },
   "@akoder": {
     "namespace": "@akoder",
@@ -495,7 +495,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.732Z"
+    "synced_at": "2026-09-28T23:21:45.055Z"
   },
   "@algolia": {
     "namespace": "@algolia",
@@ -505,7 +505,7 @@
       "dropdown"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.496Z"
+    "synced_at": "2026-09-28T23:21:44.701Z"
   },
   "@amap": {
     "namespace": "@amap",
@@ -513,7 +513,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.512Z"
+    "synced_at": "2026-09-28T23:21:44.688Z"
   },
   "@amarjay-ui": {
     "namespace": "@amarjay-ui",
@@ -536,7 +536,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.538Z"
+    "synced_at": "2026-09-28T23:21:44.591Z"
   },
   "@amicro": {
     "namespace": "@amicro",
@@ -556,7 +556,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.445Z"
+    "synced_at": "2026-09-28T23:21:44.642Z"
   },
   "@amplo": {
     "namespace": "@amplo",
@@ -566,7 +566,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.622Z"
+    "synced_at": "2026-09-28T23:21:44.850Z"
   },
   "@animate-ui": {
     "namespace": "@animate-ui",
@@ -605,7 +605,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.555Z"
+    "synced_at": "2026-09-28T23:21:44.886Z"
   },
   "@animbits": {
     "namespace": "@animbits",
@@ -625,7 +625,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.886Z"
+    "synced_at": "2026-09-28T23:21:45.522Z"
   },
   "@approvals-ui": {
     "namespace": "@approvals-ui",
@@ -633,7 +633,7 @@
     "item_count": 6,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.588Z"
+    "synced_at": "2026-09-28T23:21:45.021Z"
   },
   "@arc": {
     "namespace": "@arc",
@@ -643,7 +643,7 @@
       "carousel"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.004Z"
+    "synced_at": "2026-09-28T23:21:45.874Z"
   },
   "@ark-cn": {
     "namespace": "@ark-cn",
@@ -693,7 +693,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.531Z"
+    "synced_at": "2026-09-28T23:21:45.065Z"
   },
   "@asanshay": {
     "namespace": "@asanshay",
@@ -711,7 +711,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.021Z"
+    "synced_at": "2026-09-28T23:21:45.369Z"
   },
   "@assistant-ui": {
     "namespace": "@assistant-ui",
@@ -741,7 +741,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.843Z"
+    "synced_at": "2026-09-28T23:21:45.298Z"
   },
   "@atelier": {
     "namespace": "@atelier",
@@ -749,7 +749,7 @@
     "item_count": 51,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.452Z"
+    "synced_at": "2026-09-28T23:22:01.912Z"
   },
   "@atomloader": {
     "namespace": "@atomloader",
@@ -757,7 +757,7 @@
     "item_count": 591,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:41.282Z"
+    "synced_at": "2026-09-28T23:22:01.445Z"
   },
   "@atroui": {
     "namespace": "@atroui",
@@ -782,7 +782,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.599Z"
+    "synced_at": "2026-09-28T23:22:01.042Z"
   },
   "@auth0": {
     "namespace": "@auth0",
@@ -792,7 +792,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.725Z"
+    "synced_at": "2026-09-28T23:21:45.295Z"
   },
   "@avertra-ui": {
     "namespace": "@avertra-ui",
@@ -823,7 +823,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.862Z"
+    "synced_at": "2026-09-28T23:21:45.328Z"
   },
   "@awwwardedui": {
     "namespace": "@awwwardedui",
@@ -831,7 +831,7 @@
     "item_count": 5,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.864Z"
+    "synced_at": "2026-09-28T23:21:45.327Z"
   },
   "@axicharts": {
     "namespace": "@axicharts",
@@ -841,7 +841,7 @@
       "chart"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.664Z"
+    "synced_at": "2026-09-28T23:21:45.287Z"
   },
   "@baraile-loader": {
     "namespace": "@baraile-loader",
@@ -849,7 +849,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.859Z"
+    "synced_at": "2026-09-28T23:21:45.409Z"
   },
   "@basecn": {
     "namespace": "@basecn",
@@ -897,7 +897,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.975Z"
+    "synced_at": "2026-09-28T23:21:46.398Z"
   },
   "@baselayer": {
     "namespace": "@baselayer",
@@ -926,7 +926,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.917Z"
+    "synced_at": "2026-09-28T23:21:45.702Z"
   },
   "@benday": {
     "namespace": "@benday",
@@ -934,7 +934,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.944Z"
+    "synced_at": "2026-09-28T23:21:45.684Z"
   },
   "@beste-ui": {
     "namespace": "@beste-ui",
@@ -994,7 +994,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.030Z"
+    "synced_at": "2026-09-28T23:21:45.786Z"
   },
   "@better-upload": {
     "namespace": "@better-upload",
@@ -1006,7 +1006,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.901Z"
+    "synced_at": "2026-09-28T23:21:45.747Z"
   },
   "@beui": {
     "namespace": "@beui",
@@ -1050,7 +1050,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.890Z"
+    "synced_at": "2026-09-28T23:21:47.141Z"
   },
   "@billingsdk": {
     "namespace": "@billingsdk",
@@ -1063,7 +1063,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.983Z"
+    "synced_at": "2026-09-28T23:21:45.936Z"
   },
   "@bits-ui": {
     "namespace": "@bits-ui",
@@ -1073,7 +1073,7 @@
       "carousel"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.932Z"
+    "synced_at": "2026-09-28T23:21:45.940Z"
   },
   "@bjork-ui": {
     "namespace": "@bjork-ui",
@@ -1112,7 +1112,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.162Z"
+    "synced_at": "2026-09-28T23:21:46.043Z"
   },
   "@bklit": {
     "namespace": "@bklit",
@@ -1124,7 +1124,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.407Z"
+    "synced_at": "2026-09-28T23:21:46.487Z"
   },
   "@blobatar": {
     "namespace": "@blobatar",
@@ -1135,7 +1135,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.220Z"
+    "synced_at": "2026-09-28T23:21:45.995Z"
   },
   "@blockforge": {
     "namespace": "@blockforge",
@@ -1153,7 +1153,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.221Z"
+    "synced_at": "2026-09-28T23:21:47.015Z"
   },
   "@blocks-so": {
     "namespace": "@blocks-so",
@@ -1182,7 +1182,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.178Z"
+    "synced_at": "2026-09-28T23:21:46.050Z"
   },
   "@blockus": {
     "namespace": "@blockus",
@@ -1272,7 +1272,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.375Z"
+    "synced_at": "2026-09-28T23:21:46.307Z"
   },
   "@boldkit": {
     "namespace": "@boldkit",
@@ -1328,7 +1328,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.341Z"
+    "synced_at": "2026-09-28T23:21:46.223Z"
   },
   "@brainless": {
     "namespace": "@brainless",
@@ -1336,7 +1336,7 @@
     "item_count": 40,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.403Z"
+    "synced_at": "2026-09-28T23:21:46.284Z"
   },
   "@brut-ui": {
     "namespace": "@brut-ui",
@@ -1387,7 +1387,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.350Z"
+    "synced_at": "2026-09-28T23:21:46.369Z"
   },
   "@bundui": {
     "namespace": "@bundui",
@@ -1435,7 +1435,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.044Z"
+    "synced_at": "2026-09-28T23:21:46.542Z"
   },
   "@buzzform": {
     "namespace": "@buzzform",
@@ -1454,7 +1454,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.432Z"
+    "synced_at": "2026-09-28T23:21:46.462Z"
   },
   "@canvas-ui": {
     "namespace": "@canvas-ui",
@@ -1462,7 +1462,7 @@
     "item_count": 420,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.289Z"
+    "synced_at": "2026-09-28T23:21:46.376Z"
   },
   "@cardcn": {
     "namespace": "@cardcn",
@@ -1472,7 +1472,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.270Z"
+    "synced_at": "2026-09-28T23:21:46.418Z"
   },
   "@catalogs": {
     "namespace": "@catalogs",
@@ -1560,7 +1560,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.611Z"
+    "synced_at": "2026-09-28T23:21:46.690Z"
   },
   "@chamaac": {
     "namespace": "@chamaac",
@@ -1575,7 +1575,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.831Z"
+    "synced_at": "2026-09-28T23:21:47.122Z"
   },
   "@channel3": {
     "namespace": "@channel3",
@@ -1588,7 +1588,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.331Z"
+    "synced_at": "2026-09-28T23:21:46.499Z"
   },
   "@clerk": {
     "namespace": "@clerk",
@@ -1598,7 +1598,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.555Z"
+    "synced_at": "2026-09-28T23:21:46.853Z"
   },
   "@cligentic": {
     "namespace": "@cligentic",
@@ -1608,7 +1608,7 @@
       "audit"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.537Z"
+    "synced_at": "2026-09-28T23:21:46.855Z"
   },
   "@cnippet": {
     "namespace": "@cnippet",
@@ -1658,7 +1658,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.754Z"
+    "synced_at": "2026-09-28T23:21:46.879Z"
   },
   "@cognicatch": {
     "namespace": "@cognicatch",
@@ -1668,7 +1668,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.590Z"
+    "synced_at": "2026-09-28T23:21:47.024Z"
   },
   "@commercn": {
     "namespace": "@commercn",
@@ -1679,7 +1679,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.981Z"
+    "synced_at": "2026-09-28T23:21:47.439Z"
   },
   "@componentry": {
     "namespace": "@componentry",
@@ -1693,7 +1693,7 @@
       "slider"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.147Z"
+    "synced_at": "2026-09-28T23:21:47.447Z"
   },
   "@contentbit": {
     "namespace": "@contentbit",
@@ -1704,7 +1704,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.852Z"
+    "synced_at": "2026-09-28T23:21:47.254Z"
   },
   "@corecn": {
     "namespace": "@corecn",
@@ -1754,7 +1754,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.744Z"
+    "synced_at": "2026-09-28T23:21:47.040Z"
   },
   "@corr": {
     "namespace": "@corr",
@@ -1790,7 +1790,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.283Z"
+    "synced_at": "2026-09-28T23:21:56.332Z"
   },
   "@corsair-ui": {
     "namespace": "@corsair-ui",
@@ -1845,7 +1845,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.616Z"
+    "synced_at": "2026-09-28T23:22:01.107Z"
   },
   "@coss": {
     "namespace": "@coss",
@@ -1892,7 +1892,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.948Z"
+    "synced_at": "2026-09-28T23:21:47.159Z"
   },
   "@crafterui": {
     "namespace": "@crafterui",
@@ -1904,7 +1904,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.055Z"
+    "synced_at": "2026-09-28T23:21:47.273Z"
   },
   "@craftui": {
     "namespace": "@craftui",
@@ -1932,7 +1932,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.931Z"
+    "synced_at": "2026-09-28T23:21:47.240Z"
   },
   "@cubby-ui": {
     "namespace": "@cubby-ui",
@@ -1984,7 +1984,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.985Z"
+    "synced_at": "2026-09-28T23:21:47.303Z"
   },
   "@d2": {
     "namespace": "@d2",
@@ -2004,7 +2004,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.056Z"
+    "synced_at": "2026-09-28T23:21:47.358Z"
   },
   "@darx": {
     "namespace": "@darx",
@@ -2031,7 +2031,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.092Z"
+    "synced_at": "2026-09-28T23:21:47.443Z"
   },
   "@data-table-filters": {
     "namespace": "@data-table-filters",
@@ -2045,7 +2045,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.180Z"
+    "synced_at": "2026-09-28T23:21:47.810Z"
   },
   "@delego": {
     "namespace": "@delego",
@@ -2060,7 +2060,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:31.970Z"
+    "synced_at": "2026-09-28T23:21:47.300Z"
   },
   "@delta": {
     "namespace": "@delta",
@@ -2075,7 +2075,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.505Z"
+    "synced_at": "2026-09-28T23:21:47.911Z"
   },
   "@designali": {
     "namespace": "@designali",
@@ -2125,7 +2125,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:30.469Z"
+    "synced_at": "2026-09-28T23:21:44.629Z"
   },
   "@dgit": {
     "namespace": "@dgit",
@@ -2137,7 +2137,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.226Z"
+    "synced_at": "2026-09-28T23:21:47.293Z"
   },
   "@diarmuradi": {
     "namespace": "@diarmuradi",
@@ -2189,7 +2189,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.461Z"
+    "synced_at": "2026-09-28T23:21:47.770Z"
   },
   "@diklein": {
     "namespace": "@diklein",
@@ -2200,7 +2200,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.213Z"
+    "synced_at": "2026-09-28T23:21:47.405Z"
   },
   "@dominik-ui": {
     "namespace": "@dominik-ui",
@@ -2211,7 +2211,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.409Z"
+    "synced_at": "2026-09-28T23:21:48.212Z"
   },
   "@dotmatrix": {
     "namespace": "@dotmatrix",
@@ -2219,7 +2219,7 @@
     "item_count": 91,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.246Z"
+    "synced_at": "2026-09-28T23:21:47.400Z"
   },
   "@dsikeres1": {
     "namespace": "@dsikeres1",
@@ -2227,7 +2227,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.178Z"
+    "synced_at": "2026-09-28T23:21:47.406Z"
   },
   "@easeui": {
     "namespace": "@easeui",
@@ -2265,7 +2265,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.391Z"
+    "synced_at": "2026-09-28T23:21:48.309Z"
   },
   "@ecomcn": {
     "namespace": "@ecomcn",
@@ -2279,7 +2279,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.293Z"
+    "synced_at": "2026-09-28T23:21:47.488Z"
   },
   "@efferd": {
     "namespace": "@efferd",
@@ -2293,7 +2293,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.342Z"
+    "synced_at": "2026-09-28T23:21:47.678Z"
   },
   "@einui": {
     "namespace": "@einui",
@@ -2330,7 +2330,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.638Z"
+    "synced_at": "2026-09-28T23:21:48.034Z"
   },
   "@eldoraui": {
     "namespace": "@eldoraui",
@@ -2345,7 +2345,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.876Z"
+    "synced_at": "2026-09-28T23:21:48.287Z"
   },
   "@elements": {
     "namespace": "@elements",
@@ -2371,7 +2371,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.644Z"
+    "synced_at": "2026-09-28T23:21:48.016Z"
   },
   "@elsecase": {
     "namespace": "@elsecase",
@@ -2379,7 +2379,7 @@
     "item_count": 3,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.700Z"
+    "synced_at": "2026-09-28T23:21:47.981Z"
   },
   "@emailcn": {
     "namespace": "@emailcn",
@@ -2399,7 +2399,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.061Z"
+    "synced_at": "2026-09-28T23:21:48.498Z"
   },
   "@emstein-ui": {
     "namespace": "@emstein-ui",
@@ -2409,7 +2409,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.912Z"
+    "synced_at": "2026-09-28T23:21:48.150Z"
   },
   "@ericts": {
     "namespace": "@ericts",
@@ -2434,7 +2434,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.671Z"
+    "synced_at": "2026-09-28T23:21:48.274Z"
   },
   "@evex": {
     "namespace": "@evex",
@@ -2442,7 +2442,7 @@
     "item_count": 23,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.998Z"
+    "synced_at": "2026-09-28T23:21:48.868Z"
   },
   "@evilcharts": {
     "namespace": "@evilcharts",
@@ -2454,7 +2454,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.738Z"
+    "synced_at": "2026-09-28T23:21:48.297Z"
   },
   "@exabase": {
     "namespace": "@exabase",
@@ -2505,7 +2505,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.084Z"
+    "synced_at": "2026-09-28T23:21:48.656Z"
   },
   "@extend": {
     "namespace": "@extend",
@@ -2541,7 +2541,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.086Z"
+    "synced_at": "2026-09-28T23:21:48.716Z"
   },
   "@fab-ui": {
     "namespace": "@fab-ui",
@@ -2579,21 +2579,30 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.116Z"
+    "synced_at": "2026-09-28T23:21:48.820Z"
   },
   "@fibo": {
     "namespace": "@fibo",
     "catalog_url": "https://fibo.toribryan.com/r/registry.json",
-    "item_count": 11,
+    "item_count": 21,
     "component_tags": [
+      "avatar",
       "badge",
       "button",
       "checkbox",
       "input",
-      "textarea"
+      "progress",
+      "radio",
+      "radio-group",
+      "select",
+      "skeleton",
+      "slider",
+      "switch",
+      "textarea",
+      "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.022Z"
+    "synced_at": "2026-09-28T23:21:48.457Z"
   },
   "@flagcn": {
     "namespace": "@flagcn",
@@ -2606,7 +2615,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.980Z"
+    "synced_at": "2026-09-28T23:21:48.560Z"
   },
   "@flightcn": {
     "namespace": "@flightcn",
@@ -2614,7 +2623,7 @@
     "item_count": 13,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.027Z"
+    "synced_at": "2026-09-28T23:21:48.628Z"
   },
   "@flowkit-ui": {
     "namespace": "@flowkit-ui",
@@ -2624,7 +2633,7 @@
       "combobox"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.207Z"
+    "synced_at": "2026-09-28T23:21:49.694Z"
   },
   "@flowui": {
     "namespace": "@flowui",
@@ -2639,7 +2648,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:32.911Z"
+    "synced_at": "2026-09-28T23:21:48.653Z"
   },
   "@fluent2-react-kit": {
     "namespace": "@fluent2-react-kit",
@@ -2678,7 +2687,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.015Z"
+    "synced_at": "2026-09-28T23:21:48.709Z"
   },
   "@fluid": {
     "namespace": "@fluid",
@@ -2710,7 +2719,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.209Z"
+    "synced_at": "2026-09-28T23:21:48.801Z"
   },
   "@flx": {
     "namespace": "@flx",
@@ -2756,7 +2765,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.306Z"
+    "synced_at": "2026-09-28T23:21:48.845Z"
   },
   "@forgeui": {
     "namespace": "@forgeui",
@@ -2769,7 +2778,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.193Z"
+    "synced_at": "2026-09-28T23:21:48.837Z"
   },
   "@formcn": {
     "namespace": "@formcn",
@@ -2783,7 +2792,7 @@
       "tag-input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.257Z"
+    "synced_at": "2026-09-28T23:21:48.943Z"
   },
   "@formscn": {
     "namespace": "@formscn",
@@ -2804,7 +2813,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.327Z"
+    "synced_at": "2026-09-28T23:21:48.932Z"
   },
   "@framecn": {
     "namespace": "@framecn",
@@ -2821,7 +2830,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.969Z"
+    "synced_at": "2026-09-28T23:21:50.021Z"
   },
   "@gaia": {
     "namespace": "@gaia",
@@ -2839,7 +2848,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.359Z"
+    "synced_at": "2026-09-28T23:21:49.046Z"
   },
   "@gamekitui": {
     "namespace": "@gamekitui",
@@ -2847,7 +2856,7 @@
     "item_count": 12,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.615Z"
+    "synced_at": "2026-09-28T23:21:49.480Z"
   },
   "@gamifykit": {
     "namespace": "@gamifykit",
@@ -2855,7 +2864,7 @@
     "item_count": 3,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.379Z"
+    "synced_at": "2026-09-28T23:21:49.097Z"
   },
   "@gammaui": {
     "namespace": "@gammaui",
@@ -2870,7 +2879,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.414Z"
+    "synced_at": "2026-09-28T23:21:49.111Z"
   },
   "@gc-solid": {
     "namespace": "@gc-solid",
@@ -2920,7 +2929,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.221Z"
+    "synced_at": "2026-09-28T23:21:49.065Z"
   },
   "@glass-ui": {
     "namespace": "@glass-ui",
@@ -2968,7 +2977,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.467Z"
+    "synced_at": "2026-09-28T23:21:49.194Z"
   },
   "@glasscn": {
     "namespace": "@glasscn",
@@ -3004,7 +3013,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.449Z"
+    "synced_at": "2026-09-28T23:21:49.126Z"
   },
   "@gooseui": {
     "namespace": "@gooseui",
@@ -3021,7 +3030,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.650Z"
+    "synced_at": "2026-09-28T23:21:50.027Z"
   },
   "@gpt-vis": {
     "namespace": "@gpt-vis",
@@ -3032,7 +3041,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.380Z"
+    "synced_at": "2026-09-28T23:21:49.262Z"
   },
   "@gridcn": {
     "namespace": "@gridcn",
@@ -3046,7 +3055,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.481Z"
+    "synced_at": "2026-09-28T23:21:50.162Z"
   },
   "@grootstudio": {
     "namespace": "@grootstudio",
@@ -3061,7 +3070,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.799Z"
+    "synced_at": "2026-09-28T23:21:50.051Z"
   },
   "@gymnopedies": {
     "namespace": "@gymnopedies",
@@ -3102,7 +3111,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.624Z"
+    "synced_at": "2026-09-28T23:21:49.463Z"
   },
   "@ha-components": {
     "namespace": "@ha-components",
@@ -3117,7 +3126,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.541Z"
+    "synced_at": "2026-09-28T23:21:49.389Z"
   },
   "@herocn": {
     "namespace": "@herocn",
@@ -3169,7 +3178,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.690Z"
+    "synced_at": "2026-09-28T23:21:49.578Z"
   },
   "@heroicons-animated": {
     "namespace": "@heroicons-animated",
@@ -3189,7 +3198,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.668Z"
+    "synced_at": "2026-09-28T23:21:49.715Z"
   },
   "@hextaui": {
     "namespace": "@hextaui",
@@ -3250,7 +3259,7 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.632Z"
+    "synced_at": "2026-09-28T23:21:50.029Z"
   },
   "@hirael": {
     "namespace": "@hirael",
@@ -3302,7 +3311,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.716Z"
+    "synced_at": "2026-09-28T23:21:49.957Z"
   },
   "@honestui": {
     "namespace": "@honestui",
@@ -3350,7 +3359,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.386Z"
+    "synced_at": "2026-09-28T23:21:50.916Z"
   },
   "@hugeicons-animated": {
     "namespace": "@hugeicons-animated",
@@ -3365,7 +3374,7 @@
       "qr-code"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.764Z"
+    "synced_at": "2026-09-28T23:21:50.085Z"
   },
   "@hugeicons-animated-vue": {
     "namespace": "@hugeicons-animated-vue",
@@ -3403,7 +3412,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.051Z"
+    "synced_at": "2026-09-28T23:21:50.304Z"
   },
   "@iandefined": {
     "namespace": "@iandefined",
@@ -3444,7 +3453,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.775Z"
+    "synced_at": "2026-09-28T23:21:50.142Z"
   },
   "@iconiq": {
     "namespace": "@iconiq",
@@ -3492,7 +3501,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.890Z"
+    "synced_at": "2026-09-28T23:21:50.560Z"
   },
   "@ilinxa": {
     "namespace": "@ilinxa",
@@ -3511,7 +3520,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.937Z"
+    "synced_at": "2026-09-28T23:21:50.636Z"
   },
   "@indiacn": {
     "namespace": "@indiacn",
@@ -3552,7 +3561,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.962Z"
+    "synced_at": "2026-09-28T23:21:50.551Z"
   },
   "@inferencesh": {
     "namespace": "@inferencesh",
@@ -3566,7 +3575,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.384Z"
+    "synced_at": "2026-09-28T23:21:51.374Z"
   },
   "@intentui": {
     "namespace": "@intentui",
@@ -3616,7 +3625,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.969Z"
+    "synced_at": "2026-09-28T23:21:50.778Z"
   },
   "@interior": {
     "namespace": "@interior",
@@ -3649,7 +3658,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.018Z"
+    "synced_at": "2026-09-28T23:21:50.950Z"
   },
   "@jolyui": {
     "namespace": "@jolyui",
@@ -3675,7 +3684,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.828Z"
+    "synced_at": "2026-09-28T23:21:50.767Z"
   },
   "@joyco": {
     "namespace": "@joyco",
@@ -3703,7 +3712,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.392Z"
+    "synced_at": "2026-09-28T23:21:51.573Z"
   },
   "@kanpeki": {
     "namespace": "@kanpeki",
@@ -3752,7 +3761,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.835Z"
+    "synced_at": "2026-09-28T23:21:50.752Z"
   },
   "@kapwa": {
     "namespace": "@kapwa",
@@ -3762,7 +3771,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.826Z"
+    "synced_at": "2026-09-28T23:21:50.765Z"
   },
   "@kaui": {
     "namespace": "@kaui",
@@ -3776,7 +3785,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.890Z"
+    "synced_at": "2026-09-28T23:21:59.603Z"
   },
   "@keyline": {
     "namespace": "@keyline",
@@ -3800,7 +3809,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:33.983Z"
+    "synced_at": "2026-09-28T23:21:50.972Z"
   },
   "@kibo-ui": {
     "namespace": "@kibo-ui",
@@ -3823,7 +3832,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.398Z"
+    "synced_at": "2026-09-28T23:21:51.383Z"
   },
   "@kinetic": {
     "namespace": "@kinetic",
@@ -3831,7 +3840,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.450Z"
+    "synced_at": "2026-09-28T23:21:50.841Z"
   },
   "@knock-codes": {
     "namespace": "@knock-codes",
@@ -3841,7 +3850,7 @@
       "pill"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.801Z"
+    "synced_at": "2026-09-28T23:22:01.270Z"
   },
   "@knot-ui": {
     "namespace": "@knot-ui",
@@ -3855,7 +3864,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.492Z"
+    "synced_at": "2026-09-28T23:22:00.901Z"
   },
   "@kobra": {
     "namespace": "@kobra",
@@ -3910,7 +3919,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.428Z"
+    "synced_at": "2026-09-28T23:21:51.376Z"
   },
   "@kokonutui": {
     "namespace": "@kokonutui",
@@ -3933,7 +3942,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.388Z"
+    "synced_at": "2026-09-28T23:21:50.898Z"
   },
   "@launchui": {
     "namespace": "@launchui",
@@ -3950,7 +3959,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.382Z"
+    "synced_at": "2026-09-28T23:21:51.372Z"
   },
   "@layish": {
     "namespace": "@layish",
@@ -3958,7 +3967,7 @@
     "item_count": 2,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.676Z"
+    "synced_at": "2026-09-28T23:21:51.819Z"
   },
   "@lema-ds": {
     "namespace": "@lema-ds",
@@ -4029,7 +4038,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.520Z"
+    "synced_at": "2026-09-28T23:21:52.257Z"
   },
   "@lens-blocks": {
     "namespace": "@lens-blocks",
@@ -4044,7 +4053,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.525Z"
+    "synced_at": "2026-09-28T23:21:52.339Z"
   },
   "@limeplay": {
     "namespace": "@limeplay",
@@ -4056,7 +4065,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.593Z"
+    "synced_at": "2026-09-28T23:21:51.588Z"
   },
   "@liquefy-ui": {
     "namespace": "@liquefy-ui",
@@ -4087,7 +4096,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.657Z"
+    "synced_at": "2026-09-28T23:21:51.637Z"
   },
   "@livedocs": {
     "namespace": "@livedocs",
@@ -4104,7 +4113,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.097Z"
+    "synced_at": "2026-09-28T23:21:52.009Z"
   },
   "@lmscn": {
     "namespace": "@lmscn",
@@ -4114,7 +4123,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.640Z"
+    "synced_at": "2026-09-28T23:21:51.586Z"
   },
   "@loading-ui": {
     "namespace": "@loading-ui",
@@ -4126,7 +4135,7 @@
       "spinner"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.751Z"
+    "synced_at": "2026-09-28T23:21:51.857Z"
   },
   "@localmode": {
     "namespace": "@localmode",
@@ -4153,7 +4162,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.693Z"
+    "synced_at": "2026-09-28T23:21:52.342Z"
   },
   "@lucide-animated": {
     "namespace": "@lucide-animated",
@@ -4172,7 +4181,7 @@
       "switch"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.704Z"
+    "synced_at": "2026-09-28T23:21:51.692Z"
   },
   "@lumiui": {
     "namespace": "@lumiui",
@@ -4217,7 +4226,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.719Z"
+    "synced_at": "2026-09-28T23:21:51.906Z"
   },
   "@lytenyte": {
     "namespace": "@lytenyte",
@@ -4225,7 +4234,7 @@
     "item_count": 2,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.743Z"
+    "synced_at": "2026-09-28T23:21:52.115Z"
   },
   "@magicui": {
     "namespace": "@magicui",
@@ -4244,7 +4253,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.958Z"
+    "synced_at": "2026-09-28T23:21:52.311Z"
   },
   "@manifest": {
     "namespace": "@manifest",
@@ -4260,7 +4269,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.736Z"
+    "synced_at": "2026-09-28T23:21:51.920Z"
   },
   "@mapcn": {
     "namespace": "@mapcn",
@@ -4270,7 +4279,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.103Z"
+    "synced_at": "2026-09-28T23:21:52.466Z"
   },
   "@materialcn": {
     "namespace": "@materialcn",
@@ -4309,7 +4318,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.724Z"
+    "synced_at": "2026-09-28T23:21:51.991Z"
   },
   "@mediadrop": {
     "namespace": "@mediadrop",
@@ -4321,7 +4330,7 @@
       "file-upload"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.493Z"
+    "synced_at": "2026-09-28T23:22:00.765Z"
   },
   "@mewo": {
     "namespace": "@mewo",
@@ -4333,7 +4342,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.843Z"
+    "synced_at": "2026-09-28T23:21:52.039Z"
   },
   "@microkit": {
     "namespace": "@microkit",
@@ -4346,7 +4355,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.975Z"
+    "synced_at": "2026-09-28T23:21:52.211Z"
   },
   "@mischief": {
     "namespace": "@mischief",
@@ -4382,7 +4391,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.989Z"
+    "synced_at": "2026-09-28T23:21:52.096Z"
   },
   "@mksingh": {
     "namespace": "@mksingh",
@@ -4396,7 +4405,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.191Z"
+    "synced_at": "2026-09-28T23:21:52.407Z"
   },
   "@moduix-react": {
     "namespace": "@moduix-react",
@@ -4448,7 +4457,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.979Z"
+    "synced_at": "2026-09-28T23:21:52.203Z"
   },
   "@morphiq": {
     "namespace": "@morphiq",
@@ -4456,7 +4465,7 @@
     "item_count": 20,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.987Z"
+    "synced_at": "2026-09-28T23:21:52.371Z"
   },
   "@motion-lexicon": {
     "namespace": "@motion-lexicon",
@@ -4496,7 +4505,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.943Z"
+    "synced_at": "2026-09-28T23:21:52.330Z"
   },
   "@motion-menu": {
     "namespace": "@motion-menu",
@@ -4556,7 +4565,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:34.953Z"
+    "synced_at": "2026-09-28T23:21:52.380Z"
   },
   "@motiq": {
     "namespace": "@motiq",
@@ -4577,7 +4586,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.152Z"
+    "synced_at": "2026-09-28T23:21:52.149Z"
   },
   "@motokoui": {
     "namespace": "@motokoui",
@@ -4595,7 +4604,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.357Z"
+    "synced_at": "2026-09-28T23:21:52.303Z"
   },
   "@moumenlab": {
     "namespace": "@moumenlab",
@@ -4610,7 +4619,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.284Z"
+    "synced_at": "2026-09-28T23:21:52.296Z"
   },
   "@mozaika": {
     "namespace": "@mozaika",
@@ -4623,7 +4632,7 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.440Z"
+    "synced_at": "2026-09-28T23:21:52.369Z"
   },
   "@mui-treasury": {
     "namespace": "@mui-treasury",
@@ -4667,7 +4676,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.549Z"
+    "synced_at": "2026-09-28T23:21:52.733Z"
   },
   "@navui": {
     "namespace": "@navui",
@@ -4683,7 +4692,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.382Z"
+    "synced_at": "2026-09-28T23:21:53.073Z"
   },
   "@ncdai": {
     "namespace": "@ncdai",
@@ -4702,7 +4711,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.239Z"
+    "synced_at": "2026-09-28T23:21:52.361Z"
   },
   "@nekode": {
     "namespace": "@nekode",
@@ -4716,7 +4725,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.195Z"
+    "synced_at": "2026-09-28T23:21:52.366Z"
   },
   "@neon-ui": {
     "namespace": "@neon-ui",
@@ -4743,7 +4752,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.286Z"
+    "synced_at": "2026-09-28T23:21:52.495Z"
   },
   "@nexus-labs": {
     "namespace": "@nexus-labs",
@@ -4771,7 +4780,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.716Z"
+    "synced_at": "2026-09-28T23:21:53.153Z"
   },
   "@nexus-ui": {
     "namespace": "@nexus-ui",
@@ -4781,7 +4790,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.519Z"
+    "synced_at": "2026-09-28T23:21:53.952Z"
   },
   "@niko-table": {
     "namespace": "@niko-table",
@@ -4796,7 +4805,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.430Z"
+    "synced_at": "2026-09-28T23:21:52.744Z"
   },
   "@nordaun": {
     "namespace": "@nordaun",
@@ -4854,7 +4863,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.908Z"
+    "synced_at": "2026-09-28T23:21:53.354Z"
   },
   "@ns-ui": {
     "namespace": "@ns-ui",
@@ -4908,7 +4917,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.656Z"
+    "synced_at": "2026-09-28T23:22:02.181Z"
   },
   "@nteract": {
     "namespace": "@nteract",
@@ -4919,7 +4928,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.586Z"
+    "synced_at": "2026-09-28T23:21:52.808Z"
   },
   "@nuqs": {
     "namespace": "@nuqs",
@@ -4927,7 +4936,7 @@
     "item_count": 6,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.615Z"
+    "synced_at": "2026-09-28T23:21:52.981Z"
   },
   "@nusaiba": {
     "namespace": "@nusaiba",
@@ -4937,7 +4946,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.621Z"
+    "synced_at": "2026-09-28T23:21:53.810Z"
   },
   "@odysseyui": {
     "namespace": "@odysseyui",
@@ -4976,15 +4985,18 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.686Z"
+    "synced_at": "2026-09-28T23:21:53.081Z"
   },
   "@ogimagecn": {
     "namespace": "@ogimagecn",
     "catalog_url": "https://ogimagecn.vercel.app/r/registry.json",
-    "item_count": 22,
-    "component_tags": [],
+    "item_count": 26,
+    "component_tags": [
+      "avatar",
+      "badge"
+    ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.018Z"
+    "synced_at": "2026-09-28T23:21:53.596Z"
   },
   "@oidc": {
     "namespace": "@oidc",
@@ -4992,7 +5004,7 @@
     "item_count": 78,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.702Z"
+    "synced_at": "2026-09-28T23:21:53.212Z"
   },
   "@onchain-ui": {
     "namespace": "@onchain-ui",
@@ -5004,7 +5016,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.898Z"
+    "synced_at": "2026-09-28T23:22:01.342Z"
   },
   "@opaline": {
     "namespace": "@opaline",
@@ -5034,7 +5046,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.736Z"
+    "synced_at": "2026-09-28T23:21:53.258Z"
   },
   "@openmirai": {
     "namespace": "@openmirai",
@@ -5042,7 +5054,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.961Z"
+    "synced_at": "2026-09-28T23:21:53.394Z"
   },
   "@openstatus": {
     "namespace": "@openstatus",
@@ -5053,7 +5065,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.156Z"
+    "synced_at": "2026-09-28T23:21:53.911Z"
   },
   "@optics": {
     "namespace": "@optics",
@@ -5104,7 +5116,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.957Z"
+    "synced_at": "2026-09-28T23:21:54.914Z"
   },
   "@oui": {
     "namespace": "@oui",
@@ -5138,7 +5150,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.843Z"
+    "synced_at": "2026-09-28T23:21:53.421Z"
   },
   "@pacekit": {
     "namespace": "@pacekit",
@@ -5154,7 +5166,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.082Z"
+    "synced_at": "2026-09-28T23:21:53.715Z"
   },
   "@paceui": {
     "namespace": "@paceui",
@@ -5170,7 +5182,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.914Z"
+    "synced_at": "2026-09-28T23:21:53.490Z"
   },
   "@paceui-gsap": {
     "namespace": "@paceui-gsap",
@@ -5182,7 +5194,7 @@
       "modal"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:35.980Z"
+    "synced_at": "2026-09-28T23:21:53.600Z"
   },
   "@paddle": {
     "namespace": "@paddle",
@@ -5195,7 +5207,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.069Z"
+    "synced_at": "2026-09-28T23:21:53.769Z"
   },
   "@paletteui": {
     "namespace": "@paletteui",
@@ -5203,7 +5215,7 @@
     "item_count": 65,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.160Z"
+    "synced_at": "2026-09-28T23:21:53.900Z"
   },
   "@pane": {
     "namespace": "@pane",
@@ -5221,7 +5233,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.285Z"
+    "synced_at": "2026-09-28T23:21:53.816Z"
   },
   "@pantoken": {
     "namespace": "@pantoken",
@@ -5255,7 +5267,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.034Z"
+    "synced_at": "2026-09-28T23:21:53.749Z"
   },
   "@pastecn": {
     "namespace": "@pastecn",
@@ -5263,7 +5275,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.212Z"
+    "synced_at": "2026-09-28T23:21:54.341Z"
   },
   "@paykit-sdk": {
     "namespace": "@paykit-sdk",
@@ -5271,7 +5283,7 @@
     "item_count": 21,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.266Z"
+    "synced_at": "2026-09-28T23:21:54.227Z"
   },
   "@payload-components": {
     "namespace": "@payload-components",
@@ -5286,7 +5298,7 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.360Z"
+    "synced_at": "2026-09-28T23:21:54.118Z"
   },
   "@persianlabsui": {
     "namespace": "@persianlabsui",
@@ -5340,7 +5352,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.650Z"
+    "synced_at": "2026-09-28T23:21:54.731Z"
   },
   "@pipecat": {
     "namespace": "@pipecat",
@@ -5352,7 +5364,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.292Z"
+    "synced_at": "2026-09-28T23:21:54.285Z"
   },
   "@pixelact-ui": {
     "namespace": "@pixelact-ui",
@@ -5385,7 +5397,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.430Z"
+    "synced_at": "2026-09-28T23:21:54.726Z"
   },
   "@plate": {
     "namespace": "@plate",
@@ -5407,7 +5419,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.403Z"
+    "synced_at": "2026-09-28T23:21:54.362Z"
   },
   "@plotcn": {
     "namespace": "@plotcn",
@@ -5419,7 +5431,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.288Z"
+    "synced_at": "2026-09-28T23:21:54.221Z"
   },
   "@preskok": {
     "namespace": "@preskok",
@@ -5468,7 +5480,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.557Z"
+    "synced_at": "2026-09-28T23:21:54.716Z"
   },
   "@prompt-kit": {
     "namespace": "@prompt-kit",
@@ -5482,7 +5494,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.394Z"
+    "synced_at": "2026-09-28T23:21:54.311Z"
   },
   "@prosekit": {
     "namespace": "@prosekit",
@@ -5497,7 +5509,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.728Z"
+    "synced_at": "2026-09-28T23:21:55.714Z"
   },
   "@pulkitxm": {
     "namespace": "@pulkitxm",
@@ -5550,7 +5562,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.605Z"
+    "synced_at": "2026-09-28T23:21:54.594Z"
   },
   "@quill": {
     "namespace": "@quill",
@@ -5572,7 +5584,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.644Z"
+    "synced_at": "2026-09-28T23:21:54.876Z"
   },
   "@quiz-ui": {
     "namespace": "@quiz-ui",
@@ -5585,7 +5597,7 @@
       "slider"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.659Z"
+    "synced_at": "2026-09-28T23:22:01.132Z"
   },
   "@ramonclaudio-coderabbit": {
     "namespace": "@ramonclaudio-coderabbit",
@@ -5595,7 +5607,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.641Z"
+    "synced_at": "2026-09-28T23:21:54.641Z"
   },
   "@ratneshc": {
     "namespace": "@ratneshc",
@@ -5606,7 +5618,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.619Z"
+    "synced_at": "2026-09-28T23:21:54.831Z"
   },
   "@rawkitui": {
     "namespace": "@rawkitui",
@@ -5649,7 +5661,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.600Z"
+    "synced_at": "2026-09-28T23:21:54.686Z"
   },
   "@react-aria": {
     "namespace": "@react-aria",
@@ -5677,7 +5689,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.630Z"
+    "synced_at": "2026-09-28T23:21:55.004Z"
   },
   "@react-bits": {
     "namespace": "@react-bits",
@@ -5688,7 +5700,7 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.678Z"
+    "synced_at": "2026-09-28T23:21:54.795Z"
   },
   "@react-slot": {
     "namespace": "@react-slot",
@@ -5696,7 +5708,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.718Z"
+    "synced_at": "2026-09-28T23:21:54.837Z"
   },
   "@reactframe": {
     "namespace": "@reactframe",
@@ -5760,7 +5772,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.762Z"
+    "synced_at": "2026-09-28T23:21:55.593Z"
   },
   "@registrydirectory": {
     "namespace": "@registrydirectory",
@@ -5863,7 +5875,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.007Z"
+    "synced_at": "2026-09-28T23:21:55.135Z"
   },
   "@remocn": {
     "namespace": "@remocn",
@@ -5903,7 +5915,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.635Z"
+    "synced_at": "2026-09-28T23:21:57.070Z"
   },
   "@rescript-shadcn": {
     "namespace": "@rescript-shadcn",
@@ -5947,7 +5959,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.978Z"
+    "synced_at": "2026-09-28T23:21:55.026Z"
   },
   "@retab": {
     "namespace": "@retab",
@@ -5974,7 +5986,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.899Z"
+    "synced_at": "2026-09-28T23:21:55.605Z"
   },
   "@retroui": {
     "namespace": "@retroui",
@@ -6023,7 +6035,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.500Z"
+    "synced_at": "2026-09-28T23:21:55.703Z"
   },
   "@roiui": {
     "namespace": "@roiui",
@@ -6068,7 +6080,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.693Z"
+    "synced_at": "2026-09-28T23:21:55.908Z"
   },
   "@saastro": {
     "namespace": "@saastro",
@@ -6106,7 +6118,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.803Z"
+    "synced_at": "2026-09-28T23:21:59.470Z"
   },
   "@sans": {
     "namespace": "@sans",
@@ -6116,7 +6128,7 @@
       "spinner"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.973Z"
+    "synced_at": "2026-09-28T23:21:55.760Z"
   },
   "@satoriui": {
     "namespace": "@satoriui",
@@ -6128,7 +6140,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.753Z"
+    "synced_at": "2026-09-28T23:21:56.108Z"
   },
   "@sc1m": {
     "namespace": "@sc1m",
@@ -6166,7 +6178,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:36.955Z"
+    "synced_at": "2026-09-28T23:21:55.674Z"
   },
   "@scrimui": {
     "namespace": "@scrimui",
@@ -6186,7 +6198,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.758Z"
+    "synced_at": "2026-09-28T23:21:55.869Z"
   },
   "@scrollxui": {
     "namespace": "@scrollxui",
@@ -6231,7 +6243,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.833Z"
+    "synced_at": "2026-09-28T23:21:56.616Z"
   },
   "@seamui": {
     "namespace": "@seamui",
@@ -6283,7 +6295,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.504Z"
+    "synced_at": "2026-09-28T23:21:55.835Z"
   },
   "@sekei": {
     "namespace": "@sekei",
@@ -6291,7 +6303,7 @@
     "item_count": 11,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.596Z"
+    "synced_at": "2026-09-28T23:21:55.942Z"
   },
   "@sevenui": {
     "namespace": "@sevenui",
@@ -6344,7 +6356,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.703Z"
+    "synced_at": "2026-09-28T23:21:55.917Z"
   },
   "@sf-fleet-hud": {
     "namespace": "@sf-fleet-hud",
@@ -6385,7 +6397,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.580Z"
+    "synced_at": "2026-09-28T23:21:55.938Z"
   },
   "@shadcn-dashboard": {
     "namespace": "@shadcn-dashboard",
@@ -6443,7 +6455,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.391Z"
+    "synced_at": "2026-09-28T23:22:00.614Z"
   },
   "@shadcn-editor": {
     "namespace": "@shadcn-editor",
@@ -6451,7 +6463,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.539Z"
+    "synced_at": "2026-09-28T23:21:55.977Z"
   },
   "@shadcn-map": {
     "namespace": "@shadcn-map",
@@ -6461,7 +6473,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.829Z"
+    "synced_at": "2026-09-28T23:21:56.412Z"
   },
   "@shadcn-space": {
     "namespace": "@shadcn-space",
@@ -6530,7 +6542,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.083Z"
+    "synced_at": "2026-09-28T23:21:56.451Z"
   },
   "@shadcn-ui-blocks": {
     "namespace": "@shadcn-ui-blocks",
@@ -6594,7 +6606,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.866Z"
+    "synced_at": "2026-09-28T23:21:56.160Z"
   },
   "@shadcnblocks": {
     "namespace": "@shadcnblocks",
@@ -6676,7 +6688,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.357Z"
+    "synced_at": "2026-09-28T23:21:56.879Z"
   },
   "@shadcncraft": {
     "namespace": "@shadcncraft",
@@ -6710,7 +6722,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.798Z"
+    "synced_at": "2026-09-28T23:21:56.425Z"
   },
   "@shadcndesign": {
     "namespace": "@shadcndesign",
@@ -6723,7 +6735,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.765Z"
+    "synced_at": "2026-09-28T23:21:56.137Z"
   },
   "@shadcnhooks": {
     "namespace": "@shadcnhooks",
@@ -6733,7 +6745,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:37.769Z"
+    "synced_at": "2026-09-28T23:21:56.415Z"
   },
   "@shadcnloaders": {
     "namespace": "@shadcnloaders",
@@ -6741,7 +6753,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.210Z"
+    "synced_at": "2026-09-28T23:22:00.336Z"
   },
   "@shadcnmaps": {
     "namespace": "@shadcnmaps",
@@ -6749,7 +6761,7 @@
     "item_count": 361,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.567Z"
+    "synced_at": "2026-09-28T23:21:57.178Z"
   },
   "@shadcnstore": {
     "namespace": "@shadcnstore",
@@ -6771,7 +6783,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.131Z"
+    "synced_at": "2026-09-28T23:21:56.666Z"
   },
   "@shadcnui-blocks": {
     "namespace": "@shadcnui-blocks",
@@ -6823,7 +6835,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.582Z"
+    "synced_at": "2026-09-28T23:21:57.148Z"
   },
   "@shadcnuikit": {
     "namespace": "@shadcnuikit",
@@ -6875,7 +6887,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.177Z"
+    "synced_at": "2026-09-28T23:21:56.684Z"
   },
   "@shivraj-roy": {
     "namespace": "@shivraj-roy",
@@ -6885,7 +6897,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.224Z"
+    "synced_at": "2026-09-28T23:21:56.681Z"
   },
   "@shoogle": {
     "namespace": "@shoogle",
@@ -6893,7 +6905,7 @@
     "item_count": 0,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.846Z"
+    "synced_at": "2026-09-28T23:21:57.714Z"
   },
   "@simple-ai": {
     "namespace": "@simple-ai",
@@ -6903,7 +6915,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.262Z"
+    "synced_at": "2026-09-28T23:21:56.681Z"
   },
   "@skecher-ui": {
     "namespace": "@skecher-ui",
@@ -6918,7 +6930,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.319Z"
+    "synced_at": "2026-09-28T23:21:57.067Z"
   },
   "@skiper-ui": {
     "namespace": "@skiper-ui",
@@ -6926,7 +6938,7 @@
     "item_count": 37,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.293Z"
+    "synced_at": "2026-09-28T23:21:56.804Z"
   },
   "@slide-cn": {
     "namespace": "@slide-cn",
@@ -6940,7 +6952,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.759Z"
+    "synced_at": "2026-09-28T23:22:06.342Z"
   },
   "@slidecn": {
     "namespace": "@slidecn",
@@ -6952,7 +6964,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.563Z"
+    "synced_at": "2026-09-28T23:21:57.521Z"
   },
   "@smoothui": {
     "namespace": "@smoothui",
@@ -7000,7 +7012,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.736Z"
+    "synced_at": "2026-09-28T23:22:06.445Z"
   },
   "@snap-cn": {
     "namespace": "@snap-cn",
@@ -7023,7 +7035,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.723Z"
+    "synced_at": "2026-09-28T23:21:57.322Z"
   },
   "@solaceui": {
     "namespace": "@solaceui",
@@ -7035,7 +7047,7 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.651Z"
+    "synced_at": "2026-09-28T23:21:57.276Z"
   },
   "@sona-ui": {
     "namespace": "@sona-ui",
@@ -7059,7 +7071,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:47.928Z"
+    "synced_at": "2026-09-28T23:21:57.415Z"
   },
   "@soralabs": {
     "namespace": "@soralabs",
@@ -7082,7 +7094,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.764Z"
+    "synced_at": "2026-09-28T23:21:57.285Z"
   },
   "@soundcn": {
     "namespace": "@soundcn",
@@ -7098,7 +7110,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.913Z"
+    "synced_at": "2026-09-28T23:21:57.530Z"
   },
   "@spaceui": {
     "namespace": "@spaceui",
@@ -7156,7 +7168,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.959Z"
+    "synced_at": "2026-09-28T23:21:57.861Z"
   },
   "@spark-ui": {
     "namespace": "@spark-ui",
@@ -7169,7 +7181,7 @@
       "receipt"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.920Z"
+    "synced_at": "2026-09-28T23:21:57.814Z"
   },
   "@spectrumui": {
     "namespace": "@spectrumui",
@@ -7214,7 +7226,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.807Z"
+    "synced_at": "2026-09-28T23:22:06.383Z"
   },
   "@spell": {
     "namespace": "@spell",
@@ -7234,7 +7246,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:47.841Z"
+    "synced_at": "2026-09-28T23:21:57.226Z"
   },
   "@ssych": {
     "namespace": "@ssych",
@@ -7254,7 +7266,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.912Z"
+    "synced_at": "2026-09-28T23:21:57.282Z"
   },
   "@starck": {
     "namespace": "@starck",
@@ -7268,7 +7280,7 @@
       "navbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.922Z"
+    "synced_at": "2026-09-28T23:21:57.369Z"
   },
   "@starseam": {
     "namespace": "@starseam",
@@ -7316,7 +7328,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.941Z"
+    "synced_at": "2026-09-28T23:21:57.233Z"
   },
   "@stepper": {
     "namespace": "@stepper",
@@ -7326,7 +7338,7 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.016Z"
+    "synced_at": "2026-09-28T23:21:57.402Z"
   },
   "@styleui": {
     "namespace": "@styleui",
@@ -7334,7 +7346,7 @@
     "item_count": 4,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:47.935Z"
+    "synced_at": "2026-09-28T23:21:57.576Z"
   },
   "@stylexui": {
     "namespace": "@stylexui",
@@ -7356,7 +7368,7 @@
       "dialog"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:47.855Z"
+    "synced_at": "2026-09-28T23:21:57.580Z"
   },
   "@supabase": {
     "namespace": "@supabase",
@@ -7368,7 +7380,7 @@
       "file-upload"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.874Z"
+    "synced_at": "2026-09-28T23:21:57.850Z"
   },
   "@svelte-bits": {
     "namespace": "@svelte-bits",
@@ -7389,7 +7401,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.037Z"
+    "synced_at": "2026-09-28T23:21:59.839Z"
   },
   "@svgl": {
     "namespace": "@svgl",
@@ -7399,7 +7411,7 @@
       "calendar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:47.897Z"
+    "synced_at": "2026-09-28T23:21:58.212Z"
   },
   "@systaliko-ui": {
     "namespace": "@systaliko-ui",
@@ -7427,7 +7439,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.764Z"
+    "synced_at": "2026-09-28T23:21:57.648Z"
   },
   "@tailark": {
     "namespace": "@tailark",
@@ -7457,7 +7469,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.779Z"
+    "synced_at": "2026-09-28T23:21:58.417Z"
   },
   "@tailgrids": {
     "namespace": "@tailgrids",
@@ -7504,7 +7516,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.774Z"
+    "synced_at": "2026-09-28T23:21:57.789Z"
   },
   "@tailwind-admin": {
     "namespace": "@tailwind-admin",
@@ -7523,7 +7535,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.822Z"
+    "synced_at": "2026-09-28T23:21:57.822Z"
   },
   "@taki": {
     "namespace": "@taki",
@@ -7573,7 +7585,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.964Z"
+    "synced_at": "2026-09-28T23:21:57.794Z"
   },
   "@termcn": {
     "namespace": "@termcn",
@@ -7615,7 +7627,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.287Z"
+    "synced_at": "2026-09-28T23:21:58.968Z"
   },
   "@terrae": {
     "namespace": "@terrae",
@@ -7623,7 +7635,7 @@
     "item_count": 40,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.139Z"
+    "synced_at": "2026-09-28T23:21:58.031Z"
   },
   "@tetra-ui": {
     "namespace": "@tetra-ui",
@@ -7655,7 +7667,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.488Z"
+    "synced_at": "2026-09-28T23:21:59.150Z"
   },
   "@text-ui": {
     "namespace": "@text-ui",
@@ -7663,7 +7675,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.880Z"
+    "synced_at": "2026-09-28T23:21:58.156Z"
   },
   "@thegridcn": {
     "namespace": "@thegridcn",
@@ -7719,7 +7731,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.199Z"
+    "synced_at": "2026-09-28T23:21:58.083Z"
   },
   "@threecn": {
     "namespace": "@threecn",
@@ -7729,7 +7741,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.233Z"
+    "synced_at": "2026-09-28T23:21:59.945Z"
   },
   "@tile-ui": {
     "namespace": "@tile-ui",
@@ -7780,7 +7792,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.229Z"
+    "synced_at": "2026-09-28T23:22:00.120Z"
   },
   "@toc-cn": {
     "namespace": "@toc-cn",
@@ -7790,7 +7802,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.152Z"
+    "synced_at": "2026-09-28T23:21:58.139Z"
   },
   "@toggles": {
     "namespace": "@toggles",
@@ -7802,7 +7814,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.159Z"
+    "synced_at": "2026-09-28T23:21:58.029Z"
   },
   "@tokenui": {
     "namespace": "@tokenui",
@@ -7814,7 +7826,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.267Z"
+    "synced_at": "2026-09-28T23:21:58.325Z"
   },
   "@tool-ui": {
     "namespace": "@tool-ui",
@@ -7830,7 +7842,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.122Z"
+    "synced_at": "2026-09-28T23:21:58.550Z"
   },
   "@tour": {
     "namespace": "@tour",
@@ -7838,7 +7850,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.304Z"
+    "synced_at": "2026-09-28T23:21:58.241Z"
   },
   "@trophy-ui": {
     "namespace": "@trophy-ui",
@@ -7852,7 +7864,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.265Z"
+    "synced_at": "2026-09-28T23:21:58.548Z"
   },
   "@tuiparts": {
     "namespace": "@tuiparts",
@@ -7876,7 +7888,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:38.957Z"
+    "synced_at": "2026-09-28T23:21:57.815Z"
   },
   "@turbopills-ui": {
     "namespace": "@turbopills-ui",
@@ -7889,7 +7901,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.367Z"
+    "synced_at": "2026-09-28T23:21:58.438Z"
   },
   "@tween-ui": {
     "namespace": "@tween-ui",
@@ -7908,7 +7920,7 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.207Z"
+    "synced_at": "2026-09-28T23:21:58.363Z"
   },
   "@tweenly": {
     "namespace": "@tweenly",
@@ -7928,7 +7940,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.261Z"
+    "synced_at": "2026-09-28T23:21:58.579Z"
   },
   "@typedora-ui": {
     "namespace": "@typedora-ui",
@@ -7941,7 +7953,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.376Z"
+    "synced_at": "2026-09-28T23:21:59.019Z"
   },
   "@ui-layouts": {
     "namespace": "@ui-layouts",
@@ -7970,7 +7982,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.527Z"
+    "synced_at": "2026-09-28T23:21:58.902Z"
   },
   "@ui-shrushank": {
     "namespace": "@ui-shrushank",
@@ -7983,7 +7995,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.142Z"
+    "synced_at": "2026-09-28T23:21:58.336Z"
   },
   "@uiable": {
     "namespace": "@uiable",
@@ -8043,7 +8055,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.337Z"
+    "synced_at": "2026-09-28T23:21:59.899Z"
   },
   "@uicapsule": {
     "namespace": "@uicapsule",
@@ -8063,7 +8075,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.652Z"
+    "synced_at": "2026-09-28T23:21:58.812Z"
   },
   "@uiception": {
     "namespace": "@uiception",
@@ -8077,7 +8089,7 @@
       "navbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.424Z"
+    "synced_at": "2026-09-28T23:21:58.637Z"
   },
   "@uitripled": {
     "namespace": "@uitripled",
@@ -8125,7 +8137,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.434Z"
+    "synced_at": "2026-09-28T23:21:58.592Z"
   },
   "@uniquel": {
     "namespace": "@uniquel",
@@ -8153,7 +8165,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.491Z"
+    "synced_at": "2026-09-28T23:21:58.700Z"
   },
   "@unlumen-ui": {
     "namespace": "@unlumen-ui",
@@ -8184,7 +8196,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.476Z"
+    "synced_at": "2026-09-28T23:21:58.725Z"
   },
   "@uselayouts": {
     "namespace": "@uselayouts",
@@ -8208,7 +8220,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.671Z"
+    "synced_at": "2026-09-28T23:21:58.841Z"
   },
   "@usva": {
     "namespace": "@usva",
@@ -8244,7 +8256,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.417Z"
+    "synced_at": "2026-09-28T23:22:01.439Z"
   },
   "@utilcn": {
     "namespace": "@utilcn",
@@ -8252,7 +8264,7 @@
     "item_count": 17,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.952Z"
+    "synced_at": "2026-09-28T23:21:59.370Z"
   },
   "@uui": {
     "namespace": "@uui",
@@ -8263,7 +8275,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.586Z"
+    "synced_at": "2026-09-28T23:21:58.986Z"
   },
   "@vectorstudio-ir": {
     "namespace": "@vectorstudio-ir",
@@ -8313,7 +8325,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.306Z"
+    "synced_at": "2026-09-28T23:21:58.738Z"
   },
   "@velobits": {
     "namespace": "@velobits",
@@ -8351,7 +8363,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.141Z"
+    "synced_at": "2026-09-28T23:21:59.817Z"
   },
   "@vernostudio": {
     "namespace": "@vernostudio",
@@ -8363,7 +8375,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.592Z"
+    "synced_at": "2026-09-28T23:22:00.979Z"
   },
   "@vllnt-ui": {
     "namespace": "@vllnt-ui",
@@ -8430,7 +8442,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.863Z"
+    "synced_at": "2026-09-28T23:22:00.824Z"
   },
   "@voraui": {
     "namespace": "@voraui",
@@ -8440,7 +8452,7 @@
       "chart"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.170Z"
+    "synced_at": "2026-09-28T23:22:00.260Z"
   },
   "@vue-bits": {
     "namespace": "@vue-bits",
@@ -8451,7 +8463,7 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.025Z"
+    "synced_at": "2026-09-28T23:21:59.726Z"
   },
   "@wa-ui": {
     "namespace": "@wa-ui",
@@ -8466,7 +8478,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.442Z"
+    "synced_at": "2026-09-28T23:21:59.877Z"
   },
   "@washiveil": {
     "namespace": "@washiveil",
@@ -8514,7 +8526,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.938Z"
+    "synced_at": "2026-09-28T23:21:59.372Z"
   },
   "@waves-cn": {
     "namespace": "@waves-cn",
@@ -8524,7 +8536,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.665Z"
+    "synced_at": "2026-09-28T23:21:59.147Z"
   },
   "@wds": {
     "namespace": "@wds",
@@ -8537,7 +8549,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.180Z"
+    "synced_at": "2026-09-28T23:21:59.656Z"
   },
   "@wensity": {
     "namespace": "@wensity",
@@ -8587,7 +8599,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.498Z"
+    "synced_at": "2026-09-28T23:21:58.988Z"
   },
   "@whiskeyjack": {
     "namespace": "@whiskeyjack",
@@ -8614,7 +8626,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:40.321Z"
+    "synced_at": "2026-09-28T23:22:00.707Z"
   },
   "@wigggle-ui": {
     "namespace": "@wigggle-ui",
@@ -8641,7 +8653,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.715Z"
+    "synced_at": "2026-09-28T23:21:59.192Z"
   },
   "@wxcn": {
     "namespace": "@wxcn",
@@ -8649,7 +8661,7 @@
     "item_count": 4,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.832Z"
+    "synced_at": "2026-09-28T23:21:59.460Z"
   },
   "@yukihi": {
     "namespace": "@yukihi",
@@ -8696,7 +8708,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.789Z"
+    "synced_at": "2026-09-28T23:21:59.475Z"
   },
   "@zenoadmin": {
     "namespace": "@zenoadmin",
@@ -8704,7 +8716,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.869Z"
+    "synced_at": "2026-09-28T23:21:59.540Z"
   },
   "@zippystarter": {
     "namespace": "@zippystarter",
@@ -8714,6 +8726,6 @@
       "avatar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T17:52:39.999Z"
+    "synced_at": "2026-09-28T23:22:01.249Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-09-28T17:52:50.790Z",
+    "synced_at": "2026-09-28T23:22:08.577Z",
     "upstream_count": 392,
     "registry_count": 392,
     "local_count": 392,
@@ -5691,18 +5691,27 @@
       "atlas": {
         "primary_focus": [],
         "component_tags": [
+          "avatar",
           "badge",
           "button",
           "checkbox",
           "input",
-          "textarea"
+          "progress",
+          "radio",
+          "radio-group",
+          "select",
+          "skeleton",
+          "slider",
+          "switch",
+          "textarea",
+          "toast"
         ],
         "aliases": [],
         "coverage_status": "inferred",
         "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 11,
+        "catalog_item_count": 21,
         "catalog_evidence_url": "https://fibo.toribryan.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
@@ -9901,13 +9910,16 @@
       },
       "atlas": {
         "primary_focus": [],
-        "component_tags": [],
+        "component_tags": [
+          "avatar",
+          "badge"
+        ],
         "aliases": [],
-        "coverage_status": "unverified",
-        "confidence": "unknown",
+        "coverage_status": "inferred",
+        "confidence": "medium",
         "catalog_status": "unavailable",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 22,
+        "catalog_item_count": 26,
         "catalog_evidence_url": "https://ogimagecn.vercel.app/r/registry.json",
         "item_summaries": [],
         "notes": ""

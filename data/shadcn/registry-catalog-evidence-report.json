@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-09-28T17:52:50.790Z",
+  "generated_at": "2026-09-28T23:22:08.577Z",
   "registry_count": 392,
   "fetched_catalog_count": 342,
-  "fetched_item_count": 82302,
-  "discoverable_item_count": 76506,
+  "fetched_item_count": 82316,
+  "discoverable_item_count": 76520,
   "evidence_registry_count": 349,
   "stale_registry_count": 6,
   "failure_count": 50,
