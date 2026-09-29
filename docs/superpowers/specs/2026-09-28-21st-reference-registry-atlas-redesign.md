@@ -340,17 +340,37 @@ Otherwise show a purposeful “Preview unavailable” state and retain the full 
 
 Do not fabricate a preview from inferred type or taxonomy.
 
-### Raw item data
+### Raw item data and static detail bundles
 
-Full registry item JSON is fetched lazily from the resolved upstream item route when the user opens detail or explicitly requests source information.
+A static GitHub Pages client cannot depend on direct browser fetches to arbitrary registry item URLs because upstream CORS policies vary. Live acceptance confirmed a valid upstream item route can still fail in the browser with `net::ERR_FAILED`.
+
+Registry sync therefore generates one compact, same-origin safe detail bundle per successfully fetched registry under `public/data/registry-item-details/`.
+
+Each bundle contains only normalized facts needed by detail UI:
+
+- exact item name;
+- optional title/description;
+- real item type and explicit categories;
+- dependencies;
+- dev dependencies;
+- registry dependencies;
+- file path/type/target metadata.
+
+The bundles must not copy source-code contents or arbitrary unreviewed HTML.
+
+Measured 2026-09-28 sizing for this shape across roughly 76k discoverable items was about 23.1 MiB raw / 3.08 MiB gzip total, with the largest registry bundle about 2.3 MiB raw / 0.32 MiB gzip. Because detail fetches only the selected registry bundle, this is acceptable for the static architecture and avoids both a 23 MiB startup payload and tens of thousands of tiny files.
+
+If a registry refresh fails transiently, preserve its prior detail bundle alongside the stale compact index.
+
+Component detail lazily fetches the selected registry's same-origin detail bundle, then selects the exact item identity. The resolved upstream item URL remains available as provenance/action context. A direct upstream browser fetch may be attempted only as an optional fallback when same-origin detail metadata is unavailable; product correctness must not depend on third-party CORS.
 
 Display safe normalized facts such as:
 
 - dependencies;
+- dev dependencies;
 - registry dependencies;
 - files;
-- CSS variables/metadata supported by the existing safe normalizer;
-- source/raw JSON link.
+- source/provenance and the resolved upstream raw-item URL.
 
 ### Related items
 
@@ -636,7 +656,9 @@ Detail resolution accepts exact namespace + exact item name and merges:
 
 1. compact index identity;
 2. reviewed enrichment;
-3. lazily fetched raw item JSON.
+3. lazily loaded same-origin safe detail metadata from the generated per-registry bundle.
+
+The module keeps upstream raw-item URLs as evidence/actions but does not require cross-origin browser access to render full normalized detail.
 
 ## Testing decisions
 
@@ -676,6 +698,9 @@ Required automated coverage includes:
 - pagination changes visible inventory and retains truthful total count;
 - empty queue does not occupy the permanent sidebar;
 - component detail exposes expected route/install actions;
+- indexed-only detail loads normalized metadata from the generated same-origin registry detail bundle;
+- detail still renders safely when the upstream raw route is not CORS-accessible;
+- stale catalog refresh preserves the previous same-origin detail bundle;
 - compare uses exact-data overlap;
 - no internal `not_run` status leaks into primary UI.
 
