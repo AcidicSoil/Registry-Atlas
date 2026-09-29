@@ -1898,6 +1898,50 @@ aside > .primary-nav .nav-item {
   overflow-wrap: anywhere;
 }
 
+.catalog-filter-bar {
+  display: flex;
+  min-width: 0;
+  align-items: end;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  flex-wrap: wrap;
+}
+
+.catalog-filter-control {
+  display: grid;
+  min-width: 132px;
+  gap: 5px;
+}
+
+.catalog-filter-control > span {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.catalog-filter-control select {
+  max-width: 220px;
+  min-height: 34px;
+  padding: 0 30px 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 12px;
+}
+
+.catalog-filter-control select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.catalog-filter-clear {
+  min-height: 34px;
+}
+
 .catalog-result-meta {
   margin: 0 0 var(--space-3);
   color: var(--muted-foreground);
@@ -2102,6 +2146,18 @@ aside > .primary-nav .nav-item {
 
   .registry-directory-actions {
     min-width: 0;
+  }
+
+  .catalog-filter-bar {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .catalog-filter-control,
+  .catalog-filter-control select,
+  .catalog-filter-clear {
+    width: 100%;
+    max-width: none;
   }
 
   .catalog-component-specimen {

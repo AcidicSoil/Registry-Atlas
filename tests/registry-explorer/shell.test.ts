@@ -97,6 +97,41 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).not.toContain('Copy install');
   });
 
+  it('rehydrates shareable catalog filters, sort, and page state', () => {
+    const harness = setup(
+      '?page=2&sort=type&registry=%40delta&type=registry%3Aui&reviewed=unreviewed',
+      '/Registry-Atlas/components',
+    );
+
+    expect(harness.contentBody.innerHTML).toContain('<option value="@delta" selected>');
+    expect(harness.contentBody.innerHTML).toContain('<option value="registry:ui" selected>');
+    expect(harness.contentBody.innerHTML).toContain('<option value="unreviewed" selected>');
+    expect(harness.contentBody.innerHTML).toContain('<option value="type" selected>');
+    expect(harness.location.search).toContain('page=2');
+    expect(harness.location.search).toContain('sort=type');
+    expect(harness.location.search).toContain('registry=%40delta');
+    expect(harness.location.search).toContain('type=registry%3Aui');
+  });
+
+  it('writes catalog filter changes to the URL and resets paging', () => {
+    const harness = setup('?page=3', '/Registry-Atlas/components');
+    const typeSelect = target({ 'data-catalog-filter': 'type', value: 'registry:block' });
+
+    harness.contentBody.dispatch('change', typeSelect);
+
+    expect(harness.location.pathname).toBe('/Registry-Atlas/components');
+    expect(harness.location.search).toBe('?type=registry%3Ablock');
+    expect(harness.contentBody.innerHTML).toContain('<option value="registry:block" selected>');
+  });
+
+  it('writes component pagination to the shareable URL', () => {
+    const harness = setup('', '/Registry-Atlas/components');
+
+    harness.contentBody.dispatch('click', target({ 'data-discovery-page': '2' }));
+
+    expect(harness.location.search).toBe('?page=2');
+  });
+
   it('retains focus while toggling a Compare option twice', () => {
     const harness = setup('?view=compare');
     const option = target({ 'data-compare-registry': '@delta' });
@@ -318,6 +353,7 @@ function target(attributes: Record<string, string>) {
   const focus = vi.fn();
   return {
     focus,
+    value: attributes.value ?? '',
     classList: {
       contains: (name: string) => (attributes.class ?? '').split(' ').includes(name),
     },
@@ -335,6 +371,7 @@ function target(attributes: Record<string, string>) {
 function targetWithFocus(attributes: Record<string, string>, focus: ReturnType<typeof vi.fn>) {
   return {
     focus,
+    value: attributes.value ?? '',
     classList: { contains: (name: string) => (attributes.class ?? '').split(' ').includes(name) },
     getAttribute: (name: string) => attributes[name] ?? null,
     setAttribute: (name: string, value: string) => { attributes[name] = value; },

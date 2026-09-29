@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { queryCatalogComponents } from "../../src/registry-explorer/core/catalogQuery";
+import {
+  buildCatalogFacetSummary,
+  queryCatalogComponents,
+} from "../../src/registry-explorer/core/catalogQuery";
 import type {
   Registry,
   RegistryCatalogIndex,
@@ -129,6 +132,53 @@ describe("queryCatalogComponents", () => {
       .toEqual(["@alpha:button"]);
   });
 
+  it("filters and sorts using only real item facts plus reviewed enrichment", () => {
+    const reviewed: RegistryItemSummary = {
+      name: "Reviewed Zebra",
+      slug: "zebra",
+      source: "reviewed",
+      provenance: "fixture",
+      catalogStatus: "available",
+      routeEligible: true,
+    };
+    const registries = [registry("@alpha", [reviewed]), registry("@beta")];
+    const catalog = index({
+      "@alpha": [
+        { name: "zebra", type: "registry:ui", categories: ["forms"] },
+        { name: "button", type: "registry:ui", categories: ["controls"] },
+      ],
+      "@beta": [
+        { name: "accordion", type: "registry:block", categories: ["forms"] },
+      ],
+    });
+
+    expect(queryCatalogComponents(registries, catalog, {
+      itemTypes: ["registry:ui"],
+      categories: ["forms"],
+      reviewed: "reviewed",
+      sort: "name",
+      pageSize: 10,
+    }).items.map(item => item.id)).toEqual(["@alpha:zebra"]);
+
+    expect(queryCatalogComponents(registries, catalog, {
+      sort: "name",
+      pageSize: 10,
+    }).items.map(item => item.id)).toEqual([
+      "@beta:accordion",
+      "@alpha:button",
+      "@alpha:zebra",
+    ]);
+
+    expect(queryCatalogComponents(registries, catalog, {
+      sort: "type",
+      pageSize: 10,
+    }).items.map(item => item.type)).toEqual([
+      "registry:block",
+      "registry:ui",
+      "registry:ui",
+    ]);
+  });
+
   it("paginates beyond the old 1,000-result materialization limit", () => {
     const items = Array.from({ length: 1105 }, (_, indexValue) => ({
       name: `item-${String(indexValue).padStart(4, "0")}`,
@@ -145,6 +195,34 @@ describe("queryCatalogComponents", () => {
     expect(result.pageCount).toBe(45);
     expect(result.items[0]?.slug).toBe("item-1000");
     expect(result.items.at(-1)?.slug).toBe("item-1024");
+  });
+
+  it("derives bounded facet counts from real indexed item facts", () => {
+    const registries = [registry("@alpha"), registry("@beta")];
+    const catalog = index({
+      "@alpha": [
+        { name: "button", type: "registry:ui", categories: ["controls"] },
+        { name: "input", type: "registry:ui", categories: ["forms"] },
+      ],
+      "@beta": [
+        { name: "hero", type: "registry:block", categories: ["marketing"] },
+      ],
+    });
+
+    const facets = buildCatalogFacetSummary(registries, catalog);
+    expect(facets.registries).toEqual([
+      { value: "@alpha", count: 2 },
+      { value: "@beta", count: 1 },
+    ]);
+    expect(facets.itemTypes).toEqual([
+      { value: "registry:ui", count: 2 },
+      { value: "registry:block", count: 1 },
+    ]);
+    expect(facets.categories).toEqual(expect.arrayContaining([
+      { value: "controls", count: 1 },
+      { value: "forms", count: 1 },
+      { value: "marketing", count: 1 },
+    ]));
   });
 
   it("supports a registry-scoped inventory without scanning other registries into the page", () => {

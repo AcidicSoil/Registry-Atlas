@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   catalogRoutePath,
+  parseCatalogBrowseQuery,
   parseCatalogRoute,
+  serializeCatalogBrowseQuery,
   type CatalogRoute,
 } from "../../src/registry-explorer/core/catalogRoutes";
 
@@ -52,6 +54,25 @@ describe("catalogRoutes", () => {
 
     expect(path).toBe("/Registry-Atlas/@demo/components/menus/context%20menu");
     expect(parseCatalogRoute(path, BASE)).toEqual(route);
+  });
+
+  it("round-trips shareable real-catalog page, filter, and sort state", () => {
+    const parsed = parseCatalogBrowseQuery(new URLSearchParams(
+      "page=3&sort=type&type=registry%3Aui&type=registry%3Ablock&category=forms&reviewed=reviewed&registry=%40alpha",
+    ));
+
+    expect(parsed).toEqual({
+      page: 3,
+      sort: "type",
+      itemTypes: ["registry:ui", "registry:block"],
+      categories: ["forms"],
+      reviewed: "reviewed",
+      registryNames: ["@alpha"],
+    });
+
+    expect(serializeCatalogBrowseQuery(parsed).toString()).toBe(
+      "page=3&sort=type&registry=%40alpha&type=registry%3Aui&type=registry%3Ablock&category=forms&reviewed=reviewed",
+    );
   });
 
   it("rejects routes outside the configured base and unsafe traversal segments", () => {

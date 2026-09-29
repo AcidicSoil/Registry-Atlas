@@ -16,10 +16,19 @@ import {
 import type { CopyFeedback } from './discoveryView';
 import { renderItemDetailView } from './itemDetailView';
 import { escapeHtml } from './renderSafety';
-import { queryCatalogComponents } from '../core/catalogQuery';
+import { buildCatalogFacetSummary, queryCatalogComponents } from '../core/catalogQuery';
 import { buildRegistryDirectory } from '../core/registryDirectory';
 import { buildCatalogComparison } from '../core/catalogCompare';
-import { catalogRoutePath, parseCatalogRoute, type CatalogRoute } from '../core/catalogRoutes';
+import {
+  catalogRoutePath,
+  parseCatalogBrowseQuery,
+  parseCatalogRoute,
+  serializeCatalogBrowseQuery,
+  type CatalogBrowseQueryState,
+  type CatalogReviewedFilter,
+  type CatalogRoute,
+  type CatalogSort,
+} from '../core/catalogRoutes';
 import { renderCatalogComponents } from './catalogComponentsView';
 import { renderRegistryDirectory } from './registryDirectoryView';
 import { renderRegistryCollection } from './registryCollectionView';
@@ -50,6 +59,11 @@ interface AppState {
   copyFeedback: CopyFeedback | null;
   facetSearchTerms: Record<string, string>;
   discoveryPage: number;
+  catalogSort: CatalogSort;
+  catalogRegistryNames: string[];
+  catalogItemTypes: string[];
+  catalogCategories: string[];
+  catalogReviewed: CatalogReviewedFilter;
 }
 interface FocusIdentity {
   selector: string;
@@ -83,7 +97,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
     installQueue: [],
     copyFeedback: null,
     facetSearchTerms: {},
-    discoveryPage: 1,
   };
   roots.searchInput.value = state.searchTerm;
   const setState = (
@@ -109,6 +122,17 @@ export function initRegistryExplorer(options: ShellOptions): void {
         .filter(([key]) => key.startsWith(prefix))
         .map(([key, value]) => [key.slice(prefix.length), value]),
     );
+  }
+
+  function catalogBrowseState(includeRegistry = true): CatalogBrowseQueryState {
+    return {
+      page: state.discoveryPage,
+      sort: state.catalogSort,
+      registryNames: includeRegistry ? state.catalogRegistryNames : [],
+      itemTypes: state.catalogItemTypes,
+      categories: state.catalogCategories,
+      reviewed: state.catalogReviewed,
+    };
   }
 
   function restoreControlFocus(identity: FocusIdentity): void {
@@ -188,18 +212,40 @@ export function initRegistryExplorer(options: ShellOptions): void {
         const result = queryCatalogComponents(registries, catalogIndex, {
           search: state.searchTerm,
           registryNames: [registry.name],
+          itemTypes: state.catalogItemTypes,
+          categories: state.catalogCategories,
+          reviewed: state.catalogReviewed,
+          sort: state.catalogSort,
           page: state.discoveryPage,
           basePath: catalogBasePath(),
         });
-        renderRegistryCollection(roots.contentHeader, roots.contentBody, registry, result);
+        const facets = buildCatalogFacetSummary(registries, catalogIndex, {
+          search: state.searchTerm,
+          registryNames: [registry.name],
+        });
+        renderRegistryCollection(roots.contentHeader, roots.contentBody, registry, result, {
+          facets,
+          browseState: catalogBrowseState(false),
+        });
       } else if (state.currentView === 'discover') {
         const result = queryCatalogComponents(registries, catalogIndex, {
           search: state.searchTerm,
+          registryNames: state.catalogRegistryNames,
+          itemTypes: state.catalogItemTypes,
+          categories: state.catalogCategories,
+          reviewed: state.catalogReviewed,
+          sort: state.catalogSort,
           page: state.discoveryPage,
           basePath: catalogBasePath(),
         });
+        const facets = buildCatalogFacetSummary(registries, catalogIndex, {
+          search: state.searchTerm,
+        });
         renderCatalogComponents(roots.contentHeader, roots.contentBody, result, {
           searchTerm: state.searchTerm,
+          facets,
+          browseState: catalogBrowseState(),
+          includeRegistryFilter: true,
         });
       } else if (state.currentView === 'registries') {
         const result = buildRegistryDirectory(registries, catalogIndex, {
@@ -257,6 +303,36 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.searchInput.addEventListener('input', () =>
     setState({ searchTerm: roots.searchInput.value, copyFeedback: null, discoveryPage: 1 }),
   );
+  roots.contentBody.addEventListener('change', (event) => {
+    const target = event.target as HTMLSelectElement;
+    const dimension = target.getAttribute('data-catalog-filter');
+    if (dimension) {
+      const value = target.value.trim();
+      if (dimension === 'registry') {
+        setState({ catalogRegistryNames: value ? [value] : [], discoveryPage: 1 }, 'push');
+      } else if (dimension === 'type') {
+        setState({ catalogItemTypes: value ? [value] : [], discoveryPage: 1 }, 'push');
+      } else if (dimension === 'category') {
+        setState({ catalogCategories: value ? [value] : [], discoveryPage: 1 }, 'push');
+      }
+      return;
+    }
+
+    if (target.hasAttribute('data-catalog-reviewed')) {
+      const reviewed = target.value;
+      if (reviewed === 'all' || reviewed === 'reviewed' || reviewed === 'unreviewed') {
+        setState({ catalogReviewed: reviewed, discoveryPage: 1 }, 'push');
+      }
+      return;
+    }
+
+    if (target.hasAttribute('data-catalog-sort')) {
+      const sort = target.value;
+      if (sort === 'name' || sort === 'registry' || sort === 'type' || sort === 'reviewed') {
+        setState({ catalogSort: sort, discoveryPage: 1 }, 'push');
+      }
+    }
+  });
   roots.contentBody.addEventListener('input', (event) => {
     const target = event.target as HTMLInputElement;
     const control = target.closest('[data-compare-search]');
@@ -291,6 +367,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
   );
   function handleClick(target: HTMLElement): void {
     if (handleInstall(target)) return;
+
+    if (target.closest('[data-catalog-clear]')) {
+      setState({
+        catalogRegistryNames: [],
+        catalogItemTypes: [],
+        catalogCategories: [],
+        catalogReviewed: 'all',
+        catalogSort: 'name',
+        discoveryPage: 1,
+      }, 'push');
+      return;
+    }
 
     const discoveryPage = target.closest('[data-discovery-page]')?.getAttribute('data-discovery-page');
     if (discoveryPage) {
@@ -491,9 +579,10 @@ function toggle<T>(values: readonly T[], value: T): T[] {
 }
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<AppState, 'installQueue' | 'copyFeedback' | 'returnView' | 'returnRegistryName' | 'facetSearchTerms' | 'discoveryPage'> {
+): Omit<AppState, 'installQueue' | 'copyFeedback' | 'returnView' | 'returnRegistryName' | 'facetSearchTerms'> {
   const params = new URLSearchParams(window.location.search);
   const parsed = parseRegistryExplorerUrlState(params);
+  const browse = parseCatalogBrowseQuery(params);
   const hasLegacyView = params.has('view');
   const route = hasLegacyView
     ? null
@@ -547,6 +636,14 @@ function hydrateStateFromUrl(
     selectedProfileRegistryName: currentView === 'compare' ? null : registry,
     selectedItemSlug: currentView === 'item' && registry ? selectedItemSlug : null,
     compareRegistryNames: names.slice(0, 4),
+    discoveryPage: browse.page,
+    catalogSort: browse.sort,
+    catalogRegistryNames: browse.registryNames.filter(name =>
+      registries.some(registryItem => registryItem.name === name),
+    ),
+    catalogItemTypes: browse.itemTypes,
+    catalogCategories: browse.categories,
+    catalogReviewed: browse.reviewed,
   };
 }
 
@@ -570,7 +667,21 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
     route = { kind: 'components' };
   }
 
-  const params = new URLSearchParams();
+  const isCatalogBrowse = state.currentView === 'discover'
+    || (state.currentView === 'registries' && Boolean(state.selectedProfileRegistryName));
+  const params = isCatalogBrowse
+    ? serializeCatalogBrowseQuery({
+        page: state.discoveryPage,
+        sort: state.catalogSort,
+        registryNames: state.currentView === 'discover' ? state.catalogRegistryNames : [],
+        itemTypes: state.catalogItemTypes,
+        categories: state.catalogCategories,
+        reviewed: state.catalogReviewed,
+      })
+    : new URLSearchParams();
+  if (!isCatalogBrowse && state.currentView !== 'item' && state.discoveryPage > 1) {
+    params.set('page', String(state.discoveryPage));
+  }
   const pathCarriesSearch = route.kind === 'components' && Boolean(route.pathSearchTerm);
   if (state.searchTerm.trim() && !pathCarriesSearch && state.currentView !== 'item') {
     params.set('q', state.searchTerm.trim());

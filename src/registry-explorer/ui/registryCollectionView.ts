@@ -1,6 +1,10 @@
-import type { CatalogQueryResult } from "../core/catalogQuery";
+import type { CatalogFacetSummary, CatalogQueryResult } from "../core/catalogQuery";
+import type { CatalogBrowseQueryState } from "../core/catalogRoutes";
 import type { Registry } from "../core/registry.schema";
-import { renderCatalogComponentCard } from "./catalogComponentsView";
+import {
+  renderCatalogBrowseControls,
+  renderCatalogComponentCard,
+} from "./catalogComponentsView";
 import { escapeHtml, renderExternalLink } from "./renderSafety";
 
 export function renderRegistryCollection(
@@ -8,6 +12,10 @@ export function renderRegistryCollection(
   bodyRoot: HTMLElement,
   registry: Registry,
   result: CatalogQueryResult,
+  options: {
+    facets?: CatalogFacetSummary;
+    browseState?: CatalogBrowseQueryState;
+  } = {},
 ): void {
   const count = result.total === 1 ? "1 indexed component" : `${result.total.toLocaleString()} indexed components`;
   headerRoot.innerHTML = `
@@ -32,6 +40,9 @@ export function renderRegistryCollection(
           <p>Real component records from this registry's indexed catalog.</p>
         </div>
       </div>
+      ${options.facets && options.browseState
+        ? renderCatalogBrowseControls(options.facets, options.browseState, { includeRegistry: false })
+        : ""}
       ${result.items.length
         ? `
           ${renderMeta(result)}

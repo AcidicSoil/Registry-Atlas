@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-explorer/core/catalogQuery";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
-import { renderCatalogComponents } from "../../src/registry-explorer/ui/catalogComponentsView";
+import {
+  renderCatalogBrowseControls,
+  renderCatalogComponents,
+} from "../../src/registry-explorer/ui/catalogComponentsView";
 
 describe("renderCatalogComponents", () => {
   it("renders real component cards as action-light detail links", () => {
@@ -34,6 +37,64 @@ describe("renderCatalogComponents", () => {
     expect(withoutPreview.innerHTML).toContain("Preview not published");
     expect(withoutPreview.innerHTML).toContain("registry:ui");
     expect(withoutPreview.innerHTML).not.toContain("<svg");
+  });
+
+  it("renders bounded real-data filters and deterministic sorts", () => {
+    const html = renderCatalogBrowseControls(
+      {
+        registries: [{ value: "@delta", count: 12 }],
+        itemTypes: [{ value: "registry:ui", count: 10 }],
+        categories: [{ value: "forms", count: 4 }],
+        reviewedCount: 2,
+        unreviewedCount: 10,
+      },
+      {
+        page: 2,
+        sort: "type",
+        registryNames: ["@delta"],
+        itemTypes: ["registry:ui"],
+        categories: ["forms"],
+        reviewed: "unreviewed",
+      },
+    );
+
+    expect(html).toContain('data-catalog-filter="registry"');
+    expect(html).toContain('data-catalog-filter="type"');
+    expect(html).toContain('data-catalog-filter="category"');
+    expect(html).toContain('data-catalog-reviewed');
+    expect(html).toContain('data-catalog-sort');
+    expect(html).toContain('<option value="@delta" selected>');
+    expect(html).toContain('<option value="registry:ui" selected>');
+    expect(html).toContain('<option value="forms" selected>');
+    expect(html).toContain('<option value="unreviewed" selected>');
+    expect(html).toContain('<option value="type" selected>');
+    expect(html).toContain('data-catalog-clear');
+  });
+
+  it("keeps filters visible when a filter combination has no matches", () => {
+    const body = root();
+    renderCatalogComponents(root(), body, result([]), {
+      searchTerm: "",
+      facets: {
+        registries: [{ value: "@delta", count: 1 }],
+        itemTypes: [{ value: "registry:ui", count: 1 }],
+        categories: [],
+        reviewedCount: 0,
+        unreviewedCount: 1,
+      },
+      browseState: {
+        page: 1,
+        sort: "name",
+        registryNames: [],
+        itemTypes: ["registry:block"],
+        categories: [],
+        reviewed: "all",
+      },
+    });
+
+    expect(body.innerHTML).toContain('data-catalog-filter="type"');
+    expect(body.innerHTML).toContain('data-catalog-clear');
+    expect(body.innerHTML).toContain('No indexed components are available');
   });
 
   it("renders truthful pagination over the full query result", () => {
