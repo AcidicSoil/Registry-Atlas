@@ -13,7 +13,7 @@
     "import:catalog": "node scripts/import-registry-catalog.mjs",
     "validate:data": "node scripts/validate-registry-data.mjs",
     "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm validate:data && pnpm build",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",
     "all": "pnpm sync:registries && pnpm verify",
     "sync:catalog-evidence": "node scripts/sync-registry-catalog-evidence.mjs"
