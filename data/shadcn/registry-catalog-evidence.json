@@ -4,364 +4,364 @@
     "catalog_url": "https://000h.cojeev.com/r/registry.json",
     "item_count": 174,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.498Z"
+    "synced_at": "2026-09-29T12:14:27.593Z"
   },
   "@1st-pouf": {
     "namespace": "@1st-pouf",
     "catalog_url": "https://1st-pouf.worksonmy.dev/r/registry.json",
     "item_count": 71,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.505Z"
+    "synced_at": "2026-09-29T12:14:27.589Z"
   },
   "@23rd": {
     "namespace": "@23rd",
     "catalog_url": "https://23rd.dev/r/registry.json",
     "item_count": 28,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.467Z"
+    "synced_at": "2026-09-29T12:14:27.566Z"
   },
   "@7ovr": {
     "namespace": "@7ovr",
     "catalog_url": "https://7ovr.com/r/registry.json",
     "item_count": 248,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.257Z"
+    "synced_at": "2026-09-29T12:14:28.355Z"
   },
   "@8bitcn": {
     "namespace": "@8bitcn",
     "catalog_url": "https://www.8bitcn.com/r/registry.json",
     "item_count": 121,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.578Z"
+    "synced_at": "2026-09-29T12:14:27.622Z"
   },
   "@8starlabs-ui": {
     "namespace": "@8starlabs-ui",
     "catalog_url": "https://ui.8starlabs.com/r/registry.json",
     "item_count": 76,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.625Z"
+    "synced_at": "2026-09-29T12:14:27.698Z"
   },
   "@abui": {
     "namespace": "@abui",
     "catalog_url": "https://www.abui.io/r/registry.json",
     "item_count": 20,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.807Z"
+    "synced_at": "2026-09-29T12:14:28.031Z"
   },
   "@aceternity": {
     "namespace": "@aceternity",
     "catalog_url": "https://ui.aceternity.com/registry/registry.json",
     "item_count": 292,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.587Z"
+    "synced_at": "2026-09-29T12:14:27.638Z"
   },
   "@aevr": {
     "namespace": "@aevr",
     "catalog_url": "https://ui.aevr.online/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.695Z"
+    "synced_at": "2026-09-29T12:14:27.783Z"
   },
   "@afterglow": {
     "namespace": "@afterglow",
     "catalog_url": "https://afterglow.thebuilder.dk/r/registry.json",
     "item_count": 66,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.947Z"
+    "synced_at": "2026-09-29T12:14:41.033Z"
   },
   "@agentblog": {
     "namespace": "@agentblog",
     "catalog_url": "https://agentblog.dev/r/registry.json",
     "item_count": 13,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:51.002Z"
+    "synced_at": "2026-09-29T12:14:41.107Z"
   },
   "@agentcn": {
     "namespace": "@agentcn",
     "catalog_url": "https://www.agentcn.run/r/registry.json",
     "item_count": 76,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.524Z"
+    "synced_at": "2026-09-29T12:14:28.742Z"
   },
   "@agents-ui": {
     "namespace": "@agents-ui",
     "catalog_url": "https://livekit.com/ui/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.607Z"
+    "synced_at": "2026-09-29T12:14:28.049Z"
   },
   "@agentui": {
     "namespace": "@agentui",
     "catalog_url": "https://www.agentui.pro/r/registry.json",
     "item_count": 21,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.406Z"
+    "synced_at": "2026-09-29T12:14:28.524Z"
   },
   "@ai-elements": {
     "namespace": "@ai-elements",
     "catalog_url": "https://elements.ai-sdk.dev/api/registry/registry.json",
     "item_count": 136,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.028Z"
+    "synced_at": "2026-09-29T12:14:28.109Z"
   },
   "@ai2": {
     "namespace": "@ai2",
     "catalog_url": "https://ai2.design/r/registry.json",
     "item_count": 414,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.742Z"
+    "synced_at": "2026-09-29T12:14:40.786Z"
   },
   "@aicanvas": {
     "namespace": "@aicanvas",
     "catalog_url": "https://aicanvas.me/r/registry.json",
     "item_count": 183,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.368Z"
+    "synced_at": "2026-09-29T12:14:28.591Z"
   },
   "@akoder": {
     "namespace": "@akoder",
     "catalog_url": "https://www.akoder.xyz/r/registry.json",
     "item_count": 17,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.970Z"
+    "synced_at": "2026-09-29T12:14:28.118Z"
   },
   "@algolia": {
     "namespace": "@algolia",
     "catalog_url": "https://sitesearch.algolia.com/r/registry.json",
     "item_count": 5,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.242Z"
+    "synced_at": "2026-09-29T12:14:27.854Z"
   },
   "@amap": {
     "namespace": "@amap",
     "catalog_url": "https://map.ling.pub/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.022Z"
+    "synced_at": "2026-09-29T12:14:28.063Z"
   },
   "@amarjay-ui": {
     "namespace": "@amarjay-ui",
     "catalog_url": "https://ui.amarjay.com/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.894Z"
+    "synced_at": "2026-09-29T12:14:27.961Z"
   },
   "@amicro": {
     "namespace": "@amicro",
     "catalog_url": "https://amicro.vercel.app/r/registry.json",
     "item_count": 169,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.830Z"
+    "synced_at": "2026-09-29T12:14:27.918Z"
   },
   "@amplo": {
     "namespace": "@amplo",
     "catalog_url": "https://amplo.ale.design/r/registry.json",
     "item_count": 9,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.082Z"
+    "synced_at": "2026-09-29T12:14:28.096Z"
   },
   "@animate-ui": {
     "namespace": "@animate-ui",
     "catalog_url": "https://animate-ui.com/r/registry.json",
     "item_count": 580,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.904Z"
+    "synced_at": "2026-09-29T12:14:27.977Z"
   },
   "@animbits": {
     "namespace": "@animbits",
     "catalog_url": "https://www.animbits.dev/r/registry.json",
     "item_count": 99,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.261Z"
+    "synced_at": "2026-09-29T12:14:28.445Z"
   },
   "@approvals-ui": {
     "namespace": "@approvals-ui",
     "catalog_url": "https://approvals-ui.vercel.app/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.908Z"
+    "synced_at": "2026-09-29T12:14:28.083Z"
   },
   "@arc": {
     "namespace": "@arc",
     "catalog_url": "https://www.witharc.co/r/registry.json",
     "item_count": 2,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.522Z"
+    "synced_at": "2026-09-29T12:14:28.571Z"
   },
   "@ark-cn": {
     "namespace": "@ark-cn",
     "catalog_url": "https://ark-cn.vercel.app/r/registry.json",
     "item_count": 76,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.052Z"
+    "synced_at": "2026-09-29T12:14:28.157Z"
   },
   "@asanshay": {
     "namespace": "@asanshay",
     "catalog_url": "https://ds.asanshay.com/r/registry.json",
     "item_count": 27,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.364Z"
+    "synced_at": "2026-09-29T12:14:28.460Z"
   },
   "@assistant-ui": {
     "namespace": "@assistant-ui",
     "catalog_url": "https://r.assistant-ui.com/registry.json",
     "item_count": 156,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.187Z"
+    "synced_at": "2026-09-29T12:14:28.323Z"
   },
   "@atelier": {
     "namespace": "@atelier",
     "catalog_url": "https://www.atelier-ui.com/r/registry.json",
     "item_count": 51,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.631Z"
+    "synced_at": "2026-09-29T12:14:40.804Z"
   },
   "@atomloader": {
     "namespace": "@atomloader",
     "catalog_url": "https://atomloader.roothq.tech/r/registry.json",
     "item_count": 591,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:51.678Z"
+    "synced_at": "2026-09-29T12:14:40.824Z"
   },
   "@atroui": {
     "namespace": "@atroui",
     "catalog_url": "https://www.atroui.com/r/registry.json",
     "item_count": 84,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.828Z"
+    "synced_at": "2026-09-29T12:14:40.895Z"
   },
   "@auth0": {
     "namespace": "@auth0",
     "catalog_url": "https://ui.auth0.com/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.195Z"
+    "synced_at": "2026-09-29T12:14:28.442Z"
   },
   "@avertra-ui": {
     "namespace": "@avertra-ui",
     "catalog_url": "https://micomponents.micustomer.io/r/registry.json",
     "item_count": 31,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.186Z"
+    "synced_at": "2026-09-29T12:14:28.332Z"
   },
   "@awwwardedui": {
     "namespace": "@awwwardedui",
     "catalog_url": "https://awwwardedui.vercel.app/r/registry.json",
     "item_count": 5,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.189Z"
+    "synced_at": "2026-09-29T12:14:28.286Z"
   },
   "@axicharts": {
     "namespace": "@axicharts",
     "catalog_url": "https://axidify.github.io/axicharts/registry/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.176Z"
+    "synced_at": "2026-09-29T12:14:28.274Z"
   },
   "@baraile-loader": {
     "namespace": "@baraile-loader",
     "catalog_url": "https://shadcn-braille-loader.vercel.app/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.253Z"
+    "synced_at": "2026-09-29T12:14:28.337Z"
   },
   "@basecn": {
     "namespace": "@basecn",
     "catalog_url": "https://basecn.dev/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.062Z"
+    "synced_at": "2026-09-29T12:14:29.088Z"
   },
   "@baselayer": {
     "namespace": "@baselayer",
     "catalog_url": "https://www.baselayer.dev/r/registry.json",
     "item_count": 26,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.429Z"
+    "synced_at": "2026-09-29T12:14:28.426Z"
   },
   "@benday": {
     "namespace": "@benday",
     "catalog_url": "https://benday.kacemmathlouthi.dev/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.608Z"
+    "synced_at": "2026-09-29T12:14:28.463Z"
   },
   "@beste-ui": {
     "namespace": "@beste-ui",
     "catalog_url": "https://ui.beste.co/r/registry.json",
     "item_count": 2189,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.592Z"
+    "synced_at": "2026-09-29T12:14:29.430Z"
   },
   "@better-auth-ui": {
     "namespace": "@better-auth-ui",
     "catalog_url": "https://better-auth-ui.com/r/radix-nova/registry.json",
     "item_count": 54,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.666Z"
+    "synced_at": "2026-09-29T12:14:28.717Z"
   },
   "@better-upload": {
     "namespace": "@better-upload",
     "catalog_url": "https://better-upload.com/r/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.515Z"
+    "synced_at": "2026-09-29T12:14:28.517Z"
   },
   "@beui": {
     "namespace": "@beui",
     "catalog_url": "https://beui.dev/r/registry.json",
     "item_count": 127,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.539Z"
+    "synced_at": "2026-09-29T12:14:29.903Z"
   },
   "@billingsdk": {
     "namespace": "@billingsdk",
     "catalog_url": "https://billingsdk.com/r/registry.json",
     "item_count": 35,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.610Z"
+    "synced_at": "2026-09-29T12:14:28.636Z"
   },
   "@bits-ui": {
     "namespace": "@bits-ui",
     "catalog_url": "https://bits-ui.netlify.app/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.205Z"
+    "synced_at": "2026-09-29T12:14:28.558Z"
   },
   "@bjork-ui": {
     "namespace": "@bjork-ui",
     "catalog_url": "https://ui.isaiahbjork.com/registry.json",
     "item_count": 74,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.619Z"
+    "synced_at": "2026-09-29T12:14:28.678Z"
   },
   "@bklit": {
     "namespace": "@bklit",
     "catalog_url": "https://bklit.com/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.812Z"
+    "synced_at": "2026-09-29T12:14:28.955Z"
   },
   "@blobatar": {
     "namespace": "@blobatar",
     "catalog_url": "https://blobatar.dev/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.609Z"
+    "synced_at": "2026-09-29T12:14:28.670Z"
   },
   "@blockforge": {
     "namespace": "@blockforge",
     "catalog_url": "https://blockforge.terravidhal.me/r/registry.json",
     "item_count": 131,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.730Z"
+    "synced_at": "2026-09-29T12:14:29.417Z"
   },
   "@blocks-so": {
     "namespace": "@blocks-so",
     "catalog_url": "https://blocks.so/r/registry.json",
     "item_count": 82,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.650Z"
+    "synced_at": "2026-09-29T12:14:28.749Z"
   },
   "@blockus": {
     "namespace": "@blockus",
@@ -375,182 +375,182 @@
     "catalog_url": "https://blode.co/ui/r/registry.json",
     "item_count": 100,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.876Z"
+    "synced_at": "2026-09-29T12:14:28.933Z"
   },
   "@boldkit": {
     "namespace": "@boldkit",
     "catalog_url": "https://boldkit.dev/r/registry.json",
     "item_count": 96,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.926Z"
+    "synced_at": "2026-09-29T12:14:28.902Z"
   },
   "@brainless": {
     "namespace": "@brainless",
     "catalog_url": "https://brainless.swerdlow.dev/r/registry.json",
     "item_count": 40,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.827Z"
+    "synced_at": "2026-09-29T12:14:28.906Z"
   },
   "@brut-ui": {
     "namespace": "@brut-ui",
     "catalog_url": "https://www.brut-ui.site/r/registry.json",
     "item_count": 59,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.835Z"
+    "synced_at": "2026-09-29T12:14:28.873Z"
   },
   "@bundui": {
     "namespace": "@bundui",
     "catalog_url": "https://bundui.io/r/registry.json",
     "item_count": 217,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.451Z"
+    "synced_at": "2026-09-29T12:14:28.935Z"
   },
   "@buzzform": {
     "namespace": "@buzzform",
     "catalog_url": "https://form.buildnbuzz.com/r/registry.json",
     "item_count": 48,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.855Z"
+    "synced_at": "2026-09-29T12:14:28.928Z"
   },
   "@canvas-ui": {
     "namespace": "@canvas-ui",
     "catalog_url": "https://canvasui.dev/r/registry.json",
     "item_count": 420,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.852Z"
+    "synced_at": "2026-09-29T12:14:28.894Z"
   },
   "@cardcn": {
     "namespace": "@cardcn",
     "catalog_url": "https://cardcn.dev/r/registry.json",
     "item_count": 27,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.872Z"
+    "synced_at": "2026-09-29T12:14:28.968Z"
   },
   "@catalogs": {
     "namespace": "@catalogs",
     "catalog_url": "https://api.catalogs.dev/shadcn/registry.json",
     "item_count": 2910,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.086Z"
+    "synced_at": "2026-09-29T12:14:29.210Z"
   },
   "@chamaac": {
     "namespace": "@chamaac",
     "catalog_url": "https://www.chamaac.com/r/registry.json",
     "item_count": 90,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.286Z"
+    "synced_at": "2026-09-29T12:14:29.241Z"
   },
   "@channel3": {
     "namespace": "@channel3",
     "catalog_url": "https://ui.trychannel3.com/r/registry.json",
     "item_count": 23,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:41.806Z"
+    "synced_at": "2026-09-29T12:14:29.026Z"
   },
   "@clerk": {
     "namespace": "@clerk",
     "catalog_url": "https://clerk.com/r/registry.json",
     "item_count": 12,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.112Z"
+    "synced_at": "2026-09-29T12:14:29.236Z"
   },
   "@cligentic": {
     "namespace": "@cligentic",
     "catalog_url": "https://cligentic.railly.dev/r/registry.json",
     "item_count": 24,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.117Z"
+    "synced_at": "2026-09-29T12:14:29.236Z"
   },
   "@cnippet": {
     "namespace": "@cnippet",
     "catalog_url": "https://ui.cnippet.dev/r/registry.json",
     "item_count": 1132,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.233Z"
+    "synced_at": "2026-09-29T12:14:38.628Z"
   },
   "@cognicatch": {
     "namespace": "@cognicatch",
     "catalog_url": "https://cognicatch.dev/registry/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.105Z"
+    "synced_at": "2026-09-29T12:14:29.233Z"
   },
   "@commercn": {
     "namespace": "@commercn",
     "catalog_url": "https://www.commercn.com/r/registry.json",
     "item_count": 17,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.500Z"
+    "synced_at": "2026-09-29T12:14:29.301Z"
   },
   "@componentry": {
     "namespace": "@componentry",
     "catalog_url": "https://componentry.dev/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.477Z"
+    "synced_at": "2026-09-29T12:14:29.453Z"
   },
   "@contentbit": {
     "namespace": "@contentbit",
     "catalog_url": "https://contentbit.dev/r/registry.json",
     "item_count": 20,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.323Z"
+    "synced_at": "2026-09-29T12:14:38.713Z"
   },
   "@corecn": {
     "namespace": "@corecn",
     "catalog_url": "https://corecn.vercel.app/r/registry.json",
     "item_count": 67,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.104Z"
+    "synced_at": "2026-09-29T12:14:29.235Z"
   },
   "@corr": {
     "namespace": "@corr",
     "catalog_url": "https://ui.corr.sh/r/registry.json",
     "item_count": 60,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.694Z"
+    "synced_at": "2026-09-29T12:14:29.548Z"
   },
   "@corsair-ui": {
     "namespace": "@corsair-ui",
     "catalog_url": "https://kevingirelli.github.io/corsair-ui/r/registry.json",
     "item_count": 133,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.988Z"
+    "synced_at": "2026-09-29T12:14:40.986Z"
   },
   "@coss": {
     "namespace": "@coss",
     "catalog_url": "https://coss.com/ui/r/registry.json",
     "item_count": 579,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.326Z"
+    "synced_at": "2026-09-29T12:14:29.212Z"
   },
   "@crafterui": {
     "namespace": "@crafterui",
     "catalog_url": "https://www.crafterui.com/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.672Z"
+    "synced_at": "2026-09-29T12:14:29.462Z"
   },
   "@craftui": {
     "namespace": "@craftui",
     "catalog_url": "https://www.craftui.space/r/registry.json",
     "item_count": 170,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.037Z"
+    "synced_at": "2026-09-29T12:14:29.900Z"
   },
   "@cubby-ui": {
     "namespace": "@cubby-ui",
     "catalog_url": "https://www.cubby-ui.dev/r/registry.json",
     "item_count": 79,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.420Z"
+    "synced_at": "2026-09-29T12:14:29.476Z"
   },
   "@d2": {
     "namespace": "@d2",
     "catalog_url": "https://ui.d2studio.dev/r/registry.json",
     "item_count": 40,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.475Z"
+    "synced_at": "2026-09-29T12:14:29.466Z"
   },
   "@darx": {
     "namespace": "@darx",
@@ -562,387 +562,387 @@
   "@dashboardblocks": {
     "namespace": "@dashboardblocks",
     "catalog_url": "https://www.dashboardblocks.com/r/registry.json",
-    "item_count": 305,
+    "item_count": 308,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.683Z"
+    "synced_at": "2026-09-29T12:14:29.887Z"
   },
   "@dashboardcn": {
     "namespace": "@dashboardcn",
     "catalog_url": "https://dashboardcn.com/r/registry.json",
     "item_count": 54,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.483Z"
+    "synced_at": "2026-09-29T12:14:29.419Z"
   },
   "@data-table-filters": {
     "namespace": "@data-table-filters",
     "catalog_url": "https://data-table.openstatus.dev/r/registry.json",
     "item_count": 15,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.218Z"
+    "synced_at": "2026-09-29T12:14:30.435Z"
   },
   "@delego": {
     "namespace": "@delego",
     "catalog_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.581Z"
+    "synced_at": "2026-09-29T12:14:29.527Z"
   },
   "@delta": {
     "namespace": "@delta",
     "catalog_url": "https://www.deltacomponents.dev/r/registry.json",
     "item_count": 20,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.965Z"
+    "synced_at": "2026-09-29T12:14:30.062Z"
   },
   "@designali": {
     "namespace": "@designali",
     "catalog_url": "https://designali.com/r/registry.json",
     "item_count": 277,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:40.871Z"
+    "synced_at": "2026-09-29T12:14:27.910Z"
   },
   "@dgit": {
     "namespace": "@dgit",
     "catalog_url": "https://ui.dgit.co/r/registry.json",
     "item_count": 11,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.703Z"
+    "synced_at": "2026-09-29T12:14:29.701Z"
   },
   "@diarmuradi": {
     "namespace": "@diarmuradi",
     "catalog_url": "https://www.diarmuradi.com/r/registry.json",
     "item_count": 119,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.198Z"
+    "synced_at": "2026-09-29T12:14:30.043Z"
   },
   "@diceui": {
     "namespace": "@diceui",
     "catalog_url": "https://diceui.com/r/registry.json",
     "item_count": 204,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.744Z"
+    "synced_at": "2026-09-29T12:14:30.450Z"
   },
   "@diklein": {
     "namespace": "@diklein",
     "catalog_url": "https://diklein.com/r/registry.json",
     "item_count": 3,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.731Z"
+    "synced_at": "2026-09-29T12:14:29.749Z"
   },
   "@dominik-ui": {
     "namespace": "@dominik-ui",
     "catalog_url": "https://dominikkoch.dev/r/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.357Z"
+    "synced_at": "2026-09-29T12:14:29.897Z"
   },
   "@dotmatrix": {
     "namespace": "@dotmatrix",
     "catalog_url": "https://dotmatrix.zzzzshawn.cloud/r/registry.json",
     "item_count": 91,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.752Z"
+    "synced_at": "2026-09-29T12:14:29.808Z"
   },
   "@dsikeres1": {
     "namespace": "@dsikeres1",
     "catalog_url": "https://dsikeres1.github.io/react-date-range-picker/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.783Z"
+    "synced_at": "2026-09-29T12:14:29.713Z"
   },
   "@easeui": {
     "namespace": "@easeui",
     "catalog_url": "https://easeui.dev/r/registry.json",
     "item_count": 50,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.676Z"
+    "synced_at": "2026-09-29T12:14:30.624Z"
   },
   "@ecomcn": {
     "namespace": "@ecomcn",
     "catalog_url": "https://ecomcn.vercel.app/r/registry.json",
     "item_count": 11,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:42.967Z"
+    "synced_at": "2026-09-29T12:14:29.968Z"
   },
   "@efferd": {
     "namespace": "@efferd",
     "catalog_url": "https://efferd.com/r/registry.json",
     "item_count": 231,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.073Z"
+    "synced_at": "2026-09-29T12:14:30.004Z"
   },
   "@einui": {
     "namespace": "@einui",
     "catalog_url": "https://ui.eindev.ir/r/registry.json",
     "item_count": 44,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.233Z"
+    "synced_at": "2026-09-29T12:14:30.227Z"
   },
   "@eldoraui": {
     "namespace": "@eldoraui",
     "catalog_url": "https://www.eldoraui.site/r/registry.json",
     "item_count": 115,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.262Z"
+    "synced_at": "2026-09-29T12:14:30.448Z"
   },
   "@elements": {
     "namespace": "@elements",
     "catalog_url": "https://www.tryelements.dev/r/registry.json",
     "item_count": 360,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.225Z"
+    "synced_at": "2026-09-29T12:14:30.425Z"
   },
   "@elsecase": {
     "namespace": "@elsecase",
     "catalog_url": "https://elsecase.vercel.app/r/registry.json",
     "item_count": 3,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.016Z"
+    "synced_at": "2026-09-29T12:14:30.147Z"
   },
   "@emailcn": {
     "namespace": "@emailcn",
     "catalog_url": "https://www.emailcn.run/r/registry.json",
     "item_count": 338,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.181Z"
+    "synced_at": "2026-09-29T12:14:31.406Z"
   },
   "@emstein-ui": {
     "namespace": "@emstein-ui",
     "catalog_url": "https://ui.emstein.com/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.273Z"
+    "synced_at": "2026-09-29T12:14:30.431Z"
   },
   "@ericts": {
     "namespace": "@ericts",
     "catalog_url": "https://ui.ericts.com/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.391Z"
+    "synced_at": "2026-09-29T12:14:30.447Z"
   },
   "@evex": {
     "namespace": "@evex",
     "catalog_url": "https://www.evex.sh/r/registry.json",
     "item_count": 23,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.743Z"
+    "synced_at": "2026-09-29T12:14:30.857Z"
   },
   "@evilcharts": {
     "namespace": "@evilcharts",
     "catalog_url": "https://evilcharts.com/r/registry.json",
     "item_count": 279,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.428Z"
+    "synced_at": "2026-09-29T12:14:30.565Z"
   },
   "@exabase": {
     "namespace": "@exabase",
     "catalog_url": "https://exawizards.com/exabase/design/registry/registry.json",
     "item_count": 61,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.806Z"
+    "synced_at": "2026-09-29T12:14:30.701Z"
   },
   "@extend": {
     "namespace": "@extend",
     "catalog_url": "https://ui.extend.ai/ui/r/registry.json",
     "item_count": 67,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.794Z"
+    "synced_at": "2026-09-29T12:14:30.748Z"
   },
   "@fab-ui": {
     "namespace": "@fab-ui",
     "catalog_url": "https://www.fab-ui.com/r/registry.json",
     "item_count": 44,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.734Z"
+    "synced_at": "2026-09-29T12:14:30.877Z"
   },
   "@fibo": {
     "namespace": "@fibo",
     "catalog_url": "https://fibo.toribryan.com/r/registry.json",
     "item_count": 21,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.516Z"
+    "synced_at": "2026-09-29T12:14:30.860Z"
   },
   "@flagcn": {
     "namespace": "@flagcn",
     "catalog_url": "https://flagcn.dev/r/registry.json",
     "item_count": 321,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.612Z"
+    "synced_at": "2026-09-29T12:14:30.818Z"
   },
   "@flightcn": {
     "namespace": "@flightcn",
     "catalog_url": "https://flightcn.yencheng.dev/r/registry.json",
     "item_count": 13,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.624Z"
+    "synced_at": "2026-09-29T12:14:30.879Z"
   },
   "@flowkit-ui": {
     "namespace": "@flowkit-ui",
     "catalog_url": "https://flowkit-ui.vzkiss.com/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.663Z"
+    "synced_at": "2026-09-29T12:14:31.854Z"
   },
   "@flowui": {
     "namespace": "@flowui",
     "catalog_url": "https://flowui-registry.vercel.app/r/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.497Z"
+    "synced_at": "2026-09-29T12:14:30.704Z"
   },
   "@fluent2-react-kit": {
     "namespace": "@fluent2-react-kit",
     "catalog_url": "https://fluent2-react-kit.graund.io/r/registry.json",
     "item_count": 37,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.638Z"
+    "synced_at": "2026-09-29T12:14:30.769Z"
   },
   "@fluid": {
     "namespace": "@fluid",
     "catalog_url": "https://www.fluidfunctionalism.com/r/registry.json",
     "item_count": 71,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.749Z"
+    "synced_at": "2026-09-29T12:14:31.650Z"
   },
   "@flx": {
     "namespace": "@flx",
     "catalog_url": "https://ui.flexnative.com/r/registry.json",
     "item_count": 450,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.777Z"
+    "synced_at": "2026-09-29T12:14:30.873Z"
   },
   "@forgeui": {
     "namespace": "@forgeui",
     "catalog_url": "https://forgeui.in/r/registry.json",
     "item_count": 24,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.784Z"
+    "synced_at": "2026-09-29T12:14:30.901Z"
   },
   "@formcn": {
     "namespace": "@formcn",
     "catalog_url": "https://formcn.dev/r/registry.json",
     "item_count": 9,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.853Z"
+    "synced_at": "2026-09-29T12:14:31.009Z"
   },
   "@formscn": {
     "namespace": "@formscn",
     "catalog_url": "https://www.formscn.space/r/registry.json",
     "item_count": 30,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.901Z"
+    "synced_at": "2026-09-29T12:14:31.015Z"
   },
   "@framecn": {
     "namespace": "@framecn",
     "catalog_url": "https://www.framecn.dev/r/registry.json",
     "item_count": 101,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:53.877Z"
+    "synced_at": "2026-09-29T12:14:32.993Z"
   },
   "@gaia": {
     "namespace": "@gaia",
     "catalog_url": "https://ui.heygaia.io/r/registry.json",
     "item_count": 29,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.980Z"
+    "synced_at": "2026-09-29T12:14:31.062Z"
   },
   "@gamekitui": {
     "namespace": "@gamekitui",
     "catalog_url": "https://www.gamekitui.com/r/registry.json",
     "item_count": 12,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.220Z"
+    "synced_at": "2026-09-29T12:14:31.417Z"
   },
   "@gamifykit": {
     "namespace": "@gamifykit",
     "catalog_url": "https://gamifykit.com/r/registry.json",
     "item_count": 3,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.002Z"
+    "synced_at": "2026-09-29T12:14:31.157Z"
   },
   "@gammaui": {
     "namespace": "@gammaui",
     "catalog_url": "https://www.gammaui.com/r/registry.json",
     "item_count": 63,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.047Z"
+    "synced_at": "2026-09-29T12:14:31.130Z"
   },
   "@gc-solid": {
     "namespace": "@gc-solid",
     "catalog_url": "https://binnodon.github.io/gc-solid-ui/r/registry.json",
     "item_count": 61,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:43.968Z"
+    "synced_at": "2026-09-29T12:14:31.104Z"
   },
   "@glass-ui": {
     "namespace": "@glass-ui",
     "catalog_url": "https://glass-ui.crenspire.com/r/registry.json",
     "item_count": 49,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.099Z"
+    "synced_at": "2026-09-29T12:14:31.240Z"
   },
   "@glasscn": {
     "namespace": "@glasscn",
     "catalog_url": "https://glasscn-components.vercel.app/r/registry.json",
     "item_count": 65,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.018Z"
+    "synced_at": "2026-09-29T12:14:31.200Z"
   },
   "@gooseui": {
     "namespace": "@gooseui",
     "catalog_url": "https://gooseui.pro/r/registry.json",
     "item_count": 19,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.878Z"
+    "synced_at": "2026-09-29T12:14:32.103Z"
   },
   "@gpt-vis": {
     "namespace": "@gpt-vis",
     "catalog_url": "https://gpt-vis.antv.vision/r/registry.json",
     "item_count": 27,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.015Z"
+    "synced_at": "2026-09-29T12:14:31.218Z"
   },
   "@gridcn": {
     "namespace": "@gridcn",
     "catalog_url": "https://gridcn.vercel.app/r/registry.json",
     "item_count": 60,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:53.829Z"
+    "synced_at": "2026-09-29T12:14:32.996Z"
   },
   "@grootstudio": {
     "namespace": "@grootstudio",
     "catalog_url": "https://grootstudio.dev/r/registry.json",
     "item_count": 26,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.451Z"
+    "synced_at": "2026-09-29T12:14:31.609Z"
   },
   "@gymnopedies": {
     "namespace": "@gymnopedies",
     "catalog_url": "https://gymnopedies.shoota.work/r/registry.json",
     "item_count": 49,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.273Z"
+    "synced_at": "2026-09-29T12:14:31.487Z"
   },
   "@ha-components": {
     "namespace": "@ha-components",
     "catalog_url": "https://hacomponents.keshuac.com/r/registry.json",
     "item_count": 12,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.170Z"
+    "synced_at": "2026-09-29T12:14:31.326Z"
   },
   "@herocn": {
     "namespace": "@herocn",
     "catalog_url": "https://herocn.dev/r/registry.json",
     "item_count": 559,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.266Z"
+    "synced_at": "2026-09-29T12:14:31.552Z"
   },
   "@heroicons-animated": {
     "namespace": "@heroicons-animated",
     "catalog_url": "https://www.heroicons-animated.com/r/registry.json",
     "item_count": 316,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.303Z"
+    "synced_at": "2026-09-29T12:14:31.499Z"
   },
   "@hextaui": {
     "namespace": "@hextaui",
@@ -956,350 +956,350 @@
     "catalog_url": "https://hexui.sh/r/registry.json",
     "item_count": 34,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.370Z"
+    "synced_at": "2026-09-29T12:14:31.658Z"
   },
   "@hirael": {
     "namespace": "@hirael",
     "catalog_url": "https://hirael.com/r/registry.json",
     "item_count": 278,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.337Z"
+    "synced_at": "2026-09-29T12:14:31.829Z"
   },
   "@honestui": {
     "namespace": "@honestui",
     "catalog_url": "https://www.honestui.com/r/registry.json",
     "item_count": 84,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.761Z"
+    "synced_at": "2026-09-29T12:14:32.991Z"
   },
   "@hugeicons-animated": {
     "namespace": "@hugeicons-animated",
     "catalog_url": "https://hugeicons-animated.com/r/registry.json",
     "item_count": 165,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.467Z"
+    "synced_at": "2026-09-29T12:14:31.836Z"
   },
   "@hugeicons-animated-vue": {
     "namespace": "@hugeicons-animated-vue",
     "catalog_url": "https://hugeicons-animated-vue.rebeaumickael.fr/r/registry.json",
     "item_count": 6122,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.711Z"
+    "synced_at": "2026-09-29T12:14:32.334Z"
   },
   "@iandefined": {
     "namespace": "@iandefined",
     "catalog_url": "https://ui.iandefined.com/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.470Z"
+    "synced_at": "2026-09-29T12:14:31.837Z"
   },
   "@iconiq": {
     "namespace": "@iconiq",
     "catalog_url": "https://iconiqui.com/r/registry.json",
     "item_count": 120,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.555Z"
+    "synced_at": "2026-09-29T12:14:31.990Z"
   },
   "@ilinxa": {
     "namespace": "@ilinxa",
     "catalog_url": "https://ui.ilinxa.com/r/registry.json",
     "item_count": 184,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.607Z"
+    "synced_at": "2026-09-29T12:14:32.230Z"
   },
   "@indiacn": {
     "namespace": "@indiacn",
     "catalog_url": "https://indiacn.in/r/registry.json",
     "item_count": 48,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.630Z"
+    "synced_at": "2026-09-29T12:14:32.053Z"
   },
   "@inferencesh": {
     "namespace": "@inferencesh",
     "catalog_url": "https://inference.sh/ui/r/registry.json",
     "item_count": 14,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.911Z"
+    "synced_at": "2026-09-29T12:14:32.990Z"
   },
   "@initium": {
     "namespace": "@initium",
     "catalog_url": "https://app.initium.sh/r/styles/new-york-v4/registry.json",
     "item_count": 252,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.317Z"
+    "synced_at": "2026-09-29T12:14:34.544Z"
   },
   "@intentui": {
     "namespace": "@intentui",
     "catalog_url": "https://intentui.com/r/registry",
     "item_count": 592,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.734Z"
+    "synced_at": "2026-09-29T12:14:32.241Z"
   },
   "@interior": {
     "namespace": "@interior",
     "catalog_url": "https://www.interior.dev/r/registry.json",
     "item_count": 54,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.750Z"
+    "synced_at": "2026-09-29T12:14:32.992Z"
   },
   "@jolyui": {
     "namespace": "@jolyui",
     "catalog_url": "https://www.jolyui.dev/r/registry.json",
     "item_count": 199,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.860Z"
+    "synced_at": "2026-09-29T12:14:32.251Z"
   },
   "@joyco": {
     "namespace": "@joyco",
     "catalog_url": "https://hub.joyco.studio/r/registry.json",
     "item_count": 48,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.399Z"
+    "synced_at": "2026-09-29T12:14:34.404Z"
   },
   "@kanpeki": {
     "namespace": "@kanpeki",
     "catalog_url": "https://kanpeki.vercel.app/r/registry.json",
     "item_count": 260,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.862Z"
+    "synced_at": "2026-09-29T12:14:32.994Z"
   },
   "@kapwa": {
     "namespace": "@kapwa",
     "catalog_url": "https://kapwa-two.vercel.app/r/registry.json",
     "item_count": 11,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.877Z"
+    "synced_at": "2026-09-29T12:14:33.063Z"
   },
   "@kaui": {
     "namespace": "@kaui",
     "catalog_url": "https://kaui-shadcn-registry.vercel.app/r/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.124Z"
+    "synced_at": "2026-09-29T12:14:40.210Z"
   },
   "@keyline": {
     "namespace": "@keyline",
     "catalog_url": "https://keylineicons.com/r/registry.json",
     "item_count": 9736,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:53.959Z"
+    "synced_at": "2026-09-29T12:14:33.658Z"
   },
   "@kibo-ui": {
     "namespace": "@kibo-ui",
     "catalog_url": "https://www.kibo-ui.com/r/registry.json",
     "item_count": 41,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.602Z"
+    "synced_at": "2026-09-29T12:14:33.376Z"
   },
   "@kinetic": {
     "namespace": "@kinetic",
     "catalog_url": "https://kinetic.itsjay.in/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.549Z"
+    "synced_at": "2026-09-29T12:14:33.196Z"
   },
   "@knock-codes": {
     "namespace": "@knock-codes",
     "catalog_url": "https://www.knock.codes/r/react/registry.json",
     "item_count": 19,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:51.066Z"
+    "synced_at": "2026-09-29T12:14:41.087Z"
   },
   "@knot-ui": {
     "namespace": "@knot-ui",
     "catalog_url": "https://knot-ui.trupal.me/r/registry.json",
     "item_count": 15,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.767Z"
+    "synced_at": "2026-09-29T12:14:40.919Z"
   },
   "@kobra": {
     "namespace": "@kobra",
     "catalog_url": "https://kobra.systems/r/registry.json",
     "item_count": 78,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.932Z"
+    "synced_at": "2026-09-29T12:14:34.360Z"
   },
   "@kokonutui": {
     "namespace": "@kokonutui",
     "catalog_url": "https://kokonutui.com/r/registry.json",
     "item_count": 51,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.726Z"
+    "synced_at": "2026-09-29T12:14:33.233Z"
   },
   "@launchui": {
     "namespace": "@launchui",
     "catalog_url": "https://www.launchuicomponents.com/r/registry.json",
     "item_count": 24,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.679Z"
+    "synced_at": "2026-09-29T12:14:33.271Z"
   },
   "@layish": {
     "namespace": "@layish",
     "catalog_url": "https://ui.layishsieger.com/r/registry.json",
     "item_count": 2,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.994Z"
+    "synced_at": "2026-09-29T12:14:33.479Z"
   },
   "@lema-ds": {
     "namespace": "@lema-ds",
     "catalog_url": "https://ds.lema.ufpb.br/r/registry.json",
     "item_count": 378,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.815Z"
+    "synced_at": "2026-09-29T12:14:34.610Z"
   },
   "@lens-blocks": {
     "namespace": "@lens-blocks",
     "catalog_url": "https://lensblocks.com/r/registry.json",
     "item_count": 24,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.815Z"
+    "synced_at": "2026-09-29T12:14:34.361Z"
   },
   "@limeplay": {
     "namespace": "@limeplay",
     "catalog_url": "https://limeplay.winoffrg.dev/r/registry.json",
     "item_count": 52,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.741Z"
+    "synced_at": "2026-09-29T12:14:33.414Z"
   },
   "@liquefy-ui": {
     "namespace": "@liquefy-ui",
     "catalog_url": "https://liquefy-ui.com/r/registry.json",
     "item_count": 39,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.803Z"
+    "synced_at": "2026-09-29T12:14:33.308Z"
   },
   "@livedocs": {
     "namespace": "@livedocs",
     "catalog_url": "https://www.livedocs.xyz/r/registry.json",
     "item_count": 41,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.082Z"
+    "synced_at": "2026-09-29T12:14:34.358Z"
   },
   "@lmscn": {
     "namespace": "@lmscn",
     "catalog_url": "https://lmscn.vercel.app/r/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:44.808Z"
+    "synced_at": "2026-09-29T12:14:33.309Z"
   },
   "@loading-ui": {
     "namespace": "@loading-ui",
     "catalog_url": "https://www.loading-ui.com/r/registry.json",
     "item_count": 50,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.035Z"
+    "synced_at": "2026-09-29T12:14:34.359Z"
   },
   "@localmode": {
     "namespace": "@localmode",
     "catalog_url": "https://localmode.ai/r/registry.json",
     "item_count": 147,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.673Z"
+    "synced_at": "2026-09-29T12:14:34.427Z"
   },
   "@lucide-animated": {
     "namespace": "@lucide-animated",
     "catalog_url": "https://lucide-animated.com/r/registry.json",
     "item_count": 467,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.055Z"
+    "synced_at": "2026-09-29T12:14:34.406Z"
   },
   "@lumiui": {
     "namespace": "@lumiui",
     "catalog_url": "https://www.lumiui.dev/r/registry.json",
     "item_count": 67,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.038Z"
+    "synced_at": "2026-09-29T12:14:34.401Z"
   },
   "@lytenyte": {
     "namespace": "@lytenyte",
     "catalog_url": "https://www.1771technologies.com/r/registry.json",
     "item_count": 2,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.818Z"
+    "synced_at": "2026-09-29T12:14:34.359Z"
   },
   "@magicui": {
     "namespace": "@magicui",
     "catalog_url": "https://magicui.design/r/registry.json",
     "item_count": 250,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.286Z"
+    "synced_at": "2026-09-29T12:14:43.685Z"
   },
   "@manifest": {
     "namespace": "@manifest",
     "catalog_url": "https://ui.manifest.build/r/registry.json",
     "item_count": 32,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.096Z"
+    "synced_at": "2026-09-29T12:14:34.435Z"
   },
   "@mapcn": {
     "namespace": "@mapcn",
     "catalog_url": "https://www.mapcn.dev/r/registry.json",
     "item_count": 9,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.515Z"
+    "synced_at": "2026-09-29T12:14:34.369Z"
   },
   "@materialcn": {
     "namespace": "@materialcn",
     "catalog_url": "https://guillermo-rebolledo.github.io/materialcn/r/registry.json",
     "item_count": 66,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.156Z"
+    "synced_at": "2026-09-29T12:14:34.235Z"
   },
   "@mediadrop": {
     "namespace": "@mediadrop",
     "catalog_url": "https://www.mediadrop.dev/r/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.731Z"
+    "synced_at": "2026-09-29T12:14:40.744Z"
   },
   "@mewo": {
     "namespace": "@mewo",
     "catalog_url": "https://mewo-ui.vercel.app/r/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.153Z"
+    "synced_at": "2026-09-29T12:14:43.647Z"
   },
   "@microkit": {
     "namespace": "@microkit",
     "catalog_url": "https://microkit.co/r/registry.json",
     "item_count": 49,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.302Z"
+    "synced_at": "2026-09-29T12:14:43.714Z"
   },
   "@mischief": {
     "namespace": "@mischief",
     "catalog_url": "https://ui.tinkererslabs.com/r/registry.json",
     "item_count": 234,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.258Z"
+    "synced_at": "2026-09-29T12:14:43.651Z"
   },
   "@mksingh": {
     "namespace": "@mksingh",
     "catalog_url": "https://mksingh.dev/r/registry.json",
     "item_count": 36,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.448Z"
+    "synced_at": "2026-09-29T12:14:34.413Z"
   },
   "@moduix-react": {
     "namespace": "@moduix-react",
     "catalog_url": "https://moduix.dev/r/react/registry.json",
     "item_count": 96,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.293Z"
+    "synced_at": "2026-09-29T12:14:43.686Z"
   },
   "@morphiq": {
     "namespace": "@morphiq",
     "catalog_url": "https://morphiq.prathampatel.design/r/registry.json",
     "item_count": 20,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.380Z"
+    "synced_at": "2026-09-29T12:14:34.233Z"
   },
   "@motion-lexicon": {
     "namespace": "@motion-lexicon",
     "catalog_url": "https://motion-lexicon.pages.dev/r/registry.json",
     "item_count": 150,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.383Z"
+    "synced_at": "2026-09-29T12:14:43.669Z"
   },
   "@motion-menu": {
     "namespace": "@motion-menu",
@@ -1313,91 +1313,91 @@
     "catalog_url": "https://motion-primitives.com/c/registry.json",
     "item_count": 33,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.416Z"
+    "synced_at": "2026-09-29T12:14:43.680Z"
   },
   "@motiq": {
     "namespace": "@motiq",
     "catalog_url": "https://motiq.dev/r/registry.json",
     "item_count": 100,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.697Z"
+    "synced_at": "2026-09-29T12:14:34.589Z"
   },
   "@motokoui": {
     "namespace": "@motokoui",
     "catalog_url": "https://www.motokoui.com/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.637Z"
+    "synced_at": "2026-09-29T12:14:34.445Z"
   },
   "@moumenlab": {
     "namespace": "@moumenlab",
     "catalog_url": "https://lab.moumen.dev/r/registry.json",
     "item_count": 14,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.652Z"
+    "synced_at": "2026-09-29T12:14:34.441Z"
   },
   "@mozaika": {
     "namespace": "@mozaika",
     "catalog_url": "https://mozaika.design/r/registry.json",
     "item_count": 548,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.895Z"
+    "synced_at": "2026-09-29T12:14:34.721Z"
   },
   "@mui-treasury": {
     "namespace": "@mui-treasury",
     "catalog_url": "https://www.mui-treasury.com/r/registry.json",
     "item_count": 192,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.881Z"
+    "synced_at": "2026-09-29T12:14:34.730Z"
   },
   "@navui": {
     "namespace": "@navui",
     "catalog_url": "https://ui.navdeepsingh.dev/r/registry.json",
     "item_count": 62,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.568Z"
+    "synced_at": "2026-09-29T12:14:34.550Z"
   },
   "@ncdai": {
     "namespace": "@ncdai",
     "catalog_url": "https://chanhdai.com/r/registry.json",
     "item_count": 69,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.663Z"
+    "synced_at": "2026-09-29T12:14:34.411Z"
   },
   "@nekode": {
     "namespace": "@nekode",
     "catalog_url": "https://ui.nekode.id/r/registry.json",
     "item_count": 23,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.670Z"
+    "synced_at": "2026-09-29T12:14:34.392Z"
   },
   "@neon-ui": {
     "namespace": "@neon-ui",
     "catalog_url": "https://ui.neon.com/r/registry.json",
     "item_count": 77,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.766Z"
+    "synced_at": "2026-09-29T12:14:34.488Z"
   },
   "@nexus-labs": {
     "namespace": "@nexus-labs",
     "catalog_url": "https://www.nexus-ui.com/r/registry.json",
     "item_count": 86,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.175Z"
+    "synced_at": "2026-09-29T12:14:35.206Z"
   },
   "@nexus-ui": {
     "namespace": "@nexus-ui",
     "catalog_url": "https://nexus-ui.dev/r/registry.json",
     "item_count": 15,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.970Z"
+    "synced_at": "2026-09-29T12:14:36.328Z"
   },
   "@niko-table": {
     "namespace": "@niko-table",
     "catalog_url": "https://niko-table.com/r/registry.json",
     "item_count": 34,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.877Z"
+    "synced_at": "2026-09-29T12:14:34.688Z"
   },
   "@nordaun": {
     "namespace": "@nordaun",
@@ -1411,224 +1411,224 @@
     "catalog_url": "https://www.nostalgia-ui.com/r/registry.json",
     "item_count": 91,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.231Z"
+    "synced_at": "2026-09-29T12:14:35.214Z"
   },
   "@ns-ui": {
     "namespace": "@ns-ui",
     "catalog_url": "https://design.helpmarq.com/r/registry.json",
     "item_count": 542,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.108Z"
+    "synced_at": "2026-09-29T12:14:35.036Z"
   },
   "@nteract": {
     "namespace": "@nteract",
     "catalog_url": "https://nteract-elements.vercel.app/r/registry.json",
     "item_count": 35,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:45.960Z"
+    "synced_at": "2026-09-29T12:14:34.835Z"
   },
   "@nuqs": {
     "namespace": "@nuqs",
     "catalog_url": "https://nuqs.dev/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.128Z"
+    "synced_at": "2026-09-29T12:14:35.138Z"
   },
   "@nusaiba": {
     "namespace": "@nusaiba",
     "catalog_url": "https://nusaiba.dev/r/base-nova/registry.json",
     "item_count": 119,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.104Z"
+    "synced_at": "2026-09-29T12:14:35.819Z"
   },
   "@odysseyui": {
     "namespace": "@odysseyui",
     "catalog_url": "https://www.odysseyui.com/r/registry.json",
     "item_count": 288,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.171Z"
+    "synced_at": "2026-09-29T12:14:35.212Z"
   },
   "@ogimagecn": {
     "namespace": "@ogimagecn",
     "catalog_url": "https://www.ogimagecn.com/r/registry.json",
     "item_count": 26,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.126Z"
+    "synced_at": "2026-09-29T12:14:35.383Z"
   },
   "@oidc": {
     "namespace": "@oidc",
     "catalog_url": "https://ui.shadcn.com/oidc/r/registry.json",
     "item_count": 78,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.064Z"
+    "synced_at": "2026-09-29T12:14:35.140Z"
   },
   "@onchain-ui": {
     "namespace": "@onchain-ui",
     "catalog_url": "https://onchain-ui.dev/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.969Z"
+    "synced_at": "2026-09-29T12:14:41.072Z"
   },
   "@opaline": {
     "namespace": "@opaline",
     "catalog_url": "https://opaline.buildlab.in/r/registry.json",
     "item_count": 40,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.277Z"
+    "synced_at": "2026-09-29T12:14:35.141Z"
   },
   "@openmirai": {
     "namespace": "@openmirai",
     "catalog_url": "https://www.openmirai.dev/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.281Z"
+    "synced_at": "2026-09-29T12:14:35.333Z"
   },
   "@openstatus": {
     "namespace": "@openstatus",
     "catalog_url": "https://www.openstatus.dev/r/registry.json",
     "item_count": 26,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.565Z"
+    "synced_at": "2026-09-29T12:14:35.781Z"
   },
   "@optics": {
     "namespace": "@optics",
     "catalog_url": "https://optics.agusmayol.com.ar/r/registry.json",
     "item_count": 79,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.397Z"
+    "synced_at": "2026-09-29T12:14:36.716Z"
   },
   "@oui": {
     "namespace": "@oui",
     "catalog_url": "https://oui.mw10013.workers.dev/r/registry.json",
     "item_count": 137,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.304Z"
+    "synced_at": "2026-09-29T12:14:35.286Z"
   },
   "@pacekit": {
     "namespace": "@pacekit",
     "catalog_url": "https://paceui.com/r/registry.json",
     "item_count": 23,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.608Z"
+    "synced_at": "2026-09-29T12:14:35.659Z"
   },
   "@paceui": {
     "namespace": "@paceui",
     "catalog_url": "https://paceui.com/r/registry.json",
     "item_count": 23,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.419Z"
+    "synced_at": "2026-09-29T12:14:35.453Z"
   },
   "@paceui-gsap": {
     "namespace": "@paceui-gsap",
     "catalog_url": "https://gsap.paceui.com/r/registry.json",
     "item_count": 29,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.500Z"
+    "synced_at": "2026-09-29T12:14:35.401Z"
   },
   "@paddle": {
     "namespace": "@paddle",
     "catalog_url": "https://developer.paddle.com/r/registry.json",
     "item_count": 14,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.421Z"
+    "synced_at": "2026-09-29T12:14:35.559Z"
   },
   "@paletteui": {
     "namespace": "@paletteui",
     "catalog_url": "https://paletteui.xyz/r/registry.json",
     "item_count": 65,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.592Z"
+    "synced_at": "2026-09-29T12:14:35.585Z"
   },
   "@pane": {
     "namespace": "@pane",
     "catalog_url": "https://pane.theui.company/r/registry.json",
     "item_count": 15,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.555Z"
+    "synced_at": "2026-09-29T12:14:35.491Z"
   },
   "@pantoken": {
     "namespace": "@pantoken",
     "catalog_url": "https://pantoken.app/r/registry.json",
     "item_count": 80,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.696Z"
+    "synced_at": "2026-09-29T12:14:35.500Z"
   },
   "@pastecn": {
     "namespace": "@pastecn",
     "catalog_url": "https://pastecn.com/r/registry",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.614Z"
+    "synced_at": "2026-09-29T12:14:35.699Z"
   },
   "@paykit-sdk": {
     "namespace": "@paykit-sdk",
     "catalog_url": "https://www.usepaykit.dev/r/registry.json",
     "item_count": 21,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.718Z"
+    "synced_at": "2026-09-29T12:14:35.788Z"
   },
   "@payload-components": {
     "namespace": "@payload-components",
     "catalog_url": "https://www.payload-components.xyz/r/registry.json",
     "item_count": 82,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.712Z"
+    "synced_at": "2026-09-29T12:14:35.830Z"
   },
   "@persianlabsui": {
     "namespace": "@persianlabsui",
     "catalog_url": "https://ui.persian-labs.ir/r/registry.json",
     "item_count": 105,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.547Z"
+    "synced_at": "2026-09-29T12:14:36.263Z"
   },
   "@pipecat": {
     "namespace": "@pipecat",
     "catalog_url": "https://ui.pipecat.ai/r/registry.json",
     "item_count": 21,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.419Z"
+    "synced_at": "2026-09-29T12:14:36.530Z"
   },
   "@pixelact-ui": {
     "namespace": "@pixelact-ui",
     "catalog_url": "https://www.pixelactui.com/r/registry.json",
     "item_count": 28,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.036Z"
+    "synced_at": "2026-09-29T12:14:36.109Z"
   },
   "@plate": {
     "namespace": "@plate",
     "catalog_url": "https://platejs.org/r/registry.json",
     "item_count": 324,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.915Z"
+    "synced_at": "2026-09-29T12:14:36.034Z"
   },
   "@plotcn": {
     "namespace": "@plotcn",
     "catalog_url": "https://plotcn.vercel.app/r/registry.json",
     "item_count": 49,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.771Z"
+    "synced_at": "2026-09-29T12:14:35.783Z"
   },
   "@preskok": {
     "namespace": "@preskok",
     "catalog_url": "https://preskok-ui.vercel.app/r/registry.json",
     "item_count": 260,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.034Z"
+    "synced_at": "2026-09-29T12:14:36.153Z"
   },
   "@prompt-kit": {
     "namespace": "@prompt-kit",
     "catalog_url": "https://www.prompt-kit.com/c/registry.json",
     "item_count": 23,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:46.867Z"
+    "synced_at": "2026-09-29T12:14:36.046Z"
   },
   "@prosekit": {
     "namespace": "@prosekit",
     "catalog_url": "https://unpkg.com/prosekit-registry@0.0.20260901031754/dist/r/registry.json",
     "item_count": 549,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.340Z"
+    "synced_at": "2026-09-29T12:14:36.503Z"
   },
   "@pulkitxm": {
     "namespace": "@pulkitxm",
@@ -1642,350 +1642,350 @@
     "catalog_url": "https://pulld.pages.dev/r/registry.json",
     "item_count": 100,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.080Z"
+    "synced_at": "2026-09-29T12:14:36.196Z"
   },
   "@quill": {
     "namespace": "@quill",
     "catalog_url": "https://www.quilldesignsystem.com/r/registry.json",
     "item_count": 59,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.422Z"
+    "synced_at": "2026-09-29T12:14:36.251Z"
   },
   "@quiz-ui": {
     "namespace": "@quiz-ui",
     "catalog_url": "https://quiz-ui-phi.vercel.app/r/registry.json",
     "item_count": 15,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.942Z"
+    "synced_at": "2026-09-29T12:14:41.038Z"
   },
   "@ramonclaudio-coderabbit": {
     "namespace": "@ramonclaudio-coderabbit",
     "catalog_url": "https://coderabbit-shadcn-registry.vercel.app/r/registry.json",
     "item_count": 19,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.071Z"
+    "synced_at": "2026-09-29T12:14:36.123Z"
   },
   "@ratneshc": {
     "namespace": "@ratneshc",
     "catalog_url": "https://ratneshc.com/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.128Z"
+    "synced_at": "2026-09-29T12:14:36.332Z"
   },
   "@rawkitui": {
     "namespace": "@rawkitui",
     "catalog_url": "https://rawkitui.zerodegree.tech/r/registry.json",
     "item_count": 39,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.047Z"
+    "synced_at": "2026-09-29T12:14:36.215Z"
   },
   "@react-aria": {
     "namespace": "@react-aria",
     "catalog_url": "https://react-aria.adobe.com/registry/registry.json",
     "item_count": 158,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.240Z"
+    "synced_at": "2026-09-29T12:14:36.531Z"
   },
   "@react-bits": {
     "namespace": "@react-bits",
     "catalog_url": "https://reactbits.dev/r/registry.json",
-    "item_count": 844,
+    "item_count": 848,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.270Z"
+    "synced_at": "2026-09-29T12:14:36.353Z"
   },
   "@react-slot": {
     "namespace": "@react-slot",
     "catalog_url": "https://react-slot.vercel.app/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.260Z"
+    "synced_at": "2026-09-29T12:14:36.367Z"
   },
   "@reactframe": {
     "namespace": "@reactframe",
     "catalog_url": "https://reactframe.com/r/registry.json",
     "item_count": 230,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.619Z"
+    "synced_at": "2026-09-29T12:14:36.657Z"
   },
   "@registrydirectory": {
     "namespace": "@registrydirectory",
     "catalog_url": "https://registry.directory/r/registry.json",
     "item_count": 14207,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.402Z"
+    "synced_at": "2026-09-29T12:14:36.605Z"
   },
   "@remocn": {
     "namespace": "@remocn",
     "catalog_url": "https://remocn.dev/r/registry.json",
     "item_count": 332,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.514Z"
+    "synced_at": "2026-09-29T12:14:37.710Z"
   },
   "@rescript-shadcn": {
     "namespace": "@rescript-shadcn",
     "catalog_url": "https://rescript-shadcn.miriad.studio/r/registry.json",
     "item_count": 535,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.365Z"
+    "synced_at": "2026-09-29T12:14:36.584Z"
   },
   "@retab": {
     "namespace": "@retab",
     "catalog_url": "https://ui.retab.com/r/registry.json",
     "item_count": 130,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.393Z"
+    "synced_at": "2026-09-29T12:14:36.522Z"
   },
   "@retroui": {
     "namespace": "@retroui",
     "catalog_url": "https://neobrutalism.com/r/registry.json",
     "item_count": 54,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.538Z"
+    "synced_at": "2026-09-29T12:14:36.770Z"
   },
   "@reui": {
     "namespace": "@reui",
-    "catalog_url": "https://reui.io/r/styles/base-nova/registry.json?v=dpl_FN3gGeMD8Ng9o2GymM4D4ED9jkME",
+    "catalog_url": "https://reui.io/r/styles/base-nova/registry.json?v=dpl_H8r8RskpjiWKAshDttRGTFrG6HXc",
     "item_count": 1805,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.781Z"
+    "synced_at": "2026-09-29T12:14:37.158Z"
   },
   "@roiui": {
     "namespace": "@roiui",
     "catalog_url": "https://www.roiui.com/r/registry.json",
     "item_count": 122,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.884Z"
+    "synced_at": "2026-09-29T12:14:37.194Z"
   },
   "@saastro": {
     "namespace": "@saastro",
     "catalog_url": "https://ui.saastro.io/r/registry.json",
     "item_count": 53,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.893Z"
+    "synced_at": "2026-09-29T12:14:40.035Z"
   },
   "@sans": {
     "namespace": "@sans",
     "catalog_url": "https://sans.sansorigin.com/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.523Z"
+    "synced_at": "2026-09-29T12:14:36.760Z"
   },
   "@satoriui": {
     "namespace": "@satoriui",
     "catalog_url": "https://www.satoriui.site/r/registry.json",
     "item_count": 15,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.016Z"
+    "synced_at": "2026-09-29T12:14:37.303Z"
   },
   "@sc1m": {
     "namespace": "@sc1m",
     "catalog_url": "https://sc1m.vercel.app/r/registry.json",
     "item_count": 43,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.598Z"
+    "synced_at": "2026-09-29T12:14:36.756Z"
   },
   "@scrimui": {
     "namespace": "@scrimui",
     "catalog_url": "https://scrimui.dev/r/registry.json",
     "item_count": 68,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.744Z"
+    "synced_at": "2026-09-29T12:14:37.192Z"
   },
   "@scrollxui": {
     "namespace": "@scrollxui",
     "catalog_url": "https://scrollxui.dev/registry/registry.json",
     "item_count": 180,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.121Z"
+    "synced_at": "2026-09-29T12:14:37.408Z"
   },
   "@seamui": {
     "namespace": "@seamui",
     "catalog_url": "https://seamui.dev/r/registry.json",
     "item_count": 305,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.703Z"
+    "synced_at": "2026-09-29T12:14:36.972Z"
   },
   "@sekei": {
     "namespace": "@sekei",
     "catalog_url": "https://www.sekei.design/registry/registry.json",
     "item_count": 11,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.084Z"
+    "synced_at": "2026-09-29T12:14:37.484Z"
   },
   "@sevenui": {
     "namespace": "@sevenui",
     "catalog_url": "https://sevenui.dev/r/registry.json",
     "item_count": 67,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.812Z"
+    "synced_at": "2026-09-29T12:14:37.193Z"
   },
   "@sf-fleet-hud": {
     "namespace": "@sf-fleet-hud",
     "catalog_url": "https://sf-fleet-hud.vercel.app/r/registry.json",
     "item_count": 47,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.760Z"
+    "synced_at": "2026-09-29T12:14:36.965Z"
   },
   "@shadcn-dashboard": {
     "namespace": "@shadcn-dashboard",
     "catalog_url": "https://shadcndashboard.dev/r/registry.json",
     "item_count": 508,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.696Z"
+    "synced_at": "2026-09-29T12:14:40.782Z"
   },
   "@shadcn-editor": {
     "namespace": "@shadcn-editor",
     "catalog_url": "https://raw.githubusercontent.com/htmujahid/shadcn-editor/refs/heads/main/public/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.753Z"
+    "synced_at": "2026-09-29T12:14:37.191Z"
   },
   "@shadcn-map": {
     "namespace": "@shadcn-map",
     "catalog_url": "https://shadcn-map.vercel.app/r/registry.json",
     "item_count": 32,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.893Z"
+    "synced_at": "2026-09-29T12:14:37.269Z"
   },
   "@shadcn-space": {
     "namespace": "@shadcn-space",
     "catalog_url": "https://shadcnspace.com/r/registry.json",
     "item_count": 941,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.940Z"
+    "synced_at": "2026-09-29T12:14:37.224Z"
   },
   "@shadcn-studio": {
     "namespace": "@shadcn-studio",
     "catalog_url": "https://shadcnstudio.com/r/new-york-v4/registry.json",
     "item_count": 694,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.452Z"
+    "synced_at": "2026-09-29T12:14:38.534Z"
   },
   "@shadcn-ui-blocks": {
     "namespace": "@shadcn-ui-blocks",
     "catalog_url": "https://www.shadcn-ui-blocks.com/r/registry.json",
     "item_count": 4007,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.072Z"
+    "synced_at": "2026-09-29T12:14:37.690Z"
   },
   "@shadcnblocks": {
     "namespace": "@shadcnblocks",
     "catalog_url": "https://www.shadcnblocks.com/r/registry.json",
     "item_count": 4171,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.332Z"
+    "synced_at": "2026-09-29T12:14:37.929Z"
   },
   "@shadcncraft": {
     "namespace": "@shadcncraft",
     "catalog_url": "https://shadcncraft.com/r/registry.json",
     "item_count": 300,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.026Z"
+    "synced_at": "2026-09-29T12:14:37.487Z"
   },
   "@shadcndesign": {
     "namespace": "@shadcndesign",
     "catalog_url": "https://shadcndesign-free.vercel.app/r/registry.json",
     "item_count": 44,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.988Z"
+    "synced_at": "2026-09-29T12:14:37.481Z"
   },
   "@shadcnhooks": {
     "namespace": "@shadcnhooks",
     "catalog_url": "https://shadcn-hooks.com/r/registry.json",
     "item_count": 58,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:47.966Z"
+    "synced_at": "2026-09-29T12:14:37.397Z"
   },
   "@shadcnloaders": {
     "namespace": "@shadcnloaders",
     "catalog_url": "https://shadcn-loaders.vercel.app/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.436Z"
+    "synced_at": "2026-09-29T12:14:40.485Z"
   },
   "@shadcnmaps": {
     "namespace": "@shadcnmaps",
     "catalog_url": "https://www.shadcnmaps.com/r/registry.json",
     "item_count": 361,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.728Z"
+    "synced_at": "2026-09-29T12:14:37.868Z"
   },
   "@shadcnstore": {
     "namespace": "@shadcnstore",
     "catalog_url": "https://shadcnstore.com/r/registry.json",
     "item_count": 274,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.411Z"
+    "synced_at": "2026-09-29T12:14:37.837Z"
   },
   "@shadcnui-blocks": {
     "namespace": "@shadcnui-blocks",
     "catalog_url": "https://www.shadcnui-blocks.com/r/registry.json",
     "item_count": 542,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.589Z"
+    "synced_at": "2026-09-29T12:14:37.890Z"
   },
   "@shadcnuikit": {
     "namespace": "@shadcnuikit",
     "catalog_url": "https://shadcnuikit.com/r/registry.json",
     "item_count": 962,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.206Z"
+    "synced_at": "2026-09-29T12:14:38.784Z"
   },
   "@shivraj-roy": {
     "namespace": "@shivraj-roy",
     "catalog_url": "https://www.shivrajroy.in/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.240Z"
+    "synced_at": "2026-09-29T12:14:37.742Z"
   },
   "@shoogle": {
     "namespace": "@shoogle",
     "catalog_url": "https://shoogle.dev/r/registry.json",
     "item_count": 0,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.116Z"
+    "synced_at": "2026-09-29T12:14:38.455Z"
   },
   "@simple-ai": {
     "namespace": "@simple-ai",
     "catalog_url": "https://www.simple-ai.dev/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.276Z"
+    "synced_at": "2026-09-29T12:14:37.775Z"
   },
   "@skecher-ui": {
     "namespace": "@skecher-ui",
     "catalog_url": "https://skecher-ui.com/r/registry.json",
     "item_count": 26,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.440Z"
+    "synced_at": "2026-09-29T12:14:38.047Z"
   },
   "@skiper-ui": {
     "namespace": "@skiper-ui",
     "catalog_url": "https://skiper-ui.com/registry/registry.json",
     "item_count": 37,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.371Z"
+    "synced_at": "2026-09-29T12:14:38.172Z"
   },
   "@slide-cn": {
     "namespace": "@slide-cn",
     "catalog_url": "https://www.slide-cn.com/r/registry.json",
     "item_count": 20,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.806Z"
+    "synced_at": "2026-09-29T12:14:38.311Z"
   },
   "@slidecn": {
     "namespace": "@slidecn",
     "catalog_url": "https://slidecn.vercel.app/r/registry.json",
     "item_count": 26,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.218Z"
+    "synced_at": "2026-09-29T12:14:38.797Z"
   },
   "@smoothui": {
     "namespace": "@smoothui",
     "catalog_url": "https://smoothui.dev/r/registry.json",
     "item_count": 246,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.660Z"
+    "synced_at": "2026-09-29T12:14:39.423Z"
   },
   "@snap-cn": {
     "namespace": "@snap-cn",
@@ -1999,405 +1999,405 @@
     "catalog_url": "https://snapcn.dev/r/registry.json",
     "item_count": 47,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.118Z"
+    "synced_at": "2026-09-29T12:14:38.802Z"
   },
   "@solaceui": {
     "namespace": "@solaceui",
     "catalog_url": "https://www.solaceui.com/r/registry.json",
     "item_count": 39,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.665Z"
+    "synced_at": "2026-09-29T12:14:38.175Z"
   },
   "@sona-ui": {
     "namespace": "@sona-ui",
     "catalog_url": "https://www.sonaui.com/r/registry.json",
-    "item_count": 46,
+    "item_count": 45,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.013Z"
+    "synced_at": "2026-09-29T12:14:38.958Z"
   },
   "@soralabs": {
     "namespace": "@soralabs",
     "catalog_url": "https://ui.soralabs.studio/r/registry.json",
     "item_count": 68,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.645Z"
+    "synced_at": "2026-09-29T12:14:38.237Z"
   },
   "@soundcn": {
     "namespace": "@soundcn",
     "catalog_url": "https://soundcn.xyz/r/registry.json",
     "item_count": 816,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.365Z"
+    "synced_at": "2026-09-29T12:14:39.547Z"
   },
   "@spaceui": {
     "namespace": "@spaceui",
     "catalog_url": "https://www.spaceui.one/r/registry.json",
-    "item_count": 1100,
+    "item_count": 1129,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.560Z"
+    "synced_at": "2026-09-29T12:14:38.821Z"
   },
   "@spark-ui": {
     "namespace": "@spark-ui",
     "catalog_url": "https://spark-ui-olive.vercel.app/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.805Z"
+    "synced_at": "2026-09-29T12:14:39.056Z"
   },
   "@spectrumui": {
     "namespace": "@spectrumui",
     "catalog_url": "https://ui.spectrumhq.in/r/registry.json",
     "item_count": 315,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.775Z"
+    "synced_at": "2026-09-29T12:14:38.436Z"
   },
   "@spell": {
     "namespace": "@spell",
     "catalog_url": "https://spell.sh/r/registry.json",
     "item_count": 33,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.900Z"
+    "synced_at": "2026-09-29T12:14:38.486Z"
   },
   "@ssych": {
     "namespace": "@ssych",
     "catalog_url": "https://ui.ssych.com/r/registry.json",
     "item_count": 80,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.952Z"
+    "synced_at": "2026-09-29T12:14:38.799Z"
   },
   "@starck": {
     "namespace": "@starck",
     "catalog_url": "https://ui.starck.studio/r/registry.json",
     "item_count": 16,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.040Z"
+    "synced_at": "2026-09-29T12:14:38.796Z"
   },
   "@starseam": {
     "namespace": "@starseam",
     "catalog_url": "https://starseam.astroicers.link/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.012Z"
+    "synced_at": "2026-09-29T12:14:38.800Z"
   },
   "@stepper": {
     "namespace": "@stepper",
     "catalog_url": "https://francozeta-stepper.vercel.app/registry.json",
     "item_count": 3,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:48.974Z"
+    "synced_at": "2026-09-29T12:14:38.869Z"
   },
   "@styleui": {
     "namespace": "@styleui",
     "catalog_url": "https://www.styleui.dev/r/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.143Z"
+    "synced_at": "2026-09-29T12:14:39.289Z"
   },
   "@stylexui": {
     "namespace": "@stylexui",
     "catalog_url": "https://stylexui.dev/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.098Z"
+    "synced_at": "2026-09-29T12:14:39.108Z"
   },
   "@supabase": {
     "namespace": "@supabase",
     "catalog_url": "https://supabase.com/library/r/registry.json",
     "item_count": 67,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.357Z"
+    "synced_at": "2026-09-29T12:14:39.522Z"
   },
   "@svelte-bits": {
     "namespace": "@svelte-bits",
     "catalog_url": "https://sveltebits.xyz/r/registry.json",
     "item_count": 164,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.314Z"
+    "synced_at": "2026-09-29T12:14:40.411Z"
   },
   "@svgl": {
     "namespace": "@svgl",
     "catalog_url": "https://svgl.app/r/registry.json",
     "item_count": 670,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.192Z"
+    "synced_at": "2026-09-29T12:14:48.669Z"
   },
   "@systaliko-ui": {
     "namespace": "@systaliko-ui",
     "catalog_url": "https://systaliko-ui.vercel.app/r/registry.json",
     "item_count": 174,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.200Z"
+    "synced_at": "2026-09-29T12:14:39.037Z"
   },
   "@tablecn": {
     "namespace": "@tablecn",
     "catalog_url": "https://table-cn.vercel.app/r/new-york-v4/registry.json",
     "item_count": 2,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.461Z"
+    "synced_at": "2026-09-29T12:14:39.394Z"
   },
   "@tailark": {
     "namespace": "@tailark",
     "catalog_url": "https://tailark.com/r/registry.json",
     "item_count": 476,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.497Z"
+    "synced_at": "2026-09-29T12:14:39.211Z"
   },
   "@tailgrids": {
     "namespace": "@tailgrids",
     "catalog_url": "https://tailgrids.com/docs/r/registry.json",
     "item_count": 61,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.370Z"
+    "synced_at": "2026-09-29T12:14:39.214Z"
   },
   "@tailwind-admin": {
     "namespace": "@tailwind-admin",
     "catalog_url": "https://tailwind-admin.com/r/registry.json",
     "item_count": 102,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.403Z"
+    "synced_at": "2026-09-29T12:14:39.217Z"
   },
   "@taki": {
     "namespace": "@taki",
     "catalog_url": "https://taki-ui.com/r/registry.json",
     "item_count": 540,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.411Z"
+    "synced_at": "2026-09-29T12:14:39.267Z"
   },
   "@termcn": {
     "namespace": "@termcn",
     "catalog_url": "https://www.termcn.dev/r/registry.json",
     "item_count": 344,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.153Z"
+    "synced_at": "2026-09-29T12:14:39.969Z"
   },
   "@terrae": {
     "namespace": "@terrae",
     "catalog_url": "https://www.terrae.dev/registry.json",
     "item_count": 40,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.567Z"
+    "synced_at": "2026-09-29T12:14:39.552Z"
   },
   "@tetra-ui": {
     "namespace": "@tetra-ui",
     "catalog_url": "https://www.tetra-ui.com/r/registry.json",
     "item_count": 45,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.867Z"
+    "synced_at": "2026-09-29T12:14:39.837Z"
   },
   "@text-ui": {
     "namespace": "@text-ui",
     "catalog_url": "https://joelachance.github.io/text-ui/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.489Z"
+    "synced_at": "2026-09-29T12:14:39.403Z"
   },
   "@thegridcn": {
     "namespace": "@thegridcn",
     "catalog_url": "https://thegridcn.com/r/registry.json",
     "item_count": 144,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.815Z"
+    "synced_at": "2026-09-29T12:14:39.542Z"
   },
   "@threecn": {
     "namespace": "@threecn",
     "catalog_url": "https://threecn.dev/r/registry.json",
     "item_count": 28,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.441Z"
+    "synced_at": "2026-09-29T12:14:40.393Z"
   },
   "@tile-ui": {
     "namespace": "@tile-ui",
     "catalog_url": "https://react.tileui.zmorg.cn/r/registry.json",
     "item_count": 71,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.430Z"
+    "synced_at": "2026-09-29T12:14:40.407Z"
   },
   "@toc-cn": {
     "namespace": "@toc-cn",
     "catalog_url": "https://tocn.vercel.app/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.638Z"
+    "synced_at": "2026-09-29T12:14:39.484Z"
   },
   "@toggles": {
     "namespace": "@toggles",
     "catalog_url": "https://toggles.dev/r/registry.json",
     "item_count": 14,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.459Z"
+    "synced_at": "2026-09-29T12:14:39.389Z"
   },
   "@tokenui": {
     "namespace": "@tokenui",
     "catalog_url": "https://www.tokenui.dev/r/registry.json",
     "item_count": 17,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.744Z"
+    "synced_at": "2026-09-29T12:14:48.721Z"
   },
   "@tool-ui": {
     "namespace": "@tool-ui",
     "catalog_url": "https://raw.githubusercontent.com/assistant-ui/tool-ui/49a870286facdbf28160cd647f0d337ebdc9b275/apps/www/public/r/registry.json",
     "item_count": 27,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.816Z"
+    "synced_at": "2026-09-29T12:14:39.342Z"
   },
   "@tour": {
     "namespace": "@tour",
     "catalog_url": "https://onboarding-tour.vercel.app/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.693Z"
+    "synced_at": "2026-09-29T12:14:48.635Z"
   },
   "@trophy-ui": {
     "namespace": "@trophy-ui",
     "catalog_url": "https://ui.trophy.so/r/registry.json",
     "item_count": 18,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.829Z"
+    "synced_at": "2026-09-29T12:14:48.728Z"
   },
   "@tuiparts": {
     "namespace": "@tuiparts",
     "catalog_url": "https://tuiparts.sh/r/registry.json",
     "item_count": 56,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.369Z"
+    "synced_at": "2026-09-29T12:14:39.284Z"
   },
   "@turbopills-ui": {
     "namespace": "@turbopills-ui",
     "catalog_url": "https://ui.turbopills.com/r/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.791Z"
+    "synced_at": "2026-09-29T12:14:48.694Z"
   },
   "@tween-ui": {
     "namespace": "@tween-ui",
     "catalog_url": "https://tween-ui.vercel.app/r/registry.json",
     "item_count": 82,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.887Z"
+    "synced_at": "2026-09-29T12:14:39.269Z"
   },
   "@tweenly": {
     "namespace": "@tweenly",
     "catalog_url": "https://trytweenly.vercel.app/r/registry.json",
     "item_count": 61,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.784Z"
+    "synced_at": "2026-09-29T12:14:39.256Z"
   },
   "@typedora-ui": {
     "namespace": "@typedora-ui",
     "catalog_url": "https://typedora-ui.netlify.app/r/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.771Z"
+    "synced_at": "2026-09-29T12:14:39.858Z"
   },
   "@ui-layouts": {
     "namespace": "@ui-layouts",
     "catalog_url": "https://www.ui-layouts.com/r/registry.json",
     "item_count": 327,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.697Z"
+    "synced_at": "2026-09-29T12:14:39.613Z"
   },
   "@ui-shrushank": {
     "namespace": "@ui-shrushank",
     "catalog_url": "https://raw.githubusercontent.com/Shrootiiii/ui/main/r/registry.json",
-    "item_count": 8,
+    "item_count": 22,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.684Z"
+    "synced_at": "2026-09-29T12:14:48.681Z"
   },
   "@uiable": {
     "namespace": "@uiable",
     "catalog_url": "https://uiable.com/r/registry.json",
     "item_count": 986,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.423Z"
+    "synced_at": "2026-09-29T12:14:40.433Z"
   },
   "@uicapsule": {
     "namespace": "@uicapsule",
     "catalog_url": "https://www.uicapsule.com/r/registry.json",
     "item_count": 52,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.647Z"
+    "synced_at": "2026-09-29T12:14:39.921Z"
   },
   "@uiception": {
     "namespace": "@uiception",
     "catalog_url": "https://uiception.com/r/registry.json",
     "item_count": 124,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:58.894Z"
+    "synced_at": "2026-09-29T12:14:39.453Z"
   },
   "@uitripled": {
     "namespace": "@uitripled",
     "catalog_url": "https://ui.tripled.work/r/registry.json",
     "item_count": 282,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:58.891Z"
+    "synced_at": "2026-09-29T12:14:39.421Z"
   },
   "@uniquel": {
     "namespace": "@uniquel",
     "catalog_url": "https://uniquel.io/r/registry.json",
     "item_count": 55,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:58.925Z"
+    "synced_at": "2026-09-29T12:14:39.433Z"
   },
   "@unlumen-ui": {
     "namespace": "@unlumen-ui",
     "catalog_url": "https://ui.unlumen.com/r/registry.json",
     "item_count": 235,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.594Z"
+    "synced_at": "2026-09-29T12:14:39.520Z"
   },
   "@uselayouts": {
     "namespace": "@uselayouts",
     "catalog_url": "https://uselayouts.com/r/registry.json",
     "item_count": 64,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.655Z"
+    "synced_at": "2026-09-29T12:14:39.602Z"
   },
   "@usva": {
     "namespace": "@usva",
     "catalog_url": "https://usva.build/r/registry.json",
     "item_count": 83,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.715Z"
+    "synced_at": "2026-09-29T12:14:41.786Z"
   },
   "@utilcn": {
     "namespace": "@utilcn",
     "catalog_url": "https://www.utilcn.dev/r/registry.json",
     "item_count": 17,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.099Z"
+    "synced_at": "2026-09-29T12:14:40.139Z"
   },
   "@uui": {
     "namespace": "@uui",
     "catalog_url": "https://uui.app/r/registry.json",
     "item_count": 6,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.750Z"
+    "synced_at": "2026-09-29T12:14:39.552Z"
   },
   "@vectorstudio-ir": {
     "namespace": "@vectorstudio-ir",
     "catalog_url": "https://raw.githubusercontent.com/vectorstudio-ir/ui/develop/public/r/registry.json",
     "item_count": 66,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:58.857Z"
+    "synced_at": "2026-09-29T12:14:39.542Z"
   },
   "@velobits": {
     "namespace": "@velobits",
     "catalog_url": "https://ui.velobits.dev/r/registry.json",
     "item_count": 48,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.432Z"
+    "synced_at": "2026-09-29T12:14:40.491Z"
   },
   "@vernostudio": {
     "namespace": "@vernostudio",
     "catalog_url": "https://verno-studio.vercel.app/r/registry.json",
     "item_count": 5,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.836Z"
+    "synced_at": "2026-09-29T12:14:40.945Z"
   },
   "@vllnt-ui": {
     "namespace": "@vllnt-ui",
     "catalog_url": "https://ui.vllnt.com/r/registry.json",
     "item_count": 313,
-    "status": "available",
+    "status": "stale",
     "synced_at": "2026-09-29T05:58:51.193Z"
   },
   "@voraui": {
@@ -2405,90 +2405,90 @@
     "catalog_url": "https://voraui.vercel.app/r/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.439Z"
+    "synced_at": "2026-09-29T12:14:40.410Z"
   },
   "@vue-bits": {
     "namespace": "@vue-bits",
     "catalog_url": "https://vue-bits.dev/r/registry.json",
     "item_count": 197,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.223Z"
+    "synced_at": "2026-09-29T12:14:40.251Z"
   },
   "@wa-ui": {
     "namespace": "@wa-ui",
     "catalog_url": "https://ui.meta-cloud-api.site/r/registry.json",
     "item_count": 29,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.524Z"
+    "synced_at": "2026-09-29T12:14:40.568Z"
   },
   "@washiveil": {
     "namespace": "@washiveil",
     "catalog_url": "https://washiveil.alexchih.com/r/registry.json",
     "item_count": 58,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.936Z"
+    "synced_at": "2026-09-29T12:14:40.030Z"
   },
   "@waves-cn": {
     "namespace": "@waves-cn",
     "catalog_url": "https://waves-cn.vercel.app/r/registry.json",
     "item_count": 12,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.729Z"
+    "synced_at": "2026-09-29T12:14:39.751Z"
   },
   "@wds": {
     "namespace": "@wds",
     "catalog_url": "https://wds-shadcn-registry.netlify.app/r/registry.json",
     "item_count": 10,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.249Z"
+    "synced_at": "2026-09-29T12:14:40.219Z"
   },
   "@wensity": {
     "namespace": "@wensity",
     "catalog_url": "https://raw.githubusercontent.com/wensity/registry/main/registry.json",
     "item_count": 91,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.694Z"
+    "synced_at": "2026-09-29T12:14:39.712Z"
   },
   "@whiskeyjack": {
     "namespace": "@whiskeyjack",
     "catalog_url": "https://whiskeyjack.net/r/registry.json",
     "item_count": 62,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.827Z"
+    "synced_at": "2026-09-29T12:14:40.702Z"
   },
   "@wigggle-ui": {
     "namespace": "@wigggle-ui",
     "catalog_url": "https://wigggle-ui.vercel.app/r/registry.json",
     "item_count": 119,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.909Z"
+    "synced_at": "2026-09-29T12:14:39.833Z"
   },
   "@wxcn": {
     "namespace": "@wxcn",
     "catalog_url": "https://wxcn.dev/r/react/registry.json",
     "item_count": 4,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.978Z"
+    "synced_at": "2026-09-29T12:14:40.020Z"
   },
   "@yukihi": {
     "namespace": "@yukihi",
     "catalog_url": "https://design.yukihi.tokyo/v1/r/registry.json",
     "item_count": 113,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:49.985Z"
+    "synced_at": "2026-09-29T12:14:40.086Z"
   },
   "@zenoadmin": {
     "namespace": "@zenoadmin",
     "catalog_url": "https://shadcn-editor-nu.vercel.app/r/registry.json",
     "item_count": 1,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.089Z"
+    "synced_at": "2026-09-29T12:14:40.077Z"
   },
   "@zippystarter": {
     "namespace": "@zippystarter",
     "catalog_url": "https://zippystarter.com/r/registry.json",
     "item_count": 77,
     "status": "available",
-    "synced_at": "2026-09-29T05:58:50.205Z"
+    "synced_at": "2026-09-29T12:14:41.134Z"
   }
 }

@@ -29,8 +29,7 @@ export interface CatalogBrowseQueryState {
   reviewed: CatalogReviewedFilter;
 }
 
-const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry", "type", "reviewed"]);
-const CATALOG_REVIEWED_FILTERS = new Set<CatalogReviewedFilter>(["all", "reviewed", "unreviewed"]);
+const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry", "type"]);
 const CATALOG_ITEM_TYPES = new Set([
   "registry:block",
   "registry:component",
@@ -105,24 +104,20 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
 export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQueryState {
   const pageValue = Number(params.get("page"));
   const sortValue = params.get("sort");
-  const reviewedValue = params.get("reviewed");
-
   return {
     page: Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1,
     sort: sortValue && CATALOG_SORTS.has(sortValue as CatalogSort) ? sortValue as CatalogSort : "name",
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
     itemTypes: uniqueValues(params.getAll("type").filter(value => CATALOG_ITEM_TYPES.has(value))),
     categories: uniqueValues(params.getAll("category").map(value => value.trim()).filter(isSafeFacetValue)),
-    reviewed: reviewedValue && CATALOG_REVIEWED_FILTERS.has(reviewedValue as CatalogReviewedFilter)
-      ? reviewedValue as CatalogReviewedFilter
-      : "all",
+    reviewed: "all",
   };
 }
 
 export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URLSearchParams {
   const params = new URLSearchParams();
   if (state.page > 1) params.set("page", String(state.page));
-  if (state.sort !== "name") params.set("sort", state.sort);
+  if (state.sort !== "name" && state.sort !== "reviewed") params.set("sort", state.sort);
   state.registryNames.forEach(value => {
     if (isSafeNamespace(value)) params.append("registry", value);
   });
@@ -132,7 +127,6 @@ export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URL
   state.categories.forEach(value => {
     if (isSafeFacetValue(value)) params.append("category", value.trim());
   });
-  if (state.reviewed !== "all") params.set("reviewed", state.reviewed);
   return params;
 }
 

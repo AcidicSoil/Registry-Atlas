@@ -66,13 +66,17 @@ describe("catalogRoutes", () => {
       sort: "type",
       itemTypes: ["registry:ui", "registry:block"],
       categories: ["forms"],
-      reviewed: "reviewed",
+      reviewed: "all",
       registryNames: ["@alpha"],
     });
 
     expect(serializeCatalogBrowseQuery(parsed).toString()).toBe(
-      "page=3&sort=type&registry=%40alpha&type=registry%3Aui&type=registry%3Ablock&category=forms&reviewed=reviewed",
+      "page=3&sort=type&registry=%40alpha&type=registry%3Aui&type=registry%3Ablock&category=forms",
     );
+    expect(parseCatalogBrowseQuery(new URLSearchParams("sort=reviewed&reviewed=unreviewed"))).toMatchObject({
+      sort: "name",
+      reviewed: "all",
+    });
   });
 
   it("rejects routes outside the configured base and unsafe traversal segments", () => {

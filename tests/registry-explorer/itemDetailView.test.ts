@@ -12,7 +12,9 @@ describe('renderItemDetailView', () => {
     renderItemDetailView(header, body, result, new Set());
 
     expect(header.innerHTML).toContain('Code Block');
-    expect(body.innerHTML).toContain('Preview not published');
+    expect(body.innerHTML).toContain('item-preview-metadata');
+    expect(body.innerHTML).toContain('Syntax highlighted code block.');
+    expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="secondary-link"');
     expect(body.innerHTML).toContain('Inspect first');
@@ -41,7 +43,8 @@ describe('renderItemDetailView', () => {
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).toContain('Preview not published');
+    expect(body.innerHTML).toContain('item-preview-metadata');
+    expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).not.toContain('<img');
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain('visual available');
@@ -167,7 +170,10 @@ describe('enriched detail actions', () => {
     expect(body.innerHTML).toContain('<img');
     expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Copy install-agent prompt');
-    expect(body.innerHTML).toContain('Copy review prompt');
+    expect(body.innerHTML).toContain('Copy inspection prompt');
+    expect(body.innerHTML).not.toContain('Copy review prompt');
+    expect(body.innerHTML).toContain('Open in v0');
+    expect(body.innerHTML).toContain('href="https://v0.dev/chat/api/open?url=https%3A%2F%2Fdelta.example%2Fr%2Fcode-block.json"');
     expect(body.innerHTML).toContain('Copy link');
     expect(body.innerHTML).toContain('data-copy-current-url');
     expect(body.innerHTML).not.toContain('Alternate terminology');

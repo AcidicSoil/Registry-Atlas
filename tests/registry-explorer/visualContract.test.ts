@@ -12,6 +12,7 @@ if (!fs) throw new Error('Node filesystem module is unavailable.');
 const css = fs.readFileSync('public/styles/registry-explorer.css', 'utf8').toLowerCase();
 const index = fs.readFileSync('index.html', 'utf8');
 const entry = fs.readFileSync('src/registry-explorer/entry.ts', 'utf8');
+const shell = fs.readFileSync('src/registry-explorer/ui/shell.ts', 'utf8');
 const packageJson = fs.readFileSync('package.json', 'utf8');
 const pagesFallback = fs.readFileSync('scripts/create-pages-spa-fallback.mjs', 'utf8');
 
@@ -33,8 +34,7 @@ describe('visual dictionary design contract', () => {
     expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?max-width:\s*none/);
     expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?margin:\s*0/);
     expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?padding:\s*0/);
-    expect(css).toMatch(/\.app-header\s*\{[\s\S]*?padding:\s*var\(--space-5\)\s+var\(--space-6\)\s+var\(--space-4\)/);
-    expect(css).toMatch(/main\s*\{[\s\S]*?padding:\s*var\(--space-6\)/);
+    expect(css).toMatch(/@media \(max-width:\s*1180px\)[\s\S]*?\.app-inner\s*\{[\s\S]*?padding-inline:\s*0/);
   });
 
   it('keeps the real-catalog grid bounded and responsive', () => {
@@ -56,7 +56,31 @@ describe('visual dictionary design contract', () => {
     expect(css).toContain('.mobile-browse-menu');
     expect(css).toContain('.registry-directory-controls');
     expect(css).toContain('.evidence-unavailable');
-    expect(css).toContain('.catalog-component-card:has(.catalog-component-placeholder)');
+    expect(css).toMatch(/\.catalog-component-card:has\(\.catalog-component-metadata-specimen\) \.catalog-component-specimen\s*\{[\s\S]*?min-height:\s*0[\s\S]*?aspect-ratio:\s*auto/);
+    expect(css).not.toContain('.catalog-component-placeholder');
+    expect(css).not.toContain('.catalog-rail-search-control');
+  });
+
+  it('pins exemplar-shaped desktop geometry and measured boundary contrast', () => {
+    expect(css).toContain('--border: rgba(255, 255, 255, 0.35)');
+    expect(css).toContain('--input: rgba(255, 255, 255, 0.4)');
+    expect(css).toMatch(/main\s*\{[\s\S]*?grid-template-columns:\s*240px\s+minmax\(0,\s*1fr\)/);
+    expect(css).toMatch(/main\s*\{[\s\S]*?gap:\s*20px/);
+    expect(css).toMatch(/\.app-header\s*\{[\s\S]*?min-height:\s*40px/);
+    expect(css).toMatch(/\.registry-directory-grid\s*\{[\s\S]*?repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+    expect(css).toMatch(/\.item-detail-page\s*\{[\s\S]*?width:\s*min\(100%,\s*800px\)/);
+    expect(css).toMatch(/\.registry-profile-layout\s*\{[\s\S]*?minmax\(240px,\s*320px\)/);
+  });
+
+  it('replaces the desktop rail with a mobile facet sheet and fixed supported navigation', () => {
+    expect(shell).toContain('class="mobile-bottom-nav"');
+    expect(shell).toContain('role="dialog"');
+    expect(shell).toContain('data-mobile-browse-close');
+    expect(shell).toContain("mobileBrowse.addEventListener('toggle'");
+    expect(shell).toContain("mobileBrowse.querySelector<HTMLElement>('[data-mobile-browse-close]')?.focus()");
+    expect(css).toMatch(/\.mobile-bottom-nav\s*\{[\s\S]*?position:\s*fixed/);
+    expect(css).toMatch(/\.mobile-bottom-nav\s*\{[\s\S]*?height:\s*57px/);
+    expect(css).toMatch(/@media \(max-width:\s*860px\)[\s\S]*?\.desktop-browse-rail\s*\{[\s\S]*?display:\s*none/);
   });
 
   it('announces loading and data-load failures without extra helper UI', () => {

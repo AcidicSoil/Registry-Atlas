@@ -19,6 +19,18 @@ export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
   'registry:icon',
 ]);
 
+const COMPACT_DESCRIPTION_MAX = 280;
+const COMPACT_AUTHOR_MAX = 120;
+const THEME_SWATCH_KEYS = Object.freeze([
+  'background',
+  'foreground',
+  'primary',
+  'secondary',
+  'accent',
+  'muted',
+  'card',
+]);
+
 export function deriveCatalogUrls(template) {
   if (typeof template !== 'string' || !template.includes('{name}')) return [];
 
@@ -84,6 +96,13 @@ export function buildCompactCatalogItems(catalog) {
 
     const compact = { name, type };
     if (typeof item.title === 'string' && item.title.trim()) compact.title = item.title.trim();
+    const description = boundedText(item.description, COMPACT_DESCRIPTION_MAX);
+    if (description) compact.description = description;
+    const author = boundedText(item.author, COMPACT_AUTHOR_MAX);
+    if (author) compact.author = author;
+    if (Array.isArray(item.files) && item.files.length > 0) compact.fileCount = item.files.length;
+    const themePreview = buildThemePreview(type, item.cssVars);
+    if (themePreview) compact.themePreview = themePreview;
 
     const categories = [
       ...(Array.isArray(item.categories) ? item.categories : []),
@@ -95,6 +114,44 @@ export function buildCompactCatalogItems(catalog) {
   }
 
   return items;
+}
+
+function boundedText(value, maxCodePoints) {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return Array.from(trimmed).slice(0, maxCodePoints).join('');
+}
+
+function buildThemePreview(type, cssVars) {
+  if (type !== 'registry:theme' && type !== 'registry:style') return null;
+  if (!cssVars || typeof cssVars !== 'object' || Array.isArray(cssVars)) return null;
+  const preview = {};
+  for (const mode of ['light', 'dark']) {
+    const source = cssVars[mode];
+    if (!source || typeof source !== 'object' || Array.isArray(source)) continue;
+    const swatches = {};
+    for (const key of THEME_SWATCH_KEYS) {
+      const value = boundedText(source[key], 160);
+      if (value) swatches[key] = value;
+    }
+    if (Object.keys(swatches).length > 0) preview[mode] = swatches;
+  }
+  return Object.keys(preview).length > 0 ? preview : null;
+}
+
+function sanitizeCssVars(cssVars) {
+  if (!cssVars || typeof cssVars !== 'object' || Array.isArray(cssVars)) return null;
+  const output = {};
+  for (const mode of ['theme', 'light', 'dark']) {
+    const source = cssVars[mode];
+    if (!source || typeof source !== 'object' || Array.isArray(source)) continue;
+    const entries = Object.entries(source)
+      .filter(([key, value]) => key && typeof value === 'string' && value.trim())
+      .map(([key, value]) => [key, value.trim()]);
+    if (entries.length) output[mode] = Object.fromEntries(entries);
+  }
+  return Object.keys(output).length > 0 ? output : null;
 }
 
 export function buildRegistryItemDetailBundle(catalog) {
@@ -110,6 +167,9 @@ export function buildRegistryItemDetailBundle(catalog) {
     const detail = { name, type };
     if (typeof item.title === 'string' && item.title.trim()) detail.title = item.title.trim();
     if (typeof item.description === 'string' && item.description.trim()) detail.description = item.description.trim();
+    if (typeof item.author === 'string' && item.author.trim()) detail.author = item.author.trim();
+    const cssVars = sanitizeCssVars(item.cssVars);
+    if (cssVars) detail.cssVars = cssVars;
 
     const categories = [
       ...(Array.isArray(item.categories) ? item.categories : []),

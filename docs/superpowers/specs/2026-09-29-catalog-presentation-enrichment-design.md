@@ -100,9 +100,8 @@ export type RegistryThemeSwatch =
 Rules:
 
 - `description` comes only from explicit upstream `item.description`.
-- compact descriptions have a documented maximum length; the full description remains in
-  the same-origin detail bundle.
-- `author` comes only from explicit upstream `item.author`.
+- compact descriptions are trimmed and capped at 280 Unicode code points; the full description remains in the same-origin detail bundle.
+- `author` comes only from explicit upstream `item.author` and is trimmed/capped at 120 Unicode code points.
 - `fileCount` is a count of explicit upstream files and implies nothing about quality.
 - `themePreview` exists only for theme/style items with structured upstream shadcn
   `cssVars`.

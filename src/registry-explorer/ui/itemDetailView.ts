@@ -58,6 +58,7 @@ function renderDetailBody(
           ${detail.description ? `<p>${escapeHtml(detail.description)}</p>` : '<p class="muted">No component description is available yet.</p>'}
           <div class="item-action-row">
             ${renderComponentPageAction(detail, detail.installAction.status === 'enabled')}
+            ${renderOpenInV0Action(detail)}
             ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           </div>
           ${renderPromptActions(detail)}
@@ -99,13 +100,22 @@ function renderPreview(detail: RegistryItemDetail, previewUrl: string | null): s
     }
   }
 
+  const facts = [
+    detail.author ? `By ${detail.author}` : '',
+    `${detail.files.length} ${detail.files.length === 1 ? 'file' : 'files'}`,
+    `${detail.dependencies.length} ${detail.dependencies.length === 1 ? 'dependency' : 'dependencies'}`,
+  ].filter(Boolean);
+
   return `
-    <div class="item-preview-unavailable">
-      <div class="item-preview-empty-state">
-        <code>${escapeHtml(detail.type ?? 'registry:item')}</code>
-        <strong>Preview not published</strong>
-        <span>This real registry item has no verified visual preview yet.</span>
+    <div class="item-preview-metadata">
+      <div class="catalog-eyebrow">Catalog specimen</div>
+      <code>${escapeHtml(detail.type ?? 'registry:item')}</code>
+      <h2>${escapeHtml(detail.title)}</h2>
+      <p>${escapeHtml(detail.description ?? 'This real registry item has no published preview media.')}</p>
+      <div class="item-preview-metadata-facts">
+        ${facts.map(fact => `<span>${escapeHtml(fact)}</span>`).join('')}
       </div>
+      <div class="item-preview-metadata-status">No published preview · showing source metadata</div>
       ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'secondary-link') : ''}
     </div>
   `;
@@ -126,6 +136,14 @@ function renderComponentPageAction(detail: RegistryItemDetail, installationEnabl
   }
 
   return '<span class="muted">Upstream item route unavailable</span>';
+}
+
+function renderOpenInV0Action(detail: RegistryItemDetail): string {
+  if (detail.route.status !== 'available') return '';
+  const rawItemUrl = toSafeExternalUrl(detail.route.url);
+  if (!rawItemUrl || rawItemUrl.protocol !== 'https:') return '';
+  const openUrl = `https://v0.dev/chat/api/open?url=${encodeURIComponent(rawItemUrl.href)}`;
+  return renderExternalLink(openUrl, 'Open in v0', 'secondary-link');
 }
 
 function renderInstallActions(action: InstallActionState, detail: RegistryItemDetail, queuedTokens: ReadonlySet<string>): string {
@@ -160,7 +178,7 @@ function renderPromptActions(detail: RegistryItemDetail): string {
   return `
     <div class="item-prompt-actions" aria-label="Copy component context">
       ${agentPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(agentPrompt)}" data-copy-label="Agent prompt copied">Copy install-agent prompt</button>` : ''}
-      ${inspectionPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(inspectionPrompt)}" data-copy-label="Review prompt copied">Copy review prompt</button>` : ''}
+      ${inspectionPrompt ? `<button class="install-button" type="button" data-copy-text="${escapeHtml(inspectionPrompt)}" data-copy-label="Inspection prompt copied">Copy inspection prompt</button>` : ''}
       <button class="install-button" type="button" data-copy-current-url>Copy link</button>
     </div>
   `;

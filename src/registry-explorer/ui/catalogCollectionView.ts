@@ -40,7 +40,7 @@ export function renderCatalogCollection(
   const end = Math.min(result.page * result.pageSize, result.total);
   bodyRoot.innerHTML = `
     <div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>
-    <div class="catalog-component-grid">
+    <div class="catalog-component-grid catalog-collection-grid-${options.routeKind ?? "component"}">
       ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
     </div>
     ${result.pageCount > 1 ? `

@@ -18,8 +18,8 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 
 ## Features
 
-- **Components**: Browse real catalog identities with search, registry/type/category filters, reviewed-state filtering, deterministic sorting, pagination, and shareable URLs.
-- **Collections**: Explore reviewed components, explicit category collections, templates, themes, and icons without inventing unsupported popularity, recency, or author data.
+- **Components**: Browse real catalog identities with one canonical search, registry/type/category facets, deterministic sorting, pagination, and shareable URLs.
+- **Collections**: Explore explicit category collections, templates, themes, and registry-backed icon-related assets without inventing popularity, recency, author, or review rankings.
 - **Registries**: Search and sort registry libraries, filter by current/stale/empty/unavailable catalog state, and browse each registry's exact indexed inventory.
 - **Details**: Open canonical nested item routes backed by generated same-origin detail bundles, with the upstream raw item route preserved as provenance.
 - **Compare**: Compare exact catalog identities across registries rather than inferred component families.
@@ -104,7 +104,7 @@ mise run validate:data
 mise run verify
 ```
 
-`mise run import:catalog` refreshes the reviewed Atlas item-summary sample in `data/shadcn/registry-items.json`.
+`mise run import:catalog` refreshes the curated Atlas item-summary enrichment sample in `data/shadcn/registry-items.json`.
 
 `mise run sync:registries` refreshes:
 
@@ -181,7 +181,7 @@ src/registry-explorer/
 
 The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing runtime artifacts:
 
-1. Run `mise run import:catalog` to refresh reviewed Atlas item-summary enrichment.
+1. Run `mise run import:catalog` to refresh curated Atlas item-summary enrichment.
 2. Run `mise run sync:registries` to refresh directory/catalog evidence, compact items, detail bundles, and the runtime mirror.
 3. Review the generated reports and artifacts.
 4. Run `mise run validate:data`.

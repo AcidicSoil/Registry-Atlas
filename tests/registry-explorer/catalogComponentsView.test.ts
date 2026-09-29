@@ -3,6 +3,7 @@ import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-ex
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
 import {
   renderCatalogBrowseControls,
+  renderCatalogComponentCard,
   renderCatalogComponents,
   renderCatalogRailControls,
 } from "../../src/registry-explorer/ui/catalogComponentsView";
@@ -25,6 +26,26 @@ describe("renderCatalogComponents", () => {
     expect(body.innerHTML).not.toContain("Add to queue");
   });
 
+  it("renders evidence-backed discovery bands before the full component grid", () => {
+    const body = root();
+    renderCatalogComponents(root(), body, result([component()]), {
+      searchTerm: "",
+      discoveryBands: [{
+        label: "Forms",
+        routePath: "/Registry-Atlas/components/explore/forms",
+        items: [component()],
+      }],
+    });
+
+    expect(body.innerHTML).toContain('class="catalog-discovery-bands"');
+    expect(body.innerHTML).toContain('class="catalog-discovery-band"');
+    expect(body.innerHTML).toContain(">Forms<");
+    expect(body.innerHTML).toContain('data-catalog-route="/Registry-Atlas/components/explore/forms"');
+    expect(body.innerHTML.indexOf("catalog-discovery-bands")).toBeLessThan(
+      body.innerHTML.indexOf("catalog-component-grid"),
+    );
+  });
+
   it("renders a trusted preview when present and an honest specimen when absent", () => {
     const withPreview = root();
     renderCatalogComponents(root(), withPreview, result([
@@ -35,9 +56,28 @@ describe("renderCatalogComponents", () => {
 
     const withoutPreview = root();
     renderCatalogComponents(root(), withoutPreview, result([component()]), { searchTerm: "" });
-    expect(withoutPreview.innerHTML).toContain("Preview not published");
-    expect(withoutPreview.innerHTML).toContain("registry:ui");
+    expect(withoutPreview.innerHTML).not.toContain("Preview not published");
+    expect(withoutPreview.innerHTML).toContain("A real indexed component.");
+    expect(withoutPreview.innerHTML).toContain("ui");
     expect(withoutPreview.innerHTML).not.toContain("<svg");
+  });
+
+  it("renders native theme swatches only in theme mode", () => {
+    const themed = component({
+      themePreview: {
+        light: { background: "#ffffff", primary: "oklch(0.55 0.2 250)" },
+        dark: { background: "#101010", primary: "#78a9ff" },
+      },
+    });
+
+    const html = renderCatalogComponentCard(themed, "theme");
+    expect(html).toContain("catalog-component-card-theme");
+    expect(html).toContain("catalog-theme-swatches");
+    expect(html).toContain("background-color:#ffffff");
+    expect(html).toContain("background-color:#101010");
+
+    const componentHtml = renderCatalogComponentCard(themed, "component");
+    expect(componentHtml).not.toContain("catalog-theme-swatches");
   });
 
   it("splits browse dimensions into the rail and keeps the content toolbar compact", () => {
@@ -57,10 +97,10 @@ describe("renderCatalogComponents", () => {
       reviewed: "unreviewed" as const,
     };
 
-    const rail = renderCatalogRailControls(facets, state, "button");
-    expect(rail).toContain('data-catalog-search');
-    expect(rail).toContain('data-catalog-filter="registry"');
-    expect(rail).toContain('data-catalog-filter="type"');
+    const rail = renderCatalogRailControls(facets, state);
+    expect(rail).not.toContain('data-catalog-search');
+    expect(rail).toContain('data-catalog-registry-value="@delta"');
+    expect(rail).toContain('data-catalog-type-value="registry:ui"');
     expect(rail).toContain('data-catalog-category-value="forms"');
     expect(rail).toContain('aria-pressed="true"');
     expect(rail).toContain('>4<');
@@ -69,9 +109,9 @@ describe("renderCatalogComponents", () => {
     expect(toolbar).not.toContain('data-catalog-filter="registry"');
     expect(toolbar).not.toContain('data-catalog-filter="type"');
     expect(toolbar).not.toContain('data-catalog-filter="category"');
-    expect(toolbar).toContain('data-catalog-reviewed');
+    expect(toolbar).not.toContain('data-catalog-reviewed');
     expect(toolbar).toContain('data-catalog-sort');
-    expect(toolbar).toContain('<option value="unreviewed" selected>');
+    expect(toolbar).not.toContain('Reviewed first');
     expect(toolbar).toContain('<option value="type" selected>');
     expect(toolbar).toContain('data-catalog-clear');
   });
@@ -97,7 +137,7 @@ describe("renderCatalogComponents", () => {
       },
     });
 
-    expect(body.innerHTML).toContain('data-catalog-reviewed');
+    expect(body.innerHTML).not.toContain('data-catalog-reviewed');
     expect(body.innerHTML).toContain('data-catalog-sort');
     expect(body.innerHTML).toContain('data-catalog-clear');
     expect(body.innerHTML).toContain('No indexed components are available');
@@ -138,7 +178,10 @@ function result(items: CatalogComponent[]): CatalogQueryResult {
   };
 }
 
-function component(options: { previewUrl?: string } = {}): CatalogComponent {
+function component(options: {
+  previewUrl?: string;
+  themePreview?: CatalogComponent["themePreview"];
+} = {}): CatalogComponent {
   return {
     id: "@delta:code-block",
     namespace: "@delta",
@@ -153,6 +196,7 @@ function component(options: { previewUrl?: string } = {}): CatalogComponent {
     item: { name: "code-block", title: "Code Block", type: "registry:ui", categories: ["code"] },
     routePath: "/Registry-Atlas/@delta/components/code-block",
     ...(options.previewUrl ? { previewUrl: options.previewUrl } : {}),
+    ...(options.themePreview ? { themePreview: options.themePreview } : {}),
   };
 }
 

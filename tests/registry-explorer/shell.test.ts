@@ -19,24 +19,63 @@ describe('registry explorer shell interactions', () => {
     vi.unstubAllGlobals();
   });
 
-  it('renders a compact mobile browse disclosure alongside the desktop rail', () => {
-    const harness = setup('', '/Registry-Atlas/');
+  it('keeps Home rail-free and renders the collection rail only on collection surfaces', () => {
+    const home = setup('', '/Registry-Atlas/');
+    expect(home.aside.innerHTML).toBe('');
+
+    const harness = setup('', '/Registry-Atlas/components');
     expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail"');
     expect(harness.aside.innerHTML).toContain('class="mobile-browse-menu"');
-    expect(harness.aside.innerHTML).toContain('<summary>');
+    expect(harness.aside.innerHTML).toContain('<summary aria-label="Open catalog filters">');
+    expect(harness.aside.innerHTML).toContain('role="dialog" aria-label="Browse and filter catalog"');
+    expect(harness.aside.innerHTML).toContain('class="mobile-bottom-nav"');
+    expect(harness.aside.innerHTML).toContain('>Components</button>');
+    expect(harness.aside.innerHTML).toContain('>Libraries</button>');
+    expect(harness.aside.innerHTML).toContain('>Templates</button>');
+    expect(harness.aside.innerHTML).toContain('>Themes</button>');
+    expect(harness.aside.innerHTML).toMatch(/>Icon-related(?: assets)?<\/button>/);
+    expect(harness.aside.innerHTML).not.toContain('>Reviewed</button>');
+    expect(harness.aside.innerHTML).not.toContain('>Newest</button>');
+    expect(harness.aside.innerHTML).not.toContain('>Authors</button>');
   });
 
-  it('renders real component filters in the browse rail and routes rail changes through URL state', () => {
+  it('keeps Featured as an honest unavailable route instead of mapping review enrichment to ranking', () => {
+    const harness = setup('', '/Registry-Atlas/components/featured');
+
+    expect(harness.contentBody.innerHTML).toContain('class="evidence-unavailable"');
+    expect(harness.contentHeader.innerHTML).toContain('Featured');
+    expect(harness.contentHeader.innerHTML).toContain('curation');
+    expect(harness.contentBody.innerHTML).toContain('quality ranking');
+    expect(harness.contentBody.innerHTML).not.toContain('data-view-item-registry');
+  });
+
+  it('labels icon routes as registry-backed icon-related assets, not a universal glyph catalog', () => {
+    const root = setup('', '/Registry-Atlas/icons');
+    expect(root.contentHeader.innerHTML).toContain('<h1>Icon-related assets</h1>');
+    expect(root.contentHeader.innerHTML).toContain('not a universal glyph catalog');
+
+    const category = setup('', '/Registry-Atlas/icons/c/icons');
+    expect(category.contentHeader.innerHTML).toContain('Icon-related assets / Category');
+    expect(category.contentHeader.innerHTML).not.toContain('Icons / Category');
+
+    const family = setup('', '/Registry-Atlas/icons/missing-family');
+    expect(family.contentHeader.innerHTML).toContain('Icon-related assets · missing-family');
+  });
+
+  it('renders real component facets in the browse rail and routes rail changes through URL state', () => {
     const harness = setup('', '/Registry-Atlas/components');
 
-    expect(harness.aside.innerHTML).toContain('data-catalog-search');
-    expect(harness.aside.innerHTML).toContain('data-catalog-filter="registry"');
-    expect(harness.aside.innerHTML).toContain('data-catalog-filter="type"');
+    expect(harness.aside.innerHTML).not.toContain('data-catalog-search');
+    expect(harness.aside.innerHTML).toContain('data-catalog-registry-value="@delta"');
+    expect(harness.aside.innerHTML).toContain('data-catalog-type-value="registry:ui"');
     expect(harness.aside.innerHTML).toContain('data-catalog-category-value="code"');
     expect(harness.aside.innerHTML).toContain('>1</span>');
 
-    harness.aside.dispatch('change', target({ 'data-catalog-filter': 'type', value: 'registry:ui' }));
+    harness.aside.dispatch('click', target({ 'data-catalog-type-value': 'registry:ui' }));
     expect(harness.location.search).toBe('?type=registry%3Aui');
+
+    harness.aside.dispatch('click', target({ 'data-catalog-registry-value': '@delta' }));
+    expect(harness.location.search).toContain('registry=%40delta');
 
     harness.aside.dispatch('click', target({ 'data-catalog-category-value': 'code' }));
     expect(harness.location.search).toContain('category=code');
@@ -120,15 +159,15 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).not.toContain('Copy install');
   });
 
-  it('rehydrates shareable catalog filters, sort, and page state', () => {
+  it('rehydrates shareable catalog facets, sort, and page state without exposing review controls', () => {
     const harness = setup(
       '?page=2&sort=type&registry=%40delta&type=registry%3Aui&reviewed=unreviewed',
       '/Registry-Atlas/components',
     );
 
-    expect(harness.aside.innerHTML).toContain('<option value="@delta" selected>');
-    expect(harness.aside.innerHTML).toContain('<option value="registry:ui" selected>');
-    expect(harness.contentBody.innerHTML).toContain('<option value="unreviewed" selected>');
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-registry-value="@delta"[\s\S]*aria-pressed="true"/);
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-type-value="registry:ui"[\s\S]*aria-pressed="true"/);
+    expect(harness.contentBody.innerHTML).not.toContain('data-catalog-reviewed');
     expect(harness.contentBody.innerHTML).toContain('<option value="type" selected>');
     expect(harness.location.search).toContain('page=2');
     expect(harness.location.search).toContain('sort=type');
@@ -136,15 +175,14 @@ describe('registry explorer shell interactions', () => {
     expect(harness.location.search).toContain('type=registry%3Aui');
   });
 
-  it('writes catalog filter changes to the URL and resets paging', () => {
+  it('writes catalog facet changes to the URL and resets paging', () => {
     const harness = setup('?page=3', '/Registry-Atlas/components');
-    const typeSelect = target({ 'data-catalog-filter': 'type', value: 'registry:block' });
 
-    harness.contentBody.dispatch('change', typeSelect);
+    harness.aside.dispatch('click', target({ 'data-catalog-type-value': 'registry:block' }));
 
     expect(harness.location.pathname).toBe('/Registry-Atlas/components');
     expect(harness.location.search).toBe('?type=registry%3Ablock');
-    expect(harness.aside.innerHTML).toContain('<option value="registry:block" selected>');
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-type-value="registry:block"[\s\S]*aria-pressed="true"/);
   });
 
   it('writes component pagination to the shareable URL', () => {

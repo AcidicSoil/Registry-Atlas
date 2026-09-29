@@ -14,6 +14,7 @@ function assert(condition, message) {
 
 const routeSource = read('src/registry-explorer/core/catalogRoutes.ts');
 const shellSource = read('src/registry-explorer/ui/shell.ts');
+const componentViewSource = read('src/registry-explorer/ui/catalogComponentsView.ts');
 
 for (const token of [
   'kind: "home"',
@@ -38,6 +39,14 @@ for (const token of [
 assert(shellSource.includes("kind: 'not-found'"), 'shell must preserve unsupported paths as not-found state');
 assert(!/parseCatalogRoute[\s\S]{0,500}\?\?\s*\{\s*kind:\s*['"]components['"]/.test(shellSource),
   'unsupported canonical paths must not default to Components');
+assert(!componentViewSource.includes('data-catalog-search'), 'Components rail must not expose a second text-search intent');
+assert(!componentViewSource.includes('Preview not published'), 'browse cards must use factual specimens instead of empty preview placeholders');
+assert(!shellSource.includes("routeButton({ kind: 'components', lens: 'featured' }, 'Reviewed')"),
+  'Reviewed enrichment must not be exposed as Featured navigation');
+assert(shellSource.includes('Featured browsing requires an explicit upstream curation or popularity signal.'),
+  'Featured route must remain honest when no curation signal exists');
+assert(shellSource.includes("routeButton({ kind: 'icons' }, 'Icon-related assets')"),
+  'Icons navigation must describe the registry-backed icon-related data honestly');
 
 const retiredFiles = [
   'src/registry-explorer/core/catalogFacets.ts',
@@ -90,6 +99,38 @@ for (const token of ['component_tags', 'primary_focus', 'ComponentTag', 'Primary
   assert(!schema.includes(token), `runtime schema still exposes retired taxonomy token: ${token}`);
 }
 
+const compactCatalog = JSON.parse(read('public/data/registry-catalog-items.json'));
+const allowedThemeSwatches = new Set(['background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card']);
+const enrichmentCoverage = { total: 0, description: 0, author: 0, fileCount: 0, themePreview: 0 };
+for (const [namespace, items] of Object.entries(compactCatalog.registries ?? {})) {
+  assert(Array.isArray(items), `compact catalog namespace must be an array: ${namespace}`);
+  if (!Array.isArray(items)) continue;
+  for (const item of items) {
+    enrichmentCoverage.total += 1;
+    if (typeof item.description === 'string') {
+      enrichmentCoverage.description += 1;
+      assert(Array.from(item.description).length <= 280, `compact description exceeds 280 code points: ${namespace}/${item.name}`);
+    }
+    if (typeof item.author === 'string') {
+      enrichmentCoverage.author += 1;
+      assert(Array.from(item.author).length <= 120, `compact author exceeds 120 code points: ${namespace}/${item.name}`);
+    }
+    if (item.fileCount !== undefined) {
+      enrichmentCoverage.fileCount += 1;
+      assert(Number.isInteger(item.fileCount) && item.fileCount >= 0, `compact fileCount is invalid: ${namespace}/${item.name}`);
+    }
+    if (item.themePreview !== undefined) {
+      enrichmentCoverage.themePreview += 1;
+      for (const mode of Object.keys(item.themePreview)) {
+        assert(mode === 'light' || mode === 'dark', `compact themePreview mode is unsupported: ${namespace}/${item.name}/${mode}`);
+        for (const swatch of Object.keys(item.themePreview[mode] ?? {})) {
+          assert(allowedThemeSwatches.has(swatch), `compact themePreview swatch is unsupported: ${namespace}/${item.name}/${swatch}`);
+        }
+      }
+    }
+  }
+}
+
 for (const relative of [
   'public/data/registries.json',
   'data/shadcn/registry-items.json',
@@ -121,3 +162,4 @@ if (failures.length > 0) {
 }
 
 console.log('Registry Atlas product contract passed.');
+console.log(`Catalog enrichment coverage: ${enrichmentCoverage.description}/${enrichmentCoverage.total} descriptions, ${enrichmentCoverage.author}/${enrichmentCoverage.total} authors, ${enrichmentCoverage.fileCount}/${enrichmentCoverage.total} file counts, ${enrichmentCoverage.themePreview}/${enrichmentCoverage.total} theme previews.`);

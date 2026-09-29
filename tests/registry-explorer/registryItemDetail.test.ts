@@ -103,6 +103,41 @@ describe('registry item detail', () => {
     expect(seen[0]).toContain('/data/registry-item-details/delta.json');
   });
 
+  it('loads explicit author and structured css variables from safe detail JSON', async () => {
+    const result = await loadRegistryItemDetailFromCatalogIndex(
+      [registryFixture()],
+      {
+        meta: { registry_count: 1, item_count: 1 },
+        registries: { '@delta': [{
+          name: 'midnight',
+          type: 'registry:theme',
+          author: 'Ada Example',
+          themePreview: { dark: { background: '#000000' } },
+        }] },
+      },
+      '@delta',
+      'midnight',
+      async () => jsonResponse({
+        name: 'midnight',
+        type: 'registry:theme',
+        author: 'Ada Example',
+        cssVars: {
+          light: { background: '#ffffff', primary: '#111111' },
+          dark: { background: '#000000', foreground: '#ffffff' },
+        },
+      }),
+    );
+
+    expect(result.status).toBe('loaded');
+    expect(result.detail).toEqual(expect.objectContaining({
+      author: 'Ada Example',
+      cssVars: {
+        light: { background: '#ffffff', primary: '#111111' },
+        dark: { background: '#000000', foreground: '#ffffff' },
+      },
+    }));
+  });
+
   it('does not mislabel registry JSON as a component page when docs are absent', () => {
     const registry = registryFixture();
     const routeOnlyRegistry: Registry = {

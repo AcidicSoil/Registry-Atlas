@@ -36,24 +36,36 @@ export function renderRegistryCollection(
   `;
 
   bodyRoot.innerHTML = `
-    <section class="registry-collection-components">
-      <div class="section-heading-row">
-        <div>
-          <h2>Catalog components</h2>
-          <p>Real component records from this registry's indexed catalog.</p>
+    <div class="registry-profile-layout">
+      <section class="registry-profile-summary-rail" aria-label="Registry summary">
+        <div class="catalog-eyebrow">Library summary</div>
+        <h2>${escapeHtml(registry.name)}</h2>
+        <p>${escapeHtml(registry.description)}</p>
+        <div class="registry-profile-summary-facts">
+          <span><strong>${result.total.toLocaleString()}</strong> indexed items</span>
+          ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
         </div>
-      </div>
-      ${options.facets && options.browseState
-        ? renderCatalogBrowseControls(options.facets, options.browseState, { includeDimensions: true, includeRegistry: false })
-        : ""}
-      ${result.items.length
-        ? `
-          ${renderMeta(result)}
-          <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item)).join("")}</div>
-          ${renderPagination(result)}
-        `
-        : renderEmptyRegistryInventory(options.coverage)}
-    </section>
+        <div class="secondary-links">${renderExternalLink(registry.url, "Open source", "secondary-link")}</div>
+      </section>
+      <section class="registry-profile-inventory registry-collection-components">
+        <div class="section-heading-row">
+          <div>
+            <h2>Catalog components</h2>
+            <p>Real component records from this registry's indexed catalog.</p>
+          </div>
+        </div>
+        ${options.facets && options.browseState
+          ? renderCatalogBrowseControls(options.facets, options.browseState, { includeDimensions: true, includeRegistry: false })
+          : ""}
+        ${result.items.length
+          ? `
+            ${renderMeta(result)}
+            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item)).join("")}</div>
+            ${renderPagination(result)}
+          `
+          : renderEmptyRegistryInventory(options.coverage)}
+      </section>
+    </div>
   `;
 }
 
