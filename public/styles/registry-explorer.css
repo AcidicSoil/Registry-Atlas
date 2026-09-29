@@ -1491,12 +1491,35 @@ aside {
 .item-preview-unavailable {
   display: grid;
   min-width: 0;
-  align-content: start;
-  gap: var(--space-2);
-  padding: var(--space-3);
+  min-height: 320px;
+  grid-template-rows: 1fr auto;
+  gap: var(--space-3);
+  padding: var(--space-4);
   border: 1px dashed var(--border);
   border-radius: var(--radius-card);
   color: var(--muted-foreground);
+}
+
+.item-preview-empty-state {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.item-preview-empty-state code {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.item-preview-empty-state strong {
+  color: var(--foreground);
 }
 
 

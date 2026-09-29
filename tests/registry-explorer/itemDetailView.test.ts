@@ -12,7 +12,7 @@ describe('renderItemDetailView', () => {
     renderItemDetailView(header, body, result, new Set());
 
     expect(header.innerHTML).toContain('Code Block');
-    expect(body.innerHTML).toContain('Preview unavailable');
+    expect(body.innerHTML).toContain('Preview not published');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="secondary-link"');
     expect(body.innerHTML).toContain('Inspect first');
@@ -21,7 +21,7 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).toContain('Dependencies');
     expect(body.innerHTML).toContain('<dt>Warnings</dt>');
     expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Raw JSON');
-    expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Open raw item route');
+    expect(body.innerHTML).toContain('Open raw item');
   });
 
   it('uses the component page as the sole primary action when installation is unavailable', () => {
@@ -41,7 +41,7 @@ describe('renderItemDetailView', () => {
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).toContain('Preview unavailable');
+    expect(body.innerHTML).toContain('Preview not published');
     expect(body.innerHTML).not.toContain('<img');
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain('visual available');
@@ -97,9 +97,10 @@ describe('renderItemDetailView', () => {
       reason: 'network-error',
     }, new Set());
 
-    expect(body.innerHTML).toContain('Atlas could not load this item from the registry');
+    expect(header.innerHTML).toContain('catalog-backed summary');
+    expect(body.innerHTML).toContain('Atlas could not load richer item metadata from the registry');
     expect(body.innerHTML).toContain('Open component page');
-    expect(body.innerHTML).not.toContain('Open raw item route');
+    expect(body.innerHTML).toContain('Open raw item');
   });
 });
 
@@ -167,7 +168,7 @@ describe('enriched detail actions', () => {
     renderItemDetailView(root(), body, result, new Set());
 
     expect(body.innerHTML).toContain('<img');
-    expect(body.innerHTML).not.toContain('Preview unavailable');
+    expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Copy install-agent prompt');
     expect(body.innerHTML).toContain('Copy review prompt');
     expect(body.innerHTML).toContain('Copy link');

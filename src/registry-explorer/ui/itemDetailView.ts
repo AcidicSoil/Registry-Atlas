@@ -101,7 +101,11 @@ function renderPreview(detail: RegistryItemDetail, previewUrl: string | null): s
 
   return `
     <div class="item-preview-unavailable">
-      <strong>Preview unavailable</strong>
+      <div class="item-preview-empty-state">
+        <code>${escapeHtml(detail.type ?? 'registry:item')}</code>
+        <strong>Preview not published</strong>
+        <span>This real registry item has no verified visual preview yet.</span>
+      </div>
       ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'secondary-link') : ''}
     </div>
   `;
@@ -113,11 +117,15 @@ function renderComponentPageAction(detail: RegistryItemDetail, installationEnabl
     return renderExternalLink(detail.componentPageUrl, 'Open component page', className);
   }
 
+  if (detail.route.status === 'available') {
+    return renderExternalLink(detail.route.url, 'Open raw item', className);
+  }
+
   if (detail.registry.url) {
     return renderExternalLink(detail.registry.url, 'Open registry homepage', className);
   }
 
-  return '<span class="muted">Component page unavailable</span>';
+  return '<span class="muted">Upstream item route unavailable</span>';
 }
 
 function renderInstallActions(action: InstallActionState, detail: RegistryItemDetail, queuedTokens: ReadonlySet<string>): string {
@@ -197,9 +205,10 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
 function renderSourceCard(detail: RegistryItemDetail): string {
   const links = [
     detail.docsUrl ? renderExternalLink(detail.docsUrl, 'Docs', 'secondary-link') : '',
+    detail.route.status === 'available' ? renderExternalLink(detail.route.url, 'Open raw item', 'secondary-link') : '',
     detail.evidenceUrl ? renderExternalLink(detail.evidenceUrl, 'Evidence', 'secondary-link') : '',
     renderExternalLink(detail.registry.url, 'Registry homepage', 'secondary-link'),
-  ].filter(Boolean).slice(0, 3).join(' ');
+  ].filter(Boolean).slice(0, 4).join(' ');
 
   return `
     <section class="item-detail-card">
@@ -216,7 +225,7 @@ function renderSourceCard(detail: RegistryItemDetail): string {
 
 function renderFallback(result: RegistryItemDetailResult): string {
   if (result.status === 'fetch-error') {
-    return '<div class="partial-data-note">Atlas could not load this item from the registry. You can still open the component page or inspect the source outside Atlas.</div>';
+    return '<div class="partial-data-note">Atlas could not load richer item metadata from the registry. This real indexed component remains available as a catalog-backed summary, and its upstream item route can still be opened directly.</div>';
   }
   if (result.status === 'invalid-json' || result.status === 'invalid-schema') {
     return '<div class="partial-data-note">Atlas could not read this registry item safely. The component page may still be available from the registry.</div>';
@@ -226,6 +235,13 @@ function renderFallback(result: RegistryItemDetailResult): string {
 
 function statusLabel(detail: RegistryItemDetail, status: RegistryItemDetailResult['status']): string {
   if (status === 'loaded') return 'catalog-backed detail';
-  if (status === 'summary-only') return detail.catalogStatus === 'available' ? 'catalog-backed summary' : detail.catalogStatus;
-  return 'detail unavailable';
+  if (
+    status === 'summary-only'
+    || status === 'fetch-error'
+    || status === 'invalid-json'
+    || status === 'invalid-schema'
+  ) {
+    return detail.catalogStatus === 'available' ? 'catalog-backed summary' : detail.catalogStatus;
+  }
+  return 'item route unavailable';
 }
