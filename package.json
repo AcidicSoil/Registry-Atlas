@@ -13,6 +13,7 @@
     "import:catalog": "node scripts/import-registry-catalog.mjs",
     "validate:data": "node scripts/validate-registry-data.mjs",
     "check:product-contract": "node scripts/check-product-contract.mjs",
+    "browser:acceptance": "node scripts/check-browser-acceptance.mjs",
     "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:product-contract && pnpm validate:data && pnpm build",
     "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",

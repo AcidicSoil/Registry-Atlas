@@ -34,6 +34,10 @@ run = "pnpm validate:data"
 description = "Check canonical routes, retired taxonomy removal, and detail bundles"
 run = "pnpm check:product-contract"
 
+[tasks."browser:acceptance"]
+description = "Run managed PinchTab desktop/mobile route acceptance"
+run = "pnpm browser:acceptance"
+
 [tasks.verify]
 description = "Run the full maintainer verification gate"
 run = "pnpm verify"
