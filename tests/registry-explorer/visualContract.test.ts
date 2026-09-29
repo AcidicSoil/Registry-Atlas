@@ -28,6 +28,15 @@ describe('visual dictionary design contract', () => {
     expect(css).not.toContain('fractalnoise');
   });
 
+  it('uses the full desktop viewport instead of a centered capped shell', () => {
+    expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?width:\s*100%/);
+    expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?max-width:\s*none/);
+    expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?margin:\s*0/);
+    expect(css).toMatch(/\.app-inner\s*\{[\s\S]*?padding:\s*0/);
+    expect(css).toMatch(/\.app-header\s*\{[\s\S]*?padding:\s*var\(--space-5\)\s+var\(--space-6\)\s+var\(--space-4\)/);
+    expect(css).toMatch(/main\s*\{[\s\S]*?padding:\s*var\(--space-6\)/);
+  });
+
   it('keeps the real-catalog grid bounded and responsive', () => {
     expect(css).toMatch(/\.catalog-component-grid\s*\{[\s\S]*?repeat\(4,\s*minmax\(0,\s*1fr\)\)/);
     expect(css).toMatch(/@media \(max-width:\s*1180px\)[\s\S]*?\.catalog-component-grid\s*\{[\s\S]*?repeat\(3,/);

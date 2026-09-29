@@ -1,26 +1,30 @@
 # Registry Atlas
 
-A modular, interactive explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory) ecosystem.
+A component-first explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory) ecosystem.
 
-Registry Atlas provides a search-first way to discover community registry items, browse registry sources, and compare component coverage.
+Registry Atlas mirrors real upstream registry catalogs into a local, evidence-backed index so you can browse exact component identities, inspect registry libraries, open canonical item routes, compare coverage, and distinguish missing evidence from unavailable data without synthesized fallback components.
 
 <p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-0.png" alt="" />
+<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-0.png" alt="Registry Atlas landing page showing the full-width catalog dashboard" />
 </p>
 
 <p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="" />
+<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="Registry Atlas component catalog with real registry, type, and category filters" />
 </p>
 
 <p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-2.png" alt="" />
+<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-2.png" alt="Registry Atlas registry directory with catalog coverage and indexed item counts" />
 </p>
 
 ## Features
 
-- **Discover**: Search components and registries with rough-language queries, multi-select Category/Component/Registry filters, and relevance or name sorting.
-- **Registries**: Browse registry sources, inspect profiles, and review known items and coverage.
-- **Compare**: Select registries and components in a verification-aware coverage table.
+- **Components**: Browse real catalog identities with search, registry/type/category filters, reviewed-state filtering, deterministic sorting, pagination, and shareable URLs.
+- **Collections**: Explore reviewed components, explicit category collections, templates, themes, and icons without inventing unsupported popularity, recency, or author data.
+- **Registries**: Search and sort registry libraries, filter by current/stale/empty/unavailable catalog state, and browse each registry's exact indexed inventory.
+- **Details**: Open canonical nested item routes backed by generated same-origin detail bundles, with the upstream raw item route preserved as provenance.
+- **Compare**: Compare exact catalog identities across registries rather than inferred component families.
+- **Honest unavailable states**: Routes such as Newest, Authors, or the theme editor stay first-class but explicitly explain when the required source evidence does not exist.
+- **Responsive catalog UI**: Full-width desktop layout, persistent browse rail, compact content controls, and a mobile browse disclosure with no horizontal document overflow.
 
 ## Getting Started
 
@@ -48,7 +52,7 @@ Visit `http://localhost:5173` in your browser.
 
 ### Verification
 
-Validate the generated registry mirror data:
+Validate generated registry data:
 
 ```bash
 mise run validate:data
@@ -60,9 +64,16 @@ Run the test suite:
 mise run test
 ```
 
-Type-check the test files and source files together:
+Check the canonical product contract:
 
 ```bash
+mise run check:product-contract
+```
+
+Type-check source and tests:
+
+```bash
+mise run typecheck
 mise run typecheck:test
 ```
 
@@ -72,13 +83,19 @@ Run the full maintainer verification gate:
 mise run verify
 ```
 
-`mise run verify` runs source type-checking, test type-checking, tests, data validation, and the production build. It does not refresh generated registry data.
+`mise run verify` runs source/test type-checking, the complete test suite, the product contract, data validation, and the production build. It does not refresh upstream registry data.
 
-For release browser checks, use `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md`. It covers install-command copy behavior, disabled states, queue flow, URL restoration, safe links, and the keyboard/focus baseline against the `/Registry-Atlas/` base path.
+The managed browser acceptance matrix is exposed as:
+
+```bash
+mise run browser:acceptance
+```
+
+It exercises the canonical route family at desktop and 390px mobile widths and checks route identity, expected unavailable/not-found states, exact catalog items, horizontal overflow, basic accessible labeling, browser exceptions, and unexpected 5xx responses.
 
 ### Refreshing Registry Data
 
-Registry Atlas mirrors the official shadcn directory into generated local artifacts. Refresh them explicitly when you want to review upstream changes:
+Registry Atlas mirrors the official shadcn directory and its reachable registry catalogs into generated local artifacts. Refresh them explicitly when you want to review upstream changes:
 
 ```bash
 mise run import:catalog
@@ -87,16 +104,23 @@ mise run validate:data
 mise run verify
 ```
 
-`mise run import:catalog` imports the reviewed v1.1 sample catalog into `data/shadcn/registry-items.json` and writes `data/shadcn/registry-catalog-import-report.json`. `mise run sync:registries` then merges that Atlas item-summary enrichment with the official shadcn directory mirror and refreshes the compact open-vocabulary item index.
+`mise run import:catalog` refreshes the reviewed Atlas item-summary sample in `data/shadcn/registry-items.json`.
 
-Taxonomy/search labels come from the controlled vocabulary in `src/registry-explorer/core/componentTaxonomy.ts`. Keep proposed tags backed by imported item examples, and use catalog-backed, inferred, unavailable, or manual-follow-up wording when coverage is incomplete.
+`mise run sync:registries` refreshes:
 
-Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, `data/shadcn/registry-catalog-evidence-report.json`, `public/data/registries.json`, and `public/data/registry-catalog-items.json` before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
+- the official directory mirror;
+- catalog coverage evidence;
+- the compact real-item index in `public/data/registry-catalog-items.json`;
+- safe same-origin detail bundles in `public/data/registry-item-details/`;
+- the runtime registry mirror in `public/data/registries.json`.
+
+The active runtime intentionally does **not** use the retired inferred component taxonomy. Asset classification is based on explicit catalog item types/categories, and missing signals remain unavailable rather than being guessed.
+
+Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, `data/shadcn/registry-catalog-evidence-report.json`, `public/data/registries.json`, `public/data/registry-catalog-items.json`, and the generated detail-bundle directory before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
 
 ### Building for Production
 
-`mise run build` remains the production output check. It type-checks source files and builds the Vite bundle.
-The generated `dist/` directory is ignored by `.gitignore`; regenerate it instead of editing or committing generated output.
+`mise run build` type-checks source files and builds the Vite bundle. The generated `dist/` directory is ignored; regenerate it instead of editing or committing build output.
 
 ```bash
 mise run build
@@ -105,53 +129,64 @@ mise run preview
 
 ## Architecture
 
-This project uses a modular vanilla TypeScript architecture, avoiding heavy frontend frameworks to maintain a lightweight footprint while ensuring type safety and testability.
+Registry Atlas uses modular vanilla TypeScript with generated JSON artifacts and no heavy frontend framework.
 
-The canonical browser app surface is:
+The canonical browser surface is:
 
-- `index.html` - Static shell loaded by Vite and production builds.
-- `public/styles/registry-explorer.css` - App stylesheet copied as a public asset.
-- `src/registry-explorer/entry.ts` - TypeScript bootstrap that mounts the Registry Atlas explorer.
+- `index.html` — static shell loaded by Vite and production builds.
+- `public/styles/registry-explorer.css` — application layout and visual system.
+- `src/registry-explorer/entry.ts` — bootstrap and runtime data loading.
+- `src/registry-explorer/ui/shell.ts` — route/history/state coordination.
 
 ### Directory Structure
 
 ```txt
 src/registry-explorer/
-├── core/               # Pure domain logic and types
-│   ├── registry.schema.ts  # Type definitions & vocabularies
-│   ├── grouping.ts         # Pure functions for filtering/grouping
-│   ├── labels.ts           # UI label mappers
-│   └── matrixColumns.ts    # Component columns used by Compare
+├── core/
+│   ├── registry.schema.ts       # Runtime catalog/registry/install contracts
+│   ├── catalogRoutes.ts         # Canonical route parser/serializer
+│   ├── catalogQuery.ts          # Exact identity search/filter/sort/pagination
+│   ├── catalogCollections.ts    # Evidence-backed asset kinds and collections
+│   ├── catalogCompare.ts        # Exact catalog comparison
+│   ├── registryCatalogIndex.ts  # Compact index parsing/lookups
+│   ├── registryDirectory.ts     # Registry search/status/sort/pagination
+│   └── registryItemDetail.ts    # Safe exact-item detail resolution
 ├── data/
-│   ├── loadRegistries.ts   # Runtime loader for generated registry mirror JSON
-│   └── registries.data.ts  # Legacy enrichment seed used by sync tooling
-├── ui/                 # DOM rendering modules
-│   ├── shell.ts            # State management & event orchestration
-│   ├── discoveryView.ts    # Renderer for Discover
-│   ├── registriesView.ts   # Renderer for Registries
-│   ├── compareView.ts      # Renderer for Compare
-│   ├── registryProfileView.ts # Renderer for registry profiles
-│   └── itemDetailView.ts   # Renderer for item details
-└── entry.ts            # Application bootstrap
+│   ├── loadRegistries.ts
+│   └── loadRegistryItemDetail.ts
+├── ui/
+│   ├── shell.ts
+│   ├── catalogLandingView.ts
+│   ├── catalogComponentsView.ts
+│   ├── catalogCollectionView.ts
+│   ├── registryDirectoryView.ts
+│   ├── registryCollectionView.ts
+│   ├── catalogCompareView.ts
+│   └── itemDetailView.ts
+└── entry.ts
 ```
 
 ### Core Concepts
 
-- **Registry**: The fundamental unit of data, defined in `src/registry-explorer/core/registry.schema.ts`.
-- **Pure Logic**: All filtering, grouping, and metrics calculations are pure functions located in `src/registry-explorer/core/grouping.ts`. This ensures logic is easily testable independent of the UI.
-- **State Management**: The `shell.ts` module manages the current route, search term, facets, sort, comparison selections, queue, and detail/profile state across the view modules.
+- **Exact catalog identity**: every browse result maps to a real upstream `namespace + item name`.
+- **Canonical routes**: landing, components, collections, registries, typed assets, exact details, and Compare are represented by one route model rather than catch-all fallback behavior.
+- **Evidence-backed classification**: Components/Templates/Themes/Icons are derived only from explicit item type/category facts.
+- **Same-origin detail bundles**: safe normalized item metadata is generated during sync so detail correctness does not depend on third-party browser CORS.
+- **Explicit coverage state**: registries distinguish current, stale, empty, and unavailable catalogs.
+- **No inferred inventory**: the retired component taxonomy/discovery/matrix stack is not part of the active runtime contract.
 
 ## Maintenance
 
 ### Maintaining Registry Data
 
-The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing the runtime catalog:
+The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing runtime artifacts:
 
-1.  Run `pnpm import:catalog` to refresh reviewed Atlas item-summary enrichment.
-2.  Run `pnpm sync:registries` to merge that enrichment with the official shadcn directory mirror.
-3.  Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/registries.raw.json`, `data/shadcn/sync-report.json`, and `public/data/registries.json`.
-4.  Run `pnpm validate:data`.
-5.  Run `pnpm verify`.
+1. Run `mise run import:catalog` to refresh reviewed Atlas item-summary enrichment.
+2. Run `mise run sync:registries` to refresh directory/catalog evidence, compact items, detail bundles, and the runtime mirror.
+3. Review the generated reports and artifacts.
+4. Run `mise run validate:data`.
+5. Run `mise run verify`.
+6. Run the managed browser acceptance matrix before release/deployment changes.
 
 For more details, see [docs/registry-explorer-data.md](https://github.com/acidicsoil/registry-atlas/blob/HEAD/docs/registry-explorer-data.md).
 
