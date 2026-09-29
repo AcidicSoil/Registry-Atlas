@@ -22,6 +22,7 @@ export interface RegistryDirectoryResult {
   pageCount: number;
   hasPreviousPage: boolean;
   hasNextPage: boolean;
+  coverageCounts: Record<RegistryCatalogCoverage, number>;
 }
 
 const DEFAULT_PAGE_SIZE = 32;
@@ -57,6 +58,15 @@ export function buildRegistryDirectory(
   const total = matches.length;
   const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
   const start = (page - 1) * pageSize;
+  const coverageCounts: Record<RegistryCatalogCoverage, number> = {
+    current: 0,
+    stale: 0,
+    empty: 0,
+    failed: 0,
+  };
+  for (const registry of matches) {
+    coverageCounts[registryCatalogCoverage(registry, index)] += 1;
+  }
   const entries = matches.slice(start, start + pageSize).map(registry => ({
     registry,
     itemCount: index.registries[registry.name]?.length ?? 0,
@@ -71,6 +81,7 @@ export function buildRegistryDirectory(
     pageCount,
     hasPreviousPage: page > 1 && total > 0,
     hasNextPage: page < pageCount,
+    coverageCounts,
   };
 }
 

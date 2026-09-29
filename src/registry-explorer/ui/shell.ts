@@ -21,7 +21,7 @@ import type { CopyFeedback } from './discoveryView';
 import { renderItemDetailView } from './itemDetailView';
 import { escapeHtml } from './renderSafety';
 import { buildCatalogFacetSummary, queryCatalogComponents } from '../core/catalogQuery';
-import { buildRegistryDirectory } from '../core/registryDirectory';
+import { buildRegistryDirectory, registryCatalogCoverage } from '../core/registryDirectory';
 import { buildCatalogComparison } from '../core/catalogCompare';
 import {
   catalogRoutePath,
@@ -273,6 +273,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
         renderRegistryCollection(roots.contentHeader, roots.contentBody, registry, result, {
           facets,
           browseState: catalogBrowseState(false),
+          coverage: registryCatalogCoverage(registry, catalogIndex),
         });
       } else if (state.currentView === 'discover') {
         const result = queryCatalogComponents(registries, catalogIndex, {

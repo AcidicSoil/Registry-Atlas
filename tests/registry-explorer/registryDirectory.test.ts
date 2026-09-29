@@ -54,6 +54,12 @@ describe("registryDirectory", () => {
       itemCount: 125,
       coverage: "current",
     });
+    expect(result.coverageCounts).toEqual({
+      current: 1,
+      stale: 0,
+      empty: 0,
+      failed: 0,
+    });
   });
 
   it("distinguishes current, stale, empty, and failed catalog coverage", () => {

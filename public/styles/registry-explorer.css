@@ -2164,3 +2164,22 @@ aside > .primary-nav .nav-item {
     min-height: 156px;
   }
 }
+
+.registry-coverage-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.registry-coverage-summary span {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.registry-coverage-summary strong {
+  color: var(--foreground);
+}

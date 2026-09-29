@@ -28,11 +28,24 @@ export function renderRegistryDirectory(
 
   bodyRoot.innerHTML = result.entries.length
     ? `
+      ${renderCoverageSummary(result)}
       ${renderMeta(result)}
       <div class="registry-directory-grid">${result.entries.map(renderEntry).join("")}</div>
       ${renderPagination(result)}
     `
     : '<div class="empty-state"><h2>No registries match this search.</h2></div>';
+}
+
+function renderCoverageSummary(result: RegistryDirectoryResult): string {
+  const counts = result.coverageCounts;
+  return `
+    <div class="registry-coverage-summary" aria-label="Catalog coverage summary">
+      <span><strong>${counts.current.toLocaleString()}</strong> current</span>
+      <span><strong>${counts.stale.toLocaleString()}</strong> stale</span>
+      <span><strong>${counts.empty.toLocaleString()}</strong> empty</span>
+      <span><strong>${counts.failed.toLocaleString()}</strong> unavailable</span>
+    </div>
+  `;
 }
 
 function renderEntry(entry: RegistryDirectoryEntry): string {
