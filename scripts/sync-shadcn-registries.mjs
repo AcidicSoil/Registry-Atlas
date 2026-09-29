@@ -1,4 +1,4 @@
-import { applyCatalogEvidenceToAtlas, syncCatalogEvidenceForRegistries } from './sync-registry-catalog-evidence.mjs';
+import { applyCatalogEvidenceToAtlas, syncCatalogEvidenceForRegistries, writeRegistryItemDetailBundles } from './sync-registry-catalog-evidence.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -11,6 +11,7 @@ const REGISTRY_ITEMS_PATH = 'data/shadcn/registry-items.json';
 const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.json';
 const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
 const REGISTRY_CATALOG_ITEMS_PATH = 'public/data/registry-catalog-items.json';
+const REGISTRY_ITEM_DETAILS_DIR = 'public/data/registry-item-details';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   primary_focus: [],
@@ -300,6 +301,7 @@ async function main() {
     },
     registries: catalogSync.itemsByNamespace,
   });
+  await writeRegistryItemDetailBundles(REGISTRY_ITEM_DETAILS_DIR, catalogSync.freshDetailsByNamespace);
   await writeJson(RUNTIME_OUTPUT_PATH, runtimeData);
   await writeJson(REPORT_OUTPUT_PATH, report);
 

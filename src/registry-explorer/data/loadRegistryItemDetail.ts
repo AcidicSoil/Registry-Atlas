@@ -19,6 +19,7 @@ export async function loadRegistryItemDetail(
   return loadResolvedRegistryItemDetail(
     summaryResult,
     payload => resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug, payload),
+    namespace,
     fetchImpl,
   );
 }
@@ -45,6 +46,7 @@ export async function loadRegistryItemDetailFromCatalogIndex(
       itemSlug,
       payload,
     ),
+    namespace,
     fetchImpl,
   );
 }
@@ -52,11 +54,20 @@ export async function loadRegistryItemDetailFromCatalogIndex(
 async function loadResolvedRegistryItemDetail(
   summaryResult: RegistryItemDetailResult,
   resolveWithPayload: (payload: unknown) => RegistryItemDetailResult,
+  namespace: string | null | undefined,
   fetchImpl: typeof fetch,
 ): Promise<RegistryItemDetailResult> {
   if (summaryResult.status !== 'summary-only' || summaryResult.detail.route.status !== 'available') {
     return summaryResult;
   }
+
+  const localResult = await loadSameOriginDetailBundle(
+    summaryResult,
+    resolveWithPayload,
+    namespace,
+    fetchImpl,
+  );
+  if (localResult) return localResult;
 
   try {
     const response = await fetchImpl(summaryResult.detail.route.url);
@@ -87,6 +98,48 @@ async function loadResolvedRegistryItemDetail(
   }
 }
 
+async function loadSameOriginDetailBundle(
+  summaryResult: Extract<RegistryItemDetailResult, { status: 'summary-only' }>,
+  resolveWithPayload: (payload: unknown) => RegistryItemDetailResult,
+  namespace: string | null | undefined,
+  fetchImpl: typeof fetch,
+): Promise<RegistryItemDetailResult | null> {
+  const registryName = namespace?.trim();
+  if (!registryName) return null;
+
+  try {
+    const response = await fetchImpl(registryItemDetailBundleUrl(registryName));
+    if (!response.ok) return null;
+
+    const payload: unknown = await response.json();
+    if (!Array.isArray(payload)) return null;
+    const item = payload.find(candidate =>
+      isRecord(candidate)
+      && typeof candidate.name === 'string'
+      && candidate.name === summaryResult.detail.slug
+    );
+    if (!item) return null;
+
+    const normalized = normalizeRegistryItemDetailJson(item);
+    if (!normalized.valid) {
+      return {
+        status: 'invalid-schema',
+        detail: summaryResult.detail,
+        message: 'Registry item data did not match the expected safe shape.',
+        reason: normalized.reason,
+      };
+    }
+    return resolveWithPayload(item);
+  } catch {
+    return null;
+  }
+}
+
+export function registryItemDetailBundleUrl(namespace: string): string {
+  const normalized = namespace.trim().replace(/^@/, '');
+  return `${import.meta.env.BASE_URL}data/registry-item-details/${encodeURIComponent(normalized)}.json`;
+}
+
 export function buildSummaryOnlyRegistryItemDetail(
   registry: Registry,
   itemSlug: string,
@@ -106,4 +159,8 @@ export function buildSummaryOnlyRegistryItemDetail(
     detail: buildBaseDetail(registry, summary),
     message: 'Full item JSON was not loaded; showing catalog summary details.',
   };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

@@ -3,6 +3,7 @@ import {
   type CatalogReviewedFilter,
   type CatalogSort,
 } from "./catalogRoutes";
+import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import type {
   Registry,
@@ -34,6 +35,7 @@ export interface CatalogQueryOptions {
   registryNames?: readonly string[];
   itemTypes?: readonly string[];
   categories?: readonly string[];
+  assetKinds?: readonly CatalogAssetKind[];
   reviewed?: CatalogReviewedFilter;
   sort?: CatalogSort;
   page?: number;
@@ -82,6 +84,7 @@ export function queryCatalogComponents(
   const registryFilter = new Set(options.registryNames?.map(value => value.trim()).filter(Boolean) ?? []);
   const typeFilter = new Set(options.itemTypes?.map(normalize).filter(Boolean) ?? []);
   const categoryFilter = new Set(options.categories?.map(normalize).filter(Boolean) ?? []);
+  const assetKindFilter = new Set(options.assetKinds ?? []);
   const reviewedFilter = options.reviewed ?? "all";
   const sort = options.sort ?? "name";
   const query = normalize(options.search ?? "");
@@ -106,6 +109,7 @@ export function queryCatalogComponents(
         query,
         typeFilter,
         categoryFilter,
+        assetKindFilter,
         reviewedFilter,
         Boolean(overlay),
       )) continue;
@@ -136,10 +140,11 @@ export function queryCatalogComponents(
 export function buildCatalogFacetSummary(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
-  options: Pick<CatalogQueryOptions, "search" | "registryNames"> = {},
+  options: Pick<CatalogQueryOptions, "search" | "registryNames" | "assetKinds"> = {},
 ): CatalogFacetSummary {
   const registryFilter = new Set(options.registryNames?.map(value => value.trim()).filter(Boolean) ?? []);
   const query = normalize(options.search ?? "");
+  const assetKindFilter = new Set(options.assetKinds ?? []);
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));
   const reviewedByRegistry = new Map(
     registries.map(registry => [registry.name, reviewedSummaryMap(registry)]),
@@ -156,6 +161,7 @@ export function buildCatalogFacetSummary(
     const reviewed = reviewedByRegistry.get(namespace) ?? new Map<string, RegistryItemSummary>();
 
     for (const item of items) {
+      if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item) ?? "component")) continue;
       if (query && !matchesSearch(item, namespace, query)) continue;
       increment(registryCounts, namespace);
       increment(typeCounts, item.type);
@@ -255,10 +261,12 @@ function matchesFilters(
   query: string,
   typeFilter: ReadonlySet<string>,
   categoryFilter: ReadonlySet<string>,
+  assetKindFilter: ReadonlySet<CatalogAssetKind>,
   reviewedFilter: CatalogReviewedFilter,
   isReviewed: boolean,
 ): boolean {
   if (typeFilter.size > 0 && !typeFilter.has(normalize(item.type))) return false;
+  if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item) ?? "component")) return false;
   const categories = (item.categories ?? []).map(normalize);
   if (categoryFilter.size > 0 && !categories.some(category => categoryFilter.has(category))) {
     return false;

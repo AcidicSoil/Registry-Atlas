@@ -2,6 +2,7 @@ import type {
   RegistryCatalogCoverage,
   RegistryDirectoryEntry,
   RegistryDirectoryResult,
+  RegistryDirectorySort,
 } from "../core/registryDirectory";
 import { escapeHtml, renderExternalLink } from "./renderSafety";
 
@@ -12,28 +13,67 @@ const COVERAGE_LABELS: Record<RegistryCatalogCoverage, string> = {
   failed: "Catalog unavailable",
 };
 
+export interface RegistryDirectoryViewOptions {
+  searchTerm?: string;
+  coverage?: readonly RegistryCatalogCoverage[];
+  sort?: RegistryDirectorySort;
+}
+
 export function renderRegistryDirectory(
   headerRoot: HTMLElement,
   bodyRoot: HTMLElement,
   result: RegistryDirectoryResult,
+  options: RegistryDirectoryViewOptions = {},
 ): void {
   headerRoot.innerHTML = `
     <div class="catalog-page-heading">
-      <div class="catalog-eyebrow">Registry Atlas</div>
+      <div class="catalog-eyebrow">Libraries</div>
       <h1>Registries</h1>
       <p>${result.total.toLocaleString()} registry sources. Counts come from real indexed catalog items.</p>
     </div>
     <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry directory link copied">Copy link</button>
   `;
 
-  bodyRoot.innerHTML = result.entries.length
-    ? `
-      ${renderCoverageSummary(result)}
-      ${renderMeta(result)}
-      <div class="registry-directory-grid">${result.entries.map(renderEntry).join("")}</div>
-      ${renderPagination(result)}
-    `
-    : '<div class="empty-state"><h2>No registries match this search.</h2></div>';
+  const coverage = options.coverage?.[0] ?? "";
+  const sort = options.sort ?? "name";
+  bodyRoot.innerHTML = `
+    <div class="registry-directory-controls" aria-label="Registry directory controls">
+      <label>
+        <span>Search libraries</span>
+        <input type="search" data-registry-search value="${escapeHtml(options.searchTerm ?? "")}" placeholder="Search registries" />
+      </label>
+      <label>
+        <span>Catalog status</span>
+        <select data-registry-coverage>
+          <option value="">All statuses</option>
+          ${coverageOption("current", coverage)}
+          ${coverageOption("stale", coverage)}
+          ${coverageOption("empty", coverage)}
+          ${coverageOption("failed", coverage)}
+        </select>
+      </label>
+      <label>
+        <span>Sort</span>
+        <select data-registry-sort>
+          ${sortOption("name", "Name", sort)}
+          ${sortOption("item-count-desc", "Most indexed items", sort)}
+          ${sortOption("item-count-asc", "Fewest indexed items", sort)}
+        </select>
+      </label>
+    </div>
+    ${renderCoverageSummary(result)}
+    ${result.entries.length
+      ? `${renderMeta(result)}<div class="registry-directory-grid">${result.entries.map(renderEntry).join("")}</div>${renderPagination(result)}`
+      : '<div class="empty-state"><h2>No registries match these controls.</h2><p>Change the search or catalog-status filter.</p></div>'}
+  `;
+}
+
+function coverageOption(value: RegistryCatalogCoverage, selected: string): string {
+  return `<option value="${value}"${value === selected ? " selected" : ""}>${escapeHtml(COVERAGE_LABELS[value])}</option>`;
+}
+
+function sortOption(value: RegistryDirectorySort, label: string, selected: string): string {
+  return `<option value="${value}"${value === selected ? " selected" : ""}>${escapeHtml(label)}</option>`;
 }
 
 function renderCoverageSummary(result: RegistryDirectoryResult): string {
@@ -49,7 +89,7 @@ function renderCoverageSummary(result: RegistryDirectoryResult): string {
 }
 
 function renderEntry(entry: RegistryDirectoryEntry): string {
-  const count = entry.itemCount === 1 ? "1 component" : `${entry.itemCount.toLocaleString()} components`;
+  const count = entry.itemCount === 1 ? "1 indexed asset" : `${entry.itemCount.toLocaleString()} indexed assets`;
   return `
     <article class="registry-directory-card">
       <div class="registry-directory-copy">

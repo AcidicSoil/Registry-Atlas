@@ -10,8 +10,8 @@ import {
 const BASE = "/Registry-Atlas/";
 
 describe("catalogRoutes", () => {
-  it("treats the project root and /components as the real component catalogue", () => {
-    expect(parseCatalogRoute("/Registry-Atlas/", BASE)).toEqual({ kind: "components" });
+  it("keeps the project root distinct from /components", () => {
+    expect(parseCatalogRoute("/Registry-Atlas/", BASE)).toEqual({ kind: "home" });
     expect(parseCatalogRoute("/Registry-Atlas/components", BASE)).toEqual({ kind: "components" });
   });
 
@@ -79,5 +79,28 @@ describe("catalogRoutes", () => {
     expect(parseCatalogRoute("/other/components", BASE)).toBeNull();
     expect(parseCatalogRoute("/Registry-Atlas/@demo/components/%2E%2E/secret", BASE)).toBeNull();
     expect(parseCatalogRoute("/Registry-Atlas/not-a-route", BASE)).toBeNull();
+  });
+});
+
+describe("corrective route parity", () => {
+  it("keeps home distinct and parses audited route families", () => {
+    expect(parseCatalogRoute("/Registry-Atlas/", BASE)).toEqual({ kind: "home" });
+    expect(parseCatalogRoute("/Registry-Atlas/components/featured", BASE)).toEqual({ kind: "components", lens: "featured" });
+    expect(parseCatalogRoute("/Registry-Atlas/components/newest/2026-W40", BASE)).toEqual({ kind: "components", lens: "newest", period: "2026-W40" });
+    expect(parseCatalogRoute("/Registry-Atlas/components/explore/ai", BASE)).toEqual({ kind: "explore", collection: "ai" });
+    expect(parseCatalogRoute("/Registry-Atlas/authors", BASE)).toEqual({ kind: "authors" });
+    expect(parseCatalogRoute("/Registry-Atlas/templates", BASE)).toEqual({ kind: "templates" });
+    expect(parseCatalogRoute("/Registry-Atlas/themes", BASE)).toEqual({ kind: "themes" });
+    expect(parseCatalogRoute("/Registry-Atlas/themes/editor", BASE)).toEqual({ kind: "theme-editor" });
+    expect(parseCatalogRoute("/Registry-Atlas/icons", BASE)).toEqual({ kind: "icons" });
+    expect(parseCatalogRoute("/Registry-Atlas/icons/lucide", BASE)).toEqual({ kind: "icon-family", family: "lucide" });
+    expect(parseCatalogRoute("/Registry-Atlas/icons/c/layout", BASE)).toEqual({ kind: "icon-category", category: "layout" });
+  });
+
+  it("round-trips typed asset detail routes", () => {
+    const templateRoute: CatalogRoute = { kind: "template", namespace: "@demo", slug: "landing/agency" };
+    const themeRoute: CatalogRoute = { kind: "theme", namespace: "@demo", slug: "vercel" };
+    expect(parseCatalogRoute(catalogRoutePath(templateRoute, BASE), BASE)).toEqual(templateRoute);
+    expect(parseCatalogRoute(catalogRoutePath(themeRoute, BASE), BASE)).toEqual(themeRoute);
   });
 });

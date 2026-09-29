@@ -72,6 +72,37 @@ describe('registry item detail', () => {
     }));
   });
 
+  it('loads indexed detail from the same-origin registry bundle before the raw route', async () => {
+    const seen: string[] = [];
+    const result = await loadRegistryItemDetailFromCatalogIndex(
+      [registryFixture()],
+      {
+        meta: { registry_count: 1, item_count: 1 },
+        registries: { '@delta': [{ name: 'catalog-only', type: 'registry:ui' }] },
+      },
+      '@delta',
+      'catalog-only',
+      async (input) => {
+        seen.push(String(input));
+        if (String(input).includes('/data/registry-item-details/delta.json')) {
+          return jsonResponse([{
+            name: 'catalog-only',
+            title: 'Same-origin detail',
+            type: 'registry:ui',
+            dependencies: ['react'],
+            files: [{ path: 'registry/catalog-only.tsx', type: 'registry:ui' }],
+          }]);
+        }
+        throw new Error('raw route must not be fetched');
+      },
+    );
+
+    expect(result.status).toBe('loaded');
+    expect(result.detail?.title).toBe('Same-origin detail');
+    expect(seen).toHaveLength(1);
+    expect(seen[0]).toContain('/data/registry-item-details/delta.json');
+  });
+
   it('does not mislabel registry JSON as a component page when docs are absent', () => {
     const registry = registryFixture();
     const routeOnlyRegistry: Registry = {

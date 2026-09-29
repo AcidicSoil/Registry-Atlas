@@ -1,8 +1,20 @@
 export type CatalogRoute =
-  | { kind: "components"; lens?: "featured" | "newest"; pathSearchTerm?: string }
+  | { kind: "home" }
+  | { kind: "not-found"; path: string }
+  | { kind: "components"; lens?: "featured" | "newest"; period?: string; pathSearchTerm?: string }
+  | { kind: "explore"; collection: string }
+  | { kind: "authors" }
   | { kind: "registries" }
   | { kind: "registry"; namespace: string }
   | { kind: "component"; namespace: string; slug: string }
+  | { kind: "templates" }
+  | { kind: "template"; namespace: string; slug: string }
+  | { kind: "themes" }
+  | { kind: "theme"; namespace: string; slug: string }
+  | { kind: "theme-editor" }
+  | { kind: "icons" }
+  | { kind: "icon-family"; family: string }
+  | { kind: "icon-category"; category: string }
   | { kind: "compare" };
 
 export type CatalogSort = "name" | "registry" | "type" | "reviewed";
@@ -25,12 +37,12 @@ const CATALOG_ITEM_TYPES = new Set([
   "registry:ui",
   "registry:page",
   "registry:item",
+  "registry:style",
+  "registry:theme",
+  "registry:icon",
 ]);
 
-export function parseCatalogRoute(
-  pathname: string,
-  basePath = "/",
-): CatalogRoute | null {
+export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRoute | null {
   const relative = stripBasePath(pathname, basePath);
   if (relative === null) return null;
 
@@ -39,29 +51,52 @@ export function parseCatalogRoute(
   if (segments.some(segment => segment === null)) return null;
   const decoded = segments as string[];
 
-  if (decoded.length === 0 || (decoded.length === 1 && decoded[0] === "components")) {
-    return { kind: "components" };
-  }
+  if (decoded.length === 0) return { kind: "home" };
+  if (decoded.length === 1 && decoded[0] === "components") return { kind: "components" };
   if (decoded.length === 2 && decoded[0] === "components" && decoded[1] === "featured") {
     return { kind: "components", lens: "featured" };
   }
-  if (decoded.length === 2 && decoded[0] === "components" && decoded[1] === "newest") {
-    return { kind: "components", lens: "newest" };
+  if (decoded.length >= 2 && decoded[0] === "components" && decoded[1] === "newest") {
+    if (decoded.length === 2) return { kind: "components", lens: "newest" };
+    if (decoded.length === 3 && isSafeFacetValue(decoded[2])) {
+      return { kind: "components", lens: "newest", period: decoded[2] };
+    }
+    return null;
   }
   if (decoded.length === 3 && decoded[0] === "components" && decoded[1] === "s") {
     return { kind: "components", pathSearchTerm: decoded[2] };
   }
+  if (decoded.length === 3 && decoded[0] === "components" && decoded[1] === "explore") {
+    return { kind: "explore", collection: decoded[2] };
+  }
+
+  if (decoded.length === 1 && decoded[0] === "authors") return { kind: "authors" };
   if (decoded.length === 1 && decoded[0] === "registries") return { kind: "registries" };
+  if (decoded.length === 1 && decoded[0] === "templates") return { kind: "templates" };
+  if (decoded.length === 1 && decoded[0] === "themes") return { kind: "themes" };
+  if (decoded.length === 2 && decoded[0] === "themes" && decoded[1] === "editor") {
+    return { kind: "theme-editor" };
+  }
+  if (decoded.length === 1 && decoded[0] === "icons") return { kind: "icons" };
+  if (decoded.length === 3 && decoded[0] === "icons" && decoded[1] === "c") {
+    return { kind: "icon-category", category: decoded[2] };
+  }
+  if (decoded.length === 2 && decoded[0] === "icons") {
+    return { kind: "icon-family", family: decoded[1] };
+  }
   if (decoded.length === 1 && decoded[0] === "compare") return { kind: "compare" };
 
   const namespace = decoded[0];
   if (!namespace || !isSafeNamespace(namespace)) return null;
   if (decoded.length === 1) return { kind: "registry", namespace };
 
-  if (decoded[1] === "components" && decoded.length >= 3) {
+  if (decoded.length >= 3 && ["components", "templates", "themes"].includes(decoded[1])) {
     const slugSegments = decoded.slice(2);
     if (!slugSegments.every(isSafeItemSegment)) return null;
-    return { kind: "component", namespace, slug: slugSegments.join("/") };
+    const slug = slugSegments.join("/");
+    if (decoded[1] === "components") return { kind: "component", namespace, slug };
+    if (decoded[1] === "templates") return { kind: "template", namespace, slug };
+    return { kind: "theme", namespace, slug };
   }
 
   return null;
@@ -74,9 +109,7 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
 
   return {
     page: Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1,
-    sort: sortValue && CATALOG_SORTS.has(sortValue as CatalogSort)
-      ? sortValue as CatalogSort
-      : "name",
+    sort: sortValue && CATALOG_SORTS.has(sortValue as CatalogSort) ? sortValue as CatalogSort : "name",
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
     itemTypes: uniqueValues(params.getAll("type").filter(value => CATALOG_ITEM_TYPES.has(value))),
     categories: uniqueValues(params.getAll("category").map(value => value.trim()).filter(isSafeFacetValue)),
@@ -103,18 +136,28 @@ export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URL
   return params;
 }
 
-export function catalogRoutePath(
-  route: CatalogRoute,
-  basePath = "/",
-): string {
+export function catalogRoutePath(route: CatalogRoute, basePath = "/"): string {
   const base = normalizeBasePath(basePath);
 
+  if (route.kind === "home") return base;
+  if (route.kind === "not-found") return route.path;
   if (route.kind === "components") {
     if (route.pathSearchTerm) return joinBase(base, `components/s/${encodeSegment(route.pathSearchTerm)}`);
+    if (route.lens === "newest" && route.period) {
+      return joinBase(base, `components/newest/${encodeSegment(route.period)}`);
+    }
     if (route.lens) return joinBase(base, `components/${route.lens}`);
     return joinBase(base, "components");
   }
+  if (route.kind === "explore") return joinBase(base, `components/explore/${encodeSegment(route.collection)}`);
+  if (route.kind === "authors") return joinBase(base, "authors");
   if (route.kind === "registries") return joinBase(base, "registries");
+  if (route.kind === "templates") return joinBase(base, "templates");
+  if (route.kind === "themes") return joinBase(base, "themes");
+  if (route.kind === "theme-editor") return joinBase(base, "themes/editor");
+  if (route.kind === "icons") return joinBase(base, "icons");
+  if (route.kind === "icon-family") return joinBase(base, `icons/${encodeSegment(route.family)}`);
+  if (route.kind === "icon-category") return joinBase(base, `icons/c/${encodeSegment(route.category)}`);
   if (route.kind === "compare") return joinBase(base, "compare");
 
   if (!isSafeNamespace(route.namespace)) {
@@ -125,9 +168,10 @@ export function catalogRoutePath(
 
   const slugSegments = route.slug.split("/");
   if (slugSegments.length === 0 || !slugSegments.every(isSafeItemSegment)) {
-    throw new Error(`Unsafe component slug: ${route.slug}`);
+    throw new Error(`Unsafe catalog slug: ${route.slug}`);
   }
-  return joinBase(base, `${namespace}/components/${slugSegments.map(encodeSegment).join("/")}`);
+  const kindSegment = route.kind === "component" ? "components" : route.kind === "template" ? "templates" : "themes";
+  return joinBase(base, `${namespace}/${kindSegment}/${slugSegments.map(encodeSegment).join("/")}`);
 }
 
 function stripBasePath(pathname: string, basePath: string): string | null {
@@ -142,6 +186,7 @@ function normalizeBasePath(basePath: string): string {
   const withLeading = basePath.startsWith("/") ? basePath : `/${basePath}`;
   return withLeading.endsWith("/") ? withLeading : `${withLeading}/`;
 }
+
 function joinBase(base: string, relative: string): string {
   return `${base}${relative}`.replace(/\/+/g, "/");
 }
@@ -164,10 +209,7 @@ function isSafeItemSegment(value: string): boolean {
 }
 
 function isSafePathSegment(value: string): boolean {
-  return Boolean(value)
-    && value !== "."
-    && value !== ".."
-    && !/[\\/\u0000-\u001f\u007f]/.test(value);
+  return Boolean(value) && value !== "." && value !== ".." && !/[\\/\u0000-\u001f\u007f]/.test(value);
 }
 
 function uniqueValues(values: readonly string[]): string[] {
@@ -175,9 +217,7 @@ function uniqueValues(values: readonly string[]): string[] {
 }
 
 function isSafeFacetValue(value: string): boolean {
-  return Boolean(value)
-    && value.length <= 96
-    && !/[\u0000-\u001f\u007f]/.test(value);
+  return Boolean(value) && value.length <= 96 && !/[\u0000-\u001f\u007f]/.test(value);
 }
 
 function encodeNamespace(value: string): string {

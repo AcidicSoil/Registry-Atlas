@@ -249,7 +249,8 @@ describe('registry explorer shell interactions', () => {
       expect(harness.contentBody.innerHTML).toContain('Loaded from the upstream registry item JSON.');
       expect(harness.contentBody.innerHTML).toContain('<code>react</code>');
     });
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(String(fetchImpl.mock.calls[0]?.[0])).toContain('/data/registry-item-details/delta.json');
 
     harness.contentBody.dispatch('click', target({ 'data-back-from-item': '' }));
     harness.contentBody.dispatch('click', target({
@@ -260,7 +261,7 @@ describe('registry explorer shell interactions', () => {
     await vi.waitFor(() => {
       expect(harness.contentHeader.innerHTML).toContain('Catalog Only Loaded');
     });
-    expect(fetchImpl).toHaveBeenCalledTimes(1);
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
   it('migrates a legacy registry deep link to the canonical registry path', () => {

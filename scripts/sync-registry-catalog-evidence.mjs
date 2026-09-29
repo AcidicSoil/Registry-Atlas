@@ -6,6 +6,7 @@ const DEFAULT_SOURCE_PATH = 'data/shadcn/registries.raw.json';
 const DEFAULT_OUTPUT_PATH = 'data/shadcn/registry-catalog-evidence.json';
 const DEFAULT_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
 const DEFAULT_ITEMS_PATH = 'public/data/registry-catalog-items.json';
+const DEFAULT_DETAILS_DIR = 'public/data/registry-item-details';
 
 export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
   'registry:block',
@@ -13,6 +14,9 @@ export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
   'registry:ui',
   'registry:page',
   'registry:item',
+  'registry:style',
+  'registry:theme',
+  'registry:icon',
 ]);
 
 export const COMPONENT_TAGS = Object.freeze([
@@ -158,6 +162,55 @@ export function buildCompactCatalogItems(catalog) {
   return items;
 }
 
+export function buildRegistryItemDetailBundle(catalog) {
+  const allowedTypes = new Set(DISCOVERABLE_REGISTRY_ITEM_TYPES);
+  const details = [];
+
+  for (const item of Array.isArray(catalog?.items) ? catalog.items : []) {
+    if (!item || typeof item !== 'object') continue;
+    const name = typeof item.name === 'string' ? item.name.trim() : '';
+    const type = typeof item.type === 'string' ? item.type.trim() : '';
+    if (!name || !allowedTypes.has(type)) continue;
+
+    const detail = { name, type };
+    if (typeof item.title === 'string' && item.title.trim()) detail.title = item.title.trim();
+    if (typeof item.description === 'string' && item.description.trim()) detail.description = item.description.trim();
+
+    const categories = [
+      ...(Array.isArray(item.categories) ? item.categories : []),
+      ...(typeof item.category === 'string' ? [item.category] : []),
+    ].filter(value => typeof value === 'string' && value.trim()).map(value => value.trim());
+    if (categories.length) detail.categories = [...new Set(categories)];
+
+    for (const field of ['dependencies', 'devDependencies', 'registryDependencies']) {
+      const values = Array.isArray(item[field])
+        ? item[field].filter(value => typeof value === 'string' && value.trim()).map(value => value.trim())
+        : [];
+      if (values.length) detail[field] = values;
+    }
+
+    const files = Array.isArray(item.files)
+      ? item.files
+          .filter(file => file && typeof file === 'object')
+          .map(file => {
+            const pathValue = typeof file.path === 'string' ? file.path.trim() : '';
+            const typeValue = typeof file.type === 'string' ? file.type.trim() : '';
+            const target = typeof file.target === 'string' && file.target.trim() ? file.target.trim() : null;
+            if (!pathValue || !typeValue) return null;
+            return target
+              ? { path: pathValue, type: typeValue, target }
+              : { path: pathValue, type: typeValue };
+          })
+          .filter(Boolean)
+      : [];
+    if (files.length) detail.files = files;
+
+    details.push(detail);
+  }
+
+  return details;
+}
+
 export function mergeCatalogItems(previous = {}, fresh = {}, failures = []) {
   const output = { ...fresh };
   for (const failure of failures) {
@@ -239,6 +292,16 @@ async function writeCompactJson(filePath, value) {
 `);
 }
 
+export async function writeRegistryItemDetailBundles(outputDir, detailsByNamespace) {
+  await mkdir(outputDir, { recursive: true });
+  for (const [namespace, details] of Object.entries(detailsByNamespace ?? {})) {
+    const normalized = normalizeNamespace(namespace);
+    if (!normalized || !Array.isArray(details)) continue;
+    const filename = `${encodeURIComponent(normalized.slice(1))}.json`;
+    await writeCompactJson(path.join(outputDir, filename), details);
+  }
+}
+
 function normalizeNamespace(value) {
   if (typeof value !== 'string' || !value.trim()) return '';
   const valueLower = value.trim().toLowerCase();
@@ -300,6 +363,7 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
             resolvedCatalogUrl,
           ),
           items: buildCompactCatalogItems(catalog),
+          details: buildRegistryItemDetailBundle(catalog),
         };
       } catch (error) {
         const errorName = error?.name ?? 'fetch-error';
@@ -335,6 +399,7 @@ export async function syncCatalogEvidenceForRegistries(
   const queue = [...registries];
   const fresh = {};
   const freshItems = {};
+  const freshDetails = {};
   const failures = [];
   let itemCount = 0;
 
@@ -345,6 +410,7 @@ export async function syncCatalogEvidenceForRegistries(
       if (result.evidence) {
         fresh[result.evidence.namespace] = result.evidence;
         freshItems[result.evidence.namespace] = result.items ?? [];
+        freshDetails[result.evidence.namespace] = result.details ?? [];
         itemCount += result.evidence.item_count;
       } else if (result.failure) failures.push(result.failure);
     }
@@ -379,17 +445,18 @@ export async function syncCatalogEvidenceForRegistries(
     failure_class_counts: failureClassCounts,
     failures: sortedFailures,
   };
-  return { evidence, itemsByNamespace, report };
+  return { evidence, itemsByNamespace, freshDetailsByNamespace: freshDetails, report };
 }
 
 function parseArgs(argv) {
-  const options = { source: DEFAULT_SOURCE_PATH, output: DEFAULT_OUTPUT_PATH, report: DEFAULT_REPORT_PATH, items: DEFAULT_ITEMS_PATH, concurrency: 16, timeoutMs: 8000 };
+  const options = { source: DEFAULT_SOURCE_PATH, output: DEFAULT_OUTPUT_PATH, report: DEFAULT_REPORT_PATH, items: DEFAULT_ITEMS_PATH, detailsDir: DEFAULT_DETAILS_DIR, concurrency: 16, timeoutMs: 8000 };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === '--source') options.source = argv[++index] ?? options.source;
     else if (arg === '--output') options.output = argv[++index] ?? options.output;
     else if (arg === '--report') options.report = argv[++index] ?? options.report;
     else if (arg === '--items') options.items = argv[++index] ?? options.items;
+    else if (arg === '--details-dir') options.detailsDir = argv[++index] ?? options.detailsDir;
     else if (arg === '--concurrency') options.concurrency = Math.max(1, Number(argv[++index]) || options.concurrency);
     else if (arg === '--timeout-ms') options.timeoutMs = Math.max(1000, Number(argv[++index]) || options.timeoutMs);
   }
@@ -402,7 +469,7 @@ async function main(argv = process.argv.slice(2)) {
   if (!Array.isArray(registries)) throw new Error(`${options.source} must contain the official registry array.`);
   const previous = await readJsonIfExists(options.output) ?? {};
   const previousIndex = await readJsonIfExists(options.items);
-  const { evidence, itemsByNamespace, report } = await syncCatalogEvidenceForRegistries(registries, {
+  const { evidence, itemsByNamespace, freshDetailsByNamespace, report } = await syncCatalogEvidenceForRegistries(registries, {
     previous,
     previousItems: previousIndex?.registries ?? {},
     concurrency: options.concurrency,
@@ -418,6 +485,7 @@ async function main(argv = process.argv.slice(2)) {
     },
     registries: itemsByNamespace,
   });
+  await writeRegistryItemDetailBundles(options.detailsDir, freshDetailsByNamespace);
   await writeJson(options.report, report);
   console.log(`Fetched ${report.fetched_catalog_count}/${report.registry_count} registry catalogs (${report.fetched_item_count} items).`);
   console.log(`Comparable evidence retained for ${report.evidence_registry_count} registries; stale: ${report.stale_registry_count}; failures: ${report.failure_count}.`);

@@ -90,3 +90,32 @@ describe("registryDirectory", () => {
     expect(searched.entries.map(entry => entry.registry.name)).toEqual(["@registry-12"]);
   });
 });
+
+describe("corrective registry controls", () => {
+  it("filters coverage before pagination and sorts by indexed item count", () => {
+    const regs = [
+      registry("@small"),
+      registry("@large"),
+      registry("@stale", "stale-catalog"),
+      registry("@failed", "none"),
+    ];
+    const catalog = index({
+      "@small": [{ name: "one", type: "registry:ui" }],
+      "@large": [
+        { name: "one", type: "registry:ui" },
+        { name: "two", type: "registry:ui" },
+        { name: "three", type: "registry:ui" },
+      ],
+      "@stale": [{ name: "old", type: "registry:ui" }],
+    });
+    const current = buildRegistryDirectory(regs, catalog, {
+      coverage: ["current"],
+      sort: "item-count-desc",
+      pageSize: 1,
+    });
+    expect(current.total).toBe(2);
+    expect(current.entries.map(entry => entry.registry.name)).toEqual(["@large"]);
+    const unavailable = buildRegistryDirectory(regs, catalog, { coverage: ["failed"] });
+    expect(unavailable.entries.map(entry => entry.registry.name)).toEqual(["@failed"]);
+  });
+});

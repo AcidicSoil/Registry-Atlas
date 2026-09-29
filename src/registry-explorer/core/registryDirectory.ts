@@ -1,6 +1,7 @@
 import type { Registry, RegistryCatalogIndex } from "./registry.schema";
 
 export type RegistryCatalogCoverage = "current" | "stale" | "empty" | "failed";
+export type RegistryDirectorySort = "name" | "item-count-asc" | "item-count-desc";
 
 export interface RegistryDirectoryEntry {
   registry: Registry;
@@ -10,6 +11,8 @@ export interface RegistryDirectoryEntry {
 
 export interface RegistryDirectoryOptions {
   search?: string;
+  coverage?: readonly RegistryCatalogCoverage[];
+  sort?: RegistryDirectorySort;
   page?: number;
   pageSize?: number;
 }
@@ -43,38 +46,43 @@ export function buildRegistryDirectory(
   options: RegistryDirectoryOptions = {},
 ): RegistryDirectoryResult {
   const query = (options.search ?? "").trim().toLocaleLowerCase();
-  const page = positiveInteger(options.page, 1);
+  const requestedPage = positiveInteger(options.page, 1);
   const pageSize = Math.min(positiveInteger(options.pageSize, DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
+  const coverageFilter = new Set(options.coverage ?? []);
+  const sort = options.sort ?? "name";
 
-  const matches = registries
+  const entries = registries
     .filter(registry => !query || [
       registry.name,
       registry.description,
       registry.url,
       ...(registry.atlas?.aliases ?? []),
     ].some(value => value.toLocaleLowerCase().includes(query)))
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .map(registry => ({
+      registry,
+      itemCount: index.registries[registry.name]?.length ?? 0,
+      coverage: registryCatalogCoverage(registry, index),
+    }))
+    .filter(entry => coverageFilter.size === 0 || coverageFilter.has(entry.coverage))
+    .sort((a, b) => compareEntries(a, b, sort));
 
-  const total = matches.length;
-  const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
-  const start = (page - 1) * pageSize;
   const coverageCounts: Record<RegistryCatalogCoverage, number> = {
     current: 0,
     stale: 0,
     empty: 0,
     failed: 0,
   };
-  for (const registry of matches) {
-    coverageCounts[registryCatalogCoverage(registry, index)] += 1;
-  }
-  const entries = matches.slice(start, start + pageSize).map(registry => ({
-    registry,
-    itemCount: index.registries[registry.name]?.length ?? 0,
-    coverage: registryCatalogCoverage(registry, index),
-  }));
+  entries.forEach(entry => {
+    coverageCounts[entry.coverage] += 1;
+  });
+
+  const total = entries.length;
+  const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
+  const page = pageCount === 0 ? 1 : Math.min(requestedPage, pageCount);
+  const start = (page - 1) * pageSize;
 
   return {
-    entries,
+    entries: entries.slice(start, start + pageSize),
     total,
     page,
     pageSize,
@@ -83,6 +91,20 @@ export function buildRegistryDirectory(
     hasNextPage: page < pageCount,
     coverageCounts,
   };
+}
+
+function compareEntries(
+  a: RegistryDirectoryEntry,
+  b: RegistryDirectoryEntry,
+  sort: RegistryDirectorySort,
+): number {
+  if (sort === "item-count-asc") {
+    return a.itemCount - b.itemCount || a.registry.name.localeCompare(b.registry.name);
+  }
+  if (sort === "item-count-desc") {
+    return b.itemCount - a.itemCount || a.registry.name.localeCompare(b.registry.name);
+  }
+  return a.registry.name.localeCompare(b.registry.name);
 }
 
 function positiveInteger(value: number | undefined, fallback: number): number {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { COMPONENT_TAG_VALUES } from '../../src/registry-explorer/core/registry.schema';
 // @ts-expect-error The synchronizer is an executable Node .mjs script with runtime exports tested here.
-import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, buildCompactCatalogItems, classifyCatalogFailureReason, COMPONENT_TAGS, deriveCatalogUrl, deriveCatalogUrls, DISCOVERABLE_REGISTRY_ITEM_TYPES, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
+import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, buildCompactCatalogItems, buildRegistryItemDetailBundle, classifyCatalogFailureReason, COMPONENT_TAGS, deriveCatalogUrl, deriveCatalogUrls, DISCOVERABLE_REGISTRY_ITEM_TYPES, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
 
 describe('registry catalog evidence sync', () => {
   it('keeps the sync capability vocabulary aligned with the runtime schema', () => {
@@ -138,17 +138,56 @@ describe('registry catalog evidence sync', () => {
       'registry:ui',
       'registry:page',
       'registry:item',
+      'registry:style',
+      'registry:theme',
+      'registry:icon',
     ]);
 
     expect(buildCompactCatalogItems({ items: [
       { name: 'hero-grid', title: 'Hero Grid', type: 'registry:block', categories: ['marketing'] },
       { name: 'button', type: 'registry:ui', category: 'forms' },
       { name: 'theme', type: 'registry:theme' },
+      { name: 'icons', type: 'registry:icon', category: 'icons' },
       { name: 'helpers', type: 'registry:lib' },
     ] })).toEqual([
       { name: 'hero-grid', title: 'Hero Grid', type: 'registry:block', categories: ['marketing'] },
       { name: 'button', type: 'registry:ui', categories: ['forms'] },
+      { name: 'theme', type: 'registry:theme' },
+      { name: 'icons', type: 'registry:icon', categories: ['icons'] },
     ]);
+  });
+
+  it('builds a safe same-origin detail bundle without source file contents', () => {
+    expect(buildRegistryItemDetailBundle({ items: [{
+      name: 'accordion',
+      title: 'Accordion',
+      description: 'Expandable sections.',
+      type: 'registry:ui',
+      categories: ['navigation'],
+      dependencies: ['react'],
+      devDependencies: ['typescript'],
+      registryDependencies: ['button'],
+      files: [{
+        path: 'registry/accordion.tsx',
+        type: 'registry:ui',
+        target: 'components/accordion.tsx',
+        content: 'source must not be persisted',
+      }],
+    }] })).toEqual([{
+      name: 'accordion',
+      title: 'Accordion',
+      description: 'Expandable sections.',
+      type: 'registry:ui',
+      categories: ['navigation'],
+      dependencies: ['react'],
+      devDependencies: ['typescript'],
+      registryDependencies: ['button'],
+      files: [{
+        path: 'registry/accordion.tsx',
+        type: 'registry:ui',
+        target: 'components/accordion.tsx',
+      }],
+    }]);
   });
 
   it('preserves failed namespaces and replaces successfully refreshed compact items', () => {

@@ -49,7 +49,7 @@ export function renderRegistryCollection(
       ${result.items.length
         ? `
           ${renderMeta(result)}
-          <div class="catalog-component-grid">${result.items.map(renderCatalogComponentCard).join("")}</div>
+          <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item)).join("")}</div>
           ${renderPagination(result)}
         `
         : renderEmptyRegistryInventory(options.coverage)}

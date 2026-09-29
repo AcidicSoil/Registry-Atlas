@@ -50,7 +50,7 @@ export function renderCatalogComponents(
       ? `
         ${renderResultMeta(result)}
         <div class="catalog-component-grid">
-          ${result.items.map(renderCatalogComponentCard).join("")}
+          ${result.items.map(item => renderCatalogComponentCard(item)).join("")}
         </div>
         ${renderPagination(result)}
       `
@@ -116,7 +116,10 @@ export function renderCatalogBrowseControls(
   `;
 }
 
-export function renderCatalogComponentCard(component: CatalogComponent): string {
+export function renderCatalogComponentCard(
+  component: CatalogComponent,
+  routeKind: 'component' | 'template' | 'theme' = 'component',
+): string {
   const preview = component.previewUrl
     ? renderSafeExternalImage(
         component.previewUrl,
@@ -140,6 +143,7 @@ export function renderCatalogComponentCard(component: CatalogComponent): string 
         type="button"
         data-view-item-registry="${escapeHtml(component.namespace)}"
         data-view-item-slug="${escapeHtml(component.slug)}"
+        data-view-item-kind="${routeKind}"
         aria-label="Open ${escapeHtml(component.displayName)} from ${escapeHtml(component.namespace)}">
         <div class="catalog-component-specimen">${preview}</div>
         <div class="catalog-component-card-copy">

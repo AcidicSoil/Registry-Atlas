@@ -1,4 +1,3 @@
-import { taxonomyTagsForValues } from './componentTaxonomy';
 import { resolveRegistryItemRoute } from './itemRoutes';
 import type {
   Registry,
@@ -13,6 +12,9 @@ const DISCOVERABLE_REGISTRY_ITEM_TYPES = new Set([
   'registry:ui',
   'registry:page',
   'registry:item',
+  'registry:style',
+  'registry:theme',
+  'registry:icon',
 ]);
 
 export interface RegistryCatalogMatch {
@@ -163,19 +165,12 @@ export function compactCatalogItemToSummary(
     ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.name)
     : null;
   const evidenceUrl = registry.atlas?.catalogEvidenceUrl;
-  const tags = taxonomyTagsForValues([
-    item.name,
-    item.title,
-    ...(item.categories ?? []),
-  ]);
-
   return {
     name: item.title ?? item.name,
     slug: item.name,
     title: item.title,
     type: item.type,
     category: item.categories?.[0],
-    componentTagsProposed: tags,
     source: 'registry-catalog-index',
     provenance: evidenceUrl ?? 'machine-readable registry catalog',
     catalogStatus: 'available',
