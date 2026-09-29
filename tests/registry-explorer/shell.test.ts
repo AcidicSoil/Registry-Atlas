@@ -227,6 +227,42 @@ describe('registry explorer shell interactions', () => {
     expect(harness.location.pathname).toBe('/Registry-Atlas/@delta/components/catalog-only');
   });
 
+  it('lazily upgrades indexed-only detail from the upstream item JSON and caches it', async () => {
+    const fetchImpl = vi.fn(async () => jsonResponse({
+      name: 'catalog-only',
+      title: 'Catalog Only Loaded',
+      description: 'Loaded from the upstream registry item JSON.',
+      type: 'registry:ui',
+      dependencies: ['react'],
+      files: [{ path: 'registry/catalog-only.tsx', type: 'registry:ui' }],
+    }));
+    const harness = setup(
+      '',
+      '/Registry-Atlas/@delta/components/catalog-only',
+      fetchImpl as typeof fetch,
+    );
+
+    expect(harness.contentBody.innerHTML).toContain('No component description is available yet.');
+
+    await vi.waitFor(() => {
+      expect(harness.contentHeader.innerHTML).toContain('Catalog Only Loaded');
+      expect(harness.contentBody.innerHTML).toContain('Loaded from the upstream registry item JSON.');
+      expect(harness.contentBody.innerHTML).toContain('<code>react</code>');
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+
+    harness.contentBody.dispatch('click', target({ 'data-back-from-item': '' }));
+    harness.contentBody.dispatch('click', target({
+      'data-view-item-registry': '@delta',
+      'data-view-item-slug': 'catalog-only',
+    }));
+
+    await vi.waitFor(() => {
+      expect(harness.contentHeader.innerHTML).toContain('Catalog Only Loaded');
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it('migrates a legacy registry deep link to the canonical registry path', () => {
     const harness = setup('?view=registries&registry=%40delta');
 
@@ -237,7 +273,16 @@ describe('registry explorer shell interactions', () => {
 
 });
 
-function setup(search: string, pathname = '/Registry-Atlas/') {
+function setup(
+  search: string,
+  pathname = '/Registry-Atlas/',
+  fetchImpl: typeof fetch = async () => jsonResponse({
+    name: 'catalog-only',
+    type: 'registry:ui',
+    dependencies: [],
+    files: [],
+  }),
+) {
   const location = {
     pathname,
     search,
@@ -297,6 +342,7 @@ function setup(search: string, pathname = '/Registry-Atlas/') {
       report_path: 'report.json',
     },
     mirrorWarnings: [],
+    fetchImpl,
     roots: {
       aside: aside as unknown as HTMLElement,
       contentHeader: contentHeader as unknown as HTMLElement,
@@ -341,6 +387,15 @@ function tab(view: string) {
   item.removeAttribute = name => { delete attrs[name]; };
   item.classList = { toggle: vi.fn() };
   return item;
+}
+
+function jsonResponse(data: unknown): Response {
+  return {
+    ok: true,
+    status: 200,
+    statusText: 'OK',
+    json: async () => data,
+  } as Response;
 }
 
 function input() {

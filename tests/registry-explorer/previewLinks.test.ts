@@ -4,7 +4,6 @@
 import { describe, expect, it } from 'vitest';
 import { searchComponentCandidates } from '../../src/registry-explorer/core/discovery';
 import { buildRegistryProfile } from '../../src/registry-explorer/core/registryProfile';
-import { buildRelatedComponents } from '../../src/registry-explorer/core/relatedComponents';
 import { resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
 import { renderItemDetailView } from '../../src/registry-explorer/ui/itemDetailView';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
@@ -17,7 +16,6 @@ describe('preview and component page links', () => {
 
     const [candidate] = searchComponentCandidates([registry], 'code block');
     const item = buildRegistryProfile(registry).sections[2]?.items?.[0];
-    const related = buildRelatedComponents([registry], { registryName: '@delta', itemSlug: 'code-block' });
     const result = resolveRegistryItemDetailFromSummary([registry], '@delta', 'code-block');
     const body = { innerHTML: '' } as HTMLElement;
 
@@ -25,7 +23,6 @@ describe('preview and component page links', () => {
     expect(candidate?.componentPageUrl).not.toBe(previewUrl);
     expect(item?.componentPageUrl).toBe(componentPageUrl);
     expect(item?.componentPageUrl).not.toBe(previewUrl);
-    expect(related).toEqual([]);
     expect(result.detail?.componentPageUrl).toBe(componentPageUrl);
     expect(result.detail?.componentPageUrl).not.toBe(previewUrl);
 
@@ -37,15 +34,6 @@ describe('preview and component page links', () => {
     expect(body.innerHTML).not.toContain(`href="${previewUrl}" class="secondary-link" target="_blank" rel="noreferrer">Open component page`);
   });
 
-  it('keeps related component page links grounded when a preview exists', () => {
-    const registry = registryFixture(true);
-    const [related] = buildRelatedComponents([registry], { registryName: '@delta', itemSlug: 'code-block' });
-
-    expect(related).toEqual(expect.objectContaining({
-      previewUrl: 'https://delta.example/related.png',
-      componentPageUrl: 'https://delta.example/components/related-block',
-    }));
-  });
 });
 
 function registryFixture(includeRelated = false): Registry {

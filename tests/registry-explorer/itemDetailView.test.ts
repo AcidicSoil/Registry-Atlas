@@ -65,12 +65,12 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('<script>alert(1)</script>');
   });
 
-  it('omits empty technical groups and puts source details before recommendations', () => {
+  it('omits empty technical groups and inferred recommendation sections', () => {
     const registry = registryFixture({ emptyTechnicalDetails: true });
-    const result = resolveRegistryItemDetailFromSummary([registry, relatedRegistryFixture()], '@delta', 'code-block');
+    const result = resolveRegistryItemDetailFromSummary([registry], '@delta', 'code-block');
     const body = root();
 
-    renderItemDetailView(root(), body, result, new Set(), [registry, relatedRegistryFixture()]);
+    renderItemDetailView(root(), body, result, new Set());
 
     expect(body.innerHTML).not.toContain('<h2>Dependencies</h2>');
     expect(body.innerHTML).not.toContain('<h2>Dev dependencies</h2>');
@@ -79,7 +79,8 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).toContain('<h2>Source context</h2>');
     expect(body.innerHTML).not.toContain('Review third-party registry code before installing.');
     expect(body.innerHTML).not.toContain('install-safety-note');
-    expect(body.innerHTML.indexOf('Source context')).toBeLessThan(body.innerHTML.indexOf('Similar patterns'));
+    expect(body.innerHTML).not.toContain('Similar patterns');
+    expect(body.innerHTML).not.toContain('Alternate terminology');
   });
 
   it('renders safe fallback states for failed detail loading', () => {
@@ -158,44 +159,21 @@ function registryFixture(options: { title?: string; description?: string; filePa
 }
 
 describe('enriched detail actions', () => {
-  it('renders grounded prompts, copy link, related registries, and real previews', () => {
+  it('renders grounded prompts, copy link, and real previews without inferred recommendations', () => {
     const delta = registryFixture({ previewUrl: 'https://delta.example/preview.png' });
-    const gamma = relatedRegistryFixture();
-    const result = resolveRegistryItemDetailFromSummary([delta, gamma], '@delta', 'code-block');
+    const result = resolveRegistryItemDetailFromSummary([delta], '@delta', 'code-block');
     const body = root();
 
-    renderItemDetailView(root(), body, result, new Set(), [delta, gamma]);
+    renderItemDetailView(root(), body, result, new Set());
 
     expect(body.innerHTML).toContain('<img');
     expect(body.innerHTML).not.toContain('Preview unavailable');
-    expect(body.innerHTML).toContain('Alternate terminology');
     expect(body.innerHTML).toContain('Copy install-agent prompt');
     expect(body.innerHTML).toContain('Copy review prompt');
     expect(body.innerHTML).toContain('Copy link');
-    expect(body.innerHTML).toContain('Related registries');
-    expect(body.innerHTML).toContain('@gamma');
     expect(body.innerHTML).toContain('data-copy-current-url');
+    expect(body.innerHTML).not.toContain('Alternate terminology');
+    expect(body.innerHTML).not.toContain('Similar patterns');
+    expect(body.innerHTML).not.toContain('Related registries');
   });
 });
-
-function relatedRegistryFixture(): Registry {
-  return {
-    name: '@gamma',
-    url: 'https://gamma.example',
-    description: 'Gamma registry fixture.',
-    primary_focus: ['support'],
-    component_tags: ['code-block'],
-    itemSummaries: [{
-      name: 'Code Snippet',
-      slug: 'code-snippet',
-      type: 'registry:ui',
-      category: 'code',
-      componentTagsProposed: ['code-block'],
-      source: 'fixture',
-      provenance: 'fixture',
-      catalogStatus: 'available',
-      routeEligible: true,
-      docsUrl: 'https://gamma.example/code-snippet',
-    }],
-  };
-}

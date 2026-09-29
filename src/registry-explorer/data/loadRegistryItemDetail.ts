@@ -3,10 +3,11 @@ import {
   fetchErrorResult,
   invalidJsonResult,
   normalizeRegistryItemDetailJson,
+  resolveRegistryItemDetailFromCatalogIndex,
   resolveRegistryItemDetailFromSummary,
   type RegistryItemDetailResult,
 } from '../core/registryItemDetail.ts';
-import type { Registry } from '../core/registry.schema.ts';
+import type { Registry, RegistryCatalogIndex } from '../core/registry.schema.ts';
 
 export async function loadRegistryItemDetail(
   registries: readonly Registry[],
@@ -15,6 +16,44 @@ export async function loadRegistryItemDetail(
   fetchImpl: typeof fetch = fetch,
 ): Promise<RegistryItemDetailResult> {
   const summaryResult = resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug);
+  return loadResolvedRegistryItemDetail(
+    summaryResult,
+    payload => resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug, payload),
+    fetchImpl,
+  );
+}
+
+export async function loadRegistryItemDetailFromCatalogIndex(
+  registries: readonly Registry[],
+  catalogIndex: RegistryCatalogIndex,
+  namespace: string | null | undefined,
+  itemSlug: string | null | undefined,
+  fetchImpl: typeof fetch = fetch,
+): Promise<RegistryItemDetailResult> {
+  const summaryResult = resolveRegistryItemDetailFromCatalogIndex(
+    registries,
+    catalogIndex,
+    namespace,
+    itemSlug,
+  );
+  return loadResolvedRegistryItemDetail(
+    summaryResult,
+    payload => resolveRegistryItemDetailFromCatalogIndex(
+      registries,
+      catalogIndex,
+      namespace,
+      itemSlug,
+      payload,
+    ),
+    fetchImpl,
+  );
+}
+
+async function loadResolvedRegistryItemDetail(
+  summaryResult: RegistryItemDetailResult,
+  resolveWithPayload: (payload: unknown) => RegistryItemDetailResult,
+  fetchImpl: typeof fetch,
+): Promise<RegistryItemDetailResult> {
   if (summaryResult.status !== 'summary-only' || summaryResult.detail.route.status !== 'available') {
     return summaryResult;
   }
@@ -42,7 +81,7 @@ export async function loadRegistryItemDetail(
       };
     }
 
-    return resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug, payload);
+    return resolveWithPayload(payload);
   } catch (error) {
     return fetchErrorResult(summaryResult.detail, error instanceof Error ? error.name : 'network-error');
   }

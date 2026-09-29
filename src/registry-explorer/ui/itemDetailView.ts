@@ -1,12 +1,6 @@
 import { buildInstallAgentPrompt, buildInspectionPrompt } from '../core/itemPrompts.ts';
 import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/registryItemDetail.ts';
-import {
-  buildRelatedComponents,
-  buildRelatedRegistries,
-  type RelatedComponent,
-  type RelatedRegistry,
-} from '../core/relatedComponents.ts';
-import type { InstallActionState, Registry, RegistryItemSummaryFile } from '../core/registry.schema.ts';
+import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import { escapeHtml, renderExternalLink, renderSafeExternalImage, toSafeExternalUrl } from './renderSafety.ts';
 
 export function renderItemDetailView(
@@ -14,13 +8,10 @@ export function renderItemDetailView(
   bodyRoot: HTMLElement,
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
-  registries: readonly Registry[] = [],
 ): void {
   const detail = result.detail;
-  const related = detail ? buildRelatedComponents(registries, { registryName: detail.namespace, itemSlug: detail.slug }) : [];
-  const relatedRegistries = detail ? buildRelatedRegistries(registries, { registryName: detail.namespace, itemSlug: detail.slug }) : [];
   headerRoot.innerHTML = renderHeader(detail, result.status);
-  bodyRoot.innerHTML = detail ? renderDetailBody(detail, result, queuedTokens, related, relatedRegistries) : renderMissingBody(result);
+  bodyRoot.innerHTML = detail ? renderDetailBody(detail, result, queuedTokens) : renderMissingBody(result);
 }
 
 function renderHeader(detail: RegistryItemDetail | null, status: RegistryItemDetailResult['status']): string {
@@ -53,8 +44,6 @@ function renderDetailBody(
   detail: RegistryItemDetail,
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
-  related: readonly RelatedComponent[],
-  relatedRegistries: readonly RelatedRegistry[],
 ): string {
   const fallback = result.status === 'loaded' || result.status === 'summary-only'
     ? ''
@@ -73,7 +62,6 @@ function renderDetailBody(
           </div>
           ${renderPromptActions(detail)}
           ${renderEvaluationLabels(detail, previewUrl !== null)}
-          ${renderTaxonomy(detail.taxonomyLabels)}
           ${fallback}
         </div>
       </section>
@@ -84,8 +72,6 @@ function renderDetailBody(
         ${renderFilesCard(detail.files)}
         ${renderSourceCard(detail)}
       </section>
-      ${renderRelatedComponents(related)}
-      ${renderRelatedRegistries(relatedRegistries)}
     </article>
   `;
 }
@@ -172,16 +158,6 @@ function renderPromptActions(detail: RegistryItemDetail): string {
   `;
 }
 
-function renderTaxonomy(labels: readonly string[]): string {
-  if (labels.length === 0) return '';
-  return `
-    <div class="item-taxonomy" aria-label="Alternate terminology">
-      <strong>Alternate terminology</strong>
-      <div class="discovery-item-meta">${labels.slice(0, 4).map(label => `<span class="taxonomy-tag-chip">${escapeHtml(label)}</span>`).join('')}</div>
-    </div>
-  `;
-}
-
 function renderEvaluationLabels(detail: RegistryItemDetail, previewAvailable: boolean): string {
   const labels = [
     `${detail.dependencies.length} dependencies`,
@@ -191,57 +167,6 @@ function renderEvaluationLabels(detail: RegistryItemDetail, previewAvailable: bo
     detail.catalogStatus === 'available' ? 'catalog-backed' : detail.catalogStatus,
   ];
   return `<div class="discovery-item-meta" aria-label="Component evaluation context">${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}</div>`;
-}
-
-function renderRelatedComponents(related: readonly RelatedComponent[]): string {
-  if (related.length === 0) {
-    return `
-      <section class="related-components" aria-label="Related components">
-        <h2>Similar patterns</h2>
-        <p class="muted">No similar components in this data set yet.</p>
-      </section>
-    `;
-  }
-
-  return `
-    <section class="related-components" aria-label="Related components">
-      <div>
-        <h2>Similar patterns</h2>
-        <p class="muted">Matched by shared type, category, or tags.</p>
-      </div>
-      <div class="related-component-list">
-        ${related.map(item => `
-          <article class="related-component-card">
-            <div class="related-preview-placeholder">${item.previewUrl ? 'View' : 'No visual'}</div>
-            <div>
-              <strong>${escapeHtml(item.title)}</strong>
-              <div class="muted">${escapeHtml(item.registryName)} · ${escapeHtml(item.matchReasons.join(', '))}</div>
-            </div>
-            <button class="link-button" type="button" data-view-item-registry="${escapeHtml(item.registryName)}" data-view-item-slug="${escapeHtml(item.itemSlug)}">View component</button>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
-}
-
-function renderRelatedRegistries(related: readonly RelatedRegistry[]): string {
-  if (related.length === 0) return '';
-  return `
-    <section class="related-registries" aria-label="Related registries">
-      <h2>Related registries</h2>
-      <div class="related-registry-list">
-        ${related.map(item => `
-          <article class="related-registry-card">
-            <strong>${escapeHtml(item.registryName)}</strong>
-            <span>${escapeHtml(item.matchReasons.join(', '))}</span>
-            <span>${escapeHtml(item.matchedItems.join(', '))}</span>
-            <button class="link-button" type="button" data-profile-registry="${escapeHtml(item.registryName)}">View registry</button>
-          </article>
-        `).join('')}
-      </div>
-    </section>
-  `;
 }
 
 function renderListCard(title: string, items: readonly string[]): string {

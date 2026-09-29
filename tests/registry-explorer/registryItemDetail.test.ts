@@ -3,7 +3,10 @@ import {
   resolveRegistryItemDetailFromCatalogIndex,
   resolveRegistryItemDetailFromSummary,
 } from '../../src/registry-explorer/core/registryItemDetail';
-import { loadRegistryItemDetail } from '../../src/registry-explorer/data/loadRegistryItemDetail';
+import {
+  loadRegistryItemDetail,
+  loadRegistryItemDetailFromCatalogIndex,
+} from '../../src/registry-explorer/data/loadRegistryItemDetail';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
 
 describe('registry item detail', () => {
@@ -38,6 +41,35 @@ describe('registry item detail', () => {
     expect(result.status).toBe('summary-only');
     expect(result.detail?.slug).toBe('catalog-only');
     expect(result.detail?.installAction.status).toBe('enabled');
+  });
+
+  it('loads raw JSON lazily for indexed-only catalog items', async () => {
+    const result = await loadRegistryItemDetailFromCatalogIndex(
+      [registryFixture()],
+      {
+        meta: { registry_count: 1, item_count: 1 },
+        registries: { '@delta': [{ name: 'catalog-only', type: 'registry:ui' }] },
+      },
+      '@delta',
+      'catalog-only',
+      async () => jsonResponse({
+        name: 'catalog-only',
+        title: 'Catalog Only Loaded',
+        description: 'Loaded from the real item route.',
+        type: 'registry:ui',
+        dependencies: ['react'],
+        files: [{ path: 'registry/catalog-only.tsx', type: 'registry:ui' }],
+      }),
+    );
+
+    expect(result.status).toBe('loaded');
+    expect(result.detail).toEqual(expect.objectContaining({
+      slug: 'catalog-only',
+      title: 'Catalog Only Loaded',
+      description: 'Loaded from the real item route.',
+      loadedFromJson: true,
+      dependencies: ['react'],
+    }));
   });
 
   it('does not mislabel registry JSON as a component page when docs are absent', () => {

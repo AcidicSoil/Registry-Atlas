@@ -6,7 +6,11 @@ import type {
 import type { MirrorValidationIssue } from '../core/registryMirror';
 import type { RegistryMirrorMeta } from '../data/loadRegistries';
 import { parseRegistryExplorerUrlState } from '../core/urlState';
-import { resolveRegistryItemDetailFromCatalogIndex } from '../core/registryItemDetail';
+import {
+  resolveRegistryItemDetailFromCatalogIndex,
+  type RegistryItemDetailResult,
+} from '../core/registryItemDetail';
+import { loadRegistryItemDetailFromCatalogIndex } from '../data/loadRegistryItemDetail';
 import {
   addToInstallQueue,
   buildInstallQueueBatchState,
@@ -39,6 +43,7 @@ export interface ShellOptions {
   catalogIndex: RegistryCatalogIndex;
   mirrorMeta: RegistryMirrorMeta;
   mirrorWarnings: readonly MirrorValidationIssue[];
+  fetchImpl?: typeof fetch;
   roots: {
     aside: HTMLElement;
     contentHeader: HTMLElement;
@@ -89,6 +94,9 @@ function isView(value: string | null): value is AppState['currentView'] {
 
 export function initRegistryExplorer(options: ShellOptions): void {
   const { registries, catalogIndex, roots } = options;
+  const fetchImpl = options.fetchImpl ?? fetch;
+  const itemDetailCache = new Map<string, RegistryItemDetailResult>();
+  const itemDetailLoading = new Set<string>();
   const parsed = hydrateStateFromUrl(registries);
   let state: AppState = {
     ...parsed,
@@ -133,6 +141,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
       categories: state.catalogCategories,
       reviewed: state.catalogReviewed,
     };
+  }
+
+  async function ensureItemDetailLoaded(
+    key: string,
+    namespace: string | null,
+    slug: string | null,
+  ): Promise<void> {
+    if (itemDetailLoading.has(key)) return;
+    itemDetailLoading.add(key);
+    try {
+      const result = await loadRegistryItemDetailFromCatalogIndex(
+        registries,
+        catalogIndex,
+        namespace,
+        slug,
+        fetchImpl,
+      );
+      itemDetailCache.set(key, result);
+    } finally {
+      itemDetailLoading.delete(key);
+    }
+
+    if (
+      state.currentView === 'item'
+      && itemDetailKey(state.selectedProfileRegistryName, state.selectedItemSlug) === key
+    ) {
+      render();
+    }
   }
 
   function restoreControlFocus(identity: FocusIdentity): void {
@@ -194,18 +230,29 @@ export function initRegistryExplorer(options: ShellOptions): void {
       renderCatalogSidebar(queued, batch.command);
 
       if (state.currentView === 'item') {
+        const namespace = state.selectedProfileRegistryName;
+        const slug = state.selectedItemSlug;
+        const key = itemDetailKey(namespace, slug);
+        const summaryResult = resolveRegistryItemDetailFromCatalogIndex(
+          registries,
+          catalogIndex,
+          namespace,
+          slug,
+        );
         renderItemDetailView(
           roots.contentHeader,
           roots.contentBody,
-          resolveRegistryItemDetailFromCatalogIndex(
-            registries,
-            catalogIndex,
-            state.selectedProfileRegistryName,
-            state.selectedItemSlug,
-          ),
+          key ? itemDetailCache.get(key) ?? summaryResult : summaryResult,
           queued,
-          registries,
         );
+        if (
+          key
+          && !itemDetailCache.has(key)
+          && summaryResult.status === 'summary-only'
+          && summaryResult.detail.route.status === 'available'
+        ) {
+          void ensureItemDetailLoaded(key, namespace, slug);
+        }
       } else if (state.currentView !== 'compare' && state.selectedProfileRegistryName) {
         const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
         if (!registry) return;
@@ -570,6 +617,15 @@ function historyReturnView(
     if (returnView === 'discover' || returnView === 'registries') return returnView;
   }
   return currentView === 'registries' ? 'registries' : 'discover';
+}
+
+function itemDetailKey(
+  namespace: string | null | undefined,
+  slug: string | null | undefined,
+): string | null {
+  const registryName = namespace?.trim();
+  const itemName = slug?.trim();
+  return registryName && itemName ? `${registryName}\u0000${itemName}` : null;
 }
 
 function toggle<T>(values: readonly T[], value: T): T[] {
