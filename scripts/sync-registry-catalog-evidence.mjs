@@ -61,16 +61,39 @@ function containsTerm(value, term) {
   return value === term || `-${value}-`.includes(`-${term}-`);
 }
 
-export function deriveCatalogUrl(template) {
-  if (typeof template !== 'string' || !template.includes('{name}')) return null;
-  const candidate = template.replaceAll('{name}', 'registry');
-  if (/\{[^}]+\}/.test(candidate)) return null;
-  try {
-    const url = new URL(candidate);
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
-  } catch {
-    return null;
+export function deriveCatalogUrls(template) {
+  if (typeof template !== 'string' || !template.includes('{name}')) return [];
+
+  const templates = [];
+  if (template.includes('{style}')) {
+    templates.push(
+      template.replace(/\/\{style\}(?=\/)/g, ''),
+      template.replaceAll('{style}', 'new-york-v4'),
+      template.replaceAll('{style}', 'new-york'),
+      template.replaceAll('{style}', 'default'),
+    );
+  } else {
+    templates.push(template);
   }
+
+  const urls = [];
+  for (const candidateTemplate of templates) {
+    const candidate = candidateTemplate.replaceAll('{name}', 'registry');
+    if (/\{[^}]+\}/.test(candidate)) continue;
+    try {
+      const url = new URL(candidate);
+      if ((url.protocol === 'https:' || url.protocol === 'http:') && !urls.includes(url.href)) {
+        urls.push(url.href);
+      }
+    } catch {
+      // Ignore malformed candidates and continue to deterministic fallbacks.
+    }
+  }
+  return urls;
+}
+
+export function deriveCatalogUrl(template) {
+  return deriveCatalogUrls(template)[0] ?? null;
 }
 
 export function inferComponentTagsFromCatalogItems(items) {
@@ -91,8 +114,14 @@ export function inferComponentTagsFromCatalogItems(items) {
   return [...tags].sort((a, b) => a.localeCompare(b));
 }
 
-export function buildCatalogEvidence(namespace, template, catalog, syncedAt = new Date().toISOString()) {
-  const catalogUrl = deriveCatalogUrl(template);
+export function buildCatalogEvidence(
+  namespace,
+  template,
+  catalog,
+  syncedAt = new Date().toISOString(),
+  resolvedCatalogUrl = null,
+) {
+  const catalogUrl = resolvedCatalogUrl || deriveCatalogUrl(template);
   if (!catalogUrl || !catalog || !Array.isArray(catalog.items)) return null;
   return {
     namespace,
@@ -218,32 +247,84 @@ function normalizeNamespace(value) {
 
 async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
   const namespace = normalizeNamespace(registry?.name);
-  const catalogUrl = deriveCatalogUrl(registry?.url);
-  if (!namespace || !catalogUrl) return { failure: { namespace, reason: 'unsupported-template' } };
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      const response = await fetchImpl(catalogUrl, { signal: AbortSignal.timeout(timeoutMs) });
-      if (!response.ok) {
-        if ((response.status === 429 || response.status >= 500) && attempt === 0) {
-          await new Promise(resolve => setTimeout(resolve, 700));
-          continue;
+  const catalogUrls = deriveCatalogUrls(registry?.url);
+  if (!namespace || catalogUrls.length === 0) {
+    return { failure: { namespace, reason: 'unsupported-template' } };
+  }
+
+  let lastFailure = { namespace, reason: 'fetch-error', catalog_url: catalogUrls[0] };
+  for (const catalogUrl of catalogUrls) {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const response = await fetchImpl(catalogUrl, { signal: AbortSignal.timeout(timeoutMs) });
+        if (!response.ok) {
+          lastFailure = {
+            namespace,
+            reason: `http-${response.status}`,
+            catalog_url: response.url || catalogUrl,
+          };
+          if ((response.status === 429 || response.status >= 500) && attempt === 0) {
+            await new Promise(resolve => setTimeout(resolve, 700));
+            continue;
+          }
+          break;
         }
-        return { failure: { namespace, reason: `http-${response.status}`, catalog_url: catalogUrl } };
+
+        let catalog;
+        try {
+          catalog = await response.json();
+        } catch {
+          lastFailure = {
+            namespace,
+            reason: 'invalid-json',
+            catalog_url: response.url || catalogUrl,
+          };
+          break;
+        }
+        if (!Array.isArray(catalog?.items)) {
+          lastFailure = {
+            namespace,
+            reason: 'invalid-registry-catalog',
+            catalog_url: response.url || catalogUrl,
+          };
+          break;
+        }
+
+        const resolvedCatalogUrl = response.url || catalogUrl;
+        return {
+          evidence: buildCatalogEvidence(
+            namespace,
+            registry.url,
+            catalog,
+            new Date().toISOString(),
+            resolvedCatalogUrl,
+          ),
+          items: buildCompactCatalogItems(catalog),
+        };
+      } catch (error) {
+        const errorName = error?.name ?? 'fetch-error';
+        const reason = errorName === 'TimeoutError'
+          ? 'timeout'
+          : errorName === 'TypeError'
+            ? 'network-error'
+            : errorName;
+        lastFailure = { namespace, reason, catalog_url: catalogUrl };
+        if (attempt === 0) continue;
       }
-      const catalog = await response.json();
-      if (!Array.isArray(catalog?.items)) {
-        return { failure: { namespace, reason: 'invalid-registry-catalog', catalog_url: catalogUrl } };
-      }
-      return {
-        evidence: buildCatalogEvidence(namespace, registry.url, catalog),
-        items: buildCompactCatalogItems(catalog),
-      };
-    } catch (error) {
-      if (attempt === 0) continue;
-      return { failure: { namespace, reason: error?.name ?? 'fetch-error', catalog_url: catalogUrl } };
     }
   }
-  return { failure: { namespace, reason: 'fetch-error', catalog_url: catalogUrl } };
+  return { failure: lastFailure };
+}
+
+export function classifyCatalogFailureReason(reason) {
+  if (reason === 'unsupported-template') return 'template-unsupported';
+  if (reason === 'invalid-json' || reason === 'invalid-registry-catalog') return 'invalid-response';
+  if (reason === 'http-403') return 'access-restricted';
+  if (reason === 'http-429' || reason === 'timeout' || reason === 'network-error' || /^http-5\d\d$/.test(reason)) {
+    return 'transient-network';
+  }
+  if (reason === 'http-400' || reason === 'http-404') return 'catalog-root-unavailable';
+  return 'other';
 }
 
 export async function syncCatalogEvidenceForRegistries(
@@ -275,6 +356,17 @@ export async function syncCatalogEvidenceForRegistries(
   const staleCount = Object.values(evidence).filter(item => item.status === 'stale').length;
   const discoverableItemCount = Object.values(itemsByNamespace)
     .reduce((count, items) => count + (Array.isArray(items) ? items.length : 0), 0);
+  const sortedFailures = failures
+    .map(failure => ({
+      ...failure,
+      failure_class: classifyCatalogFailureReason(failure.reason),
+    }))
+    .sort((a, b) => String(a.namespace).localeCompare(String(b.namespace)));
+  const failureClassCounts = {};
+  for (const failure of sortedFailures) {
+    failureClassCounts[failure.failure_class] = (failureClassCounts[failure.failure_class] ?? 0) + 1;
+  }
+
   const report = {
     generated_at: new Date().toISOString(),
     registry_count: registries.length,
@@ -283,8 +375,9 @@ export async function syncCatalogEvidenceForRegistries(
     discoverable_item_count: discoverableItemCount,
     evidence_registry_count: Object.keys(evidence).length,
     stale_registry_count: staleCount,
-    failure_count: failures.length,
-    failures: failures.sort((a, b) => String(a.namespace).localeCompare(String(b.namespace))),
+    failure_count: sortedFailures.length,
+    failure_class_counts: failureClassCounts,
+    failures: sortedFailures,
   };
   return { evidence, itemsByNamespace, report };
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { COMPONENT_TAG_VALUES } from '../../src/registry-explorer/core/registry.schema';
 // @ts-expect-error The synchronizer is an executable Node .mjs script with runtime exports tested here.
-import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, buildCompactCatalogItems, COMPONENT_TAGS, deriveCatalogUrl, DISCOVERABLE_REGISTRY_ITEM_TYPES, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
+import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, buildCompactCatalogItems, classifyCatalogFailureReason, COMPONENT_TAGS, deriveCatalogUrl, deriveCatalogUrls, DISCOVERABLE_REGISTRY_ITEM_TYPES, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
 
 describe('registry catalog evidence sync', () => {
   it('keeps the sync capability vocabulary aligned with the runtime schema', () => {
@@ -25,8 +25,57 @@ describe('registry catalog evidence sync', () => {
   it('derives the standard registry catalog URL from an item URL template', () => {
     expect(deriveCatalogUrl('https://example.com/r/{name}.json')).toBe('https://example.com/r/registry.json');
     expect(deriveCatalogUrl('https://example.com/r/{name}')).toBe('https://example.com/r/registry');
-    expect(deriveCatalogUrl('https://example.com/r/{style}/{name}.json')).toBeNull();
+    expect(deriveCatalogUrl('https://example.com/r/{style}/{name}.json')).toBe('https://example.com/r/registry.json');
     expect(deriveCatalogUrl('https://example.com/r/button.json')).toBeNull();
+  });
+
+  it('derives bounded style-aware registry catalog candidates', () => {
+    expect(deriveCatalogUrls('https://example.com/r/{style}/{name}.json')).toEqual([
+      'https://example.com/r/registry.json',
+      'https://example.com/r/new-york-v4/registry.json',
+      'https://example.com/r/new-york/registry.json',
+      'https://example.com/r/default/registry.json',
+    ]);
+  });
+
+  it('falls through style candidates until a real registry catalog is found', async () => {
+    const seen: string[] = [];
+    const result = await syncCatalogEvidenceForRegistries([
+      { name: '@style', url: 'https://example.com/r/{style}/{name}.json' },
+    ], {
+      concurrency: 1,
+      timeoutMs: 1000,
+      fetchImpl: async (url: string | URL | Request) => {
+        seen.push(String(url));
+        if (String(url).includes('/new-york-v4/')) {
+          return new Response(JSON.stringify({
+            items: [{ name: 'button', type: 'registry:ui' }],
+          }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          });
+        }
+        return new Response('missing', { status: 404 });
+      },
+    });
+
+    expect(seen).toEqual([
+      'https://example.com/r/registry.json',
+      'https://example.com/r/new-york-v4/registry.json',
+    ]);
+    expect(result.report.failure_count).toBe(0);
+    expect(result.itemsByNamespace['@style']).toEqual([
+      { name: 'button', type: 'registry:ui' },
+    ]);
+  });
+
+  it('classifies catalog failures for maintenance reporting', () => {
+    expect(classifyCatalogFailureReason('http-404')).toBe('catalog-root-unavailable');
+    expect(classifyCatalogFailureReason('http-429')).toBe('transient-network');
+    expect(classifyCatalogFailureReason('timeout')).toBe('transient-network');
+    expect(classifyCatalogFailureReason('network-error')).toBe('transient-network');
+    expect(classifyCatalogFailureReason('invalid-json')).toBe('invalid-response');
+    expect(classifyCatalogFailureReason('http-403')).toBe('access-restricted');
   });
 
   it('infers component capabilities from real catalog item identity fields', () => {

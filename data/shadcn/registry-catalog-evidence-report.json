@@ -1,254 +1,276 @@
 {
-  "generated_at": "2026-09-28T23:22:08.577Z",
+  "generated_at": "2026-09-29T04:24:18.590Z",
   "registry_count": 392,
-  "fetched_catalog_count": 342,
-  "fetched_item_count": 82316,
-  "discoverable_item_count": 76520,
-  "evidence_registry_count": 349,
+  "fetched_catalog_count": 349,
+  "fetched_item_count": 85657,
+  "discoverable_item_count": 79667,
+  "evidence_registry_count": 356,
   "stale_registry_count": 6,
-  "failure_count": 50,
+  "failure_count": 43,
+  "failure_class_counts": {
+    "catalog-root-unavailable": 31,
+    "invalid-response": 3,
+    "transient-network": 8,
+    "access-restricted": 1
+  },
   "failures": [
     {
       "namespace": "@abstract",
       "reason": "http-404",
-      "catalog_url": "https://build.abs.xyz/r/registry/json"
+      "catalog_url": "https://build.abs.xyz/r/registry/json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@ai-blocks",
       "reason": "http-404",
-      "catalog_url": "https://webllm.org/r/registry.json"
+      "catalog_url": "https://webllm.org/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@aniui",
       "reason": "http-404",
-      "catalog_url": "https://aniui.dev/r/registry.json"
-    },
-    {
-      "namespace": "@better-auth-ui",
-      "reason": "unsupported-template"
+      "catalog_url": "https://www.aniui.dev/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@blockus",
-      "reason": "SyntaxError",
-      "catalog_url": "https://blockus.lndevui.com/r/registry.json"
+      "reason": "invalid-json",
+      "catalog_url": "https://www.shadcnblocks.com/",
+      "failure_class": "invalid-response"
     },
     {
       "namespace": "@creative-tim",
       "reason": "http-400",
-      "catalog_url": "https://www.creative-tim.com/ui/r/registry.json"
+      "catalog_url": "https://www.creative-tim.com/ui/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@cult-ui",
       "reason": "http-429",
-      "catalog_url": "https://cult-ui.com/r/registry.json"
+      "catalog_url": "https://cult-ui.com/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@darx",
-      "reason": "TypeError",
-      "catalog_url": "https://darshitdev.in/r/registry.json"
-    },
-    {
-      "namespace": "@dashboardblocks",
-      "reason": "unsupported-template"
+      "reason": "network-error",
+      "catalog_url": "https://darshitdev.in/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@devl",
       "reason": "http-404",
-      "catalog_url": "https://devl.dev/r/registry.json"
-    },
-    {
-      "namespace": "@diceui",
-      "reason": "unsupported-template"
+      "catalog_url": "https://www.devl.dev/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@doras-ui",
       "reason": "http-404",
-      "catalog_url": "https://ui.doras.to/r/registry.json"
+      "catalog_url": "https://ui.doras.to/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@elevenlabs-ui",
       "reason": "http-429",
-      "catalog_url": "https://ui.elevenlabs.io/r/registry.json"
+      "catalog_url": "https://ui.elevenlabs.io/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@emerald-ui",
       "reason": "http-404",
-      "catalog_url": "https://emerald-ui.com/r/registry.json"
+      "catalog_url": "https://www.emerald-ui.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@evilbuttons",
       "reason": "http-404",
-      "catalog_url": "https://evilbuttons.radiumcoders.com/r/registry.json"
+      "catalog_url": "https://www.evilbuttons.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@fonttrio",
       "reason": "http-404",
-      "catalog_url": "https://www.fonttrio.xyz/r/registry.json"
+      "catalog_url": "https://www.fonttrio.xyz/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@grainly-icons",
       "reason": "http-404",
-      "catalog_url": "https://grainlyicons.abhii.space/r/registry.json"
+      "catalog_url": "https://grainlyicons.abhii.space/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@headcodecms",
       "reason": "http-404",
-      "catalog_url": "https://headcodecms.com/r/registry.json"
+      "catalog_url": "https://headcodecms.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@heatmap",
-      "reason": "SyntaxError",
-      "catalog_url": "https://shadcn-heatmap.pages.dev/r/registry.json"
+      "reason": "invalid-json",
+      "catalog_url": "https://heatmap.chingru.com/r/registry.json",
+      "failure_class": "invalid-response"
     },
     {
       "namespace": "@hextaui",
       "reason": "http-404",
-      "catalog_url": "https://hextaui.com/r/registry.json"
+      "catalog_url": "https://hextaui.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@icons-animated",
       "reason": "http-404",
-      "catalog_url": "https://icons.lndev.me/r/registry.json"
-    },
-    {
-      "namespace": "@initium",
-      "reason": "unsupported-template"
+      "catalog_url": "https://icons.lndev.me/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@jalco",
       "reason": "http-404",
-      "catalog_url": "https://ui.justinlevine.me/r/registry.json"
+      "catalog_url": "https://ui.justinlevine.me/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@moleculeui",
-      "reason": "TypeError",
-      "catalog_url": "https://www.moleculeui.design/r/registry.json"
+      "reason": "network-error",
+      "catalog_url": "https://www.moleculeui.design/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@motion-menu",
       "reason": "http-404",
-      "catalog_url": "https://motion-menu-two.vercel.app/r/registry.json"
+      "catalog_url": "https://motion-menu-two.vercel.app/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@n3wth",
-      "reason": "SyntaxError",
-      "catalog_url": "https://kit.n3wth.com/r/registry.json"
+      "reason": "invalid-json",
+      "catalog_url": "https://n3wth.com/projects/ui",
+      "failure_class": "invalid-response"
     },
     {
       "namespace": "@neobrutalism",
       "reason": "http-404",
-      "catalog_url": "https://www.neobrutalism.dev/r/registry.json"
+      "catalog_url": "https://www.neobrutalism.dev/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@nessra-ui",
       "reason": "http-404",
-      "catalog_url": "https://nessra-ui.vercel.app/r/registry.json"
+      "catalog_url": "https://nessra-ui.vercel.app/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@nexus-elements",
       "reason": "http-404",
-      "catalog_url": "https://elements.nexus.availproject.org/r/registry.json"
+      "catalog_url": "https://widgets.availproject.org/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@nordaun",
-      "reason": "TypeError",
-      "catalog_url": "https://ui.nordaun.com/r/registry.json"
+      "reason": "network-error",
+      "catalog_url": "https://ui.nordaun.com/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@nysgpt",
       "reason": "http-403",
-      "catalog_url": "https://gov.nysgpt.com/r/registry.json"
+      "catalog_url": "https://gov.nysgpt.com/r/registry.json",
+      "failure_class": "access-restricted"
     },
     {
       "namespace": "@openpolicy",
       "reason": "http-404",
-      "catalog_url": "https://www.openpolicy.sh/r/registry.json"
+      "catalog_url": "https://www.openpolicy.sh/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@phucbm",
       "reason": "http-404",
-      "catalog_url": "https://phucbm.com/r/registry.json"
+      "catalog_url": "https://phucbm.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@pulkitxm",
       "reason": "http-404",
-      "catalog_url": "https://pulkit.page/components/registry.json"
+      "catalog_url": "https://pulkit.page/components/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@pureui",
-      "reason": "TimeoutError",
-      "catalog_url": "https://pure.kam-ui.com/r/registry.json"
+      "reason": "timeout",
+      "catalog_url": "https://pure.kam-ui.com/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@react-easy-modals",
-      "reason": "unsupported-template"
+      "reason": "http-404",
+      "catalog_url": "https://react-easy-modals-docs.vercel.app/r/styles/default/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@remotionui",
       "reason": "http-404",
-      "catalog_url": "https://remotionui.com/r/registry.json"
-    },
-    {
-      "namespace": "@reui",
-      "reason": "unsupported-template"
+      "catalog_url": "https://remotionui.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@saaskit",
       "reason": "http-404",
-      "catalog_url": "https://saaskit-theta.vercel.app/r/registry.json"
+      "catalog_url": "https://saaskit-theta.vercel.app/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@sabraman",
-      "reason": "TypeError",
-      "catalog_url": "https://sabraman.ru/r/registry.json"
-    },
-    {
-      "namespace": "@shadcn-studio",
-      "reason": "unsupported-template"
+      "reason": "network-error",
+      "catalog_url": "https://sabraman.ru/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@shark",
       "reason": "http-404",
-      "catalog_url": "https://shark.vini.one/r/registry.json"
+      "catalog_url": "https://shark-ui.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@shieldcn",
       "reason": "http-404",
-      "catalog_url": "https://shieldcn.dev/r/registry.json"
+      "catalog_url": "https://shieldcn.dev/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@square-ui",
       "reason": "http-404",
-      "catalog_url": "https://square.lndev.me/registry/registry.json"
-    },
-    {
-      "namespace": "@tablecn",
-      "reason": "unsupported-template"
+      "catalog_url": "https://square.lndevui.com/registry/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@tailwind-builder",
       "reason": "http-404",
-      "catalog_url": "https://tailwindbuilder.ai/r/registry.json"
+      "catalog_url": "https://tailwindbuilder.ai/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@untld",
       "reason": "http-404",
-      "catalog_url": "https://ui.untldlabs.com/r/registry.json"
+      "catalog_url": "https://ui.untldlabs.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@w3-kit",
       "reason": "http-404",
-      "catalog_url": "https://w3-kit.com/registry/registry.json"
+      "catalog_url": "https://w3-kit.com/registry/registry.json",
+      "failure_class": "catalog-root-unavailable"
     },
     {
       "namespace": "@wandry-ui",
-      "reason": "TypeError",
-      "catalog_url": "https://ui.wandry.com.ua/r/registry.json"
+      "reason": "network-error",
+      "catalog_url": "https://ui.wandry.com.ua/r/registry.json",
+      "failure_class": "transient-network"
     },
     {
       "namespace": "@xcn",
       "reason": "http-404",
-      "catalog_url": "https://ui.radiumcoders.com/r/xcn/registry.json"
+      "catalog_url": "https://ui.radiumcoders.com/r/xcn/registry.json",
+      "failure_class": "catalog-root-unavailable"
     }
   ]
 }

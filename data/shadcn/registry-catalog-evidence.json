@@ -53,7 +53,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:43.665Z"
+    "synced_at": "2026-09-29T04:23:58.696Z"
   },
   "@1st-pouf": {
     "namespace": "@1st-pouf",
@@ -94,7 +94,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:43.785Z"
+    "synced_at": "2026-09-29T04:23:58.795Z"
   },
   "@23rd": {
     "namespace": "@23rd",
@@ -104,7 +104,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:43.770Z"
+    "synced_at": "2026-09-29T04:23:58.733Z"
   },
   "@7ovr": {
     "namespace": "@7ovr",
@@ -144,7 +144,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.668Z"
+    "synced_at": "2026-09-29T04:23:59.024Z"
   },
   "@8bitcn": {
     "namespace": "@8bitcn",
@@ -196,7 +196,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:43.966Z"
+    "synced_at": "2026-09-29T04:23:58.830Z"
   },
   "@8starlabs-ui": {
     "namespace": "@8starlabs-ui",
@@ -213,11 +213,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.186Z"
+    "synced_at": "2026-09-29T04:23:58.752Z"
   },
   "@abui": {
     "namespace": "@abui",
-    "catalog_url": "https://abui.io/r/registry.json",
+    "catalog_url": "https://www.abui.io/r/registry.json",
     "item_count": 20,
     "component_tags": [
       "accordion",
@@ -233,7 +233,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.638Z"
+    "synced_at": "2026-09-29T04:23:58.622Z"
   },
   "@aceternity": {
     "namespace": "@aceternity",
@@ -264,7 +264,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.149Z"
+    "synced_at": "2026-09-29T04:23:58.813Z"
   },
   "@aevr": {
     "namespace": "@aevr",
@@ -275,7 +275,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.198Z"
+    "synced_at": "2026-09-29T04:23:58.808Z"
   },
   "@afterglow": {
     "namespace": "@afterglow",
@@ -324,7 +324,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.096Z"
+    "synced_at": "2026-09-29T04:24:08.628Z"
   },
   "@agentblog": {
     "namespace": "@agentblog",
@@ -334,18 +334,18 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.286Z"
+    "synced_at": "2026-09-29T04:24:08.707Z"
   },
   "@agentcn": {
     "namespace": "@agentcn",
-    "catalog_url": "https://agentcn.vercel.app/r/registry.json",
+    "catalog_url": "https://www.agentcn.run/r/registry.json",
     "item_count": 76,
     "component_tags": [
       "audit",
       "chatbot"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.611Z"
+    "synced_at": "2026-09-29T04:23:58.659Z"
   },
   "@agents-ui": {
     "namespace": "@agents-ui",
@@ -356,7 +356,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.686Z"
+    "synced_at": "2026-09-29T04:23:58.845Z"
   },
   "@agentui": {
     "namespace": "@agentui",
@@ -370,11 +370,11 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.092Z"
+    "synced_at": "2026-09-29T04:24:07.918Z"
   },
   "@ai-elements": {
     "namespace": "@ai-elements",
-    "catalog_url": "https://ai-sdk.dev/elements/api/registry/registry.json",
+    "catalog_url": "https://elements.ai-sdk.dev/api/registry/registry.json",
     "item_count": 136,
     "component_tags": [
       "audio-player",
@@ -386,7 +386,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.027Z"
+    "synced_at": "2026-09-29T04:23:58.767Z"
   },
   "@ai2": {
     "namespace": "@ai2",
@@ -442,7 +442,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.216Z"
+    "synced_at": "2026-09-29T04:24:08.442Z"
   },
   "@aicanvas": {
     "namespace": "@aicanvas",
@@ -482,11 +482,11 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.273Z"
+    "synced_at": "2026-09-29T04:23:59.090Z"
   },
   "@akoder": {
     "namespace": "@akoder",
-    "catalog_url": "https://akoder.xyz/r/registry.json",
+    "catalog_url": "https://www.akoder.xyz/r/registry.json",
     "item_count": 17,
     "component_tags": [
       "card",
@@ -495,7 +495,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.055Z"
+    "synced_at": "2026-09-29T04:23:58.808Z"
   },
   "@algolia": {
     "namespace": "@algolia",
@@ -505,7 +505,7 @@
       "dropdown"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.701Z"
+    "synced_at": "2026-09-29T04:24:07.904Z"
   },
   "@amap": {
     "namespace": "@amap",
@@ -513,7 +513,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.688Z"
+    "synced_at": "2026-09-29T04:23:58.927Z"
   },
   "@amarjay-ui": {
     "namespace": "@amarjay-ui",
@@ -536,7 +536,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.591Z"
+    "synced_at": "2026-09-29T04:23:58.635Z"
   },
   "@amicro": {
     "namespace": "@amicro",
@@ -556,7 +556,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.642Z"
+    "synced_at": "2026-09-29T04:24:07.943Z"
   },
   "@amplo": {
     "namespace": "@amplo",
@@ -566,7 +566,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.850Z"
+    "synced_at": "2026-09-29T04:23:58.805Z"
   },
   "@animate-ui": {
     "namespace": "@animate-ui",
@@ -605,11 +605,11 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.886Z"
+    "synced_at": "2026-09-29T04:23:58.667Z"
   },
   "@animbits": {
     "namespace": "@animbits",
-    "catalog_url": "https://animbits.dev/r/registry.json",
+    "catalog_url": "https://www.animbits.dev/r/registry.json",
     "item_count": 99,
     "component_tags": [
       "button",
@@ -625,7 +625,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.522Z"
+    "synced_at": "2026-09-29T04:23:59.013Z"
   },
   "@approvals-ui": {
     "namespace": "@approvals-ui",
@@ -633,17 +633,17 @@
     "item_count": 6,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.021Z"
+    "synced_at": "2026-09-29T04:23:58.594Z"
   },
   "@arc": {
     "namespace": "@arc",
-    "catalog_url": "https://witharc.co/r/registry.json",
+    "catalog_url": "https://www.witharc.co/r/registry.json",
     "item_count": 2,
     "component_tags": [
       "carousel"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.874Z"
+    "synced_at": "2026-09-29T04:23:59.084Z"
   },
   "@ark-cn": {
     "namespace": "@ark-cn",
@@ -693,7 +693,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.065Z"
+    "synced_at": "2026-09-29T04:23:58.699Z"
   },
   "@asanshay": {
     "namespace": "@asanshay",
@@ -711,7 +711,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.369Z"
+    "synced_at": "2026-09-29T04:23:59.076Z"
   },
   "@assistant-ui": {
     "namespace": "@assistant-ui",
@@ -741,7 +741,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.298Z"
+    "synced_at": "2026-09-29T04:23:58.842Z"
   },
   "@atelier": {
     "namespace": "@atelier",
@@ -749,7 +749,7 @@
     "item_count": 51,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.912Z"
+    "synced_at": "2026-09-29T04:24:08.363Z"
   },
   "@atomloader": {
     "namespace": "@atomloader",
@@ -757,7 +757,7 @@
     "item_count": 591,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.445Z"
+    "synced_at": "2026-09-29T04:24:08.407Z"
   },
   "@atroui": {
     "namespace": "@atroui",
@@ -782,7 +782,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.042Z"
+    "synced_at": "2026-09-29T04:24:08.631Z"
   },
   "@auth0": {
     "namespace": "@auth0",
@@ -792,7 +792,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.295Z"
+    "synced_at": "2026-09-29T04:23:58.833Z"
   },
   "@avertra-ui": {
     "namespace": "@avertra-ui",
@@ -823,7 +823,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.328Z"
+    "synced_at": "2026-09-29T04:23:58.876Z"
   },
   "@awwwardedui": {
     "namespace": "@awwwardedui",
@@ -831,7 +831,7 @@
     "item_count": 5,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.327Z"
+    "synced_at": "2026-09-29T04:23:58.880Z"
   },
   "@axicharts": {
     "namespace": "@axicharts",
@@ -841,7 +841,7 @@
       "chart"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.287Z"
+    "synced_at": "2026-09-29T04:23:58.758Z"
   },
   "@baraile-loader": {
     "namespace": "@baraile-loader",
@@ -849,7 +849,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.409Z"
+    "synced_at": "2026-09-29T04:23:58.892Z"
   },
   "@basecn": {
     "namespace": "@basecn",
@@ -897,7 +897,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.398Z"
+    "synced_at": "2026-09-29T04:23:59.050Z"
   },
   "@baselayer": {
     "namespace": "@baselayer",
@@ -926,7 +926,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.702Z"
+    "synced_at": "2026-09-29T04:23:59.020Z"
   },
   "@benday": {
     "namespace": "@benday",
@@ -934,7 +934,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.684Z"
+    "synced_at": "2026-09-29T04:23:59.150Z"
   },
   "@beste-ui": {
     "namespace": "@beste-ui",
@@ -994,7 +994,20 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.786Z"
+    "synced_at": "2026-09-29T04:23:59.163Z"
+  },
+  "@better-auth-ui": {
+    "namespace": "@better-auth-ui",
+    "catalog_url": "https://better-auth-ui.com/r/radix-nova/registry.json",
+    "item_count": 54,
+    "component_tags": [
+      "avatar",
+      "button",
+      "otp-input",
+      "theme"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:23:59.262Z"
   },
   "@better-upload": {
     "namespace": "@better-upload",
@@ -1006,7 +1019,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.747Z"
+    "synced_at": "2026-09-29T04:23:59.037Z"
   },
   "@beui": {
     "namespace": "@beui",
@@ -1050,7 +1063,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.141Z"
+    "synced_at": "2026-09-29T04:23:59.141Z"
   },
   "@billingsdk": {
     "namespace": "@billingsdk",
@@ -1063,7 +1076,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.936Z"
+    "synced_at": "2026-09-29T04:23:59.259Z"
   },
   "@bits-ui": {
     "namespace": "@bits-ui",
@@ -1073,7 +1086,7 @@
       "carousel"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.940Z"
+    "synced_at": "2026-09-29T04:23:59.101Z"
   },
   "@bjork-ui": {
     "namespace": "@bjork-ui",
@@ -1112,11 +1125,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.043Z"
+    "synced_at": "2026-09-29T04:23:59.126Z"
   },
   "@bklit": {
     "namespace": "@bklit",
-    "catalog_url": "https://ui.bklit.com/r/registry.json",
+    "catalog_url": "https://bklit.com/r/registry.json",
     "item_count": 56,
     "component_tags": [
       "card",
@@ -1124,7 +1137,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.487Z"
+    "synced_at": "2026-09-29T04:23:59.492Z"
   },
   "@blobatar": {
     "namespace": "@blobatar",
@@ -1135,7 +1148,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:45.995Z"
+    "synced_at": "2026-09-29T04:23:59.316Z"
   },
   "@blockforge": {
     "namespace": "@blockforge",
@@ -1153,7 +1166,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.015Z"
+    "synced_at": "2026-09-29T04:23:59.341Z"
   },
   "@blocks-so": {
     "namespace": "@blocks-so",
@@ -1182,7 +1195,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.050Z"
+    "synced_at": "2026-09-29T04:23:59.388Z"
   },
   "@blockus": {
     "namespace": "@blockus",
@@ -1272,7 +1285,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.307Z"
+    "synced_at": "2026-09-29T04:23:59.475Z"
   },
   "@boldkit": {
     "namespace": "@boldkit",
@@ -1328,7 +1341,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.223Z"
+    "synced_at": "2026-09-29T04:23:59.439Z"
   },
   "@brainless": {
     "namespace": "@brainless",
@@ -1336,7 +1349,7 @@
     "item_count": 40,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.284Z"
+    "synced_at": "2026-09-29T04:23:59.435Z"
   },
   "@brut-ui": {
     "namespace": "@brut-ui",
@@ -1387,7 +1400,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.369Z"
+    "synced_at": "2026-09-29T04:23:59.444Z"
   },
   "@bundui": {
     "namespace": "@bundui",
@@ -1435,7 +1448,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.542Z"
+    "synced_at": "2026-09-29T04:23:59.464Z"
   },
   "@buzzform": {
     "namespace": "@buzzform",
@@ -1454,7 +1467,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.462Z"
+    "synced_at": "2026-09-29T04:23:59.453Z"
   },
   "@canvas-ui": {
     "namespace": "@canvas-ui",
@@ -1462,7 +1475,7 @@
     "item_count": 420,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.376Z"
+    "synced_at": "2026-09-29T04:23:59.400Z"
   },
   "@cardcn": {
     "namespace": "@cardcn",
@@ -1472,7 +1485,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.418Z"
+    "synced_at": "2026-09-29T04:23:59.396Z"
   },
   "@catalogs": {
     "namespace": "@catalogs",
@@ -1560,11 +1573,11 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.690Z"
+    "synced_at": "2026-09-29T04:23:59.659Z"
   },
   "@chamaac": {
     "namespace": "@chamaac",
-    "catalog_url": "https://chamaac.com/r/registry.json",
+    "catalog_url": "https://www.chamaac.com/r/registry.json",
     "item_count": 90,
     "component_tags": [
       "alert",
@@ -1575,7 +1588,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.122Z"
+    "synced_at": "2026-09-29T04:23:59.877Z"
   },
   "@channel3": {
     "namespace": "@channel3",
@@ -1588,7 +1601,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.499Z"
+    "synced_at": "2026-09-29T04:23:59.450Z"
   },
   "@clerk": {
     "namespace": "@clerk",
@@ -1598,7 +1611,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.853Z"
+    "synced_at": "2026-09-29T04:23:59.633Z"
   },
   "@cligentic": {
     "namespace": "@cligentic",
@@ -1608,7 +1621,7 @@
       "audit"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.855Z"
+    "synced_at": "2026-09-29T04:23:59.803Z"
   },
   "@cnippet": {
     "namespace": "@cnippet",
@@ -1658,7 +1671,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:46.879Z"
+    "synced_at": "2026-09-29T04:23:59.837Z"
   },
   "@cognicatch": {
     "namespace": "@cognicatch",
@@ -1668,22 +1681,22 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.024Z"
+    "synced_at": "2026-09-29T04:23:59.799Z"
   },
   "@commercn": {
     "namespace": "@commercn",
-    "catalog_url": "https://commercn.com/r/registry.json",
+    "catalog_url": "https://www.commercn.com/r/registry.json",
     "item_count": 17,
     "component_tags": [
       "card",
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.439Z"
+    "synced_at": "2026-09-29T04:24:00.130Z"
   },
   "@componentry": {
     "namespace": "@componentry",
-    "catalog_url": "https://componentry.fun/r/registry.json",
+    "catalog_url": "https://componentry.dev/r/registry.json",
     "item_count": 56,
     "component_tags": [
       "calendar",
@@ -1693,7 +1706,7 @@
       "slider"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.447Z"
+    "synced_at": "2026-09-29T04:24:00.119Z"
   },
   "@contentbit": {
     "namespace": "@contentbit",
@@ -1704,7 +1717,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.254Z"
+    "synced_at": "2026-09-29T04:23:59.913Z"
   },
   "@corecn": {
     "namespace": "@corecn",
@@ -1754,7 +1767,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.040Z"
+    "synced_at": "2026-09-29T04:23:59.800Z"
   },
   "@corr": {
     "namespace": "@corr",
@@ -1790,12 +1803,12 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.332Z"
+    "synced_at": "2026-09-29T04:24:00.207Z"
   },
   "@corsair-ui": {
     "namespace": "@corsair-ui",
     "catalog_url": "https://kevingirelli.github.io/corsair-ui/r/registry.json",
-    "item_count": 109,
+    "item_count": 133,
     "component_tags": [
       "accordion",
       "alert",
@@ -1814,7 +1827,9 @@
       "command",
       "context-menu",
       "dialog",
+      "drawer",
       "dropdown",
+      "dropzone",
       "feature-grid",
       "hover-card",
       "input",
@@ -1831,21 +1846,24 @@
       "select",
       "separator",
       "sheet",
+      "sidebar",
       "skeleton",
       "slider",
       "spinner",
+      "stepper",
       "switch",
       "table",
       "tabs",
       "textarea",
       "theme",
+      "timeline",
       "toast",
       "toggle",
       "tooltip",
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.107Z"
+    "synced_at": "2026-09-29T04:24:08.561Z"
   },
   "@coss": {
     "namespace": "@coss",
@@ -1892,11 +1910,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.159Z"
+    "synced_at": "2026-09-29T04:23:59.812Z"
   },
   "@crafterui": {
     "namespace": "@crafterui",
-    "catalog_url": "https://crafterui.com/r/registry.json",
+    "catalog_url": "https://www.crafterui.com/r/registry.json",
     "item_count": 18,
     "component_tags": [
       "accordion",
@@ -1904,7 +1922,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.273Z"
+    "synced_at": "2026-09-29T04:24:00.145Z"
   },
   "@craftui": {
     "namespace": "@craftui",
@@ -1932,7 +1950,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.240Z"
+    "synced_at": "2026-09-29T04:23:59.915Z"
   },
   "@cubby-ui": {
     "namespace": "@cubby-ui",
@@ -1984,7 +2002,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.303Z"
+    "synced_at": "2026-09-29T04:23:59.982Z"
   },
   "@d2": {
     "namespace": "@d2",
@@ -2004,7 +2022,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.358Z"
+    "synced_at": "2026-09-29T04:24:00.171Z"
   },
   "@darx": {
     "namespace": "@darx",
@@ -2015,6 +2033,22 @@
     ],
     "status": "stale",
     "synced_at": "2026-08-27T10:00:48.030Z"
+  },
+  "@dashboardblocks": {
+    "namespace": "@dashboardblocks",
+    "catalog_url": "https://www.dashboardblocks.com/r/registry.json",
+    "item_count": 305,
+    "component_tags": [
+      "app-shell",
+      "calendar",
+      "chart",
+      "command",
+      "progress",
+      "table",
+      "timeline"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:24:00.105Z"
   },
   "@dashboardcn": {
     "namespace": "@dashboardcn",
@@ -2031,7 +2065,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.443Z"
+    "synced_at": "2026-09-29T04:24:00.237Z"
   },
   "@data-table-filters": {
     "namespace": "@data-table-filters",
@@ -2045,7 +2079,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.810Z"
+    "synced_at": "2026-09-29T04:24:00.174Z"
   },
   "@delego": {
     "namespace": "@delego",
@@ -2060,11 +2094,11 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.300Z"
+    "synced_at": "2026-09-29T04:23:59.972Z"
   },
   "@delta": {
     "namespace": "@delta",
-    "catalog_url": "https://deltacomponents.dev/r/registry.json",
+    "catalog_url": "https://www.deltacomponents.dev/r/registry.json",
     "item_count": 20,
     "component_tags": [
       "alert",
@@ -2075,7 +2109,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.911Z"
+    "synced_at": "2026-09-29T04:24:00.599Z"
   },
   "@designali": {
     "namespace": "@designali",
@@ -2125,7 +2159,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:44.629Z"
+    "synced_at": "2026-09-29T04:23:58.578Z"
   },
   "@dgit": {
     "namespace": "@dgit",
@@ -2137,11 +2171,11 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.293Z"
+    "synced_at": "2026-09-29T04:24:00.163Z"
   },
   "@diarmuradi": {
     "namespace": "@diarmuradi",
-    "catalog_url": "https://diarmuradi.com/r/registry.json",
+    "catalog_url": "https://www.diarmuradi.com/r/registry.json",
     "item_count": 119,
     "component_tags": [
       "accordion",
@@ -2189,7 +2223,35 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.770Z"
+    "synced_at": "2026-09-29T04:24:00.563Z"
+  },
+  "@diceui": {
+    "namespace": "@diceui",
+    "catalog_url": "https://diceui.com/r/registry.json",
+    "item_count": 204,
+    "component_tags": [
+      "angle-slider",
+      "avatar",
+      "badge",
+      "card",
+      "circular-progress",
+      "color-picker",
+      "color-swatch",
+      "compare-slider",
+      "cropper",
+      "dialog",
+      "file-upload",
+      "input",
+      "progress",
+      "qr-code",
+      "select",
+      "slider",
+      "stepper",
+      "timeline",
+      "toolbar"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:24:00.222Z"
   },
   "@diklein": {
     "namespace": "@diklein",
@@ -2200,7 +2262,7 @@
       "product-card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.405Z"
+    "synced_at": "2026-09-29T04:24:00.221Z"
   },
   "@dominik-ui": {
     "namespace": "@dominik-ui",
@@ -2211,7 +2273,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.212Z"
+    "synced_at": "2026-09-29T04:24:00.392Z"
   },
   "@dotmatrix": {
     "namespace": "@dotmatrix",
@@ -2219,7 +2281,7 @@
     "item_count": 91,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.400Z"
+    "synced_at": "2026-09-29T04:24:00.296Z"
   },
   "@dsikeres1": {
     "namespace": "@dsikeres1",
@@ -2227,7 +2289,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.406Z"
+    "synced_at": "2026-09-29T04:24:00.240Z"
   },
   "@easeui": {
     "namespace": "@easeui",
@@ -2265,7 +2327,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.309Z"
+    "synced_at": "2026-09-29T04:24:00.502Z"
   },
   "@ecomcn": {
     "namespace": "@ecomcn",
@@ -2279,7 +2341,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.488Z"
+    "synced_at": "2026-09-29T04:24:00.384Z"
   },
   "@efferd": {
     "namespace": "@efferd",
@@ -2293,7 +2355,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.678Z"
+    "synced_at": "2026-09-29T04:24:00.475Z"
   },
   "@einui": {
     "namespace": "@einui",
@@ -2330,11 +2392,11 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.034Z"
+    "synced_at": "2026-09-29T04:24:00.704Z"
   },
   "@eldoraui": {
     "namespace": "@eldoraui",
-    "catalog_url": "https://eldoraui.site/r/registry.json",
+    "catalog_url": "https://www.eldoraui.site/r/registry.json",
     "item_count": 115,
     "component_tags": [
       "badge",
@@ -2345,7 +2407,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.287Z"
+    "synced_at": "2026-09-29T04:24:00.757Z"
   },
   "@elements": {
     "namespace": "@elements",
@@ -2371,7 +2433,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.016Z"
+    "synced_at": "2026-09-29T04:24:00.662Z"
   },
   "@elsecase": {
     "namespace": "@elsecase",
@@ -2379,11 +2441,11 @@
     "item_count": 3,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:47.981Z"
+    "synced_at": "2026-09-29T04:24:00.518Z"
   },
   "@emailcn": {
     "namespace": "@emailcn",
-    "catalog_url": "https://emailcn.vercel.app/r/registry.json",
+    "catalog_url": "https://www.emailcn.run/r/registry.json",
     "item_count": 338,
     "component_tags": [
       "avatar",
@@ -2399,7 +2461,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.498Z"
+    "synced_at": "2026-09-29T04:24:00.858Z"
   },
   "@emstein-ui": {
     "namespace": "@emstein-ui",
@@ -2409,7 +2471,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.150Z"
+    "synced_at": "2026-09-29T04:24:00.689Z"
   },
   "@ericts": {
     "namespace": "@ericts",
@@ -2434,15 +2496,15 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.274Z"
+    "synced_at": "2026-09-29T04:24:00.639Z"
   },
   "@evex": {
     "namespace": "@evex",
-    "catalog_url": "https://evex.sh/r/registry.json",
+    "catalog_url": "https://www.evex.sh/r/registry.json",
     "item_count": 23,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.868Z"
+    "synced_at": "2026-09-29T04:24:00.983Z"
   },
   "@evilcharts": {
     "namespace": "@evilcharts",
@@ -2454,7 +2516,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.297Z"
+    "synced_at": "2026-09-29T04:24:00.795Z"
   },
   "@exabase": {
     "namespace": "@exabase",
@@ -2505,11 +2567,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.656Z"
+    "synced_at": "2026-09-29T04:24:01.159Z"
   },
   "@extend": {
     "namespace": "@extend",
-    "catalog_url": "https://ui.extend.ai/r/registry.json",
+    "catalog_url": "https://ui.extend.ai/ui/r/registry.json",
     "item_count": 67,
     "component_tags": [
       "accordion",
@@ -2541,11 +2603,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.716Z"
+    "synced_at": "2026-09-29T04:24:01.113Z"
   },
   "@fab-ui": {
     "namespace": "@fab-ui",
-    "catalog_url": "https://fab-ui.com/r/registry.json",
+    "catalog_url": "https://www.fab-ui.com/r/registry.json",
     "item_count": 44,
     "component_tags": [
       "accordion",
@@ -2579,7 +2641,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.820Z"
+    "synced_at": "2026-09-29T04:24:01.191Z"
   },
   "@fibo": {
     "namespace": "@fibo",
@@ -2602,7 +2664,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.457Z"
+    "synced_at": "2026-09-29T04:24:00.951Z"
   },
   "@flagcn": {
     "namespace": "@flagcn",
@@ -2615,7 +2677,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.560Z"
+    "synced_at": "2026-09-29T04:24:01.024Z"
   },
   "@flightcn": {
     "namespace": "@flightcn",
@@ -2623,7 +2685,7 @@
     "item_count": 13,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.628Z"
+    "synced_at": "2026-09-29T04:24:01.078Z"
   },
   "@flowkit-ui": {
     "namespace": "@flowkit-ui",
@@ -2633,7 +2695,7 @@
       "combobox"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.694Z"
+    "synced_at": "2026-09-29T04:24:01.082Z"
   },
   "@flowui": {
     "namespace": "@flowui",
@@ -2648,7 +2710,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.653Z"
+    "synced_at": "2026-09-29T04:24:00.933Z"
   },
   "@fluent2-react-kit": {
     "namespace": "@fluent2-react-kit",
@@ -2687,7 +2749,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.709Z"
+    "synced_at": "2026-09-29T04:24:01.001Z"
   },
   "@fluid": {
     "namespace": "@fluid",
@@ -2719,7 +2781,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.801Z"
+    "synced_at": "2026-09-29T04:24:01.107Z"
   },
   "@flx": {
     "namespace": "@flx",
@@ -2765,7 +2827,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.845Z"
+    "synced_at": "2026-09-29T04:24:01.168Z"
   },
   "@forgeui": {
     "namespace": "@forgeui",
@@ -2778,7 +2840,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.837Z"
+    "synced_at": "2026-09-29T04:24:01.119Z"
   },
   "@formcn": {
     "namespace": "@formcn",
@@ -2792,7 +2854,7 @@
       "tag-input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.943Z"
+    "synced_at": "2026-09-29T04:24:01.194Z"
   },
   "@formscn": {
     "namespace": "@formscn",
@@ -2813,11 +2875,11 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:48.932Z"
+    "synced_at": "2026-09-29T04:24:01.229Z"
   },
   "@framecn": {
     "namespace": "@framecn",
-    "catalog_url": "https://framecn.vercel.app/r/registry.json",
+    "catalog_url": "https://www.framecn.dev/r/registry.json",
     "item_count": 101,
     "component_tags": [
       "accordion",
@@ -2830,7 +2892,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.021Z"
+    "synced_at": "2026-09-29T04:24:01.632Z"
   },
   "@gaia": {
     "namespace": "@gaia",
@@ -2848,15 +2910,15 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.046Z"
+    "synced_at": "2026-09-29T04:24:01.267Z"
   },
   "@gamekitui": {
     "namespace": "@gamekitui",
-    "catalog_url": "https://gamekitui.com/r/registry.json",
+    "catalog_url": "https://www.gamekitui.com/r/registry.json",
     "item_count": 12,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.480Z"
+    "synced_at": "2026-09-29T04:24:01.523Z"
   },
   "@gamifykit": {
     "namespace": "@gamifykit",
@@ -2864,7 +2926,7 @@
     "item_count": 3,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.097Z"
+    "synced_at": "2026-09-29T04:24:01.449Z"
   },
   "@gammaui": {
     "namespace": "@gammaui",
@@ -2879,7 +2941,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.111Z"
+    "synced_at": "2026-09-29T04:24:01.368Z"
   },
   "@gc-solid": {
     "namespace": "@gc-solid",
@@ -2929,7 +2991,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.065Z"
+    "synced_at": "2026-09-29T04:24:01.231Z"
   },
   "@glass-ui": {
     "namespace": "@glass-ui",
@@ -2977,7 +3039,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.194Z"
+    "synced_at": "2026-09-29T04:24:01.432Z"
   },
   "@glasscn": {
     "namespace": "@glasscn",
@@ -3013,7 +3075,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.126Z"
+    "synced_at": "2026-09-29T04:24:01.339Z"
   },
   "@gooseui": {
     "namespace": "@gooseui",
@@ -3030,7 +3092,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.027Z"
+    "synced_at": "2026-09-29T04:24:01.721Z"
   },
   "@gpt-vis": {
     "namespace": "@gpt-vis",
@@ -3041,7 +3103,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.262Z"
+    "synced_at": "2026-09-29T04:24:01.343Z"
   },
   "@gridcn": {
     "namespace": "@gridcn",
@@ -3055,11 +3117,11 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.162Z"
+    "synced_at": "2026-09-29T04:24:01.512Z"
   },
   "@grootstudio": {
     "namespace": "@grootstudio",
-    "catalog_url": "https://grootstudio.vercel.app/r/registry.json",
+    "catalog_url": "https://grootstudio.dev/r/registry.json",
     "item_count": 26,
     "component_tags": [
       "avatar",
@@ -3070,7 +3132,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.051Z"
+    "synced_at": "2026-09-29T04:24:01.785Z"
   },
   "@gymnopedies": {
     "namespace": "@gymnopedies",
@@ -3111,7 +3173,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.463Z"
+    "synced_at": "2026-09-29T04:24:01.488Z"
   },
   "@ha-components": {
     "namespace": "@ha-components",
@@ -3126,7 +3188,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.389Z"
+    "synced_at": "2026-09-29T04:24:01.452Z"
   },
   "@herocn": {
     "namespace": "@herocn",
@@ -3178,7 +3240,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.578Z"
+    "synced_at": "2026-09-29T04:24:01.642Z"
   },
   "@heroicons-animated": {
     "namespace": "@heroicons-animated",
@@ -3198,7 +3260,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.715Z"
+    "synced_at": "2026-09-29T04:24:01.615Z"
   },
   "@hextaui": {
     "namespace": "@hextaui",
@@ -3259,7 +3321,7 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.029Z"
+    "synced_at": "2026-09-29T04:24:01.639Z"
   },
   "@hirael": {
     "namespace": "@hirael",
@@ -3311,7 +3373,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:49.957Z"
+    "synced_at": "2026-09-29T04:24:01.690Z"
   },
   "@honestui": {
     "namespace": "@honestui",
@@ -3359,7 +3421,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.916Z"
+    "synced_at": "2026-09-29T04:24:02.714Z"
   },
   "@hugeicons-animated": {
     "namespace": "@hugeicons-animated",
@@ -3374,7 +3436,7 @@
       "qr-code"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.085Z"
+    "synced_at": "2026-09-29T04:24:01.709Z"
   },
   "@hugeicons-animated-vue": {
     "namespace": "@hugeicons-animated-vue",
@@ -3412,7 +3474,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.304Z"
+    "synced_at": "2026-09-29T04:24:01.995Z"
   },
   "@iandefined": {
     "namespace": "@iandefined",
@@ -3453,7 +3515,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.142Z"
+    "synced_at": "2026-09-29T04:24:01.717Z"
   },
   "@iconiq": {
     "namespace": "@iconiq",
@@ -3501,7 +3563,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.560Z"
+    "synced_at": "2026-09-29T04:24:01.779Z"
   },
   "@ilinxa": {
     "namespace": "@ilinxa",
@@ -3520,7 +3582,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.636Z"
+    "synced_at": "2026-09-29T04:24:01.811Z"
   },
   "@indiacn": {
     "namespace": "@indiacn",
@@ -3561,11 +3623,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.551Z"
+    "synced_at": "2026-09-29T04:24:01.868Z"
   },
   "@inferencesh": {
     "namespace": "@inferencesh",
-    "catalog_url": "https://ui.inference.sh/r/registry.json",
+    "catalog_url": "https://inference.sh/ui/r/registry.json",
     "item_count": 14,
     "component_tags": [
       "chat-interface",
@@ -3575,7 +3637,21 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.374Z"
+    "synced_at": "2026-09-29T04:24:02.273Z"
+  },
+  "@initium": {
+    "namespace": "@initium",
+    "catalog_url": "https://app.initium.sh/r/styles/new-york-v4/registry.json",
+    "item_count": 252,
+    "component_tags": [
+      "button",
+      "cta-section",
+      "hero-section",
+      "navbar",
+      "timeline"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:24:02.981Z"
   },
   "@intentui": {
     "namespace": "@intentui",
@@ -3625,7 +3701,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.778Z"
+    "synced_at": "2026-09-29T04:24:01.912Z"
   },
   "@interior": {
     "namespace": "@interior",
@@ -3658,7 +3734,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.950Z"
+    "synced_at": "2026-09-29T04:24:02.275Z"
   },
   "@jolyui": {
     "namespace": "@jolyui",
@@ -3684,11 +3760,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.767Z"
+    "synced_at": "2026-09-29T04:24:02.278Z"
   },
   "@joyco": {
     "namespace": "@joyco",
-    "catalog_url": "https://registry.joyco.studio/r/registry.json",
+    "catalog_url": "https://hub.joyco.studio/r/registry.json",
     "item_count": 48,
     "component_tags": [
       "avatar",
@@ -3712,7 +3788,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.573Z"
+    "synced_at": "2026-09-29T04:24:02.974Z"
   },
   "@kanpeki": {
     "namespace": "@kanpeki",
@@ -3761,7 +3837,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.752Z"
+    "synced_at": "2026-09-29T04:24:01.948Z"
   },
   "@kapwa": {
     "namespace": "@kapwa",
@@ -3771,7 +3847,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.765Z"
+    "synced_at": "2026-09-29T04:24:01.960Z"
   },
   "@kaui": {
     "namespace": "@kaui",
@@ -3785,7 +3861,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.603Z"
+    "synced_at": "2026-09-29T04:24:07.963Z"
   },
   "@keyline": {
     "namespace": "@keyline",
@@ -3809,7 +3885,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.972Z"
+    "synced_at": "2026-09-29T04:24:02.303Z"
   },
   "@kibo-ui": {
     "namespace": "@kibo-ui",
@@ -3832,7 +3908,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.383Z"
+    "synced_at": "2026-09-29T04:24:02.729Z"
   },
   "@kinetic": {
     "namespace": "@kinetic",
@@ -3840,17 +3916,17 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.841Z"
+    "synced_at": "2026-09-29T04:24:02.713Z"
   },
   "@knock-codes": {
     "namespace": "@knock-codes",
-    "catalog_url": "https://knock.codes/r/react/registry.json",
+    "catalog_url": "https://www.knock.codes/r/react/registry.json",
     "item_count": 19,
     "component_tags": [
       "pill"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.270Z"
+    "synced_at": "2026-09-29T04:24:08.766Z"
   },
   "@knot-ui": {
     "namespace": "@knot-ui",
@@ -3864,7 +3940,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.901Z"
+    "synced_at": "2026-09-29T04:24:08.540Z"
   },
   "@kobra": {
     "namespace": "@kobra",
@@ -3919,7 +3995,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.376Z"
+    "synced_at": "2026-09-29T04:24:03.042Z"
   },
   "@kokonutui": {
     "namespace": "@kokonutui",
@@ -3942,7 +4018,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:50.898Z"
+    "synced_at": "2026-09-29T04:24:02.721Z"
   },
   "@launchui": {
     "namespace": "@launchui",
@@ -3959,15 +4035,15 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.372Z"
+    "synced_at": "2026-09-29T04:24:02.797Z"
   },
   "@layish": {
     "namespace": "@layish",
-    "catalog_url": "https://layish.vercel.app/r/registry.json",
+    "catalog_url": "https://ui.layishsieger.com/r/registry.json",
     "item_count": 2,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.819Z"
+    "synced_at": "2026-09-29T04:24:03.073Z"
   },
   "@lema-ds": {
     "namespace": "@lema-ds",
@@ -4038,7 +4114,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.257Z"
+    "synced_at": "2026-09-29T04:24:03.250Z"
   },
   "@lens-blocks": {
     "namespace": "@lens-blocks",
@@ -4053,7 +4129,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.339Z"
+    "synced_at": "2026-09-29T04:24:02.859Z"
   },
   "@limeplay": {
     "namespace": "@limeplay",
@@ -4065,7 +4141,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.588Z"
+    "synced_at": "2026-09-29T04:24:02.958Z"
   },
   "@liquefy-ui": {
     "namespace": "@liquefy-ui",
@@ -4096,11 +4172,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.637Z"
+    "synced_at": "2026-09-29T04:24:02.950Z"
   },
   "@livedocs": {
     "namespace": "@livedocs",
-    "catalog_url": "https://livedocs.xyz/r/registry.json",
+    "catalog_url": "https://www.livedocs.xyz/r/registry.json",
     "item_count": 41,
     "component_tags": [
       "avatar",
@@ -4113,7 +4189,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.009Z"
+    "synced_at": "2026-09-29T04:24:03.207Z"
   },
   "@lmscn": {
     "namespace": "@lmscn",
@@ -4123,11 +4199,11 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.586Z"
+    "synced_at": "2026-09-29T04:24:02.947Z"
   },
   "@loading-ui": {
     "namespace": "@loading-ui",
-    "catalog_url": "https://loading-ui.com/r/registry.json",
+    "catalog_url": "https://www.loading-ui.com/r/registry.json",
     "item_count": 50,
     "component_tags": [
       "accordion",
@@ -4135,7 +4211,7 @@
       "spinner"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.857Z"
+    "synced_at": "2026-09-29T04:24:03.137Z"
   },
   "@localmode": {
     "namespace": "@localmode",
@@ -4162,7 +4238,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.342Z"
+    "synced_at": "2026-09-29T04:24:03.085Z"
   },
   "@lucide-animated": {
     "namespace": "@lucide-animated",
@@ -4181,7 +4257,7 @@
       "switch"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.692Z"
+    "synced_at": "2026-09-29T04:24:03.107Z"
   },
   "@lumiui": {
     "namespace": "@lumiui",
@@ -4226,7 +4302,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.906Z"
+    "synced_at": "2026-09-29T04:24:03.060Z"
   },
   "@lytenyte": {
     "namespace": "@lytenyte",
@@ -4234,11 +4310,11 @@
     "item_count": 2,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.115Z"
+    "synced_at": "2026-09-29T04:24:03.171Z"
   },
   "@magicui": {
     "namespace": "@magicui",
-    "catalog_url": "https://magicui.design/r/registry",
+    "catalog_url": "https://magicui.design/r/registry.json",
     "item_count": 250,
     "component_tags": [
       "alert",
@@ -4253,7 +4329,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.311Z"
+    "synced_at": "2026-09-29T04:24:03.323Z"
   },
   "@manifest": {
     "namespace": "@manifest",
@@ -4269,17 +4345,17 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.920Z"
+    "synced_at": "2026-09-29T04:24:03.194Z"
   },
   "@mapcn": {
     "namespace": "@mapcn",
-    "catalog_url": "https://mapcn.dev/r/registry.json",
+    "catalog_url": "https://www.mapcn.dev/r/registry.json",
     "item_count": 9,
     "component_tags": [
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.466Z"
+    "synced_at": "2026-09-29T04:24:03.516Z"
   },
   "@materialcn": {
     "namespace": "@materialcn",
@@ -4318,7 +4394,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:51.991Z"
+    "synced_at": "2026-09-29T04:24:03.125Z"
   },
   "@mediadrop": {
     "namespace": "@mediadrop",
@@ -4330,7 +4406,7 @@
       "file-upload"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.765Z"
+    "synced_at": "2026-09-29T04:24:08.465Z"
   },
   "@mewo": {
     "namespace": "@mewo",
@@ -4342,7 +4418,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.039Z"
+    "synced_at": "2026-09-29T04:24:03.198Z"
   },
   "@microkit": {
     "namespace": "@microkit",
@@ -4355,7 +4431,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.211Z"
+    "synced_at": "2026-09-29T04:24:03.314Z"
   },
   "@mischief": {
     "namespace": "@mischief",
@@ -4391,7 +4467,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.096Z"
+    "synced_at": "2026-09-29T04:24:03.274Z"
   },
   "@mksingh": {
     "namespace": "@mksingh",
@@ -4405,7 +4481,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.407Z"
+    "synced_at": "2026-09-29T04:24:03.442Z"
   },
   "@moduix-react": {
     "namespace": "@moduix-react",
@@ -4457,7 +4533,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.203Z"
+    "synced_at": "2026-09-29T04:24:03.340Z"
   },
   "@morphiq": {
     "namespace": "@morphiq",
@@ -4465,7 +4541,7 @@
     "item_count": 20,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.371Z"
+    "synced_at": "2026-09-29T04:24:03.447Z"
   },
   "@motion-lexicon": {
     "namespace": "@motion-lexicon",
@@ -4505,7 +4581,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.330Z"
+    "synced_at": "2026-09-29T04:24:03.366Z"
   },
   "@motion-menu": {
     "namespace": "@motion-menu",
@@ -4565,7 +4641,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.380Z"
+    "synced_at": "2026-09-29T04:24:03.379Z"
   },
   "@motiq": {
     "namespace": "@motiq",
@@ -4586,7 +4662,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.149Z"
+    "synced_at": "2026-09-29T04:24:03.611Z"
   },
   "@motokoui": {
     "namespace": "@motokoui",
@@ -4604,7 +4680,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.303Z"
+    "synced_at": "2026-09-29T04:24:03.518Z"
   },
   "@moumenlab": {
     "namespace": "@moumenlab",
@@ -4619,7 +4695,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.296Z"
+    "synced_at": "2026-09-29T04:24:03.526Z"
   },
   "@mozaika": {
     "namespace": "@mozaika",
@@ -4632,11 +4708,11 @@
       "sidebar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.369Z"
+    "synced_at": "2026-09-29T04:24:03.791Z"
   },
   "@mui-treasury": {
     "namespace": "@mui-treasury",
-    "catalog_url": "https://mui-treasury.com/r/registry.json",
+    "catalog_url": "https://www.mui-treasury.com/r/registry.json",
     "item_count": 192,
     "component_tags": [
       "accordion",
@@ -4676,7 +4752,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.733Z"
+    "synced_at": "2026-09-29T04:24:03.832Z"
   },
   "@navui": {
     "namespace": "@navui",
@@ -4692,7 +4768,7 @@
       "tabs"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.073Z"
+    "synced_at": "2026-09-29T04:24:03.686Z"
   },
   "@ncdai": {
     "namespace": "@ncdai",
@@ -4711,7 +4787,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.361Z"
+    "synced_at": "2026-09-29T04:24:03.580Z"
   },
   "@nekode": {
     "namespace": "@nekode",
@@ -4725,7 +4801,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.366Z"
+    "synced_at": "2026-09-29T04:24:03.546Z"
   },
   "@neon-ui": {
     "namespace": "@neon-ui",
@@ -4752,11 +4828,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.495Z"
+    "synced_at": "2026-09-29T04:24:03.597Z"
   },
   "@nexus-labs": {
     "namespace": "@nexus-labs",
-    "catalog_url": "https://nexus-ui.com/r/registry.json",
+    "catalog_url": "https://www.nexus-ui.com/r/registry.json",
     "item_count": 86,
     "component_tags": [
       "avatar",
@@ -4780,7 +4856,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.153Z"
+    "synced_at": "2026-09-29T04:24:12.856Z"
   },
   "@nexus-ui": {
     "namespace": "@nexus-ui",
@@ -4790,7 +4866,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.952Z"
+    "synced_at": "2026-09-29T04:24:03.758Z"
   },
   "@niko-table": {
     "namespace": "@niko-table",
@@ -4805,7 +4881,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.744Z"
+    "synced_at": "2026-09-29T04:24:03.828Z"
   },
   "@nordaun": {
     "namespace": "@nordaun",
@@ -4817,7 +4893,7 @@
   },
   "@nostalgia-ui": {
     "namespace": "@nostalgia-ui",
-    "catalog_url": "https://nostalgia-ui.com/r/registry.json",
+    "catalog_url": "https://www.nostalgia-ui.com/r/registry.json",
     "item_count": 91,
     "component_tags": [
       "accordion",
@@ -4863,7 +4939,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.354Z"
+    "synced_at": "2026-09-29T04:24:03.646Z"
   },
   "@ns-ui": {
     "namespace": "@ns-ui",
@@ -4917,7 +4993,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:02.181Z"
+    "synced_at": "2026-09-29T04:24:12.925Z"
   },
   "@nteract": {
     "namespace": "@nteract",
@@ -4928,7 +5004,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.808Z"
+    "synced_at": "2026-09-29T04:24:03.825Z"
   },
   "@nuqs": {
     "namespace": "@nuqs",
@@ -4936,7 +5012,7 @@
     "item_count": 6,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:52.981Z"
+    "synced_at": "2026-09-29T04:24:03.927Z"
   },
   "@nusaiba": {
     "namespace": "@nusaiba",
@@ -4946,7 +5022,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.810Z"
+    "synced_at": "2026-09-29T04:24:04.374Z"
   },
   "@odysseyui": {
     "namespace": "@odysseyui",
@@ -4985,18 +5061,18 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.081Z"
+    "synced_at": "2026-09-29T04:24:03.867Z"
   },
   "@ogimagecn": {
     "namespace": "@ogimagecn",
-    "catalog_url": "https://ogimagecn.vercel.app/r/registry.json",
+    "catalog_url": "https://www.ogimagecn.com/r/registry.json",
     "item_count": 26,
     "component_tags": [
       "avatar",
       "badge"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.596Z"
+    "synced_at": "2026-09-29T04:24:03.720Z"
   },
   "@oidc": {
     "namespace": "@oidc",
@@ -5004,7 +5080,7 @@
     "item_count": 78,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.212Z"
+    "synced_at": "2026-09-29T04:24:12.879Z"
   },
   "@onchain-ui": {
     "namespace": "@onchain-ui",
@@ -5016,7 +5092,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.342Z"
+    "synced_at": "2026-09-29T04:24:08.748Z"
   },
   "@opaline": {
     "namespace": "@opaline",
@@ -5046,7 +5122,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.258Z"
+    "synced_at": "2026-09-29T04:24:03.886Z"
   },
   "@openmirai": {
     "namespace": "@openmirai",
@@ -5054,18 +5130,18 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.394Z"
+    "synced_at": "2026-09-29T04:24:03.744Z"
   },
   "@openstatus": {
     "namespace": "@openstatus",
-    "catalog_url": "https://openstatus.dev/r/registry.json",
+    "catalog_url": "https://www.openstatus.dev/r/registry.json",
     "item_count": 26,
     "component_tags": [
       "calendar",
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.911Z"
+    "synced_at": "2026-09-29T04:24:03.859Z"
   },
   "@optics": {
     "namespace": "@optics",
@@ -5116,7 +5192,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.914Z"
+    "synced_at": "2026-09-29T04:24:03.626Z"
   },
   "@oui": {
     "namespace": "@oui",
@@ -5150,11 +5226,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.421Z"
+    "synced_at": "2026-09-29T04:24:12.956Z"
   },
   "@pacekit": {
     "namespace": "@pacekit",
-    "catalog_url": "https://ui.pacekit.dev/r/registry.json",
+    "catalog_url": "https://paceui.com/r/registry.json",
     "item_count": 23,
     "component_tags": [
       "chart",
@@ -5166,7 +5242,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.715Z"
+    "synced_at": "2026-09-29T04:24:03.842Z"
   },
   "@paceui": {
     "namespace": "@paceui",
@@ -5182,7 +5258,7 @@
       "textarea"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.490Z"
+    "synced_at": "2026-09-29T04:24:03.566Z"
   },
   "@paceui-gsap": {
     "namespace": "@paceui-gsap",
@@ -5194,7 +5270,7 @@
       "modal"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.600Z"
+    "synced_at": "2026-09-29T04:24:03.745Z"
   },
   "@paddle": {
     "namespace": "@paddle",
@@ -5207,7 +5283,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.769Z"
+    "synced_at": "2026-09-29T04:24:03.722Z"
   },
   "@paletteui": {
     "namespace": "@paletteui",
@@ -5215,7 +5291,7 @@
     "item_count": 65,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.900Z"
+    "synced_at": "2026-09-29T04:24:03.896Z"
   },
   "@pane": {
     "namespace": "@pane",
@@ -5233,7 +5309,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.816Z"
+    "synced_at": "2026-09-29T04:24:03.775Z"
   },
   "@pantoken": {
     "namespace": "@pantoken",
@@ -5267,7 +5343,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:53.749Z"
+    "synced_at": "2026-09-29T04:24:03.715Z"
   },
   "@pastecn": {
     "namespace": "@pastecn",
@@ -5275,7 +5351,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.341Z"
+    "synced_at": "2026-09-29T04:24:03.769Z"
   },
   "@paykit-sdk": {
     "namespace": "@paykit-sdk",
@@ -5283,7 +5359,7 @@
     "item_count": 21,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.227Z"
+    "synced_at": "2026-09-29T04:24:03.932Z"
   },
   "@payload-components": {
     "namespace": "@payload-components",
@@ -5298,7 +5374,7 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.118Z"
+    "synced_at": "2026-09-29T04:24:03.847Z"
   },
   "@persianlabsui": {
     "namespace": "@persianlabsui",
@@ -5352,7 +5428,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.731Z"
+    "synced_at": "2026-09-29T04:24:04.416Z"
   },
   "@pipecat": {
     "namespace": "@pipecat",
@@ -5364,11 +5440,11 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.285Z"
+    "synced_at": "2026-09-29T04:24:03.972Z"
   },
   "@pixelact-ui": {
     "namespace": "@pixelact-ui",
-    "catalog_url": "https://pixelactui.com/r/registry.json",
+    "catalog_url": "https://www.pixelactui.com/r/registry.json",
     "item_count": 28,
     "component_tags": [
       "accordion",
@@ -5397,7 +5473,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.726Z"
+    "synced_at": "2026-09-29T04:24:04.157Z"
   },
   "@plate": {
     "namespace": "@plate",
@@ -5419,7 +5495,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.362Z"
+    "synced_at": "2026-09-29T04:24:04.100Z"
   },
   "@plotcn": {
     "namespace": "@plotcn",
@@ -5431,11 +5507,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.221Z"
+    "synced_at": "2026-09-29T04:24:03.962Z"
   },
   "@preskok": {
     "namespace": "@preskok",
-    "catalog_url": "https://ui-three-mu.vercel.app/r/registry.json",
+    "catalog_url": "https://preskok-ui.vercel.app/r/registry.json",
     "item_count": 260,
     "component_tags": [
       "avatar",
@@ -5480,7 +5556,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.716Z"
+    "synced_at": "2026-09-29T04:24:04.207Z"
   },
   "@prompt-kit": {
     "namespace": "@prompt-kit",
@@ -5494,11 +5570,11 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.311Z"
+    "synced_at": "2026-09-29T04:24:04.041Z"
   },
   "@prosekit": {
     "namespace": "@prosekit",
-    "catalog_url": "https://prosekit.dev/r/registry.json",
+    "catalog_url": "https://unpkg.com/prosekit-registry@0.0.20260901031754/dist/r/registry.json",
     "item_count": 549,
     "component_tags": [
       "button",
@@ -5509,7 +5585,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.714Z"
+    "synced_at": "2026-09-29T04:24:04.388Z"
   },
   "@pulkitxm": {
     "namespace": "@pulkitxm",
@@ -5531,7 +5607,7 @@
   "@pulld": {
     "namespace": "@pulld",
     "catalog_url": "https://pulld.pages.dev/r/registry.json",
-    "item_count": 99,
+    "item_count": 100,
     "component_tags": [
       "avatar",
       "button",
@@ -5562,7 +5638,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.594Z"
+    "synced_at": "2026-09-29T04:24:04.166Z"
   },
   "@quill": {
     "namespace": "@quill",
@@ -5584,7 +5660,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.876Z"
+    "synced_at": "2026-09-29T04:24:04.193Z"
   },
   "@quiz-ui": {
     "namespace": "@quiz-ui",
@@ -5597,7 +5673,7 @@
       "slider"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.132Z"
+    "synced_at": "2026-09-29T04:24:08.679Z"
   },
   "@ramonclaudio-coderabbit": {
     "namespace": "@ramonclaudio-coderabbit",
@@ -5607,7 +5683,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.641Z"
+    "synced_at": "2026-09-29T04:24:04.127Z"
   },
   "@ratneshc": {
     "namespace": "@ratneshc",
@@ -5618,7 +5694,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.831Z"
+    "synced_at": "2026-09-29T04:24:04.197Z"
   },
   "@rawkitui": {
     "namespace": "@rawkitui",
@@ -5661,7 +5737,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.686Z"
+    "synced_at": "2026-09-29T04:24:04.124Z"
   },
   "@react-aria": {
     "namespace": "@react-aria",
@@ -5689,7 +5765,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.004Z"
+    "synced_at": "2026-09-29T04:24:04.146Z"
   },
   "@react-bits": {
     "namespace": "@react-bits",
@@ -5700,7 +5776,7 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.795Z"
+    "synced_at": "2026-09-29T04:24:04.227Z"
   },
   "@react-slot": {
     "namespace": "@react-slot",
@@ -5708,7 +5784,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:54.837Z"
+    "synced_at": "2026-09-29T04:24:04.334Z"
   },
   "@reactframe": {
     "namespace": "@reactframe",
@@ -5772,7 +5848,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.593Z"
+    "synced_at": "2026-09-29T04:24:04.359Z"
   },
   "@registrydirectory": {
     "namespace": "@registrydirectory",
@@ -5875,11 +5951,11 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.135Z"
+    "synced_at": "2026-09-29T04:24:04.480Z"
   },
   "@remocn": {
     "namespace": "@remocn",
-    "catalog_url": "https://www.remocn.dev/r/registry.json",
+    "catalog_url": "https://remocn.dev/r/registry.json",
     "item_count": 332,
     "component_tags": [
       "accordion",
@@ -5915,7 +5991,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.070Z"
+    "synced_at": "2026-09-29T04:24:06.006Z"
   },
   "@rescript-shadcn": {
     "namespace": "@rescript-shadcn",
@@ -5959,7 +6035,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.026Z"
+    "synced_at": "2026-09-29T04:24:04.918Z"
   },
   "@retab": {
     "namespace": "@retab",
@@ -5986,11 +6062,11 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.605Z"
+    "synced_at": "2026-09-29T04:24:04.935Z"
   },
   "@retroui": {
     "namespace": "@retroui",
-    "catalog_url": "https://retroui.dev/r/registry.json",
+    "catalog_url": "https://neobrutalism.com/r/registry.json",
     "item_count": 54,
     "component_tags": [
       "accordion",
@@ -6035,11 +6111,92 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.703Z"
+    "synced_at": "2026-09-29T04:24:05.036Z"
+  },
+  "@reui": {
+    "namespace": "@reui",
+    "catalog_url": "https://reui.io/r/styles/base-nova/registry.json?v=dpl_FN3gGeMD8Ng9o2GymM4D4ED9jkME",
+    "item_count": 1805,
+    "component_tags": [
+      "accordion",
+      "ai-chat",
+      "alert",
+      "app-shell",
+      "audit",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "carousel",
+      "chart",
+      "chat-interface",
+      "checkbox",
+      "circular-progress",
+      "code-block",
+      "collapsible",
+      "color-picker",
+      "color-swatch",
+      "combobox",
+      "command",
+      "context-menu",
+      "data-grid",
+      "dialog",
+      "drawer",
+      "dropdown",
+      "error-message",
+      "feature-grid",
+      "file-upload",
+      "filter-bar",
+      "hover-card",
+      "icon-button",
+      "input",
+      "menubar",
+      "message-list",
+      "mini-cart",
+      "navbar",
+      "otp-input",
+      "pagination",
+      "password-input",
+      "pill",
+      "popover",
+      "pricing-table",
+      "product-card",
+      "progress",
+      "qr-code",
+      "radio",
+      "radio-group",
+      "receipt",
+      "scroll-area",
+      "search-input",
+      "select",
+      "separator",
+      "sheet",
+      "sidebar",
+      "skeleton",
+      "slider",
+      "spinner",
+      "stepper",
+      "switch",
+      "table",
+      "tabs",
+      "testimonial",
+      "textarea",
+      "theme",
+      "timeline",
+      "toast",
+      "toggle",
+      "toolbar",
+      "tooltip",
+      "utility-button"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:24:05.188Z"
   },
   "@roiui": {
     "namespace": "@roiui",
-    "catalog_url": "https://roiui.com/r/registry.json",
+    "catalog_url": "https://www.roiui.com/r/registry.json",
     "item_count": 122,
     "component_tags": [
       "accordion",
@@ -6080,7 +6237,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.908Z"
+    "synced_at": "2026-09-29T04:24:05.290Z"
   },
   "@saastro": {
     "namespace": "@saastro",
@@ -6118,7 +6275,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.470Z"
+    "synced_at": "2026-09-29T04:24:07.910Z"
   },
   "@sans": {
     "namespace": "@sans",
@@ -6128,11 +6285,11 @@
       "spinner"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.760Z"
+    "synced_at": "2026-09-29T04:24:04.908Z"
   },
   "@satoriui": {
     "namespace": "@satoriui",
-    "catalog_url": "https://satoriui.site/r/registry.json",
+    "catalog_url": "https://www.satoriui.site/r/registry.json",
     "item_count": 15,
     "component_tags": [
       "badge",
@@ -6140,7 +6297,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.108Z"
+    "synced_at": "2026-09-29T04:24:05.280Z"
   },
   "@sc1m": {
     "namespace": "@sc1m",
@@ -6178,7 +6335,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.674Z"
+    "synced_at": "2026-09-29T04:24:04.984Z"
   },
   "@scrimui": {
     "namespace": "@scrimui",
@@ -6198,11 +6355,11 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.869Z"
+    "synced_at": "2026-09-29T04:24:05.282Z"
   },
   "@scrollxui": {
     "namespace": "@scrollxui",
-    "catalog_url": "https://www.scrollxui.dev/registry/registry.json",
+    "catalog_url": "https://scrollxui.dev/registry/registry.json",
     "item_count": 180,
     "component_tags": [
       "accordion",
@@ -6243,7 +6400,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.616Z"
+    "synced_at": "2026-09-29T04:24:05.672Z"
   },
   "@seamui": {
     "namespace": "@seamui",
@@ -6295,15 +6452,15 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.835Z"
+    "synced_at": "2026-09-29T04:24:05.114Z"
   },
   "@sekei": {
     "namespace": "@sekei",
-    "catalog_url": "https://www.sekei.xyz/registry/registry.json",
+    "catalog_url": "https://www.sekei.design/registry/registry.json",
     "item_count": 11,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.942Z"
+    "synced_at": "2026-09-29T04:24:05.360Z"
   },
   "@sevenui": {
     "namespace": "@sevenui",
@@ -6356,7 +6513,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.917Z"
+    "synced_at": "2026-09-29T04:24:05.286Z"
   },
   "@sf-fleet-hud": {
     "namespace": "@sf-fleet-hud",
@@ -6397,7 +6554,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.938Z"
+    "synced_at": "2026-09-29T04:24:05.130Z"
   },
   "@shadcn-dashboard": {
     "namespace": "@shadcn-dashboard",
@@ -6455,7 +6612,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.614Z"
+    "synced_at": "2026-09-29T04:24:08.472Z"
   },
   "@shadcn-editor": {
     "namespace": "@shadcn-editor",
@@ -6463,17 +6620,17 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:55.977Z"
+    "synced_at": "2026-09-29T04:24:05.043Z"
   },
   "@shadcn-map": {
     "namespace": "@shadcn-map",
-    "catalog_url": "http://shadcn-map.vercel.app/r/registry.json",
+    "catalog_url": "https://shadcn-map.vercel.app/r/registry.json",
     "item_count": 32,
     "component_tags": [
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.412Z"
+    "synced_at": "2026-09-29T04:24:05.355Z"
   },
   "@shadcn-space": {
     "namespace": "@shadcn-space",
@@ -6542,7 +6699,49 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.451Z"
+    "synced_at": "2026-09-29T04:24:05.308Z"
+  },
+  "@shadcn-studio": {
+    "namespace": "@shadcn-studio",
+    "catalog_url": "https://shadcnstudio.com/r/new-york-v4/registry.json",
+    "item_count": 694,
+    "component_tags": [
+      "accordion",
+      "alert",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "calendar",
+      "card",
+      "chart",
+      "checkbox",
+      "collapsible",
+      "combobox",
+      "cta-section",
+      "dialog",
+      "dropdown",
+      "file-upload",
+      "hero-section",
+      "input",
+      "navbar",
+      "otp-input",
+      "pagination",
+      "popover",
+      "radio",
+      "radio-group",
+      "select",
+      "sheet",
+      "sidebar",
+      "switch",
+      "table",
+      "tabs",
+      "textarea",
+      "timeline",
+      "tooltip"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:24:06.297Z"
   },
   "@shadcn-ui-blocks": {
     "namespace": "@shadcn-ui-blocks",
@@ -6606,11 +6805,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.160Z"
+    "synced_at": "2026-09-29T04:24:05.451Z"
   },
   "@shadcnblocks": {
     "namespace": "@shadcnblocks",
-    "catalog_url": "https://shadcnblocks.com/r/registry.json",
+    "catalog_url": "https://www.shadcnblocks.com/r/registry.json",
     "item_count": 4171,
     "component_tags": [
       "accordion",
@@ -6688,7 +6887,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.879Z"
+    "synced_at": "2026-09-29T04:24:06.072Z"
   },
   "@shadcncraft": {
     "namespace": "@shadcncraft",
@@ -6722,7 +6921,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.425Z"
+    "synced_at": "2026-09-29T04:24:05.654Z"
   },
   "@shadcndesign": {
     "namespace": "@shadcndesign",
@@ -6735,7 +6934,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.137Z"
+    "synced_at": "2026-09-29T04:24:05.669Z"
   },
   "@shadcnhooks": {
     "namespace": "@shadcnhooks",
@@ -6745,7 +6944,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.415Z"
+    "synced_at": "2026-09-29T04:24:05.650Z"
   },
   "@shadcnloaders": {
     "namespace": "@shadcnloaders",
@@ -6753,15 +6952,15 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.336Z"
+    "synced_at": "2026-09-29T04:24:08.238Z"
   },
   "@shadcnmaps": {
     "namespace": "@shadcnmaps",
-    "catalog_url": "https://shadcnmaps.com/r/registry.json",
+    "catalog_url": "https://www.shadcnmaps.com/r/registry.json",
     "item_count": 361,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.178Z"
+    "synced_at": "2026-09-29T04:24:06.276Z"
   },
   "@shadcnstore": {
     "namespace": "@shadcnstore",
@@ -6783,11 +6982,11 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.666Z"
+    "synced_at": "2026-09-29T04:24:05.899Z"
   },
   "@shadcnui-blocks": {
     "namespace": "@shadcnui-blocks",
-    "catalog_url": "https://shadcnui-blocks.com/r/registry.json",
+    "catalog_url": "https://www.shadcnui-blocks.com/r/registry.json",
     "item_count": 542,
     "component_tags": [
       "accordion",
@@ -6835,7 +7034,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.148Z"
+    "synced_at": "2026-09-29T04:24:06.038Z"
   },
   "@shadcnuikit": {
     "namespace": "@shadcnuikit",
@@ -6887,7 +7086,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.684Z"
+    "synced_at": "2026-09-29T04:24:06.874Z"
   },
   "@shivraj-roy": {
     "namespace": "@shivraj-roy",
@@ -6897,7 +7096,7 @@
       "color-picker"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.681Z"
+    "synced_at": "2026-09-29T04:24:05.773Z"
   },
   "@shoogle": {
     "namespace": "@shoogle",
@@ -6905,7 +7104,7 @@
     "item_count": 0,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.714Z"
+    "synced_at": "2026-09-29T04:24:06.914Z"
   },
   "@simple-ai": {
     "namespace": "@simple-ai",
@@ -6915,7 +7114,7 @@
       "input"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.681Z"
+    "synced_at": "2026-09-29T04:24:05.915Z"
   },
   "@skecher-ui": {
     "namespace": "@skecher-ui",
@@ -6930,7 +7129,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.067Z"
+    "synced_at": "2026-09-29T04:24:05.925Z"
   },
   "@skiper-ui": {
     "namespace": "@skiper-ui",
@@ -6938,11 +7137,11 @@
     "item_count": 37,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:56.804Z"
+    "synced_at": "2026-09-29T04:24:05.966Z"
   },
   "@slide-cn": {
     "namespace": "@slide-cn",
-    "catalog_url": "https://slide-cn.com/r/registry.json",
+    "catalog_url": "https://www.slide-cn.com/r/registry.json",
     "item_count": 20,
     "component_tags": [
       "admonition",
@@ -6952,7 +7151,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:06.342Z"
+    "synced_at": "2026-09-29T04:24:06.350Z"
   },
   "@slidecn": {
     "namespace": "@slidecn",
@@ -6964,7 +7163,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.521Z"
+    "synced_at": "2026-09-29T04:24:06.789Z"
   },
   "@smoothui": {
     "namespace": "@smoothui",
@@ -7012,7 +7211,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:06.445Z"
+    "synced_at": "2026-09-29T04:24:06.356Z"
   },
   "@snap-cn": {
     "namespace": "@snap-cn",
@@ -7035,7 +7234,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.322Z"
+    "synced_at": "2026-09-29T04:24:06.916Z"
   },
   "@solaceui": {
     "namespace": "@solaceui",
@@ -7047,11 +7246,11 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.276Z"
+    "synced_at": "2026-09-29T04:24:06.368Z"
   },
   "@sona-ui": {
     "namespace": "@sona-ui",
-    "catalog_url": "https://sonaui.com/r/registry.json",
+    "catalog_url": "https://www.sonaui.com/r/registry.json",
     "item_count": 46,
     "component_tags": [
       "accordion",
@@ -7071,7 +7270,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.415Z"
+    "synced_at": "2026-09-29T04:24:06.745Z"
   },
   "@soralabs": {
     "namespace": "@soralabs",
@@ -7094,7 +7293,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.285Z"
+    "synced_at": "2026-09-29T04:24:06.344Z"
   },
   "@soundcn": {
     "namespace": "@soundcn",
@@ -7110,7 +7309,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.530Z"
+    "synced_at": "2026-09-29T04:24:07.128Z"
   },
   "@spaceui": {
     "namespace": "@spaceui",
@@ -7168,7 +7367,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.861Z"
+    "synced_at": "2026-09-29T04:24:06.476Z"
   },
   "@spark-ui": {
     "namespace": "@spark-ui",
@@ -7181,7 +7380,7 @@
       "receipt"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.814Z"
+    "synced_at": "2026-09-29T04:24:06.563Z"
   },
   "@spectrumui": {
     "namespace": "@spectrumui",
@@ -7226,7 +7425,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:06.383Z"
+    "synced_at": "2026-09-29T04:24:06.538Z"
   },
   "@spell": {
     "namespace": "@spell",
@@ -7246,7 +7445,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.226Z"
+    "synced_at": "2026-09-29T04:24:06.617Z"
   },
   "@ssych": {
     "namespace": "@ssych",
@@ -7266,7 +7465,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.282Z"
+    "synced_at": "2026-09-29T04:24:06.612Z"
   },
   "@starck": {
     "namespace": "@starck",
@@ -7280,7 +7479,7 @@
       "navbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.369Z"
+    "synced_at": "2026-09-29T04:24:06.709Z"
   },
   "@starseam": {
     "namespace": "@starseam",
@@ -7328,7 +7527,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.233Z"
+    "synced_at": "2026-09-29T04:24:06.592Z"
   },
   "@stepper": {
     "namespace": "@stepper",
@@ -7338,7 +7537,7 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.402Z"
+    "synced_at": "2026-09-29T04:24:06.606Z"
   },
   "@styleui": {
     "namespace": "@styleui",
@@ -7346,7 +7545,7 @@
     "item_count": 4,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.576Z"
+    "synced_at": "2026-09-29T04:24:06.864Z"
   },
   "@stylexui": {
     "namespace": "@stylexui",
@@ -7368,11 +7567,11 @@
       "dialog"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.580Z"
+    "synced_at": "2026-09-29T04:24:06.936Z"
   },
   "@supabase": {
     "namespace": "@supabase",
-    "catalog_url": "https://supabase.com/ui/r/registry.json",
+    "catalog_url": "https://supabase.com/library/r/registry.json",
     "item_count": 67,
     "component_tags": [
       "avatar",
@@ -7380,7 +7579,7 @@
       "file-upload"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.850Z"
+    "synced_at": "2026-09-29T04:24:07.021Z"
   },
   "@svelte-bits": {
     "namespace": "@svelte-bits",
@@ -7401,7 +7600,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.839Z"
+    "synced_at": "2026-09-29T04:24:08.117Z"
   },
   "@svgl": {
     "namespace": "@svgl",
@@ -7411,7 +7610,7 @@
       "calendar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.212Z"
+    "synced_at": "2026-09-29T04:24:06.800Z"
   },
   "@systaliko-ui": {
     "namespace": "@systaliko-ui",
@@ -7439,7 +7638,17 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.648Z"
+    "synced_at": "2026-09-29T04:24:06.838Z"
+  },
+  "@tablecn": {
+    "namespace": "@tablecn",
+    "catalog_url": "https://table-cn.vercel.app/r/new-york-v4/registry.json",
+    "item_count": 2,
+    "component_tags": [
+      "table"
+    ],
+    "status": "available",
+    "synced_at": "2026-09-29T04:24:07.093Z"
   },
   "@tailark": {
     "namespace": "@tailark",
@@ -7469,7 +7678,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.417Z"
+    "synced_at": "2026-09-29T04:24:06.987Z"
   },
   "@tailgrids": {
     "namespace": "@tailgrids",
@@ -7516,7 +7725,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.789Z"
+    "synced_at": "2026-09-29T04:24:07.010Z"
   },
   "@tailwind-admin": {
     "namespace": "@tailwind-admin",
@@ -7535,7 +7744,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.822Z"
+    "synced_at": "2026-09-29T04:24:07.100Z"
   },
   "@taki": {
     "namespace": "@taki",
@@ -7585,11 +7794,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.794Z"
+    "synced_at": "2026-09-29T04:24:07.167Z"
   },
   "@termcn": {
     "namespace": "@termcn",
-    "catalog_url": "https://termcn.vercel.app/r/registry.json",
+    "catalog_url": "https://www.termcn.dev/r/registry.json",
     "item_count": 344,
     "component_tags": [
       "alert",
@@ -7627,7 +7836,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.968Z"
+    "synced_at": "2026-09-29T04:24:07.468Z"
   },
   "@terrae": {
     "namespace": "@terrae",
@@ -7635,11 +7844,11 @@
     "item_count": 40,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.031Z"
+    "synced_at": "2026-09-29T04:24:07.243Z"
   },
   "@tetra-ui": {
     "namespace": "@tetra-ui",
-    "catalog_url": "https://tetra-ui.com/r/registry.json",
+    "catalog_url": "https://www.tetra-ui.com/r/registry.json",
     "item_count": 45,
     "component_tags": [
       "accordion",
@@ -7667,7 +7876,7 @@
       "toast"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.150Z"
+    "synced_at": "2026-09-29T04:24:07.487Z"
   },
   "@text-ui": {
     "namespace": "@text-ui",
@@ -7675,7 +7884,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.156Z"
+    "synced_at": "2026-09-29T04:24:07.046Z"
   },
   "@thegridcn": {
     "namespace": "@thegridcn",
@@ -7731,7 +7940,7 @@
       "waveform"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.083Z"
+    "synced_at": "2026-09-29T04:24:07.264Z"
   },
   "@threecn": {
     "namespace": "@threecn",
@@ -7741,7 +7950,7 @@
       "card"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.945Z"
+    "synced_at": "2026-09-29T04:24:08.313Z"
   },
   "@tile-ui": {
     "namespace": "@tile-ui",
@@ -7792,7 +8001,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.120Z"
+    "synced_at": "2026-09-29T04:24:08.292Z"
   },
   "@toc-cn": {
     "namespace": "@toc-cn",
@@ -7802,7 +8011,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.139Z"
+    "synced_at": "2026-09-29T04:24:07.273Z"
   },
   "@toggles": {
     "namespace": "@toggles",
@@ -7814,7 +8023,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.029Z"
+    "synced_at": "2026-09-29T04:24:07.196Z"
   },
   "@tokenui": {
     "namespace": "@tokenui",
@@ -7826,11 +8035,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.325Z"
+    "synced_at": "2026-09-29T04:24:07.369Z"
   },
   "@tool-ui": {
     "namespace": "@tool-ui",
-    "catalog_url": "https://www.tool-ui.com/r/registry.json",
+    "catalog_url": "https://raw.githubusercontent.com/assistant-ui/tool-ui/49a870286facdbf28160cd647f0d337ebdc9b275/apps/www/public/r/registry.json",
     "item_count": 27,
     "component_tags": [
       "card",
@@ -7842,7 +8051,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.550Z"
+    "synced_at": "2026-09-29T04:24:07.324Z"
   },
   "@tour": {
     "namespace": "@tour",
@@ -7850,7 +8059,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.241Z"
+    "synced_at": "2026-09-29T04:24:07.262Z"
   },
   "@trophy-ui": {
     "namespace": "@trophy-ui",
@@ -7864,7 +8073,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.548Z"
+    "synced_at": "2026-09-29T04:24:07.393Z"
   },
   "@tuiparts": {
     "namespace": "@tuiparts",
@@ -7888,7 +8097,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:57.815Z"
+    "synced_at": "2026-09-29T04:24:07.084Z"
   },
   "@turbopills-ui": {
     "namespace": "@turbopills-ui",
@@ -7901,7 +8110,7 @@
       "progress"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.438Z"
+    "synced_at": "2026-09-29T04:24:07.458Z"
   },
   "@tween-ui": {
     "namespace": "@tween-ui",
@@ -7920,7 +8129,7 @@
       "testimonial"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.363Z"
+    "synced_at": "2026-09-29T04:24:07.340Z"
   },
   "@tweenly": {
     "namespace": "@tweenly",
@@ -7940,7 +8149,7 @@
       "table"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.579Z"
+    "synced_at": "2026-09-29T04:24:07.362Z"
   },
   "@typedora-ui": {
     "namespace": "@typedora-ui",
@@ -7953,11 +8162,11 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.019Z"
+    "synced_at": "2026-09-29T04:24:07.512Z"
   },
   "@ui-layouts": {
     "namespace": "@ui-layouts",
-    "catalog_url": "https://ui-layouts.com/r/registry.json",
+    "catalog_url": "https://www.ui-layouts.com/r/registry.json",
     "item_count": 327,
     "component_tags": [
       "accordion",
@@ -7982,7 +8191,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.902Z"
+    "synced_at": "2026-09-29T04:24:07.690Z"
   },
   "@ui-shrushank": {
     "namespace": "@ui-shrushank",
@@ -7995,7 +8204,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.336Z"
+    "synced_at": "2026-09-29T04:24:07.225Z"
   },
   "@uiable": {
     "namespace": "@uiable",
@@ -8055,11 +8264,11 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.899Z"
+    "synced_at": "2026-09-29T04:24:08.245Z"
   },
   "@uicapsule": {
     "namespace": "@uicapsule",
-    "catalog_url": "https://uicapsule.com/r/registry.json",
+    "catalog_url": "https://www.uicapsule.com/r/registry.json",
     "item_count": 52,
     "component_tags": [
       "button",
@@ -8075,7 +8284,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.812Z"
+    "synced_at": "2026-09-29T04:24:07.707Z"
   },
   "@uiception": {
     "namespace": "@uiception",
@@ -8089,7 +8298,7 @@
       "navbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.637Z"
+    "synced_at": "2026-09-29T04:24:07.494Z"
   },
   "@uitripled": {
     "namespace": "@uitripled",
@@ -8137,7 +8346,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.592Z"
+    "synced_at": "2026-09-29T04:24:07.575Z"
   },
   "@uniquel": {
     "namespace": "@uniquel",
@@ -8165,7 +8374,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.700Z"
+    "synced_at": "2026-09-29T04:24:07.542Z"
   },
   "@unlumen-ui": {
     "namespace": "@unlumen-ui",
@@ -8196,7 +8405,7 @@
       "zoomable-image"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.725Z"
+    "synced_at": "2026-09-29T04:24:07.597Z"
   },
   "@uselayouts": {
     "namespace": "@uselayouts",
@@ -8220,7 +8429,7 @@
       "toolbar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.841Z"
+    "synced_at": "2026-09-29T04:24:07.730Z"
   },
   "@usva": {
     "namespace": "@usva",
@@ -8256,15 +8465,15 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.439Z"
+    "synced_at": "2026-09-29T04:24:08.378Z"
   },
   "@utilcn": {
     "namespace": "@utilcn",
-    "catalog_url": "https://utilcn.dev/r/registry.json",
+    "catalog_url": "https://www.utilcn.dev/r/registry.json",
     "item_count": 17,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.370Z"
+    "synced_at": "2026-09-29T04:24:07.924Z"
   },
   "@uui": {
     "namespace": "@uui",
@@ -8275,7 +8484,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.986Z"
+    "synced_at": "2026-09-29T04:24:07.723Z"
   },
   "@vectorstudio-ir": {
     "namespace": "@vectorstudio-ir",
@@ -8325,7 +8534,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.738Z"
+    "synced_at": "2026-09-29T04:24:07.395Z"
   },
   "@velobits": {
     "namespace": "@velobits",
@@ -8363,7 +8572,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.817Z"
+    "synced_at": "2026-09-29T04:24:08.187Z"
   },
   "@vernostudio": {
     "namespace": "@vernostudio",
@@ -8375,7 +8584,7 @@
       "theme"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.979Z"
+    "synced_at": "2026-09-29T04:24:08.533Z"
   },
   "@vllnt-ui": {
     "namespace": "@vllnt-ui",
@@ -8442,7 +8651,7 @@
       "utility-button"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.824Z"
+    "synced_at": "2026-09-29T04:24:08.809Z"
   },
   "@voraui": {
     "namespace": "@voraui",
@@ -8452,7 +8661,7 @@
       "chart"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.260Z"
+    "synced_at": "2026-09-29T04:24:08.186Z"
   },
   "@vue-bits": {
     "namespace": "@vue-bits",
@@ -8463,7 +8672,7 @@
       "stepper"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.726Z"
+    "synced_at": "2026-09-29T04:24:08.103Z"
   },
   "@wa-ui": {
     "namespace": "@wa-ui",
@@ -8478,7 +8687,7 @@
       "typing-indicator"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.877Z"
+    "synced_at": "2026-09-29T04:24:08.017Z"
   },
   "@washiveil": {
     "namespace": "@washiveil",
@@ -8526,7 +8735,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.372Z"
+    "synced_at": "2026-09-29T04:24:08.007Z"
   },
   "@waves-cn": {
     "namespace": "@waves-cn",
@@ -8536,7 +8745,7 @@
       "timeline"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.147Z"
+    "synced_at": "2026-09-29T04:24:07.706Z"
   },
   "@wds": {
     "namespace": "@wds",
@@ -8549,7 +8758,7 @@
       "select"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.656Z"
+    "synced_at": "2026-09-29T04:24:07.768Z"
   },
   "@wensity": {
     "namespace": "@wensity",
@@ -8599,7 +8808,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:58.988Z"
+    "synced_at": "2026-09-29T04:24:07.568Z"
   },
   "@whiskeyjack": {
     "namespace": "@whiskeyjack",
@@ -8626,7 +8835,7 @@
       "toggle"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:00.707Z"
+    "synced_at": "2026-09-29T04:24:08.382Z"
   },
   "@wigggle-ui": {
     "namespace": "@wigggle-ui",
@@ -8653,7 +8862,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.192Z"
+    "synced_at": "2026-09-29T04:24:07.804Z"
   },
   "@wxcn": {
     "namespace": "@wxcn",
@@ -8661,7 +8870,7 @@
     "item_count": 4,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.460Z"
+    "synced_at": "2026-09-29T04:24:07.898Z"
   },
   "@yukihi": {
     "namespace": "@yukihi",
@@ -8708,7 +8917,7 @@
       "tooltip"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.475Z"
+    "synced_at": "2026-09-29T04:24:07.901Z"
   },
   "@zenoadmin": {
     "namespace": "@zenoadmin",
@@ -8716,7 +8925,7 @@
     "item_count": 1,
     "component_tags": [],
     "status": "available",
-    "synced_at": "2026-09-28T23:21:59.540Z"
+    "synced_at": "2026-09-29T04:24:07.952Z"
   },
   "@zippystarter": {
     "namespace": "@zippystarter",
@@ -8726,6 +8935,6 @@
       "avatar"
     ],
     "status": "available",
-    "synced_at": "2026-09-28T23:22:01.249Z"
+    "synced_at": "2026-09-29T04:24:08.022Z"
   }
 }
