@@ -257,6 +257,19 @@ Requirements:
 - search still moves Home into Components as today;
 - facet state remains independent.
 
+### 6A. Review semantics and rail information architecture
+
+The existing user-facing `Reviewed` label is not a quality, security, or compatibility review. It only means an exact catalog item also has a Registry Atlas `itemSummaries` enrichment overlay. Presenting that as a primary browse destination, filter, or ranking signal overstates what the data proves.
+
+For this pass:
+- remove the `Reviewed` top-level browse destination and reviewed-first sort from user-facing navigation;
+- do not use reviewed/enrichment presence as the landing-page definition of “featured”;
+- preserve the overlay internally as optional factual metadata/provenance where it adds description, preview, docs, or exact display copy;
+- remove the reviewed-only browse filter unless a future product requirement introduces a clearly named enrichment/provenance facet;
+- group the desktop rail by purpose: asset destinations first, then route-specific facets, then bounded evidence-backed category collections;
+- category/facet groups may nest or disclose, but they must not expose an unbounded hundreds-option control as the primary interaction;
+- unavailable evidence routes such as Newest/Authors/Theme Editor must not occupy first-class persistent navigation when they cannot perform useful work.
+
 ### 7. Accessibility token correction
 
 Raise interactive/card boundary contrast through existing design tokens, not route-specific
