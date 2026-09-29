@@ -86,25 +86,15 @@ describe('registry explorer shell interactions', () => {
     expect(harness.tabs[2].getAttribute('aria-current')).toBe('page');
   });
 
-  it('toggles a selected facet off from the same option button and retains focus', () => {
+  it('writes component searches to the canonical path and renders only real index results', () => {
     const harness = setup('?view=discover');
-    const facet = target({
-      'data-facet-add-dimension': 'component',
-      'data-facet-add-value': 'code-block',
-    });
-    const replacement = target({
-      'data-facet-add-dimension': 'component',
-      'data-facet-add-value': 'code-block',
-    });
-    harness.contentBody.querySelectorAll = selector =>
-      selector.includes('[data-facet-add-dimension]') ? [replacement] : [];
+    harness.searchInput.value = 'catalog only';
+    harness.searchInput.dispatch('input', {});
 
-    harness.contentBody.dispatch('click', facet);
-    expect(harness.contentBody.innerHTML).toContain('aria-pressed="true"');
-    expect(replacement.focus).toHaveBeenCalled();
-
-    harness.contentBody.dispatch('click', facet);
-    expect(harness.contentBody.innerHTML).toContain('aria-pressed="false"');
+    expect(harness.location.pathname).toBe('/Registry-Atlas/components/s/catalog%20only');
+    expect(harness.contentBody.innerHTML).toContain('Catalog Only');
+    expect(harness.contentBody.innerHTML).toContain('data-view-item-slug="catalog-only"');
+    expect(harness.contentBody.innerHTML).not.toContain('Copy install');
   });
 
   it('retains focus while toggling a Compare option twice', () => {
@@ -122,54 +112,27 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).toContain('aria-pressed="false"');
   });
 
-  it('retains focus when removing an active facet filter', () => {
-    const harness = setup('?view=registries&component=code-block');
-    const remove = target({
-      'data-facet-remove-dimension': 'component',
-      'data-facet-remove-value': 'code-block',
-    });
-    const replacement = target({
-      'data-facet-remove-dimension': 'component',
-      'data-facet-remove-value': 'code-block',
-    });
-    harness.contentBody.querySelectorAll = selector =>
-      selector.includes('[data-facet-remove-dimension]') ? [replacement] : [];
+  it('does not render the retired inferred component facet system', () => {
+    const harness = setup('?view=discover&component=code-block');
 
-    harness.contentBody.dispatch('click', remove);
-
-    expect(replacement.focus).toHaveBeenCalled();
+    expect(harness.contentBody.innerHTML).not.toContain('data-facet-add-dimension');
+    expect(harness.contentBody.innerHTML).not.toContain('data-component-peek-id');
+    expect(harness.location.pathname).toBe('/Registry-Atlas/components/s/code-block');
   });
 
-  it('preserves opened and deliberately closed facet disclosure through popstate rerenders', () => {
-    const harness = setup('?view=registries');
-    const group = details('registries:component');
-    harness.contentBody.querySelectorAll = selector =>
-      selector.includes('[data-facet-group]') ? [group] : [];
-
-    group.open = true;
-    const popstate = harness.windowListeners.get('popstate')?.[0];
-    popstate?.({ state: null });
-    expect(group.open).toBe(true);
-
-    group.open = false;
-    group.dispatch('toggle', {});
-    harness.searchInput.value = 'delta';
-    harness.searchInput.dispatch('input', {});
-
-    expect(group.open).toBe(false);
-  });
-
-  it('keeps registry profiles deep-linkable from Registries', () => {
+  it('keeps registry profiles deep-linkable with canonical registry paths', () => {
     const harness = setup('?view=registries');
 
     harness.contentBody.dispatch('click', target({ 'data-profile-registry': '@delta' }));
 
     expect(harness.contentHeader.innerHTML).toContain('<h1>@delta</h1>');
-    expect(harness.location.search).toContain('registry=%40delta');
-    expect(harness.history.pushes.at(-1)).toContain('registry=%40delta');
+    expect(harness.location.pathname).toBe('/Registry-Atlas/@delta');
+    expect(harness.location.search).toBe('');
+    expect(harness.history.pushes.at(-1)).toContain('/Registry-Atlas/@delta');
 
-    const reloaded = setup('?view=registries&registry=%40delta');
+    const reloaded = setup('', '/Registry-Atlas/@delta');
     expect(reloaded.contentHeader.innerHTML).toContain('<h1>@delta</h1>');
+    expect(reloaded.contentBody.innerHTML).toContain('Catalog components');
   });
 
   it('keeps registry navigation on Registries and returns there from an item', () => {
@@ -197,45 +160,17 @@ describe('registry explorer shell interactions', () => {
     expect(harness.history.pushes.length).toBe(pushesAfterNavigation);
   });
 
-  it('restores focus to the newly rendered quick preview trigger after activation', () => {
-    const harness = setup('?view=discover&registry=%40delta');
-    const clickedTrigger = target({
-      class: 'component-peek-trigger',
-      'data-component-peek-id': '@delta:code-block',
-    });
-    const renderedTrigger = target({
-      class: 'component-peek-trigger',
-      'data-component-peek-id': '@delta:code-block',
-    });
-    harness.contentBody.querySelectorAll = () => [renderedTrigger];
+  it('opens catalogue cards directly instead of using browse quick-peeks', () => {
+    const harness = setup('?view=discover');
 
-    harness.contentBody.dispatch('click', clickedTrigger);
+    expect(harness.contentBody.innerHTML).not.toContain('data-component-peek-id');
+    harness.contentBody.dispatch(
+      'click',
+      target({ 'data-view-item-registry': '@delta', 'data-view-item-slug': 'catalog-only' }),
+    );
 
-    expect(renderedTrigger.focus).toHaveBeenCalledTimes(1);
-    expect(clickedTrigger.focus).not.toHaveBeenCalled();
-  });
-
-  it('opens peek explicitly, dismisses it with Escape, and restores trigger focus', () => {
-    const harness = setup('?view=discover&registry=%40delta');
-    const trigger = target({
-      class: 'component-peek-trigger',
-      'data-component-peek-id': '@delta:code-block',
-      'data-view-item-registry': '@delta',
-      'data-view-item-slug': 'code-block',
-    });
-    harness.contentBody.querySelectorAll = () => [trigger];
-
-    harness.contentBody.dispatch('click', trigger);
-    expect(harness.contentBody.innerHTML).toContain('data-component-peek-popover');
-    expect(trigger.getAttribute('aria-expanded')).toBe('true');
-    expect(trigger.getAttribute('aria-haspopup')).toBeNull();
-    expect(harness.contentHeader.innerHTML).toContain('@delta');
-
-    harness.contentBody.dispatch('keydown', trigger, { key: 'Escape' });
-
-    expect(harness.contentBody.innerHTML).not.toContain('data-component-peek-popover');
-    expect(trigger.getAttribute('aria-expanded')).toBe('false');
-    expect(trigger.focus).toHaveBeenCalled();
+    expect(harness.location.pathname).toBe('/Registry-Atlas/@delta/components/catalog-only');
+    expect(harness.contentHeader.innerHTML).toContain('Catalog Only');
   });
 
   it('searches and routes an indexed-only catalog item through the shell', () => {
@@ -245,8 +180,8 @@ describe('registry explorer shell interactions', () => {
     harness.searchInput.dispatch('input', {});
 
     expect(harness.contentBody.innerHTML).toContain('Catalog Only');
-    expect(harness.contentBody.innerHTML).toContain('@delta/catalog-only');
     expect(harness.contentBody.innerHTML).toContain('data-view-item-slug="catalog-only"');
+    expect(harness.contentBody.innerHTML).not.toContain('Copy install');
 
     harness.contentBody.dispatch(
       'click',
@@ -254,38 +189,25 @@ describe('registry explorer shell interactions', () => {
     );
 
     expect(harness.contentHeader.innerHTML).toContain('Catalog Only');
-    expect(harness.location.search).toContain('item=catalog-only');
+    expect(harness.location.pathname).toBe('/Registry-Atlas/@delta/components/catalog-only');
   });
 
-  it('clears a hover peek when the pointer leaves the trigger', () => {
-    const harness = setup('?view=discover&registry=%40delta');
-    const trigger = target({
-      class: 'component-peek-trigger',
-      'data-component-peek-id': '@delta:code-block',
-      'data-view-item-registry': '@delta',
-      'data-view-item-slug': 'code-block',
-    });
-    harness.contentBody.querySelectorAll = () => [trigger];
+  it('migrates a legacy registry deep link to the canonical registry path', () => {
+    const harness = setup('?view=registries&registry=%40delta');
 
-    harness.contentBody.dispatch('mouseover', trigger);
-    expect(harness.contentBody.innerHTML).toContain('data-component-peek-popover');
-
-    harness.contentBody.dispatch(
-      'mouseout',
-      target({ 'data-component-peek-popover': '@delta:code-block' }),
-      { relatedTarget: target({}) },
-    );
-
-    expect(harness.contentBody.innerHTML).not.toContain('data-component-peek-popover');
+    expect(harness.contentHeader.innerHTML).toContain('<h1>@delta</h1>');
+    expect(harness.location.pathname).toBe('/Registry-Atlas/@delta');
+    expect(harness.location.search).toBe('');
   });
+
 });
 
-function setup(search: string) {
+function setup(search: string, pathname = '/Registry-Atlas/') {
   const location = {
-    pathname: '/Registry-Atlas/',
+    pathname,
     search,
     hash: '',
-    href: `http://localhost/Registry-Atlas/${search}`,
+    href: `http://localhost${pathname}${search}`,
   };
   const windowListeners = new Map<string, ((event: any) => void)[]>();
   const history = {
@@ -418,20 +340,6 @@ function targetWithFocus(attributes: Record<string, string>, focus: ReturnType<t
     setAttribute: (name: string, value: string) => { attributes[name] = value; },
     hasAttribute: (name: string) => name in attributes,
     closest: () => null,
-  };
-}
-
-function details(key: string) {
-  const listeners = new Map<string, ((event: any) => void)[]>();
-  return {
-    open: false,
-    getAttribute: (name: string) => name === 'data-facet-group' ? key : null,
-    addEventListener(type: string, listener: (event: any) => void) {
-      listeners.set(type, [...(listeners.get(type) ?? []), listener]);
-    },
-    dispatch(type: string, event: any) {
-      listeners.get(type)?.forEach(listener => listener({ target: this, ...event }));
-    },
   };
 }
 

@@ -1,33 +1,11 @@
 import type {
-  ComponentTag,
   InstallQueueEntry,
   Registry,
   RegistryCatalogIndex,
 } from '../core/registry.schema';
 import type { MirrorValidationIssue } from '../core/registryMirror';
 import type { RegistryMirrorMeta } from '../data/loadRegistries';
-import {
-  searchComponentCandidates,
-  searchComponentCandidatesWithIndex,
-  buildDiscoveryOverview,
-} from '../core/discovery';
-import {
-  buildCatalogFacetGroups,
-  buildRegistryFacetGroups,
-  applyCatalogFacetsToCandidates,
-  applyCatalogFacetsToProfileRows,
-  createSelectedCatalogFacet,
-  type SelectedCatalogFacet,
-} from '../core/catalogFacets';
-import type { CatalogSort } from '../core/catalogSort';
-import { sortCatalogCandidates } from '../core/catalogSort';
-import { buildRegistryBrowseEntries } from '../core/registryBrowse';
-import { buildCompareModel } from '../core/compare';
-import {
-  parseRegistryExplorerUrlState,
-  serializeRegistryExplorerUrlState,
-} from '../core/urlState';
-import { buildRegistryProfile } from '../core/registryProfile';
+import { parseRegistryExplorerUrlState } from '../core/urlState';
 import { resolveRegistryItemDetailFromCatalogIndex } from '../core/registryItemDetail';
 import {
   addToInstallQueue,
@@ -35,16 +13,17 @@ import {
   clearInstallQueue,
   removeFromInstallQueue,
 } from '../core/installQueue';
-import {
-  renderDiscoveryAside,
-  renderDiscoveryContent,
-  type CopyFeedback,
-} from './discoveryView';
-import { renderRegistriesContent } from './registriesView';
-import { renderCompareContent } from './compareView';
-import { renderRegistryProfile } from './registryProfileView';
+import type { CopyFeedback } from './discoveryView';
 import { renderItemDetailView } from './itemDetailView';
-import { escapeHtml, renderExternalLink } from './renderSafety';
+import { escapeHtml } from './renderSafety';
+import { queryCatalogComponents } from '../core/catalogQuery';
+import { buildRegistryDirectory } from '../core/registryDirectory';
+import { buildCatalogComparison } from '../core/catalogCompare';
+import { catalogRoutePath, parseCatalogRoute, type CatalogRoute } from '../core/catalogRoutes';
+import { renderCatalogComponents } from './catalogComponentsView';
+import { renderRegistryDirectory } from './registryDirectoryView';
+import { renderRegistryCollection } from './registryCollectionView';
+import { renderCatalogCompare } from './catalogCompareView';
 
 export interface ShellOptions {
   registries: readonly Registry[];
@@ -62,17 +41,13 @@ export interface ShellOptions {
 interface AppState {
   currentView: 'discover' | 'registries' | 'compare' | 'item';
   returnView: 'discover' | 'registries';
-  selectedFacets: SelectedCatalogFacet[];
-  sort: CatalogSort;
+  returnRegistryName: string | null;
   compareRegistryNames: string[];
-  compareComponentKeys: ComponentTag[];
-  selectedCandidateId: string | null;
   selectedProfileRegistryName: string | null;
   selectedItemSlug: string | null;
   searchTerm: string;
   installQueue: InstallQueueEntry[];
   copyFeedback: CopyFeedback | null;
-  activePeekId: string | null;
   facetSearchTerms: Record<string, string>;
   discoveryPage: number;
 }
@@ -80,6 +55,15 @@ interface FocusIdentity {
   selector: string;
   attributes: ReadonlyArray<readonly [string, string]>;
 }
+function catalogBasePath(): string {
+  const configured = import.meta.env.BASE_URL;
+  if (configured && configured !== '/') return configured;
+  return window.location.pathname === '/Registry-Atlas'
+    || window.location.pathname.startsWith('/Registry-Atlas/')
+    ? '/Registry-Atlas/'
+    : (configured || '/');
+}
+
 function isView(value: string | null): value is AppState['currentView'] {
   return (
     value === 'discover' ||
@@ -95,21 +79,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
   let state: AppState = {
     ...parsed,
     returnView: parsed.currentView === 'registries' ? 'registries' : 'discover',
+    returnRegistryName: null,
     installQueue: [],
     copyFeedback: null,
-    activePeekId: null,
     facetSearchTerms: {},
     discoveryPage: 1,
   };
-  let pinnedPeekId: string | null = null;
-  const openFacetGroups = new Set<string>();
   roots.searchInput.value = state.searchTerm;
   const setState = (
     partial: Partial<AppState>,
     historyMode: 'push' | 'replace' = 'replace',
     focusIdentity: FocusIdentity | null = null,
   ) => {
-    rememberFacetDisclosureState();
     const routeContextChanged =
       (partial.currentView !== undefined && partial.currentView !== state.currentView)
       || (partial.selectedProfileRegistryName !== undefined && partial.selectedProfileRegistryName !== state.selectedProfileRegistryName)
@@ -120,39 +101,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
     render();
     if (focusIdentity) restoreControlFocus(focusIdentity);
   };
-
-  function rememberFacetDisclosureState(): void {
-    roots.contentBody
-      .querySelectorAll<HTMLDetailsElement>('[data-facet-group]')
-      .forEach((group) => {
-        const key = group.getAttribute('data-facet-group');
-        if (!key) return;
-        if (group.open) openFacetGroups.add(key);
-        else openFacetGroups.delete(key);
-      });
-  }
-
-  function trackFacetDisclosureState(): void {
-    roots.contentBody
-      .querySelectorAll<HTMLDetailsElement>('[data-facet-group]')
-      .forEach((group) => {
-        const key = group.getAttribute('data-facet-group');
-        if (!key) return;
-        group.addEventListener('toggle', () => {
-          if (group.open) openFacetGroups.add(key);
-          else openFacetGroups.delete(key);
-        });
-      });
-  }
-
-  function restoreFacetDisclosureState(): void {
-    roots.contentBody
-      .querySelectorAll<HTMLDetailsElement>('[data-facet-group]')
-      .forEach((group) => {
-        const key = group.getAttribute('data-facet-group');
-        if (key) group.open = openFacetGroups.has(key);
-      });
-  }
 
   function searchTermsFor(scope: 'discover' | 'registries' | 'compare'): Record<string, string> {
     const prefix = `${scope}:`;
@@ -174,21 +122,53 @@ export function initRegistryExplorer(options: ShellOptions): void {
     fallback?.focus();
   }
 
+  function renderCatalogSidebar(
+    queued: ReadonlySet<string>,
+    batchCommand: string | null,
+  ): void {
+    const queueMarkup = queued.size > 0
+      ? '<section class="catalog-sidebar-queue"><div class="queue-heading"><span>Install queue</span><strong>'
+        + String(queued.size)
+        + '</strong></div><button class="install-button install-button-primary" type="button" data-copy-text="'
+        + escapeHtml(batchCommand ?? '')
+        + '" data-copy-label="Batch command copied"'
+        + (batchCommand ? '' : ' disabled')
+        + '>Copy batch</button><button class="install-button" type="button" data-queue-clear>Clear</button></section>'
+      : '';
+
+    roots.aside.innerHTML = [
+      '<div class="catalog-sidebar-summary">',
+      '<div class="aside-section-title">Catalog</div>',
+      '<div class="aside-summary"><strong>',
+      options.catalogIndex.meta.item_count.toLocaleString(),
+      '</strong> indexed components<br><strong>',
+      options.catalogIndex.meta.registry_count.toLocaleString(),
+      '</strong> indexed catalogs<br><strong>',
+      registries.length.toLocaleString(),
+      '</strong> registries</div>',
+      '</div>',
+      queueMarkup,
+    ].join('');
+  }
+
   function render(): void {
     try {
       roots.tabs.forEach((tab) => {
-        tab.classList.toggle(
-          'nav-item-active',
-          tab.getAttribute('data-view') === state.currentView,
-        );
-        if (tab.getAttribute('data-view') === state.currentView) {
-          tab.setAttribute('aria-current', 'page');
-        } else {
-          tab.removeAttribute('aria-current');
-        }
+        const tabView = tab.getAttribute('data-view');
+        const activeView = state.currentView === 'item'
+          ? null
+          : state.selectedProfileRegistryName
+            ? 'registries'
+            : state.currentView;
+        tab.classList.toggle('nav-item-active', tabView === activeView);
+        if (tabView === activeView) tab.setAttribute('aria-current', 'page');
+        else tab.removeAttribute('aria-current');
       });
+
       const queued = new Set(state.installQueue.map((entry) => entry.token));
       const batch = buildInstallQueueBatchState(state.installQueue);
+      renderCatalogSidebar(queued, batch.command);
+
       if (state.currentView === 'item') {
         renderItemDetailView(
           roots.contentHeader,
@@ -202,133 +182,57 @@ export function initRegistryExplorer(options: ShellOptions): void {
           queued,
           registries,
         );
-        roots.aside.innerHTML =
-          '<div class="aside-section-title">Component item</div>';
       } else if (state.currentView !== 'compare' && state.selectedProfileRegistryName) {
-        const registry = registries.find(
-          (item) => item.name === state.selectedProfileRegistryName,
-        );
+        const registry = registries.find(item => item.name === state.selectedProfileRegistryName);
         if (!registry) return;
-        const candidates = searchComponentCandidates(
-          registries,
-          state.searchTerm,
-        );
-        const profile = buildRegistryProfile(registry, {
-          candidate: candidates.find(
-            (item) => item.id === state.selectedCandidateId,
-          ),
+        const result = queryCatalogComponents(registries, catalogIndex, {
+          search: state.searchTerm,
+          registryNames: [registry.name],
+          page: state.discoveryPage,
+          basePath: catalogBasePath(),
         });
-        const groups = buildCatalogFacetGroups(registries, candidates);
-        const filteredProfile = {
-          ...profile,
-          sections: profile.sections.map((section) =>
-            section.items
-              ? {
-                  ...section,
-                  items: applyCatalogFacetsToProfileRows(
-                    section.items,
-                    state.selectedFacets,
-                  ),
-                }
-              : section,
-          ),
-        };
-        renderRegistryProfile(
-          roots.contentHeader,
-          roots.contentBody,
-          filteredProfile,
-          queued,
-          groups,
-          state.selectedFacets,
-          state.activePeekId,
-        );
-        roots.aside.innerHTML =
-          '<div class="aside-section-title">Registry profile</div>';
+        renderRegistryCollection(roots.contentHeader, roots.contentBody, registry, result);
       } else if (state.currentView === 'discover') {
-        const selectedComponentValues = state.selectedFacets
-          .filter(facet => facet.dimension === 'component')
-          .map(facet => facet.value);
-        const indexedSearch = searchComponentCandidatesWithIndex(
-          registries,
-          catalogIndex,
-          state.searchTerm,
-          selectedComponentValues,
-        );
-        const candidates = indexedSearch.candidates;
-        const discoverFacetSearch = searchTermsFor('discover');
-        const groups = buildCatalogFacetGroups(registries, candidates, {
-          catalogIndex,
-          componentSearchTerm: discoverFacetSearch.component,
+        const result = queryCatalogComponents(registries, catalogIndex, {
+          search: state.searchTerm,
+          page: state.discoveryPage,
+          basePath: catalogBasePath(),
         });
-        renderDiscoveryAside(
-          roots.aside,
-          buildDiscoveryOverview(registries),
-          { entries: state.installQueue, batch, feedback: null },
-        );
-        renderDiscoveryContent(
-          roots.contentHeader,
-          roots.contentBody,
-          sortCatalogCandidates(
-            applyCatalogFacetsToCandidates(candidates, state.selectedFacets),
-            state.sort,
-          ),
-          {
-            searchTerm: state.searchTerm,
-            facetGroups: groups,
-            selectedFacets: state.selectedFacets,
-            sort: state.sort,
-            queuedTokens: queued,
-            activePeekId: state.activePeekId,
-            page: state.discoveryPage,
-            facetSearchTerms: discoverFacetSearch,
-            indexedSearch,
-          },
-        );
+        renderCatalogComponents(roots.contentHeader, roots.contentBody, result, {
+          searchTerm: state.searchTerm,
+        });
       } else if (state.currentView === 'registries') {
-        const groups = buildRegistryFacetGroups(
-          registries,
-          state.searchTerm,
-          state.selectedFacets,
-        );
-        renderRegistriesContent(
-          roots.contentHeader,
-          roots.contentBody,
-          buildRegistryBrowseEntries(
-            registries,
-            state.searchTerm,
-            state.selectedFacets,
-          ),
-          groups,
-          state.selectedFacets,
-          searchTermsFor('registries'),
-        );
+        const result = buildRegistryDirectory(registries, catalogIndex, {
+          search: state.searchTerm,
+          page: state.discoveryPage,
+        });
+        renderRegistryDirectory(roots.contentHeader, roots.contentBody, result);
       } else {
-        const selection = {
-          registryNames: state.compareRegistryNames,
-          componentKeys: state.compareComponentKeys,
-        };
         const compareSearchTerms = searchTermsFor('compare');
-        renderCompareContent(
+        const availableRegistryNames = registries
+          .filter(registry => Object.prototype.hasOwnProperty.call(catalogIndex.registries, registry.name))
+          .map(registry => registry.name)
+          .sort((a, b) => a.localeCompare(b));
+        const result = buildCatalogComparison(
+          registries,
+          catalogIndex,
+          state.compareRegistryNames,
+          {
+            search: state.searchTerm,
+            page: state.discoveryPage,
+            basePath: catalogBasePath(),
+          },
+        );
+        renderCatalogCompare(
           roots.contentHeader,
           roots.contentBody,
-          buildCompareModel(registries, state.searchTerm, selection),
-          selection,
-          {
-            ...compareSearchTerms,
-            registry: compareSearchTerms.registry ?? state.searchTerm,
-          },
+          result,
+          availableRegistryNames,
+          compareSearchTerms.registry ?? '',
         );
       }
-      trackFacetDisclosureState();
-      restoreFacetDisclosureState();
-      syncPeekTriggerSemantics();
+
       roots.contentHeader.insertAdjacentHTML('beforeend', renderCopyFeedback(state.copyFeedback));
-      const source = renderExternalLink(options.mirrorMeta.source_url, 'Official shadcn directory', 'secondary-link');
-      const syncedAt = escapeHtml(options.mirrorMeta.synced_at);
-      roots.contentHeader.insertAdjacentHTML(
-        'beforeend',
-        `<div class="mirror-status"><span>Source: ${source}</span><span>Synced ${syncedAt}</span><span>${options.mirrorMeta.local_count} / ${options.mirrorMeta.upstream_count} mirrored</span>${options.mirrorMeta.validation_status !== 'valid' ? `<span>Review: ${escapeHtml(options.mirrorMeta.validation_status)}</span>` : ''}${options.mirrorWarnings.length > 0 ? `<span>${options.mirrorWarnings.length} warning(s)</span>` : ''}</div>`,
-      );
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);
       roots.contentBody.innerHTML =
@@ -338,17 +242,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.tabs.forEach((tab) =>
     tab.addEventListener('click', () => {
       const view = tab.getAttribute('data-view');
-      if (isView(view)) {
-        pinnedPeekId = null;
+      if (isView(view) && view !== 'item') {
         setState({
           currentView: view,
-          selectedFacets: state.selectedFacets,
           selectedProfileRegistryName: null,
-          selectedCandidateId: null,
           selectedItemSlug: null,
-          returnView: view === 'discover' || view === 'registries' ? view : state.returnView,
-          activePeekId: null,
-          discoveryPage: view === 'discover' ? 1 : state.discoveryPage,
+          returnRegistryName: null,
+          returnView: view === 'registries' ? 'registries' : 'discover',
+          discoveryPage: 1,
         }, 'push');
       }
     }),
@@ -358,29 +259,24 @@ export function initRegistryExplorer(options: ShellOptions): void {
   );
   roots.contentBody.addEventListener('input', (event) => {
     const target = event.target as HTMLInputElement;
-    const facet = target.closest('[data-facet-search], [data-compare-search]');
-    if (!facet) return;
-    const compareSearch = facet.getAttribute('data-compare-search');
-    const dimension = facet.getAttribute('data-facet-search') ?? compareSearch;
-    if (!dimension) return;
-    const scope = compareSearch ? 'compare' : state.currentView === 'discover' ? 'discover' : 'registries';
-    const key = `${scope}:${dimension}`;
+    const control = target.closest('[data-compare-search]');
+    const dimension = control?.getAttribute('data-compare-search');
+    if (!control || !dimension) return;
+    const key = 'compare:' + dimension;
     const value = target.value;
     const focusIdentity = createFocusIdentity(
-      facet,
-      compareSearch ? '[data-compare-search]' : '[data-facet-search]',
-      [compareSearch ? 'data-compare-search' : 'data-facet-search'],
+      control,
+      '[data-compare-search]',
+      ['data-compare-search'],
     );
     setState(
-      { facetSearchTerms: { ...state.facetSearchTerms, [key]: value }, discoveryPage: scope === 'discover' ? 1 : state.discoveryPage },
+      { facetSearchTerms: { ...state.facetSearchTerms, [key]: value }, discoveryPage: 1 },
       'replace',
       focusIdentity,
     );
     const nextInput = Array.from(
-      roots.contentBody.querySelectorAll<HTMLInputElement>('[data-facet-search], [data-compare-search]'),
-    ).find(item =>
-      item.getAttribute('data-facet-search') === dimension || item.getAttribute('data-compare-search') === dimension,
-    );
+      roots.contentBody.querySelectorAll<HTMLInputElement>('[data-compare-search]'),
+    ).find(item => item.getAttribute('data-compare-search') === dimension);
     nextInput?.focus();
     nextInput?.setSelectionRange(value.length, value.length);
   });
@@ -393,124 +289,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.contentBody.addEventListener('click', (event) =>
     handleClick(event.target as HTMLElement),
   );
-  roots.contentBody.addEventListener('mouseover', (event) => {
-    const id = peekIdFromTarget(event.target);
-    if (id && pinnedPeekId === null) setState({ activePeekId: id });
-  });
-  roots.contentBody.addEventListener('mouseout', (event) => {
-    if (pinnedPeekId !== null) return;
-    const id = peekIdFromTarget(event.target) ?? popoverIdFromTarget(event.target);
-    if (!id || state.activePeekId !== id) return;
-    const relatedId = peekIdFromTarget(event.relatedTarget) ?? popoverIdFromTarget(event.relatedTarget);
-    if (relatedId !== id) setState({ activePeekId: null });
-  });
-  roots.contentBody.addEventListener('keydown', (event) => {
-    const keyboardEvent = event as KeyboardEvent;
-    if (keyboardEvent.key !== 'Escape' || !state.activePeekId) return;
-    const id = state.activePeekId;
-    pinnedPeekId = null;
-    keyboardEvent.preventDefault();
-    setState({ activePeekId: null });
-    focusPeekTrigger(id);
-  });
   function handleClick(target: HTMLElement): void {
-    const peekTrigger = target.closest('[data-component-peek-id]');
-    if (peekTrigger?.classList.contains('component-peek-trigger')) {
-      const id = peekTrigger.getAttribute('data-component-peek-id');
-      if (!id) return;
-      if (state.activePeekId === id && pinnedPeekId === id) {
-        pinnedPeekId = null;
-        setState({ activePeekId: null });
-        focusPeekTrigger(id);
-      } else {
-        pinnedPeekId = id;
-        setState({ activePeekId: id });
-        focusPeekTrigger(id);
-      }
-      return;
-    }
     if (handleInstall(target)) return;
-    const add = target.closest('[data-facet-add-dimension]');
-    const remove = target.closest('[data-facet-remove-dimension]');
-    if (add) {
-      const selectedComponentValues = state.selectedFacets
-        .filter(facet => facet.dimension === 'component')
-        .map(facet => facet.value);
-      const indexedSearch = searchComponentCandidatesWithIndex(
-        registries,
-        catalogIndex,
-        state.searchTerm,
-        selectedComponentValues,
-      );
-      const next = createSelectedCatalogFacet(
-        buildCatalogFacetGroups(
-          registries,
-          indexedSearch.candidates,
-          {
-            catalogIndex,
-            componentSearchTerm: searchTermsFor('discover').component,
-          },
-        ),
-        add.getAttribute('data-facet-add-dimension'),
-        add.getAttribute('data-facet-add-value'),
-      );
-      if (next) {
-        const selected = state.selectedFacets.some(
-          (f) => f.dimension === next.dimension && f.value === next.value,
-        );
-        const focusIdentity = createFocusIdentity(
-          add,
-          '[data-facet-add-dimension]',
-          ['data-facet-add-dimension', 'data-facet-add-value'],
-        );
-        setState({
-          discoveryPage: 1,
-          selectedFacets: selected
-            ? state.selectedFacets.filter(
-                (f) => f.dimension !== next.dimension || f.value !== next.value,
-              )
-            : [...state.selectedFacets, next],
-        }, 'push', focusIdentity);
-      }
-      return;
-    }
-    if (remove) {
-      const focusIdentity = createFocusIdentity(
-        remove,
-        '[data-facet-remove-dimension]',
-        ['data-facet-remove-dimension', 'data-facet-remove-value'],
-      );
-      setState({
-        discoveryPage: 1,
-        selectedFacets: state.selectedFacets.filter(
-          (f) =>
-            f.dimension !==
-              remove.getAttribute('data-facet-remove-dimension') ||
-            f.value !== remove.getAttribute('data-facet-remove-value'),
-        ),
-      }, 'push', focusIdentity);
-      return;
-    }
-    const clear = target.closest('[data-facet-clear]');
-    if (clear) {
-      setState(
-        { selectedFacets: [], discoveryPage: 1 },
-        'push',
-        createFocusIdentity(clear, '[data-facet-clear]', ['data-facet-clear']),
-      );
-      return;
-    }
-    const sort = target.closest('[data-sort]')?.getAttribute('data-sort');
-    if (sort === 'name' || sort === 'relevance') {
-      setState({ sort, discoveryPage: 1 }, 'push');
-      return;
-    }
+
     const discoveryPage = target.closest('[data-discovery-page]')?.getAttribute('data-discovery-page');
     if (discoveryPage) {
       const nextPage = Number(discoveryPage);
-      if (Number.isInteger(nextPage) && nextPage > 0) setState({ discoveryPage: nextPage, copyFeedback: null });
+      if (Number.isInteger(nextPage) && nextPage > 0) {
+        setState({ discoveryPage: nextPage, copyFeedback: null }, 'push');
+      }
       return;
     }
+
     const registry = target
       .closest('[data-compare-registry]')
       ?.getAttribute('data-compare-registry');
@@ -519,6 +309,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       if (!alreadySelected && state.compareRegistryNames.length >= 4) return;
       setState({
         compareRegistryNames: toggle(state.compareRegistryNames, registry),
+        discoveryPage: 1,
       }, 'push', createFocusIdentity(
         target.closest('[data-compare-registry]'),
         '[data-compare-registry]',
@@ -526,75 +317,57 @@ export function initRegistryExplorer(options: ShellOptions): void {
       ));
       return;
     }
-    const component = target
-      .closest('[data-compare-component]')
-      ?.getAttribute('data-compare-component') as ComponentTag | null;
-    if (component) {
-      setState({
-        compareComponentKeys: toggle(state.compareComponentKeys, component),
-      }, 'push', createFocusIdentity(
-        target.closest('[data-compare-component]'),
-        '[data-compare-component]',
-        ['data-compare-component'],
-      ));
-      return;
-    }
+
     const profile = target
       .closest('[data-profile-registry]')
       ?.getAttribute('data-profile-registry');
     if (profile) {
-      const surface = state.currentView === 'registries'
-        ? 'registries'
-        : state.currentView === 'discover'
-          ? 'discover'
-          : state.returnView;
       setState({
-        currentView: surface,
-        returnView: surface,
+        currentView: 'registries',
+        returnView: 'registries',
+        returnRegistryName: null,
         selectedProfileRegistryName: profile,
-        selectedFacets: state.selectedFacets.filter(
-          (f) => f.dimension !== 'registry',
-        ),
-        activePeekId: null,
+        selectedItemSlug: null,
+        discoveryPage: 1,
       }, 'push');
-      pinnedPeekId = null;
       return;
     }
+
     const item = target.closest('[data-view-item-registry]');
     if (item) {
-      const surface = state.currentView === 'registries'
-        ? 'registries'
-        : state.currentView === 'discover'
-          ? 'discover'
-          : state.returnView;
+      const itemRegistry = item.getAttribute('data-view-item-registry');
+      const itemSlug = item.getAttribute('data-view-item-slug');
+      if (!itemRegistry || !itemSlug) return;
+      const returnView = state.currentView === 'registries' ? 'registries' : 'discover';
       setState({
         currentView: 'item',
-        returnView: surface,
-        selectedProfileRegistryName: item.getAttribute(
-          'data-view-item-registry',
-        ),
-        selectedItemSlug: item.getAttribute('data-view-item-slug'),
-        selectedCandidateId: item.getAttribute('data-candidate-id'),
-        activePeekId: null,
+        returnView,
+        returnRegistryName: state.selectedProfileRegistryName,
+        selectedProfileRegistryName: itemRegistry,
+        selectedItemSlug: itemSlug,
       }, 'push');
-      pinnedPeekId = null;
       return;
     }
-    if (target.closest('[data-back-from-item]'))
+
+    if (target.closest('[data-back-from-item]')) {
       setState({
         currentView: state.returnView,
-        selectedProfileRegistryName: null,
-        selectedCandidateId: null,
+        selectedProfileRegistryName: state.returnRegistryName,
         selectedItemSlug: null,
-        activePeekId: null,
-      });
-    else if (target.closest('[data-back-to-results]'))
+        returnRegistryName: null,
+      }, 'push');
+      return;
+    }
+
+    if (target.closest('[data-back-to-results]')) {
       setState({
+        currentView: 'registries',
         selectedProfileRegistryName: null,
-        selectedCandidateId: null,
         selectedItemSlug: null,
-        activePeekId: null,
-      });
+        returnRegistryName: null,
+        discoveryPage: 1,
+      }, 'push');
+    }
   }
   function handleInstall(target: HTMLElement): boolean {
     const copy = target.closest(
@@ -645,29 +418,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
     return false;
   }
-  function syncPeekTriggerSemantics(): void {
-    const popovers = Array.from(
-      roots.contentBody.querySelectorAll<HTMLElement>('[data-component-peek-popover]'),
-    );
-    roots.contentBody
-      .querySelectorAll<HTMLElement>('[data-component-peek-id]')
-      .forEach((trigger) => {
-        const id = trigger.getAttribute('data-component-peek-id');
-        const popover = popovers.find(
-          (item) => item.getAttribute('data-component-peek-popover') === id,
-        );
-        trigger.setAttribute('aria-expanded', String(state.activePeekId === id));
-        if (popover?.id) trigger.setAttribute('aria-controls', popover.id);
-      });
-  }
-
-  function focusPeekTrigger(id: string): void {
-    const trigger = Array.from(
-      roots.contentBody.querySelectorAll<HTMLElement>('[data-component-peek-id]'),
-    ).find((item) => item.getAttribute('data-component-peek-id') === id);
-    trigger?.focus();
-  }
-
   async function copyText(text: string, message: string): Promise<void> {
     try {
       if (!navigator.clipboard?.writeText) throw new Error();
@@ -684,16 +434,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
   }
   window.addEventListener('popstate', (event) => {
-    rememberFacetDisclosureState();
     const parsed = hydrateStateFromUrl(registries);
     state = {
       ...state,
       ...parsed,
       returnView: historyReturnView(event.state, parsed.currentView),
       copyFeedback: null,
-      activePeekId: null,
+      returnRegistryName: null,
     };
-    pinnedPeekId = null;
     roots.searchInput.value = state.searchTerm;
     render();
   });
@@ -725,25 +473,6 @@ function createFocusIdentity(
   return { selector, attributes: values };
 }
 
-function peekIdFromTarget(target: EventTarget | null): string | null {
-  return attributeFromTarget(target, '[data-component-peek-id]', 'data-component-peek-id');
-}
-
-function popoverIdFromTarget(target: EventTarget | null): string | null {
-  return attributeFromTarget(target, '[data-component-peek-popover]', 'data-component-peek-popover');
-}
-
-function attributeFromTarget(
-  target: EventTarget | null,
-  selector: string,
-  attribute: string,
-): string | null {
-  const closest = (target as { closest?: (value: string) => Element | null } | null)?.closest;
-  return typeof closest === 'function'
-    ? closest.call(target, selector)?.getAttribute(attribute) ?? null
-    : null;
-}
-
 function historyReturnView(
   historyState: unknown,
   currentView: AppState['currentView'],
@@ -762,60 +491,104 @@ function toggle<T>(values: readonly T[], value: T): T[] {
 }
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<AppState, 'installQueue' | 'copyFeedback' | 'activePeekId' | 'returnView' | 'facetSearchTerms' | 'discoveryPage'> {
-  const parsed = parseRegistryExplorerUrlState(
-    new URLSearchParams(window.location.search),
-  );
-  const profileStateAllowed = parsed.view !== 'compare';
-  const registry =
-    profileStateAllowed &&
-    parsed.selectedProfileRegistryName &&
-    registries.some((item) => item.name === parsed.selectedProfileRegistryName)
-      ? parsed.selectedProfileRegistryName
+): Omit<AppState, 'installQueue' | 'copyFeedback' | 'returnView' | 'returnRegistryName' | 'facetSearchTerms' | 'discoveryPage'> {
+  const params = new URLSearchParams(window.location.search);
+  const parsed = parseRegistryExplorerUrlState(params);
+  const hasLegacyView = params.has('view');
+  const route = hasLegacyView
+    ? null
+    : parseCatalogRoute(window.location.pathname, catalogBasePath());
+
+  let currentView: AppState['currentView'] = parsed.view;
+  let selectedProfileRegistryName = parsed.selectedProfileRegistryName;
+  let selectedItemSlug = parsed.selectedItemSlug;
+  let searchTerm = parsed.searchTerm;
+
+  if (hasLegacyView && !searchTerm && params.get('component')) {
+    searchTerm = params.get('component')?.trim() ?? '';
+  }
+
+  if (route) {
+    if (route.kind === 'components') {
+      currentView = 'discover';
+      selectedProfileRegistryName = null;
+      selectedItemSlug = null;
+      if (!searchTerm && route.pathSearchTerm) searchTerm = route.pathSearchTerm;
+    } else if (route.kind === 'registries') {
+      currentView = 'registries';
+      selectedProfileRegistryName = null;
+      selectedItemSlug = null;
+    } else if (route.kind === 'compare') {
+      currentView = 'compare';
+      selectedProfileRegistryName = null;
+      selectedItemSlug = null;
+    } else if (route.kind === 'registry') {
+      currentView = 'registries';
+      selectedProfileRegistryName = route.namespace;
+      selectedItemSlug = null;
+    } else {
+      currentView = 'item';
+      selectedProfileRegistryName = route.namespace;
+      selectedItemSlug = route.slug;
+    }
+  }
+
+  const registry = selectedProfileRegistryName
+    && registries.some(item => item.name === selectedProfileRegistryName)
+      ? selectedProfileRegistryName
       : null;
-  const names = parsed.compareRegistryNames.filter((name) =>
-    registries.some((item) => item.name === name),
+  const names = parsed.compareRegistryNames.filter(name =>
+    registries.some(item => item.name === name),
   );
-  const components = new Set(registries.flatMap((item) => item.component_tags));
+
   return {
-    ...parsed,
-    currentView: parsed.view,
-    selectedProfileRegistryName: registry,
-    selectedCandidateId: parsed.view === 'discover' && registry ? parsed.selectedCandidateId : null,
-    selectedItemSlug: parsed.view === 'item' && registry ? parsed.selectedItemSlug : null,
+    currentView,
+    searchTerm,
+    selectedProfileRegistryName: currentView === 'compare' ? null : registry,
+    selectedItemSlug: currentView === 'item' && registry ? selectedItemSlug : null,
     compareRegistryNames: names.slice(0, 4),
-    compareComponentKeys: parsed.compareComponentKeys.filter((key) =>
-      components.has(key),
-    ),
   };
 }
+
 function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replace'): void {
-  const profileStateAllowed = state.currentView !== 'compare';
-  const params = serializeRegistryExplorerUrlState({
-    view: state.currentView,
-    searchTerm: state.searchTerm,
-    selectedFacets: state.selectedFacets,
-    sort: state.sort,
-    selectedProfileRegistryName: profileStateAllowed
-      ? state.selectedProfileRegistryName
-      : null,
-    selectedCandidateId:
-      state.currentView === 'discover' && state.selectedProfileRegistryName
-        ? state.selectedCandidateId
-        : null,
-    selectedItemSlug:
-      state.currentView === 'item' && state.selectedProfileRegistryName
-        ? state.selectedItemSlug
-        : null,
-    compareRegistryNames: state.compareRegistryNames,
-    compareComponentKeys: state.compareComponentKeys,
-  });
+  let route: CatalogRoute;
+  if (state.currentView === 'item' && state.selectedProfileRegistryName && state.selectedItemSlug) {
+    route = {
+      kind: 'component',
+      namespace: state.selectedProfileRegistryName,
+      slug: state.selectedItemSlug,
+    };
+  } else if (state.currentView !== 'compare' && state.selectedProfileRegistryName) {
+    route = { kind: 'registry', namespace: state.selectedProfileRegistryName };
+  } else if (state.currentView === 'registries') {
+    route = { kind: 'registries' };
+  } else if (state.currentView === 'compare') {
+    route = { kind: 'compare' };
+  } else if (state.searchTerm.trim() && !state.searchTerm.includes('/')) {
+    route = { kind: 'components', pathSearchTerm: state.searchTerm.trim() };
+  } else {
+    route = { kind: 'components' };
+  }
+
+  const params = new URLSearchParams();
+  const pathCarriesSearch = route.kind === 'components' && Boolean(route.pathSearchTerm);
+  if (state.searchTerm.trim() && !pathCarriesSearch && state.currentView !== 'item') {
+    params.set('q', state.searchTerm.trim());
+  }
+  if (state.currentView === 'compare') {
+    state.compareRegistryNames.forEach(name => params.append('compareRegistry', name));
+  }
+
+  let pathname: string;
+  try {
+    pathname = catalogRoutePath(route, catalogBasePath());
+  } catch {
+    pathname = catalogRoutePath({ kind: 'components' }, catalogBasePath());
+  }
   const query = params.toString();
-  const next = `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`;
-  if (
-    next ===
-    `${window.location.pathname}${window.location.search}${window.location.hash}`
-  ) return;
+  const next = pathname + (query ? '?' + query : '') + window.location.hash;
+  if (next === window.location.pathname + window.location.search + window.location.hash) return;
+
   const history = historyMode === 'push' ? window.history.pushState : window.history.replaceState;
   history.call(window.history, { returnView: state.returnView }, '', next);
 }
