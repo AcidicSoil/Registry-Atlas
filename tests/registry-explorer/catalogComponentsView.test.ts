@@ -1,0 +1,108 @@
+import { describe, expect, it } from "vitest";
+import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-explorer/core/catalogQuery";
+import type { Registry } from "../../src/registry-explorer/core/registry.schema";
+import { renderCatalogComponents } from "../../src/registry-explorer/ui/catalogComponentsView";
+
+describe("renderCatalogComponents", () => {
+  it("renders real component cards as action-light detail links", () => {
+    const header = root();
+    const body = root();
+
+    renderCatalogComponents(header, body, result([component()]), { searchTerm: "" });
+
+    expect(header.innerHTML).toContain("Components");
+    expect(header.innerHTML).toContain("1 indexed component");
+    expect(body.innerHTML).toContain("data-view-item-registry=\"@delta\"");
+    expect(body.innerHTML).toContain("data-view-item-slug=\"code-block\"");
+    expect(body.innerHTML).toContain("Code Block");
+    expect(body.innerHTML).toContain("@delta");
+    expect(body.innerHTML).not.toContain("Copy install");
+    expect(body.innerHTML).not.toContain("Inspect first");
+    expect(body.innerHTML).not.toContain("Add to queue");
+  });
+
+  it("renders a trusted preview when present and an honest specimen when absent", () => {
+    const withPreview = root();
+    renderCatalogComponents(root(), withPreview, result([
+      component({ previewUrl: "https://delta.example/preview.png" }),
+    ]), { searchTerm: "" });
+    expect(withPreview.innerHTML).toContain("<img");
+    expect(withPreview.innerHTML).toContain("https://delta.example/preview.png");
+
+    const withoutPreview = root();
+    renderCatalogComponents(root(), withoutPreview, result([component()]), { searchTerm: "" });
+    expect(withoutPreview.innerHTML).toContain("Preview not published");
+    expect(withoutPreview.innerHTML).toContain("registry:ui");
+    expect(withoutPreview.innerHTML).not.toContain("<svg");
+  });
+
+  it("renders truthful pagination over the full query result", () => {
+    const body = root();
+    renderCatalogComponents(root(), body, {
+      ...result([component()]),
+      total: 76520,
+      page: 2,
+      pageSize: 32,
+      pageCount: 2392,
+      hasPreviousPage: true,
+      hasNextPage: true,
+    }, { searchTerm: "" });
+
+    expect(body.innerHTML).toContain("33–64 of 76,520");
+    expect(body.innerHTML).toContain("Page 2 of 2,392");
+    expect(body.innerHTML).toContain('data-discovery-page="1"');
+    expect(body.innerHTML).toContain('data-discovery-page="3"');
+  });
+});
+
+function root(): HTMLElement {
+  return { innerHTML: "" } as HTMLElement;
+}
+
+function result(items: CatalogComponent[]): CatalogQueryResult {
+  return {
+    items,
+    total: items.length,
+    page: 1,
+    pageSize: 32,
+    pageCount: items.length ? 1 : 0,
+    hasPreviousPage: false,
+    hasNextPage: false,
+  };
+}
+
+function component(options: { previewUrl?: string } = {}): CatalogComponent {
+  return {
+    id: "@delta:code-block",
+    namespace: "@delta",
+    registry: registry(),
+    slug: "code-block",
+    displayName: "Code Block",
+    title: "Code Block",
+    description: "A real indexed component.",
+    type: "registry:ui",
+    categories: ["code"],
+    reviewed: false,
+    item: { name: "code-block", title: "Code Block", type: "registry:ui", categories: ["code"] },
+    routePath: "/Registry-Atlas/@delta/components/code-block",
+    ...(options.previewUrl ? { previewUrl: options.previewUrl } : {}),
+  };
+}
+
+function registry(): Registry {
+  return {
+    name: "@delta",
+    url: "https://delta.example",
+    description: "Delta",
+    primary_focus: [],
+    component_tags: [],
+    atlas: {
+      aliases: [],
+      coverageStatus: "verified",
+      confidence: "high",
+      notes: "",
+      catalogStatus: "available",
+    },
+    itemSummaries: [],
+  };
+}
