@@ -3,7 +3,8 @@
 Date: 2026-09-29
 
 Research basis:
-`docs/research/2026-09-29-catalog-presentation-reuse-research.md`
+- `docs/research/2026-09-29-catalog-presentation-reuse-research.md`
+- `docs/research/2026-09-29-21st-layout-exemplar-audit.md`
 
 ## Status and approval model
 
@@ -31,7 +32,9 @@ Current symptoms:
 - path-shaped aggregator item names are poor scan labels;
 - theme/style records may already carry structured shadcn `cssVars`, but browse cards do
   not use them;
-- borders and control outlines are too subtle for a robust non-text boundary.
+- borders and control outlines are too subtle for a robust non-text boundary;
+- the current shell/layout still treats Home, collection routes, registry profiles, and item
+  details too uniformly compared with the measured exemplar composition.
 
 The goal is to make browsing materially more informative and asset-specific **without
 reintroducing inference** and without building new subsystems where an existing contract or
@@ -52,6 +55,14 @@ implementation already solves the problem.
 6. **One search intent.** Global catalog search owns text search; the browse rail owns
    facets.
 7. **Progressive specialization.** A route specializes only as far as its evidence allows.
+8. **Shared primitives do not mean identical layouts.** Data/card primitives should be
+   reused, while Components, Templates, Themes, Libraries, item detail, and registry detail
+   use route-specific composition supported by the exemplar.
+9. **Measured layout parity is explicit.** The 1920×1080 and 390×844 exemplar measurements
+   are acceptance contracts, not vague inspiration.
+10. **Reuse the current shadcn authoring contract.** Treat the Tailwind v4
+    `shadcn-ui/registry-template` and documented `shadcn/registry` / `shadcn/schema` APIs
+    as the reference boundary for registry authoring/build integration.
 
 ## Architecture
 
@@ -170,6 +181,26 @@ Specimen precedence:
 Preview-unavailable wording may remain as a small detail-page status, but it must not
 dominate browse-card area.
 
+The current shadcn v4 registry template previews items by importing source owned by the
+registry authoring application. That makes it a useful future preview-host scaffold, but not
+an arbitrary remote-preview contract for Registry Atlas.
+
+### 4A. Reuse the official Open in v0 action
+
+For exact item details with a public HTTPS raw registry-item URL, add an optional external
+`Open in v0` action using the same pattern as the current shadcn v4 registry template.
+
+Rules:
+
+- use the exact public raw item JSON URL already represented by the detail model;
+- URL-encode it as the v0 `url` parameter;
+- open it in a new tab and label it as an external action;
+- omit it when the raw route is unavailable, non-HTTPS, or otherwise not public;
+- do not proxy the item through Registry Atlas solely for this action;
+- do not label this action as an in-product preview or proof that every item executes.
+
+This is adaptation of an existing official shadcn pattern and does not require a new runtime.
+
 ### 5. Asset-specific browse treatment through shared primitives
 
 #### Components
@@ -249,6 +280,262 @@ deterministic sorts remain the source of truth.
 
 A new balanced/ranked discovery policy is approval-gated below.
 
+### 9. Measured exemplar layout contract
+
+The fresh live audit in
+`docs/research/2026-09-29-21st-layout-exemplar-audit.md` is the layout authority for this
+pass. Copy the composition hierarchy, not unsupported marketplace/account metrics.
+
+Shared data/card primitives do **not** require identical route geometry.
+
+#### 9.1 Root landing uses a distinct discovery shell
+
+The root route must not render as the Components application shell with a hero attached.
+
+At desktop it should use:
+- no persistent 240px catalog rail;
+- a slim top product navigation;
+- a left-aligned hero/copy region rather than a centered dashboard card;
+- multiple curated, evidence-backed discovery bands;
+- compact category/collection links above relevant bands;
+- a Libraries/Registries section later in the page;
+- a footer that repeats supported primary destinations.
+
+Discovery bands may reuse the same item-card primitive, but must use real Registry Atlas
+lenses such as reviewed items and explicit category collections. Do not copy exemplar
+"Popular", bookmark counts, or recency labels unless Registry Atlas has direct evidence.
+
+Horizontal discovery bands should use native CSS horizontal overflow/snap behavior rather
+than introducing a carousel dependency.
+
+#### 9.2 Desktop collection shell
+
+At a 1920×1080 reference viewport:
+- persistent left rail target: approximately 240px;
+- top utility/header target: approximately 40px;
+- collection content begins around x=260, leaving ~20px inset after the rail;
+- content uses the full remaining viewport width rather than a centered max-width page;
+- rail and utility/header region remain visually persistent while collection content scrolls;
+- route controls remain compact: roughly 28–32px tall with 6–8px corner radii;
+- desktop rail owns navigation/facets; the utility header owns the single global search.
+
+These are target proportions, not pixel-perfect hardcoding. Browser tests should allow small
+token-driven tolerances while proving the hierarchy and approximate dimensions.
+
+#### 9.3 Components composition
+
+Components uses two complementary browse modes:
+
+1. **sectioned discovery bands** near the top for evidence-backed lenses/collections;
+2. **dense catalog grid** for full browsing.
+
+Discovery-band contract:
+- small section heading;
+- optional right-aligned "View all" route link;
+- horizontally scrollable preview row;
+- no custom carousel runtime is required.
+
+Dense-grid contract at wide desktop:
+- 4 columns in the remaining collection canvas;
+- border-connected cells with hairline boundaries rather than widely separated floating
+  cards;
+- effectively zero inter-cell gap at the grid layer;
+- preview/specimen remains visually dominant;
+- title/registry/provenance metadata remains attached to the cell.
+
+The exemplar measured ~409.75px cells across a ~1640px content canvas at 1920px. Registry
+Atlas should achieve the same four-column density at that viewport without hardcoding that
+exact cell width.
+
+#### 9.4 Templates composition
+
+Templates uses the collection shell but a spacious specimen grid rather than the
+border-connected Components grid.
+
+Wide-desktop target:
+- 4 columns;
+- approximately 24px horizontal gap;
+- approximately 32px vertical gap;
+- approximately 392px card width in a ~1640px content canvas;
+- large visual/metadata specimen first;
+- title and factual source metadata immediately below.
+
+Use an approximately 8:5 specimen aspect ratio where explicit preview/specimen content
+exists. When no preview exists, the metadata specimen occupies that same visual role without
+pretending to be a screenshot.
+
+Do not copy exemplar price/access badges unless source data explicitly supplies equivalent
+facts.
+
+#### 9.5 Themes composition
+
+Themes uses the same 4-column / 24px-by-32px grid rhythm as Templates, but its specimen is
+theme-specific.
+
+When native structured theme data exists:
+- large theme-colored specimen surface;
+- compact swatch row near the upper-left;
+- theme name inside or directly adjacent to the specimen;
+- factual source/author metadata below.
+
+The theme route must not look like Components with a "theme" type badge.
+
+If structured theme data is absent, use the shared metadata specimen. Do not parse arbitrary
+CSS source in the base pass.
+
+#### 9.6 Registries/Libraries directory composition
+
+The Registries route adapts the exemplar Libraries information-density pattern.
+
+Desktop target:
+- persistent collection rail for search/facets/sort;
+- 3-column metadata-card grid in the content canvas;
+- relatively short cards that repeat quickly down the page;
+- registry name/identity, description, explicit item count, and real catalog coverage facts
+  prioritized over decorative preview chrome.
+
+Do not copy exemplar views, popularity, bookmark counts, or update-age labels unless those
+facts are explicitly available in Registry Atlas.
+
+#### 9.7 Icon-related route
+
+The fresh exemplar confirms that a true Icons product is a different interaction model:
+border-connected glyph matrix, family/category rail, and floating style/size/stroke/copy
+controls.
+
+The base Registry Atlas pass must **not** imitate that matrix with its current icon-related
+component records. Keep the current route honestly labeled/reframed as icon-related assets
+and use shared evidence-backed cards.
+
+If a true glyph source is approved later, the exemplar target is:
+- desktop family/category rail;
+- dense border-connected glyph matrix;
+- mobile centered 4-column matrix with ~80px cells;
+- floating icon controls above mobile bottom navigation.
+
+That future glyph browser remains approval-gated.
+
+#### 9.8 Item-detail shell
+
+Exact component/template/theme detail routes leave the collection-rail layout and use a
+centered dossier.
+
+Wide-desktop target:
+- primary dossier max-width approximately 800px;
+- at 1920px, centered around the measured ~798px exemplar column;
+- title/description/provenance first;
+- compact action row directly below;
+- one dominant preview/specimen region;
+- detailed facts after the specimen;
+- related/evidence-backed items later.
+
+Component-detail exemplar measurements:
+- outer specimen ~798px;
+- inner preview ~782px;
+- factual metadata uses a two-column desktop grid with roughly 40px column gap.
+
+Registry Atlas actions remain its own real actions. The base pass additionally adds the
+official-template-style `Open in v0` action when the exact public item URL qualifies.
+
+When no live/explicit preview exists, the same dossier area uses the richer metadata
+specimen; it must not fabricate a runtime.
+
+#### 9.9 Theme-detail hierarchy
+
+Theme details specialize the dossier only where data exists:
+
+1. title/source;
+2. action row;
+3. Preview/specimen;
+4. Colors;
+5. Typography if explicit;
+6. Tokens if explicit;
+7. related themes/assets.
+
+Absent token or typography evidence produces an unavailable/omitted section, not inferred
+values.
+
+#### 9.10 Registry-detail shell
+
+A registry profile uses a distinct two-pane shell rather than the generic collection page.
+
+Wide-desktop target:
+- top utility bar remains compact;
+- sticky registry summary column approximately 320px wide;
+- summary begins near the left page gutter;
+- wide inventory canvas fills the remaining space;
+- inventory can use a dense multi-column card grid;
+- registry identity, description, install/source actions, catalog coverage, and exact item
+  count live in the sticky summary;
+- long-form provenance/about/related factual sections appear below the inventory only when
+  data exists.
+
+This is an adaptation of the existing `registryCollectionView`/shell, not authorization to
+build a second registry-profile application from scratch.
+
+#### 9.11 Mobile collection shell
+
+At 390×844, the desktop rail is replaced, not squeezed.
+
+Mobile shell:
+- compact top bar with menu trigger on the left and route identity centered;
+- no unsupported sign-in/account affordance;
+- collection content uses roughly 12–20px side gutters depending on route;
+- fixed bottom navigation target height approximately 57px;
+- bottom navigation uses only supported Registry Atlas destinations/actions.
+
+Base bottom-nav mapping:
+- Home → root landing;
+- Search → focus/open the canonical global search and route results to Components;
+- Registries → registry directory;
+- Compare → compare route.
+
+Components mobile:
+- Filters pill approximately 32px high;
+- horizontally scrollable quick category chips;
+- one-column, border-connected component cells;
+- roughly 12px outer gutters.
+
+Templates/Themes mobile:
+- one-column specimen list;
+- roughly 20px outer gutters;
+- preserve the desktop grid's visual rhythm with approximately 32px vertical spacing.
+
+#### 9.12 Mobile facet sheet
+
+Reuse the current mobile browse/facet disclosure state rather than adding a new modal
+library. Restyle/adapt it into a bottom sheet.
+
+Required behavior:
+- modal-like bottom sheet with dimmed backdrop;
+- rounded top corners and drag/handle affordance;
+- facet groups use the same URL-backed state as desktop;
+- only supported Registry Atlas dimensions appear;
+- fixed sheet footer contains Reset and a primary Apply/Show results action.
+
+Initial supported groups:
+- Registry;
+- Type;
+- Category;
+- Reviewed;
+- Sort.
+
+Do not copy exemplar Time, primitive-library, Tailwind-version, author, or other filters
+unless Registry Atlas has explicit data and a reviewed product requirement.
+
+If the existing disclosure cannot support this accessibly without a new interaction
+subsystem, stop and request approval before introducing a dependency.
+
+#### 9.13 Responsive invariants
+
+Across these shells:
+- no horizontal document overflow at 390px or 1920px;
+- the mobile bottom nav never covers actionable content without reserved bottom padding;
+- sticky/fixed desktop regions collapse cleanly on mobile;
+- only one canonical text-search intent is exposed;
+- focus order remains logical when rail controls move into the mobile facet sheet;
+- route identity remains visible even when the desktop h1 becomes visually compact.
+
 ## Explicit approval gates
 
 These items must not appear in product code or an implementation plan unless the user
@@ -256,13 +543,18 @@ separately approves them.
 
 ### A. Live arbitrary component/page previews
 
-Existing candidate: CodeSandbox Sandpack.
+Existing reuse candidates:
+- CodeSandbox Sandpack for browser-side sandbox execution;
+- the current shadcn v4 `registry-template` as a build-time preview-host scaffold.
 
-Approval is required because it:
-- executes third-party React/npm code;
-- adds dependency resolution and iframe/bundler behavior;
-- needs trust, network, resource, and failure policies;
-- materially changes the runtime/security boundary.
+Do not build a custom preview runtime or preview-host application from scratch before
+evaluating those existing implementations.
+
+Approval is still required because either approach:
+- executes third-party registry code;
+- needs dependency/materialization rules;
+- needs build/browser isolation, caching, timeouts, networking, and failure policies;
+- materially changes the runtime/security/trust boundary.
 
 Without approval, Registry Atlas uses explicit preview media or metadata specimens only.
 
@@ -300,6 +592,22 @@ Without approval, existing deterministic sorts remain authoritative.
 If implementation discovers that Templates, Themes, or Icon-related assets cannot be
 expressed as variants/compositions of the existing shared views, stop and request approval
 before creating a new standalone renderer system.
+
+### F. Arbitrary public GitHub source-registry expansion
+
+Current shadcn supports public GitHub repositories as source registries using a root
+`registry.json`, including composition through `include`. Registry Atlas therefore does
+not need a custom registry-server protocol if this source class is added later.
+
+This expansion is approval-gated because it changes the source universe beyond the official
+shadcn directory and requires explicit decisions about:
+- opt-in versus curated versus discoverable GitHub sources;
+- exact identity/deduplication against official namespace registries;
+- refresh and caching behavior;
+- provenance labeling.
+
+If approved, use documented shadcn source-registry semantics and the stable
+`shadcn/registry` / `shadcn/schema` APIs instead of inventing a parallel source format.
 
 ## Generated-data and verification lever
 
@@ -388,39 +696,80 @@ Extend catalog query tests for:
 - path-leaf display fallback while route slug stays exact;
 - unchanged registry/type/category/review filtering.
 
-### Views
+### Views and layout contracts
 
-Extend catalog view tests for:
+Extend catalog/view tests for:
 - explicit preview URL precedence;
 - theme swatches only from native structured `themePreview`;
 - metadata specimen replacing the large no-preview placeholder;
-- shared template/theme/icon-related variants;
-- one rendered text-search control.
+- shared template/theme/icon-related card primitives;
+- one rendered text-search control;
+- Home omitting the desktop collection rail;
+- collection shell exposing separate rail, utility-header, and content-canvas regions;
+- Components rendering discovery-band and dense-grid structures;
+- Templates/Themes rendering route-specific specimen-grid classes from shared card data;
+- Registries rendering the dense directory-card grid structure;
+- item detail rendering a dossier/action/specimen/facts hierarchy;
+- registry detail rendering summary-rail + inventory-canvas regions;
+- mobile shell exposing bottom navigation and facet-sheet trigger while the desktop rail is
+  absent.
+
+Extend `visualContract.test.ts` (or the existing equivalent visual-contract test) with
+token/geometry contracts rather than exact screenshot hashes:
+- desktop rail token near 240px;
+- compact utility-bar token near 40px;
+- four-column wide collection grid breakpoint;
+- Templates/Themes 24px column / 32px row gap tokens;
+- registry-directory three-column breakpoint;
+- item-detail max-width near 800px;
+- registry-profile summary rail near 320px;
+- mobile bottom-nav reserved height near 57px;
+- icon-related base route must not claim/render the true-glyph matrix class without a glyph
+  source contract.
 
 ### Accessibility
 
-Add a deterministic contrast assertion for changed boundary tokens.
+Add deterministic assertions for:
+- changed boundary-token contrast;
+- focus-visible contrast remaining distinct from static borders;
+- mobile facet sheet dialog/disclosure naming and focus behavior;
+- bottom navigation labels and current-route state.
 
 ### Managed browser
 
-Use only the managed `registry-atlas` profile and exact instance.
+Use only the managed `registry-atlas` project profile and its exact instance for target-app
+verification. Use the separate design/reference profile only for exemplar comparison.
 
-Inspect at 1920×1080 and 390×844:
-- landing;
-- Components;
-- Templates;
-- Themes, including a native-cssVars specimen if the generated data has one;
-- Icon-related assets;
-- one registry;
-- one exact detail page.
+At 1920×1080 verify:
+- landing has no collection rail and uses the distinct discovery shell;
+- Components rail is approximately 240px and content starts roughly 20px after it;
+- Components reaches four-column dense-grid behavior without horizontal overflow;
+- Templates/Themes reach four-column specimen grids with the intended gap rhythm;
+- Registries reaches a three-column metadata grid;
+- exact item detail uses a centered ~800px dossier;
+- registry detail uses a sticky ~320px summary region plus wide inventory canvas;
+- only one canonical text-search control is exposed;
+- qualifying exact item details expose Open in v0;
+- no fabricated preview media appears.
 
-Verify:
-- no horizontal overflow;
-- one canonical text-search control;
-- clear boundaries/focus;
-- no fabricated preview media;
-- stable exact routes;
-- no browser exceptions or unexpected 5xx responses.
+At 390×844 verify:
+- desktop rail is absent;
+- compact route header remains visible;
+- bottom navigation is fixed and content reserves enough bottom space;
+- Components exposes quick chips plus the facet-sheet trigger;
+- facet sheet opens with dimmed backdrop, supported groups, Reset, and Apply/Show results;
+- Components becomes one column;
+- Templates/Themes become one-column specimen lists;
+- no horizontal document overflow;
+- focus returns logically when the facet sheet closes.
+
+Across all checked routes:
+- stable exact routes and history behavior;
+- no browser exceptions;
+- no unexpected 5xx responses;
+- no unlabeled visible controls;
+- no unsupported exemplar semantics such as fabricated bookmarks, popularity, pricing, or
+  recency.
 
 ## Acceptance criteria
 
@@ -431,19 +780,39 @@ The base pass is complete when:
 3. search uses description/author;
 4. exact route/install identity is unchanged by display formatting;
 5. no-preview browse cards no longer devote most of the card to an empty placeholder;
-6. Templates and Themes communicate their asset class through shared variants;
-7. the current Icons surface is honestly labeled as icon-related unless true glyph evidence
-   exists;
-8. duplicate rail search is removed;
-9. relevant non-text contrast is measured rather than guessed;
-10. the generated-data/product-contract lever covers the new metadata;
-11. full repository verification and managed-browser desktop/mobile verification pass;
-12. no approval-gated subsystem is introduced without separate approval.
+6. qualifying exact item details expose the official shadcn-v4-template-style Open in v0
+   action without introducing a preview runtime;
+7. the root landing uses the distinct discovery shell and does not retain the desktop
+   collection rail;
+8. desktop collection routes use the approximately 240px rail / 40px utility-header
+   hierarchy and full remaining canvas;
+9. Components provides evidence-backed discovery bands plus the dense four-column
+   border-connected browse grid at the wide reference viewport;
+10. Templates and Themes use the four-column specimen-grid rhythm and communicate their
+    asset class through shared primitives rather than identical generic cards;
+11. Registries uses the dense three-column directory rhythm with factual metadata;
+12. exact item detail uses the centered ~800px dossier hierarchy;
+13. registry detail uses the sticky ~320px summary region plus a wide inventory canvas;
+14. the current Icons surface is honestly labeled as icon-related and does not imitate a
+    true glyph matrix unless a glyph source is separately approved;
+15. desktop exposes one canonical text-search intent and duplicate rail search is removed;
+16. mobile replaces the desktop rail with the compact header, quick controls, supported
+    bottom navigation, and accessible facet bottom sheet;
+17. mobile collection layouts match their route-specific one-column or approved glyph-grid
+    behavior without horizontal overflow;
+18. relevant non-text contrast is measured rather than guessed;
+19. the generated-data/product-contract and visual-contract levers cover the new metadata
+    and layout invariants;
+20. full repository verification and managed-browser desktop/mobile verification pass;
+21. no approval-gated subsystem is introduced without separate approval.
 
 ## Non-goals for the base pass
 
 - arbitrary React/npm execution;
 - Sandpack/WebContainer integration;
+- a custom preview-host application when the current shadcn v4 registry template has not
+  first been evaluated;
+- arbitrary public GitHub registry discovery/ingestion without separate approval;
 - browser crawling for previews;
 - screenshot synthesis;
 - CSS source parsing;
@@ -461,12 +830,17 @@ Likely existing files after implementation-plan approval:
 - `scripts/sync-registry-catalog-evidence.mjs`
 - `src/registry-explorer/core/registry.schema.ts`
 - `src/registry-explorer/core/catalogQuery.ts`
+- `src/registry-explorer/ui/catalogLandingView.ts`
 - `src/registry-explorer/ui/catalogComponentsView.ts`
 - `src/registry-explorer/ui/catalogCollectionView.ts`
+- `src/registry-explorer/ui/registryDirectoryView.ts`
+- `src/registry-explorer/ui/registryCollectionView.ts`
+- `src/registry-explorer/ui/itemDetailView.ts`
 - `src/registry-explorer/ui/shell.ts`
 - `public/styles/registry-explorer.css`
-- focused tests under `tests/registry-explorer/`
-- existing product-contract script plus one small local coverage-report/check lever
+- focused tests under `tests/registry-explorer/`, including the existing visual contract
+- existing product-contract/browser-acceptance scripts plus one small local
+  coverage-report/check lever
 
 If implementation requires a materially broader file set or any new runtime/framework
 dependency, stop and re-evaluate the approval boundary before proceeding.

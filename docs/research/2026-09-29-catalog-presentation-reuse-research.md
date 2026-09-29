@@ -138,6 +138,66 @@ Primary sources:
 Icons route. The current surface should describe exact registry-backed icon-related data.
 A real glyph browser needs a separately approved ingestion contract.
 
+### 7. The current shadcn v4 registry template is directly relevant
+
+The correct current reference is `shadcn-ui/registry-template`, which explicitly uses
+Tailwind v4. The separate `registry-template-v3` repository is legacy and is not used for
+this design.
+
+Primary sources:
+- https://github.com/shadcn-ui/registry-template
+- https://ui.shadcn.com/docs/registry
+- https://ui.shadcn.com/docs/registry/getting-started
+
+The v4 template establishes several reusable patterns:
+
+1. A source `registry.json` is the authoring source of truth.
+2. `shadcn build` generates installable item JSON under `public/r/[name].json`.
+3. The author-facing preview page renders local registry source directly by importing it
+   into the application.
+4. Each preview can expose the official `Open in v0` action by passing the public
+   registry-item JSON URL to v0.
+5. Built items remain standard shadcn CLI-compatible registry items.
+
+Pinned source examples:
+- README:
+  https://github.com/shadcn-ui/registry-template/blob/906f859db0125965cba71c51da1707c0a4c6d045/README.md
+- registry definition:
+  https://github.com/shadcn-ui/registry-template/blob/906f859db0125965cba71c51da1707c0a4c6d045/registry.json
+- author preview page:
+  https://github.com/shadcn-ui/registry-template/blob/906f859db0125965cba71c51da1707c0a4c6d045/app/page.tsx
+- Open in v0 action:
+  https://github.com/shadcn-ui/registry-template/blob/906f859db0125965cba71c51da1707c0a4c6d045/components/open-in-v0-button.tsx
+
+The preview behavior is important: the template can render live previews because the
+authoring application owns the source and imports it at build time. The registry JSON does
+not define a universal remote preview runtime for arbitrary third-party items.
+
+Therefore the template is useful as an existing **preview-host scaffold**, not as proof that
+Registry Atlas can safely execute every remote item. If a live preview subsystem is approved
+later, evaluate the current v4 registry template as the build-time host before creating a
+custom preview app. Materializing remote items, resolving dependencies, isolating builds,
+caching output, networking, and failure handling remain new subsystem work and require
+explicit approval.
+
+The immediate reuse opportunity does not require a runtime: exact item-detail pages with a
+public HTTPS raw item URL can expose the same `Open in v0` external action.
+
+The current shadcn docs also support public GitHub source registries with a root
+`registry.json`, composition through `include`, and documented `shadcn/registry` /
+`shadcn/schema` programmatic APIs.
+
+Primary sources:
+- https://ui.shadcn.com/docs/registry/github
+- https://ui.shadcn.com/docs/registry/api-reference
+- https://ui.shadcn.com/docs/registry/registry-json
+- https://ui.shadcn.com/docs/registry/registry-item-json
+
+**Recommendation:** use the current v4 template as the authoritative authoring/build/action
+reference. Reuse its Open in v0 pattern in the base pass. Keep arbitrary GitHub
+source-registry discovery and live preview execution approval-gated because both materially
+change Registry Atlas's source/trust boundary.
+
 ## Current Registry Atlas gap
 
 Inspection of the current branch confirms:
@@ -175,14 +235,18 @@ Inspected local files:
 - Improve existing border/input tokens using measured contrast.
 - Use explicit title where available and exact-path leaf display as a formatting fallback,
   while retaining the complete exact slug as provenance.
+- Reuse the current shadcn v4 registry-template `Open in v0` pattern for exact public item
+  URLs instead of inventing a preview runtime for that interaction.
 
 ### Approval required before implementation
 
-- Sandpack/WebContainer/live third-party component execution.
+- Live third-party component execution, whether via Sandpack/WebContainer or a generated
+  preview host based on the current shadcn v4 registry template.
 - CSS-source fallback parsing for registries without native structured cssVars.
 - New icon-glyph ingestion adapters or an unrelated icon corpus.
 - A new registry-balanced/relevance ranking algorithm.
 - Any standalone asset renderer that cannot be expressed through existing shared primitives.
+- Expansion from the official shadcn directory into arbitrary public GitHub source registries.
 
 ## Recommendation
 
