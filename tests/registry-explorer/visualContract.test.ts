@@ -38,6 +38,17 @@ describe('visual dictionary design contract', () => {
     expect(css).toContain('.registry-directory-grid');
   });
 
+  it('styles the reference-shaped landing, browse rail, directory controls, and honest empty states', () => {
+    expect(css).toContain('.atlas-hero');
+    expect(css).toContain('.landing-metrics');
+    expect(css).toContain('.landing-shortcuts');
+    expect(css).toContain('.catalog-sidebar-routes');
+    expect(css).toContain('.aside-route');
+    expect(css).toContain('.registry-directory-controls');
+    expect(css).toContain('.evidence-unavailable');
+    expect(css).toContain('.catalog-component-card:has(.catalog-component-placeholder)');
+  });
+
   it('announces loading and data-load failures without extra helper UI', () => {
     expect(entry).toContain('class=\"empty-state\" role=\"status\"');
     expect(entry).toContain('aria-live=\"polite\"');
