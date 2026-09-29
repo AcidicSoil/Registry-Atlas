@@ -155,8 +155,6 @@ function registry(): Registry {
     name: "@delta",
     url: "https://delta.example",
     description: "Delta",
-    primary_focus: [],
-    component_tags: [],
     atlas: {
       aliases: [],
       coverageStatus: "verified",

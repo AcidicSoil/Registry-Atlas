@@ -62,8 +62,6 @@ function registry(withRoute: boolean): Registry {
     name: '@delta',
     url: 'https://delta.example',
     description: 'Delta registry.',
-    primary_focus: ['support'],
-    component_tags: ['code-block'],
     mirror: withRoute ? {
       officialName: '@delta',
       registryUrlTemplate: 'https://delta.example/r/{name}.json',

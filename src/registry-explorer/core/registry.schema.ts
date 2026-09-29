@@ -1,129 +1,3 @@
-export const PRIMARY_FOCUS_VALUES = [
-  'ai-chat',
-  'support',
-  'buttons-and-primitives',
-  'dashboards-and-admin',
-  'data-display-and-tables',
-  'auth-and-user',
-  'forms-and-inputs',
-  'navigation',
-  'templates-and-layouts',
-  'marketing-sections',
-  'ecommerce',
-  'misc-utility',
-] as const;
-
-export type PrimaryFocus = (typeof PRIMARY_FOCUS_VALUES)[number];
-
-export const COMPONENT_TAG_VALUES = [
-  'chatbot',
-  'chat-window',
-  'message-list',
-  'typing-indicator',
-  'prompt-box',
-  'button',
-  'input',
-  'badge',
-  'avatar',
-  'toolbar',
-  'icon-button',
-  'loading-button',
-  'toggle',
-  'switch',
-  'select',
-  'textarea',
-  'table',
-  'data-grid',
-  'filter-bar',
-  'pagination',
-  'chart',
-  'stat-widget',
-  'auth-form',
-  'password-input',
-  'stepper',
-  'alert',
-  'navbar',
-  'sidebar',
-  'breadcrumb',
-  'app-shell',
-  'tabs',
-  'dropdown',
-  'hero-section',
-  'feature-grid',
-  'testimonial',
-  'cta-section',
-  'card',
-  'product-card',
-  'price-badge',
-  'cart-drawer',
-  'mini-cart',
-  'column-resize',
-  'search-input',
-  'tag-input',
-  'checkbox',
-  'radio',
-  'datepicker',
-  'submit-button',
-  'error-message',
-  'toast',
-  'modal',
-  'dialog',
-  'drawer',
-  'skeleton',
-  'spinner',
-  'accordion',
-  'calendar',
-  'carousel',
-  'collapsible',
-  'combobox',
-  'command',
-  'context-menu',
-  'hover-card',
-  'menubar',
-  'popover',
-  'progress',
-  'radio-group',
-  'scroll-area',
-  'separator',
-  'sheet',
-  'slider',
-  'tooltip',
-  'file-upload',
-  'dropzone',
-  'pricing-table',
-  'timeline',
-  'scroll-progress',
-  'color-picker',
-  'audio-player',
-  'waveform',
-  'voice-picker',
-  'transcript-viewer',
-  'cropper',
-  'compare-slider',
-  'color-swatch',
-  'circular-progress',
-  'angle-slider',
-  'map-pointer',
-  'chat-interface',
-  'qr-code',
-  'admonition',
-  'card-deck',
-  'zoomable-image',
-  'utility-button',
-  'syntax-highlighting',
-  'code-block',
-  'otp-input',
-  'audit',
-  'receipt',
-  'pill',
-  'decision-pill',
-  'status-pill',
-  'theme',
-  'ai-chat',
-] as const;
-
-export type ComponentTag = (typeof COMPONENT_TAG_VALUES)[number];
-
 export type CoverageStatus = 'verified' | 'inferred' | 'partial' | 'unavailable' | 'unverified';
 
 export type CoverageConfidence = 'high' | 'medium' | 'low' | 'unknown';
@@ -143,8 +17,6 @@ export interface RegistryItemSummary {
   description?: string;
   type?: string;
   category?: string;
-  componentTagsExisting?: readonly string[];
-  componentTagsProposed?: readonly string[];
   source: string;
   provenance: string;
   catalogStatus: ItemCatalogStatus;
@@ -187,12 +59,9 @@ export interface RegistryCatalogIndex {
 }
 
 export interface Registry {
-
   name: string;
   url: string;
   description: string;
-  primary_focus: PrimaryFocus[];
-  component_tags: ComponentTag[];
   framework?: string;
   license?: string;
   atlas?: {
@@ -215,92 +84,6 @@ export interface Registry {
     warnings: string[];
   };
   itemSummaries?: readonly RegistryItemSummary[];
-}
-
-export type CoverageStatusCounts = Record<CoverageStatus, number>;
-
-export interface FocusGroup {
-  focusKey: PrimaryFocus;
-  label: string;
-  registries: Registry[];
-  count: number;
-  statusCounts: CoverageStatusCounts;
-}
-
-export interface ComponentGroup {
-  componentKey: ComponentTag;
-  label: string;
-  categoryLabel?: string;
-  registries: Registry[];
-  count: number;
-  statusCounts: CoverageStatusCounts;
-}
-
-export interface MatrixCell {
-  componentKey: ComponentTag;
-  matched: boolean;
-  status: CoverageStatus | 'absent';
-  label: string;
-}
-
-export interface MatrixRow {
-  registry: Registry;
-  coverage: boolean[];
-  cells: MatrixCell[];
-}
-
-export interface RegistryExplorerMetrics {
-  totalRegistries: number;
-  visibleRegistries: number;
-  focusGroupCount: number;
-  componentTypeCount: number;
-}
-
-export type CandidateMatchField = 'item' | 'component-tag' | 'alias' | 'focus' | 'namespace' | 'description' | 'metadata';
-
-export interface ComponentCandidate {
-  id: string;
-  registry: Registry;
-  matchedLabel: string;
-  matchedField: CandidateMatchField;
-  itemName?: string;
-  itemSlug?: string;
-  itemType?: string;
-  itemCategory?: string;
-  itemDescription?: string;
-  componentTags?: readonly ComponentTag[];
-  taxonomyTagLabels?: readonly string[];
-  taxonomyCategoryLabels?: readonly string[];
-  statusDisplayLabel?: string;
-  statusExplanation?: string;
-  itemSource?: string;
-  itemProvenance?: string;
-  rawItemUrl?: string;
-  docsUrl?: string;
-  evidenceUrl?: string;
-  previewUrl?: string;
-  componentPageUrl?: string;
-  dependencyCount?: number;
-  registryDependencyCount?: number;
-  fileCount?: number;
-  catalogStatus: ItemCatalogStatus;
-  routeEligible: boolean;
-  route?: string;
-  installAction: InstallActionState;
-  matchReasons: string[];
-  coverageStatus: CoverageStatus;
-  coverageLabel: string;
-  confidence: CoverageConfidence;
-  score: number;
-  warnings: readonly string[];
-}
-
-export interface DiscoveryOverview {
-  totalRegistries: number;
-  knownItemCount: number;
-  routeEligibleItemCount: number;
-  verifiedRegistryCount: number;
-  unverifiedRegistryCount: number;
 }
 
 export type InstallActionStatus = 'enabled' | 'disabled';
@@ -337,49 +120,4 @@ export interface BatchInstallCommandState {
   command: string | null;
   disabledReason: string | null;
   tokens: readonly string[];
-}
-
-export interface RegistryProfileFact {
-  label: string;
-  value: string | number | readonly string[];
-  url?: string;
-}
-
-export interface RegistryProfileItemRow {
-  name: string;
-  slug: string;
-  type?: string;
-  category?: string;
-  catalogStatus: ItemCatalogStatus;
-  confidence?: CoverageConfidence;
-  source: string;
-  provenance: string;
-  description?: string;
-  taxonomyTagLabels?: readonly string[];
-  taxonomyCategoryLabels?: readonly string[];
-  statusDisplayLabel?: string;
-  statusExplanation?: string;
-  rawItemUrl?: string;
-  docsUrl?: string;
-  evidenceUrl?: string;
-  previewUrl?: string;
-  componentPageUrl?: string;
-  dependencyCount: number;
-  registryDependencyCount: number;
-  fileCount: number;
-  routeEligible: boolean;
-  route?: string;
-  routeLabel: string;
-  installAction: InstallActionState;
-}
-
-export interface RegistryProfileSection {
-  name: 'Official shadcn facts' | 'Registry Atlas enrichment' | 'Item discovery status' | 'Known items' | 'Why this matched';
-  facts?: readonly RegistryProfileFact[];
-  items?: readonly RegistryProfileItemRow[];
-}
-
-export interface RegistryProfile {
-  registry: Registry;
-  sections: readonly RegistryProfileSection[];
 }

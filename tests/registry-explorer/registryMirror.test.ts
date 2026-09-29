@@ -67,16 +67,13 @@ describe('registryMirror validation', () => {
     expect(result.errors.map(error => error.code)).toContain('template-missing-token');
   });
 
-  it('fails invalid Atlas enrichment values', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({
-        primaryFocus: ['support', 'unknown-focus'],
-        componentTags: ['button', 'unknown-tag'],
-      }),
-    ]));
+  it('ignores retired taxonomy enrichment fields from older mirror records', () => {
+    const mirror = createMirror([createRecord()]) as any;
+    mirror.registries[0].atlas.primary_focus = ['unknown-focus'];
+    mirror.registries[0].atlas.component_tags = ['unknown-tag'];
+    const result = validateRegistryMirror(mirror);
 
-    expect(result.errors.map(error => error.code)).toContain('atlas-invalid-primary-focus');
-    expect(result.errors.map(error => error.code)).toContain('atlas-invalid-component-tag');
+    expect(result.errors).toEqual([]);
   });
 
   it('fails invalid coverage, confidence, catalog status, and item summaries', () => {
@@ -200,8 +197,6 @@ function createRecord(options: {
   name?: string;
   homepage?: string;
   registryUrlTemplate?: string;
-  primaryFocus?: string[];
-  componentTags?: string[];
   coverageStatus?: string;
   confidence?: string;
   catalogStatus?: string;
@@ -215,8 +210,6 @@ function createRecord(options: {
       description: 'Example registry.',
     },
     atlas: {
-      primary_focus: options.primaryFocus ?? ['support'],
-      component_tags: options.componentTags ?? ['button'],
       coverage_status: options.coverageStatus ?? 'inferred',
       confidence: options.confidence ?? 'medium',
       catalog_status: options.catalogStatus ?? 'unverified',

@@ -1,9 +1,7 @@
 import type {
-  ComponentTag,
   CoverageConfidence,
   CoverageStatus,
   ItemCatalogStatus,
-  PrimaryFocus,
   Registry,
   RegistryCatalogIndex,
   RegistryItemSummary,
@@ -39,8 +37,6 @@ interface RegistryMirrorRecord {
     description: string;
   };
   atlas?: {
-    primary_focus?: PrimaryFocus[];
-    component_tags?: ComponentTag[];
     aliases?: string[];
     coverage_status?: CoverageStatus;
     confidence?: CoverageConfidence;
@@ -56,10 +52,6 @@ interface RegistryMirrorRecord {
       description?: string;
       type?: string;
       category?: string;
-      component_tags_existing?: string[];
-      componentTagsExisting?: string[];
-      component_tags_proposed?: string[];
-      componentTagsProposed?: string[];
       source: string;
       provenance: string;
       catalog_status?: ItemCatalogStatus;
@@ -137,8 +129,6 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
       name: record.official.name,
       url: record.official.homepage,
       description: record.official.description,
-      primary_focus: record.atlas?.primary_focus ?? [],
-      component_tags: record.atlas?.component_tags ?? [],
       atlas: {
         aliases: record.atlas?.aliases ?? [],
         coverageStatus: record.atlas?.coverage_status ?? 'unverified',
@@ -174,8 +164,6 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
     description: item.description,
     type: item.type,
     category: item.category,
-    componentTagsExisting: item.component_tags_existing ?? item.componentTagsExisting,
-    componentTagsProposed: item.component_tags_proposed ?? item.componentTagsProposed,
     source: item.source,
     provenance: item.provenance,
     catalogStatus: item.catalog_status ?? item.catalogStatus ?? 'unverified',

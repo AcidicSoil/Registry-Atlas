@@ -30,6 +30,10 @@ run = "pnpm typecheck:test"
 description = "Validate generated registry data"
 run = "pnpm validate:data"
 
+[tasks."check:product-contract"]
+description = "Check canonical routes, retired taxonomy removal, and detail bundles"
+run = "pnpm check:product-contract"
+
 [tasks.verify]
 description = "Run the full maintainer verification gate"
 run = "pnpm verify"

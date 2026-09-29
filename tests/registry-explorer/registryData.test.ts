@@ -2,10 +2,6 @@ import { describe, expect, it } from 'vitest';
 import mirrorData from '../../public/data/registries.json';
 import catalogIndexData from '../../public/data/registry-catalog-items.json';
 import { parseRegistryCatalogIndex } from '../../src/registry-explorer/core/registryCatalogIndex';
-import {
-  COMPONENT_TAG_VALUES,
-  PRIMARY_FOCUS_VALUES,
-} from '../../src/registry-explorer/core/registry.schema';
 
 describe('registryData mirror artifact', () => {
   it('tracks the official shadcn registry source metadata', () => {
@@ -17,29 +13,20 @@ describe('registryData mirror artifact', () => {
 
   it('has unique non-empty prefixed registry namespaces', () => {
     const names = mirrorData.registries.map(registry => registry.official.name.trim());
-
     expect(names.every(name => name.length > 0)).toBe(true);
     expect(names.every(name => name.startsWith('@'))).toBe(true);
     expect(new Set(names.map(name => name.toLowerCase())).size).toBe(names.length);
   });
 
-  it('uses only allowed Atlas primary focus values', () => {
-    mirrorData.registries.forEach(registry => {
-      registry.atlas.primary_focus.forEach(focus => {
-        expect(PRIMARY_FOCUS_VALUES).toContain(focus);
-      });
-    });
+  it('does not persist the retired inferred taxonomy in the active runtime artifact', () => {
+    const serialized = JSON.stringify(mirrorData);
+    expect(serialized).not.toContain('"primary_focus"');
+    expect(serialized).not.toContain('"component_tags"');
+    expect(serialized).not.toContain('"component_tags_existing"');
+    expect(serialized).not.toContain('"component_tags_proposed"');
   });
 
-  it('uses only allowed Atlas component tag values', () => {
-    mirrorData.registries.forEach(registry => {
-      registry.atlas.component_tags.forEach(tag => {
-        expect(COMPONENT_TAG_VALUES).toContain(tag);
-      });
-    });
-  });
-
-  it('includes imported catalog-backed item summaries for the v1.1 sample registries', () => {
+  it('includes imported catalog-backed item summaries for the reviewed sample registries', () => {
     const byName = new Map(mirrorData.registries.map(registry => [registry.official.name, registry]));
 
     expect(byName.get('@delego')?.atlas.item_summaries.map(item => item.slug)).toEqual(
@@ -62,31 +49,6 @@ describe('registryData mirror artifact', () => {
     );
   });
 
-  it('surfaces accepted researched tags at registry level for imported sample registries', () => {
-    const byName = new Map(mirrorData.registries.map(registry => [registry.official.name, registry]));
-
-    expect(byName.get('@delego')?.atlas.component_tags).toEqual(expect.arrayContaining([
-      'theme',
-      'status-pill',
-      'decision-pill',
-      'receipt',
-      'audit',
-    ]));
-    expect(byName.get('@delta')?.atlas.component_tags).toEqual(expect.arrayContaining([
-      'otp-input',
-      'code-block',
-      'qr-code',
-      'ai-chat',
-      'map-pointer',
-    ]));
-    expect(byName.get('@diceui')?.atlas.component_tags).toEqual(expect.arrayContaining([
-      'angle-slider',
-      'color-picker',
-      'compare-slider',
-      'cropper',
-    ]));
-  });
-
   it('validates the committed compact catalog index and its declared counts', () => {
     const index = parseRegistryCatalogIndex(catalogIndexData);
     const items = Object.values(index.registries).flat();
@@ -100,9 +62,8 @@ describe('registryData mirror artifact', () => {
     expect(items.length).toBeGreaterThan(reviewedItemCount);
   });
 
-  it('retains existing v1.0 seeded item summaries after the v1.1 catalog import', () => {
+  it('retains existing reviewed item summaries after later catalog imports', () => {
     const assistant = mirrorData.registries.find(registry => registry.official.name === '@assistant-ui');
-
     expect(assistant?.atlas.item_summaries.map(item => item.slug)).toEqual(
       expect.arrayContaining(['thread', 'composer']),
     );

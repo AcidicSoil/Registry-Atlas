@@ -228,7 +228,7 @@ describe('registry explorer shell interactions', () => {
   });
 
   it('lazily upgrades indexed-only detail from the upstream item JSON and caches it', async () => {
-    const fetchImpl = vi.fn(async () => jsonResponse({
+    const fetchImpl = vi.fn(async (_input: RequestInfo | URL) => jsonResponse({
       name: 'catalog-only',
       title: 'Catalog Only Loaded',
       description: 'Loaded from the upstream registry item JSON.',
@@ -441,8 +441,6 @@ function registryFixture(): Registry {
     name: '@delta',
     url: 'https://delta.example',
     description: 'Delta registry fixture.',
-    primary_focus: ['support'],
-    component_tags: ['code-block'],
     atlas: {
       aliases: [],
       coverageStatus: 'verified',
@@ -469,7 +467,6 @@ function registryFixture(): Registry {
       description: 'Syntax highlighted code block.',
       type: 'registry:ui',
       category: 'code',
-      componentTagsProposed: ['code-block'],
       source: 'registry-json',
       provenance: 'fixture',
       catalogStatus: 'available',

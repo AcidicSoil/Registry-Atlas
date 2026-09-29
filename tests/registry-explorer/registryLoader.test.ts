@@ -27,8 +27,6 @@ describe('loadRegistries', () => {
         name: '@example',
         url: 'https://example.com',
         description: 'Example registry.',
-        primary_focus: ['support'],
-        component_tags: ['button'],
         atlas: {
           aliases: ['example-ui'],
           coverageStatus: 'inferred',
@@ -81,14 +79,14 @@ describe('loadRegistries', () => {
     expect(data.warnings.map(warning => warning.code)).toEqual(['url-http']);
   });
 
-  it('handles empty Atlas enrichment arrays without throwing', async () => {
-    const data = await loadRegistries(fetchFixture(createMirror({
-      primaryFocus: [],
-      componentTags: [],
-    })));
+  it('ignores retired inferred taxonomy fields from older mirrors', async () => {
+    const mirror = createMirror() as any;
+    mirror.registries[0].atlas.primary_focus = ['support'];
+    mirror.registries[0].atlas.component_tags = ['button'];
+    const data = await loadRegistries(fetchFixture(mirror));
 
-    expect(data.registries[0]?.primary_focus).toEqual([]);
-    expect(data.registries[0]?.component_tags).toEqual([]);
+    expect(data.registries[0]).not.toHaveProperty('primary_focus');
+    expect(data.registries[0]).not.toHaveProperty('component_tags');
   });
 
   it('throws when the runtime mirror cannot be fetched', async () => {
@@ -108,10 +106,10 @@ describe('loadRegistries', () => {
   it('ignores unsupported compact-index item types', async () => {
     const catalog = createCatalogIndex();
     catalog.registries['@example'].push({
-      name: 'theme-only',
-      title: 'Theme Only',
-      type: 'registry:theme',
-      categories: ['theme'],
+      name: 'helpers',
+      title: 'Helpers',
+      type: 'registry:lib',
+      categories: ['internal'],
     });
     const data = await loadRegistries(fetchFixture(createMirror(), catalog));
 
@@ -172,8 +170,6 @@ function createMirror(options: {
   name?: string;
   homepage?: string;
   registryUrlTemplate?: string;
-  primaryFocus?: string[];
-  componentTags?: string[];
 } = {}) {
   return {
     meta: {
@@ -194,8 +190,6 @@ function createMirror(options: {
           description: 'Example registry.',
         },
         atlas: {
-          primary_focus: options.primaryFocus ?? ['support'],
-          component_tags: options.componentTags ?? ['button'],
           aliases: ['example-ui'],
           coverage_status: 'inferred',
           confidence: 'medium',

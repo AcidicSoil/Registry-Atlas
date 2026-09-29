@@ -113,8 +113,6 @@ function registryFixture(options: { title?: string; description?: string; filePa
     name: '@delta',
     url: 'https://delta.example',
     description: 'Delta registry fixture.',
-    primary_focus: ['support'],
-    component_tags: ['code-block'],
     atlas: {
       aliases: [],
       coverageStatus: 'verified',
@@ -139,7 +137,6 @@ function registryFixture(options: { title?: string; description?: string; filePa
         description: options.description ?? 'Syntax highlighted code block.',
         type: 'registry:ui',
         category: 'code',
-        componentTagsProposed: ['code-block'],
         source: 'registry-json',
         provenance: 'fixture',
         catalogStatus: 'available',

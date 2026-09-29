@@ -70,15 +70,11 @@
       "name": "delego-theme",
       "slug": "delego-theme",
       "title": "Delego Theme",
-      "description": "Delego design tokens mapped onto shadcn variables (OKLCH light & dark). Electric‑indigo primary, signal‑mint accent and protocol decision palette.",
+      "description": "Delego design tokens mapped onto shadcn variables (OKLCH light & dark). Electric\u2011indigo primary, signal\u2011mint accent and protocol decision palette.",
       "type": "registry:theme",
       "category": "theme",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "theme"
-      ],
       "source": "registry-json",
-      "provenance": "Item defined in the Delego registry JSON with a type of registry:theme and a descriptive title and CSS variables【59244129981157†L0-L60】.",
+      "provenance": "Item defined in the Delego registry JSON with a type of registry:theme and a descriptive title and CSS variables\u301059244129981157\u2020L0-L60\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -89,7 +85,7 @@
       "docs_url": "https://github.com/Delego-Dev/registry",
       "preview_url": "",
       "evidence_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
-      "evidence_note": "Theme listed in registry JSON with detailed CSS variables and description【59244129981157†L0-L60】.",
+      "evidence_note": "Theme listed in registry JSON with detailed CSS variables and description\u301059244129981157\u2020L0-L60\u3011.",
       "dependencies": [],
       "devDependencies": [],
       "registryDependencies": [],
@@ -100,15 +96,11 @@
       "name": "button",
       "slug": "button",
       "title": "Button",
-      "description": "Delego button — primary (indigo glow), secondary, ghost, outline, link and protocol‑semantic allow/deny actions.",
+      "description": "Delego button \u2014 primary (indigo glow), secondary, ghost, outline, link and protocol\u2011semantic allow/deny actions.",
       "type": "registry:ui",
       "category": "button",
-      "component_tags_existing": [
-        "button"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Delego registry JSON defines a UI component named button with variations and dependencies【59244129981157†L114-L129】.",
+      "provenance": "Delego registry JSON defines a UI component named button with variations and dependencies\u301059244129981157\u2020L114-L129\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -119,7 +111,7 @@
       "docs_url": "https://github.com/Delego-Dev/registry",
       "preview_url": "",
       "evidence_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
-      "evidence_note": "Button entry appears in the Delego registry JSON with a descriptive title and dependencies【59244129981157†L114-L129】.",
+      "evidence_note": "Button entry appears in the Delego registry JSON with a descriptive title and dependencies\u301059244129981157\u2020L114-L129\u3011.",
       "dependencies": [
         "class-variance-authority",
         "@radix-ui/react-slot"
@@ -144,14 +136,8 @@
       "description": "Mono pill with leading icon and status color. Variants include allow, approval, deny, indigo and neutral.",
       "type": "registry:ui",
       "category": "badge",
-      "component_tags_existing": [
-        "badge"
-      ],
-      "component_tags_proposed": [
-        "status-pill"
-      ],
       "source": "registry-json",
-      "provenance": "The status‑badge item is listed in the Delego registry JSON with a clear description and dependency on the theme【59244129981157†L130-L144】.",
+      "provenance": "The status\u2011badge item is listed in the Delego registry JSON with a clear description and dependency on the theme\u301059244129981157\u2020L130-L144\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -162,7 +148,7 @@
       "docs_url": "https://github.com/Delego-Dev/registry",
       "preview_url": "",
       "evidence_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
-      "evidence_note": "Status badge defined in registry JSON with description and file path【59244129981157†L130-L144】.",
+      "evidence_note": "Status badge defined in registry JSON with description and file path\u301059244129981157\u2020L130-L144\u3011.",
       "dependencies": [
         "class-variance-authority",
         "@radix-ui/react-slot"
@@ -187,13 +173,8 @@
       "description": "Signature Delego element that displays a Decision outcome (allow / needs approval / deny) with canonical icon, mono label and color.",
       "type": "registry:ui",
       "category": "pill",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "decision-pill",
-        "pill"
-      ],
       "source": "registry-json",
-      "provenance": "Decision pill appears in Delego registry JSON with dependencies and file path【59244129981157†L148-L162】.",
+      "provenance": "Decision pill appears in Delego registry JSON with dependencies and file path\u301059244129981157\u2020L148-L162\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -204,7 +185,7 @@
       "docs_url": "https://github.com/Delego-Dev/registry",
       "preview_url": "",
       "evidence_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
-      "evidence_note": "Decision pill entry listed in registry JSON with description and dependencies【59244129981157†L148-L162】.",
+      "evidence_note": "Decision pill entry listed in registry JSON with description and dependencies\u301059244129981157\u2020L148-L162\u3011.",
       "dependencies": [
         "lucide-react"
       ],
@@ -225,16 +206,11 @@
       "name": "signed-receipt",
       "slug": "signed-receipt",
       "title": "Signed Receipt",
-      "description": "Ownable audit visual — one hash‑chained, Ed25519‑signed ledger record with signal bar, seal and mono key‑value grid.",
+      "description": "Ownable audit visual \u2014 one hash\u2011chained, Ed25519\u2011signed ledger record with signal bar, seal and mono key\u2011value grid.",
       "type": "registry:ui",
       "category": "receipt",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "receipt",
-        "audit"
-      ],
       "source": "registry-json",
-      "provenance": "Signed receipt listed in Delego registry JSON with description, dependencies and file path【59244129981157†L166-L179】.",
+      "provenance": "Signed receipt listed in Delego registry JSON with description, dependencies and file path\u301059244129981157\u2020L166-L179\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -245,7 +221,7 @@
       "docs_url": "https://github.com/Delego-Dev/registry",
       "preview_url": "",
       "evidence_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
-      "evidence_note": "Signed receipt component appears in registry JSON with Ed25519 ledger record description【59244129981157†L166-L179】.",
+      "evidence_note": "Signed receipt component appears in registry JSON with Ed25519 ledger record description\u301059244129981157\u2020L166-L179\u3011.",
       "dependencies": [
         "lucide-react"
       ],
@@ -269,12 +245,8 @@
       "description": "Labeled input with optional leading icon and mono hint, lit by the indigo focus halo.",
       "type": "registry:ui",
       "category": "input",
-      "component_tags_existing": [
-        "input"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Field component listed in Delego registry JSON with description and file path【59244129981157†L183-L195】.",
+      "provenance": "Field component listed in Delego registry JSON with description and file path\u301059244129981157\u2020L183-L195\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -285,7 +257,7 @@
       "docs_url": "https://github.com/Delego-Dev/registry",
       "preview_url": "",
       "evidence_url": "https://raw.githubusercontent.com/Delego-Dev/registry/main/public/r/registry.json",
-      "evidence_note": "Field component defined in registry JSON with dependencies and file path【59244129981157†L183-L195】.",
+      "evidence_note": "Field component defined in registry JSON with dependencies and file path\u301059244129981157\u2020L183-L195\u3011.",
       "dependencies": [],
       "devDependencies": [],
       "registryDependencies": [
@@ -309,14 +281,8 @@
       "description": "OTP input component with six slots.",
       "type": "registry:ui",
       "category": "input",
-      "component_tags_existing": [
-        "input"
-      ],
-      "component_tags_proposed": [
-        "otp-input"
-      ],
       "source": "registry-json",
-      "provenance": "Delta registry JSON lists input‑otp as a UI component with dependency on lucide-react and file path【41141706564470†L38-L47】.",
+      "provenance": "Delta registry JSON lists input\u2011otp as a UI component with dependency on lucide-react and file path\u301041141706564470\u2020L38-L47\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -327,7 +293,7 @@
       "docs_url": "https://deltacomponents.dev/components/input-otp",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Input‑otp item is defined in Delta registry JSON with dependencies and file path【41141706564470†L38-L47】.",
+      "evidence_note": "Input\u2011otp item is defined in Delta registry JSON with dependencies and file path\u301041141706564470\u2020L38-L47\u3011.",
       "dependencies": [
         "lucide-react"
       ],
@@ -346,16 +312,11 @@
       "name": "code-block",
       "slug": "code-block",
       "title": "Code Block",
-      "description": "Syntax‑highlighted code block with copy button and tabs for multi‑language snippets.",
+      "description": "Syntax\u2011highlighted code block with copy button and tabs for multi\u2011language snippets.",
       "type": "registry:ui",
       "category": "code-display",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "code-block",
-        "syntax-highlighting"
-      ],
       "source": "registry-json",
-      "provenance": "Delta registry JSON lists code‑block with dependencies on Prism packages and multiple registry dependencies【41141706564470†L81-L99】.",
+      "provenance": "Delta registry JSON lists code\u2011block with dependencies on Prism packages and multiple registry dependencies\u301041141706564470\u2020L81-L99\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -366,7 +327,7 @@
       "docs_url": "https://deltacomponents.dev/components/code-block",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Code‑block is defined in Delta registry JSON with dependencies and file path【41141706564470†L81-L99】.",
+      "evidence_note": "Code\u2011block is defined in Delta registry JSON with dependencies and file path\u301041141706564470\u2020L81-L99\u3011.",
       "dependencies": [
         "lucide-react",
         "prism-react-renderer",
@@ -394,14 +355,8 @@
       "description": "Utility button that copies text to clipboard; designed to accompany code blocks or inputs.",
       "type": "registry:ui",
       "category": "button",
-      "component_tags_existing": [
-        "button"
-      ],
-      "component_tags_proposed": [
-        "utility-button"
-      ],
       "source": "registry-json",
-      "provenance": "Delta registry JSON defines copy‑button with dependencies on lucide‑react and registry dependencies【41141706564470†L101-L118】.",
+      "provenance": "Delta registry JSON defines copy\u2011button with dependencies on lucide\u2011react and registry dependencies\u301041141706564470\u2020L101-L118\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -412,7 +367,7 @@
       "docs_url": "https://deltacomponents.dev/components/copy-button",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Copy button entry found in Delta registry JSON with dependencies and registryDependencies【41141706564470†L101-L118】.",
+      "evidence_note": "Copy button entry found in Delta registry JSON with dependencies and registryDependencies\u301041141706564470\u2020L101-L118\u3011.",
       "dependencies": [
         "lucide-react"
       ],
@@ -437,12 +392,8 @@
       "description": "Zoomable image component built with the Cambio library.",
       "type": "registry:ui",
       "category": "image",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "zoomable-image"
-      ],
       "source": "registry-json",
-      "provenance": "Cambio image appears in Delta registry JSON with dependencies on lucide-react and cambio【41141706564470†L121-L133】.",
+      "provenance": "Cambio image appears in Delta registry JSON with dependencies on lucide-react and cambio\u301041141706564470\u2020L121-L133\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -453,7 +404,7 @@
       "docs_url": "https://deltacomponents.dev/components/cambio-image",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Cambio image item defined in registry JSON with file path and dependencies【41141706564470†L121-L133】.",
+      "evidence_note": "Cambio image item defined in registry JSON with file path and dependencies\u301041141706564470\u2020L121-L133\u3011.",
       "dependencies": [
         "lucide-react",
         "cambio"
@@ -473,17 +424,11 @@
       "name": "card-deck",
       "slug": "card-deck",
       "title": "Card Deck",
-      "description": "Swipeable card deck built with framer‑motion and swiper.",
+      "description": "Swipeable card deck built with framer\u2011motion and swiper.",
       "type": "registry:ui",
       "category": "carousel",
-      "component_tags_existing": [
-        "carousel"
-      ],
-      "component_tags_proposed": [
-        "card-deck"
-      ],
       "source": "registry-json",
-      "provenance": "Card deck defined in Delta registry JSON with dependencies on lucide‑react, framer‑motion and swiper【41141706564470†L135-L146】.",
+      "provenance": "Card deck defined in Delta registry JSON with dependencies on lucide\u2011react, framer\u2011motion and swiper\u301041141706564470\u2020L135-L146\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -494,7 +439,7 @@
       "docs_url": "https://deltacomponents.dev/components/card-deck",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Card deck component appears in Delta registry JSON with dependencies and file path【41141706564470†L135-L146】.",
+      "evidence_note": "Card deck component appears in Delta registry JSON with dependencies and file path\u301041141706564470\u2020L135-L146\u3011.",
       "dependencies": [
         "lucide-react",
         "framer-motion",
@@ -518,14 +463,8 @@
       "description": "Callout box styled as a note or warning.",
       "type": "registry:ui",
       "category": "callout",
-      "component_tags_existing": [
-        "alert"
-      ],
-      "component_tags_proposed": [
-        "admonition"
-      ],
       "source": "registry-json",
-      "provenance": "Admonition appears in Delta registry JSON with file path【41141706564470†L150-L159】.",
+      "provenance": "Admonition appears in Delta registry JSON with file path\u301041141706564470\u2020L150-L159\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -536,7 +475,7 @@
       "docs_url": "https://deltacomponents.dev/components/admonition",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Admonition defined in Delta registry JSON with file path【41141706564470†L150-L159】.",
+      "evidence_note": "Admonition defined in Delta registry JSON with file path\u301041141706564470\u2020L150-L159\u3011.",
       "dependencies": [
         "lucide-react"
       ],
@@ -558,12 +497,8 @@
       "description": "Accessible tabbed navigation built on Radix UI tabs.",
       "type": "registry:ui",
       "category": "tabs",
-      "component_tags_existing": [
-        "tabs"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Tabs component appears in Delta registry JSON with dependency on @radix-ui/react-tabs and file path【41141706564470†L183-L194】.",
+      "provenance": "Tabs component appears in Delta registry JSON with dependency on @radix-ui/react-tabs and file path\u301041141706564470\u2020L183-L194\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -574,7 +509,7 @@
       "docs_url": "https://deltacomponents.dev/components/tabs",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Tabs item is listed in Delta registry JSON with dependencies and file path【41141706564470†L183-L194】.",
+      "evidence_note": "Tabs item is listed in Delta registry JSON with dependencies and file path\u301041141706564470\u2020L183-L194\u3011.",
       "dependencies": [
         "@radix-ui/react-tabs"
       ],
@@ -596,12 +531,8 @@
       "description": "Generates QR codes with customizable styles using the qr-code-styling package.",
       "type": "registry:ui",
       "category": "qr-code",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "qr-code"
-      ],
       "source": "registry-json",
-      "provenance": "QR code component is defined in Delta registry JSON with dependency on qr-code-styling【41141706564470†L196-L205】.",
+      "provenance": "QR code component is defined in Delta registry JSON with dependency on qr-code-styling\u301041141706564470\u2020L196-L205\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -612,7 +543,7 @@
       "docs_url": "https://deltacomponents.dev/components/qrcode",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "QR code item appears in Delta registry JSON with dependency and file path【41141706564470†L196-L205】.",
+      "evidence_note": "QR code item appears in Delta registry JSON with dependency and file path\u301041141706564470\u2020L196-L205\u3011.",
       "dependencies": [
         "qr-code-styling"
       ],
@@ -634,13 +565,8 @@
       "description": "Streaming chat interface built for AI/LLM interactions; includes message list, composer and streaming responses.",
       "type": "registry:ui",
       "category": "chat",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "chat-interface",
-        "ai-chat"
-      ],
       "source": "registry-json",
-      "provenance": "Chat item is listed in Delta registry JSON with dependencies on lucide-react, streamdown and motion【41141706564470†L209-L227】.",
+      "provenance": "Chat item is listed in Delta registry JSON with dependencies on lucide-react, streamdown and motion\u301041141706564470\u2020L209-L227\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -651,7 +577,7 @@
       "docs_url": "https://deltacomponents.dev/components/chat",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Chat component defined in Delta registry JSON with dependencies and registryDependencies【41141706564470†L209-L227】.",
+      "evidence_note": "Chat component defined in Delta registry JSON with dependencies and registryDependencies\u301041141706564470\u2020L209-L227\u3011.",
       "dependencies": [
         "lucide-react",
         "streamdown",
@@ -681,12 +607,8 @@
       "description": "Interactive Mapbox map pointer widget.",
       "type": "registry:ui",
       "category": "map",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "map-pointer"
-      ],
       "source": "registry-json",
-      "provenance": "Mapbox pointer appears in Delta registry JSON with file path【41141706564470†L231-L237】.",
+      "provenance": "Mapbox pointer appears in Delta registry JSON with file path\u301041141706564470\u2020L231-L237\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -697,7 +619,7 @@
       "docs_url": "https://deltacomponents.dev/components/mapbox-pointer",
       "preview_url": "",
       "evidence_url": "https://deltacomponents.dev/r/registry.json",
-      "evidence_note": "Mapbox pointer component listed in Delta registry JSON with file path【41141706564470†L231-L237】.",
+      "evidence_note": "Mapbox pointer component listed in Delta registry JSON with file path\u301041141706564470\u2020L231-L237\u3011.",
       "dependencies": [],
       "devDependencies": [],
       "registryDependencies": [],
@@ -716,15 +638,11 @@
       "name": "action-bar",
       "slug": "action-bar",
       "title": "Action Bar",
-      "description": "Action bar component built on Radix UI with compose‑refs utility.",
+      "description": "Action bar component built on Radix UI with compose\u2011refs utility.",
       "type": "registry:ui",
       "category": "toolbar",
-      "component_tags_existing": [
-        "toolbar"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Dice UI registry JSON lists action‑bar with dependencies on radix‑ui and compose‑refs files【294852709217546†L5-L23】.",
+      "provenance": "Dice UI registry JSON lists action\u2011bar with dependencies on radix\u2011ui and compose\u2011refs files\u3010294852709217546\u2020L5-L23\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -735,7 +653,7 @@
       "docs_url": "https://diceui.com/components/action-bar",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Action‑bar is defined in Dice UI registry JSON with dependencies and file paths【294852709217546†L5-L23】.",
+      "evidence_note": "Action\u2011bar is defined in Dice UI registry JSON with dependencies and file paths\u3010294852709217546\u2020L5-L23\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -766,14 +684,8 @@
       "description": "Radial angle slider input with visual indicator.",
       "type": "registry:ui",
       "category": "slider",
-      "component_tags_existing": [
-        "slider"
-      ],
-      "component_tags_proposed": [
-        "angle-slider"
-      ],
       "source": "registry-json",
-      "provenance": "Dice UI registry JSON defines angle‑slider with dependencies on radix‑ui and internal use‑ref utilities【294852709217546†L27-L49】.",
+      "provenance": "Dice UI registry JSON defines angle\u2011slider with dependencies on radix\u2011ui and internal use\u2011ref utilities\u3010294852709217546\u2020L27-L49\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -784,7 +696,7 @@
       "docs_url": "https://diceui.com/components/angle-slider",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Angle‑slider entry appears in Dice UI registry JSON with dependencies and file paths【294852709217546†L27-L49】.",
+      "evidence_note": "Angle\u2011slider entry appears in Dice UI registry JSON with dependencies and file paths\u3010294852709217546\u2020L27-L49\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -820,12 +732,8 @@
       "description": "A group of overlapping avatars for representing multiple users.",
       "type": "registry:ui",
       "category": "avatar",
-      "component_tags_existing": [
-        "avatar"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Avatar group item appears in Dice UI registry JSON with dependency on radix‑ui and file path【294852709217546†L53-L63】.",
+      "provenance": "Avatar group item appears in Dice UI registry JSON with dependency on radix\u2011ui and file path\u3010294852709217546\u2020L53-L63\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -836,7 +744,7 @@
       "docs_url": "https://diceui.com/components/avatar-group",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Avatar group defined in Dice UI registry JSON【294852709217546†L53-L63】.",
+      "evidence_note": "Avatar group defined in Dice UI registry JSON\u3010294852709217546\u2020L53-L63\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -858,12 +766,8 @@
       "description": "Badge component that handles overflow counts gracefully.",
       "type": "registry:ui",
       "category": "badge",
-      "component_tags_existing": [
-        "badge"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Badge overflow is listed in Dice UI registry JSON with dependencies and file paths【294852709217546†L66-L79】.",
+      "provenance": "Badge overflow is listed in Dice UI registry JSON with dependencies and file paths\u3010294852709217546\u2020L66-L79\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -874,7 +778,7 @@
       "docs_url": "https://diceui.com/components/badge-overflow",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Badge overflow entry appears in Dice UI registry JSON【294852709217546†L66-L79】.",
+      "evidence_note": "Badge overflow entry appears in Dice UI registry JSON\u3010294852709217546\u2020L66-L79\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -901,12 +805,8 @@
       "description": "Banner component for announcements and alerts.",
       "type": "registry:ui",
       "category": "alert",
-      "component_tags_existing": [
-        "alert"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Banner appears in Dice UI registry JSON with dependencies and file path【294852709217546†L83-L99】.",
+      "provenance": "Banner appears in Dice UI registry JSON with dependencies and file path\u3010294852709217546\u2020L83-L99\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -917,7 +817,7 @@
       "docs_url": "https://diceui.com/components/banner",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Banner item defined in Dice UI registry JSON with dependencies and file path【294852709217546†L83-L99】.",
+      "evidence_note": "Banner item defined in Dice UI registry JSON with dependencies and file path\u3010294852709217546\u2020L83-L99\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -940,16 +840,11 @@
       "name": "checkbox-group",
       "slug": "checkbox-group",
       "title": "Checkbox Group",
-      "description": "Group of checkboxes with built‑in state management.",
+      "description": "Group of checkboxes with built\u2011in state management.",
       "type": "registry:ui",
       "category": "input",
-      "component_tags_existing": [
-        "input",
-        "checkbox"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Checkbox group appears in Dice UI registry JSON with dependency on @diceui/checkbox-group【294852709217546†L101-L110】.",
+      "provenance": "Checkbox group appears in Dice UI registry JSON with dependency on @diceui/checkbox-group\u3010294852709217546\u2020L101-L110\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -960,7 +855,7 @@
       "docs_url": "https://diceui.com/components/checkbox-group",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Checkbox group is defined in Dice UI registry JSON【294852709217546†L101-L110】.",
+      "evidence_note": "Checkbox group is defined in Dice UI registry JSON\u3010294852709217546\u2020L101-L110\u3011.",
       "dependencies": [
         "@diceui/checkbox-group"
       ],
@@ -982,14 +877,8 @@
       "description": "Animated circular progress indicator with custom CSS variables.",
       "type": "registry:ui",
       "category": "progress",
-      "component_tags_existing": [
-        "progress"
-      ],
-      "component_tags_proposed": [
-        "circular-progress"
-      ],
       "source": "registry-json",
-      "provenance": "Circular progress appears in Dice UI registry JSON with CSS variables and dependencies【294852709217546†L114-L138】.",
+      "provenance": "Circular progress appears in Dice UI registry JSON with CSS variables and dependencies\u3010294852709217546\u2020L114-L138\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -1000,7 +889,7 @@
       "docs_url": "https://diceui.com/components/circular-progress",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Circular progress item is defined in Dice UI registry JSON with CSS keyframes and dependencies【294852709217546†L114-L138】.",
+      "evidence_note": "Circular progress item is defined in Dice UI registry JSON with CSS keyframes and dependencies\u3010294852709217546\u2020L114-L138\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -1022,12 +911,8 @@
       "description": "Color picker component with sliders and swatches built on Radix UI.",
       "type": "registry:ui",
       "category": "color-picker",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "color-picker"
-      ],
       "source": "registry-json",
-      "provenance": "Color picker entry in Dice UI registry JSON lists dependencies including button, input, popover, select and internal use‑ref hooks【294852709217546†L142-L169】.",
+      "provenance": "Color picker entry in Dice UI registry JSON lists dependencies including button, input, popover, select and internal use\u2011ref hooks\u3010294852709217546\u2020L142-L169\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -1038,7 +923,7 @@
       "docs_url": "https://diceui.com/components/color-picker",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Color picker appears in Dice UI registry JSON with multiple dependencies and file paths【294852709217546†L142-L169】.",
+      "evidence_note": "Color picker appears in Dice UI registry JSON with multiple dependencies and file paths\u3010294852709217546\u2020L142-L169\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -1078,12 +963,8 @@
       "description": "Simple color swatch display used by the color picker.",
       "type": "registry:ui",
       "category": "color-swatch",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "color-swatch"
-      ],
       "source": "registry-json",
-      "provenance": "Color swatch item appears in Dice UI registry JSON with dependency on radix‑ui and file path【294852709217546†L172-L181】.",
+      "provenance": "Color swatch item appears in Dice UI registry JSON with dependency on radix\u2011ui and file path\u3010294852709217546\u2020L172-L181\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -1094,7 +975,7 @@
       "docs_url": "https://diceui.com/components/color-swatch",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Color swatch entry appears in Dice UI registry JSON【294852709217546†L172-L181】.",
+      "evidence_note": "Color swatch entry appears in Dice UI registry JSON\u3010294852709217546\u2020L172-L181\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -1116,14 +997,8 @@
       "description": "Slider for comparing two images or values side by side.",
       "type": "registry:ui",
       "category": "slider",
-      "component_tags_existing": [
-        "slider"
-      ],
-      "component_tags_proposed": [
-        "compare-slider"
-      ],
       "source": "registry-json",
-      "provenance": "Compare slider appears in Dice UI registry JSON with dependencies on radix‑ui and internal use‑ref hooks【294852709217546†L185-L205】.",
+      "provenance": "Compare slider appears in Dice UI registry JSON with dependencies on radix\u2011ui and internal use\u2011ref hooks\u3010294852709217546\u2020L185-L205\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -1134,7 +1009,7 @@
       "docs_url": "https://diceui.com/components/compare-slider",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Compare slider entry appears in Dice UI registry JSON【294852709217546†L185-L205】.",
+      "evidence_note": "Compare slider entry appears in Dice UI registry JSON\u3010294852709217546\u2020L185-L205\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -1165,12 +1040,8 @@
       "description": "Image cropper component for selecting a region within an image.",
       "type": "registry:ui",
       "category": "image-cropper",
-      "component_tags_existing": [],
-      "component_tags_proposed": [
-        "cropper"
-      ],
       "source": "registry-json",
-      "provenance": "Cropper entry appears in Dice UI registry JSON with dependencies on radix‑ui and internal hooks【294852709217546†L207-L225】.",
+      "provenance": "Cropper entry appears in Dice UI registry JSON with dependencies on radix\u2011ui and internal hooks\u3010294852709217546\u2020L207-L225\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -1181,7 +1052,7 @@
       "docs_url": "https://diceui.com/components/cropper",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Cropper is listed in Dice UI registry JSON with dependencies and file paths【294852709217546†L207-L225】.",
+      "evidence_note": "Cropper is listed in Dice UI registry JSON with dependencies and file paths\u3010294852709217546\u2020L207-L225\u3011.",
       "dependencies": [
         "radix-ui"
       ],
@@ -1209,15 +1080,11 @@
       "name": "combobox",
       "slug": "combobox",
       "title": "Combobox",
-      "description": "Drag‑sortable combobox with DnD kit and Radix UI.",
+      "description": "Drag\u2011sortable combobox with DnD kit and Radix UI.",
       "type": "registry:ui",
       "category": "combobox",
-      "component_tags_existing": [
-        "combobox"
-      ],
-      "component_tags_proposed": [],
       "source": "registry-json",
-      "provenance": "Combobox entry appears in Dice UI registry JSON with dependencies on multiple @dnd-kit packages and radix‑ui【294852709217546†L229-L239】.",
+      "provenance": "Combobox entry appears in Dice UI registry JSON with dependencies on multiple @dnd-kit packages and radix\u2011ui\u3010294852709217546\u2020L229-L239\u3011.",
       "catalog_status": "available",
       "confidence": "high",
       "route_eligible": true,
@@ -1228,7 +1095,7 @@
       "docs_url": "https://diceui.com/components/combobox",
       "preview_url": "",
       "evidence_url": "https://diceui.com/r/registry.json",
-      "evidence_note": "Combobox defined in Dice UI registry JSON with dependencies on DnD kit and radix‑ui【294852709217546†L229-L239】.",
+      "evidence_note": "Combobox defined in Dice UI registry JSON with dependencies on DnD kit and radix\u2011ui\u3010294852709217546\u2020L229-L239\u3011.",
       "dependencies": [
         "@diceui/combobox",
         "@dnd-kit/core",

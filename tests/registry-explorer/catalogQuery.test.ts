@@ -14,8 +14,6 @@ function registry(name: string, itemSummaries: RegistryItemSummary[] = []): Regi
     name,
     url: `https://example.test/${name.slice(1)}`,
     description: name === "@empty" ? "Chat components and aliases live here." : `${name} registry`,
-    primary_focus: name === "@empty" ? ["ai-chat"] : [],
-    component_tags: name === "@empty" ? ["chatbot"] : [],
     atlas: {
       aliases: name === "@empty" ? ["chat-kit"] : [],
       coverageStatus: "verified",

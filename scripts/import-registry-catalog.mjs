@@ -98,8 +98,6 @@ export function normalizeImportedItem(namespace, item, warnings = []) {
     description: normalizeOptionalString(item.description),
     type: normalizeOptionalString(item.type),
     category: normalizeOptionalString(item.category),
-    component_tags_existing: normalizeStringArray(item.component_tags_existing),
-    component_tags_proposed: normalizeStringArray(item.component_tags_proposed),
     source: normalizeOptionalString(item.source) || 'registry-json',
     provenance: normalizeOptionalString(item.provenance) || `Imported from ${namespace} normalized registry catalog.`,
     catalog_status: catalogStatus,

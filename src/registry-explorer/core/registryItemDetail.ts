@@ -27,7 +27,6 @@ export interface RegistryItemDetail {
   description: string | null;
   type: string | null;
   category: string | null;
-  taxonomyLabels: readonly string[];
   catalogStatus: RegistryItemSummary['catalogStatus'];
   confidence: CoverageConfidence | 'unknown';
   source: string;
@@ -201,7 +200,6 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
     description: summary.description ?? null,
     type: summary.type ?? null,
     category: summary.category ?? null,
-    taxonomyLabels: [...(summary.componentTagsExisting ?? []), ...(summary.componentTagsProposed ?? [])],
     catalogStatus: summary.catalogStatus,
     confidence: summary.confidence ?? registry.atlas?.confidence ?? 'unknown',
     source: summary.source,

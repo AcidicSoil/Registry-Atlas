@@ -1,4 +1,4 @@
-import { applyCatalogEvidenceToAtlas, syncCatalogEvidenceForRegistries, writeRegistryItemDetailBundles } from './sync-registry-catalog-evidence.mjs';
+import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries, writeRegistryItemDetailBundles } from './sync-registry-catalog-evidence.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -6,7 +6,6 @@ const SOURCE_URL = 'https://ui.shadcn.com/r/registries.json';
 const RAW_OUTPUT_PATH = 'data/shadcn/registries.raw.json';
 const REPORT_OUTPUT_PATH = 'data/shadcn/sync-report.json';
 const RUNTIME_OUTPUT_PATH = 'public/data/registries.json';
-const LEGACY_DATA_PATH = 'src/registry-explorer/data/registries.data.ts';
 const REGISTRY_ITEMS_PATH = 'data/shadcn/registry-items.json';
 const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.json';
 const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
@@ -14,8 +13,6 @@ const REGISTRY_CATALOG_ITEMS_PATH = 'public/data/registry-catalog-items.json';
 const REGISTRY_ITEM_DETAILS_DIR = 'public/data/registry-item-details';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
-  primary_focus: [],
-  component_tags: [],
   aliases: [],
   coverage_status: 'unverified',
   confidence: 'unknown',
@@ -46,52 +43,6 @@ async function writeCompactJson(filePath, value) {
 function normalizeNamespace(value) {
   if (typeof value !== 'string') return '';
   return value.startsWith('@') ? value : `@${value}`;
-}
-
-function legacyNameCandidates(registry) {
-  const rawName = typeof registry.name === 'string' ? registry.name : '';
-  const normalized = normalizeNamespace(rawName);
-
-  return new Set([
-    rawName,
-    normalized,
-    normalized.slice(1),
-    rawName.startsWith('@') ? rawName.slice(1) : rawName,
-  ].filter(Boolean));
-}
-
-async function readLegacyEnrichment() {
-  let source;
-  try {
-    source = await readFile(LEGACY_DATA_PATH, 'utf8');
-  } catch (error) {
-    if (error && error.code === 'ENOENT') return new Map();
-    throw error;
-  }
-
-  const executableSource = source
-    .replace(/^import type .*;\n/m, '')
-    .replace(/export const registries: ReadonlyArray<Registry> = /, 'const registries = ');
-
-  const registries = Function(`${executableSource}\nreturn registries;`)();
-  const enrichment = new Map();
-
-  for (const registry of registries) {
-    const atlas = {
-      primary_focus: Array.isArray(registry.primary_focus) ? registry.primary_focus : [],
-      component_tags: Array.isArray(registry.component_tags) ? registry.component_tags : [],
-      aliases: [],
-      coverage_status: 'inferred',
-      confidence: 'medium',
-      notes: '',
-    };
-
-    for (const candidate of legacyNameCandidates(registry)) {
-      enrichment.set(candidate, atlas);
-    }
-  }
-
-  return enrichment;
 }
 
 function readPreviousEnrichment(previousRuntimeData) {
@@ -139,8 +90,6 @@ function normalizeItemSummary(item) {
     description: optionalString(item.description),
     type: item.type,
     category: item.category,
-    component_tags_existing: normalizeStringArray(item.component_tags_existing),
-    component_tags_proposed: normalizeStringArray(item.component_tags_proposed),
     source: item.source,
     provenance: item.provenance,
     catalog_status: item.catalog_status ?? item.catalogStatus,
@@ -162,21 +111,19 @@ function normalizeItemSummary(item) {
   };
 }
 
-function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrichment, itemSummariesByNamespace, catalogEvidenceByNamespace) {
+function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummariesByNamespace, catalogEvidenceByNamespace) {
   const name = normalizeNamespace(registry.name);
-  const atlas =
-    enrichmentByNamespace.get(name) ||
-    legacyEnrichment.get(name) ||
-    legacyEnrichment.get(name.slice(1)) ||
-    DEFAULT_ATLAS_ENRICHMENT;
+  const atlas = enrichmentByNamespace.get(name) || DEFAULT_ATLAS_ENRICHMENT;
   const itemSummaries = Array.isArray(itemSummariesByNamespace?.[name])
     ? itemSummariesByNamespace[name].map(normalizeItemSummary)
     : [];
   const catalogEvidence = catalogEvidenceByNamespace?.[name] ?? null;
-  const componentEvidence = applyCatalogEvidenceToAtlas(atlas, itemSummaries, catalogEvidence);
+  const catalogFacts = buildCatalogCoverageFacts(atlas, itemSummaries, catalogEvidence);
   const catalogStatus = itemSummaries.length > 0
     ? (itemSummaries.some(item => item.catalog_status === 'partial') ? 'partial' : 'available')
-    : (typeof atlas.catalog_status === 'string' ? atlas.catalog_status : 'unavailable');
+    : (catalogFacts.comparison_evidence === 'catalog' || catalogFacts.comparison_evidence === 'stale-catalog'
+      ? 'available'
+      : 'unavailable');
 
   return {
     official: {
@@ -186,21 +133,17 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, legacyEnrich
       description: typeof registry.description === 'string' ? registry.description : '',
     },
     atlas: {
-      primary_focus: Array.isArray(atlas.primary_focus) ? atlas.primary_focus : [],
-      component_tags: componentEvidence.component_tags,
       aliases: Array.isArray(atlas.aliases) ? atlas.aliases : [],
-      coverage_status: componentEvidence.coverage_status,
-      confidence: componentEvidence.confidence,
+      coverage_status: catalogFacts.coverage_status,
+      confidence: catalogFacts.confidence,
       catalog_status: catalogStatus,
-      comparison_evidence: componentEvidence.comparison_evidence,
-      catalog_item_count: componentEvidence.catalog_item_count,
-      catalog_evidence_url: componentEvidence.catalog_evidence_url,
+      comparison_evidence: catalogFacts.comparison_evidence,
+      catalog_item_count: catalogFacts.catalog_item_count,
+      catalog_evidence_url: catalogFacts.catalog_evidence_url,
       item_summaries: itemSummaries,
       notes: typeof atlas.notes === 'string' ? atlas.notes : '',
     },
-    status: {
-      warnings: [],
-    },
+    status: { warnings: [] },
   };
 }
 
@@ -245,7 +188,6 @@ async function main() {
     ? previousRuntimeData.registries
     : [];
   const previousEnrichment = readPreviousEnrichment(previousRuntimeData);
-  const legacyEnrichment = await readLegacyEnrichment();
   const itemSummariesByNamespace = await readJsonIfExists(REGISTRY_ITEMS_PATH) ?? {};
   const previousCatalogEvidence = await readJsonIfExists(REGISTRY_CATALOG_EVIDENCE_PATH) ?? {};
   const previousCatalogIndex = await readJsonIfExists(REGISTRY_CATALOG_ITEMS_PATH);
@@ -257,7 +199,7 @@ async function main() {
   const syncedAt = new Date().toISOString();
 
   const registries = upstream.map(registry =>
-    normalizeOfficialRegistry(registry, previousEnrichment, legacyEnrichment, itemSummariesByNamespace, catalogEvidenceByNamespace)
+    normalizeOfficialRegistry(registry, previousEnrichment, itemSummariesByNamespace, catalogEvidenceByNamespace)
   );
 
   const runtimeData = {

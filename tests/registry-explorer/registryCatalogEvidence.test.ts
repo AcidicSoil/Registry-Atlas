@@ -1,25 +1,28 @@
 import { describe, expect, it } from 'vitest';
-import { COMPONENT_TAG_VALUES } from '../../src/registry-explorer/core/registry.schema';
-// @ts-expect-error The synchronizer is an executable Node .mjs script with runtime exports tested here.
-import { applyCatalogEvidenceToAtlas, buildCatalogEvidence, buildCompactCatalogItems, buildRegistryItemDetailBundle, classifyCatalogFailureReason, COMPONENT_TAGS, deriveCatalogUrl, deriveCatalogUrls, DISCOVERABLE_REGISTRY_ITEM_TYPES, inferComponentTagsFromCatalogItems, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
+// @ts-ignore Executable Node .mjs script has no TypeScript declaration file.
+import { buildCatalogCoverageFacts, buildCatalogEvidence, buildCompactCatalogItems, buildRegistryItemDetailBundle, classifyCatalogFailureReason, deriveCatalogUrl, deriveCatalogUrls, DISCOVERABLE_REGISTRY_ITEM_TYPES, mergeCatalogEvidence, mergeCatalogItems, syncCatalogEvidenceForRegistries } from '../../scripts/sync-registry-catalog-evidence.mjs';
 
 describe('registry catalog evidence sync', () => {
-  it('keeps the sync capability vocabulary aligned with the runtime schema', () => {
-    expect(COMPONENT_TAGS).toEqual([...COMPONENT_TAG_VALUES]);
-  });
-
-  it('promotes fetched catalog capability evidence without claiming verified item coverage', () => {
-    const atlas = applyCatalogEvidenceToAtlas(
-      { component_tags: [], coverage_status: 'unverified', confidence: 'unknown' },
+  it('promotes real catalog availability without synthesizing taxonomy tags', () => {
+    const atlas = buildCatalogCoverageFacts(
+      { coverage_status: 'unverified', confidence: 'unknown' },
       [],
-      { component_tags: ['button', 'input'], status: 'available' },
+      {
+        namespace: '@example',
+        catalog_url: 'https://example.com/r/registry.json',
+        item_count: 2,
+        status: 'available',
+      },
     );
 
-    expect(atlas.component_tags).toEqual(['button', 'input']);
-    expect(atlas.coverage_status).toBe('inferred');
-    expect(atlas.confidence).toBe('medium');
-    expect(atlas.comparison_evidence).toBe('catalog');
-    expect(atlas.catalog_item_count).toBe(0);
+    expect(atlas).toEqual({
+      coverage_status: 'verified',
+      confidence: 'high',
+      comparison_evidence: 'catalog',
+      catalog_item_count: 2,
+      catalog_evidence_url: 'https://example.com/r/registry.json',
+    });
+    expect(atlas).not.toHaveProperty('component_tags');
   });
 
   it('derives the standard registry catalog URL from an item URL template', () => {
@@ -78,19 +81,7 @@ describe('registry catalog evidence sync', () => {
     expect(classifyCatalogFailureReason('http-403')).toBe('access-restricted');
   });
 
-  it('infers component capabilities from real catalog item identity fields', () => {
-    const tags = inferComponentTagsFromCatalogItems([
-      { name: 'button', type: 'registry:ui' },
-      { name: 'fancy-code-block', title: 'Fancy Code Block', type: 'registry:component' },
-      { name: 'qrcode', title: 'QR Code', type: 'registry:ui' },
-      { name: 'unrelated-template', title: 'Landing template', type: 'registry:block' },
-    ]);
-
-    expect(tags).toEqual(expect.arrayContaining(['button', 'code-block', 'qr-code']));
-    expect(tags).not.toContain('table');
-  });
-
-  it('builds compact comparable evidence instead of persisting full catalog items', () => {
+  it('builds catalog evidence without inferred component vocabulary or source payloads', () => {
     const evidence = buildCatalogEvidence(
       '@example',
       'https://example.com/r/{name}.json',
@@ -104,17 +95,18 @@ describe('registry catalog evidence sync', () => {
       '2026-08-27T00:00:00.000Z',
     );
 
-    expect(evidence).toEqual(expect.objectContaining({
+    expect(evidence).toEqual({
       namespace: '@example',
       catalog_url: 'https://example.com/r/registry.json',
       item_count: 2,
-      component_tags: expect.arrayContaining(['button', 'input']),
       status: 'available',
-    }));
+      synced_at: '2026-08-27T00:00:00.000Z',
+    });
     expect(JSON.stringify(evidence)).not.toContain('large source payload');
+    expect(evidence).not.toHaveProperty('component_tags');
   });
 
-  it('syncs catalog evidence from the same supplied directory snapshot', async () => {
+  it('syncs exact compact items and coverage evidence from the supplied directory snapshot', async () => {
     const fetchImpl = async (url: string) => new Response(JSON.stringify({
       name: 'example',
       items: [{ name: url.includes('alpha') ? 'button' : 'input', type: 'registry:ui' }],
@@ -127,8 +119,10 @@ describe('registry catalog evidence sync', () => {
 
     expect(result.report.registry_count).toBe(2);
     expect(result.report.fetched_catalog_count).toBe(2);
-    expect(result.evidence['@alpha'].component_tags).toContain('button');
-    expect(result.evidence['@beta'].component_tags).toContain('input');
+    expect(result.itemsByNamespace['@alpha']).toEqual([{ name: 'button', type: 'registry:ui' }]);
+    expect(result.itemsByNamespace['@beta']).toEqual([{ name: 'input', type: 'registry:ui' }]);
+    expect(result.evidence['@alpha']).not.toHaveProperty('component_tags');
+    expect(result.evidence['@beta']).not.toHaveProperty('component_tags');
   });
 
   it('keeps only user-facing registry item types in the compact catalog index', () => {
@@ -190,7 +184,7 @@ describe('registry catalog evidence sync', () => {
     }]);
   });
 
-  it('preserves failed namespaces and replaces successfully refreshed compact items', () => {
+  it('preserves failed compact-item namespaces and replaces successfully refreshed ones', () => {
     const previous = {
       '@alpha': [{ name: 'old-alpha', type: 'registry:ui' }],
       '@beta': [{ name: 'old-beta', type: 'registry:ui' }],
@@ -205,23 +199,24 @@ describe('registry catalog evidence sync', () => {
     });
   });
 
-  it('preserves prior evidence when a later network sync fails', () => {
+  it('preserves prior evidence on transient failure while scrubbing retired taxonomy fields', () => {
     const previous = {
       '@example': {
         namespace: '@example',
         catalog_url: 'https://example.com/r/registry.json',
         item_count: 12,
-        component_tags: ['button'],
         status: 'available',
         synced_at: '2026-08-26T00:00:00.000Z',
       },
     };
 
     const merged = mergeCatalogEvidence(previous, {}, [{ namespace: '@example', reason: 'http-429' }]);
-    expect(merged['@example']).toEqual(expect.objectContaining({
+    expect(merged['@example']).toEqual({
+      namespace: '@example',
+      catalog_url: 'https://example.com/r/registry.json',
       item_count: 12,
-      component_tags: ['button'],
       status: 'stale',
-    }));
+      synced_at: '2026-08-26T00:00:00.000Z',
+    });
   });
 });

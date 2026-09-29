@@ -19,52 +19,6 @@ export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
   'registry:icon',
 ]);
 
-export const COMPONENT_TAGS = Object.freeze([
-  "chatbot", "chat-window", "message-list", "typing-indicator", "prompt-box", "button", "input", "badge",
-  "avatar", "toolbar", "icon-button", "loading-button", "toggle", "switch", "select", "textarea",
-  "table", "data-grid", "filter-bar", "pagination", "chart", "stat-widget", "auth-form", "password-input",
-  "stepper", "alert", "navbar", "sidebar", "breadcrumb", "app-shell", "tabs", "dropdown",
-  "hero-section", "feature-grid", "testimonial", "cta-section", "card", "product-card", "price-badge", "cart-drawer",
-  "mini-cart", "column-resize", "search-input", "tag-input", "checkbox", "radio", "datepicker", "submit-button",
-  "error-message", "toast", "modal", "dialog", "drawer", "skeleton", "spinner", "accordion",
-  "calendar", "carousel", "collapsible", "combobox", "command", "context-menu", "hover-card", "menubar",
-  "popover", "progress", "radio-group", "scroll-area", "separator", "sheet", "slider", "tooltip",
-  "file-upload", "dropzone", "pricing-table", "timeline", "scroll-progress", "color-picker", "audio-player", "waveform",
-  "voice-picker", "transcript-viewer", "cropper", "compare-slider", "color-swatch", "circular-progress", "angle-slider", "map-pointer",
-  "chat-interface", "qr-code", "admonition", "card-deck", "zoomable-image", "utility-button", "syntax-highlighting", "code-block",
-  "otp-input", "audit", "receipt", "pill", "decision-pill", "status-pill", "theme", "ai-chat"
-]);
-
-const TAG_ALIASES = Object.freeze({
-  'qr-code': ['qrcode', 'qr'],
-  'otp-input': ['input-otp', 'otp'],
-  'code-block': ['codeblock', 'code-snippet'],
-  'syntax-highlighting': ['syntax-highlighter', 'syntax-highlight'],
-  'chat-interface': ['chat-ui', 'chat-interface'],
-  'ai-chat': ['ai-chat', 'llm-chat'],
-  'map-pointer': ['mapbox-pointer', 'map-pin'],
-  'utility-button': ['copy-button', 'clipboard-button'],
-  'zoomable-image': ['image-zoom', 'zoom-image'],
-  'card-deck': ['card-stack', 'swipe-cards'],
-  'admonition': ['callout'],
-  'circular-progress': ['radial-progress', 'circle-progress'],
-  'compare-slider': ['before-after', 'image-compare'],
-});
-
-function normalize(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function containsTerm(value, term) {
-  if (!value || !term) return false;
-  return value === term || `-${value}-`.includes(`-${term}-`);
-}
-
 export function deriveCatalogUrls(template) {
   if (typeof template !== 'string' || !template.includes('{name}')) return [];
 
@@ -100,24 +54,6 @@ export function deriveCatalogUrl(template) {
   return deriveCatalogUrls(template)[0] ?? null;
 }
 
-export function inferComponentTagsFromCatalogItems(items) {
-  const tags = new Set();
-  for (const item of Array.isArray(items) ? items : []) {
-    if (!item || typeof item !== 'object') continue;
-    const values = [item.name, item.title, item.category]
-      .map(normalize)
-      .filter(Boolean);
-    for (const tag of COMPONENT_TAGS) {
-      const normalizedTag = normalize(tag);
-      if (values.some(value => containsTerm(value, normalizedTag))) tags.add(tag);
-      for (const alias of TAG_ALIASES[tag] ?? []) {
-        if (values.some(value => containsTerm(value, normalize(alias)))) tags.add(tag);
-      }
-    }
-  }
-  return [...tags].sort((a, b) => a.localeCompare(b));
-}
-
 export function buildCatalogEvidence(
   namespace,
   template,
@@ -131,7 +67,6 @@ export function buildCatalogEvidence(
     namespace,
     catalog_url: catalogUrl,
     item_count: catalog.items.length,
-    component_tags: inferComponentTagsFromCatalogItems(catalog.items),
     status: 'available',
     synced_at: syncedAt,
   };
@@ -221,42 +156,21 @@ export function mergeCatalogItems(previous = {}, fresh = {}, failures = []) {
   return Object.fromEntries(Object.entries(output).sort(([a], [b]) => a.localeCompare(b)));
 }
 
-function itemSummaryTags(item) {
-  return [
-    ...(Array.isArray(item?.component_tags_existing) ? item.component_tags_existing : []),
-    ...(Array.isArray(item?.componentTagsExisting) ? item.componentTagsExisting : []),
-    ...(Array.isArray(item?.component_tags_proposed) ? item.component_tags_proposed : []),
-    ...(Array.isArray(item?.componentTagsProposed) ? item.componentTagsProposed : []),
-  ].filter(tag => COMPONENT_TAGS.includes(tag));
-}
-
-export function applyCatalogEvidenceToAtlas(atlas = {}, itemSummaries = [], evidence = null) {
-  const tags = new Set(Array.isArray(atlas.component_tags) ? atlas.component_tags : []);
-  for (const item of Array.isArray(itemSummaries) ? itemSummaries : []) {
-    itemSummaryTags(item).forEach(tag => tags.add(tag));
-  }
-  for (const tag of Array.isArray(evidence?.component_tags) ? evidence.component_tags : []) {
-    if (COMPONENT_TAGS.includes(tag)) tags.add(tag);
-  }
-
-  const hasItems = Array.isArray(itemSummaries) && itemSummaries.length > 0;
-  const hasCatalogEvidence = Array.isArray(evidence?.component_tags) && evidence.component_tags.length > 0;
-  let coverageStatus = typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified';
-  let confidence = typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown';
-  if (hasItems) {
-    coverageStatus = 'verified';
-    confidence = 'high';
-  } else if (hasCatalogEvidence) {
-    if (coverageStatus === 'unverified' || coverageStatus === 'unavailable') coverageStatus = 'inferred';
-    if (confidence === 'unknown' || confidence === 'low') confidence = 'medium';
-  }
+export function buildCatalogCoverageFacts(atlas = {}, itemSummaries = [], evidence = null) {
+  const hasReviewedItems = Array.isArray(itemSummaries) && itemSummaries.length > 0;
+  const hasCatalogEvidence = evidence?.status === 'available' || evidence?.status === 'stale';
+  const coverageStatus = hasReviewedItems || hasCatalogEvidence
+    ? 'verified'
+    : (typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified');
+  const confidence = hasReviewedItems || hasCatalogEvidence
+    ? 'high'
+    : (typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown');
   const evidenceStatus = evidence?.status === 'available'
     ? 'catalog'
     : evidence?.status === 'stale'
       ? 'stale-catalog'
       : 'none';
   return {
-    component_tags: [...tags].sort((a, b) => a.localeCompare(b)),
     coverage_status: coverageStatus,
     confidence,
     comparison_evidence: evidenceStatus,
@@ -266,11 +180,21 @@ export function applyCatalogEvidenceToAtlas(atlas = {}, itemSummaries = [], evid
 }
 
 export function mergeCatalogEvidence(previous = {}, fresh = {}, failures = []) {
-  const output = { ...previous, ...fresh };
+  const output = {};
+  for (const [namespace, entry] of Object.entries(previous)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const { component_tags: _retired, ...safe } = entry;
+    output[namespace] = safe;
+  }
+  for (const [namespace, entry] of Object.entries(fresh)) {
+    if (!entry || typeof entry !== 'object') continue;
+    const { component_tags: _retired, ...safe } = entry;
+    output[namespace] = safe;
+  }
   for (const failure of failures) {
     const namespace = failure?.namespace;
-    if (!namespace || fresh[namespace] || !previous[namespace]) continue;
-    output[namespace] = { ...previous[namespace], status: 'stale' };
+    if (!namespace || fresh[namespace] || !output[namespace]) continue;
+    output[namespace] = { ...output[namespace], status: 'stale' };
   }
   return Object.fromEntries(Object.entries(output).sort(([a], [b]) => a.localeCompare(b)));
 }

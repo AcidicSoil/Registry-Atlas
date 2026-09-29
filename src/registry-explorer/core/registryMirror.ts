@@ -4,13 +4,9 @@ import {
   ITEM_CATALOG_STATUS_VALUES,
 } from './coverageStatus.ts';
 import {
-  COMPONENT_TAG_VALUES,
-  PRIMARY_FOCUS_VALUES,
-  type ComponentTag,
   type CoverageConfidence,
   type CoverageStatus,
   type ItemCatalogStatus,
-  type PrimaryFocus,
 } from './registry.schema.ts';
 
 export type MirrorValidationSeverity = 'error' | 'warning';
@@ -68,8 +64,6 @@ interface MirrorRecord {
     description?: unknown;
   };
   atlas?: {
-    primary_focus?: unknown;
-    component_tags?: unknown;
     coverage_status?: unknown;
     confidence?: unknown;
     catalog_status?: unknown;
@@ -97,8 +91,6 @@ const OFFICIAL_URL_POLICY: UrlPolicy = {
   warningProtocols: ['http:'],
 };
 
-const PRIMARY_FOCUS_SET = new Set<PrimaryFocus>(PRIMARY_FOCUS_VALUES);
-const COMPONENT_TAG_SET = new Set<ComponentTag>(COMPONENT_TAG_VALUES);
 const COVERAGE_STATUS_SET = new Set<CoverageStatus>(COVERAGE_STATUS_VALUES);
 const COVERAGE_CONFIDENCE_SET = new Set<CoverageConfidence>(COVERAGE_CONFIDENCE_VALUES);
 const ITEM_CATALOG_STATUS_SET = new Set<ItemCatalogStatus>(ITEM_CATALOG_STATUS_VALUES);
@@ -232,8 +224,6 @@ function validateMirrorRecord(
 
   validateUrlIntoResult(record.official?.homepage, 'official.homepage', namespace, result);
   validateRegistryUrlTemplateIntoResult(record.official?.registry_url_template, namespace, 'official.registry_url_template', result);
-  validateAtlasValues(record.atlas?.primary_focus, PRIMARY_FOCUS_SET, 'atlas.primary_focus', 'atlas-invalid-primary-focus', label, result);
-  validateAtlasValues(record.atlas?.component_tags, COMPONENT_TAG_SET, 'atlas.component_tags', 'atlas-invalid-component-tag', label, result);
   validateAtlasScalar(record.atlas?.coverage_status, COVERAGE_STATUS_SET, 'atlas.coverage_status', 'atlas-invalid-coverage-status', label, result);
   validateAtlasScalar(record.atlas?.confidence, COVERAGE_CONFIDENCE_SET, 'atlas.confidence', 'atlas-invalid-confidence', label, result);
   validateAtlasScalar(record.atlas?.catalog_status, ITEM_CATALOG_STATUS_SET, 'atlas.catalog_status', 'atlas-invalid-catalog-status', label, result);
@@ -519,8 +509,6 @@ function validateItemSummaries(
     validateOptionalStringArray(record.dependencies, `${field}.dependencies`, namespace, result);
     validateOptionalStringArray(record.devDependencies, `${field}.devDependencies`, namespace, result);
     validateOptionalStringArray(record.registryDependencies, `${field}.registryDependencies`, namespace, result);
-    validateOptionalComponentTagArray(record.component_tags_existing ?? record.componentTagsExisting, `${field}.component_tags_existing`, namespace, result);
-    validateOptionalComponentTagArray(record.component_tags_proposed ?? record.componentTagsProposed, `${field}.component_tags_proposed`, namespace, result);
     validateOptionalStringArray(record.warnings, `${field}.warnings`, namespace, result);
     validateOptionalFiles(record.files, `${field}.files`, namespace, result);
   });
@@ -616,39 +604,6 @@ function validateOptionalCommand(
   }
 }
 
-function validateOptionalComponentTagArray(
-  value: unknown,
-  field: string,
-  namespace: string,
-  result: MirrorValidationResult,
-): void {
-  if (value === undefined || value === null) return;
-  if (!Array.isArray(value)) {
-    addIssue(result, {
-      code: 'atlas-invalid-item-array',
-      message: `${field} must be an array of component tag strings when present.`,
-      severity: 'error',
-      namespace,
-      field,
-      value: String(value),
-    });
-    return;
-  }
-
-  value.forEach((tag, index) => {
-    if (typeof tag !== 'string' || !COMPONENT_TAG_SET.has(tag as ComponentTag)) {
-      addIssue(result, {
-        code: 'atlas-invalid-component-tag',
-        message: `${field}[${index}] contains an unknown component tag.`,
-        severity: 'error',
-        namespace,
-        field: `${field}[${index}]`,
-        value: typeof tag === 'string' ? tag : String(tag),
-      });
-    }
-  });
-}
-
 function validateOptionalStringArray(
   value: unknown,
   field: string,
@@ -709,45 +664,6 @@ function validateOptionalFiles(
         value: String(file.target),
       });
     }
-  });
-}
-
-function validateAtlasValues(
-  values: unknown,
-  allowedValues: ReadonlySet<string>,
-  field: string,
-  code: MirrorValidationCode,
-  namespace: string,
-  result: MirrorValidationResult,
-): void {
-  if (values === undefined) {
-    return;
-  }
-
-  if (!Array.isArray(values)) {
-    addIssue(result, {
-      code,
-      message: `${field} must be an array.`,
-      severity: 'error',
-      namespace,
-      field,
-    });
-    return;
-  }
-
-  values.forEach(value => {
-    if (typeof value === 'string' && allowedValues.has(value)) {
-      return;
-    }
-
-    addIssue(result, {
-      code,
-      message: `${field} contains an unknown value.`,
-      severity: 'error',
-      namespace,
-      field,
-      value: typeof value === 'string' ? value : String(value),
-    });
   });
 }
 

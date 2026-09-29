@@ -30,8 +30,6 @@ function registry(): Registry {
     name: "@registrydirectory",
     url: "https://registry.directory",
     description: "Registry directory.",
-    primary_focus: [],
-    component_tags: ["button", "chatbot"],
     atlas: {
       aliases: [],
       coverageStatus: "inferred",

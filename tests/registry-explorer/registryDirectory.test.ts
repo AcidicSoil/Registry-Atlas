@@ -10,8 +10,6 @@ function registry(name: string, comparisonEvidence: "catalog" | "stale-catalog" 
     name,
     url: `https://example.test/${name.slice(1)}`,
     description: `Description for ${name}`,
-    primary_focus: [],
-    component_tags: [],
     atlas: {
       aliases: [],
       coverageStatus: "verified",

@@ -7,8 +7,6 @@ function registry(name: string): Registry {
     name,
     url: "https://example.test",
     description: name,
-    primary_focus: ["ai-chat"],
-    component_tags: ["chatbot", "button"],
     atlas: {
       aliases: [],
       coverageStatus: "inferred",

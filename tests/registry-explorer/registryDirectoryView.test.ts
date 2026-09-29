@@ -4,17 +4,21 @@ import type { Registry } from "../../src/registry-explorer/core/registry.schema"
 import { renderRegistryDirectory } from "../../src/registry-explorer/ui/registryDirectoryView";
 
 describe("renderRegistryDirectory", () => {
-  it("renders real indexed counts and explicit catalog coverage", () => {
+  it("renders real indexed counts, explicit catalog coverage, and directory controls", () => {
     const body = root();
-    renderRegistryDirectory(root(), body, result());
+    renderRegistryDirectory(root(), body, result(), {
+      searchTerm: "registry",
+      coverage: ["current"],
+      sort: "item-count-desc",
+    });
 
     expect(body.innerHTML).toContain("@registrydirectory");
-    expect(body.innerHTML).toContain("13,544 components");
+    expect(body.innerHTML).toContain("13,544 indexed assets");
     expect(body.innerHTML).toContain("Current catalog");
     expect(body.innerHTML).toContain("<strong>1</strong> current");
-    expect(body.innerHTML).toContain("<strong>0</strong> stale");
-    expect(body.innerHTML).toContain("<strong>0</strong> empty");
-    expect(body.innerHTML).toContain("<strong>0</strong> unavailable");
+    expect(body.innerHTML).toContain('data-registry-search');
+    expect(body.innerHTML).toContain('<option value="current" selected>');
+    expect(body.innerHTML).toContain('<option value="item-count-desc" selected>');
     expect(body.innerHTML).toContain('data-profile-registry="@registrydirectory"');
     expect(body.innerHTML).not.toContain("known items");
   });
@@ -65,12 +69,10 @@ function registry(): Registry {
     name: "@registrydirectory",
     url: "https://registry.directory",
     description: "The explorer for the shadcn registry ecosystem.",
-    primary_focus: [],
-    component_tags: [],
     atlas: {
       aliases: [],
-      coverageStatus: "inferred",
-      confidence: "medium",
+      coverageStatus: "verified",
+      confidence: "high",
       notes: "",
       catalogStatus: "available",
     },
