@@ -26,6 +26,22 @@ describe('registry explorer shell interactions', () => {
     expect(harness.aside.innerHTML).toContain('<summary>');
   });
 
+  it('renders real component filters in the browse rail and routes rail changes through URL state', () => {
+    const harness = setup('', '/Registry-Atlas/components');
+
+    expect(harness.aside.innerHTML).toContain('data-catalog-search');
+    expect(harness.aside.innerHTML).toContain('data-catalog-filter="registry"');
+    expect(harness.aside.innerHTML).toContain('data-catalog-filter="type"');
+    expect(harness.aside.innerHTML).toContain('data-catalog-category-value="code"');
+    expect(harness.aside.innerHTML).toContain('>1</span>');
+
+    harness.aside.dispatch('change', target({ 'data-catalog-filter': 'type', value: 'registry:ui' }));
+    expect(harness.location.search).toBe('?type=registry%3Aui');
+
+    harness.aside.dispatch('click', target({ 'data-catalog-category-value': 'code' }));
+    expect(harness.location.search).toContain('category=code');
+  });
+
   it('routes header copy actions and announces successful feedback', async () => {
     const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
     const harness = setup('?view=compare');
@@ -110,8 +126,8 @@ describe('registry explorer shell interactions', () => {
       '/Registry-Atlas/components',
     );
 
-    expect(harness.contentBody.innerHTML).toContain('<option value="@delta" selected>');
-    expect(harness.contentBody.innerHTML).toContain('<option value="registry:ui" selected>');
+    expect(harness.aside.innerHTML).toContain('<option value="@delta" selected>');
+    expect(harness.aside.innerHTML).toContain('<option value="registry:ui" selected>');
     expect(harness.contentBody.innerHTML).toContain('<option value="unreviewed" selected>');
     expect(harness.contentBody.innerHTML).toContain('<option value="type" selected>');
     expect(harness.location.search).toContain('page=2');
@@ -128,7 +144,7 @@ describe('registry explorer shell interactions', () => {
 
     expect(harness.location.pathname).toBe('/Registry-Atlas/components');
     expect(harness.location.search).toBe('?type=registry%3Ablock');
-    expect(harness.contentBody.innerHTML).toContain('<option value="registry:block" selected>');
+    expect(harness.aside.innerHTML).toContain('<option value="registry:block" selected>');
   });
 
   it('writes component pagination to the shareable URL', () => {
@@ -337,7 +353,7 @@ function setup(
     catalogIndex: {
       meta: { registry_count: 1, item_count: 1 },
       registries: {
-        '@delta': [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui' }],
+        '@delta': [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui', categories: ['code'] }],
       },
     },
     mirrorMeta: {

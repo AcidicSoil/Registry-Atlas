@@ -44,7 +44,7 @@ export function renderRegistryCollection(
         </div>
       </div>
       ${options.facets && options.browseState
-        ? renderCatalogBrowseControls(options.facets, options.browseState, { includeRegistry: false })
+        ? renderCatalogBrowseControls(options.facets, options.browseState, { includeDimensions: true, includeRegistry: false })
         : ""}
       ${result.items.length
         ? `

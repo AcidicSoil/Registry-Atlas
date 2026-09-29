@@ -15,7 +15,6 @@ export interface CatalogComponentsViewOptions {
   searchTerm: string;
   facets?: CatalogFacetSummary;
   browseState?: CatalogBrowseQueryState;
-  includeRegistryFilter?: boolean;
 }
 
 export function renderCatalogComponents(
@@ -39,9 +38,7 @@ export function renderCatalogComponents(
     : "No indexed components are available.";
 
   const controls = options.facets && options.browseState
-    ? renderCatalogBrowseControls(options.facets, options.browseState, {
-        includeRegistry: options.includeRegistryFilter ?? true,
-      })
+    ? renderCatalogBrowseControls(options.facets, options.browseState)
     : "";
 
   bodyRoot.innerHTML = `
@@ -61,39 +58,40 @@ export function renderCatalogComponents(
 export function renderCatalogBrowseControls(
   facets: CatalogFacetSummary,
   state: CatalogBrowseQueryState,
-  options: { includeRegistry?: boolean } = {},
+  options: { includeDimensions?: boolean; includeRegistry?: boolean } = {},
 ): string {
-  const includeRegistry = options.includeRegistry ?? true;
   const active = state.registryNames.length > 0
     || state.itemTypes.length > 0
     || state.categories.length > 0
     || state.reviewed !== "all"
     || state.sort !== "name";
+  const includeDimensions = options.includeDimensions ?? false;
+  const includeRegistry = options.includeRegistry ?? true;
 
   return `
-    <div class="catalog-filter-bar" aria-label="Catalog filters">
-      ${includeRegistry ? renderFilterSelect(
+    <div class="catalog-filter-bar catalog-filter-bar-compact" aria-label="Catalog review and sort controls">
+      ${includeDimensions && includeRegistry ? renderFilterSelect(
         "Registry",
         "registry",
         facets.registries,
         state.registryNames[0] ?? "",
         "All registries",
       ) : ""}
-      ${renderFilterSelect(
+      ${includeDimensions ? renderFilterSelect(
         "Type",
         "type",
         facets.itemTypes,
         state.itemTypes[0] ?? "",
         "All item types",
         value => value.replace(/^registry:/, ""),
-      )}
-      ${renderFilterSelect(
+      ) : ""}
+      ${includeDimensions ? renderFilterSelect(
         "Category",
         "category",
         boundedFacetOptions(facets.categories, state.categories[0] ?? "", 100),
         state.categories[0] ?? "",
         "All categories",
-      )}
+      ) : ""}
       <label class="catalog-filter-control">
         <span>Reviewed</span>
         <select data-catalog-reviewed>
@@ -113,6 +111,66 @@ export function renderCatalogBrowseControls(
       </label>
       ${active ? '<button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear filters</button>' : ""}
     </div>
+  `;
+}
+
+export function renderCatalogRailControls(
+  facets: CatalogFacetSummary,
+  state: CatalogBrowseQueryState,
+  searchTerm: string,
+): string {
+  const selectedCategory = state.categories[0] ?? "";
+  const categories = boundedFacetOptions(facets.categories, selectedCategory, 12);
+
+  return `
+    <section class="catalog-sidebar-filters" aria-label="Component browse filters">
+      <label class="catalog-rail-search-control">
+        <span>Search</span>
+        <input
+          type="search"
+          data-catalog-search
+          value="${escapeHtml(searchTerm)}"
+          placeholder="Search components"
+          autocomplete="off" />
+      </label>
+      ${renderFilterSelect(
+        "Registry",
+        "registry",
+        facets.registries,
+        state.registryNames[0] ?? "",
+        "All registries",
+      )}
+      ${renderFilterSelect(
+        "Type",
+        "type",
+        facets.itemTypes,
+        state.itemTypes[0] ?? "",
+        "All item types",
+        value => value.replace(/^registry:/, ""),
+      )}
+      <div class="catalog-category-filter">
+        <div class="aside-section-title">Categories</div>
+        <div class="catalog-category-list">
+          <button
+            type="button"
+            class="catalog-category-option"
+            data-catalog-category-value=""
+            aria-pressed="${selectedCategory === ""}">
+            <span>All categories</span>
+          </button>
+          ${categories.map(option => `
+            <button
+              type="button"
+              class="catalog-category-option"
+              data-catalog-category-value="${escapeHtml(option.value)}"
+              aria-pressed="${option.value === selectedCategory}">
+              <span>${escapeHtml(option.value)}</span>
+              <span class="catalog-category-count">${option.count.toLocaleString()}</span>
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    </section>
   `;
 }
 

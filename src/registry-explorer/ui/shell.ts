@@ -42,7 +42,7 @@ import {
   exploreCollectionBySlug,
 } from '../core/catalogCollections';
 import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
-import { renderCatalogComponents } from './catalogComponentsView';
+import { renderCatalogComponents, renderCatalogRailControls } from './catalogComponentsView';
 import { renderCatalogLanding } from './catalogLandingView';
 import { renderCatalogCollection, renderEvidenceUnavailable } from './catalogCollectionView';
 import { renderRegistryDirectory } from './registryDirectoryView';
@@ -201,7 +201,12 @@ export function initRegistryExplorer(options: ShellOptions): void {
         </section>`
       : '';
 
+    const railControls = state.route.kind === 'components' && !state.route.lens
+      ? renderCatalogRailControls(facets, catalogBrowseState(), state.searchTerm)
+      : '';
+
     const railMarkup = `
+      ${railControls}
       <div class="catalog-sidebar-routes">
         <div class="aside-section-title">Browse</div>
         ${routeButton({ kind: 'components', lens: 'featured' }, 'Reviewed')}
@@ -391,7 +396,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
       searchTerm: state.searchTerm,
       facets,
       browseState: catalogBrowseState(),
-      includeRegistryFilter: true,
     });
   }
 
@@ -617,8 +621,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
   });
 
-  roots.contentBody.addEventListener('change', event => {
-    const target = event.target as HTMLSelectElement;
+  function handleControlChange(target: HTMLSelectElement): void {
     const dimension = target.getAttribute('data-catalog-filter');
     if (dimension) {
       const value = target.value.trim();
@@ -652,6 +655,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
         setState({ registrySort: value, discoveryPage: 1 }, 'push');
       }
     }
+  }
+
+  roots.aside.addEventListener('change', event => handleControlChange(event.target as HTMLSelectElement));
+  roots.contentBody.addEventListener('change', event => handleControlChange(event.target as HTMLSelectElement));
+
+  roots.aside.addEventListener('input', event => {
+    const target = event.target as HTMLInputElement;
+    if (!target.hasAttribute('data-catalog-search')) return;
+    roots.searchInput.value = target.value;
+    setState({ searchTerm: target.value, copyFeedback: null, discoveryPage: 1 });
   });
 
   roots.contentBody.addEventListener('input', event => {
@@ -697,6 +710,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
         catalogSort: 'name',
         discoveryPage: 1,
       }, 'push');
+      return;
+    }
+
+    const categoryControl = target.closest('[data-catalog-category-value]');
+    if (categoryControl) {
+      const category = categoryControl.getAttribute('data-catalog-category-value') ?? '';
+      setState({ catalogCategories: category ? [category] : [], discoveryPage: 1 }, 'push');
       return;
     }
 

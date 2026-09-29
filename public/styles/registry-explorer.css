@@ -1925,6 +1925,7 @@ aside > .primary-nav .nav-item {
   display: flex;
   min-width: 0;
   align-items: end;
+  justify-content: flex-end;
   gap: var(--space-2);
   margin: 0 0 var(--space-3);
   flex-wrap: wrap;
@@ -2416,6 +2417,93 @@ body {
   .catalog-component-card:has(.catalog-component-placeholder) .catalog-component-specimen {
     min-height: 88px;
   }
+}
+
+.catalog-sidebar-filters {
+  display: grid;
+  min-width: 0;
+  gap: var(--space-3);
+}
+
+.catalog-sidebar-filters .catalog-filter-control {
+  min-width: 0;
+}
+
+.catalog-sidebar-filters .catalog-filter-control select {
+  width: 100%;
+  max-width: none;
+}
+
+.catalog-rail-search-control {
+  display: grid;
+  gap: 5px;
+}
+
+.catalog-rail-search-control > span {
+  color: var(--muted-foreground);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.catalog-rail-search-control input {
+  width: 100%;
+  min-width: 0;
+  min-height: 34px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 12px;
+}
+
+.catalog-rail-search-control input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.catalog-category-filter {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.catalog-category-list {
+  display: grid;
+  gap: 2px;
+}
+
+.catalog-category-option {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+}
+
+.catalog-category-option:hover,
+.catalog-category-option:focus-visible,
+.catalog-category-option[aria-pressed="true"] {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.catalog-category-count {
+  flex: 0 0 auto;
+  color: var(--muted-foreground);
+  font-size: 10px;
 }
 
 .desktop-browse-rail {

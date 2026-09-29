@@ -4,6 +4,7 @@ import type { Registry } from "../../src/registry-explorer/core/registry.schema"
 import {
   renderCatalogBrowseControls,
   renderCatalogComponents,
+  renderCatalogRailControls,
 } from "../../src/registry-explorer/ui/catalogComponentsView";
 
 describe("renderCatalogComponents", () => {
@@ -39,36 +40,40 @@ describe("renderCatalogComponents", () => {
     expect(withoutPreview.innerHTML).not.toContain("<svg");
   });
 
-  it("renders bounded real-data filters and deterministic sorts", () => {
-    const html = renderCatalogBrowseControls(
-      {
-        registries: [{ value: "@delta", count: 12 }],
-        itemTypes: [{ value: "registry:ui", count: 10 }],
-        categories: [{ value: "forms", count: 4 }],
-        reviewedCount: 2,
-        unreviewedCount: 10,
-      },
-      {
-        page: 2,
-        sort: "type",
-        registryNames: ["@delta"],
-        itemTypes: ["registry:ui"],
-        categories: ["forms"],
-        reviewed: "unreviewed",
-      },
-    );
+  it("splits browse dimensions into the rail and keeps the content toolbar compact", () => {
+    const facets = {
+      registries: [{ value: "@delta", count: 12 }],
+      itemTypes: [{ value: "registry:ui", count: 10 }],
+      categories: [{ value: "forms", count: 4 }],
+      reviewedCount: 2,
+      unreviewedCount: 10,
+    };
+    const state = {
+      page: 2,
+      sort: "type" as const,
+      registryNames: ["@delta"],
+      itemTypes: ["registry:ui"],
+      categories: ["forms"],
+      reviewed: "unreviewed" as const,
+    };
 
-    expect(html).toContain('data-catalog-filter="registry"');
-    expect(html).toContain('data-catalog-filter="type"');
-    expect(html).toContain('data-catalog-filter="category"');
-    expect(html).toContain('data-catalog-reviewed');
-    expect(html).toContain('data-catalog-sort');
-    expect(html).toContain('<option value="@delta" selected>');
-    expect(html).toContain('<option value="registry:ui" selected>');
-    expect(html).toContain('<option value="forms" selected>');
-    expect(html).toContain('<option value="unreviewed" selected>');
-    expect(html).toContain('<option value="type" selected>');
-    expect(html).toContain('data-catalog-clear');
+    const rail = renderCatalogRailControls(facets, state, "button");
+    expect(rail).toContain('data-catalog-search');
+    expect(rail).toContain('data-catalog-filter="registry"');
+    expect(rail).toContain('data-catalog-filter="type"');
+    expect(rail).toContain('data-catalog-category-value="forms"');
+    expect(rail).toContain('aria-pressed="true"');
+    expect(rail).toContain('>4<');
+
+    const toolbar = renderCatalogBrowseControls(facets, state);
+    expect(toolbar).not.toContain('data-catalog-filter="registry"');
+    expect(toolbar).not.toContain('data-catalog-filter="type"');
+    expect(toolbar).not.toContain('data-catalog-filter="category"');
+    expect(toolbar).toContain('data-catalog-reviewed');
+    expect(toolbar).toContain('data-catalog-sort');
+    expect(toolbar).toContain('<option value="unreviewed" selected>');
+    expect(toolbar).toContain('<option value="type" selected>');
+    expect(toolbar).toContain('data-catalog-clear');
   });
 
   it("keeps filters visible when a filter combination has no matches", () => {
@@ -92,7 +97,8 @@ describe("renderCatalogComponents", () => {
       },
     });
 
-    expect(body.innerHTML).toContain('data-catalog-filter="type"');
+    expect(body.innerHTML).toContain('data-catalog-reviewed');
+    expect(body.innerHTML).toContain('data-catalog-sort');
     expect(body.innerHTML).toContain('data-catalog-clear');
     expect(body.innerHTML).toContain('No indexed components are available');
   });
