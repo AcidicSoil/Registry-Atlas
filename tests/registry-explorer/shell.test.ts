@@ -19,6 +19,13 @@ describe('registry explorer shell interactions', () => {
     vi.unstubAllGlobals();
   });
 
+  it('renders a compact mobile browse disclosure alongside the desktop rail', () => {
+    const harness = setup('', '/Registry-Atlas/');
+    expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail"');
+    expect(harness.aside.innerHTML).toContain('class="mobile-browse-menu"');
+    expect(harness.aside.innerHTML).toContain('<summary>');
+  });
+
   it('routes header copy actions and announces successful feedback', async () => {
     const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
     const harness = setup('?view=compare');

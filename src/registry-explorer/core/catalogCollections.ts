@@ -24,10 +24,10 @@ const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
 
 export function assetKindForCatalogItem(item: RegistryCatalogItem): CatalogAssetKind | null {
   if (item.type === "registry:page") return "template";
-  if (THEME_TYPES.has(item.type)) return "theme";
   if (ICON_TYPES.has(item.type) || (item.categories ?? []).some(category => ICON_CATEGORIES.has(normalize(category)))) {
     return "icon";
   }
+  if (THEME_TYPES.has(item.type)) return "theme";
   if (COMPONENT_TYPES.has(item.type)) return "component";
   return null;
 }

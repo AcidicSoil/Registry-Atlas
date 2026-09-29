@@ -201,7 +201,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
         </section>`
       : '';
 
-    roots.aside.innerHTML = `
+    const railMarkup = `
       <div class="catalog-sidebar-routes">
         <div class="aside-section-title">Browse</div>
         ${routeButton({ kind: 'components', lens: 'featured' }, 'Reviewed')}
@@ -225,6 +225,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
         <div class="aside-summary"><strong>${catalogIndex.meta.item_count.toLocaleString()}</strong> indexed assets<br><strong>${catalogIndex.meta.registry_count.toLocaleString()}</strong> indexed catalogs<br><strong>${registries.length.toLocaleString()}</strong> registries</div>
       </div>
       ${queueMarkup}
+    `;
+    roots.aside.innerHTML = `
+      <div class="desktop-browse-rail">${railMarkup}</div>
+      <details class="mobile-browse-menu">
+        <summary>
+          <span>Browse catalog</span>
+          <span>${catalogIndex.meta.item_count.toLocaleString()} assets</span>
+        </summary>
+        <div class="mobile-browse-menu-body">${railMarkup}</div>
+      </details>
     `;
   }
 

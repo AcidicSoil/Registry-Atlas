@@ -2417,3 +2417,72 @@ body {
     min-height: 88px;
   }
 }
+
+.desktop-browse-rail {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.mobile-browse-menu {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .desktop-browse-rail {
+    display: none;
+  }
+
+  .mobile-browse-menu {
+    display: block;
+    margin-bottom: var(--space-4);
+  }
+
+  .mobile-browse-menu summary {
+    display: flex;
+    min-height: 40px;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 0 var(--space-3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-button);
+    background: var(--card);
+    color: var(--foreground);
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .mobile-browse-menu summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .mobile-browse-menu summary span:last-child {
+    color: var(--muted-foreground);
+    font-size: 11px;
+  }
+
+  .mobile-browse-menu-body {
+    display: grid;
+    gap: var(--space-4);
+    padding-top: var(--space-3);
+  }
+
+  .mobile-browse-menu-body .catalog-sidebar-routes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+    overflow: visible;
+    padding: 0;
+  }
+
+  .mobile-browse-menu-body .aside-section-title {
+    grid-column: 1 / -1;
+  }
+
+  .mobile-browse-menu-body .aside-route {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--border);
+    white-space: normal;
+  }
+}

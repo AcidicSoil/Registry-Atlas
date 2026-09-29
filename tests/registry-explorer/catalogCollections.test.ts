@@ -11,6 +11,7 @@ describe("catalogCollections", () => {
     expect(assetKindForCatalogItem({ name: "page", type: "registry:page" })).toBe("template");
     expect(assetKindForCatalogItem({ name: "theme", type: "registry:theme" })).toBe("theme");
     expect(assetKindForCatalogItem({ name: "icons", type: "registry:component", categories: ["icons"] })).toBe("icon");
+    expect(assetKindForCatalogItem({ name: "icon-theme", type: "registry:style", categories: ["icons"] })).toBe("icon");
     expect(assetKindForCatalogItem({ name: "icon-button", type: "registry:component" })).toBe("component");
   });
 

@@ -44,6 +44,7 @@ describe('visual dictionary design contract', () => {
     expect(css).toContain('.landing-shortcuts');
     expect(css).toContain('.catalog-sidebar-routes');
     expect(css).toContain('.aside-route');
+    expect(css).toContain('.mobile-browse-menu');
     expect(css).toContain('.registry-directory-controls');
     expect(css).toContain('.evidence-unavailable');
     expect(css).toContain('.catalog-component-card:has(.catalog-component-placeholder)');
