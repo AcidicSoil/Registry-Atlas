@@ -1,0 +1,1 @@
+[{"name":"slot","type":"registry:component","title":"React Slot","description":"Vue-style slot composition for React","files":[{"path":"components/slot.tsx","type":"registry:component","target":"components/ui/slot.tsx"}]}]

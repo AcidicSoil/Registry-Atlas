@@ -106,8 +106,10 @@ assert(existsSync(detailDir), 'same-origin registry item detail bundle directory
 if (existsSync(detailDir)) {
   const bundleFiles = readdirSync(detailDir).filter(name => name.endsWith('.json'));
   assert(bundleFiles.length > 0, 'same-origin registry item detail bundle directory is empty');
-  for (const name of bundleFiles.slice(0, 5)) {
-    const payload = JSON.parse(readFileSync(path.join(detailDir, name), 'utf8'));
+  for (const name of bundleFiles) {
+    const text = readFileSync(path.join(detailDir, name), 'utf8');
+    assert(!/"content"\s*:/.test(text), `detail bundle must not persist source-code content: ${name}`);
+    const payload = JSON.parse(text);
     assert(Array.isArray(payload), `detail bundle must be a JSON array: ${name}`);
   }
 }

@@ -1,0 +1,1 @@
+[{"name":"echo-text","type":"registry:component","title":"EchoText","description":"Layered stroke text that follows the pointer for a simple motion trail effect.","registryDependencies":["utils"],"files":[{"path":"registry/components/echo-text.tsx","type":"registry:component"}]}]
