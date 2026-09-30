@@ -154,38 +154,39 @@ function expectedPathname(routePath) {
   return url.pathname;
 }
 
-function mobileFacetFocusState() {
+function mobileSidebarFocusState() {
   const openResult = JSON.parse(run(['eval', '--tab', tab, `(() => {
-    const details = document.querySelector('.mobile-browse-menu');
-    const summary = details?.querySelector('summary');
-    if (!(details instanceof HTMLDetailsElement) || !(summary instanceof HTMLElement)) {
+    const sidebar = document.querySelector('#appSidebar');
+    const toggle = document.querySelector('#sidebarToggle');
+    const close = document.querySelector('#sidebarClose');
+    if (!(sidebar instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement) || !(close instanceof HTMLButtonElement)) {
       return JSON.stringify({ available: false });
     }
-    details.removeAttribute('open');
-    summary.focus();
-    summary.click();
+    sidebar.dataset.open = 'false';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.focus();
+    toggle.click();
     return JSON.stringify({ available: true });
   })()`]).stdout);
   if (!openResult.available) return openResult;
 
   const opened = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
-    open: document.querySelector('.mobile-browse-menu')?.open ?? false,
-    focusMovedInside: document.activeElement?.hasAttribute('data-mobile-browse-close') ?? false
+    open: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'true',
+    expanded: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'true',
+    focusMovedInside: document.activeElement?.id === 'sidebarClose'
   })`]).stdout);
-  run(['eval', '--tab', tab, `document.activeElement?.click(); 'clicked'`]);
-  const closed = JSON.parse(run(['eval', '--tab', tab, `(() => {
-    const details = document.querySelector('.mobile-browse-menu');
-    const summary = details?.querySelector('summary');
-    return JSON.stringify({
-      closed: details instanceof HTMLDetailsElement && !details.open,
-      focusReturned: summary instanceof HTMLElement && document.activeElement === summary
-    });
-  })()`]).stdout);
+  run(['eval', '--tab', tab, `document.querySelector('#sidebarClose')?.click(); 'clicked'`]);
+  const closed = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
+    closed: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'false',
+    collapsed: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'false',
+    focusReturned: document.activeElement?.id === 'sidebarToggle'
+  })`]).stdout);
 
   return {
     available: true,
-    focusMovedInside: opened.open && opened.focusMovedInside,
-    closed: closed.closed,
+    opened: opened.open && opened.expanded,
+    focusMovedInside: opened.focusMovedInside,
+    closed: closed.closed && closed.collapsed,
     focusReturned: closed.focusReturned,
   };
 }
@@ -256,11 +257,12 @@ for (const viewport of viewports) {
     if (state.imagesMissingAlt > 0) routeFailures.push(`${state.imagesMissingAlt} visible image(s) lack alt text`);
     if (state.duplicateIdCount > 0) routeFailures.push(`${state.duplicateIdCount} duplicate DOM id(s)`);
     if (viewport.mobile && route.name === 'components') {
-      const facetFocus = mobileFacetFocusState();
-      if (!facetFocus.available) routeFailures.push('mobile facet sheet is unavailable');
-      if (facetFocus.available && !facetFocus.focusMovedInside) routeFailures.push('mobile facet sheet did not move focus inside');
-      if (facetFocus.available && !facetFocus.closed) routeFailures.push('mobile facet sheet did not close');
-      if (facetFocus.available && !facetFocus.focusReturned) routeFailures.push('mobile facet sheet did not return focus to Filters');
+      const sidebarFocus = mobileSidebarFocusState();
+      if (!sidebarFocus.available) routeFailures.push('mobile sidebar is unavailable');
+      if (sidebarFocus.available && !sidebarFocus.opened) routeFailures.push('mobile sidebar did not open');
+      if (sidebarFocus.available && !sidebarFocus.focusMovedInside) routeFailures.push('mobile sidebar did not move focus to Close');
+      if (sidebarFocus.available && !sidebarFocus.closed) routeFailures.push('mobile sidebar did not close');
+      if (sidebarFocus.available && !sidebarFocus.focusReturned) routeFailures.push('mobile sidebar did not return focus to the menu button');
     }
 
     const record = {

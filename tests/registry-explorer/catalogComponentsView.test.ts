@@ -16,7 +16,7 @@ describe("renderCatalogComponents", () => {
     renderCatalogComponents(header, body, result([component()]), { searchTerm: "" });
 
     expect(header.innerHTML).toContain("Components");
-    expect(header.innerHTML).toContain("1 indexed component");
+    expect(header.innerHTML).toContain("1 component");
     expect(body.innerHTML).toContain("data-view-item-registry=\"@delta\"");
     expect(body.innerHTML).toContain("data-view-item-slug=\"code-block\"");
     expect(body.innerHTML).toContain("Code Block");
@@ -57,7 +57,7 @@ describe("renderCatalogComponents", () => {
     const withoutPreview = root();
     renderCatalogComponents(root(), withoutPreview, result([component()]), { searchTerm: "" });
     expect(withoutPreview.innerHTML).not.toContain("Preview not published");
-    expect(withoutPreview.innerHTML).toContain("A real indexed component.");
+    expect(withoutPreview.innerHTML).toContain("A component from the catalog.");
     expect(withoutPreview.innerHTML).toContain("ui");
     expect(withoutPreview.innerHTML).not.toContain("<svg");
   });
@@ -90,7 +90,7 @@ describe("renderCatalogComponents", () => {
     };
     const state = {
       page: 2,
-      sort: "type" as const,
+      sort: "registry" as const,
       registryNames: ["@delta"],
       itemTypes: ["registry:ui"],
       categories: ["forms"],
@@ -100,33 +100,28 @@ describe("renderCatalogComponents", () => {
     const rail = renderCatalogRailControls(facets, state);
     expect(rail).not.toContain('data-catalog-search');
     expect(rail).toContain('data-catalog-registry-value="@delta"');
-    expect(rail).toContain('data-catalog-type-value="registry:ui"');
-    expect(rail).toContain('data-catalog-category-value="forms"');
-    expect(rail).toContain('aria-pressed="true"');
-    expect(rail).toContain('>4<');
+    expect(rail).toContain('>Registry<');
+    expect(rail).not.toContain('data-catalog-type-value');
+    expect(rail).not.toContain('data-catalog-category-value');
+    expect(rail).not.toContain('>Item types<');
+    expect(rail).not.toContain('>Categories<');
 
-    const toolbar = renderCatalogBrowseControls(facets, state);
+    const toolbar = renderCatalogBrowseControls(state);
     expect(toolbar).not.toContain('data-catalog-filter="registry"');
     expect(toolbar).not.toContain('data-catalog-filter="type"');
     expect(toolbar).not.toContain('data-catalog-filter="category"');
     expect(toolbar).not.toContain('data-catalog-reviewed');
     expect(toolbar).toContain('data-catalog-sort');
     expect(toolbar).not.toContain('Reviewed first');
-    expect(toolbar).toContain('<option value="type" selected>');
-    expect(toolbar).toContain('data-catalog-clear');
+    expect(toolbar).not.toContain('<option value="type"');
+    expect(toolbar).toContain('<option value="name"');
+    expect(toolbar).toContain('<option value="registry"');
   });
 
   it("keeps filters visible when a filter combination has no matches", () => {
     const body = root();
     renderCatalogComponents(root(), body, result([]), {
       searchTerm: "",
-      facets: {
-        registries: [{ value: "@delta", count: 1 }],
-        itemTypes: [{ value: "registry:ui", count: 1 }],
-        categories: [],
-        reviewedCount: 0,
-        unreviewedCount: 1,
-      },
       browseState: {
         page: 1,
         sort: "name",
@@ -140,7 +135,7 @@ describe("renderCatalogComponents", () => {
     expect(body.innerHTML).not.toContain('data-catalog-reviewed');
     expect(body.innerHTML).toContain('data-catalog-sort');
     expect(body.innerHTML).toContain('data-catalog-clear');
-    expect(body.innerHTML).toContain('No indexed components are available');
+    expect(body.innerHTML).toContain('No components are available');
   });
 
   it("renders truthful pagination over the full query result", () => {
@@ -189,7 +184,7 @@ function component(options: {
     slug: "code-block",
     displayName: "Code Block",
     title: "Code Block",
-    description: "A real indexed component.",
+    description: "A component from the catalog.",
     type: "registry:ui",
     categories: ["code"],
     reviewed: false,

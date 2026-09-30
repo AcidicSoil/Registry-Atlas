@@ -29,17 +29,7 @@ export interface CatalogBrowseQueryState {
   reviewed: CatalogReviewedFilter;
 }
 
-const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry", "type"]);
-const CATALOG_ITEM_TYPES = new Set([
-  "registry:block",
-  "registry:component",
-  "registry:ui",
-  "registry:page",
-  "registry:item",
-  "registry:style",
-  "registry:theme",
-  "registry:icon",
-]);
+const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry"]);
 
 export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRoute | null {
   const relative = stripBasePath(pathname, basePath);
@@ -108,8 +98,8 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
     page: Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1,
     sort: sortValue && CATALOG_SORTS.has(sortValue as CatalogSort) ? sortValue as CatalogSort : "name",
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
-    itemTypes: uniqueValues(params.getAll("type").filter(value => CATALOG_ITEM_TYPES.has(value))),
-    categories: uniqueValues(params.getAll("category").map(value => value.trim()).filter(isSafeFacetValue)),
+    itemTypes: [],
+    categories: [],
     reviewed: "all",
   };
 }
@@ -117,15 +107,9 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
 export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URLSearchParams {
   const params = new URLSearchParams();
   if (state.page > 1) params.set("page", String(state.page));
-  if (state.sort !== "name" && state.sort !== "reviewed") params.set("sort", state.sort);
+  if (state.sort === "registry") params.set("sort", "registry");
   state.registryNames.forEach(value => {
     if (isSafeNamespace(value)) params.append("registry", value);
-  });
-  state.itemTypes.forEach(value => {
-    if (CATALOG_ITEM_TYPES.has(value)) params.append("type", value);
-  });
-  state.categories.forEach(value => {
-    if (isSafeFacetValue(value)) params.append("category", value.trim());
   });
   return params;
 }

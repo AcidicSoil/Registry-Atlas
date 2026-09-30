@@ -15,6 +15,7 @@ function assert(condition, message) {
 const routeSource = read('src/registry-explorer/core/catalogRoutes.ts');
 const shellSource = read('src/registry-explorer/ui/shell.ts');
 const componentViewSource = read('src/registry-explorer/ui/catalogComponentsView.ts');
+const indexSource = read('index.html');
 
 for (const token of [
   'kind: "home"',
@@ -43,10 +44,17 @@ assert(!componentViewSource.includes('data-catalog-search'), 'Components rail mu
 assert(!componentViewSource.includes('Preview not published'), 'browse cards must use factual specimens instead of empty preview placeholders');
 assert(!shellSource.includes("routeButton({ kind: 'components', lens: 'featured' }, 'Reviewed')"),
   'Reviewed enrichment must not be exposed as Featured navigation');
-assert(shellSource.includes('Featured browsing requires an explicit upstream curation or popularity signal.'),
-  'Featured route must remain honest when no curation signal exists');
-assert(shellSource.includes("routeButton({ kind: 'icons' }, 'Icon-related assets')"),
+assert(shellSource.includes("Featured isn't available because registries don't provide a common popularity or featured field.")
+  && shellSource.includes("Registry Atlas won't rank items without that data."),
+  'Featured route must remain honest when no ranking signal exists');
+assert(indexSource.includes('data-view="icons">Icon-related assets</button>'),
   'Icons navigation must describe the registry-backed icon-related data honestly');
+assert(!componentViewSource.includes('data-catalog-type-value'),
+  'Components sidebar must not expose raw registry item-type filters');
+assert(!componentViewSource.includes('data-catalog-category-value'),
+  'Components sidebar must not expose noisy raw category filters');
+assert(!componentViewSource.includes('data-catalog-reviewed'),
+  'Components UI must not expose legacy reviewed metadata as a browse control');
 
 const retiredFiles = [
   'src/registry-explorer/core/catalogFacets.ts',

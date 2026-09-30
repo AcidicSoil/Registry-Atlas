@@ -19,8 +19,8 @@ function renderHeader(detail: RegistryItemDetail | null, status: RegistryItemDet
     return `
       <div>
         <button class="link-button" type="button" data-back-from-item>← Back to results</button>
-        <h1>Component details unavailable</h1>
-        <p>Atlas could not find this component in the selected registry.</p>
+        <h1>Item details unavailable</h1>
+        <p>Registry Atlas could not find this item in the selected registry.</p>
       </div>
     `;
   }
@@ -32,8 +32,7 @@ function renderHeader(detail: RegistryItemDetail | null, status: RegistryItemDet
       <p>${escapeHtml(detail.namespace)} · ${escapeHtml(detail.slug)}</p>
       <div class="profile-chips">
         <span class="status-chip status-${escapeHtml(detail.catalogStatus)}">${escapeHtml(statusLabel(detail, status))}</span>
-        <span class="confidence-chip">${escapeHtml(detail.confidence)} confidence</span>
-        ${detail.type ? `<span>${escapeHtml(detail.type)}</span>` : ''}
+        ${detail.type ? `<span>${escapeHtml(detail.type.replace(/^registry:/, ''))}</span>` : ''}
         ${detail.category ? `<span>${escapeHtml(detail.category)}</span>` : ''}
       </div>
     </div>
@@ -55,7 +54,7 @@ function renderDetailBody(
       <section class="item-detail-hero">
         ${renderPreview(detail, previewUrl)}
         <div class="item-detail-summary">
-          ${detail.description ? `<p>${escapeHtml(detail.description)}</p>` : '<p class="muted">No component description is available yet.</p>'}
+          ${detail.description ? `<p>${escapeHtml(detail.description)}</p>` : '<p class="muted">No description is available.</p>'}
           <div class="item-action-row">
             ${renderComponentPageAction(detail, detail.installAction.status === 'enabled')}
             ${renderOpenInV0Action(detail)}
@@ -66,7 +65,7 @@ function renderDetailBody(
           ${fallback}
         </div>
       </section>
-      <section class="item-detail-cards" aria-label="Component details">
+      <section class="item-detail-cards" aria-label="Item details">
         ${renderListCard('Dependencies', detail.dependencies)}
         ${renderListCard('Dev dependencies', detail.devDependencies)}
         ${renderListCard('Registry dependencies', detail.registryDependencies)}
@@ -81,8 +80,8 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
   return `
     <div class="empty-state">
       <div class="empty-state-icon">⌕</div>
-      <h2>Component details unavailable</h2>
-      <p>${escapeHtml(result.message ?? 'Atlas could not load this item yet.')} Open the component page or registry source to inspect it outside Atlas.</p>
+      <h2>Item details unavailable</h2>
+      <p>${escapeHtml(result.message ?? 'Registry Atlas could not load this item.')} Open the item page or registry source to inspect it outside Registry Atlas.</p>
     </div>
   `;
 }
@@ -108,14 +107,14 @@ function renderPreview(detail: RegistryItemDetail, previewUrl: string | null): s
 
   return `
     <div class="item-preview-metadata">
-      <div class="catalog-eyebrow">Catalog specimen</div>
-      <code>${escapeHtml(detail.type ?? 'registry:item')}</code>
+      <div class="catalog-eyebrow">Item details</div>
+      <code>${escapeHtml((detail.type ?? 'registry:item').replace(/^registry:/, ''))}</code>
       <h2>${escapeHtml(detail.title)}</h2>
-      <p>${escapeHtml(detail.description ?? 'This real registry item has no published preview media.')}</p>
+      <p>${escapeHtml(detail.description ?? 'No preview image is published for this item.')}</p>
       <div class="item-preview-metadata-facts">
         ${facts.map(fact => `<span>${escapeHtml(fact)}</span>`).join('')}
       </div>
-      <div class="item-preview-metadata-status">No published preview · showing source metadata</div>
+      <div class="item-preview-metadata-status">No preview image</div>
       ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'secondary-link') : ''}
     </div>
   `;
@@ -135,7 +134,7 @@ function renderComponentPageAction(detail: RegistryItemDetail, installationEnabl
     return renderExternalLink(detail.registry.url, 'Open registry homepage', className);
   }
 
-  return '<span class="muted">Upstream item route unavailable</span>';
+  return '<span class="muted">Item source unavailable</span>';
 }
 
 function renderOpenInV0Action(detail: RegistryItemDetail): string {
@@ -187,12 +186,11 @@ function renderPromptActions(detail: RegistryItemDetail): string {
 function renderEvaluationLabels(detail: RegistryItemDetail, previewAvailable: boolean): string {
   const labels = [
     `${detail.dependencies.length} dependencies`,
-    `${detail.registryDependencies.length} registry deps`,
+    `${detail.registryDependencies.length} registry dependencies`,
     `${detail.files.length} files`,
-    previewAvailable ? 'visual available' : 'preview unavailable',
-    detail.catalogStatus === 'available' ? 'catalog-backed' : detail.catalogStatus,
+    previewAvailable ? 'Preview' : 'No preview',
   ];
-  return `<div class="discovery-item-meta" aria-label="Component evaluation context">${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}</div>`;
+  return `<div class="discovery-item-meta" aria-label="Item summary">${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}</div>`;
 }
 
 function renderListCard(title: string, items: readonly string[]): string {
@@ -224,16 +222,16 @@ function renderSourceCard(detail: RegistryItemDetail): string {
   const links = [
     detail.docsUrl ? renderExternalLink(detail.docsUrl, 'Docs', 'secondary-link') : '',
     detail.route.status === 'available' ? renderExternalLink(detail.route.url, 'Open raw item', 'secondary-link') : '',
-    detail.evidenceUrl ? renderExternalLink(detail.evidenceUrl, 'Evidence', 'secondary-link') : '',
+    detail.evidenceUrl ? renderExternalLink(detail.evidenceUrl, 'Source record', 'secondary-link') : '',
     renderExternalLink(detail.registry.url, 'Registry homepage', 'secondary-link'),
   ].filter(Boolean).slice(0, 4).join(' ');
 
   return `
     <section class="item-detail-card">
-      <h2>Source context</h2>
+      <h2>Source</h2>
       <dl class="profile-facts">
         <div class="profile-fact"><dt>Source</dt><dd>${escapeHtml(detail.source)}</dd></div>
-        <div class="profile-fact"><dt>Provenance</dt><dd>${escapeHtml(detail.provenance)}</dd></div>
+        <div class="profile-fact"><dt>Imported from</dt><dd>${escapeHtml(detail.provenance)}</dd></div>
         ${detail.warnings.length ? `<div class="profile-fact"><dt>Warnings</dt><dd>${escapeHtml(detail.warnings.join(', '))}</dd></div>` : ''}
       </dl>
       <div class="secondary-links">${links}</div>
@@ -243,7 +241,7 @@ function renderSourceCard(detail: RegistryItemDetail): string {
 
 function renderFallback(result: RegistryItemDetailResult): string {
   if (result.status === 'fetch-error') {
-    return '<div class="partial-data-note">Atlas could not load richer item metadata from the registry. This real indexed component remains available as a catalog-backed summary, and its upstream item route can still be opened directly.</div>';
+    return '<div class="partial-data-note">Full item details could not be loaded. Showing the saved summary.</div>';
   }
   if (result.status === 'invalid-json' || result.status === 'invalid-schema') {
     return '<div class="partial-data-note">Atlas could not read this registry item safely. The component page may still be available from the registry.</div>';
@@ -252,14 +250,14 @@ function renderFallback(result: RegistryItemDetailResult): string {
 }
 
 function statusLabel(detail: RegistryItemDetail, status: RegistryItemDetailResult['status']): string {
-  if (status === 'loaded') return 'catalog-backed detail';
+  if (status === 'loaded') return 'Full details';
   if (
     status === 'summary-only'
     || status === 'fetch-error'
     || status === 'invalid-json'
     || status === 'invalid-schema'
   ) {
-    return detail.catalogStatus === 'available' ? 'catalog-backed summary' : detail.catalogStatus;
+    return detail.catalogStatus === 'available' ? 'Summary' : detail.catalogStatus;
   }
-  return 'item route unavailable';
+  return 'Details unavailable';
 }

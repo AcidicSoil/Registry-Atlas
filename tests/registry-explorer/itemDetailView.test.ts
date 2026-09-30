@@ -48,7 +48,8 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('<img');
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain('visual available');
-    expect(body.innerHTML).toContain('preview unavailable');
+    expect(body.innerHTML).not.toContain('preview unavailable');
+    expect(body.innerHTML).toContain('No preview');
   });
 
   it('escapes imported item text and file fields', () => {
@@ -79,7 +80,7 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('<h2>Dev dependencies</h2>');
     expect(body.innerHTML).not.toContain('<h2>Registry dependencies</h2>');
     expect(body.innerHTML).not.toContain('<h2>Files</h2>');
-    expect(body.innerHTML).toContain('<h2>Source context</h2>');
+    expect(body.innerHTML).toContain('<h2>Source</h2>');
     expect(body.innerHTML).not.toContain('Review third-party registry code before installing.');
     expect(body.innerHTML).not.toContain('install-safety-note');
     expect(body.innerHTML).not.toContain('Similar patterns');
@@ -100,8 +101,9 @@ describe('renderItemDetailView', () => {
       reason: 'network-error',
     }, new Set());
 
-    expect(header.innerHTML).toContain('catalog-backed summary');
-    expect(body.innerHTML).toContain('Atlas could not load richer item metadata from the registry');
+    expect(header.innerHTML).toContain('Summary');
+    expect(header.innerHTML).not.toContain('Catalog summary');
+    expect(body.innerHTML).toContain('Full item details could not be loaded');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('Open raw item');
   });

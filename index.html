@@ -7,45 +7,63 @@
   <meta charset="UTF-8" />
   <title>Registry Atlas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-
   <link rel="stylesheet" href="/styles/registry-explorer.css" />
 </head>
 <body>
   <div id="app">
     <div class="app-inner">
-      <header class="app-header">
-        <div class="brand">
-          <div class="brand-logo">
-            <div class="brand-logo-inner">R</div>
+      <header class="mobile-app-header">
+        <button
+          id="sidebarToggle"
+          class="sidebar-toggle"
+          type="button"
+          aria-controls="appSidebar"
+          aria-expanded="false"
+          aria-label="Open navigation">☰</button>
+        <a class="brand brand-home-link" href="/Registry-Atlas/" aria-label="Registry Atlas home">
+          <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
+          <span class="brand-title">Registry Atlas</span>
+        </a>
+      </header>
+
+      <button id="sidebarBackdrop" class="sidebar-backdrop" type="button" aria-label="Close navigation" hidden></button>
+
+      <main>
+        <aside id="appSidebar" class="app-sidebar" data-open="false" aria-label="Registry Atlas navigation">
+          <div class="sidebar-topbar">
+            <a class="brand brand-home-link" href="/Registry-Atlas/" aria-label="Registry Atlas home">
+              <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
+              <span class="brand-title">Registry Atlas</span>
+            </a>
+            <button id="sidebarClose" class="sidebar-close" type="button" aria-label="Close navigation">×</button>
           </div>
-          <div class="brand-text">
-            <div class="brand-title">Registry Atlas</div>
-          </div>
-        </div>
-        <div class="header-right">
+
           <div class="search-bar">
-            <div class="search-icon">⌕</div>
+            <span class="search-icon" aria-hidden="true">⌕</span>
             <input
               id="searchInput"
               type="search"
               class="search-input"
-              placeholder="Search components or registries"
-              aria-label="Search components or registries"
+              placeholder="Search catalog"
+              aria-label="Search catalog"
             />
           </div>
-        </div>
-      </header>
 
-      <main>
-        <aside>
           <nav class="primary-nav" aria-label="Primary navigation">
-            <button type="button" class="nav-item nav-item-active" data-view="discover">Components</button>
+            <button type="button" class="nav-item nav-item-active" data-view="home">Home</button>
+            <div class="nav-section-label">Explore</div>
+            <button type="button" class="nav-item" data-view="discover">Components</button>
+            <button type="button" class="nav-item" data-view="templates">Templates</button>
+            <button type="button" class="nav-item" data-view="themes">Themes</button>
+            <button type="button" class="nav-item" data-view="icons">Icon-related assets</button>
             <button type="button" class="nav-item" data-view="registries">Registries</button>
+            <div class="nav-section-label">Tools</div>
             <button type="button" class="nav-item" data-view="compare">Compare</button>
           </nav>
+
           <div class="aside-inner" id="aside"></div>
         </aside>
+
         <section class="content">
           <div class="content-header" id="contentHeader"></div>
           <div class="content-body">

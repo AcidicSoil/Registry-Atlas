@@ -19,7 +19,6 @@ export interface CatalogDiscoveryBand {
 
 export interface CatalogComponentsViewOptions {
   searchTerm: string;
-  facets?: CatalogFacetSummary;
   browseState?: CatalogBrowseQueryState;
   discoveryBands?: readonly CatalogDiscoveryBand[];
 }
@@ -30,22 +29,22 @@ export function renderCatalogComponents(
   result: CatalogQueryResult,
   options: CatalogComponentsViewOptions,
 ): void {
-  const countLabel = result.total === 1 ? "1 indexed component" : `${result.total.toLocaleString()} indexed components`;
+  const countLabel = result.total === 1 ? "1 component" : `${result.total.toLocaleString()} components`;
   headerRoot.innerHTML = `
     <div class="catalog-page-heading">
       <div class="catalog-eyebrow">Registry Atlas</div>
       <h1>Components</h1>
-      <p>${escapeHtml(countLabel)} from real registry catalog records.</p>
+      <p>${escapeHtml(countLabel)} across published registries.</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url data-copy-label="Component catalogue link copied">Copy link</button>
+    <button class="link-button" type="button" data-copy-current-url data-copy-label="Component catalog link copied">Copy link</button>
   `;
 
   const emptyCopy = options.searchTerm.trim()
-    ? `No indexed components match “${escapeHtml(options.searchTerm.trim())}”.`
-    : "No indexed components are available.";
+    ? `No components match “${escapeHtml(options.searchTerm.trim())}”.`
+    : "No components are available.";
 
-  const controls = options.facets && options.browseState
-    ? renderCatalogBrowseControls(options.facets, options.browseState)
+  const controls = options.browseState
+    ? renderCatalogBrowseControls(options.browseState)
     : "";
 
   bodyRoot.innerHTML = `
@@ -59,7 +58,7 @@ export function renderCatalogComponents(
         </div>
         ${renderPagination(result)}
       `
-      : `<div class="empty-state"><h2>${emptyCopy}</h2><p>Try another real component name, category, type, or registry.</p></div>`}
+      : `<div class="empty-state"><h2>${emptyCopy}</h2><p>Try a different component name or registry.</p></div>`}
   `;
 }
 
@@ -85,48 +84,21 @@ function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
 }
 
 export function renderCatalogBrowseControls(
-  facets: CatalogFacetSummary,
   state: CatalogBrowseQueryState,
-  options: { includeDimensions?: boolean; includeRegistry?: boolean } = {},
 ): string {
-  const visibleSort: Exclude<CatalogSort, "reviewed"> = state.sort === "reviewed" ? "name" : state.sort;
+  const visibleSort: "name" | "registry" = state.sort === "registry" ? "registry" : "name";
   const active = state.registryNames.length > 0
     || state.itemTypes.length > 0
     || state.categories.length > 0
     || visibleSort !== "name";
-  const includeDimensions = options.includeDimensions ?? false;
-  const includeRegistry = options.includeRegistry ?? true;
 
   return `
     <div class="catalog-filter-bar catalog-filter-bar-compact" aria-label="Catalog sort controls">
-      ${includeDimensions && includeRegistry ? renderFilterSelect(
-        "Registry",
-        "registry",
-        boundedFacetOptions(facets.registries, state.registryNames[0] ?? "", 100),
-        state.registryNames[0] ?? "",
-        "All registries",
-      ) : ""}
-      ${includeDimensions ? renderFilterSelect(
-        "Type",
-        "type",
-        boundedFacetOptions(facets.itemTypes, state.itemTypes[0] ?? "", 20),
-        state.itemTypes[0] ?? "",
-        "All item types",
-        value => value.replace(/^registry:/, ""),
-      ) : ""}
-      ${includeDimensions ? renderFilterSelect(
-        "Category",
-        "category",
-        boundedFacetOptions(facets.categories, state.categories[0] ?? "", 100),
-        state.categories[0] ?? "",
-        "All categories",
-      ) : ""}
       <label class="catalog-filter-control">
         <span>Sort</span>
         <select data-catalog-sort>
           ${sortOption("name", "Name", visibleSort)}
           ${sortOption("registry", "Registry", visibleSort)}
-          ${sortOption("type", "Item type", visibleSort)}
         </select>
       </label>
       ${active ? '<button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear filters</button>' : ""}
@@ -139,28 +111,12 @@ export function renderCatalogRailControls(
   state: CatalogBrowseQueryState,
 ): string {
   return `
-    <section class="catalog-sidebar-filters" aria-label="Component browse filters">
+    <section class="catalog-sidebar-filters" aria-label="Component filters">
       ${renderRailFacetGroup(
-        "Sources",
-        "registry",
-        boundedFacetOptions(facets.registries, state.registryNames[0] ?? "", 10),
+        "Registry",
+        boundedFacetOptions(facets.registries, state.registryNames[0] ?? "", 12),
         state.registryNames[0] ?? "",
-        "All sources",
-      )}
-      ${renderRailFacetGroup(
-        "Item types",
-        "type",
-        boundedFacetOptions(facets.itemTypes, state.itemTypes[0] ?? "", 12),
-        state.itemTypes[0] ?? "",
-        "All item types",
-        value => value.replace(/^registry:/, ""),
-      )}
-      ${renderRailFacetGroup(
-        "Categories",
-        "category",
-        boundedFacetOptions(facets.categories, state.categories[0] ?? "", 12),
-        state.categories[0] ?? "",
-        "All categories",
+        "All registries",
       )}
     </section>
   `;
@@ -265,7 +221,7 @@ function renderCatalogMetadataSpecimen(component: CatalogComponent): string {
 
   return `
     <div class="catalog-component-metadata-specimen">
-      <p>${escapeHtml(component.description ?? `Catalog item from ${component.namespace}.`)}</p>
+      <p>${escapeHtml(component.description ?? `From ${component.namespace}.`)}</p>
       <div class="catalog-component-specimen-facts">
         ${facts.map(fact => `<span>${escapeHtml(fact)}</span>`).join("")}
       </div>
@@ -275,17 +231,10 @@ function renderCatalogMetadataSpecimen(component: CatalogComponent): string {
 
 function renderRailFacetGroup(
   label: string,
-  dimension: "registry" | "type" | "category",
   options: readonly CatalogFacetOption[],
   selected: string,
   allLabel: string,
-  labelFor: (value: string) => string = value => value,
 ): string {
-  const dataAttribute = dimension === "registry"
-    ? "data-catalog-registry-value"
-    : dimension === "type"
-      ? "data-catalog-type-value"
-      : "data-catalog-category-value";
   return `
     <div class="catalog-rail-facet-group">
       <div class="aside-section-title">${escapeHtml(label)}</div>
@@ -293,7 +242,7 @@ function renderRailFacetGroup(
         <button
           type="button"
           class="catalog-category-option"
-          ${dataAttribute}=""
+          data-catalog-registry-value=""
           aria-pressed="${selected === ""}">
           <span>${escapeHtml(allLabel)}</span>
         </button>
@@ -301,9 +250,9 @@ function renderRailFacetGroup(
           <button
             type="button"
             class="catalog-category-option"
-            ${dataAttribute}="${escapeHtml(option.value)}"
+            data-catalog-registry-value="${escapeHtml(option.value)}"
             aria-pressed="${option.value === selected}">
-            <span>${escapeHtml(labelFor(option.value))}</span>
+            <span>${escapeHtml(option.value)}</span>
             <span class="catalog-category-count">${option.count.toLocaleString()}</span>
           </button>
         `).join("")}
@@ -321,7 +270,7 @@ function renderResultMeta(result: CatalogQueryResult): string {
 function renderPagination(result: CatalogQueryResult): string {
   if (result.pageCount <= 1) return "";
   return `
-    <nav class="catalog-pagination" aria-label="Component catalogue pages">
+    <nav class="catalog-pagination" aria-label="Component catalog pages">
       <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>
       <span>Page ${result.page.toLocaleString()} of ${result.pageCount.toLocaleString()}</span>
       <button type="button" data-discovery-page="${result.page + 1}" ${result.hasNextPage ? "" : "disabled"}>Next</button>
@@ -329,31 +278,6 @@ function renderPagination(result: CatalogQueryResult): string {
   `;
 }
 
-function renderFilterSelect(
-  label: string,
-  dimension: "registry" | "type" | "category",
-  options: readonly CatalogFacetOption[],
-  selected: string,
-  allLabel: string,
-  labelFor: (value: string) => string = value => value,
-): string {
-  const visibleOptions = selected && !options.some(option => option.value === selected)
-    ? [...options, { value: selected, count: 0 }]
-    : options;
-  return `
-    <label class="catalog-filter-control">
-      <span>${escapeHtml(label)}</span>
-      <select data-catalog-filter="${dimension}">
-        <option value="">${escapeHtml(allLabel)}</option>
-        ${visibleOptions.map(option => `
-          <option value="${escapeHtml(option.value)}"${option.value === selected ? " selected" : ""}>
-            ${escapeHtml(labelFor(option.value))} (${option.count.toLocaleString()})
-          </option>
-        `).join("")}
-      </select>
-    </label>
-  `;
-}
 
 function boundedFacetOptions(
   options: readonly CatalogFacetOption[],

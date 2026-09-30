@@ -17,6 +17,27 @@ explicit user decision before implementation even if the base spec is approved.
 This prevents “make it more like 21st.dev” from silently becoming a third-party code
 execution engine, a new parser stack, an unrelated icon corpus, or a bespoke ranking policy.
 
+### Corrective shell amendment — latest user direction
+
+The rendered correction pass supersedes the earlier shell-only requirements where they
+conflict with the points below:
+
+- desktop uses one persistent primary navigation sidebar across routes, including Home;
+- Home remains a distinct discovery **content** surface but does not hide the primary sidebar;
+- the same sidebar becomes one off-canvas navigation drawer at narrow widths;
+- there is no separate mobile bottom navigation or second facet bottom sheet;
+- the single catalog text-search control lives in the sidebar/drawer;
+- primary navigation is grouped as Home, Explore (Components, Templates, Themes,
+  Icon-related assets, Registries), and Tools (Compare);
+- unavailable or unsupported destinations are not promoted into persistent navigation;
+- Components adds only the useful Registry facet below the primary navigation; sort remains
+  a compact content control;
+- the Registry Atlas brand/logo is a Home link in desktop and mobile shell variants.
+
+This amendment takes precedence over the older shell details in sections 6, 6A, 9.1, 9.2,
+9.11, 9.12, 9.13, and the corresponding acceptance bullets. Evidence, route identity,
+asset-specific presentation, and approval-gated subsystem constraints remain unchanged.
+
 ## Problem
 
 Registry Atlas has the correct real-catalog foundation and canonical route structure, but
@@ -206,8 +227,9 @@ This is adaptation of an existing official shadcn pattern and does not require a
 
 Use the shared card in `component` mode.
 
-The rail keeps registry/type/category facets. The duplicate rail text-search field is
-removed; the global header search remains canonical.
+The shared sidebar keeps only the bounded Registry facet for Components. Raw item-type and
+category populations are not promoted to primary browse controls. The sidebar search is the
+single canonical catalog text-search control.
 
 #### Templates
 
@@ -245,10 +267,11 @@ not identify a universal third-party registry glyph contract.
 
 ### 6. Search consolidation
 
-The header search is the canonical text-search control.
+The sidebar search is the canonical text-search control on desktop and inside the same
+sidebar when it becomes the mobile drawer.
 
-Remove `data-catalog-search` from the browse rail and its duplicate event handling. The
-rail contains facets only.
+Remove `data-catalog-search` from route-specific browse controls and their duplicate event
+handling. Route controls contain facets/sort only.
 
 Requirements:
 - desktop and mobile expose one text-search intent;
@@ -265,8 +288,9 @@ For this pass:
 - do not use reviewed/enrichment presence as the landing-page definition of “featured”;
 - preserve the overlay internally as optional factual metadata/provenance where it adds description, preview, docs, or exact display copy;
 - remove the reviewed-only browse filter unless a future product requirement introduces a clearly named enrichment/provenance facet;
-- group the desktop rail by purpose: asset destinations first, then route-specific facets, then bounded evidence-backed category collections;
-- category/facet groups may nest or disclose, but they must not expose an unbounded hundreds-option control as the primary interaction;
+- group the primary sidebar by purpose: Home, Explore destinations, then Tools;
+- place route-specific component controls below primary navigation and keep only the bounded Registry facet in this pass;
+- category/type data may still drive factual grouping and cards, but raw category/type facet populations are not promoted to primary controls;
 - unavailable evidence routes such as Newest/Authors/Theme Editor must not occupy first-class persistent navigation when they cannot perform useful work.
 
 ### 7. Accessibility token correction
@@ -300,36 +324,31 @@ pass. Copy the composition hierarchy, not unsupported marketplace/account metric
 
 Shared data/card primitives do **not** require identical route geometry.
 
-#### 9.1 Root landing uses a distinct discovery shell
+#### 9.1 Root landing uses distinct discovery content inside the shared shell
 
-The root route must not render as the Components application shell with a hero attached.
+The root route must not render as the Components application content with a hero attached.
 
 At desktop it should use:
-- no persistent 240px catalog rail;
-- a slim top product navigation;
+- the shared approximately 240px primary navigation sidebar;
+- no route-specific component facet controls on Home;
 - a left-aligned hero/copy region rather than a centered dashboard card;
-- multiple curated, evidence-backed discovery bands;
-- compact category/collection links above relevant bands;
-- a Libraries/Registries section later in the page;
-- a footer that repeats supported primary destinations.
+- compact supported destination shortcuts;
+- deterministic component discovery content from real catalog records.
 
-Discovery bands may reuse the same item-card primitive, but must use real Registry Atlas
-lenses such as reviewed items and explicit category collections. Do not copy exemplar
-"Popular", bookmark counts, or recency labels unless Registry Atlas has direct evidence.
+The Home content surface remains visually distinct even though primary navigation is shared.
+Do not copy exemplar "Popular", bookmark counts, or recency labels unless Registry Atlas has
+direct evidence.
 
-Horizontal discovery bands should use native CSS horizontal overflow/snap behavior rather
-than introducing a carousel dependency.
-
-#### 9.2 Desktop collection shell
+#### 9.2 Desktop shared-sidebar shell
 
 At a 1920×1080 reference viewport:
-- persistent left rail target: approximately 240px;
-- top utility/header target: approximately 40px;
-- collection content begins around x=260, leaving ~20px inset after the rail;
+- persistent primary sidebar target: approximately 240px;
+- content begins immediately after the sidebar with a compact inset;
 - content uses the full remaining viewport width rather than a centered max-width page;
-- rail and utility/header region remain visually persistent while collection content scrolls;
-- route controls remain compact: roughly 28–32px tall with 6–8px corner radii;
-- desktop rail owns navigation/facets; the utility header owns the single global search.
+- the sidebar remains visually persistent while content scrolls;
+- the sidebar owns brand/Home, the single global search, grouped primary navigation, and
+  route-specific Registry filtering when applicable;
+- route controls remain compact: roughly 28–36px tall with modest corner radii.
 
 These are target proportions, not pixel-perfect hardcoding. Browser tests should allow small
 token-driven tolerances while proving the hierarchy and approximate dimensions.
@@ -400,7 +419,8 @@ CSS source in the base pass.
 The Registries route adapts the exemplar Libraries information-density pattern.
 
 Desktop target:
-- persistent collection rail for search/facets/sort;
+- shared primary sidebar remains available;
+- registry-directory search/status/sort controls live compactly in the content canvas;
 - 3-column metadata-card grid in the content canvas;
 - relatively short cards that repeat quickly down the page;
 - registry name/identity, description, explicit item count, and real catalog coverage facts
@@ -423,14 +443,14 @@ If a true glyph source is approved later, the exemplar target is:
 - desktop family/category rail;
 - dense border-connected glyph matrix;
 - mobile centered 4-column matrix with ~80px cells;
-- floating icon controls above mobile bottom navigation.
+- floating icon controls placed within the approved future mobile shell.
 
 That future glyph browser remains approval-gated.
 
 #### 9.8 Item-detail shell
 
-Exact component/template/theme detail routes leave the collection-rail layout and use a
-centered dossier.
+Exact component/template/theme detail routes keep the shared primary sidebar but leave the
+collection-grid composition and use a centered dossier in the content canvas.
 
 Wide-desktop target:
 - primary dossier max-width approximately 800px;
@@ -472,7 +492,7 @@ values.
 A registry profile uses a distinct two-pane shell rather than the generic collection page.
 
 Wide-desktop target:
-- top utility bar remains compact;
+- shared primary sidebar remains persistent;
 - sticky registry summary column approximately 320px wide;
 - summary begins near the left page gutter;
 - wide inventory canvas fills the remaining space;
@@ -485,27 +505,26 @@ Wide-desktop target:
 This is an adaptation of the existing `registryCollectionView`/shell, not authorization to
 build a second registry-profile application from scratch.
 
-#### 9.11 Mobile collection shell
+#### 9.11 Mobile shared drawer shell
 
-At 390×844, the desktop rail is replaced, not squeezed.
+At 390×844, the desktop sidebar becomes one off-canvas navigation drawer rather than being
+squeezed into the content canvas.
 
 Mobile shell:
-- compact top bar with menu trigger on the left and route identity centered;
+- compact top bar with a menu trigger and Registry Atlas Home link;
 - no unsupported sign-in/account affordance;
-- collection content uses roughly 12–20px side gutters depending on route;
-- fixed bottom navigation target height approximately 57px;
-- bottom navigation uses only supported Registry Atlas destinations/actions.
-
-Base bottom-nav mapping:
-- Home → root landing;
-- Search → focus/open the canonical global search and route results to Components;
-- Registries → registry directory;
-- Compare → compare route.
+- the drawer contains the same single catalog search, grouped primary navigation, and
+  route-specific Registry facet when applicable;
+- a dimmed backdrop closes the drawer;
+- opening moves focus to the drawer Close control and closing from that control, backdrop,
+  or Escape restores focus to the menu trigger;
+- there is no separate bottom navigation or second browse/facet sheet;
+- collection content uses roughly 12–20px side gutters depending on route.
 
 Components mobile:
-- Filters pill approximately 32px high;
-- horizontally scrollable quick category chips;
 - one-column, border-connected component cells;
+- Registry filtering remains available in the shared drawer;
+- sort remains a compact content control;
 - roughly 12px outer gutters.
 
 Templates/Themes mobile:
@@ -513,40 +532,32 @@ Templates/Themes mobile:
 - roughly 20px outer gutters;
 - preserve the desktop grid's visual rhythm with approximately 32px vertical spacing.
 
-#### 9.12 Mobile facet sheet
+#### 9.12 Mobile navigation/filter interaction
 
-Reuse the current mobile browse/facet disclosure state rather than adding a new modal
-library. Restyle/adapt it into a bottom sheet.
+Reuse the shared sidebar DOM as the mobile off-canvas drawer rather than maintaining a
+second navigation or filter subsystem.
 
 Required behavior:
-- modal-like bottom sheet with dimmed backdrop;
-- rounded top corners and drag/handle affordance;
-- facet groups use the same URL-backed state as desktop;
-- only supported Registry Atlas dimensions appear;
-- fixed sheet footer contains Reset and a primary Apply/Show results action.
+- dimmed backdrop;
+- compact brand/Home, Close, search, navigation, and route-specific facet stack;
+- only supported Registry Atlas controls appear;
+- opening/closing updates `aria-expanded`;
+- focus moves into the drawer on open and returns to the trigger on explicit close;
+- no new modal/navigation dependency is introduced.
 
-Initial supported groups:
-- Registry;
-- Type;
-- Category;
-- Reviewed;
-- Sort.
-
-Do not copy exemplar Time, primitive-library, Tailwind-version, author, or other filters
-unless Registry Atlas has explicit data and a reviewed product requirement.
-
-If the existing disclosure cannot support this accessibly without a new interaction
-subsystem, stop and request approval before introducing a dependency.
+Do not copy exemplar Time, primitive-library, Tailwind-version, author, bookmark, account,
+or other controls unless Registry Atlas has explicit data and a reviewed product requirement.
 
 #### 9.13 Responsive invariants
 
 Across these shells:
 - no horizontal document overflow at 390px or 1920px;
-- the mobile bottom nav never covers actionable content without reserved bottom padding;
+- the off-canvas drawer does not alter document width;
 - sticky/fixed desktop regions collapse cleanly on mobile;
 - only one canonical text-search intent is exposed;
-- focus order remains logical when rail controls move into the mobile facet sheet;
-- route identity remains visible even when the desktop h1 becomes visually compact.
+- focus order remains logical when the sidebar becomes the mobile drawer;
+- route identity remains visible in content while primary navigation remains available from
+  the compact mobile header.
 
 ## Explicit approval gates
 
@@ -706,7 +717,7 @@ Extend catalog query tests for:
 - description/author search;
 - explicit title precedence;
 - path-leaf display fallback while route slug stays exact;
-- unchanged registry/type/category/review filtering.
+- Registry filtering remains shareable while retired type/category/review browse parameters degrade safely and are not exposed as primary controls.
 
 ### Views and layout contracts
 
@@ -715,27 +726,27 @@ Extend catalog/view tests for:
 - theme swatches only from native structured `themePreview`;
 - metadata specimen replacing the large no-preview placeholder;
 - shared template/theme/icon-related card primitives;
-- one rendered text-search control;
-- Home omitting the desktop collection rail;
-- collection shell exposing separate rail, utility-header, and content-canvas regions;
+- one rendered catalog text-search control;
+- persistent shared desktop sidebar with Home-linked brand and grouped primary navigation;
+- route-specific Registry facet appearing below primary navigation only where applicable;
 - Components rendering discovery-band and dense-grid structures;
 - Templates/Themes rendering route-specific specimen-grid classes from shared card data;
 - Registries rendering the dense directory-card grid structure;
 - item detail rendering a dossier/action/specimen/facts hierarchy;
 - registry detail rendering summary-rail + inventory-canvas regions;
-- mobile shell exposing bottom navigation and facet-sheet trigger while the desktop rail is
-  absent.
+- mobile shell reusing the same sidebar as an off-canvas drawer with no duplicate bottom
+  navigation or facet sheet.
 
 Extend `visualContract.test.ts` (or the existing equivalent visual-contract test) with
 token/geometry contracts rather than exact screenshot hashes:
-- desktop rail token near 240px;
-- compact utility-bar token near 40px;
+- desktop primary-sidebar token near 240px;
+- compact mobile-header token near 52px;
 - four-column wide collection grid breakpoint;
 - Templates/Themes 24px column / 32px row gap tokens;
 - registry-directory three-column breakpoint;
 - item-detail max-width near 800px;
 - registry-profile summary rail near 320px;
-- mobile bottom-nav reserved height near 57px;
+- mobile drawer width bounded below the viewport width;
 - icon-related base route must not claim/render the true-glyph matrix class without a glyph
   source contract.
 
@@ -744,8 +755,8 @@ token/geometry contracts rather than exact screenshot hashes:
 Add deterministic assertions for:
 - changed boundary-token contrast;
 - focus-visible contrast remaining distinct from static borders;
-- mobile facet sheet dialog/disclosure naming and focus behavior;
-- bottom navigation labels and current-route state.
+- mobile drawer accessible naming, `aria-expanded`, open/close focus transfer, and focus return;
+- primary-navigation labels and current-route state.
 
 ### Managed browser
 
@@ -753,9 +764,10 @@ Use only the managed `registry-atlas` project profile and its exact instance for
 verification. Use the separate design/reference profile only for exemplar comparison.
 
 At 1920×1080 verify:
-- landing has no collection rail and uses the distinct discovery shell;
-- Components rail is approximately 240px and content starts roughly 20px after it;
-- Components reaches four-column dense-grid behavior without horizontal overflow;
+- the shared primary sidebar is approximately 240px and remains present on Home and content routes;
+- Home has distinct discovery content without route-specific component facets;
+- Components uses the shared sidebar plus its bounded Registry facet and reaches four-column
+  dense-grid behavior without horizontal overflow;
 - Templates/Themes reach four-column specimen grids with the intended gap rhythm;
 - Registries reaches a three-column metadata grid;
 - exact item detail uses a centered ~800px dossier;
@@ -765,15 +777,15 @@ At 1920×1080 verify:
 - no fabricated preview media appears.
 
 At 390×844 verify:
-- desktop rail is absent;
-- compact route header remains visible;
-- bottom navigation is fixed and content reserves enough bottom space;
-- Components exposes quick chips plus the facet-sheet trigger;
-- facet sheet opens with dimmed backdrop, supported groups, Reset, and Apply/Show results;
+- the desktop sidebar is off-canvas until the menu trigger opens it;
+- compact mobile header remains visible;
+- the drawer exposes the shared Home link, catalog search, grouped primary navigation, and
+  route-specific Registry facet where applicable;
+- the drawer opens over a dimmed backdrop without changing document width;
 - Components becomes one column;
 - Templates/Themes become one-column specimen lists;
 - no horizontal document overflow;
-- focus returns logically when the facet sheet closes.
+- focus moves to Close when the drawer opens and returns to the menu trigger when it closes.
 
 Across all checked routes:
 - stable exact routes and history behavior;
@@ -794,10 +806,10 @@ The base pass is complete when:
 5. no-preview browse cards no longer devote most of the card to an empty placeholder;
 6. qualifying exact item details expose the official shadcn-v4-template-style Open in v0
    action without introducing a preview runtime;
-7. the root landing uses the distinct discovery shell and does not retain the desktop
-   collection rail;
-8. desktop collection routes use the approximately 240px rail / 40px utility-header
-   hierarchy and full remaining canvas;
+7. the root landing uses distinct discovery content while retaining the shared primary
+   sidebar and no route-specific component facets;
+8. desktop routes use the approximately 240px shared primary-sidebar hierarchy and full
+   remaining content canvas;
 9. Components provides evidence-backed discovery bands plus the dense four-column
    border-connected browse grid at the wide reference viewport;
 10. Templates and Themes use the four-column specimen-grid rhythm and communicate their
@@ -807,9 +819,11 @@ The base pass is complete when:
 13. registry detail uses the sticky ~320px summary region plus a wide inventory canvas;
 14. the current Icons surface is honestly labeled as icon-related and does not imitate a
     true glyph matrix unless a glyph source is separately approved;
-15. desktop exposes one canonical text-search intent and duplicate rail search is removed;
-16. mobile replaces the desktop rail with the compact header, quick controls, supported
-    bottom navigation, and accessible facet bottom sheet;
+15. desktop exposes one canonical catalog text-search intent in the shared sidebar and
+    duplicate route search is removed;
+16. mobile reuses the shared sidebar as an accessible off-canvas drawer with compact header,
+    dimmed backdrop, and deterministic focus return, without duplicate bottom navigation or
+    a second facet sheet;
 17. mobile collection layouts match their route-specific one-column or approved glyph-grid
     behavior without horizontal overflow;
 18. relevant non-text contrast is measured rather than guessed;

@@ -1,5 +1,4 @@
 import type { CatalogQueryResult } from "../core/catalogQuery";
-import type { ExploreCollectionOption } from "../core/catalogCollections";
 import { catalogRoutePath } from "../core/catalogRoutes";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
 import { escapeHtml } from "./renderSafety";
@@ -7,9 +6,8 @@ import { escapeHtml } from "./renderSafety";
 export interface CatalogLandingOptions {
   itemCount: number;
   registryCount: number;
-  indexedRegistryCount: number;
+  catalogCount: number;
   featured: CatalogQueryResult;
-  collections: readonly ExploreCollectionOption[];
   basePath: string;
 }
 
@@ -21,8 +19,8 @@ export function renderCatalogLanding(
   headerRoot.innerHTML = `
     <div class="atlas-hero">
       <div class="catalog-eyebrow">Registry Atlas</div>
-      <h1>The living map of shadcn registries.</h1>
-      <p>Browse real upstream components, pages, themes, and registry libraries from one evidence-backed catalog.</p>
+      <h1>Browse shadcn registries.</h1>
+      <p>Browse components, templates, themes, and registries in one place.</p>
     </div>
   `;
 
@@ -33,31 +31,27 @@ export function renderCatalogLanding(
 
   bodyRoot.innerHTML = `
     <section class="landing-metrics" aria-label="Catalog totals">
-      <div><strong>${options.itemCount.toLocaleString()}</strong><span>indexed assets</span></div>
-      <div><strong>${options.indexedRegistryCount.toLocaleString()}</strong><span>indexed catalogs</span></div>
+      <div><strong>${options.itemCount.toLocaleString()}</strong><span>items</span></div>
+      <div><strong>${options.catalogCount.toLocaleString()}</strong><span>catalogs</span></div>
       <div><strong>${options.registryCount.toLocaleString()}</strong><span>registries</span></div>
     </section>
     <nav class="landing-shortcuts" aria-label="Catalog shortcuts">
       <button type="button" data-catalog-route="${escapeHtml(componentsPath)}">Browse components</button>
       <button type="button" data-catalog-route="${escapeHtml(templatesPath)}">Browse templates</button>
       <button type="button" data-catalog-route="${escapeHtml(themesPath)}">Browse themes</button>
-      <button type="button" data-catalog-route="${escapeHtml(registriesPath)}">Explore libraries</button>
-      ${options.collections.slice(0, 4).map(collection => {
-        const path = catalogRoutePath({ kind: "explore", collection: collection.slug }, options.basePath);
-        return `<button type="button" data-catalog-route="${escapeHtml(path)}">${escapeHtml(collection.label)}</button>`;
-      }).join("")}
+      <button type="button" data-catalog-route="${escapeHtml(registriesPath)}">Browse registries</button>
     </nav>
     <section class="landing-section">
       <div class="landing-section-heading">
         <div>
-          <div class="catalog-eyebrow">Component catalog</div>
-          <h2>Browse indexed components</h2>
+          <div class="catalog-eyebrow">Explore</div>
+          <h2>Components</h2>
         </div>
         <button type="button" class="link-button" data-catalog-route="${escapeHtml(componentsPath)}">View all</button>
       </div>
       ${options.featured.items.length
         ? `<div class="catalog-component-grid landing-grid">${options.featured.items.map(item => renderCatalogComponentCard(item)).join("")}</div>`
-        : '<div class="empty-state"><h2>No indexed components are available yet.</h2><p>Registry Atlas keeps unsupported claims out of the catalog.</p></div>'}
+        : '<div class="empty-state"><h2>No components are available yet.</h2><p>Components will appear here when a registry provides them.</p></div>'}
     </section>
   `;
 }

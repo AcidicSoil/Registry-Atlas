@@ -8,7 +8,7 @@ describe("renderCatalogCompare", () => {
     renderCatalogCompare(root(), body, result(), ["@a", "@b", "@c"], "");
 
     expect(body.innerHTML).toContain("1 shared component");
-    expect(body.innerHTML).toContain("3 in union");
+    expect(body.innerHTML).toContain("3 unique components");
     expect(body.innerHTML).toContain('data-view-item-registry="@a"');
     expect(body.innerHTML).toContain('data-view-item-slug="button"');
     expect(body.innerHTML).toContain("Not listed");

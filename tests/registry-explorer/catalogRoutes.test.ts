@@ -56,25 +56,23 @@ describe("catalogRoutes", () => {
     expect(parseCatalogRoute(path, BASE)).toEqual(route);
   });
 
-  it("round-trips shareable real-catalog page, filter, and sort state", () => {
+  it("keeps only the user-facing registry filter and supported sort in shareable browse state", () => {
     const parsed = parseCatalogBrowseQuery(new URLSearchParams(
-      "page=3&sort=type&type=registry%3Aui&type=registry%3Ablock&category=forms&reviewed=reviewed&registry=%40alpha",
+      "page=3&sort=type&type=registry%3Aui&category=forms&reviewed=reviewed&registry=%40alpha",
     ));
 
     expect(parsed).toEqual({
       page: 3,
-      sort: "type",
-      itemTypes: ["registry:ui", "registry:block"],
-      categories: ["forms"],
+      sort: "name",
+      itemTypes: [],
+      categories: [],
       reviewed: "all",
       registryNames: ["@alpha"],
     });
 
-    expect(serializeCatalogBrowseQuery(parsed).toString()).toBe(
-      "page=3&sort=type&registry=%40alpha&type=registry%3Aui&type=registry%3Ablock&category=forms",
-    );
-    expect(parseCatalogBrowseQuery(new URLSearchParams("sort=reviewed&reviewed=unreviewed"))).toMatchObject({
-      sort: "name",
+    expect(serializeCatalogBrowseQuery(parsed).toString()).toBe("page=3&registry=%40alpha");
+    expect(parseCatalogBrowseQuery(new URLSearchParams("sort=registry"))).toMatchObject({
+      sort: "registry",
       reviewed: "all",
     });
   });

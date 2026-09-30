@@ -14,7 +14,7 @@ export function renderCatalogCompare(
     <div class="catalog-page-heading">
       <div class="catalog-eyebrow">Registry Atlas</div>
       <h1>Compare</h1>
-      <p>Compare exact component identities from real registry catalogs.</p>
+      <p>Compare component availability across registries.</p>
     </div>
     <button class="link-button" type="button" data-copy-current-url data-copy-label="Comparison link copied">Copy link</button>
   `;
@@ -78,7 +78,7 @@ function renderSummary(result: CatalogCompareResult): string {
   return `
     <div class="catalog-compare-summary">
       <strong>${escapeHtml(shared)}</strong>
-      <span>${result.unionCount.toLocaleString()} in union</span>
+      <span>${result.unionCount.toLocaleString()} unique components</span>
       <span>${result.total.toLocaleString()} rows matching the current search</span>
     </div>
   `;
@@ -86,7 +86,7 @@ function renderSummary(result: CatalogCompareResult): string {
 
 function renderTable(result: CatalogCompareResult): string {
   if (result.rows.length === 0) {
-    return '<div class="empty-state"><h2>No real catalog components match this comparison search.</h2></div>';
+    return '<div class="empty-state"><h2>No components match this comparison search.</h2></div>';
   }
 
   const headers = result.selectedRegistryNames
@@ -103,7 +103,7 @@ function renderTable(result: CatalogCompareResult): string {
   `).join("");
 
   return `
-    <div class="compare-table-scroll" tabindex="0" role="region" aria-label="Real catalog component comparison">
+    <div class="compare-table-scroll" tabindex="0" role="region" aria-label="Component comparison">
       <table class="compare-table catalog-compare-table">
         <thead><tr><th scope="col">Component</th>${headers}</tr></thead>
         <tbody>${rows}</tbody>
@@ -127,7 +127,7 @@ function renderEmpty(selectedCount: number): string {
   return `
     <div class="compare-empty-state">
       <strong>Choose 2–4 registries to compare.</strong>
-      <span>${selectedCount === 0 ? "Start by searching for a registry above." : "Choose one more registry to compare real component inventory."}</span>
+      <span>${selectedCount === 0 ? "Start by searching for a registry above." : "Choose one more registry to compare components."}</span>
     </div>
   `;
 }

@@ -9,7 +9,7 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 </p>
 
 <p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="Registry Atlas component catalog with real registry, type, and category filters" />
+<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="Registry Atlas component catalog with registry filtering and deterministic sorting" />
 </p>
 
 <p>
@@ -18,13 +18,13 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 
 ## Features
 
-- **Components**: Browse real catalog identities with one canonical search, registry/type/category facets, deterministic sorting, pagination, and shareable URLs.
+- **Components**: Browse real catalog identities with one canonical search, a bounded registry facet, deterministic sorting, pagination, and shareable URLs.
 - **Collections**: Explore explicit category collections, templates, themes, and registry-backed icon-related assets without inventing popularity, recency, author, or review rankings.
 - **Registries**: Search and sort registry libraries, filter by current/stale/empty/unavailable catalog state, and browse each registry's exact indexed inventory.
 - **Details**: Open canonical nested item routes backed by generated same-origin detail bundles, with the upstream raw item route preserved as provenance.
 - **Compare**: Compare exact catalog identities across registries rather than inferred component families.
 - **Honest unavailable states**: Routes such as Newest, Authors, or the theme editor stay first-class but explicitly explain when the required source evidence does not exist.
-- **Responsive catalog UI**: Full-width desktop layout, persistent browse rail, compact content controls, and a mobile browse disclosure with no horizontal document overflow.
+- **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
 ## Getting Started
 

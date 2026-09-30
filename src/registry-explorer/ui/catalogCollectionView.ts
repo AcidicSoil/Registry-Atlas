@@ -29,8 +29,8 @@ export function renderCatalogCollection(
   if (!result.items.length) {
     bodyRoot.innerHTML = `
       <div class="empty-state collection-empty">
-        <h2>${escapeHtml(options.emptyTitle ?? "No matching catalog assets are available.")}</h2>
-        <p>${escapeHtml(options.emptyBody ?? "This route only displays assets supported by explicit upstream evidence.")}</p>
+        <h2>${escapeHtml(options.emptyTitle ?? "No matching items.")}</h2>
+        <p>${escapeHtml(options.emptyBody ?? "Try a different search or filter.")}</p>
       </div>
     `;
     return;
@@ -70,8 +70,8 @@ export function renderEvidenceUnavailable(
   `;
   bodyRoot.innerHTML = `
     <div class="evidence-unavailable">
-      <div class="catalog-eyebrow">Evidence unavailable</div>
-      <h2>Registry Atlas will not infer this data.</h2>
+      <div class="catalog-eyebrow">Not available</div>
+      <h2>This view is not available yet.</h2>
       <p>${escapeHtml(detail)}</p>
     </div>
   `;

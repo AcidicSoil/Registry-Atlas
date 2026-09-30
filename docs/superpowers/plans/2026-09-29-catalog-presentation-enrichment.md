@@ -11,7 +11,7 @@
 **Spec:** `docs/superpowers/specs/2026-09-29-catalog-presentation-enrichment-design.md`
 
 ## Global Constraints
-- The global header owns the single catalog text-search intent; rail controls are facets/navigation only.
+- The shared sidebar/drawer owns the single catalog text-search intent; route controls contain only supported facets/sort.
 - No fake previews or inferred marketplace semantics.
 - Preserve exact namespace + item-name route/install identity.
 - Native structured `cssVars` may produce bounded theme swatches; arbitrary CSS parsing is out of scope.
@@ -20,13 +20,15 @@
 - Use the managed `registry-atlas` profile for target-app browser verification.
 
 ## Review Focus
-- Huge registry/category facet populations remain usable without an unbounded control dominating the rail.
+- Registry facet populations remain bounded and usable without an unbounded control dominating the sidebar.
 - Missing optional metadata produces a compact factual specimen, not blank visual chrome.
 - Legacy `reviewed` query URLs degrade safely after user-facing review controls are removed.
-- Mobile facet disclosure preserves URL-backed state, focus, and no-horizontal-overflow behavior.
+- The mobile off-canvas drawer reuses the desktop sidebar DOM, preserves URL-backed state, moves focus to Close on open, restores focus to the menu trigger on close, and never creates horizontal overflow.
 - Exact item routes keep source/install identity even when display labels are cleaned up.
 
----### Task 1: Enrich compact catalog facts
+---
+
+### Task 1: Enrich compact catalog facts
 
 **Files:** `scripts/sync-registry-catalog-evidence.mjs`, `src/registry-explorer/core/registry.schema.ts`, evidence/schema tests.
 
@@ -47,16 +49,18 @@
 - [ ] Re-run focused query/route tests and typechecks.
 - [ ] Commit the vertical slice.
 
-### Task 3: Rebuild the collection rail around purpose
+### Task 3: Rebuild the shared sidebar around purpose
 
-**Files:** `src/registry-explorer/ui/catalogComponentsView.ts`, `src/registry-explorer/ui/shell.ts`, shell/view tests.
+**Files:** `index.html`, `src/registry-explorer/ui/catalogComponentsView.ts`, `src/registry-explorer/ui/shell.ts`, shell/view tests.
 
-- [ ] Add failing view/shell tests proving one text-search control, no Reviewed/Newest/Authors dead-end first-class rail entries, and purpose-grouped asset/facet/category sections.
-- [ ] Replace the duplicate rail search and reviewed controls with route-specific facets.
-- [ ] Bound large facet lists and use disclosure/list controls with counts rather than a hundreds-option primary select.
+- [ ] Add failing view/shell tests proving one text-search control, Home-linked brand, no Reviewed/Newest/Authors dead-end first-class navigation, and purpose-grouped Home/Explore/Tools sections.
+- [ ] Use one persistent desktop sidebar and reuse it as the mobile off-canvas drawer.
+- [ ] Keep only the bounded Registry facet as the route-specific Components facet; do not promote raw type/category populations into primary controls.
 - [ ] Preserve clear/reset and URL-backed navigation behavior.
 - [ ] Re-run focused shell/view tests and typechecks.
-- [ ] Commit the vertical slice.### Task 4: Render factual asset specimens and route-specific collections
+- [ ] Commit the vertical slice.
+
+### Task 4: Render factual asset specimens and route-specific collections
 
 **Files:** `src/registry-explorer/ui/catalogComponentsView.ts`, `catalogCollectionView.ts`, landing view, CSS, focused tests.
 
@@ -78,12 +82,12 @@
 - [ ] Re-run focused tests and typechecks.
 - [ ] Commit the vertical slice.
 
-### Task 6: Mobile shell, accessibility, and contract levers
+### Task 6: Shared sidebar/mobile drawer, accessibility, and contract levers
 
-**Files:** `shell.ts`, CSS, `visualContract.test.ts`, product-contract/coverage scripts.
+**Files:** `index.html`, `entry.ts`, `shell.ts`, CSS, `visualContract.test.ts`, product-contract/coverage scripts.
 
-- [ ] Add failing tests for 240px desktop rail, 40px utility region, 800px dossier, 320px registry rail, 57px mobile nav reserve, one-column mobile collections, facet-sheet semantics, and non-text contrast.
-- [ ] Implement mobile header + quick controls + accessible facet bottom sheet + supported bottom navigation; desktop rail must disappear rather than squeeze.
+- [ ] Add failing tests for the approximately 240px desktop sidebar, 800px dossier, 320px registry rail, one-column mobile collections, off-canvas drawer semantics, and non-text contrast.
+- [ ] Implement the compact mobile header and reuse the same sidebar as an accessible off-canvas drawer with dimmed backdrop, `aria-expanded`, focus transfer, Escape/Close behavior, and focus return; do not add duplicate bottom navigation or a second facet sheet.
 - [ ] Add local metadata coverage reporting and product-contract checks for bounds, swatch allowlist, one-search invariant, and honest icon wording.
 - [ ] Re-run full deterministic verification.
 - [ ] Commit the vertical slice.

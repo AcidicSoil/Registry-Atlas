@@ -7,10 +7,10 @@ import type {
 import { escapeHtml, renderExternalLink } from "./renderSafety";
 
 const COVERAGE_LABELS: Record<RegistryCatalogCoverage, string> = {
-  current: "Current catalog",
-  stale: "Stale catalog",
-  empty: "No supported items",
-  failed: "Catalog unavailable",
+  current: "Current",
+  stale: "Stale",
+  empty: "No items",
+  failed: "Unavailable",
 };
 
 export interface RegistryDirectoryViewOptions {
@@ -27,9 +27,9 @@ export function renderRegistryDirectory(
 ): void {
   headerRoot.innerHTML = `
     <div class="catalog-page-heading">
-      <div class="catalog-eyebrow">Libraries</div>
+      <div class="catalog-eyebrow">Registry directory</div>
       <h1>Registries</h1>
-      <p>${result.total.toLocaleString()} registry sources. Counts come from real indexed catalog items.</p>
+      <p>${result.total.toLocaleString()} registries.</p>
     </div>
     <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry directory link copied">Copy link</button>
   `;
@@ -39,7 +39,7 @@ export function renderRegistryDirectory(
   bodyRoot.innerHTML = `
     <div class="registry-directory-controls" aria-label="Registry directory controls">
       <label>
-        <span>Search libraries</span>
+        <span>Search registries</span>
         <input type="search" data-registry-search value="${escapeHtml(options.searchTerm ?? "")}" placeholder="Search registries" />
       </label>
       <label>
@@ -56,8 +56,8 @@ export function renderRegistryDirectory(
         <span>Sort</span>
         <select data-registry-sort>
           ${sortOption("name", "Name", sort)}
-          ${sortOption("item-count-desc", "Most indexed items", sort)}
-          ${sortOption("item-count-asc", "Fewest indexed items", sort)}
+          ${sortOption("item-count-desc", "Most items", sort)}
+          ${sortOption("item-count-asc", "Fewest items", sort)}
         </select>
       </label>
     </div>
@@ -79,17 +79,17 @@ function sortOption(value: RegistryDirectorySort, label: string, selected: strin
 function renderCoverageSummary(result: RegistryDirectoryResult): string {
   const counts = result.coverageCounts;
   return `
-    <div class="registry-coverage-summary" aria-label="Catalog coverage summary">
+    <div class="registry-coverage-summary" aria-label="Catalog status summary">
       <span><strong>${counts.current.toLocaleString()}</strong> current</span>
       <span><strong>${counts.stale.toLocaleString()}</strong> stale</span>
-      <span><strong>${counts.empty.toLocaleString()}</strong> empty</span>
+      <span><strong>${counts.empty.toLocaleString()}</strong> no items</span>
       <span><strong>${counts.failed.toLocaleString()}</strong> unavailable</span>
     </div>
   `;
 }
 
 function renderEntry(entry: RegistryDirectoryEntry): string {
-  const count = entry.itemCount === 1 ? "1 indexed asset" : `${entry.itemCount.toLocaleString()} indexed assets`;
+  const count = entry.itemCount === 1 ? "1 item" : `${entry.itemCount.toLocaleString()} items`;
   return `
     <article class="registry-directory-card">
       <div class="registry-directory-copy">
