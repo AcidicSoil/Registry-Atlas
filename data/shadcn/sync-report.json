@@ -1,10 +1,30 @@
 {
   "source_url": "https://ui.shadcn.com/r/registries.json",
-  "synced_at": "2026-09-29T04:24:18.590Z",
-  "upstream_count": 392,
-  "local_count": 392,
+  "synced_at": "2026-10-01T08:27:09.122Z",
+  "upstream_count": 408,
+  "local_count": 408,
   "previous_count": 392,
-  "added": [],
+  "added": [
+    "@aayurt",
+    "@balick",
+    "@jpmarques",
+    "@json-view-cn",
+    "@neobrutal-ui",
+    "@notra",
+    "@pastaui",
+    "@skrewww",
+    "@soldevelo",
+    "@stacklyui",
+    "@stealth",
+    "@sureui",
+    "@uiarc",
+    "@velora",
+    "@videocn",
+    "@watermelon"
+  ],
   "removed": [],
-  "changed": []
+  "changed": [
+    "@sekei",
+    "@snapcn"
+  ]
 }
