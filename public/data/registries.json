@@ -1,7 +1,7 @@
 {
   "meta": {
     "source_url": "https://ui.shadcn.com/r/registries.json",
-    "synced_at": "2026-10-01T08:27:09.122Z",
+    "synced_at": "2026-10-01T09:33:37.934Z",
     "upstream_count": 408,
     "registry_count": 408,
     "local_count": 408,
@@ -114,22 +114,6 @@
         "catalog_evidence_url": "https://www.8bitcn.com/r/registry.json",
         "item_summaries": [
           {
-            "name": "Button",
-            "slug": "button",
-            "type": "registry:ui",
-            "category": "buttons-and-primitives",
-            "source": "known-catalog",
-            "provenance": "static item-summary seed from Phase 03 catalog review",
-            "catalog_status": "available",
-            "route_eligible": true,
-            "dependencies": [],
-            "devDependencies": [],
-            "registryDependencies": [],
-            "files": [],
-            "warnings": [],
-            "docs_url": "https://www.8bitcn.com/docs/components/button"
-          },
-          {
             "name": "8-bit Card",
             "slug": "card",
             "title": "8-bit Card",
@@ -198,6 +182,41 @@
               }
             ],
             "warnings": []
+          },
+          {
+            "name": "8-bit Button",
+            "slug": "button",
+            "title": "8-bit Button",
+            "description": "A simple 8-bit button component",
+            "type": "registry:component",
+            "category": "buttons-and-primitives",
+            "source": "registry-json",
+            "provenance": "Official item JSON https://www.8bitcn.com/r/button.json",
+            "catalog_status": "available",
+            "confidence": "high",
+            "route_eligible": true,
+            "install_command": "npx shadcn@latest add @8bitcn/button",
+            "raw_item_url": "https://www.8bitcn.com/r/button.json",
+            "evidence_url": "https://www.8bitcn.com/r/button.json",
+            "dependencies": [],
+            "devDependencies": [],
+            "registryDependencies": [
+              "button"
+            ],
+            "files": [
+              {
+                "path": "components/ui/8bit/button.tsx",
+                "type": "registry:component",
+                "target": "components/ui/8bit/button.tsx"
+              },
+              {
+                "path": "components/ui/8bit/styles/retro.css",
+                "type": "registry:component",
+                "target": "components/ui/8bit/styles/retro.css"
+              }
+            ],
+            "warnings": [],
+            "docs_url": "https://www.8bitcn.com/docs/components/button"
           }
         ],
         "notes": ""
@@ -773,8 +792,8 @@
         "catalog_evidence_url": "https://r.assistant-ui.com/registry.json",
         "item_summaries": [
           {
-            "name": "Thread",
-            "slug": "thread",
+            "name": "Composer",
+            "slug": "composer",
             "type": "registry:component",
             "category": "ai-chat",
             "source": "known-catalog",
@@ -788,18 +807,44 @@
             "warnings": []
           },
           {
-            "name": "Composer",
-            "slug": "composer",
+            "name": "Thread",
+            "slug": "thread",
+            "title": "Thread",
+            "description": "Chat container with message list, composer, auto scroll, and accessibility built in.",
             "type": "registry:component",
             "category": "ai-chat",
-            "source": "known-catalog",
-            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "source": "registry-json",
+            "provenance": "Official item JSON https://r.assistant-ui.com/thread.json",
             "catalog_status": "available",
+            "confidence": "high",
             "route_eligible": true,
-            "dependencies": [],
+            "install_command": "npx shadcn@latest add @assistant-ui/thread",
+            "raw_item_url": "https://r.assistant-ui.com/thread.json",
+            "evidence_url": "https://r.assistant-ui.com/thread.json",
+            "dependencies": [
+              "@assistant-ui/react",
+              "lucide-react"
+            ],
             "devDependencies": [],
-            "registryDependencies": [],
-            "files": [],
+            "registryDependencies": [
+              "button",
+              "skeleton",
+              "https://r.assistant-ui.com/attachment.json",
+              "https://r.assistant-ui.com/file.json",
+              "https://r.assistant-ui.com/follow-up-suggestions.json",
+              "https://r.assistant-ui.com/image.json",
+              "https://r.assistant-ui.com/markdown-text.json",
+              "https://r.assistant-ui.com/reasoning.json",
+              "https://r.assistant-ui.com/tooltip-icon-button.json",
+              "https://r.assistant-ui.com/tool-fallback.json",
+              "https://r.assistant-ui.com/tool-group.json"
+            ],
+            "files": [
+              {
+                "path": "components/assistant-ui/elements/thread.aui.tsx",
+                "type": "registry:component"
+              }
+            ],
             "warnings": []
           }
         ],
@@ -4756,7 +4801,7 @@
         "confidence": "high",
         "catalog_status": "available",
         "comparison_evidence": "catalog",
-        "catalog_item_count": 9864,
+        "catalog_item_count": 10288,
         "catalog_evidence_url": "https://keylineicons.com/r/registry.json",
         "item_summaries": [],
         "notes": ""
