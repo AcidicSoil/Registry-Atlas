@@ -130,36 +130,74 @@
             "docs_url": "https://www.8bitcn.com/docs/components/button"
           },
           {
-            "name": "Card",
+            "name": "8-bit Card",
             "slug": "card",
-            "type": "registry:ui",
+            "title": "8-bit Card",
+            "description": "A simple 8-bit card component",
+            "type": "registry:component",
             "category": "data-display-and-tables",
-            "source": "known-catalog",
-            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "source": "registry-json",
+            "provenance": "Official item JSON https://www.8bitcn.com/r/card.json",
             "catalog_status": "available",
+            "confidence": "high",
             "route_eligible": true,
+            "install_command": "npx shadcn@latest add @8bitcn/card",
+            "raw_item_url": "https://www.8bitcn.com/r/card.json",
+            "docs_url": "https://www.8bitcn.com/docs/components/card",
+            "evidence_url": "https://www.8bitcn.com/r/card.json",
             "dependencies": [],
             "devDependencies": [],
-            "registryDependencies": [],
-            "files": [],
-            "warnings": [],
-            "docs_url": "https://www.8bitcn.com/docs/components/card"
+            "registryDependencies": [
+              "card"
+            ],
+            "files": [
+              {
+                "path": "components/ui/8bit/card.tsx",
+                "type": "registry:component",
+                "target": "components/ui/8bit/card.tsx"
+              },
+              {
+                "path": "components/ui/8bit/styles/retro.css",
+                "type": "registry:component",
+                "target": "components/ui/8bit/styles/retro.css"
+              }
+            ],
+            "warnings": []
           },
           {
-            "name": "Input",
+            "name": "8-bit Input",
             "slug": "input",
-            "type": "registry:ui",
+            "title": "8-bit Input",
+            "description": "A simple 8-bit input component",
+            "type": "registry:component",
             "category": "forms-and-inputs",
-            "source": "known-catalog",
-            "provenance": "static item-summary seed from Phase 03 catalog review",
+            "source": "registry-json",
+            "provenance": "Official item JSON https://www.8bitcn.com/r/input.json",
             "catalog_status": "available",
+            "confidence": "high",
             "route_eligible": true,
+            "install_command": "npx shadcn@latest add @8bitcn/input",
+            "raw_item_url": "https://www.8bitcn.com/r/input.json",
+            "docs_url": "https://www.8bitcn.com/docs/components/input",
+            "evidence_url": "https://www.8bitcn.com/r/input.json",
             "dependencies": [],
             "devDependencies": [],
-            "registryDependencies": [],
-            "files": [],
-            "warnings": [],
-            "docs_url": "https://www.8bitcn.com/docs/components/input"
+            "registryDependencies": [
+              "input"
+            ],
+            "files": [
+              {
+                "path": "components/ui/8bit/input.tsx",
+                "type": "registry:component",
+                "target": "components/ui/8bit/input.tsx"
+              },
+              {
+                "path": "components/ui/8bit/styles/retro.css",
+                "type": "registry:component",
+                "target": "components/ui/8bit/styles/retro.css"
+              }
+            ],
+            "warnings": []
           }
         ],
         "notes": ""
