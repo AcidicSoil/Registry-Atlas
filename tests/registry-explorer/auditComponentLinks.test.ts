@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
-import { inventoryLinks, applyVerifiedLinks, recheckLivePages } from '../../scripts/audit-component-links.mjs';
+import { inventoryLinks, applyVerifiedLinks, recheckLivePages, summarizeAuditCoverage } from '../../scripts/audit-component-links.mjs';
 
 const registries = [
   { name: '@delta', homepage: 'https://delta.example', url: 'https://delta.example/r/{name}.json' },
@@ -121,6 +121,57 @@ describe('registry component link audit', () => {
     expect(result.repaired).toEqual([]);
     expect(result.unresolved).toMatchObject([{ token: `@delta/${candidate.slug}`, reason }]);
   });
+  it('rejects records pointing to an unrelated host even if every field agrees', () => {
+    const forged = { ...observation, verifiedUrl: 'https://other.example/components/button',
+      browser: { ...observation.browser, observedUrl: 'https://other.example/components/button',
+        listingUrl: 'https://other.example/components' } };
+    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [forged]);
+    expect(result.repaired).toEqual([]);
+    expect(result.unresolved).toMatchObject([{ token: '@delta/button', reason: 'foreign-component-origin' }]);
+  });
+
+  it('rejects a heading that does not name the expected component', () => {
+    const forged = { ...observation, browser: { ...observation.browser, renderedHeading: 'Card' } };
+    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [forged]);
+    expect(result.repaired).toEqual([]);
+    expect(result.unresolved).toMatchObject([{ token: '@delta/button', reason: 'browser-heading-mismatch' }]);
+  });
+
+  it('produces a complete per-item and per-registry coverage ledger without inventing checked statuses', () => {
+    const inventory = inventoryLinks(registries, catalog, curated);
+    const summary = summarizeAuditCoverage(inventory, applyVerifiedLinks(inventory, curated, [observation]));
+    expect(summary.totals).toMatchObject({
+      items: 4, repaired: 1, confirmedUnchanged: 0, unresolved: 0, notChecked: 3,
+      registries: 2, fullyReviewedRegistries: 0, completed: false,
+    });
+    expect(summary.perRegistry.find((x: { namespace: string }) => x.namespace === '@delta'))
+      .toMatchObject({ count: 3, repaired: 1, notChecked: 2, homepageVisited: true, listingVisited: true });
+    expect(summary.perRegistry.find((x: { namespace: string }) => x.namespace === '@other'))
+      .toMatchObject({ count: 1, repaired: 0, notChecked: 1, homepageVisited: false });
+    expect(summary.rows.find((x: { token: string }) => x.token === '@delta/button'))
+      .toMatchObject({ status: 'repaired', verifiedUrl: observation.verifiedUrl });
+    expect(summary.rows.find((x: { token: string }) => x.token === '@delta/card'))
+      .toMatchObject({ status: 'not-checked' });
+  });
+
+  it('does not claim full audit completion from an unchecked manifest without an explicit review gate', () => {
+    const inv = inventoryLinks([registries[0]], { registries: { '@delta': [{ name: 'button' }] } },
+      { '@delta': [curated['@delta'][0]] });
+    const accepted = applyVerifiedLinks(inv, { '@delta': [curated['@delta'][0]] }, [observation]);
+    expect(summarizeAuditCoverage(inv, accepted).totals.completed).toBe(false);
+    expect(summarizeAuditCoverage(inv, accepted, true).totals.completed).toBe(true);
+  });
+
+  it('does not mark invalid or duplicated evidence as verified in the coverage ledger', () => {
+    const inventory = inventoryLinks(registries, catalog, curated);
+    const broken = applyVerifiedLinks(inventory, curated,
+      [observation, { ...observation, verifiedUrl: 'https://delta.example/docs/button-2' }]);
+    const summary = summarizeAuditCoverage(inventory, broken);
+    expect(summary.totals).toMatchObject({ repaired: 0, unresolved: 1, notChecked: 3, completed: false });
+    expect(summary.rows.find((x: { token: string }) => x.token === '@delta/button'))
+      .toMatchObject({ status: 'unresolved', reason: 'duplicate-evidence' });
+  });
+
   it('rejects conflicting evidence and cannot silently drop existing links', () => {
     const report = inventoryLinks(registries, catalog, curated);
     const result = applyVerifiedLinks(report, curated,

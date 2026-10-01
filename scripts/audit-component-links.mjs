@@ -86,6 +86,11 @@ function checkObservation(row, record) {
   const homepage = publicHttps(row.homepage);
   if (!homepage || publicHttps(browser.homepageUrl) !== homepage) return 'official-homepage-mismatch';
   if (!publicHttps(browser.listingUrl)) return 'invalid-listing-url';
+  if (new URL(target).origin !== new URL(homepage).origin
+    || new URL(browser.listingUrl).origin !== new URL(homepage).origin)
+    return 'foreign-component-origin';
+  const normalize = text => text.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (normalize(browser.renderedHeading) !== normalize(row.slug)) return 'browser-heading-mismatch';
   if (new URL(target).origin === new URL(homepage).origin
     && new URL(target).pathname.replace(/\/+$/, '') === new URL(homepage).pathname.replace(/\/+$/, '')
     && (record.exception !== true || !(new URL(target).search || new URL(target).hash)))
@@ -165,6 +170,40 @@ export function applyVerifiedLinks(inventory, curated, evidence) {
   }
   return { curated: output, repaired, confirmedUnchanged, unresolved, verifiedUrls };
 }
+export function summarizeAuditCoverage(inventory, evaluation, independentlyReviewed = false) {
+  const repaired = new Set(evaluation.repaired);
+  const confirmed = new Set(evaluation.confirmedUnchanged);
+  const unresolved = new Map(evaluation.unresolved.map(item => [item.token, item.reason]));
+  const verified = new Map(evaluation.verifiedUrls.map(item => [item.token, item]));
+  const rows = inventory.rows.map(item => {
+    const status = unresolved.has(item.token) ? 'unresolved'
+      : repaired.has(item.token) ? 'repaired'
+      : confirmed.has(item.token) ? 'confirmed-unchanged' : 'not-checked';
+    return { ...item, status,
+      ...(unresolved.has(item.token) ? { reason: unresolved.get(item.token) } : {}),
+      ...(verified.has(item.token) ? { verifiedUrl: verified.get(item.token).url } : {}) };
+  });
+  const perRegistry = inventory.perRegistry.map(registry => {
+    const items = rows.filter(item => item.namespace === registry.namespace);
+    const counts = Object.fromEntries(['repaired', 'confirmed-unchanged', 'unresolved', 'not-checked']
+      .map(status => [status, items.filter(item => item.status === status).length]));
+    return { ...registry, repaired: counts.repaired, confirmedUnchanged: counts['confirmed-unchanged'],
+      unresolved: counts.unresolved, notChecked: counts['not-checked'],
+      reviewedItems: items.length - counts['not-checked'],
+      homepageVisited: items.some(item => verified.has(item.token)),
+      listingVisited: items.some(item => verified.has(item.token)) };
+  });
+  const counts = Object.fromEntries(['repaired', 'confirmed-unchanged', 'unresolved', 'not-checked']
+    .map(status => [status, rows.filter(item => item.status === status).length]));
+  return { schemaVersion: 'registry-atlas-link-coverage/v1',
+    totals: { registries: perRegistry.length, items: rows.length, repaired: counts.repaired,
+      confirmedUnchanged: counts['confirmed-unchanged'], unresolved: counts.unresolved,
+      notChecked: counts['not-checked'],
+      fullyReviewedRegistries: perRegistry.filter(item => item.notChecked === 0 && item.homepageVisited && item.listingVisited).length,
+      completed: Boolean(independentlyReviewed && perRegistry.every(item => item.notChecked === 0 && item.unresolved === 0 && item.homepageVisited && item.listingVisited)) },
+    perRegistry, rows };
+}
+
 async function loadJson(file) { return JSON.parse(await readFile(file, 'utf8')); }
 const checksum = value => createHash('sha256').update(value).digest('hex');
 async function main(argv) {
@@ -210,14 +249,17 @@ async function main(argv) {
         await writeFile(PUBLIC_PATHS.curated, JSON.stringify(evaluation.curated, null, 2) + '\n');
     }
   }
+  const coverage = summarizeAuditCoverage(inventory, evaluation,
+    apply && (args.has('--reviewed') || args.has('--recheck-browser')));
   const report = {
-    ...inventory, generatedAt: new Date().toISOString(), dataset: metadata,
-    audit: {
+    ...inventory, rows: coverage.rows, perRegistry: coverage.perRegistry,
+    generatedAt: new Date().toISOString(), dataset: metadata,
+    audit: { ...coverage.totals,
       evidenceCount: evaluation.repaired.length + evaluation.confirmedUnchanged.length + evaluation.unresolved.length,
       repaired: evaluation.repaired, confirmedUnchanged: evaluation.confirmedUnchanged,
       verifiedUrls: evaluation.verifiedUrls, unresolved: evaluation.unresolved,
-      remainingUnchecked: inventory.rows.length - evaluation.repaired.length - evaluation.confirmedUnchanged.length,
-      completed: false,
+      remainingUnchecked: coverage.totals.notChecked,
+      completed: coverage.totals.completed,
     },
     apply,
   };
