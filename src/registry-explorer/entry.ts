@@ -8,12 +8,40 @@ async function bootstrap() {
     const contentBody = document.getElementById('contentBody');
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     const tabs = document.querySelectorAll('.primary-nav [data-view]');
+    const appSidebar = document.getElementById('appSidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle') as HTMLButtonElement | null;
+    const sidebarClose = document.getElementById('sidebarClose') as HTMLButtonElement | null;
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop') as HTMLButtonElement | null;
+
+    const setSidebarOpen = (open: boolean, restoreFocus = false) => {
+      if (!appSidebar || !sidebarToggle || !sidebarBackdrop) return;
+      appSidebar.dataset.open = String(open);
+      sidebarToggle.setAttribute('aria-expanded', String(open));
+      sidebarBackdrop.hidden = !open;
+      if (open) sidebarClose?.focus();
+      else if (restoreFocus) sidebarToggle.focus();
+    };
+
+    sidebarToggle?.addEventListener('click', () => setSidebarOpen(true));
+    sidebarClose?.addEventListener('click', () => setSidebarOpen(false, true));
+    sidebarBackdrop?.addEventListener('click', () => setSidebarOpen(false, true));
+    appSidebar?.addEventListener('click', event => {
+      const target = event.target as HTMLElement;
+      if (target.closest('[data-view], [data-catalog-route], .brand-home-link')) {
+        setSidebarOpen(false);
+      }
+    });
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && appSidebar?.dataset.open === 'true') {
+        setSidebarOpen(false, true);
+      }
+    });
 
     if (aside && contentHeader && contentBody && searchInput && tabs.length) {
       contentBody.innerHTML = `
         <div class="empty-state" role="status" aria-live="polite">
           <div class="empty-state-icon">...</div>
-          <div>Loading registry mirror...</div>
+          <div>Loading catalog...</div>
         </div>
       `;
 
@@ -43,8 +71,8 @@ async function bootstrap() {
       contentBody.innerHTML = `
         <div class="empty-state" role="alert">
           <div class="empty-state-icon">!</div>
-          <div>Registry mirror data is unavailable.</div>
-          <div>Run pnpm sync:registries and pnpm validate:data, then reload.</div>
+          <div>Catalog data is unavailable.</div>
+          <div>Refresh after the registry data sync completes.</div>
         </div>
       `;
     }

@@ -56,23 +56,25 @@ describe("catalogRoutes", () => {
     expect(parseCatalogRoute(path, BASE)).toEqual(route);
   });
 
-  it("round-trips shareable real-catalog page, filter, and sort state", () => {
+  it("keeps only the user-facing registry filter and supported sort in shareable browse state", () => {
     const parsed = parseCatalogBrowseQuery(new URLSearchParams(
-      "page=3&sort=type&type=registry%3Aui&type=registry%3Ablock&category=forms&reviewed=reviewed&registry=%40alpha",
+      "page=3&sort=type&type=registry%3Aui&category=forms&reviewed=reviewed&registry=%40alpha",
     ));
 
     expect(parsed).toEqual({
       page: 3,
-      sort: "type",
-      itemTypes: ["registry:ui", "registry:block"],
+      sort: "name",
+      itemTypes: [],
       categories: ["forms"],
-      reviewed: "reviewed",
+      reviewed: "all",
       registryNames: ["@alpha"],
     });
 
-    expect(serializeCatalogBrowseQuery(parsed).toString()).toBe(
-      "page=3&sort=type&registry=%40alpha&type=registry%3Aui&type=registry%3Ablock&category=forms&reviewed=reviewed",
-    );
+    expect(serializeCatalogBrowseQuery(parsed).toString()).toBe("page=3&registry=%40alpha&category=forms");
+    expect(parseCatalogBrowseQuery(new URLSearchParams("sort=registry"))).toMatchObject({
+      sort: "registry",
+      reviewed: "all",
+    });
   });
 
   it("rejects routes outside the configured base and unsafe traversal segments", () => {
@@ -85,16 +87,25 @@ describe("catalogRoutes", () => {
 describe("corrective route parity", () => {
   it("keeps home distinct and parses audited route families", () => {
     expect(parseCatalogRoute("/Registry-Atlas/", BASE)).toEqual({ kind: "home" });
-    expect(parseCatalogRoute("/Registry-Atlas/components/featured", BASE)).toEqual({ kind: "components", lens: "featured" });
-    expect(parseCatalogRoute("/Registry-Atlas/components/newest/2026-W40", BASE)).toEqual({ kind: "components", lens: "newest", period: "2026-W40" });
     expect(parseCatalogRoute("/Registry-Atlas/components/explore/ai", BASE)).toEqual({ kind: "explore", collection: "ai" });
-    expect(parseCatalogRoute("/Registry-Atlas/authors", BASE)).toEqual({ kind: "authors" });
     expect(parseCatalogRoute("/Registry-Atlas/templates", BASE)).toEqual({ kind: "templates" });
     expect(parseCatalogRoute("/Registry-Atlas/themes", BASE)).toEqual({ kind: "themes" });
     expect(parseCatalogRoute("/Registry-Atlas/themes/editor", BASE)).toEqual({ kind: "theme-editor" });
     expect(parseCatalogRoute("/Registry-Atlas/icons", BASE)).toEqual({ kind: "icons" });
     expect(parseCatalogRoute("/Registry-Atlas/icons/lucide", BASE)).toEqual({ kind: "icon-family", family: "lucide" });
     expect(parseCatalogRoute("/Registry-Atlas/icons/c/layout", BASE)).toEqual({ kind: "icon-category", category: "layout" });
+  });
+
+  it("retires featured/reviewed, authors, and newest routes", () => {
+    for (const path of ["/components/featured", "/components/reviewed", "/components/newest", "/components/newest/2026-W40", "/authors", "/authored"]) {
+      expect(parseCatalogRoute(BASE.slice(0, -1) + path, BASE)).toBeNull();
+    }
+  });
+
+  it("round-trips multi-select registry and category chips with practical sorts", () => {
+    const state = parseCatalogBrowseQuery(new URLSearchParams("registry=%40alpha&registry=%40beta&category=forms&category=ai&sort=name-desc"));
+    expect(state).toMatchObject({ registryNames: ["@alpha", "@beta"], categories: ["forms", "ai"], sort: "name-desc" });
+    expect(serializeCatalogBrowseQuery(state).toString()).toBe("sort=name-desc&registry=%40alpha&registry=%40beta&category=forms&category=ai");
   });
 
   it("round-trips typed asset detail routes", () => {

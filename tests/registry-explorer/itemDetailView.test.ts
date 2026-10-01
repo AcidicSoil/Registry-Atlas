@@ -12,7 +12,9 @@ describe('renderItemDetailView', () => {
     renderItemDetailView(header, body, result, new Set());
 
     expect(header.innerHTML).toContain('Code Block');
-    expect(body.innerHTML).toContain('Preview not published');
+    expect(body.innerHTML).toContain('item-preview-metadata');
+    expect(body.innerHTML).toContain('Syntax highlighted code block.');
+    expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="secondary-link"');
     expect(body.innerHTML).toContain('Inspect first');
@@ -41,11 +43,13 @@ describe('renderItemDetailView', () => {
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).toContain('Preview not published');
+    expect(body.innerHTML).toContain('item-preview-metadata');
+    expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).not.toContain('<img');
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain('visual available');
-    expect(body.innerHTML).toContain('preview unavailable');
+    expect(body.innerHTML).not.toContain('preview unavailable');
+    expect(body.innerHTML).toContain('No preview');
   });
 
   it('escapes imported item text and file fields', () => {
@@ -76,7 +80,7 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('<h2>Dev dependencies</h2>');
     expect(body.innerHTML).not.toContain('<h2>Registry dependencies</h2>');
     expect(body.innerHTML).not.toContain('<h2>Files</h2>');
-    expect(body.innerHTML).toContain('<h2>Source context</h2>');
+    expect(body.innerHTML).toContain('<h2>Source</h2>');
     expect(body.innerHTML).not.toContain('Review third-party registry code before installing.');
     expect(body.innerHTML).not.toContain('install-safety-note');
     expect(body.innerHTML).not.toContain('Similar patterns');
@@ -97,8 +101,9 @@ describe('renderItemDetailView', () => {
       reason: 'network-error',
     }, new Set());
 
-    expect(header.innerHTML).toContain('catalog-backed summary');
-    expect(body.innerHTML).toContain('Atlas could not load richer item metadata from the registry');
+    expect(header.innerHTML).toContain('Summary');
+    expect(header.innerHTML).not.toContain('Catalog summary');
+    expect(body.innerHTML).toContain('Full item details could not be loaded');
     expect(body.innerHTML).toContain('Open component page');
     expect(body.innerHTML).toContain('Open raw item');
   });
@@ -167,7 +172,10 @@ describe('enriched detail actions', () => {
     expect(body.innerHTML).toContain('<img');
     expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Copy install-agent prompt');
-    expect(body.innerHTML).toContain('Copy review prompt');
+    expect(body.innerHTML).toContain('Copy inspection prompt');
+    expect(body.innerHTML).not.toContain('Copy review prompt');
+    expect(body.innerHTML).toContain('Open in v0');
+    expect(body.innerHTML).toContain('href="https://v0.dev/chat/api/open?url=https%3A%2F%2Fdelta.example%2Fr%2Fcode-block.json"');
     expect(body.innerHTML).toContain('Copy link');
     expect(body.innerHTML).toContain('data-copy-current-url');
     expect(body.innerHTML).not.toContain('Alternate terminology');

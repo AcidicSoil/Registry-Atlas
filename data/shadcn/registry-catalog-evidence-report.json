@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-09-29T05:59:01.231Z",
+  "generated_at": "2026-09-29T12:14:50.326Z",
   "registry_count": 392,
-  "fetched_catalog_count": 349,
-  "fetched_item_count": 85657,
-  "discoverable_item_count": 80755,
+  "fetched_catalog_count": 348,
+  "fetched_item_count": 85393,
+  "discoverable_item_count": 80803,
   "evidence_registry_count": 356,
-  "stale_registry_count": 6,
-  "failure_count": 43,
+  "stale_registry_count": 7,
+  "failure_count": 44,
   "failure_class_counts": {
-    "catalog-root-unavailable": 31,
+    "catalog-root-unavailable": 32,
     "invalid-response": 3,
     "transient-network": 8,
     "access-restricted": 1
@@ -252,6 +252,12 @@
       "namespace": "@untld",
       "reason": "http-404",
       "catalog_url": "https://ui.untldlabs.com/r/registry.json",
+      "failure_class": "catalog-root-unavailable"
+    },
+    {
+      "namespace": "@vllnt-ui",
+      "reason": "http-404",
+      "catalog_url": "https://ui.vllnt.com/r/registry.json",
       "failure_class": "catalog-root-unavailable"
     },
     {

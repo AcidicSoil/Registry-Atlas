@@ -15,6 +15,7 @@ export interface RegistryItemSummary {
   slug: string;
   title?: string;
   description?: string;
+  author?: string;
   type?: string;
   category?: string;
   source: string;
@@ -37,11 +38,34 @@ export interface RegistryItemSummary {
   warnings?: readonly string[];
 }
 
+export type RegistryThemeSwatch =
+  | 'background'
+  | 'foreground'
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'muted'
+  | 'card';
+
+export interface RegistryThemePreview {
+  light?: Readonly<Partial<Record<RegistryThemeSwatch, string>>>;
+  dark?: Readonly<Partial<Record<RegistryThemeSwatch, string>>>;
+}
+
+export type RegistryCssVars = Readonly<Partial<Record<
+  'theme' | 'light' | 'dark',
+  Readonly<Record<string, string>>
+>>>;
+
 export interface RegistryCatalogItem {
   name: string;
   type: string;
   title?: string;
+  description?: string;
+  author?: string;
   categories?: readonly string[];
+  fileCount?: number;
+  themePreview?: RegistryThemePreview;
 }
 
 export interface RegistryCatalogIndexMeta {

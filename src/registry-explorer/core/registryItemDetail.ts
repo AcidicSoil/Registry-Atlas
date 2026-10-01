@@ -6,6 +6,7 @@ import type {
   CoverageConfidence,
   Registry,
   RegistryCatalogIndex,
+  RegistryCssVars,
   RegistryItemSummary,
   RegistryItemSummaryFile,
 } from './registry.schema.ts';
@@ -25,6 +26,8 @@ export interface RegistryItemDetail {
   name: string;
   title: string;
   description: string | null;
+  author: string | null;
+  cssVars: RegistryCssVars | null;
   type: string | null;
   category: string | null;
   catalogStatus: RegistryItemSummary['catalogStatus'];
@@ -70,12 +73,28 @@ export interface RegistryItemDetailJson {
   name?: unknown;
   title?: unknown;
   description?: unknown;
+  author?: unknown;
+  cssVars?: unknown;
   type?: unknown;
   category?: unknown;
   dependencies?: unknown;
   devDependencies?: unknown;
   registryDependencies?: unknown;
   files?: unknown;
+}
+
+interface NormalizedRegistryItemDetailJson {
+  name?: string;
+  title?: string;
+  description?: string;
+  author?: string;
+  cssVars?: RegistryCssVars;
+  type?: string;
+  category?: string;
+  dependencies: readonly string[];
+  devDependencies: readonly string[];
+  registryDependencies: readonly string[];
+  files: readonly RegistryItemSummaryFile[];
 }
 
 export function resolveRegistryItemDetailFromSummary(
@@ -198,6 +217,8 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
     name: summary.name,
     title: summary.title ?? summary.name,
     description: summary.description ?? null,
+    author: summary.author ?? null,
+    cssVars: null,
     type: summary.type ?? null,
     category: summary.category ?? null,
     catalogStatus: summary.catalogStatus,
@@ -221,7 +242,7 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
 }
 
 export function normalizeRegistryItemDetailJson(value: unknown):
-  | { valid: true; item: Required<Pick<RegistryItemDetailJson, 'dependencies' | 'devDependencies' | 'registryDependencies' | 'files'>> & RegistryItemDetailJson }
+  | { valid: true; item: NormalizedRegistryItemDetailJson }
   | { valid: false; reason: string } {
   if (!isRecord(value)) {
     return { valid: false, reason: 'item-json-not-object' };
@@ -239,12 +260,17 @@ export function normalizeRegistryItemDetailJson(value: unknown):
   const registryDependencies = normalizeStringArray(value.registryDependencies, 'registryDependencies');
   if (!registryDependencies.valid) return { valid: false, reason: registryDependencies.reason };
 
+  const cssVars = normalizeCssVars(value.cssVars);
+  if (!cssVars.valid) return { valid: false, reason: cssVars.reason };
+
   return {
     valid: true,
     item: {
       name: optionalString(value.name),
       title: optionalString(value.title),
       description: optionalString(value.description),
+      author: optionalString(value.author),
+      cssVars: cssVars.value,
       type: optionalString(value.type),
       category: optionalString(value.category),
       dependencies: dependencies.items,
@@ -273,23 +299,20 @@ export function fetchErrorResult(detail: RegistryItemDetail | null, reason = 'fe
   };
 }
 
-function mergeDetailJson(detail: RegistryItemDetail, item: RegistryItemDetailJson, rawSource: unknown): RegistryItemDetail {
-  const dependencies = arrayOrFallback(item.dependencies, detail.dependencies);
-  const devDependencies = arrayOrFallback(item.devDependencies, detail.devDependencies);
-  const registryDependencies = arrayOrFallback(item.registryDependencies, detail.registryDependencies);
-  const files = Array.isArray(item.files) ? item.files as readonly RegistryItemSummaryFile[] : detail.files;
-
+function mergeDetailJson(detail: RegistryItemDetail, item: NormalizedRegistryItemDetailJson, rawSource: unknown): RegistryItemDetail {
   return {
     ...detail,
-    name: optionalString(item.name) ?? detail.name,
-    title: optionalString(item.title) ?? optionalString(item.name) ?? detail.title,
-    description: optionalString(item.description) ?? detail.description,
-    type: optionalString(item.type) ?? detail.type,
-    category: optionalString(item.category) ?? detail.category,
-    dependencies,
-    devDependencies,
-    registryDependencies,
-    files,
+    name: item.name ?? detail.name,
+    title: item.title ?? item.name ?? detail.title,
+    description: item.description ?? detail.description,
+    author: item.author ?? detail.author,
+    cssVars: item.cssVars ?? detail.cssVars,
+    type: item.type ?? detail.type,
+    category: item.category ?? detail.category,
+    dependencies: item.dependencies,
+    devDependencies: item.devDependencies,
+    registryDependencies: item.registryDependencies,
+    files: item.files,
     loadedFromJson: true,
     rawSource,
   };
@@ -311,6 +334,29 @@ function normalizeStringArray(value: unknown, field: string): { valid: true; ite
   return { valid: true, items: value };
 }
 
+function normalizeCssVars(value: unknown):
+  | { valid: true; value: RegistryCssVars | undefined }
+  | { valid: false; reason: string } {
+  if (value === undefined) return { valid: true, value: undefined };
+  if (!isRecord(value)) return { valid: false, reason: 'css-vars-not-object' };
+
+  const output: { theme?: Record<string, string>; light?: Record<string, string>; dark?: Record<string, string> } = {};
+  for (const mode of ['theme', 'light', 'dark'] as const) {
+    const source = value[mode];
+    if (source === undefined) continue;
+    if (!isRecord(source)) return { valid: false, reason: `css-vars-${mode}-not-object` };
+    const swatches: Record<string, string> = {};
+    for (const [key, item] of Object.entries(source)) {
+      if (!key.trim() || typeof item !== 'string' || !item.trim()) {
+        return { valid: false, reason: `css-vars-${mode}-contains-invalid-value` };
+      }
+      swatches[key] = item.trim();
+    }
+    if (Object.keys(swatches).length > 0) output[mode] = swatches;
+  }
+  return { valid: true, value: Object.keys(output).length > 0 ? output : undefined };
+}
+
 function normalizeFiles(value: unknown): { valid: true; items: readonly RegistryItemSummaryFile[] } | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, items: [] };
   if (!Array.isArray(value)) return { valid: false, reason: 'files-not-array' };
@@ -326,10 +372,6 @@ function normalizeFiles(value: unknown): { valid: true; items: readonly Registry
   }
 
   return { valid: true, items: files };
-}
-
-function arrayOrFallback<T>(value: unknown, fallback: readonly T[]): readonly T[] {
-  return Array.isArray(value) ? value as readonly T[] : fallback;
 }
 
 function optionalString(value: unknown): string | undefined {

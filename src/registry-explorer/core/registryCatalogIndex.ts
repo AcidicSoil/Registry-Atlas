@@ -4,6 +4,8 @@ import type {
   RegistryCatalogIndex,
   RegistryCatalogItem,
   RegistryItemSummary,
+  RegistryThemePreview,
+  RegistryThemeSwatch,
 } from './registry.schema';
 
 const DISCOVERABLE_REGISTRY_ITEM_TYPES = new Set([
@@ -16,6 +18,10 @@ const DISCOVERABLE_REGISTRY_ITEM_TYPES = new Set([
   'registry:theme',
   'registry:icon',
 ]);
+
+const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [
+  'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
+];
 
 export interface RegistryCatalogMatch {
   namespace: string;
@@ -165,10 +171,13 @@ export function compactCatalogItemToSummary(
     ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.name)
     : null;
   const evidenceUrl = registry.atlas?.catalogEvidenceUrl;
+  const pathLeaf = item.name.split('/').filter(Boolean).at(-1) ?? item.name;
   return {
-    name: item.title ?? item.name,
+    name: item.title ?? pathLeaf,
     slug: item.name,
     title: item.title,
+    description: item.description,
+    author: item.author,
     type: item.type,
     category: item.categories?.[0],
     source: 'registry-catalog-index',
@@ -198,6 +207,13 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
   }
 
   const title = optionalString(value.title);
+  const description = optionalString(value.description);
+  const author = optionalString(value.author);
+  const fileCount = value.fileCount === undefined ? null : numberValue(value.fileCount);
+  if (value.fileCount !== undefined && (fileCount === null || !Number.isInteger(fileCount))) {
+    throw new Error('Registry catalog index validation failed: item fileCount must be a non-negative integer');
+  }
+  const themePreview = value.themePreview === undefined ? undefined : parseThemePreview(value.themePreview);
   let categories: string[] | undefined;
   if (value.categories !== undefined) {
     if (!Array.isArray(value.categories) || !value.categories.every(item => typeof item === 'string')) {
@@ -210,8 +226,37 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
     name,
     type,
     ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
+    ...(author ? { author } : {}),
     ...(categories?.length ? { categories } : {}),
+    ...(fileCount !== null ? { fileCount } : {}),
+    ...(themePreview ? { themePreview } : {}),
   };
+}
+
+function parseThemePreview(value: unknown): RegistryThemePreview | undefined {
+  if (!isRecord(value)) {
+    throw new Error('Registry catalog index validation failed: item themePreview must be an object');
+  }
+  const output: { light?: Partial<Record<RegistryThemeSwatch, string>>; dark?: Partial<Record<RegistryThemeSwatch, string>> } = {};
+  for (const mode of ['light', 'dark'] as const) {
+    const source = value[mode];
+    if (source === undefined) continue;
+    if (!isRecord(source)) {
+      throw new Error(`Registry catalog index validation failed: themePreview.${mode} must be an object`);
+    }
+    const swatches: Partial<Record<RegistryThemeSwatch, string>> = {};
+    for (const [key, raw] of Object.entries(source)) {
+      if (!isThemeSwatch(key)) {
+        throw new Error(`Registry catalog index validation failed: unsupported theme swatch ${key}`);
+      }
+      const swatch = optionalString(raw);
+      if (!swatch) throw new Error(`Registry catalog index validation failed: theme swatch ${key} must be a string`);
+      swatches[key] = swatch;
+    }
+    if (Object.keys(swatches).length) output[mode] = swatches;
+  }
+  return output.light || output.dark ? output : undefined;
 }
 
 export function registryCatalogItemIdentity(value: string): string {
@@ -234,6 +279,10 @@ function titleCase(value: string): string {
 
 function optionalString(value: unknown): string | undefined {
   return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+}
+
+function isThemeSwatch(value: string): value is RegistryThemeSwatch {
+  return THEME_SWATCH_KEYS.some(key => key === value);
 }
 
 function numberValue(value: unknown): number | null {

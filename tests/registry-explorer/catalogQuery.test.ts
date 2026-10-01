@@ -111,7 +111,7 @@ describe("queryCatalogComponents", () => {
     expect(result.items[0]).toMatchObject({
       id: "@alpha:button",
       slug: "button",
-      displayName: "Reviewed Button",
+      displayName: "Button",
       description: "Human-reviewed detail",
       reviewed: true,
     });
@@ -168,13 +168,50 @@ describe("queryCatalogComponents", () => {
     ]);
 
     expect(queryCatalogComponents(registries, catalog, {
-      sort: "type",
+      sort: "name-desc",
       pageSize: 10,
-    }).items.map(item => item.type)).toEqual([
-      "registry:block",
-      "registry:ui",
-      "registry:ui",
+    }).items.map(item => item.id)).toEqual([
+      "@alpha:zebra",
+      "@alpha:button",
+      "@beta:accordion",
     ]);
+  });
+
+  it("searches native description/author metadata and separates display labels from exact slugs", () => {
+    const result = queryCatalogComponents(
+      [registry("@alpha")],
+      index({
+        "@alpha": [{
+          name: "collections/forms/contact-card",
+          title: undefined,
+          description: "A compact onboarding surface.",
+          author: "Ada Example",
+          type: "registry:block",
+          categories: ["forms"],
+          fileCount: 3,
+        }],
+      }),
+      { search: "ada example", pageSize: 10 },
+    );
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0]).toMatchObject({
+      slug: "collections/forms/contact-card",
+      displayName: "contact-card",
+      description: "A compact onboarding surface.",
+      author: "Ada Example",
+      fileCount: 3,
+    });
+    expect(queryCatalogComponents(
+      [registry("@alpha")],
+      index({ "@alpha": [{
+        name: "collections/forms/contact-card",
+        description: "A compact onboarding surface.",
+        author: "Ada Example",
+        type: "registry:block",
+      }] }),
+      { search: "onboarding", pageSize: 10 },
+    ).total).toBe(1);
   });
 
   it("paginates beyond the old 1,000-result materialization limit", () => {

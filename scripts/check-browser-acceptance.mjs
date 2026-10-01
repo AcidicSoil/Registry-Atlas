@@ -45,14 +45,14 @@ const itemPath = item => item.name.split('/').map(encodeURIComponent).join('/');
 const routes = [
   { name: 'home', path: '/' },
   { name: 'components', path: '/components', requireItems: true },
-  { name: 'components-featured', path: '/components/featured', requireItems: true },
-  { name: 'components-newest', path: '/components/newest', expectUnavailable: true },
   { name: 'components-search-button', path: '/components/s/button', requireItems: true },
   { name: 'explore-forms', path: '/components/explore/forms', requireItems: true },
-  { name: 'authors', path: '/authors', expectUnavailable: true },
+  { name: 'retired-authors', path: '/authors', expectUnavailable: true },
+  { name: 'retired-newest', path: '/components/newest', expectUnavailable: true },
+  { name: 'retired-reviewed', path: '/components/featured', expectUnavailable: true },
   {
     name: 'registries-filtered',
-    path: '/registries?q=registry&coverage=current&registrySort=item-count-desc',
+    path: '/registries?asset=template&registrySort=item-count-desc',
   },
   { name: 'registry-large', path: `/${nsPath(largeRegistry.namespace)}`, requireItems: true },
   {
@@ -84,7 +84,7 @@ const routes = [
 ];
 
 const viewports = [
-  { name: 'desktop', width: 1440, height: 1000, mobile: false },
+  { name: 'desktop', width: 1920, height: 1080, mobile: false },
   { name: 'mobile', width: 390, height: 844, mobile: true },
 ];
 
@@ -154,6 +154,43 @@ function expectedPathname(routePath) {
   return url.pathname;
 }
 
+function mobileSidebarFocusState() {
+  const openResult = JSON.parse(run(['eval', '--tab', tab, `(() => {
+    const sidebar = document.querySelector('#appSidebar');
+    const toggle = document.querySelector('#sidebarToggle');
+    const close = document.querySelector('#sidebarClose');
+    if (!(sidebar instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement) || !(close instanceof HTMLButtonElement)) {
+      return JSON.stringify({ available: false });
+    }
+    sidebar.dataset.open = 'false';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.focus();
+    toggle.click();
+    return JSON.stringify({ available: true });
+  })()`]).stdout);
+  if (!openResult.available) return openResult;
+
+  const opened = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
+    open: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'true',
+    expanded: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'true',
+    focusMovedInside: document.activeElement?.id === 'sidebarClose'
+  })`]).stdout);
+  run(['eval', '--tab', tab, `document.querySelector('#sidebarClose')?.click(); 'clicked'`]);
+  const closed = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
+    closed: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'false',
+    collapsed: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'false',
+    focusReturned: document.activeElement?.id === 'sidebarToggle'
+  })`]).stdout);
+
+  return {
+    available: true,
+    opened: opened.open && opened.expanded,
+    focusMovedInside: opened.focusMovedInside,
+    closed: closed.closed && closed.collapsed,
+    focusReturned: closed.focusReturned,
+  };
+}
+
 function readNetwork5xx() {
   const raw = run([
     'network', '--tab', tab, '--status', '5xx', '--limit', '100', '--json',
@@ -219,6 +256,14 @@ for (const viewport of viewports) {
     if (state.unlabeledFields > 0) routeFailures.push(`${state.unlabeledFields} visible form field(s) lack a label`);
     if (state.imagesMissingAlt > 0) routeFailures.push(`${state.imagesMissingAlt} visible image(s) lack alt text`);
     if (state.duplicateIdCount > 0) routeFailures.push(`${state.duplicateIdCount} duplicate DOM id(s)`);
+    if (viewport.mobile && route.name === 'components') {
+      const sidebarFocus = mobileSidebarFocusState();
+      if (!sidebarFocus.available) routeFailures.push('mobile sidebar is unavailable');
+      if (sidebarFocus.available && !sidebarFocus.opened) routeFailures.push('mobile sidebar did not open');
+      if (sidebarFocus.available && !sidebarFocus.focusMovedInside) routeFailures.push('mobile sidebar did not move focus to Close');
+      if (sidebarFocus.available && !sidebarFocus.closed) routeFailures.push('mobile sidebar did not close');
+      if (sidebarFocus.available && !sidebarFocus.focusReturned) routeFailures.push('mobile sidebar did not return focus to the menu button');
+    }
 
     const record = {
       viewport: viewport.name,

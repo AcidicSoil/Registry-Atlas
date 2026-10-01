@@ -7,6 +7,7 @@ export interface CatalogCollectionViewOptions {
   title: string;
   description: string;
   routeKind?: 'component' | 'template' | 'theme';
+  controls?: string;
   emptyTitle?: string;
   emptyBody?: string;
 }
@@ -28,9 +29,10 @@ export function renderCatalogCollection(
 
   if (!result.items.length) {
     bodyRoot.innerHTML = `
+      ${options.controls ?? ""}
       <div class="empty-state collection-empty">
-        <h2>${escapeHtml(options.emptyTitle ?? "No matching catalog assets are available.")}</h2>
-        <p>${escapeHtml(options.emptyBody ?? "This route only displays assets supported by explicit upstream evidence.")}</p>
+        <h2>${escapeHtml(options.emptyTitle ?? "No matching items.")}</h2>
+        <p>${escapeHtml(options.emptyBody ?? "Try a different search or filter.")}</p>
       </div>
     `;
     return;
@@ -39,8 +41,9 @@ export function renderCatalogCollection(
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
   bodyRoot.innerHTML = `
+    ${options.controls ?? ""}
     <div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>
-    <div class="catalog-component-grid">
+    <div class="catalog-component-grid catalog-collection-grid-${options.routeKind ?? "component"}">
       ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
     </div>
     ${result.pageCount > 1 ? `
@@ -70,8 +73,8 @@ export function renderEvidenceUnavailable(
   `;
   bodyRoot.innerHTML = `
     <div class="evidence-unavailable">
-      <div class="catalog-eyebrow">Evidence unavailable</div>
-      <h2>Registry Atlas will not infer this data.</h2>
+      <div class="catalog-eyebrow">Not available</div>
+      <h2>This view is not available yet.</h2>
       <p>${escapeHtml(detail)}</p>
     </div>
   `;

@@ -9,7 +9,7 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 </p>
 
 <p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="Registry Atlas component catalog with real registry, type, and category filters" />
+<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="Registry Atlas component catalog with registry filtering and deterministic sorting" />
 </p>
 
 <p>
@@ -18,13 +18,13 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 
 ## Features
 
-- **Components**: Browse real catalog identities with search, registry/type/category filters, reviewed-state filtering, deterministic sorting, pagination, and shareable URLs.
-- **Collections**: Explore reviewed components, explicit category collections, templates, themes, and icons without inventing unsupported popularity, recency, or author data.
-- **Registries**: Search and sort registry libraries, filter by current/stale/empty/unavailable catalog state, and browse each registry's exact indexed inventory.
+- **Components**: Search real catalog items, select multiple registries and common categories as chips, sort by name or registry in either direction, and share filtered URLs.
+- **Collections**: Explore explicit category collections, templates, themes, and registry-backed icon-related assets without inventing popularity, recency, author, or review rankings.
+- **Registries**: Filter by asset type (components, templates, themes, or icon-related items), sort alphabetically or by item count, and open each registry's catalog. Sync status remains informational, not a primary filter.
 - **Details**: Open canonical nested item routes backed by generated same-origin detail bundles, with the upstream raw item route preserved as provenance.
 - **Compare**: Compare exact catalog identities across registries rather than inferred component families.
-- **Honest unavailable states**: Routes such as Newest, Authors, or the theme editor stay first-class but explicitly explain when the required source evidence does not exist.
-- **Responsive catalog UI**: Full-width desktop layout, persistent browse rail, compact content controls, and a mobile browse disclosure with no horizontal document overflow.
+- **Unavailable routes**: Former Featured, Newest, and Authors routes are retired and return Not found. The theme editor explains why editing is not yet supported.
+- **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
 ## Getting Started
 
@@ -104,7 +104,7 @@ mise run validate:data
 mise run verify
 ```
 
-`mise run import:catalog` refreshes the reviewed Atlas item-summary sample in `data/shadcn/registry-items.json`.
+`mise run import:catalog` refreshes the curated Atlas item-summary enrichment sample in `data/shadcn/registry-items.json`.
 
 `mise run sync:registries` refreshes:
 
@@ -181,7 +181,7 @@ src/registry-explorer/
 
 The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing runtime artifacts:
 
-1. Run `mise run import:catalog` to refresh reviewed Atlas item-summary enrichment.
+1. Run `mise run import:catalog` to refresh curated Atlas item-summary enrichment.
 2. Run `mise run sync:registries` to refresh directory/catalog evidence, compact items, detail bundles, and the runtime mirror.
 3. Review the generated reports and artifacts.
 4. Run `mise run validate:data`.

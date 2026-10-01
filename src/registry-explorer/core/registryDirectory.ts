@@ -1,7 +1,8 @@
 import type { Registry, RegistryCatalogIndex } from "./registry.schema";
+import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
 
 export type RegistryCatalogCoverage = "current" | "stale" | "empty" | "failed";
-export type RegistryDirectorySort = "name" | "item-count-asc" | "item-count-desc";
+export type RegistryDirectorySort = "name" | "item-count-asc" | "item-count-desc" | "name-desc";
 
 export interface RegistryDirectoryEntry {
   registry: Registry;
@@ -12,6 +13,7 @@ export interface RegistryDirectoryEntry {
 export interface RegistryDirectoryOptions {
   search?: string;
   coverage?: readonly RegistryCatalogCoverage[];
+  assetKinds?: readonly CatalogAssetKind[];
   sort?: RegistryDirectorySort;
   page?: number;
   pageSize?: number;
@@ -49,6 +51,7 @@ export function buildRegistryDirectory(
   const requestedPage = positiveInteger(options.page, 1);
   const pageSize = Math.min(positiveInteger(options.pageSize, DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
   const coverageFilter = new Set(options.coverage ?? []);
+  const assetFilter = new Set(options.assetKinds ?? []);
   const sort = options.sort ?? "name";
 
   const entries = registries
@@ -64,6 +67,10 @@ export function buildRegistryDirectory(
       coverage: registryCatalogCoverage(registry, index),
     }))
     .filter(entry => coverageFilter.size === 0 || coverageFilter.has(entry.coverage))
+    .filter(entry => assetFilter.size === 0 || (index.registries[entry.registry.name] ?? []).some(item => {
+      const kind = assetKindForCatalogItem(item);
+      return kind !== null && assetFilter.has(kind);
+    }))
     .sort((a, b) => compareEntries(a, b, sort));
 
   const coverageCounts: Record<RegistryCatalogCoverage, number> = {
@@ -104,6 +111,7 @@ function compareEntries(
   if (sort === "item-count-desc") {
     return b.itemCount - a.itemCount || a.registry.name.localeCompare(b.registry.name);
   }
+  if (sort === "name-desc") return b.registry.name.localeCompare(a.registry.name);
   return a.registry.name.localeCompare(b.registry.name);
 }
 

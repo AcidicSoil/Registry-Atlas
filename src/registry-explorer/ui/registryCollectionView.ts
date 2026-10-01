@@ -1,11 +1,8 @@
-import type { CatalogFacetSummary, CatalogQueryResult } from "../core/catalogQuery";
-import type { CatalogBrowseQueryState } from "../core/catalogRoutes";
+import type { CatalogQueryResult } from "../core/catalogQuery";
+import { assetKindForCatalogItem } from "../core/catalogCollections";
 import type { RegistryCatalogCoverage } from "../core/registryDirectory";
 import type { Registry } from "../core/registry.schema";
-import {
-  renderCatalogBrowseControls,
-  renderCatalogComponentCard,
-} from "./catalogComponentsView";
+import { renderCatalogComponentCard } from "./catalogComponentsView";
 import { escapeHtml, renderExternalLink } from "./renderSafety";
 
 export function renderRegistryCollection(
@@ -14,12 +11,11 @@ export function renderRegistryCollection(
   registry: Registry,
   result: CatalogQueryResult,
   options: {
-    facets?: CatalogFacetSummary;
-    browseState?: CatalogBrowseQueryState;
     coverage?: RegistryCatalogCoverage;
+    controls?: string;
   } = {},
 ): void {
-  const count = result.total === 1 ? "1 indexed component" : `${result.total.toLocaleString()} indexed components`;
+  const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
   headerRoot.innerHTML = `
     <div class="registry-collection-heading">
       <button class="link-button" type="button" data-back-to-results>← Registries</button>
@@ -36,45 +32,56 @@ export function renderRegistryCollection(
   `;
 
   bodyRoot.innerHTML = `
-    <section class="registry-collection-components">
-      <div class="section-heading-row">
-        <div>
-          <h2>Catalog components</h2>
-          <p>Real component records from this registry's indexed catalog.</p>
+    <div class="registry-profile-layout">
+      <section class="registry-profile-summary-rail" aria-label="Registry summary">
+        <div class="catalog-eyebrow">Registry summary</div>
+        <h2>${escapeHtml(registry.name)}</h2>
+        <p>${escapeHtml(registry.description)}</p>
+        <div class="registry-profile-summary-facts">
+          <span><strong>${result.total.toLocaleString()}</strong> items</span>
+          ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
         </div>
-      </div>
-      ${options.facets && options.browseState
-        ? renderCatalogBrowseControls(options.facets, options.browseState, { includeDimensions: true, includeRegistry: false })
-        : ""}
-      ${result.items.length
-        ? `
-          ${renderMeta(result)}
-          <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item)).join("")}</div>
-          ${renderPagination(result)}
-        `
-        : renderEmptyRegistryInventory(options.coverage)}
-    </section>
+        <div class="secondary-links">${renderExternalLink(registry.url, "Open source", "secondary-link")}</div>
+      </section>
+      <section class="registry-profile-inventory registry-collection-components">
+        <div class="section-heading-row">
+          <div>
+            <h2>Items</h2>
+            <p>Items published by this registry.</p>
+          </div>
+        </div>
+
+        ${options.controls ?? ""}
+        ${result.items.length
+          ? `
+            ${renderMeta(result)}
+            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item, assetKindForCatalogItem(item.item) === "theme" ? "theme" : assetKindForCatalogItem(item.item) === "template" ? "template" : "component")).join("")}</div>
+            ${renderPagination(result)}
+          `
+          : renderEmptyRegistryInventory(options.coverage)}
+      </section>
+    </div>
   `;
 }
 
 function coverageLabel(coverage: RegistryCatalogCoverage): string {
-  if (coverage === "current") return "Current catalog";
-  if (coverage === "stale") return "Stale catalog";
-  if (coverage === "empty") return "No supported items";
-  return "Catalog unavailable";
+  if (coverage === "current") return "Current";
+  if (coverage === "stale") return "Stale";
+  if (coverage === "empty") return "No items";
+  return "Unavailable";
 }
 
 function renderEmptyRegistryInventory(coverage: RegistryCatalogCoverage | undefined): string {
   if (coverage === "failed") {
-    return '<div class="empty-state"><h2>Catalog unavailable.</h2><p>The upstream registry catalog could not be fetched, so Registry Atlas does not invent component results.</p></div>';
+    return '<div class="empty-state"><h2>Catalog unavailable.</h2><p>This registry could not be loaded during the latest sync.</p></div>';
   }
   if (coverage === "empty") {
-    return '<div class="empty-state"><h2>No supported component items.</h2><p>The catalog was fetched successfully but contained no supported browse item types.</p></div>';
+    return '<div class="empty-state"><h2>No components found.</h2><p>This registry catalog does not contain component items we can display.</p></div>';
   }
   if (coverage === "stale") {
-    return '<div class="empty-state"><h2>No stale indexed items remain.</h2><p>The last successful catalog evidence is stale and contains no supported browse items.</p></div>';
+    return '<div class="empty-state"><h2>No components found.</h2><p>The last successful catalog snapshot does not contain component items.</p></div>';
   }
-  return '<div class="empty-state"><h2>No indexed components are available for this registry.</h2><p>This is a catalog coverage gap, not an inferred empty component set.</p></div>';
+  return '<div class="empty-state"><h2>No components are available for this registry.</h2></div>';
 }
 
 function renderMeta(result: CatalogQueryResult): string {

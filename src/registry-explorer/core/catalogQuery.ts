@@ -20,8 +20,11 @@ export interface CatalogComponent {
   displayName: string;
   title?: string;
   description?: string;
+  author?: string;
   type: string;
   categories: readonly string[];
+  fileCount?: number;
+  themePreview?: RegistryCatalogItem['themePreview'];
   reviewed: boolean;
   reviewedSummary?: RegistryItemSummary;
   item: RegistryCatalogItem;
@@ -197,11 +200,14 @@ function toCatalogComponent(
     namespace: registry.name,
     registry,
     slug: item.name,
-    displayName: reviewed?.name ?? item.title ?? item.name,
+    displayName: displayLabel(item),
     ...(item.title ? { title: item.title } : {}),
-    ...(reviewed?.description ? { description: reviewed.description } : {}),
+    ...((item.description ?? reviewed?.description) ? { description: item.description ?? reviewed?.description } : {}),
+    ...(item.author ? { author: item.author } : {}),
     type: item.type,
     categories: item.categories ?? [],
+    ...(item.fileCount !== undefined ? { fileCount: item.fileCount } : {}),
+    ...(item.themePreview ? { themePreview: item.themePreview } : {}),
     reviewed: Boolean(reviewed),
     ...(reviewed ? { reviewedSummary: reviewed } : {}),
     item,
@@ -231,20 +237,20 @@ function compareCatalogMatches(
   const aName = displayName(a);
   const bName = displayName(b);
 
+  if (sort === "name-desc") {
+    return bName.localeCompare(aName)
+      || a.registry.name.localeCompare(b.registry.name)
+      || a.item.name.localeCompare(b.item.name);
+  }
+  if (sort === "registry-desc") {
+    return b.registry.name.localeCompare(a.registry.name)
+      || aName.localeCompare(bName)
+      || a.item.name.localeCompare(b.item.name);
+  }
   if (sort === "registry") {
     return a.registry.name.localeCompare(b.registry.name)
       || aName.localeCompare(bName)
       || a.item.name.localeCompare(b.item.name);
-  }
-  if (sort === "type") {
-    return a.item.type.localeCompare(b.item.type)
-      || aName.localeCompare(bName)
-      || a.registry.name.localeCompare(b.registry.name);
-  }
-  if (sort === "reviewed") {
-    return Number(Boolean(b.reviewed)) - Number(Boolean(a.reviewed))
-      || aName.localeCompare(bName)
-      || a.registry.name.localeCompare(b.registry.name);
   }
   return aName.localeCompare(bName)
     || a.registry.name.localeCompare(b.registry.name)
@@ -252,7 +258,13 @@ function compareCatalogMatches(
 }
 
 function displayName(match: CatalogMatch): string {
-  return match.reviewed?.name ?? match.item.title ?? match.item.name;
+  return displayLabel(match.item);
+}
+
+function displayLabel(item: RegistryCatalogItem): string {
+  if (item.title?.trim()) return item.title.trim();
+  const segments = item.name.split('/').filter(Boolean);
+  return segments.at(-1) ?? item.name;
 }
 
 function matchesFilters(
@@ -282,6 +294,8 @@ function matchesSearch(item: RegistryCatalogItem, namespace: string, query: stri
   return [
     item.name,
     item.title ?? "",
+    item.description ?? "",
+    item.author ?? "",
     item.type,
     namespace,
     ...(item.categories ?? []),

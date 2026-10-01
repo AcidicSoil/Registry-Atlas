@@ -151,6 +151,41 @@ describe('registry catalog evidence sync', () => {
     ]);
   });
 
+  it('promotes bounded native compact metadata and structured theme swatches', () => {
+    const longDescription = 'd'.repeat(320);
+    const longAuthor = 'a'.repeat(140);
+    const items = buildCompactCatalogItems({ items: [{
+      name: 'midnight',
+      title: 'Midnight',
+      description: longDescription,
+      author: longAuthor,
+      type: 'registry:theme',
+      categories: ['dark'],
+      files: [{ path: 'theme.ts', type: 'registry:theme', content: 'must not leak' }],
+      cssVars: {
+        light: { background: '#ffffff', primary: '#111111', radius: '1rem' },
+        dark: { background: '#000000', foreground: '#ffffff', custom: 'ignore-me' },
+      },
+    }] });
+
+    expect(items).toEqual([{
+      name: 'midnight',
+      title: 'Midnight',
+      description: 'd'.repeat(280),
+      author: 'a'.repeat(120),
+      type: 'registry:theme',
+      categories: ['dark'],
+      fileCount: 1,
+      themePreview: {
+        light: { background: '#ffffff', primary: '#111111' },
+        dark: { background: '#000000', foreground: '#ffffff' },
+      },
+    }]);
+    expect(JSON.stringify(items)).not.toContain('must not leak');
+    expect(JSON.stringify(items)).not.toContain('radius');
+    expect(JSON.stringify(items)).not.toContain('custom');
+  });
+
   it('builds a safe same-origin detail bundle without source file contents', () => {
     expect(buildRegistryItemDetailBundle({ items: [{
       name: 'accordion',
