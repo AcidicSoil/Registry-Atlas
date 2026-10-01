@@ -95,6 +95,707 @@
         }
       ],
       "install_command": "npx shadcn@latest add @8bitcn/input"
+    },
+    {
+      "name": "8-bit Alert",
+      "slug": "alert",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/alert.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/alert.json",
+      "evidence_url": "https://www.8bitcn.com/r/alert.json",
+      "title": "8-bit Alert",
+      "description": "A simple 8-bit switch component",
+      "registryDependencies": [
+        "alert"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/alert.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/alert.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/alert",
+      "docs_url": "https://www.8bitcn.com/docs/components/alert"
+    },
+    {
+      "name": "8-bit Avatar",
+      "slug": "avatar",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/avatar.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/avatar.json",
+      "evidence_url": "https://www.8bitcn.com/r/avatar.json",
+      "title": "8-bit Avatar",
+      "description": "A simple 8-bit avatar component",
+      "registryDependencies": [
+        "avatar"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/avatar.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/avatar.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/avatar",
+      "docs_url": "https://www.8bitcn.com/docs/components/avatar"
+    },
+    {
+      "name": "8-bit Badge",
+      "slug": "badge",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/badge.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/badge.json",
+      "evidence_url": "https://www.8bitcn.com/r/badge.json",
+      "title": "8-bit Badge",
+      "description": "A simple 8-bit badge component",
+      "registryDependencies": [
+        "badge"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/badge.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/badge.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/badge",
+      "docs_url": "https://www.8bitcn.com/docs/components/badge"
+    },
+    {
+      "name": "8-bit Checkbox",
+      "slug": "checkbox",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/checkbox.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/checkbox.json",
+      "evidence_url": "https://www.8bitcn.com/r/checkbox.json",
+      "title": "8-bit Checkbox",
+      "description": "A simple 8-bit checkbox component",
+      "registryDependencies": [
+        "checkbox"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/checkbox.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/checkbox.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/checkbox",
+      "docs_url": "https://www.8bitcn.com/docs/components/checkbox"
+    },
+    {
+      "name": "8-bit Progress",
+      "slug": "progress",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/progress.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/progress.json",
+      "evidence_url": "https://www.8bitcn.com/r/progress.json",
+      "title": "8-bit Progress",
+      "description": "A simple 8-bit progress component",
+      "dependencies": [
+        "@radix-ui/react-progress"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/8bit/progress.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/progress.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/progress",
+      "docs_url": "https://www.8bitcn.com/docs/components/progress"
+    },
+    {
+      "name": "8-bit Switch",
+      "slug": "switch",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/switch.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/switch.json",
+      "evidence_url": "https://www.8bitcn.com/r/switch.json",
+      "title": "8-bit Switch",
+      "description": "A simple 8-bit switch component",
+      "registryDependencies": [
+        "switch"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/switch.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/switch.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/switch",
+      "docs_url": "https://www.8bitcn.com/docs/components/switch"
+    },
+    {
+      "name": "8-bit Accordion",
+      "slug": "accordion",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/accordion.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/accordion.json",
+      "evidence_url": "https://www.8bitcn.com/r/accordion.json",
+      "title": "8-bit Accordion",
+      "description": "A simple 8-bit accordion component",
+      "registryDependencies": [
+        "accordion"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/accordion.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/accordion.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/accordion",
+      "docs_url": "https://www.8bitcn.com/docs/components/accordion"
+    },
+    {
+      "name": "8-bit Calendar",
+      "slug": "calendar",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/calendar.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/calendar.json",
+      "evidence_url": "https://www.8bitcn.com/r/calendar.json",
+      "title": "8-bit Calendar",
+      "description": "A simple 8-bit calendar component",
+      "registryDependencies": [
+        "calendar"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/calendar.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/calendar.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/calendar",
+      "docs_url": "https://www.8bitcn.com/docs/components/calendar"
+    },
+    {
+      "name": "8-bit Card",
+      "slug": "carousel",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/carousel.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/carousel.json",
+      "evidence_url": "https://www.8bitcn.com/r/carousel.json",
+      "title": "8-bit Card",
+      "description": "A simple 8-bit carousel component",
+      "registryDependencies": [
+        "carousel"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/carousel.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/carousel.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/carousel",
+      "docs_url": "https://www.8bitcn.com/docs/components/carousel"
+    },
+    {
+      "name": "8-bit Chart",
+      "slug": "chart",
+      "type": "registry:block",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/chart.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/chart.json",
+      "evidence_url": "https://www.8bitcn.com/r/chart.json",
+      "title": "8-bit Chart",
+      "description": "A simple 8-bit chart component",
+      "registryDependencies": [
+        "chart"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/blocks/chart.tsx",
+          "type": "registry:block",
+          "target": "components/ui/8bit/blocks/chart.tsx"
+        },
+        {
+          "path": "components/ui/8bit/chart.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/chart.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/chart",
+      "docs_url": "https://www.8bitcn.com/docs/components/chart"
+    },
+    {
+      "name": "8-bit Dialog",
+      "slug": "dialog",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/dialog.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/dialog.json",
+      "evidence_url": "https://www.8bitcn.com/r/dialog.json",
+      "title": "8-bit Dialog",
+      "description": "A simple 8-bit dialog component",
+      "registryDependencies": [
+        "dialog"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/dialog.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/dialog.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/dialog",
+      "docs_url": "https://www.8bitcn.com/docs/components/dialog"
+    },
+    {
+      "name": "8-bit Drawer",
+      "slug": "drawer",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/drawer.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/drawer.json",
+      "evidence_url": "https://www.8bitcn.com/r/drawer.json",
+      "title": "8-bit Drawer",
+      "description": "A simple 8-bit drawer component",
+      "registryDependencies": [
+        "drawer"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/drawer.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/drawer.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/drawer",
+      "docs_url": "https://www.8bitcn.com/docs/components/drawer"
+    },
+    {
+      "name": "8-bit Dropdown Menu",
+      "slug": "dropdown-menu",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/dropdown-menu.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/dropdown-menu.json",
+      "evidence_url": "https://www.8bitcn.com/r/dropdown-menu.json",
+      "title": "8-bit Dropdown Menu",
+      "description": "A simple 8-bit dropdown-menu component",
+      "registryDependencies": [
+        "dropdown-menu"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/dropdown-menu.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/dropdown-menu.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/dropdown-menu",
+      "docs_url": "https://www.8bitcn.com/docs/components/dropdown-menu"
+    },
+    {
+      "name": "8-bit Hover Card",
+      "slug": "hover-card",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/hover-card.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/hover-card.json",
+      "evidence_url": "https://www.8bitcn.com/r/hover-card.json",
+      "title": "8-bit Hover Card",
+      "description": "A simple 8-bit hover card component",
+      "registryDependencies": [
+        "hover-card"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/hover-card.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/hover-card.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/hover-card",
+      "docs_url": "https://www.8bitcn.com/docs/components/hover-card"
+    },
+    {
+      "name": "8-bit Popover",
+      "slug": "popover",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/popover.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/popover.json",
+      "evidence_url": "https://www.8bitcn.com/r/popover.json",
+      "title": "8-bit Popover",
+      "description": "A simple 8-bit popover component",
+      "registryDependencies": [
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/popover.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/popover.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/popover",
+      "docs_url": "https://www.8bitcn.com/docs/components/popover"
+    },
+    {
+      "name": "8-bit Radio Group",
+      "slug": "radio-group",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/radio-group.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/radio-group.json",
+      "evidence_url": "https://www.8bitcn.com/r/radio-group.json",
+      "title": "8-bit Radio Group",
+      "description": "A simple 8-bit radio group component",
+      "registryDependencies": [
+        "radio-group"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/radio-group.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/radio-group.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/radio-group",
+      "docs_url": "https://www.8bitcn.com/docs/components/radio-group"
+    },
+    {
+      "name": "8-bit Scroll Area",
+      "slug": "scroll-area",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/scroll-area.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/scroll-area.json",
+      "evidence_url": "https://www.8bitcn.com/r/scroll-area.json",
+      "title": "8-bit Scroll Area",
+      "description": "A simple 8-bit Scroll Area component",
+      "dependencies": [
+        "@radix-ui/react-scroll-area"
+      ],
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "components/ui/8bit/scroll-area.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/scroll-area.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/scroll-area",
+      "docs_url": "https://www.8bitcn.com/docs/components/scroll-area"
+    },
+    {
+      "name": "8-bit Select",
+      "slug": "select",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/select.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/select.json",
+      "evidence_url": "https://www.8bitcn.com/r/select.json",
+      "title": "8-bit Select",
+      "description": "A simple 8-bit select component",
+      "registryDependencies": [
+        "select"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/select.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/select.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/select",
+      "docs_url": "https://www.8bitcn.com/docs/components/select"
+    },
+    {
+      "name": "8-bit Slider",
+      "slug": "slider",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/slider.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/slider.json",
+      "evidence_url": "https://www.8bitcn.com/r/slider.json",
+      "title": "8-bit Slider",
+      "description": "A simple 8-bit slider component",
+      "registryDependencies": [
+        "slider"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/slider.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/slider.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/slider",
+      "docs_url": "https://www.8bitcn.com/docs/components/slider"
+    },
+    {
+      "name": "8-bit Tabs",
+      "slug": "tabs",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/tabs.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/tabs.json",
+      "evidence_url": "https://www.8bitcn.com/r/tabs.json",
+      "title": "8-bit Tabs",
+      "description": "A simple 8-bit tabs component",
+      "registryDependencies": [
+        "tabs"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/tabs.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/tabs.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/tabs",
+      "docs_url": "https://www.8bitcn.com/docs/components/tabs"
+    },
+    {
+      "name": "8-bit Tooltip",
+      "slug": "tooltip",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/tooltip.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/tooltip.json",
+      "evidence_url": "https://www.8bitcn.com/r/tooltip.json",
+      "title": "8-bit Tooltip",
+      "description": "A simple 8-bit tooltip component",
+      "registryDependencies": [
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/tooltip.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/tooltip.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/tooltip",
+      "docs_url": "https://www.8bitcn.com/docs/components/tooltip"
+    },
+    {
+      "name": "8-bit Button Group",
+      "slug": "button-group",
+      "type": "registry:component",
+      "source": "registry-json",
+      "provenance": "Official item JSON https://www.8bitcn.com/r/button-group.json",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "confidence": "high",
+      "raw_item_url": "https://www.8bitcn.com/r/button-group.json",
+      "evidence_url": "https://www.8bitcn.com/r/button-group.json",
+      "title": "8-bit Button Group",
+      "description": "Groups multiple 8-bit buttons together inside a shared retro pixelated border.",
+      "registryDependencies": [
+        "button",
+        "button-group",
+        "separator"
+      ],
+      "files": [
+        {
+          "path": "components/ui/8bit/button-group.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/button-group.tsx"
+        },
+        {
+          "path": "components/ui/8bit/button.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/button.tsx"
+        },
+        {
+          "path": "components/ui/8bit/separator.tsx",
+          "type": "registry:component",
+          "target": "components/ui/8bit/separator.tsx"
+        },
+        {
+          "path": "components/ui/8bit/styles/retro.css",
+          "type": "registry:component",
+          "target": "components/ui/8bit/styles/retro.css"
+        }
+      ],
+      "install_command": "npx shadcn@latest add @8bitcn/button-group",
+      "docs_url": "https://www.8bitcn.com/docs/components/button-group"
     }
   ],
   "@assistant-ui": [

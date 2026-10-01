@@ -276,3 +276,6 @@ CLAUDE.local.md
 .claude/**/temp/.codex/config.toml
 graph-infra/.env
 graph-infra/bin/
+
+# Local browser observations, screenshots, and generated audit inventories.
+/reports/

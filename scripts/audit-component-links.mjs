@@ -1,6 +1,7 @@
 import { readFile, writeFile, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
+import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
 
 const SCHEMA = 'registry-atlas-component-link-evidence/v1';
 const PUBLIC_PATHS = {
@@ -94,6 +95,49 @@ function checkObservation(row, record) {
   return null;
 }
 
+export async function recheckLivePages(inventory, evidence, browser) {
+  const rows = new Map(inventory.rows.map(row => [row.token, row]));
+  const unresolved = [];
+  for (const record of evidence) {
+    const token = `${record.namespace}/${record.slug}`;
+    const row = rows.get(token);
+    const invalid = checkObservation(row, record);
+    if (invalid) {
+      unresolved.push({ token, reason: invalid });
+      continue;
+    }
+    const homepage = new URL(publicHttps(row.homepage));
+    const target = new URL(record.verifiedUrl);
+    if (target.origin !== homepage.origin) {
+      unresolved.push({ token, reason: 'live-origin-mismatch' });
+      continue;
+    }
+    try {
+      const initial = new URL(await browser.url());
+      if (initial.origin !== homepage.origin) {
+        unresolved.push({ token, reason: 'live-tab-origin-mismatch' });
+        break;
+      }
+      await browser.nav(record.verifiedUrl);
+      const snapshot = await browser.snap();
+      const landed = await browser.url();
+      if (landed !== record.verifiedUrl || snapshot.url !== landed) {
+        unresolved.push({ token, reason: 'live-navigation-mismatch' });
+        continue;
+      }
+      const expected = record.slug.replace(/[-_]+/g, ' ').toLowerCase();
+      const actualHeading = (snapshot.nodes ?? []).some(node =>
+        node.role === 'heading' && typeof node.name === 'string'
+          && node.name.trim().toLowerCase().replace(/\s+/g, ' ') === expected);
+      if (!actualHeading) unresolved.push({ token, reason: 'live-heading-mismatch' });
+    } catch {
+      unresolved.push({ token, reason: 'live-browser-error' });
+      break;
+    }
+  }
+  return unresolved;
+}
+
 export function applyVerifiedLinks(inventory, curated, evidence) {
   const output = structuredClone(curated);
   const rows = new Map(inventory.rows.map(r => [r.token, r]));
@@ -131,7 +175,10 @@ async function main(argv) {
   const reportPath = valueOf('--report');
   const apply = args.has('--apply');
   if (apply && !evidenceFile) throw new Error('--apply requires --evidence');
-  if (apply && !args.has('--reviewed')) throw new Error('--apply requires --reviewed after human review of PinchTab captures');
+  if (apply && !args.has('--reviewed') && !args.has('--recheck-browser'))
+    throw new Error('--apply requires --reviewed or independent --recheck-browser with a dedicated managed PinchTab tab');
+  if (args.has('--recheck-browser') && (!valueOf('--server') || !valueOf('--tab')))
+    throw new Error('--recheck-browser requires --server and --tab');
   if ((indexOf('--evidence') >= 0 && !evidenceFile) || (indexOf('--report') >= 0 && !reportPath))
     throw new Error('Missing path for --evidence or --report');
   const [rawText, catalogText, curatedText] = await Promise.all([
@@ -148,6 +195,11 @@ async function main(argv) {
       throw new Error('Unsupported browser evidence manifest');
     evaluation = applyVerifiedLinks(inventory, JSON.parse(curatedText), evidence.records);
     if (apply && evaluation.unresolved.length) throw new Error(`Refusing partial apply: ${JSON.stringify(evaluation.unresolved)}`);
+    if (apply && args.has('--recheck-browser')) {
+      const browser = new PinchTabBrowser(valueOf('--server'), valueOf('--tab'));
+      const liveProblems = await recheckLivePages(inventory, evidence.records, browser);
+      if (liveProblems.length) throw new Error(`Refusing apply after live browser check: ${JSON.stringify(liveProblems)}`);
+    }
     if (apply) {
       for (const record of evidence.records) {
         const file = record?.browser?.capturePath;

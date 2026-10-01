@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
-import { inventoryLinks, applyVerifiedLinks } from '../../scripts/audit-component-links.mjs';
+import { inventoryLinks, applyVerifiedLinks, recheckLivePages } from '../../scripts/audit-component-links.mjs';
 
 const registries = [
   { name: '@delta', homepage: 'https://delta.example', url: 'https://delta.example/r/{name}.json' },
@@ -52,6 +52,51 @@ describe('registry component link audit', () => {
     expect(curated['@delta'][0].docs_url).toBe('https://delta.example/docs/old');
     expect(applyVerifiedLinks(inventoryLinks(registries, catalog, result.curated), result.curated,
       [{ ...observation, previousUrl: observation.verifiedUrl }]).repaired).toEqual([]);
+  });
+
+  it('rechecks the recorded source page and heading in the live browser before automated URL promotion', async () => {
+    const seen: string[] = [];
+    let current = 'https://delta.example/';
+    const browser = {
+      url: async () => current,
+      nav: async (url: string) => { seen.push(url); current = url; },
+      snap: async () => ({
+        url: observation.verifiedUrl,
+        nodes: [{ role: 'heading', name: 'Button' }, { role: 'heading', name: 'Installation' }],
+      }),
+    };
+    const result = await recheckLivePages(inventoryLinks(registries, catalog, curated),
+      [observation], browser);
+    expect(result).toEqual([]);
+    expect(seen).toEqual([observation.verifiedUrl]);
+  });
+
+  it('refuses an automated apply when the browser lands on a different component', async () => {
+    let current = 'https://delta.example/';
+    const browser = {
+      url: async () => current,
+      nav: async (url: string) => { current = url; },
+      snap: async () => ({
+        url: observation.verifiedUrl,
+        nodes: [{ role: 'heading', name: 'Card' }],
+      }),
+    };
+    expect(await recheckLivePages(inventoryLinks(registries, catalog, curated),
+      [observation], browser)).toMatchObject([
+      { token: '@delta/button', reason: 'live-heading-mismatch' },
+    ]);
+  });
+
+  it('never navigates a browser tab owned by a different registry or worker', async () => {
+    const browser = {
+      url: async () => 'https://other.example/',
+      nav: async () => { throw new Error('must not navigate'); },
+      snap: async () => { throw new Error('must not snap'); },
+    };
+    expect(await recheckLivePages(inventoryLinks(registries, catalog, curated),
+      [observation], browser)).toMatchObject([
+      { token: '@delta/button', reason: 'live-tab-origin-mismatch' },
+    ]);
   });
 
   it('supports explicitly witnessed query-based component-page exceptions', () => {

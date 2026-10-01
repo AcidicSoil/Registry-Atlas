@@ -1,6 +1,7 @@
 import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries, writeRegistryItemDetailBundles } from './sync-registry-catalog-evidence.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const SOURCE_URL = 'https://ui.shadcn.com/r/registries.json';
 const RAW_OUTPUT_PATH = 'data/shadcn/registries.raw.json';
@@ -147,6 +148,28 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummarie
   };
 }
 
+export function projectCuratedSummaries(runtime, curated) {
+  if (!Array.isArray(runtime?.registries)) throw new Error('Expected an official runtime mirror');
+  const names = new Map(runtime.registries.map((entry, index) => [entry.official.name, index]));
+  const output = structuredClone(runtime);
+  for (const [namespace, items] of Object.entries(curated)) {
+    const index = names.get(namespace);
+    if (index === undefined) throw new Error(`Curated namespace ${namespace} not in official runtime mirror`);
+    if (!Array.isArray(items)) throw new Error(`Invalid curated items in ${namespace}`);
+    const slugs = new Set();
+    for (const item of items) {
+      if (!item?.slug || slugs.has(item.slug)) {
+        throw new Error(`duplicate curated slug in ${namespace}: ${item?.slug}`);
+      }
+      slugs.add(item.slug);
+    }
+    const atlas = output.registries[index].atlas;
+    atlas.item_summaries = items.map(normalizeItemSummary);
+    if (items.length && atlas.catalog_status === 'unavailable') atlas.catalog_status = 'available';
+  }
+  return output;
+}
+
 function sortedNames(registries) {
   return registries
     .map(registry => registry?.official?.name)
@@ -173,6 +196,16 @@ function changedRegistries(previousRegistries, nextRegistries) {
 }
 
 async function main() {
+  if (process.argv.includes('--local-curated-only')) {
+    const [runtime, curated] = await Promise.all([
+      readJsonIfExists(RUNTIME_OUTPUT_PATH),
+      readJsonIfExists(REGISTRY_ITEMS_PATH),
+    ]);
+    const projected = projectCuratedSummaries(runtime, curated);
+    await writeJson(RUNTIME_OUTPUT_PATH, projected);
+    console.log(`Projected verified curated item summaries into ${RUNTIME_OUTPUT_PATH} without fetching upstream registries`);
+    return;
+  }
   const response = await fetch(SOURCE_URL);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${SOURCE_URL}: ${response.status} ${response.statusText}`);
@@ -254,7 +287,9 @@ async function main() {
   console.log(`Report: ${REPORT_OUTPUT_PATH}`);
 }
 
-main().catch(error => {
-  console.error(error instanceof Error ? error.message : error);
-  process.exitCode = 1;
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch(error => {
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  });
+}
