@@ -8,7 +8,8 @@
       "source": "known-catalog",
       "provenance": "static item-summary seed from Phase 03 catalog review",
       "catalog_status": "available",
-      "route_eligible": true
+      "route_eligible": true,
+      "docs_url": "https://www.8bitcn.com/docs/components/button"
     },
     {
       "name": "Card",
@@ -18,7 +19,8 @@
       "source": "known-catalog",
       "provenance": "static item-summary seed from Phase 03 catalog review",
       "catalog_status": "available",
-      "route_eligible": true
+      "route_eligible": true,
+      "docs_url": "https://www.8bitcn.com/docs/components/card"
     },
     {
       "name": "Input",
@@ -28,7 +30,8 @@
       "source": "known-catalog",
       "provenance": "static item-summary seed from Phase 03 catalog review",
       "catalog_status": "available",
-      "route_eligible": true
+      "route_eligible": true,
+      "docs_url": "https://www.8bitcn.com/docs/components/input"
     }
   ],
   "@assistant-ui": [

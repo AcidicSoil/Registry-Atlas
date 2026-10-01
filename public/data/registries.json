@@ -126,7 +126,8 @@
             "devDependencies": [],
             "registryDependencies": [],
             "files": [],
-            "warnings": []
+            "warnings": [],
+            "docs_url": "https://www.8bitcn.com/docs/components/button"
           },
           {
             "name": "Card",
@@ -141,7 +142,8 @@
             "devDependencies": [],
             "registryDependencies": [],
             "files": [],
-            "warnings": []
+            "warnings": [],
+            "docs_url": "https://www.8bitcn.com/docs/components/card"
           },
           {
             "name": "Input",
@@ -156,7 +158,8 @@
             "devDependencies": [],
             "registryDependencies": [],
             "files": [],
-            "warnings": []
+            "warnings": [],
+            "docs_url": "https://www.8bitcn.com/docs/components/input"
           }
         ],
         "notes": ""
