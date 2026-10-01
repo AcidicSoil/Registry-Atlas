@@ -11,6 +11,8 @@ import type {
 import type { RegistryThemeSwatch } from "../core/registry.schema";
 import { escapeHtml, renderSafeExternalImage } from "./renderSafety";
 
+const COMMON_CATEGORIES = new Set(["ai", "forms", "form", "dashboard", "marketing", "navigation", "charts"]);
+
 export interface CatalogDiscoveryBand {
   label: string;
   routePath: string;
@@ -85,8 +87,9 @@ function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
 
 export function renderCatalogBrowseControls(
   state: CatalogBrowseQueryState,
+  options: { showRegistrySort?: boolean } = {},
 ): string {
-  const visibleSort: "name" | "registry" = state.sort === "registry" ? "registry" : "name";
+  const visibleSort: CatalogSort = state.sort;
   const active = state.registryNames.length > 0
     || state.itemTypes.length > 0
     || state.categories.length > 0
@@ -97,8 +100,10 @@ export function renderCatalogBrowseControls(
       <label class="catalog-filter-control">
         <span>Sort</span>
         <select data-catalog-sort>
-          ${sortOption("name", "Name", visibleSort)}
-          ${sortOption("registry", "Registry", visibleSort)}
+          ${sortOption("name", "Name A–Z", visibleSort)}
+          ${sortOption("name-desc", "Name Z–A", visibleSort)}
+          ${options.showRegistrySort === false ? "" : sortOption("registry", "Registry A–Z", visibleSort)}
+          ${options.showRegistrySort === false ? "" : sortOption("registry-desc", "Registry Z–A", visibleSort)}
         </select>
       </label>
       ${active ? '<button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear filters</button>' : ""}
@@ -106,20 +111,73 @@ export function renderCatalogBrowseControls(
   `;
 }
 
+export type AssetKindToken = "component" | "template" | "theme" | "icon";
+
+const ASSET_KIND_LABELS: Readonly<Record<AssetKindToken, string>> = {
+  component: "Components",
+  template: "Templates",
+  theme: "Themes",
+  icon: "Icon-related",
+};
+
+export function renderAssetKindChips(
+  counts: Readonly<Partial<Record<AssetKindToken, number>>>,
+  selected: readonly AssetKindToken[],
+): string {
+  const kinds = (Object.keys(ASSET_KIND_LABELS) as AssetKindToken[])
+    .filter(kind => Boolean(counts[kind]) || selected.includes(kind));
+  if (!kinds.length) return "";
+  return `
+    <section class="catalog-rail-facet-group" aria-label="Asset type filter">
+      <div class="aside-section-title">Asset type</div>
+      <div class="catalog-category-list" role="group" aria-label="Asset type">
+        <button type="button" class="catalog-category-option" data-asset-kind-value=""
+          aria-pressed="${selected.length === 0}">All types</button>
+        ${kinds.map(kind => `
+          <button type="button" class="catalog-category-option" data-asset-kind-value="${kind}"
+            aria-pressed="${selected.includes(kind)}">
+            <span>${ASSET_KIND_LABELS[kind]}</span>
+            <span class="catalog-category-count">${(counts[kind] ?? 0).toLocaleString()}</span>
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+export interface CatalogRailOptions {
+  showRegistries?: boolean;
+  showCategories?: boolean;
+  showItemTypes?: boolean;
+}
+
 export function renderCatalogRailControls(
   facets: CatalogFacetSummary,
   state: CatalogBrowseQueryState,
+  options: CatalogRailOptions = {},
 ): string {
-  return `
-    <section class="catalog-sidebar-filters" aria-label="Component filters">
-      ${renderRailFacetGroup(
-        "Registry",
-        boundedFacetOptions(facets.registries, state.registryNames[0] ?? "", 12),
-        state.registryNames[0] ?? "",
-        "All registries",
-      )}
-    </section>
-  `;
+  const showRegistries = options.showRegistries ?? true;
+  const showCategories = options.showCategories ?? true;
+  const groups = [
+    showRegistries ? renderRailFacetGroup(
+      "Registry", "registry", boundedFacetOptions(facets.registries, state.registryNames, 12),
+      state.registryNames, "All registries",
+    ) : "",
+    showCategories ? renderRailFacetGroup(
+      "Category", "category", boundedFacetOptions(
+        facets.categories.filter(option => COMMON_CATEGORIES.has(option.value) && option.value === option.value.toLowerCase()),
+        state.categories, 8,
+      ), state.categories, "All categories",
+    ) : "",
+    options.showItemTypes ? renderRailFacetGroup(
+      "Item type", "type", boundedFacetOptions(facets.itemTypes, state.itemTypes, 8),
+      state.itemTypes, "All item types",
+    ) : "",
+  ].filter(Boolean);
+
+  return groups.length
+    ? `<section class="catalog-sidebar-filters" aria-label="Browse filters">${groups.join("")}</section>`
+    : "";
 }
 
 export function renderCatalogComponentCard(
@@ -231,28 +289,24 @@ function renderCatalogMetadataSpecimen(component: CatalogComponent): string {
 
 function renderRailFacetGroup(
   label: string,
+  dimension: "registry" | "category" | "type",
   options: readonly CatalogFacetOption[],
-  selected: string,
+  selected: readonly string[],
   allLabel: string,
 ): string {
+  if (!options.length && !selected.length) return "";
+  const attribute = `data-catalog-${dimension}-value`;
   return `
     <div class="catalog-rail-facet-group">
       <div class="aside-section-title">${escapeHtml(label)}</div>
-      <div class="catalog-category-list">
-        <button
-          type="button"
-          class="catalog-category-option"
-          data-catalog-registry-value=""
-          aria-pressed="${selected === ""}">
-          <span>${escapeHtml(allLabel)}</span>
-        </button>
+      <div class="catalog-category-list" role="group" aria-label="${escapeHtml(label)}">
+        <button type="button" class="catalog-category-option" ${attribute}=""
+          aria-pressed="${selected.length === 0}">${escapeHtml(allLabel)}</button>
         ${options.map(option => `
-          <button
-            type="button"
-            class="catalog-category-option"
-            data-catalog-registry-value="${escapeHtml(option.value)}"
-            aria-pressed="${option.value === selected}">
-            <span>${escapeHtml(option.value)}</span>
+          <button type="button" class="catalog-category-option"
+            ${attribute}="${escapeHtml(option.value)}"
+            aria-pressed="${selected.includes(option.value)}">
+            <span>${escapeHtml(dimension === "type" ? option.value.replace(/^registry:/, "") : option.value)}</span>
             <span class="catalog-category-count">${option.count.toLocaleString()}</span>
           </button>
         `).join("")}
@@ -281,13 +335,16 @@ function renderPagination(result: CatalogQueryResult): string {
 
 function boundedFacetOptions(
   options: readonly CatalogFacetOption[],
-  selected: string,
+  selected: readonly string[],
   limit: number,
 ): CatalogFacetOption[] {
   const bounded = options.slice(0, limit);
-  if (!selected || bounded.some(option => option.value === selected)) return bounded;
-  const selectedOption = options.find(option => option.value === selected);
-  return [...bounded, selectedOption ?? { value: selected, count: 0 }];
+  for (const value of selected) {
+    if (!bounded.some(option => option.value === value)) {
+      bounded.push(options.find(option => option.value === value) ?? { value, count: 0 });
+    }
+  }
+  return bounded;
 }
 
 function sortOption(value: CatalogSort, label: string, selected: CatalogSort): string {

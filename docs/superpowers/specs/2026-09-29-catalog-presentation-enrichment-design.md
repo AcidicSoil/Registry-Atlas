@@ -38,6 +38,24 @@ This amendment takes precedence over the older shell details in sections 6, 6A, 
 9.11, 9.12, 9.13, and the corresponding acceptance bullets. Evidence, route identity,
 asset-specific presentation, and approval-gated subsystem constraints remain unchanged.
 
+### Filter and route amendment — 2026-10-01
+
+The latest user direction supersedes the earlier Registry-only Components facet and the
+previous unavailable-route policy. Every meaningful browse/list route exposes applicable,
+data-backed token multi-select controls using the shared sidebar/drawer; static Home, exact
+item details, and not-found pages do not invent meaningless filters. Components and typed
+collections provide multi-select Registry chips and a curated set of real common category
+chips when the selected asset class contains them. A registry profile provides Asset type
+chips for its own inventory, while Registries uses Asset type in place of the former
+Catalog status selector; original sync status remains factual card metadata. Compare retains
+its existing bounded 2–4-registry chip selection. Selecting values within a dimension uses
+OR, combining dimensions uses AND. Chips keep their selected state and shareable URL
+parameters across page changes and browser history. Name A–Z / Z–A and Registry A–Z / Z–A
+are supported catalog sorts; registry directory also offers most/fewest indexed items.
+No unsupported recency, review quality, price, popularity, or author ranking is inferred.
+Former Featured, Reviewed, Authors/Authored, and Newest routes return Not found, not
+unavailable placeholder destinations; factual metadata overlays remain usable internally.
+
 ## Problem
 
 Registry Atlas has the correct real-catalog foundation and canonical route structure, but

@@ -1,4 +1,5 @@
 import type { CatalogQueryResult } from "../core/catalogQuery";
+import { assetKindForCatalogItem } from "../core/catalogCollections";
 import type { RegistryCatalogCoverage } from "../core/registryDirectory";
 import type { Registry } from "../core/registry.schema";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
@@ -11,9 +12,10 @@ export function renderRegistryCollection(
   result: CatalogQueryResult,
   options: {
     coverage?: RegistryCatalogCoverage;
+    controls?: string;
   } = {},
 ): void {
-  const count = result.total === 1 ? "1 component" : `${result.total.toLocaleString()} components`;
+  const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
   headerRoot.innerHTML = `
     <div class="registry-collection-heading">
       <button class="link-button" type="button" data-back-to-results>← Registries</button>
@@ -44,15 +46,16 @@ export function renderRegistryCollection(
       <section class="registry-profile-inventory registry-collection-components">
         <div class="section-heading-row">
           <div>
-            <h2>Components</h2>
-            <p>Components published by this registry.</p>
+            <h2>Items</h2>
+            <p>Items published by this registry.</p>
           </div>
         </div>
 
+        ${options.controls ?? ""}
         ${result.items.length
           ? `
             ${renderMeta(result)}
-            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item)).join("")}</div>
+            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item, assetKindForCatalogItem(item.item) === "theme" ? "theme" : assetKindForCatalogItem(item.item) === "template" ? "template" : "component")).join("")}</div>
             ${renderPagination(result)}
           `
           : renderEmptyRegistryInventory(options.coverage)}

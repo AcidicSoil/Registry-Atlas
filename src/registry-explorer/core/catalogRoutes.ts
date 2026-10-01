@@ -1,9 +1,8 @@
 export type CatalogRoute =
   | { kind: "home" }
   | { kind: "not-found"; path: string }
-  | { kind: "components"; lens?: "featured" | "newest"; period?: string; pathSearchTerm?: string }
+  | { kind: "components"; pathSearchTerm?: string }
   | { kind: "explore"; collection: string }
-  | { kind: "authors" }
   | { kind: "registries" }
   | { kind: "registry"; namespace: string }
   | { kind: "component"; namespace: string; slug: string }
@@ -17,7 +16,7 @@ export type CatalogRoute =
   | { kind: "icon-category"; category: string }
   | { kind: "compare" };
 
-export type CatalogSort = "name" | "registry" | "type" | "reviewed";
+export type CatalogSort = "name" | "name-desc" | "registry" | "registry-desc";
 export type CatalogReviewedFilter = "all" | "reviewed" | "unreviewed";
 
 export interface CatalogBrowseQueryState {
@@ -29,7 +28,7 @@ export interface CatalogBrowseQueryState {
   reviewed: CatalogReviewedFilter;
 }
 
-const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry"]);
+const CATALOG_SORTS = new Set<CatalogSort>(["name", "name-desc", "registry", "registry-desc"]);
 
 export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRoute | null {
   const relative = stripBasePath(pathname, basePath);
@@ -42,16 +41,6 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
 
   if (decoded.length === 0) return { kind: "home" };
   if (decoded.length === 1 && decoded[0] === "components") return { kind: "components" };
-  if (decoded.length === 2 && decoded[0] === "components" && decoded[1] === "featured") {
-    return { kind: "components", lens: "featured" };
-  }
-  if (decoded.length >= 2 && decoded[0] === "components" && decoded[1] === "newest") {
-    if (decoded.length === 2) return { kind: "components", lens: "newest" };
-    if (decoded.length === 3 && isSafeFacetValue(decoded[2])) {
-      return { kind: "components", lens: "newest", period: decoded[2] };
-    }
-    return null;
-  }
   if (decoded.length === 3 && decoded[0] === "components" && decoded[1] === "s") {
     return { kind: "components", pathSearchTerm: decoded[2] };
   }
@@ -59,7 +48,6 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
     return { kind: "explore", collection: decoded[2] };
   }
 
-  if (decoded.length === 1 && decoded[0] === "authors") return { kind: "authors" };
   if (decoded.length === 1 && decoded[0] === "registries") return { kind: "registries" };
   if (decoded.length === 1 && decoded[0] === "templates") return { kind: "templates" };
   if (decoded.length === 1 && decoded[0] === "themes") return { kind: "themes" };
@@ -99,7 +87,7 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
     sort: sortValue && CATALOG_SORTS.has(sortValue as CatalogSort) ? sortValue as CatalogSort : "name",
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
     itemTypes: [],
-    categories: [],
+    categories: uniqueValues(params.getAll("category").filter(isSafeFacetValue)),
     reviewed: "all",
   };
 }
@@ -107,9 +95,12 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
 export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URLSearchParams {
   const params = new URLSearchParams();
   if (state.page > 1) params.set("page", String(state.page));
-  if (state.sort === "registry") params.set("sort", "registry");
+  if (state.sort !== "name" && CATALOG_SORTS.has(state.sort)) params.set("sort", state.sort);
   state.registryNames.forEach(value => {
     if (isSafeNamespace(value)) params.append("registry", value);
+  });
+  state.categories.forEach(value => {
+    if (isSafeFacetValue(value)) params.append("category", value);
   });
   return params;
 }
@@ -121,14 +112,9 @@ export function catalogRoutePath(route: CatalogRoute, basePath = "/"): string {
   if (route.kind === "not-found") return route.path;
   if (route.kind === "components") {
     if (route.pathSearchTerm) return joinBase(base, `components/s/${encodeSegment(route.pathSearchTerm)}`);
-    if (route.lens === "newest" && route.period) {
-      return joinBase(base, `components/newest/${encodeSegment(route.period)}`);
-    }
-    if (route.lens) return joinBase(base, `components/${route.lens}`);
     return joinBase(base, "components");
   }
   if (route.kind === "explore") return joinBase(base, `components/explore/${encodeSegment(route.collection)}`);
-  if (route.kind === "authors") return joinBase(base, "authors");
   if (route.kind === "registries") return joinBase(base, "registries");
   if (route.kind === "templates") return joinBase(base, "templates");
   if (route.kind === "themes") return joinBase(base, "themes");

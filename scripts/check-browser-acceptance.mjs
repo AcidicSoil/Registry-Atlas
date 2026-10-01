@@ -45,14 +45,14 @@ const itemPath = item => item.name.split('/').map(encodeURIComponent).join('/');
 const routes = [
   { name: 'home', path: '/' },
   { name: 'components', path: '/components', requireItems: true },
-  { name: 'components-featured', path: '/components/featured', expectUnavailable: true },
-  { name: 'components-newest', path: '/components/newest', expectUnavailable: true },
   { name: 'components-search-button', path: '/components/s/button', requireItems: true },
   { name: 'explore-forms', path: '/components/explore/forms', requireItems: true },
-  { name: 'authors', path: '/authors', expectUnavailable: true },
+  { name: 'retired-authors', path: '/authors', expectUnavailable: true },
+  { name: 'retired-newest', path: '/components/newest', expectUnavailable: true },
+  { name: 'retired-reviewed', path: '/components/featured', expectUnavailable: true },
   {
     name: 'registries-filtered',
-    path: '/registries?q=registry&coverage=current&registrySort=item-count-desc',
+    path: '/registries?asset=template&registrySort=item-count-desc',
   },
   { name: 'registry-large', path: `/${nsPath(largeRegistry.namespace)}`, requireItems: true },
   {

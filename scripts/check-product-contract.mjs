@@ -19,9 +19,7 @@ const indexSource = read('index.html');
 
 for (const token of [
   'kind: "home"',
-  'lens?: "featured" | "newest"',
   'kind: "explore"',
-  'kind: "authors"',
   'kind: "registries"',
   'kind: "registry"',
   'kind: "component"',
@@ -44,15 +42,14 @@ assert(!componentViewSource.includes('data-catalog-search'), 'Components rail mu
 assert(!componentViewSource.includes('Preview not published'), 'browse cards must use factual specimens instead of empty preview placeholders');
 assert(!shellSource.includes("routeButton({ kind: 'components', lens: 'featured' }, 'Reviewed')"),
   'Reviewed enrichment must not be exposed as Featured navigation');
-assert(shellSource.includes("Featured isn't available because registries don't provide a common popularity or featured field.")
-  && shellSource.includes("Registry Atlas won't rank items without that data."),
-  'Featured route must remain honest when no ranking signal exists');
+assert(!routeSource.includes('lens?: "featured" | "newest"') && !routeSource.includes('kind: "authors"'),
+  'Reviewed, authors, and newest browse routes must remain retired');
 assert(indexSource.includes('data-view="icons">Icon-related assets</button>'),
   'Icons navigation must describe the registry-backed icon-related data honestly');
 assert(!componentViewSource.includes('data-catalog-type-value'),
   'Components sidebar must not expose raw registry item-type filters');
-assert(!componentViewSource.includes('data-catalog-category-value'),
-  'Components sidebar must not expose noisy raw category filters');
+assert(componentViewSource.includes('COMMON_CATEGORIES') && componentViewSource.includes('aria-pressed'),
+  'Browse filters must use bounded, selectable category chips');
 assert(!componentViewSource.includes('data-catalog-reviewed'),
   'Components UI must not expose legacy reviewed metadata as a browse control');
 

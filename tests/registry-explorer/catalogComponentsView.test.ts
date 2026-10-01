@@ -3,12 +3,19 @@ import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-ex
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
 import {
   renderCatalogBrowseControls,
+  renderAssetKindChips,
   renderCatalogComponentCard,
   renderCatalogComponents,
   renderCatalogRailControls,
 } from "../../src/registry-explorer/ui/catalogComponentsView";
 
 describe("renderCatalogComponents", () => {
+  it("renders multi-selected asset type chips", () => {
+    const html = renderAssetKindChips({component: 4, template: 2, theme: 1}, ["template", "theme"]);
+    expect(html).toMatch(/data-asset-kind-value="template"\s+aria-pressed="true"/);
+    expect(html).toMatch(/data-asset-kind-value="theme"\s+aria-pressed="true"/);
+    expect(html).not.toContain('data-asset-kind-value="icon"');
+  });
   it("renders real component cards as action-light detail links", () => {
     const header = root();
     const body = root();
@@ -102,9 +109,9 @@ describe("renderCatalogComponents", () => {
     expect(rail).toContain('data-catalog-registry-value="@delta"');
     expect(rail).toContain('>Registry<');
     expect(rail).not.toContain('data-catalog-type-value');
-    expect(rail).not.toContain('data-catalog-category-value');
+    expect(rail).toContain('data-catalog-category-value="forms"');
+    expect(rail).toContain('>Category<');
     expect(rail).not.toContain('>Item types<');
-    expect(rail).not.toContain('>Categories<');
 
     const toolbar = renderCatalogBrowseControls(state);
     expect(toolbar).not.toContain('data-catalog-filter="registry"');

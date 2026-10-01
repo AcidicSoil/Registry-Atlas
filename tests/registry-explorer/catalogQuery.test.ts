@@ -168,12 +168,12 @@ describe("queryCatalogComponents", () => {
     ]);
 
     expect(queryCatalogComponents(registries, catalog, {
-      sort: "type",
+      sort: "name-desc",
       pageSize: 10,
-    }).items.map(item => item.type)).toEqual([
-      "registry:block",
-      "registry:ui",
-      "registry:ui",
+    }).items.map(item => item.id)).toEqual([
+      "@alpha:zebra",
+      "@alpha:button",
+      "@beta:accordion",
     ]);
   });
 

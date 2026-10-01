@@ -89,6 +89,25 @@ describe("registryDirectory", () => {
   });
 });
 
+describe("registry asset-type filters", () => {
+  it("ignores unsupported item types when filtering components", () => {
+    const items = index({ "@unknown": [{ name: "unknown", type: "registry:unsupported" }] });
+    expect(buildRegistryDirectory([registry("@unknown")], items, {assetKinds:["component"]}).total).toBe(0);
+  });
+
+  it("matches any selected asset type and supports reverse alphabetical order", () => {
+    const regs = [registry("@components"), registry("@templates"), registry("@themes"), registry("@mixed")];
+    const data = index({
+      "@components": [{ name: "button", type: "registry:ui" }],
+      "@templates": [{ name: "landing", type: "registry:page" }],
+      "@themes": [{ name: "tint", type: "registry:theme" }],
+      "@mixed": [{ name: "button", type: "registry:ui" }, { name: "landing", type: "registry:page" }],
+    });
+    const filtered = buildRegistryDirectory(regs, data, { assetKinds: ["template", "theme"], sort: "name-desc" });
+    expect(filtered.entries.map(entry => entry.registry.name)).toEqual(["@themes", "@templates", "@mixed"]);
+  });
+});
+
 describe("corrective registry controls", () => {
   it("filters coverage before pagination and sorts by indexed item count", () => {
     const regs = [

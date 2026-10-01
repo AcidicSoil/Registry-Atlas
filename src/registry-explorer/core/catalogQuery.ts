@@ -237,20 +237,20 @@ function compareCatalogMatches(
   const aName = displayName(a);
   const bName = displayName(b);
 
+  if (sort === "name-desc") {
+    return bName.localeCompare(aName)
+      || a.registry.name.localeCompare(b.registry.name)
+      || a.item.name.localeCompare(b.item.name);
+  }
+  if (sort === "registry-desc") {
+    return b.registry.name.localeCompare(a.registry.name)
+      || aName.localeCompare(bName)
+      || a.item.name.localeCompare(b.item.name);
+  }
   if (sort === "registry") {
     return a.registry.name.localeCompare(b.registry.name)
       || aName.localeCompare(bName)
       || a.item.name.localeCompare(b.item.name);
-  }
-  if (sort === "type") {
-    return a.item.type.localeCompare(b.item.type)
-      || aName.localeCompare(bName)
-      || a.registry.name.localeCompare(b.registry.name);
-  }
-  if (sort === "reviewed") {
-    return Number(Boolean(b.reviewed)) - Number(Boolean(a.reviewed))
-      || aName.localeCompare(bName)
-      || a.registry.name.localeCompare(b.registry.name);
   }
   return aName.localeCompare(bName)
     || a.registry.name.localeCompare(b.registry.name)

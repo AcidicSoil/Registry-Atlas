@@ -15,7 +15,6 @@ const COVERAGE_LABELS: Record<RegistryCatalogCoverage, string> = {
 
 export interface RegistryDirectoryViewOptions {
   searchTerm?: string;
-  coverage?: readonly RegistryCatalogCoverage[];
   sort?: RegistryDirectorySort;
 }
 
@@ -34,58 +33,27 @@ export function renderRegistryDirectory(
     <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry directory link copied">Copy link</button>
   `;
 
-  const coverage = options.coverage?.[0] ?? "";
   const sort = options.sort ?? "name";
   bodyRoot.innerHTML = `
     <div class="registry-directory-controls" aria-label="Registry directory controls">
       <label>
-        <span>Search registries</span>
-        <input type="search" data-registry-search value="${escapeHtml(options.searchTerm ?? "")}" placeholder="Search registries" />
-      </label>
-      <label>
-        <span>Catalog status</span>
-        <select data-registry-coverage>
-          <option value="">All statuses</option>
-          ${coverageOption("current", coverage)}
-          ${coverageOption("stale", coverage)}
-          ${coverageOption("empty", coverage)}
-          ${coverageOption("failed", coverage)}
-        </select>
-      </label>
-      <label>
         <span>Sort</span>
         <select data-registry-sort>
-          ${sortOption("name", "Name", sort)}
+          ${sortOption("name", "Name A–Z", sort)}
+          ${sortOption("name-desc", "Name Z–A", sort)}
           ${sortOption("item-count-desc", "Most items", sort)}
           ${sortOption("item-count-asc", "Fewest items", sort)}
         </select>
       </label>
     </div>
-    ${renderCoverageSummary(result)}
     ${result.entries.length
       ? `${renderMeta(result)}<div class="registry-directory-grid">${result.entries.map(renderEntry).join("")}</div>${renderPagination(result)}`
-      : '<div class="empty-state"><h2>No registries match these controls.</h2><p>Change the search or catalog-status filter.</p></div>'}
+      : '<div class="empty-state"><h2>No registries match these controls.</h2><p>Try another search or asset type.</p></div>'}
   `;
-}
-
-function coverageOption(value: RegistryCatalogCoverage, selected: string): string {
-  return `<option value="${value}"${value === selected ? " selected" : ""}>${escapeHtml(COVERAGE_LABELS[value])}</option>`;
 }
 
 function sortOption(value: RegistryDirectorySort, label: string, selected: string): string {
   return `<option value="${value}"${value === selected ? " selected" : ""}>${escapeHtml(label)}</option>`;
-}
-
-function renderCoverageSummary(result: RegistryDirectoryResult): string {
-  const counts = result.coverageCounts;
-  return `
-    <div class="registry-coverage-summary" aria-label="Catalog status summary">
-      <span><strong>${counts.current.toLocaleString()}</strong> current</span>
-      <span><strong>${counts.stale.toLocaleString()}</strong> stale</span>
-      <span><strong>${counts.empty.toLocaleString()}</strong> no items</span>
-      <span><strong>${counts.failed.toLocaleString()}</strong> unavailable</span>
-    </div>
-  `;
 }
 
 function renderEntry(entry: RegistryDirectoryEntry): string {

@@ -7,6 +7,7 @@ export interface CatalogCollectionViewOptions {
   title: string;
   description: string;
   routeKind?: 'component' | 'template' | 'theme';
+  controls?: string;
   emptyTitle?: string;
   emptyBody?: string;
 }
@@ -28,6 +29,7 @@ export function renderCatalogCollection(
 
   if (!result.items.length) {
     bodyRoot.innerHTML = `
+      ${options.controls ?? ""}
       <div class="empty-state collection-empty">
         <h2>${escapeHtml(options.emptyTitle ?? "No matching items.")}</h2>
         <p>${escapeHtml(options.emptyBody ?? "Try a different search or filter.")}</p>
@@ -39,6 +41,7 @@ export function renderCatalogCollection(
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
   bodyRoot.innerHTML = `
+    ${options.controls ?? ""}
     <div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>
     <div class="catalog-component-grid catalog-collection-grid-${options.routeKind ?? "component"}">
       ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}

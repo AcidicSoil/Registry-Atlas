@@ -44,14 +44,12 @@ describe('registry explorer shell interactions', () => {
     expect(harness.aside.innerHTML).not.toContain('catalog-sidebar-summary');
   });
 
-  it('keeps Featured as an honest unavailable route instead of mapping review enrichment to ranking', () => {
-    const harness = setup('', '/Registry-Atlas/components/featured');
-
-    expect(harness.contentBody.innerHTML).toContain('class="evidence-unavailable"');
-    expect(harness.contentHeader.innerHTML).toContain('Featured');
-    expect(harness.contentHeader.innerHTML).toContain('common popularity or featured field');
-    expect(harness.contentBody.innerHTML).toContain('won&#39;t rank items without that data');
-    expect(harness.contentBody.innerHTML).not.toContain('data-view-item-registry');
+  it('retired routes render not-found instead of a fake browse surface', () => {
+    for (const path of ['/components/featured', '/components/newest', '/authors']) {
+      const harness = setup('', `/Registry-Atlas${path}`);
+      expect(harness.contentHeader.innerHTML).toContain('Route not found');
+      expect(harness.contentBody.innerHTML).not.toContain('data-view-item-registry');
+    }
   });
 
   it('labels icon routes as registry-backed icon-related assets, not a universal glyph catalog', () => {
@@ -228,7 +226,7 @@ describe('registry explorer shell interactions', () => {
 
     const reloaded = setup('', '/Registry-Atlas/@delta');
     expect(reloaded.contentHeader.innerHTML).toContain('<h1>@delta</h1>');
-    expect(reloaded.contentBody.innerHTML).toContain('<h2>Components</h2>');
+    expect(reloaded.contentBody.innerHTML).toContain('<h2>Items</h2>');
   });
 
   it('keeps registry navigation on Registries and returns there from an item', () => {
