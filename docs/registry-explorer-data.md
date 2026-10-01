@@ -88,6 +88,27 @@ When adding a new Atlas focus or curated component tag:
 3. Update relevant tests in `tests/registry-explorer/`.
 4. Run `mise run validate:data` and `mise run verify`.
 
+## Opt-in Official Item Recovery
+
+When a registry catalog cannot be indexed, use the official directory's item URL template to verify a **specific known namespace and slug** before considering browser research. The bounded command below is read-only by default:
+
+```bash
+mise exec -- node scripts/recover-item-evidence.mjs @8bitcn/button
+```
+
+The result is either `verified` (matched official HTTPS URL, JSON item name/type, and safe metadata fields) or `unresolved` with a reason. It never executes third-party code or follows redirects. For example, `@blockus/button` currently returns `http-or-redirect-308`: its configured item route redirects to a generic homepage, which is **not** proof of an item. Source-code contents are not copied into summaries. Docs URLs, preview URLs, imports, required props, and working renders remain unresolved unless independently verified.
+
+Only after reviewing individual verified results may a maintainer explicitly opt into writing enriched item summaries:
+
+```bash
+mise exec -- node scripts/recover-item-evidence.mjs @8bitcn/button --apply
+mise run sync:registries
+mise run validate:data
+mise run verify
+```
+
+`--apply` edits the curated `data/shadcn/registry-items.json`; the ordinary sync then regenerates runtime artifacts. Do not use `--apply` to promote unresolved cases or model-selected guesses, and review any unrelated generated-data differences before committing. A generated install command is informational and has **not** been executed or verified.
+
 ## Legacy Seed Data
 
 `src/registry-explorer/data/registries.data.ts` is no longer the primary runtime catalog. It remains useful as a local enrichment seed for sync tooling until all Atlas enrichment moves to a dedicated generated or editable source.
