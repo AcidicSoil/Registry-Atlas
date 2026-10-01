@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "registry-atlas-reviewed-component-url-patterns/v1",
+  "reviewedDate": "2026-10-01",
+  "scope": {
+    "supportedRegistries": 408,
+    "catalogEntries": 84153,
+    "distinctIndexedOrCuratedItems": 84145,
+    "fullyAuditedRegistries": 0,
+    "verifiedAtlasOpenedLinks": 3,
+    "remainingDistinctItemsWithoutThisAudit": 84142
+  },
+  "registries": [
+    {
+      "namespace": "@8bitcn",
+      "auditStatus": "partial",
+      "officialHomepage": "https://www.8bitcn.com/",
+      "officialComponentListing": "https://www.8bitcn.com/docs/components",
+      "catalogItems": 121,
+      "verifiedItemPages": 3,
+      "unauditedItemPages": 118,
+      "observedPatterns": [
+        {
+          "template": "https://www.8bitcn.com/docs/components/{slug}",
+          "applicability": "witnessed Button, Card and Input only; all other component URLs remain unverified",
+          "verifiedSlugs": [
+            "button",
+            "card",
+            "input"
+          ]
+        }
+      ],
+      "observedExceptions": [],
+      "exceptionCoverage": "not evaluated for remaining items",
+      "itemPages": [
+        {
+          "slug": "button",
+          "confirmedDocsUrl": "https://www.8bitcn.com/docs/components/button",
+          "rawItemUrl": "https://www.8bitcn.com/r/button.json",
+          "image": "docs/evidence/component-links/8bitcn-button.jpg",
+          "sourceBrowserCaptureAt": "2026-10-01T18:47:37.796Z",
+          "sourcePageIdentity": "Button",
+          "atlasOpenedCorrectComponentPage": true,
+          "reviewStatus": "browser-verified"
+        },
+        {
+          "slug": "card",
+          "confirmedDocsUrl": "https://www.8bitcn.com/docs/components/card",
+          "rawItemUrl": "https://www.8bitcn.com/r/card.json",
+          "image": "docs/evidence/component-links/8bitcn-card.jpg",
+          "sourceBrowserCaptureAt": "2026-10-01T18:54:01.117Z",
+          "sourcePageIdentity": "Card",
+          "atlasOpenedCorrectComponentPage": true,
+          "reviewStatus": "browser-verified"
+        },
+        {
+          "slug": "input",
+          "confirmedDocsUrl": "https://www.8bitcn.com/docs/components/input",
+          "rawItemUrl": "https://www.8bitcn.com/r/input.json",
+          "image": "docs/evidence/component-links/8bitcn-input.jpg",
+          "sourceBrowserCaptureAt": "2026-10-01T18:54:10.444Z",
+          "sourcePageIdentity": "Input",
+          "atlasOpenedCorrectComponentPage": true,
+          "reviewStatus": "browser-verified"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Patterns here are documentation for witnessed pages, not authority to bulk-rewrite other URLs.",
+    "An Atlas browser click, resulting final URL and rendered component identity were checked for each listed item.",
+    "Other registries are not marked checked and must be audited separately.",
+    "No usage/import-code/runtime-render claims are made by URL checks."
+  ]
+}
