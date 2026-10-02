@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-ignore standalone Node ESM.
-import { planRegistryCrawl, runRegistryCrawl, summarizeRegistryCrawl, proposeVerifiedLinkUpdates, collectQualifiedRegistryRoutes } from '../../scripts/crawl-component-links.mjs';
+import { planRegistryCrawl, runRegistryCrawl, summarizeRegistryCrawl, proposeVerifiedLinkUpdates, collectDiscoveryLinkEvidence } from '../../scripts/crawl-component-links.mjs';
 
 const registries = [
   { name: '@a', homepage: 'https://a.example', url: 'https://a.example/r/{name}.json' },
@@ -192,75 +192,85 @@ describe('applying verified crawler results to Atlas sources', () => {
   });
 });
 
-describe('qualified registry route discovery', () => {
-  const reg = { name: '@animate-ui', homepage: 'https://animate-ui.com',
-    url: 'https://animate-ui.com/r/{name}.json' };
-  const HOME = 'https://animate-ui.com/';
-  const INDEX = 'https://animate-ui.com/docs/components';
-  const PRIMITIVES = 'https://animate-ui.com/docs/primitives';
-  const primitiveRadix = 'https://animate-ui.com/docs/primitives/radix/accordion';
-  const radix = 'https://animate-ui.com/docs/components/radix/accordion';
-  const base = 'https://animate-ui.com/docs/components/base/accordion';
-  const pages = new Map([
-    [HOME, { nodes: [], anchors: [{ name: 'Browse Components', href: '/docs/components' },
-      { name: 'Browse Primitives', href: '/docs/primitives' }] }],
-    [INDEX, { nodes: [], anchors: [{ name: 'Accordion', href: '/docs/components/radix/accordion' },
-      { name: 'Accordion', href: '/docs/components/base/accordion' }] }],
-    [radix, { nodes: [{ role: 'heading', name: 'Accordion' }], anchors: [] }],
-    [PRIMITIVES, { nodes: [], anchors: [{ name: 'Accordion', href: '/docs/primitives/radix/accordion' }] }],
-    [primitiveRadix, { nodes: [{ role: 'heading', name: 'Accordion' }], anchors: [] }],
-    [base, { nodes: [{ role: 'heading', name: 'Accordion' }], anchors: [] }],
+describe('shared discovery to source-verified crawler bridge', () => {
+  const home = 'https://example.test/';
+  const docs = 'https://example.test/docs/components';
+  const button = 'https://example.test/docs/components/button';
+  const nested = 'https://example.test/docs/components/radix/accordion';
+  function site() {
+    let current = home;
+    const pages: Record<string, {heading?: string; links?: Array<[string,string]>}> = {
+      [home]: {links:[['Components','/docs/components']]},
+      [docs]: {heading:'Components',links:[['Button','/docs/components/button'],
+        ['Radix','/docs/components/radix'], ['Base','/docs/components/base']]},
+      'https://example.test/docs/components/base': {heading:'Base',
+        links:[['Accordion','/docs/components/base/accordion']]},
+      'https://example.test/docs/components/base/accordion': {heading:'Accordion'},
+      'https://example.test/docs/components/radix': {heading:'Radix',
+        links:[['Accordion','/docs/components/radix/accordion']]},
+      [button]: {heading:'Button'},
+      [nested]: {heading:'Accordion'},
+    };
+    const visited: string[] = [];
+    const page = () => pages[current] ?? {};
+    return {visited, url: async () => current,
+      nav: async (dest: string) => {current=dest;visited.push(dest);},
+      snap: async () => ({url:current,nodes:[
+        ...(page().heading ? [{role:'heading',name:page().heading}] : []),
+        ...(page().links ?? []).map(([name],i)=>({role:'link',name,ref:'e'+i})),
+      ]}),
+      attr: async (ref:string) => page().links?.[Number(ref.slice(1))]?.[1],
+      domLinks: async () => (page().links ?? []).map(([name,href])=>({name,href})),
+    };
+  }
+  const registry = {name:'@example',homepage:home};
+  const targets = [
+    {slug:'button',token:'@example/button',docs_url:null},
+    {slug:'components-radix-accordion',token:'@example/components-radix-accordion',
+      docs_url:null},
+  ];
+  const source = new Map([
+    ['@example/button', {status:'verified', summary:{title:'Button',
+      files:[{path:'registry/components/button/index.tsx'}]}}],
+    ['@example/components-radix-accordion', {status:'verified',
+      summary:{title:'Accordion', files:[{path:'registry/components/radix/accordion/index.tsx'}]}}],
   ]);
-  function source(_slug: string, file: string, title: string) {
-    return { status: 'verified', summary: { title,
-      files: [{ path: file, type: 'registry:ui' }] } };
-  }
-  function fakeSite() {
-    let url = HOME; const visited: string[] = [];
-    return { visited, url: async () => url,
-      nav: async (dest: string) => { url = dest; visited.push(dest); },
-      snap: async () => ({ url, nodes: pages.get(url)?.nodes ?? [] }),
-      domLinks: async () => pages.get(url)?.anchors ?? [] };
-  }
-  it('distinguishes same-titled components using witnessed hrefs and official file paths', async () => {
-    const targets = [{ slug: 'components-radix-accordion', token: '@animate-ui/components-radix-accordion', docs_url: null },
-      { slug: 'components-base-accordion', token: '@animate-ui/components-base-accordion', docs_url: null }];
-    const facts = new Map([
-      [targets[0].token, source(targets[0].slug, 'registry/components/radix/accordion/index.tsx', 'Accordion')],
-      [targets[1].token, source(targets[1].slug, 'registry/components/base/accordion/index.tsx', 'Accordion')],
-    ]);
-    const browser = fakeSite();
-    const result = await collectQualifiedRegistryRoutes(browser, reg, targets, facts);
+  it('maps observed pages to source-checked records for flat and nested item names', async () => {
+    const browser = site();
+    const result = await collectDiscoveryLinkEvidence(browser, registry, targets, source);
     expect(result.unresolved).toEqual([]);
-    expect(result.records.map((x: any) => x.verifiedUrl)).toEqual([radix, base]);
-    expect(result.records.every((x: any) => x.browser.capturePath === null)).toBe(true);
-    expect(browser.visited).toEqual([INDEX, radix, base]);
+    expect(result.records.map((r: any) => r.verifiedUrl)).toEqual([button, nested]);
+    expect(result.records[1].browser).toMatchObject({
+      observedSlug:'components-radix-accordion',
+      renderedHeading:'Accordion',
+      sourceFilePath:'registry/components/radix/accordion/index.tsx',
+      capturePath:null,
+    });
+    expect(browser.visited).not.toContain('https://example.test/docs/components-radix-accordion');
   });
-  it('returns to the homepage when the next item belongs to a different catalog route family', async () => {
-    const targets = [{ slug: 'components-radix-accordion', token: '@animate-ui/components-radix-accordion', docs_url: null },
-      { slug: 'primitives-radix-accordion', token: '@animate-ui/primitives-radix-accordion', docs_url: null }];
-    const facts = new Map([
-      [targets[0].token, source(targets[0].slug, 'registry/components/radix/accordion/index.tsx', 'Accordion')],
-      [targets[1].token, source(targets[1].slug, 'registry/primitives/radix/accordion/index.tsx', 'Accordion')],
-    ]);
-    const browser = fakeSite();
-    const result = await collectQualifiedRegistryRoutes(browser, reg, targets, facts);
+  it('distinguishes same-titled docs from different nested source paths', async () => {
+    const extra = {slug:'components-base-accordion',token:'@example/components-base-accordion',
+      docs_url:null};
+    const facts = new Map(source);
+    facts.set(extra.token, {status:'verified',summary:{title:'Accordion',
+      files:[{path:'registry/components/base/accordion/index.tsx'}]}} as any);
+    const result = await collectDiscoveryLinkEvidence(site(), registry,
+      [targets[1],extra], facts);
     expect(result.unresolved).toEqual([]);
-    expect(result.records.map((x: any) => x.verifiedUrl)).toEqual([radix, primitiveRadix]);
-    expect(browser.visited).toEqual([INDEX, radix, HOME, PRIMITIVES, primitiveRadix]);
-  });
-  it('does not invent distinct component docs URLs for icon and demo registry assets', async () => {
-    const targets = [{ slug: 'icons-accessibility', token: '@animate-ui/icons-accessibility' },
-      { slug: 'demo-components-radix-accordion', token: '@animate-ui/demo-components-radix-accordion' }];
-    const facts = new Map([
-      [targets[0].token, source(targets[0].slug, 'registry/icons/accessibility/index.tsx', 'Accessibility Icon')],
-      [targets[1].token, source(targets[1].slug,
-        'registry/demo/components/radix/accordion/index.tsx', 'Accordion Demo')],
+    expect(result.records.map((row:any) => [row.slug,row.verifiedUrl])).toEqual([
+      ['components-radix-accordion',nested],
+      ['components-base-accordion','https://example.test/docs/components/base/accordion'],
     ]);
-    const result = await collectQualifiedRegistryRoutes(fakeSite(), reg, targets, facts);
+    expect(result.records.map((row:any) => row.browser.sourceFilePath)).toEqual([
+      'registry/components/radix/accordion/index.tsx',
+      'registry/components/base/accordion/index.tsx',
+    ]);
+  });
+  it('does not promote observed docs without independently verified registry source facts', async () => {
+    const result = await collectDiscoveryLinkEvidence(site(), registry, targets,
+      new Map([['@example/button', {status:'unresolved'}]]));
     expect(result.records).toEqual([]);
-    expect(result.unresolved.map((x: any) => x.reason)).toEqual([
-      'icon-gallery-no-observed-item-page', 'auxiliary-demo-no-observed-page',
-    ]);
+    expect(result.unresolved.map((r: any) => r.reason))
+      .toEqual(['official-item-not-verified','official-item-not-verified']);
   });
 });

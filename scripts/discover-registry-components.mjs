@@ -47,30 +47,7 @@ function checkedSourceProfile({profile, server}, registry) {
     throw new Error('Managed profile does not allow this registry official homepage domain');
 }
 
-export async function main(argv, cwd = process.cwd()) {
-  const options = args(argv);
-  const [raw, catalog, curated] = await Promise.all([
-    readFile(cwd + '/data/shadcn/registries.raw.json', 'utf8').then(JSON.parse),
-    readFile(cwd + '/public/data/registry-catalog-items.json', 'utf8').then(JSON.parse),
-    readFile(cwd + '/data/shadcn/registry-items.json', 'utf8').then(JSON.parse),
-  ]);
-  const registry = raw.find(item => item.name === options.registry);
-  if (!registry) throw new Error('Unknown exact raw registry namespace');
-  checkedSourceProfile(options, registry);
-  const indexedItems = [...new Set([
-    ...(catalog.registries?.[options.registry] ?? []).map(x => x.name),
-    ...(curated[options.registry] ?? []).map(x => x.slug),
-  ])].filter(x => typeof x === 'string');
-  // A journal has one writer at a time; an interrupted worker leaves an explicit
-  // lock for operator recovery rather than silently racing another worker.
-  const lockPath = options.journal + '.lock';
-  const lock = await open(lockPath, 'wx', 0o600).catch(error => {
-    if (error.code === 'EEXIST') throw new Error('Discovery journal is already claimed');
-    throw error;
-  });
-  try {
-  const ledger = await DiscoveryLedger.open(options.journal);
-  const browser = new PinchTabBrowser(options.server, options.tab);
+export function configureManagedSourceBrowser(browser) {
   // An empty hydration snapshot cannot be treated as an empty registry.
   browser.waitForLinks = async timeoutMs => browser.call('wait', '--fn',
     String.raw`[...document.querySelectorAll('a[href]')].some(a => {
@@ -115,6 +92,33 @@ export async function main(argv, cwd = process.cwd()) {
     })()`;
     return JSON.parse(browser.call('eval', expression, '--await-promise').result);
   };
+  return browser;
+}
+
+export async function main(argv, cwd = process.cwd()) {
+  const options = args(argv);
+  const [raw, catalog, curated] = await Promise.all([
+    readFile(cwd + '/data/shadcn/registries.raw.json', 'utf8').then(JSON.parse),
+    readFile(cwd + '/public/data/registry-catalog-items.json', 'utf8').then(JSON.parse),
+    readFile(cwd + '/data/shadcn/registry-items.json', 'utf8').then(JSON.parse),
+  ]);
+  const registry = raw.find(item => item.name === options.registry);
+  if (!registry) throw new Error('Unknown exact raw registry namespace');
+  checkedSourceProfile(options, registry);
+  const indexedItems = [...new Set([
+    ...(catalog.registries?.[options.registry] ?? []).map(x => x.name),
+    ...(curated[options.registry] ?? []).map(x => x.slug),
+  ])].filter(x => typeof x === 'string');
+  // A journal has one writer at a time; an interrupted worker leaves an explicit
+  // lock for operator recovery rather than silently racing another worker.
+  const lockPath = options.journal + '.lock';
+  const lock = await open(lockPath, 'wx', 0o600).catch(error => {
+    if (error.code === 'EEXIST') throw new Error('Discovery journal is already claimed');
+    throw error;
+  });
+  try {
+  const ledger = await DiscoveryLedger.open(options.journal);
+  const browser = configureManagedSourceBrowser(new PinchTabBrowser(options.server, options.tab));
   const result = await discoverRegistry({
     registry, indexedItems, ledger, browser,
     limit: options.limit, maxPages: options.maxPages,

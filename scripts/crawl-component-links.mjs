@@ -3,7 +3,9 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { resolve, join, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { collectBrowserLinkEvidence, PinchTabBrowser } from './collect-browser-link-evidence.mjs';
+import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
+import { discoverRegistry } from './lib/registry-discovery.mjs';
+import { configureManagedSourceBrowser } from './discover-registry-components.mjs';
 import { recoverOfficialItem } from './recover-item-evidence.mjs';
 const VALID_SLUG = /^[a-z0-9][a-z0-9_-]*$/;
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -86,8 +88,50 @@ function sameSource(registry, record, target, sourceFact) {
     && b.observedSlug === target.slug
     && normalizeTitle(b.renderedHeading) === normalizeTitle(target.slug);
 }
+export async function collectDiscoveryLinkEvidence(browser, registry, targets, sourceFacts) {
+  const state = new Map();
+  const ledger = {
+    get: key => state.get(key),
+    append: async row => { state.set(row.token, row); },
+  };
+  const result = await discoverRegistry({
+    registry, indexedItems: targets.map(target => target.slug),
+    browser, ledger, limit: targets.length, maxPages: 40,
+    maxDepth: 5, maxLinks: 1500,
+  });
+  const records = [], unresolved = [];
+  for (const target of targets) {
+    const row = result.records.find(row => row.slug === target.slug);
+    const fact = sourceFacts?.get(target.token);
+    if (fact?.status !== 'verified') {
+      unresolved.push({slug: target.slug, reason: 'official-item-not-verified'});
+      continue;
+    }
+    if (row?.status !== 'page-observed') {
+      unresolved.push({slug: target.slug, reason: row?.reason ?? 'not-yet-observed'});
+      continue;
+    }
+    const structural = structuredDocsPath(fact);
+    records.push({
+      namespace: registry.name, slug: target.slug,
+      previousUrl: target.docs_url ?? null, verifiedUrl: row.docsUrl,
+      browser: {
+        homepageUrl: new URL(registry.homepage).href,
+        listingUrl: row.evidence.listingUrl,
+        observedUrl: row.docsUrl, observedSlug: target.slug,
+        renderedHeading: row.evidence.renderedHeading,
+        sourceFilePath: structural?.file ?? null,
+        navigationSource: row.evidence.navigationSource,
+        checkedAt: row.checkedAt,
+        capturePath: null,
+      },
+    });
+  }
+  return {records, unresolved};
+}
+
 export async function runRegistryCrawl({
-  jobs, browser, journal, collect = collectBrowserLinkEvidence,
+  jobs, browser, journal, collect = collectDiscoveryLinkEvidence,
   probe, siteAllowed, verifyPage = validateObservedPage,
   batchSize = 10, delayMs = 1000, captureDir = '/tmp/registry-audit-captures',
   maxItemsPerRun = Infinity, onProgress = () => {},
@@ -106,6 +150,8 @@ export async function runRegistryCrawl({
     // Source navigation and rendered identity, not screenshots, establish URLs.
     capture: async () => ({ url: await browser.url(), capturePath: null }),
     domLinks: browser.domLinks ? () => browser.domLinks() : undefined,
+    waitForLinks: browser.waitForLinks ? timeoutMs => browser.waitForLinks(timeoutMs) : undefined,
+    structuredIndex: browser.structuredIndex ? url => browser.structuredIndex(url) : undefined,
     extract: browser.extract ? () => browser.extract() : undefined };
   for (const { registry, targets } of jobs) {
     const all = targets.length ? targets : [{ token: 'registry:' + registry.name }];
@@ -142,9 +188,7 @@ export async function runRegistryCrawl({
       let collected;
       try {
         await wrapped.nav(new URL(registry.homepage).href);
-        collected = registry.name === '@animate-ui' && collect === collectBrowserLinkEvidence
-          ? await collectQualifiedRegistryRoutes(wrapped, registry, usable.filter(item => item.slug), sourceFacts)
-          : await collect(wrapped, registry, usable.filter(item => item.slug), captureDir);
+        collected = await collect(wrapped, registry, usable.filter(item => item.slug), sourceFacts, captureDir);
       } catch (error) {
         collected = { records: [], unresolved: usable.map(item => ({
           slug: item.slug, reason: 'browser-collection-error',
@@ -298,7 +342,7 @@ async function cli(argv) {
     JSON.stringify({ digest, registry: registryName, files, createdAt: new Date().toISOString() }) + '\n',
     { flag: 'wx' });
   const journal = await JsonlJournal.open(journalPath);
-  const browser = new PinchTabBrowser(server, tab);
+  const browser = configureManagedSourceBrowser(new PinchTabBrowser(server, tab));
   const summary = await runRegistryCrawl({
     jobs, browser, journal, siteAllowed, probe: recoverOfficialItem,
     batchSize, delayMs, maxItemsPerRun,
@@ -410,103 +454,6 @@ function structuredDocsPath(fact) {
   return { file: paths[0], route: '/docs/' + paths[0].slice('registry/'.length, -'/index.tsx'.length),
     title: fact.summary?.title ?? null };
 }
-function observedLink(raw, from, home) {
-  if (typeof raw !== 'string') return null;
-  try {
-    const u = new URL(raw, from);
-    return u.protocol === 'https:' && u.origin === home.origin && !u.hash && !u.username && !u.password
-      ? u.href : null;
-  } catch { return null; }
-}
-export async function collectQualifiedRegistryRoutes(browser, registry, targets, sourceFacts) {
-  const home = publicHomepage(registry.homepage);
-  const result = { records: [], unresolved: [] };
-  if (!home || await browser.url() !== home.href) {
-    return { records: [], unresolved: [{ reason: 'source-tab-homepage-mismatch' }] };
-  }
-  await browser.snap();
-  const listingCache = new Map();
-  for (const target of targets) {
-    const fact = sourceFacts.get(target.token);
-    const described = structuredDocsPath(fact);
-    if (!described) {
-      result.unresolved.push({ slug: target.slug,
-        reason: target.slug.startsWith('demo-') ? 'auxiliary-demo-no-observed-page'
-          : target.slug.startsWith('icons-') ? 'icon-gallery-no-observed-item-page'
-            : 'no-unique-source-file-path' });
-      continue;
-    }
-    const listingRoute = '/' + described.route.split('/').slice(1, 3).join('/');
-    let listing = listingCache.get(listingRoute);
-    if (!listing) {
-      // A previous item may have left the tab on a component or another catalog.
-      // Discover each route family from the official homepage, never the last page.
-      if (await browser.url() !== home.href) {
-        await browser.nav(home.href);
-        const homePage = await browser.snap();
-        if (homePage.url !== home.href || await browser.url() !== home.href) {
-          result.unresolved.push({ slug: target.slug, reason: 'homepage-navigation-mismatch' });
-          continue;
-        }
-      }
-      let matching = [];
-      for (let attempt = 0; attempt < 6; attempt++) {
-        const homepageLinks = await browser.domLinks();
-        matching = [...new Set(homepageLinks.map(a => observedLink(a.href, home.href, home))
-          .filter(url => url && new URL(url).pathname === listingRoute))];
-        if (matching.length) break;
-        await wait(250);
-        await browser.snap();
-      }
-      if (matching.length !== 1) {
-        result.unresolved.push({ slug: target.slug, reason: 'no-unique-observed-catalog-link' });
-        continue;
-      }
-      await browser.nav(matching[0]);
-      const snap = await browser.snap();
-      if (await browser.url() !== matching[0] || snap.url !== matching[0]) {
-        result.unresolved.push({ slug: target.slug, reason: 'catalog-navigation-mismatch' });
-        continue;
-      }
-      let anchors = await browser.domLinks();
-      for (let attempt = 0; attempt < 5 && anchors.length < 12; attempt++) {
-        await wait(250);
-        await browser.snap();
-        anchors = await browser.domLinks();
-      }
-      listing = { url: matching[0], anchors };
-      listingCache.set(listingRoute, listing);
-    }
-    const candidates = [...new Set(listing.anchors.map(a => observedLink(a.href, listing.url, home))
-      .filter(url => url && new URL(url).pathname === described.route))];
-    if (candidates.length !== 1) {
-      result.unresolved.push({ slug: target.slug, reason: 'no-unique-observed-item-link' });
-      continue;
-    }
-    await browser.nav(candidates[0]);
-    const page = await browser.snap();
-    if (page.url !== candidates[0] || await browser.url() !== candidates[0]) {
-      result.unresolved.push({ slug: target.slug, reason: 'item-navigation-mismatch' });
-      continue;
-    }
-    const leaf = described.route.split('/').at(-1);
-    const heading = (page.nodes ?? []).find(x => x.role === 'heading'
-      && [leaf, described.title].some(expected => normalizeTitle(x.name) === normalizeTitle(expected)));
-    if (!heading) {
-      result.unresolved.push({ slug: target.slug, reason: 'item-heading-mismatch' });
-      continue;
-    }
-    result.records.push({ namespace: registry.name, slug: target.slug,
-      previousUrl: target.docs_url ?? null, verifiedUrl: candidates[0], browser: {
-        homepageUrl: home.href, listingUrl: listing.url, observedUrl: candidates[0],
-        observedSlug: target.slug, expectedHeading: leaf, renderedHeading: heading.name,
-        sourceFilePath: described.file, navigationSource: 'observed-official-file-path',
-        capturePath: null, checkedAt: new Date().toISOString(),
-      } });
-  }
-  return result;
-}
-
 async function persistVerifiedChanges(curatedBefore, runtimeBefore, proposed) {
   const curatedFile = 'data/shadcn/registry-items.json';
   const runtimeFile = 'public/data/registries.json';
