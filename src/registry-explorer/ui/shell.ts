@@ -17,7 +17,7 @@ import {
   removeFromInstallQueue,
 } from '../core/installQueue';
 import { renderItemDetailView } from './itemDetailView';
-import { escapeHtml } from './renderSafety';
+import { escapeHtml, renderRegistryHomepageLink } from './renderSafety';
 import { buildCatalogFacetSummary, queryCatalogComponents } from '../core/catalogQuery';
 import {
   buildRegistryDirectory,
@@ -291,6 +291,19 @@ export function initRegistryExplorer(options: ShellOptions): void {
           break;
       }
 
+      // A registry homepage is one route-level action, not an item/source fallback.
+      // Include it even when a known registry's item route is unavailable.
+      const route = state.route;
+      const registryForHeader = route.kind === 'icon-family'
+        ? registries.find(registry => registry.name.slice(1) === route.family)
+        : 'namespace' in route
+          ? registries.find(registry => registry.name === route.namespace)
+          : undefined;
+      const homepage = registryForHeader
+        ? renderRegistryHomepageLink(registryForHeader.url) : '';
+      if (homepage) {
+        roots.contentHeader.innerHTML += `<div class="registry-header-homepage-action">${homepage}</div>`;
+      }
       roots.contentHeader.insertAdjacentHTML('beforeend', renderCopyFeedback(state.copyFeedback));
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);

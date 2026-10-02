@@ -22,22 +22,9 @@ describe("renderRegistryCollection", () => {
     expect(body.innerHTML).not.toContain("Official shadcn facts");
     expect(body.innerHTML).not.toContain("Catalog not verified");
     expect(body.innerHTML).not.toContain("Copy install");
-    expect(header.innerHTML).toContain('href="https://registry.directory/"');
-    expect(header.innerHTML).toContain('>Visit registry homepage</a>');
-    expect(header.innerHTML).toContain('target="_blank" rel="noreferrer"');
+    // The shell owns the single route-level homepage action, avoiding duplicate links.
+    expect(header.innerHTML).not.toContain('>Visit registry homepage</a>');
   });
-  it.each(["javascript:alert(1)", "https://user:pass@registry.directory", "//untrusted.example"])(
-    "does not expose an unsafe registry homepage: %s",
-    (url) => {
-      const entry = registry();
-      entry.url = url;
-      const header = root();
-      renderRegistryCollection(header, root(), entry, result());
-      expect(header.innerHTML).not.toContain(">Visit registry homepage</a>");
-      expect(header.innerHTML).not.toContain('href="javascript:');
-      expect(header.innerHTML).not.toContain("user:pass@");
-    },
-  );
 });
 
 function root(): HTMLElement {

@@ -223,6 +223,36 @@ describe('registry explorer shell interactions', () => {
     expect(harness.location.pathname).toBe('/Registry-Atlas/components/s/code-block');
   });
 
+  it('keeps the registry homepage in the header of every route tied to a known library', () => {
+    for (const path of [
+      '/Registry-Atlas/@delta',
+      '/Registry-Atlas/@delta/components/catalog-only',
+      '/Registry-Atlas/@delta/templates/catalog-only',
+      '/Registry-Atlas/@delta/themes/catalog-only',
+      '/Registry-Atlas/@delta/components/missing-component',
+      '/Registry-Atlas/icons/delta',
+    ]) {
+      const harness = setup('', path);
+      const header = harness.contentHeader.innerHTML;
+      expect(header, path).toContain('href="https://delta.example/"');
+      expect(header, path).toContain('>Visit registry homepage</a>');
+      expect(header, path).toContain('target="_blank" rel="noreferrer"');
+      expect(header.match(/>Visit registry homepage<\/a>/g), path).toHaveLength(1);
+    }
+    for (const path of [
+      '/Registry-Atlas/',
+      '/Registry-Atlas/registries',
+      '/Registry-Atlas/components',
+      '/Registry-Atlas/icons',
+      '/Registry-Atlas/icons/nonexistent',
+      '/Registry-Atlas/compare',
+      '/Registry-Atlas/@missing/components/button',
+    ]) {
+      const harness = setup('', path);
+      expect(harness.contentHeader.innerHTML, path).not.toContain('>Visit registry homepage</a>');
+    }
+  });
+
   it('keeps registry profiles deep-linkable with canonical registry paths', () => {
     const harness = setup('?view=registries');
 

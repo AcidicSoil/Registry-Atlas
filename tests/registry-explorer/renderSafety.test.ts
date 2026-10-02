@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   escapeHtml,
   renderExternalLink,
+  renderRegistryHomepageLink,
   renderSafeExternalImage,
   toSafeExternalUrl,
 } from '../../src/registry-explorer/ui/renderSafety';
@@ -29,6 +30,14 @@ describe('renderSafety', () => {
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noreferrer"');
     expect(html).toContain('Visit &quot;site&quot;');
+  });
+
+  it('shows a registry homepage action only for safe absolute public URLs without credentials', () => {
+    expect(renderRegistryHomepageLink('https://registry.example/')).toContain('href="https://registry.example/"');
+    expect(renderRegistryHomepageLink('http://registry.example/')).toContain('href="http://registry.example/"');
+    for (const unsafe of ['javascript:alert(1)', '//unsafe.example', 'https://user:pass@registry.example/', 'https://127.0.0.1/', 'https://localhost/', 'not a URL']) {
+      expect(renderRegistryHomepageLink(unsafe)).toBe('');
+    }
   });
 
   it('renders unavailable copy for invalid external links', () => {

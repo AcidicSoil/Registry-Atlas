@@ -37,6 +37,20 @@ export function renderExternalLink(
   return `<a href="${escapeHtml(safeUrl.href)}" class="${escapeHtml(className)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
 }
 
+/** Homepage links are navigation only: never render raw registry endpoints as replacements. */
+export function renderRegistryHomepageLink(
+  homepage: string,
+  className = 'link-button registry-homepage-link',
+): string {
+  const url = toSafeExternalUrl(homepage);
+  if (!url || url.username || url.password) return '';
+  const host = url.hostname.toLowerCase().replace(/\.$/, '');
+  if (!host || host === 'localhost' || host.endsWith('.localhost')
+    || host.endsWith('.local') || host.endsWith('.internal')
+    || host.includes(':') || /^\d+(?:\.\d+){3}$/.test(host)) return '';
+  return renderExternalLink(url.href, 'Visit registry homepage', className);
+}
+
 export function renderSafeExternalImage(
   url: string,
   alt: string,

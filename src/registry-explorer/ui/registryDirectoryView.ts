@@ -4,7 +4,7 @@ import type {
   RegistryDirectoryResult,
   RegistryDirectorySort,
 } from "../core/registryDirectory";
-import { escapeHtml, renderExternalLink, toSafeExternalUrl } from "./renderSafety";
+import { escapeHtml, renderRegistryHomepageLink } from "./renderSafety";
 
 const COVERAGE_LABELS: Record<RegistryCatalogCoverage, string> = {
   current: "Current",
@@ -58,9 +58,7 @@ function sortOption(value: RegistryDirectorySort, label: string, selected: strin
 
 function renderEntry(entry: RegistryDirectoryEntry): string {
   const count = entry.itemCount === 1 ? "1 item" : `${entry.itemCount.toLocaleString()} items`;
-  const url = toSafeExternalUrl(entry.registry.url);
-  const homepage = url && !url.username && !url.password
-    ? renderExternalLink(url.href, "Visit registry homepage", "secondary-link") : "";
+  const homepage = renderRegistryHomepageLink(entry.registry.url, "secondary-link");
   return `
     <article class="registry-directory-card">
       <div class="registry-directory-copy">
