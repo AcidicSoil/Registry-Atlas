@@ -15,26 +15,32 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).toContain('item-preview-metadata');
     expect(body.innerHTML).toContain('Syntax highlighted code block.');
     expect(body.innerHTML).not.toContain('Preview not published');
-    expect(body.innerHTML).toContain('Open component page');
-    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="secondary-link"');
+    expect(body.innerHTML).not.toContain('Open component page');
+    expect(body.innerHTML).not.toContain('href="https://delta.example/components/code-block"');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Copy install');
     expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(1);
     expect(body.innerHTML).toContain('Dependencies');
     expect(body.innerHTML).toContain('<dt>Warnings</dt>');
     expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Raw JSON');
-    expect(body.innerHTML).toContain('Open raw item');
+    expect(body.innerHTML).not.toContain('Open raw item');
+    expect(body.innerHTML).not.toContain('Open registry homepage');
+    expect(body.innerHTML).not.toContain('Registry homepage');
+    expect(body.innerHTML).not.toContain('Open in v0');
+    expect(body.innerHTML).not.toContain('Source record');
+    expect(body.innerHTML).not.toContain('href="https://delta.example/r/');
   });
 
-  it('uses the component page as the sole primary action when installation is unavailable', () => {
+  it('does not substitute an external source link for an unavailable install action', () => {
     const result = resolveRegistryItemDetailFromSummary([registryFixture({ routeEligible: false })], '@delta', 'code-block');
     const body = root();
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block" class="install-button install-button-primary"');
+    expect(body.innerHTML).not.toContain('href="https://delta.example/components/code-block"');
     expect(body.innerHTML).toContain('<button class="install-button" type="button" disabled>Copy install</button>');
-    expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(1);
+    expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(0);
+    expect(body.innerHTML).toContain('Interactive demo unavailable');
   });
 
   it.each(['javascript:alert(1)', 'not a URL'])('treats unsafe preview URLs (%s) as unavailable in both imagery and status copy', (previewUrl) => {
@@ -49,7 +55,7 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain('visual available');
     expect(body.innerHTML).not.toContain('preview unavailable');
-    expect(body.innerHTML).toContain('No preview');
+    expect(body.innerHTML).toContain('Interactive demo unavailable');
   });
 
   it('escapes imported item text and file fields', () => {
@@ -104,8 +110,13 @@ describe('renderItemDetailView', () => {
     expect(header.innerHTML).toContain('Summary');
     expect(header.innerHTML).not.toContain('Catalog summary');
     expect(body.innerHTML).toContain('Full item details could not be loaded');
-    expect(body.innerHTML).toContain('Open component page');
-    expect(body.innerHTML).toContain('Open raw item');
+    expect(body.innerHTML).not.toContain('Open component page');
+    expect(body.innerHTML).not.toContain('Open raw item');
+    expect(body.innerHTML).not.toContain('Open registry homepage');
+    expect(body.innerHTML).not.toContain('Registry homepage');
+    expect(body.innerHTML).not.toContain('Open in v0');
+    expect(body.innerHTML).not.toContain('Source record');
+    expect(body.innerHTML).not.toContain('href="https://delta.example/r/');
   });
 });
 
@@ -169,13 +180,14 @@ describe('enriched detail actions', () => {
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).toContain('<img');
+    expect(body.innerHTML).not.toContain('<img');
+    expect(body.innerHTML).toContain('Interactive demo unavailable');
     expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Copy install-agent prompt');
     expect(body.innerHTML).toContain('Copy inspection prompt');
     expect(body.innerHTML).not.toContain('Copy review prompt');
-    expect(body.innerHTML).toContain('Open in v0');
-    expect(body.innerHTML).toContain('href="https://v0.dev/chat/api/open?url=https%3A%2F%2Fdelta.example%2Fr%2Fcode-block.json"');
+    expect(body.innerHTML).not.toContain('Open in v0');
+    expect(body.innerHTML).not.toContain('v0.dev/chat/api/open');
     expect(body.innerHTML).toContain('Copy link');
     expect(body.innerHTML).toContain('data-copy-current-url');
     expect(body.innerHTML).not.toContain('Alternate terminology');

@@ -22,6 +22,8 @@ describe("renderRegistryCollection", () => {
     expect(body.innerHTML).not.toContain("Official shadcn facts");
     expect(body.innerHTML).not.toContain("Catalog not verified");
     expect(body.innerHTML).not.toContain("Copy install");
+    expect(header.innerHTML + body.innerHTML).not.toContain("Open source");
+    expect(header.innerHTML + body.innerHTML).not.toContain('href="https://registry.directory');
   });
 });
 
@@ -59,6 +61,7 @@ function result(): CatalogQueryResult {
       reviewed: false,
       item: { name: "tree/menu-navigation-tree", type: "registry:component", categories: ["navigation"] },
       routePath: "/Registry-Atlas/@registrydirectory/components/tree/menu-navigation-tree",
+      previewUrl: "https://registry.directory/previews/navigation-tree.png",
     }],
     total: 13544,
     page: 1,

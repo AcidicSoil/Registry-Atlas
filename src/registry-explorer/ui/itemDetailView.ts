@@ -1,7 +1,7 @@
 import { buildInstallAgentPrompt, buildInspectionPrompt } from '../core/itemPrompts.ts';
 import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/registryItemDetail.ts';
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
-import { escapeHtml, renderExternalLink, renderSafeExternalImage, toSafeExternalUrl } from './renderSafety.ts';
+import { escapeHtml } from './renderSafety.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -47,21 +47,19 @@ function renderDetailBody(
   const fallback = result.status === 'loaded' || result.status === 'summary-only'
     ? ''
     : renderFallback(result);
-  const previewUrl = detail.previewUrl ? toSafeExternalUrl(detail.previewUrl)?.href ?? null : null;
+  // A published image is not an executable component demo. Do not promote it as one.
 
   return `
     <article class="item-detail-page">
       <section class="item-detail-hero">
-        ${renderPreview(detail, previewUrl)}
+        ${renderPreview(detail)}
         <div class="item-detail-summary">
           ${detail.description ? `<p>${escapeHtml(detail.description)}</p>` : '<p class="muted">No description is available.</p>'}
           <div class="item-action-row">
-            ${renderComponentPageAction(detail, detail.installAction.status === 'enabled')}
-            ${renderOpenInV0Action(detail)}
             ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           </div>
           ${renderPromptActions(detail)}
-          ${renderEvaluationLabels(detail, previewUrl !== null)}
+          ${renderEvaluationLabels(detail, false)}
           ${fallback}
         </div>
       </section>
@@ -81,23 +79,14 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
     <div class="empty-state">
       <div class="empty-state-icon">⌕</div>
       <h2>Item details unavailable</h2>
-      <p>${escapeHtml(result.message ?? 'Registry Atlas could not load this item.')} Open the item page or registry source to inspect it outside Registry Atlas.</p>
+      <p>${escapeHtml(result.message ?? 'Registry Atlas could not load this item.')}</p>
     </div>
   `;
 }
 
-function renderPreview(detail: RegistryItemDetail, previewUrl: string | null): string {
-  if (previewUrl) {
-    const image = renderSafeExternalImage(previewUrl, `${detail.title} preview`, 'item-preview-image');
-    if (image) {
-      return `
-        <div class="item-preview-panel">
-          ${image}
-          ${renderExternalLink(previewUrl, 'Open preview', 'secondary-link')}
-        </div>
-      `;
-    }
-  }
+function renderPreview(detail: RegistryItemDetail): string {
+  // An upstream screenshot is not an Atlas interactive component.
+  // The URL remains internal source evidence until a reviewed runtime exists.
 
   const facts = [
     detail.author ? `By ${detail.author}` : '',
@@ -110,39 +99,13 @@ function renderPreview(detail: RegistryItemDetail, previewUrl: string | null): s
       <div class="catalog-eyebrow">Item details</div>
       <code>${escapeHtml((detail.type ?? 'registry:item').replace(/^registry:/, ''))}</code>
       <h2>${escapeHtml(detail.title)}</h2>
-      <p>${escapeHtml(detail.description ?? 'No preview image is published for this item.')}</p>
+      <p>${escapeHtml(detail.description ?? 'Component information has not been verified.')}</p>
       <div class="item-preview-metadata-facts">
         ${facts.map(fact => `<span>${escapeHtml(fact)}</span>`).join('')}
       </div>
-      <div class="item-preview-metadata-status">No preview image</div>
-      ${detail.componentPageUrl ? renderExternalLink(detail.componentPageUrl, 'Open component page', 'secondary-link') : ''}
+      <div class="item-preview-metadata-status">Interactive demo unavailable</div>
     </div>
   `;
-}
-
-function renderComponentPageAction(detail: RegistryItemDetail, installationEnabled: boolean): string {
-  const className = installationEnabled ? 'secondary-link' : 'install-button install-button-primary';
-  if (detail.componentPageUrl) {
-    return renderExternalLink(detail.componentPageUrl, 'Open component page', className);
-  }
-
-  if (detail.route.status === 'available') {
-    return renderExternalLink(detail.route.url, 'Open raw item', className);
-  }
-
-  if (detail.registry.url) {
-    return renderExternalLink(detail.registry.url, 'Open registry homepage', className);
-  }
-
-  return '<span class="muted">Item source unavailable</span>';
-}
-
-function renderOpenInV0Action(detail: RegistryItemDetail): string {
-  if (detail.route.status !== 'available') return '';
-  const rawItemUrl = toSafeExternalUrl(detail.route.url);
-  if (!rawItemUrl || rawItemUrl.protocol !== 'https:') return '';
-  const openUrl = `https://v0.dev/chat/api/open?url=${encodeURIComponent(rawItemUrl.href)}`;
-  return renderExternalLink(openUrl, 'Open in v0', 'secondary-link');
 }
 
 function renderInstallActions(action: InstallActionState, detail: RegistryItemDetail, queuedTokens: ReadonlySet<string>): string {
@@ -219,13 +182,6 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
 }
 
 function renderSourceCard(detail: RegistryItemDetail): string {
-  const links = [
-    detail.docsUrl ? renderExternalLink(detail.docsUrl, 'Docs', 'secondary-link') : '',
-    detail.route.status === 'available' ? renderExternalLink(detail.route.url, 'Open raw item', 'secondary-link') : '',
-    detail.evidenceUrl ? renderExternalLink(detail.evidenceUrl, 'Source record', 'secondary-link') : '',
-    renderExternalLink(detail.registry.url, 'Registry homepage', 'secondary-link'),
-  ].filter(Boolean).slice(0, 4).join(' ');
-
   return `
     <section class="item-detail-card">
       <h2>Source</h2>
@@ -234,7 +190,6 @@ function renderSourceCard(detail: RegistryItemDetail): string {
         <div class="profile-fact"><dt>Imported from</dt><dd>${escapeHtml(detail.provenance)}</dd></div>
         ${detail.warnings.length ? `<div class="profile-fact"><dt>Warnings</dt><dd>${escapeHtml(detail.warnings.join(', '))}</dd></div>` : ''}
       </dl>
-      <div class="secondary-links">${links}</div>
     </section>
   `;
 }
@@ -244,7 +199,7 @@ function renderFallback(result: RegistryItemDetailResult): string {
     return '<div class="partial-data-note">Full item details could not be loaded. Showing the saved summary.</div>';
   }
   if (result.status === 'invalid-json' || result.status === 'invalid-schema') {
-    return '<div class="partial-data-note">Atlas could not read this registry item safely. The component page may still be available from the registry.</div>';
+    return '<div class="partial-data-note">Atlas could not read this registry item safely. A functional demo is unavailable.</div>';
   }
   return `<div class="partial-data-note">${escapeHtml(result.message ?? 'Component details unavailable.')}</div>`;
 }

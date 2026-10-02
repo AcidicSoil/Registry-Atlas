@@ -23,6 +23,8 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).toContain('<option value="item-count-desc" selected>');
     expect(body.innerHTML).toContain('data-profile-registry="@registrydirectory"');
     expect(body.innerHTML).not.toContain("known items");
+    expect(body.innerHTML).not.toContain('href="https://registry.directory');
+    expect(body.innerHTML).not.toContain('>Source</a>');
   });
 
   it("renders registry pagination instead of an unbounded card wall", () => {

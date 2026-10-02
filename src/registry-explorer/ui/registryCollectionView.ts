@@ -3,7 +3,7 @@ import { assetKindForCatalogItem } from "../core/catalogCollections";
 import type { RegistryCatalogCoverage } from "../core/registryDirectory";
 import type { Registry } from "../core/registry.schema";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
-import { escapeHtml, renderExternalLink } from "./renderSafety";
+import { escapeHtml } from "./renderSafety";
 
 export function renderRegistryCollection(
   headerRoot: HTMLElement,
@@ -25,7 +25,6 @@ export function renderRegistryCollection(
       <div class="registry-collection-meta">
         <strong>${escapeHtml(count)}</strong>
         ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
-        ${renderExternalLink(registry.url, "Open source", "secondary-link")}
       </div>
     </div>
     <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry link copied">Copy link</button>
@@ -41,7 +40,6 @@ export function renderRegistryCollection(
           <span><strong>${result.total.toLocaleString()}</strong> items</span>
           ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
         </div>
-        <div class="secondary-links">${renderExternalLink(registry.url, "Open source", "secondary-link")}</div>
       </section>
       <section class="registry-profile-inventory registry-collection-components">
         <div class="section-heading-row">

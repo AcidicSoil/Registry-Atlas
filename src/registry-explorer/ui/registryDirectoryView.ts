@@ -4,7 +4,7 @@ import type {
   RegistryDirectoryResult,
   RegistryDirectorySort,
 } from "../core/registryDirectory";
-import { escapeHtml, renderExternalLink } from "./renderSafety";
+import { escapeHtml } from "./renderSafety";
 
 const COVERAGE_LABELS: Record<RegistryCatalogCoverage, string> = {
   current: "Current",
@@ -70,7 +70,6 @@ function renderEntry(entry: RegistryDirectoryEntry): string {
       </div>
       <div class="registry-directory-actions">
         <button class="link-button" type="button" data-profile-registry="${escapeHtml(entry.registry.name)}">View registry</button>
-        ${renderExternalLink(entry.registry.url, "Source", "secondary-link")}
       </div>
     </article>
   `;
