@@ -73,8 +73,48 @@ export async function main(argv, cwd = process.cwd()) {
   const browser = new PinchTabBrowser(options.server, options.tab);
   // An empty hydration snapshot cannot be treated as an empty registry.
   browser.waitForLinks = async timeoutMs => browser.call('wait', '--fn',
-    "document.querySelectorAll('a[href]').length > 0",
+    String.raw`[...document.querySelectorAll('a[href]')].some(a => {
+      try {
+        const url = new URL(a.getAttribute('href'), location.href);
+        return url.origin === location.origin && url.href !== location.href
+          && (a.innerText || a.textContent || '').trim().length > 0;
+      } catch { return false; }
+    })`,
     '--timeout', String(Math.min(timeoutMs, 4000)));
+  // Execute a fixed, bounded JSON read on the already-approved official origin.
+  // Index URLs come only from links observed by discoverRegistry.
+  browser.structuredIndex = async observedUrl => {
+    const u = new URL(observedUrl);
+    const current = new URL(await browser.url());
+    if (u.protocol !== 'https:' || u.origin !== current.origin
+      || !u.pathname.toLowerCase().endsWith('.json') || u.username || u.password)
+      throw new Error('Structured index is not on the observed official origin');
+    const expression = String.raw`(async () => {
+      const requested = ${JSON.stringify(observedUrl)};
+      if (location.origin !== new URL(requested).origin) throw Error('Origin changed');
+      const response = await fetch(requested, {
+        credentials: 'omit', redirect: 'error', mode: 'same-origin', cache: 'no-store',
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok || response.url !== requested
+        || !/json/i.test(response.headers.get('content-type') || ''))
+        throw Error('Official JSON unavailable');
+      const reader = response.body.getReader();
+      const chunks = []; let size = 0;
+      while (true) {
+        const {done, value} = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > 2 * 1024 * 1024) { await reader.cancel(); throw Error('Index too large'); }
+        chunks.push(value);
+      }
+      const bytes = new Uint8Array(size);
+      let offset = 0;
+      for (const chunk of chunks) {bytes.set(chunk, offset); offset += chunk.byteLength;}
+      return JSON.stringify(JSON.parse(new TextDecoder().decode(bytes)));
+    })()`;
+    return JSON.parse(browser.call('eval', expression, '--await-promise').result);
+  };
   const result = await discoverRegistry({
     registry, indexedItems, ledger, browser,
     limit: options.limit, maxPages: options.maxPages,

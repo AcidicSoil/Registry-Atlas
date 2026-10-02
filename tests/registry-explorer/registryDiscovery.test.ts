@@ -56,6 +56,60 @@ const pages: Record<string, Page> = {
 const at = '2026-10-01T20:00:00.000Z';
 
 describe('evidence-based registry discovery', () => {
+  it('uses an observed official JSON index with exact names and explicit docs URLs, then verifies the rendered page', async () => {
+    const sample: Record<string, Page> = {
+      [HOME]: { links: [['Registry index', '/r/registry.json'], ['Docs', '/docs']] },
+      'https://sample.example/docs': { heading: 'Docs', links: [['About', '/about']] },
+      'https://sample.example/about': { heading: 'About' },
+      'https://sample.example/docs/button': { heading: 'Button' },
+    };
+    const browser = fakeBrowser(sample, HOME);
+    const consulted: string[] = [];
+    (browser as any).structuredIndex = async (url: string) => {
+      consulted.push(url);
+      return { items: [
+        { name: 'button', title: 'Button', docsUrl: '/docs/button' },
+        { name: 'missing', docsUrl: 'https://evil.example/docs/missing' },
+        { name: 'fake', url: '/r/fake.json' },
+      ] };
+    };
+    const result = await discoverRegistry({
+      registry, indexedItems: ['button', 'missing', 'fake'], browser,
+      ledger: fakeLedger(), checkedAt: at, maxPages: 3,
+    });
+    expect(consulted).toEqual(['https://sample.example/r/registry.json']);
+    expect(result.records.find((row: any) => row.slug === 'button')).toMatchObject({
+      status: 'page-observed',
+      docsUrl: 'https://sample.example/docs/button',
+      evidence: { strategy: 'observed-structured-index', indexUrl: 'https://sample.example/r/registry.json' },
+    });
+    expect(result.records.find((row: any) => row.slug === 'missing')?.status).toBe('unresolved');
+    expect(result.records.find((row: any) => row.slug === 'fake')?.status).toBe('unresolved');
+    expect(browser.navigated).not.toContain('https://evil.example/docs/missing');
+    expect(browser.navigated).not.toContain('https://sample.example/r/fake.json');
+  });
+
+  it('does not infer docs pages from index entries with no explicit docs URL', async () => {
+    const sample: Record<string, Page> = {
+      [HOME]: { links: [['Catalog JSON', '/catalog/index.json'], ['Docs', '/docs']] },
+      'https://sample.example/docs': { heading: 'Docs', links: [['About', '/about']] },
+    };
+    const browser = fakeBrowser(sample, HOME);
+    (browser as any).structuredIndex = async () => ({
+      items: [{ name: 'button', type: 'registry:ui', title: 'Button',
+        files: [{ path: 'components/ui/button.tsx' }] }],
+    });
+    const result = await discoverRegistry({
+      registry, indexedItems: ['button'], browser, ledger: fakeLedger(), checkedAt: at,
+    });
+    expect(result.records[0]).toMatchObject({
+      status: 'unresolved', reason: 'not-found-in-observed-navigation',
+    });
+    expect(result.structuredIndexes).toEqual([expect.objectContaining({
+      url: 'https://sample.example/catalog/index.json', identityCount: 1, candidateCount: 0,
+    })]);
+    expect(browser.navigated).not.toContain('https://sample.example/docs/button');
+  });
   it('traverses observed multi-level listings once, verifies nonmatching URL slugs and checkpoints each identity', async () => {
     const browser = fakeBrowser(pages, HOME);
     const ledger = fakeLedger();
@@ -370,6 +424,30 @@ describe('evidence-based registry discovery', () => {
     expect(result.records[0]).toMatchObject({
       status: 'page-observed', docsUrl: 'https://sample.example/docs/button',
     });
+  });
+
+  it('retries a transient empty-navigation observation without requiring a new catalog fingerprint', async () => {
+    const ledger = fakeLedger();
+    const empty = fakeBrowser({[HOME]: {heading:'Loading'}}, HOME);
+    const first = await discoverRegistry({
+      registry, indexedItems: ['button'], browser: empty, ledger, checkedAt: at,
+    });
+    expect(first.records[0]).toMatchObject({
+      status: 'unresolved', reason: 'discovery-navigation-error',
+    });
+    const hydrated = fakeBrowser({
+      [HOME]: {links: [['Components', '/components']]},
+      'https://sample.example/components': {heading: 'Components',
+        links: [['Button', '/docs/button']]},
+      'https://sample.example/docs/button': {heading: 'Button'},
+    }, HOME);
+    const retry = await discoverRegistry({
+      registry, indexedItems: ['button'], browser: hydrated, ledger, checkedAt: at,
+    });
+    expect(retry.records[0]).toMatchObject({
+      status: 'page-observed', docsUrl: 'https://sample.example/docs/button',
+    });
+    expect(ledger.writes.filter(row => row.token === 'registry:@sample')).toHaveLength(2);
   });
 
   it('reports unresolved navigation when no evidence appears after the bounded wait', async () => {

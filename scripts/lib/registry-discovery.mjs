@@ -5,7 +5,7 @@ import { isIP } from 'node:net';
 
 const SCHEMA = 'registry-atlas-discovery/v1';
 // Bump when identity resolution semantics change; old evidence is not re-promoted.
-const DISCOVERY_REVISION = 'identity-resolution-v5';
+export const DISCOVERY_REVISION = 'identity-resolution-v6';
 const DIRECTORY = /^(?:docs?|documentation|components|primitives|blocks|patterns|catalog|library|elements|ui|examples|animations|actions|forms|inputs|buttons|navigation|feedback|browse)$/i;
 const normalize = text => String(text ?? '').toLowerCase()
   .replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
@@ -49,6 +49,37 @@ function directoryLink(link, identities) {
   }
   return false;
 }
+function isObservedStructuredIndex(link) {
+  const path = new URL(link.url).pathname;
+  return path.toLowerCase().endsWith('.json')
+    && /\b(registry|catalog|index|manifest|components)\b/.test(
+      normalize(path + ' ' + link.name));
+}
+
+function candidatesFromOfficialIndex(index, link, identities, root) {
+  if (!index || !Array.isArray(index.items) || index.items.length > 10000)
+    throw new Error('Unsupported or oversized official index');
+  const names = new Set(identities);
+  const candidates = [];
+  let identityCount = 0;
+  for (const entry of index.items) {
+    if (!entry || typeof entry.name !== 'string' || !names.has(entry.name)) continue;
+    identityCount++;
+    // Index-provided source JSON paths are not documentation URLs.
+    const declared = entry.docsUrl ?? entry.docs_url ?? entry.documentationUrl;
+    const url = sameOrigin(declared, link.url, root);
+    if (!url || new URL(url).pathname.toLowerCase().endsWith('.json')) continue;
+    const heading = typeof entry.title === 'string' && entry.title.trim().length <= 180
+      ? entry.title : entry.name;
+    candidates.push({
+      slug: entry.name, url, name: entry.name, listingUrl: link.listingUrl,
+      matching: 'official-index-name', navigationSource: 'observed-structured-index',
+      renderedName: normalize(heading), indexUrl: link.url,
+    });
+  }
+  return {identityCount, candidates};
+}
+
 async function observedLinks(browser, current, root, remaining) {
   const observe = async () => {
     const snap = await browser.snap();
@@ -125,6 +156,7 @@ async function inspectNavigation({registry, identities, browser, root, maxPages,
   const queue = [{url: origin, depth: 0}];
   const visited = new Set();
   const candidates = [];
+  const structuredIndexes = [];
   const ambiguous = new Set();
   const listings = [];
   const repeatedLeaves = new Map();
@@ -147,6 +179,26 @@ async function inspectNavigation({registry, identities, browser, root, maxPages,
       remaining -= links.length;
       listings.push({ url: next.url, depth: next.depth, observedLinks: links.length });
       for (const link of links) {
+        if (typeof browser.structuredIndex === 'function'
+          && structuredIndexes.length < 4 && isObservedStructuredIndex(link)) {
+          try {
+            if (delayMs) await new Promise(done => setTimeout(done, delayMs));
+            const index = await browser.structuredIndex(link.url);
+            const extracted = candidatesFromOfficialIndex(index, link, identities, root);
+            candidates.push(...extracted.candidates);
+            structuredIndexes.push({
+              url: link.url, listingUrl: link.listingUrl,
+              identityCount: extracted.identityCount,
+              candidateCount: extracted.candidates.length,
+              status: 'observed',
+            });
+          } catch {
+            structuredIndexes.push({
+              url: link.url, listingUrl: link.listingUrl,
+              status: 'unavailable', identityCount: 0, candidateCount: 0,
+            });
+          }
+        }
         const matched = matchesFor(link, identities, repeatedLeaves);
         for (const match of matched) {
           if (match.kind === 'ambiguous-leaf') ambiguous.add(match.slug);
@@ -163,7 +215,7 @@ async function inspectNavigation({registry, identities, browser, root, maxPages,
     }
   }
   return {
-    listings, candidates, ambiguous: [...ambiguous].sort(),
+    listings, candidates, structuredIndexes, ambiguous: [...ambiguous].sort(),
     exhausted: queue.length > 0 || remaining === 0, error,
   };
 }
@@ -221,12 +273,13 @@ export async function discoverRegistry({
   const prefix = registry.name + '/';
   const snapshotToken = 'registry:' + registry.name;
   let snapshot = ledger.get(snapshotToken);
+  const previousNavigationError = Boolean(snapshot?.error);
   const previouslyExhausted = snapshot?.exhausted && snapshot?.budgets
     && (maxPages > snapshot.budgets.maxPages
       || maxLinks > snapshot.budgets.maxLinks
       || maxDepth > snapshot.budgets.maxDepth);
   if (!isFresh(snapshot, fp, checkedAt, maxAgeMs) || snapshot.status !== 'discovered'
-    || previouslyExhausted) {
+    || previouslyExhausted || previousNavigationError) {
     const nav = await inspectNavigation({
       registry, identities, browser, root, maxPages, maxDepth, maxLinks, delayMs,
     });
@@ -242,7 +295,8 @@ export async function discoverRegistry({
     const token = prefix + slug;
     let row = ledger.get(token);
     if (!isFresh(row, fp, checkedAt, maxAgeMs)
-      || (previouslyExhausted && row?.reason === 'discovery-budget-exhausted')) {
+      || (previouslyExhausted && row?.reason === 'discovery-budget-exhausted')
+      || (previousNavigationError && row?.reason === 'discovery-navigation-error')) {
       if (processed >= limit) continue;
       const candidates = (snapshot.candidates ?? []).filter(x => x.slug === slug);
       // When a component listing and an unrelated block reuse a label, the
@@ -273,6 +327,7 @@ export async function discoverRegistry({
           const full = normalize(slug);
           const itemLeaf = normalize(leaf(slug));
           const expected = source.matching === 'observed-catalog-path'
+            || source.matching === 'official-index-name'
             ? source.renderedName
             : source.matching === 'observed-full-path' ? itemLeaf : full;
           if (landed !== source.url || snap.url !== landed
@@ -282,7 +337,10 @@ export async function discoverRegistry({
             row = {...base, status: 'unresolved', reason: 'rendered-identity-mismatch'};
           } else {
             row = {...base, status: 'page-observed', docsUrl: landed,
-              evidence: { strategy: 'rendered-navigation', listingUrl: source.listingUrl,
+              evidence: { strategy: source.indexUrl
+                ? 'observed-structured-index' : 'rendered-navigation',
+                ...(source.indexUrl ? {indexUrl: source.indexUrl} : {}),
+                listingUrl: source.listingUrl,
                 observedLink: source.url, linkName: source.name,
                 matching: source.matching, navigationSource: source.navigationSource,
                 renderedHeading: (snap.nodes ?? []).find(x =>
@@ -302,7 +360,9 @@ export async function discoverRegistry({
   }
   const pending = identities.length - records.length;
   return {schema: SCHEMA, namespace: registry.name, catalogFingerprint: fp,
-    listings: snapshot.listings ?? [], records, processed, pending,
+    listings: snapshot.listings ?? [],
+    structuredIndexes: snapshot.structuredIndexes ?? [],
+    records, processed, pending,
     complete: pending === 0, fullyVerified: identities.length > 0 && pending === 0
       && records.every(x => x.status === 'page-observed'),
     exhausted: snapshot.exhausted ?? false,
