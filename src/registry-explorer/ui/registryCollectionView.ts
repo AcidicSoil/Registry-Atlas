@@ -3,7 +3,7 @@ import { assetKindForCatalogItem } from "../core/catalogCollections";
 import type { RegistryCatalogCoverage } from "../core/registryDirectory";
 import type { Registry } from "../core/registry.schema";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
-import { escapeHtml } from "./renderSafety";
+import { escapeHtml, renderExternalLink, toSafeExternalUrl } from "./renderSafety";
 
 export function renderRegistryCollection(
   headerRoot: HTMLElement,
@@ -16,6 +16,9 @@ export function renderRegistryCollection(
   } = {},
 ): void {
   const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
+  const url = toSafeExternalUrl(registry.url);
+  const homepage = url && !url.username && !url.password
+    ? renderExternalLink(url.href, "Visit registry homepage", "secondary-link") : "";
   headerRoot.innerHTML = `
     <div class="registry-collection-heading">
       <button class="link-button" type="button" data-back-to-results>← Registries</button>
@@ -25,6 +28,7 @@ export function renderRegistryCollection(
       <div class="registry-collection-meta">
         <strong>${escapeHtml(count)}</strong>
         ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
+        ${homepage}
       </div>
     </div>
     <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry link copied">Copy link</button>

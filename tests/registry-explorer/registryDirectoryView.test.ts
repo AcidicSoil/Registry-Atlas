@@ -23,9 +23,23 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).toContain('<option value="item-count-desc" selected>');
     expect(body.innerHTML).toContain('data-profile-registry="@registrydirectory"');
     expect(body.innerHTML).not.toContain("known items");
-    expect(body.innerHTML).not.toContain('href="https://registry.directory');
-    expect(body.innerHTML).not.toContain('>Source</a>');
+    expect(body.innerHTML).toContain('href="https://registry.directory/"');
+    expect(body.innerHTML).toContain('>Visit registry homepage</a>');
+    expect(body.innerHTML).toContain('target="_blank" rel="noreferrer"');
   });
+
+  it.each(["javascript:alert(1)", "https://user:pass@registry.directory", "//untrusted.example"])(
+    "does not expose an unsafe registry homepage: %s",
+    (url) => {
+      const view = result();
+      view.entries[0]!.registry.url = url;
+      const body = root();
+      renderRegistryDirectory(root(), body, view);
+      expect(body.innerHTML).not.toContain(">Visit registry homepage</a>");
+      expect(body.innerHTML).not.toContain('href="javascript:');
+      expect(body.innerHTML).not.toContain("user:pass@");
+    },
+  );
 
   it("renders registry pagination instead of an unbounded card wall", () => {
     const body = root();
