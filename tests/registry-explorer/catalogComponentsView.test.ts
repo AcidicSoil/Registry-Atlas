@@ -138,6 +138,20 @@ describe("renderCatalogComponents", () => {
     expect(toolbar).toContain('<option value="registry"');
   });
 
+  it("keeps active asset filters clearable without duplicating the directory sorter", () => {
+    const markup = renderCatalogBrowseControls({
+      page: 1, sort: "name", registryNames: [], itemTypes: [], categories: [], reviewed: "all",
+    }, {
+      assetCounts: { component: 4, template: 2 },
+      selectedAssetKinds: ["component"],
+      hideSort: true,
+    });
+    expect(markup).toContain("<summary>Filters");
+    expect(markup).toContain('data-asset-kind-value="component"');
+    expect(markup).toContain('data-catalog-clear');
+    expect(markup).not.toContain('data-catalog-sort');
+  });
+
   it("keeps filters visible when a filter combination has no matches", () => {
     const body = root();
     renderCatalogComponents(root(), body, result([]), {

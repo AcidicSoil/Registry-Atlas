@@ -3079,3 +3079,32 @@ aside:has(.aside-inner:empty) {
   .item-preview-live { padding: var(--space-3); }
   .component-demo-frame-card { min-height: 145px; }
 }
+
+/* Directory sorting shares a small control cluster with progressive filters. */
+.registry-directory-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.registry-directory-controls > label {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--space-2);
+}
+.registry-directory-controls > label > select {
+  width: 172px;
+  max-width: 100%;
+  min-height: 40px;
+}
+.registry-directory-controls > .catalog-filter-bar {
+  width: auto;
+  min-height: 40px;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .registry-directory-controls { justify-content: flex-start; }
+  .registry-directory-controls > label { flex: 0 1 auto; }
+}

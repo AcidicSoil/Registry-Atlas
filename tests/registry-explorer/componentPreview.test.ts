@@ -50,5 +50,7 @@ describe('reviewed sandboxed component examples', () => {
     expect(html).not.toContain('<img');
     expect(html).not.toContain('fetch(');
     expect(html).not.toContain('src="https:');
+    expect(html).not.toContain('registry-atlas:component-state');
+    expect(html).toContain('registry-atlas:component-open');
   });
 });

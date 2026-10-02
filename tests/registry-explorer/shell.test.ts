@@ -44,6 +44,15 @@ describe('registry explorer shell interactions', () => {
     expect(harness.aside.innerHTML).not.toContain('catalog-sidebar-summary');
   });
 
+  it('places registry asset filters beside sorting, not in navigation', () => {
+    const harness = setup('', '/Registry-Atlas/registries');
+    expect(harness.aside.innerHTML).not.toContain('data-asset-kind-value');
+    expect(harness.contentBody.innerHTML).toContain('data-asset-kind-value');
+    expect(harness.contentBody.innerHTML).toContain('<summary>Filters');
+    expect(harness.contentBody.innerHTML).toContain('data-registry-sort');
+    expect(harness.contentBody.innerHTML).not.toContain('data-catalog-sort');
+  });
+
   it('retired routes render not-found instead of a fake browse surface', () => {
     for (const path of ['/components/featured', '/components/newest', '/authors']) {
       const harness = setup('', `/Registry-Atlas${path}`);

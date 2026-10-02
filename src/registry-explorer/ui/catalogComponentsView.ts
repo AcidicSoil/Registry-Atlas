@@ -95,6 +95,7 @@ export function renderCatalogBrowseControls(
   const active = state.registryNames.length > 0
     || state.itemTypes.length > 0
     || state.categories.length > 0
+    || (options.selectedAssetKinds?.length ?? 0) > 0
     || visibleSort !== "name";
 
   const facets = options.facets

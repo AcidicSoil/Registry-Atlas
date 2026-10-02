@@ -67,15 +67,11 @@
             slug === "button" ? "Pressed " + presses + (presses === 1 ? " time" : " times")
             : done ? "Complete" : "Pending";
           if (slug === "card") action.textContent = done ? "MARK PENDING" : "MARK COMPLETE";
-          parent.postMessage({ type: "registry-atlas:component-state", slug,
-            status: document.getElementById("status").textContent }, "*");
         });
       }
       const field = document.getElementById("field");
       if (field) field.addEventListener("input", () => {
         document.getElementById("status").textContent = field.value || "Waiting for input";
-        parent.postMessage({ type: "registry-atlas:component-state", slug,
-          status: document.getElementById("status").textContent }, "*");
       });
       root.addEventListener("click", event => {
         if (mode !== "card" || event.target.closest("button,input,label")) return;
