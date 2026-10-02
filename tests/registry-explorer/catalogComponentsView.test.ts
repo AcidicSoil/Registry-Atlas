@@ -16,11 +16,24 @@ describe("renderCatalogComponents", () => {
     expect(html).toMatch(/data-asset-kind-value="theme"\s+aria-pressed="true"/);
     expect(html).not.toContain('data-asset-kind-value="icon"');
   });
+  it("keeps component records visible without claiming that an image is an interactive demo", () => {
+    const shown = renderCatalogComponentCard(component({
+      previewUrl: "/Registry-Atlas/data/previews/8bitcn/button.jpg",
+    }));
+    expect(shown).toContain('data-view-item-registry="@delta"');
+    expect(shown).toContain("Interactive demo unavailable");
+    expect(shown).not.toContain("<img");
+    expect(shown).not.toContain("Open raw item");
+    expect(shown).not.toContain("Source record");
+    const withoutPreview = renderCatalogComponentCard(component());
+    expect(withoutPreview).toContain("Interactive demo unavailable");
+    expect(withoutPreview).toContain("catalog-component-open");
+  });
   it("renders real component cards as action-light detail links", () => {
     const header = root();
     const body = root();
 
-    renderCatalogComponents(header, body, result([component()]), { searchTerm: "" });
+    renderCatalogComponents(header, body, result([component({ previewUrl: "https://delta.example/preview.png" })]), { searchTerm: "" });
 
     expect(header.innerHTML).toContain("Components");
     expect(header.innerHTML).toContain("1 component");
@@ -35,12 +48,12 @@ describe("renderCatalogComponents", () => {
 
   it("renders evidence-backed discovery bands before the full component grid", () => {
     const body = root();
-    renderCatalogComponents(root(), body, result([component()]), {
+    renderCatalogComponents(root(), body, result([component({ previewUrl: "https://delta.example/preview.png" })]), {
       searchTerm: "",
       discoveryBands: [{
         label: "Forms",
         routePath: "/Registry-Atlas/components/explore/forms",
-        items: [component()],
+        items: [component({ previewUrl: "https://delta.example/preview.png" })],
       }],
     });
 
@@ -53,20 +66,20 @@ describe("renderCatalogComponents", () => {
     );
   });
 
-  it("renders a trusted preview when present and an honest specimen when absent", () => {
-    const withPreview = root();
-    renderCatalogComponents(root(), withPreview, result([
+  it("renders all catalog entries but labels absent functional previews accurately", () => {
+    const withStaticImage = root();
+    renderCatalogComponents(root(), withStaticImage, result([
       component({ previewUrl: "https://delta.example/preview.png" }),
     ]), { searchTerm: "" });
-    expect(withPreview.innerHTML).toContain("<img");
-    expect(withPreview.innerHTML).toContain("https://delta.example/preview.png");
+    expect(withStaticImage.innerHTML).not.toContain("<img");
+    expect(withStaticImage.innerHTML).toContain("Interactive demo unavailable");
+    expect(withStaticImage.innerHTML).toContain("catalog-component-open");
 
     const withoutPreview = root();
     renderCatalogComponents(root(), withoutPreview, result([component()]), { searchTerm: "" });
-    expect(withoutPreview.innerHTML).not.toContain("Preview not published");
-    expect(withoutPreview.innerHTML).toContain("A component from the catalog.");
-    expect(withoutPreview.innerHTML).toContain("ui");
-    expect(withoutPreview.innerHTML).not.toContain("<svg");
+    expect(withoutPreview.innerHTML).toContain("catalog-component-open");
+    expect(withoutPreview.innerHTML).toContain("Interactive demo unavailable");
+    expect(withoutPreview.innerHTML).not.toContain("catalog-component-metadata-specimen");
   });
 
   it("renders native theme swatches only in theme mode", () => {

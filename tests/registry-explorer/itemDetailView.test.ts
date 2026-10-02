@@ -15,7 +15,7 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).toContain('item-preview-metadata');
     expect(body.innerHTML).toContain('Syntax highlighted code block.');
     expect(body.innerHTML).not.toContain('Preview not published');
-    expect(body.innerHTML).not.toContain('Open component page');
+    expect(body.innerHTML).not.toContain('Visit source documentation');
     expect(body.innerHTML).not.toContain('href="https://delta.example/components/code-block"');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Copy install');
@@ -57,6 +57,17 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('preview unavailable');
     expect(body.innerHTML).toContain('Interactive demo unavailable');
   });
+
+  it.each(['javascript:alert(1)', 'https://user:pass@delta.example/docs', '//attacker.example/docs'])
+    ('does not expose unsafe source documentation (%s)', (docsUrl) => {
+      const result = resolveRegistryItemDetailFromSummary(
+        [registryFixture({ docsUrl })], '@delta', 'code-block');
+      const body = root();
+      renderItemDetailView(root(), body, result, new Set());
+      expect(body.innerHTML).not.toContain('Visit source documentation');
+      expect(body.innerHTML).not.toContain('href="javascript:');
+      expect(body.innerHTML).not.toContain('user:pass@');
+    });
 
   it('escapes imported item text and file fields', () => {
     const result = resolveRegistryItemDetailFromSummary([registryFixture({
@@ -124,7 +135,7 @@ function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;
 }
 
-function registryFixture(options: { title?: string; description?: string; filePath?: string; previewUrl?: string; emptyTechnicalDetails?: boolean; routeEligible?: boolean } = {}): Registry {
+function registryFixture(options: { title?: string; description?: string; filePath?: string; previewUrl?: string; docsUrl?: string; emptyTechnicalDetails?: boolean; routeEligible?: boolean } = {}): Registry {
   return {
     name: '@delta',
     url: 'https://delta.example',
@@ -159,7 +170,7 @@ function registryFixture(options: { title?: string; description?: string; filePa
         confidence: 'high',
         routeEligible: options.routeEligible ?? true,
         rawItemUrl: 'https://delta.example/r/code-block.json',
-        docsUrl: 'https://delta.example/components/code-block',
+        docsUrl: options.docsUrl ?? 'https://delta.example/components/code-block',
         previewUrl: options.previewUrl,
         evidenceUrl: 'https://delta.example/evidence',
         warnings: ['review generated styles'],

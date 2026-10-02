@@ -42,7 +42,7 @@ import {
   exploreCollectionBySlug,
 } from '../core/catalogCollections';
 import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
-import { renderCatalogComponents, renderCatalogRailControls, renderCatalogBrowseControls, renderAssetKindChips, type AssetKindToken } from './catalogComponentsView';
+import { renderCatalogComponents, renderCatalogBrowseControls, type AssetKindToken } from './catalogComponentsView';
 import { renderCatalogLanding } from './catalogLandingView';
 import { renderCatalogCollection, renderEvidenceUnavailable } from './catalogCollectionView';
 import { renderRegistryDirectory } from './registryDirectoryView';
@@ -206,21 +206,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderSidebar(queued: ReadonlySet<string>, batchCommand: string | null): void {
-    const route = state.route;
-    const kind = route.kind === 'templates' ? 'template'
-      : route.kind === 'themes' ? 'theme'
-      : ['icons', 'icon-family', 'icon-category'].includes(route.kind) ? 'icon'
-      : ['components', 'explore'].includes(route.kind) ? 'component'
-      : null;
-    const namespace = route.kind === 'registry' ? route.namespace
-      : route.kind === 'icon-family' ? `@${route.family}` : null;
-    const browsable = Boolean(kind || namespace);
-    const facets = browsable ? buildCatalogFacetSummary(registries, catalogIndex, {
-      search: state.searchTerm,
-      ...(kind ? { assetKinds: [kind] as AssetKindToken[] } : {}),
-      ...(namespace ? { registryNames: [namespace] } : {}),
-    }) : null;
-
     const queueMarkup = queued.size > 0
       ? `<section class="catalog-sidebar-queue">
           <div class="queue-heading"><span>Install queue</span><strong>${queued.size}</strong></div>
@@ -229,25 +214,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
         </section>`
       : '';
 
-    const browseFilters = facets
-      ? renderCatalogRailControls(facets, catalogBrowseState(), {
-          showRegistries: !namespace,
-          showCategories: route.kind !== 'explore' && route.kind !== 'icon-category',
-        })
-      : '';
-    const assetFilters = route.kind === 'registries'
-      ? renderAssetKindChips(directoryAssetCounts, state.catalogAssetKinds)
-      : route.kind === 'registry'
-        ? renderAssetKindChips(registryAssetCounts.get(route.namespace) ?? {}, state.catalogAssetKinds)
-        : '';
-    const railControls = browseFilters + assetFilters;
-    roots.aside.innerHTML = railControls || queueMarkup
-      ? `
-          <div class="desktop-browse-rail">
-            ${railControls}
-            ${queueMarkup}
-          </div>
-        `
+    // Keep filters alongside results, never in the navigation sidebar.
+    roots.aside.innerHTML = queueMarkup
+      ? `<div class="desktop-browse-rail">${queueMarkup}</div>`
       : '';
   }
 
@@ -402,6 +371,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     renderCatalogComponents(roots.contentHeader, roots.contentBody, result, {
       searchTerm: state.searchTerm,
       browseState: catalogBrowseState(),
+      browseControls: renderCatalogBrowseControls(catalogBrowseState(), { facets }),
       discoveryBands,
     });
   }
@@ -432,7 +402,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
       eyebrow: 'Explore',
       title: collection.label,
       description: `Components in the ${collection.label} category.`,
-      controls: renderCatalogBrowseControls(catalogBrowseState()),
+      controls: renderCatalogBrowseControls(catalogBrowseState(), {
+        facets: buildCatalogFacetSummary(registries, catalogIndex, { search: state.searchTerm, assetKinds: ['component'] }),
+      }),
     });
   }
 
@@ -446,6 +418,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
     renderRegistryDirectory(roots.contentHeader, roots.contentBody, result, {
       sort: state.registrySort,
     });
+    roots.contentBody.innerHTML = roots.contentBody.innerHTML.replace(
+      '<div class="registry-directory-controls" aria-label="Registry directory controls">',
+      '<div class="registry-directory-controls" aria-label="Registry directory controls">' +
+      renderCatalogBrowseControls(catalogBrowseState(), {
+        hideSort: true, assetCounts: directoryAssetCounts,
+        selectedAssetKinds: state.catalogAssetKinds,
+      }),
+    );
+
   }
 
   function renderRegistryProfile(namespace: string): void {
@@ -467,7 +448,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
     renderRegistryCollection(roots.contentHeader, roots.contentBody, registry, result, {
       coverage: registryCatalogCoverage(registry, catalogIndex),
-      controls: renderCatalogBrowseControls(catalogBrowseState(), { showRegistrySort: false }),
+      controls: renderCatalogBrowseControls(catalogBrowseState(), {
+        showRegistrySort: false,
+        facets: buildCatalogFacetSummary(registries, catalogIndex, {
+          search: state.searchTerm, registryNames: [registry.name],
+        }),
+        showRegistries: false,
+        assetCounts: registryAssetCounts.get(registry.name) ?? {},
+        selectedAssetKinds: state.catalogAssetKinds,
+      }),
     });
   }
 
@@ -675,7 +664,37 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   roots.aside.addEventListener('click', event => handleClick(event.target as HTMLElement));
   roots.contentHeader.addEventListener('click', event => handleClick(event.target as HTMLElement));
-  roots.contentBody.addEventListener('click', event => handleClick(event.target as HTMLElement));
+  roots.contentBody.addEventListener('click', event => {
+    const target = event.target as HTMLElement;
+    const link = target.closest<HTMLAnchorElement>('a[data-view-item-registry]');
+    if (link) {
+      const mouse = event as MouseEvent;
+      if (mouse.button === 1 || mouse.ctrlKey || mouse.metaKey || mouse.shiftKey || mouse.altKey) return;
+      event.preventDefault?.();
+    }
+    handleClick(target);
+  });
+
+  // Sandboxed examples send only a navigation intent when their empty space is
+  // clicked. Interactive controls inside the iframe never request navigation.
+  window.addEventListener('message', (event: MessageEvent) => {
+    const data = event.data as { type?: string; namespace?: string; slug?: string } | null;
+    if (event.origin !== 'null' || data?.type !== 'registry-atlas:component-open'
+      || data.namespace !== '@8bitcn' || !['button', 'card', 'input'].includes(data.slug ?? '')) return;
+    const frames = roots.contentBody.querySelectorAll<HTMLIFrameElement>('iframe[data-component-demo]');
+    const matched = Array.from(frames).some(frame => {
+      if (frame.contentWindow !== event.source
+        || frame.getAttribute('data-component-demo') !== data.namespace + '/' + data.slug) return false;
+      const src = frame.getAttribute('src');
+      if (!src) return false;
+      const url = new URL(src, window.location.href);
+      return url.origin === window.location.origin
+        && url.pathname === '/Registry-Atlas/component-demos/8bitcn/index.html'
+        && url.searchParams.get('item') === data.slug
+        && url.searchParams.get('mode') === 'card';
+    });
+    if (matched) navigate({ kind: 'component', namespace: data.namespace, slug: data.slug! }, 'push');
+  });
 
   function handleClick(target: HTMLElement): void {
     if (handleInstall(target)) return;

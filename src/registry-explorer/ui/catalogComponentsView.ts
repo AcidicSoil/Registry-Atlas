@@ -9,7 +9,8 @@ import type {
   CatalogSort,
 } from "../core/catalogRoutes";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
-import { escapeHtml, renderSafeExternalImage } from "./renderSafety";
+import { escapeHtml } from "./renderSafety";
+import { renderComponentPreview } from './componentPreview';
 
 const COMMON_CATEGORIES = new Set(["ai", "forms", "form", "dashboard", "marketing", "navigation", "charts"]);
 
@@ -22,6 +23,7 @@ export interface CatalogDiscoveryBand {
 export interface CatalogComponentsViewOptions {
   searchTerm: string;
   browseState?: CatalogBrowseQueryState;
+  browseControls?: string;
   discoveryBands?: readonly CatalogDiscoveryBand[];
 }
 
@@ -45,9 +47,9 @@ export function renderCatalogComponents(
     ? `No components match “${escapeHtml(options.searchTerm.trim())}”.`
     : "No components are available.";
 
-  const controls = options.browseState
+  const controls = options.browseControls ?? (options.browseState
     ? renderCatalogBrowseControls(options.browseState)
-    : "";
+    : "");
 
   bodyRoot.innerHTML = `
     ${controls}
@@ -87,7 +89,7 @@ function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
 
 export function renderCatalogBrowseControls(
   state: CatalogBrowseQueryState,
-  options: { showRegistrySort?: boolean } = {},
+  options: { showRegistrySort?: boolean; facets?: CatalogFacetSummary; assetCounts?: Readonly<Partial<Record<AssetKindToken, number>>>; selectedAssetKinds?: readonly AssetKindToken[]; showRegistries?: boolean; showCategories?: boolean; showItemTypes?: boolean; hideSort?: boolean } = {},
 ): string {
   const visibleSort: CatalogSort = state.sort;
   const active = state.registryNames.length > 0
@@ -95,9 +97,19 @@ export function renderCatalogBrowseControls(
     || state.categories.length > 0
     || visibleSort !== "name";
 
+  const facets = options.facets
+    ? renderCatalogRailControls(options.facets, state, {
+        showRegistries: options.showRegistries,
+        showCategories: options.showCategories,
+        showItemTypes: options.showItemTypes,
+      }) : "";
+  const assetKinds = options.assetCounts
+    ? renderAssetKindChips(options.assetCounts, options.selectedAssetKinds ?? []) : "";
+  const filters = facets + assetKinds;
   return `
-    <div class="catalog-filter-bar catalog-filter-bar-compact" aria-label="Catalog sort controls">
-      <label class="catalog-filter-control">
+    <div class="catalog-filter-bar catalog-filter-bar-compact" role="group" aria-label="Catalog filters and sorting">
+      ${filters ? `<details class="catalog-filter-menu"><summary>Filters${state.registryNames.length + state.itemTypes.length + state.categories.length + (options.selectedAssetKinds?.length ?? 0) ? ` <span class="catalog-filter-count">${state.registryNames.length + state.itemTypes.length + state.categories.length + (options.selectedAssetKinds?.length ?? 0)}</span>` : ''}</summary><div class="catalog-filter-panel">${filters}</div></details>` : ""}
+      ${options.hideSort ? '' : `<label class="catalog-filter-control">
         <span>Sort</span>
         <select data-catalog-sort>
           ${sortOption("name", "Name A–Z", visibleSort)}
@@ -105,7 +117,7 @@ export function renderCatalogBrowseControls(
           ${options.showRegistrySort === false ? "" : sortOption("registry", "Registry A–Z", visibleSort)}
           ${options.showRegistrySort === false ? "" : sortOption("registry-desc", "Registry Z–A", visibleSort)}
         </select>
-      </label>
+      </label>`}
       ${active ? '<button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear filters</button>' : ""}
     </div>
   `;
@@ -184,41 +196,32 @@ export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: 'component' | 'template' | 'theme' = 'component',
 ): string {
-  const preview = component.previewUrl
-    ? renderSafeExternalImage(
-        component.previewUrl,
-        `${component.displayName} preview`,
-        "catalog-component-preview-image",
-      )
-    : routeKind === "theme" && component.themePreview
+  const liveDemo = routeKind === 'component'
+    ? renderComponentPreview(component.namespace, component.slug, 'card')
+    : null;
+  const preview = liveDemo
+    ?? (routeKind === 'theme' && component.themePreview
       ? renderCatalogThemeSpecimen(component)
-      : renderCatalogMetadataSpecimen(component);
-  const categories = component.categories.slice(0, 2)
-    .map(category => `<span>${escapeHtml(category)}</span>`)
-    .join("");
-
+      : '<div class="catalog-component-unavailable">Interactive demo unavailable</div>');
+  const routePath = routeKind === 'component' ? component.routePath
+    : component.routePath.replace('/components/', `/${routeKind}s/`);
+  const linkAttributes = `href="${escapeHtml(routePath)}"
+    data-view-item-registry="${escapeHtml(component.namespace)}"
+    data-view-item-slug="${escapeHtml(component.slug)}"
+    data-view-item-kind="${routeKind}"
+    aria-label="Open ${escapeHtml(component.displayName)} from ${escapeHtml(component.namespace)}"`;
+  const copy = `<div class="catalog-component-card-copy">
+    <strong>${escapeHtml(component.displayName)}</strong>
+    <span class="catalog-component-registry">${escapeHtml(component.namespace)}</span>
+  </div>`;
   return `
-    <article class="catalog-component-card catalog-component-card-${routeKind}">
-      <button
-        class="catalog-component-open"
-        type="button"
-        data-view-item-registry="${escapeHtml(component.namespace)}"
-        data-view-item-slug="${escapeHtml(component.slug)}"
-        data-view-item-kind="${routeKind}"
-        aria-label="Open ${escapeHtml(component.displayName)} from ${escapeHtml(component.namespace)}">
-        <div class="catalog-component-specimen">${preview}</div>
-        <div class="catalog-component-card-copy">
-          <strong>${escapeHtml(component.displayName)}</strong>
-          ${component.displayName !== component.slug
-            ? `<code class="catalog-component-slug">${escapeHtml(component.slug)}</code>`
-            : ""}
-          <span class="catalog-component-registry">${escapeHtml(component.namespace)}</span>
-          <div class="catalog-component-card-meta">
-            <span>${escapeHtml(component.type.replace(/^registry:/, ""))}</span>
-            ${categories}
-          </div>
-        </div>
-      </button>
+    <article class="catalog-component-card catalog-component-card-${routeKind}${liveDemo ? ' catalog-component-card-live' : ''}">
+      ${liveDemo
+        ? `<div class="catalog-component-specimen">${preview}</div>
+           <a class="catalog-component-open catalog-component-open-live" ${linkAttributes}>${copy}</a>`
+        : `<a class="catalog-component-open" ${linkAttributes}>
+             <div class="catalog-component-specimen">${preview}</div>${copy}
+           </a>`}
     </article>
   `;
 }

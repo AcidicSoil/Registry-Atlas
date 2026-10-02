@@ -34,8 +34,8 @@ describe('registry explorer shell interactions', () => {
     expect(home.aside.innerHTML).not.toContain('mobile-browse-menu');
 
     const harness = setup('', '/Registry-Atlas/components');
-    expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail"');
-    expect(harness.aside.innerHTML).toContain('>Registry<');
+    expect(harness.aside.innerHTML).not.toContain('class="desktop-browse-rail"');
+    expect(harness.contentBody.innerHTML).toContain('>Registry<');
     expect(harness.aside.innerHTML).not.toContain('>Collections<');
     expect(harness.aside.innerHTML).not.toContain('>Item types<');
     expect(harness.aside.innerHTML).not.toContain('>Categories<');
@@ -65,16 +65,16 @@ describe('registry explorer shell interactions', () => {
     expect(family.contentHeader.innerHTML).toContain('Icon-related assets · missing-family');
   });
 
-  it('keeps only the useful registry facet in the component sidebar', () => {
+  it('places the registry facet inside the compact results toolbar, not the sidebar', () => {
     const harness = setup('', '/Registry-Atlas/components');
 
-    expect(harness.aside.innerHTML).not.toContain('data-catalog-search');
-    expect(harness.aside.innerHTML).toContain('data-catalog-registry-value="@delta"');
-    expect(harness.aside.innerHTML).not.toContain('data-catalog-type-value');
-    expect(harness.aside.innerHTML).not.toContain('data-catalog-category-value');
-    expect(harness.aside.innerHTML).toContain('>1</span>');
+    expect(harness.aside.innerHTML).not.toContain('data-catalog-registry-value');
+    expect(harness.contentBody.innerHTML).toContain('data-catalog-registry-value="@delta"');
+    expect(harness.contentBody.innerHTML).toContain('<summary>Filters');
+    expect(harness.contentBody.innerHTML).not.toContain('data-catalog-type-value');
+    expect(harness.contentBody.innerHTML).toContain('>1</span>');
 
-    harness.aside.dispatch('click', target({ 'data-catalog-registry-value': '@delta' }));
+    harness.contentBody.dispatch('click', target({ 'data-catalog-registry-value': '@delta' }));
     expect(harness.location.search).toContain('registry=%40delta');
   });
 
@@ -162,7 +162,7 @@ describe('registry explorer shell interactions', () => {
       '/Registry-Atlas/components',
     );
 
-    expect(harness.aside.innerHTML).toMatch(/data-catalog-registry-value="@delta"[\s\S]*aria-pressed="true"/);
+    expect(harness.contentBody.innerHTML).toMatch(/data-catalog-registry-value="@delta"[\s\S]*aria-pressed="true"/);
     expect(harness.aside.innerHTML).not.toContain('data-catalog-type-value');
     expect(harness.contentBody.innerHTML).not.toContain('data-catalog-reviewed');
     expect(harness.contentBody.innerHTML).toContain('<option value="name" selected>');
@@ -176,11 +176,11 @@ describe('registry explorer shell interactions', () => {
   it('writes the registry facet to the URL and resets paging', () => {
     const harness = setup('?page=3', '/Registry-Atlas/components');
 
-    harness.aside.dispatch('click', target({ 'data-catalog-registry-value': '@delta' }));
+    harness.contentBody.dispatch('click', target({ 'data-catalog-registry-value': '@delta' }));
 
     expect(harness.location.pathname).toBe('/Registry-Atlas/components');
     expect(harness.location.search).toBe('?registry=%40delta');
-    expect(harness.aside.innerHTML).toMatch(/data-catalog-registry-value="@delta"[\s\S]*aria-pressed="true"/);
+    expect(harness.contentBody.innerHTML).toMatch(/data-catalog-registry-value="@delta"[\s\S]*aria-pressed="true"/);
   });
 
   it('writes component pagination to the shareable URL', () => {

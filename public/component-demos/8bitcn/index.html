@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; form-action 'none'; connect-src 'none'; base-uri 'none'">
+  <title>8bitcn interactive examples</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 12px;
+      background: #181b20; color: #e8e8e8; }
+    body[data-mode="detail"] { min-height: 260px; padding: 24px; }
+    #demo { display: grid; place-items: center; gap: 13px; width: min(100%, 340px); }
+    .pixel-button { padding: 13px 16px; border: 3px solid #e8e8e8; border-radius: 0;
+      background: #282f3c; color: #f5f5f5; box-shadow: 4px 4px 0 #090a0c;
+      font: 700 12px/1.4 ui-monospace, monospace; cursor: pointer;
+      transition: transform .08s, box-shadow .08s; }
+    .pixel-button:hover { background: #374050; }
+    .pixel-button:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #090a0c; }
+    .pixel-button:focus-visible, .pixel-input:focus-visible {
+      outline: 2px solid #83b2ff; outline-offset: 5px; }
+    .pixel-card { width: min(100%, 320px); padding: 15px; border: 6px solid #dce0ec;
+      background: #222831; box-shadow: 4px 4px 0 #0d1014; }
+    .pixel-card h1 { margin: 0 0 8px; font-size: 14px; line-height: 1.5; }
+    .pixel-card p { margin: 0 0 12px; font-size: 11px; line-height: 1.5; color: #bac1d0; }
+    .pixel-card .pixel-button { padding: 8px 11px; font-size: 11px; }
+    .pixel-field { display: grid; width: 100%; gap: 9px; font-size: 12px; }
+    .pixel-input { width: 100%; min-height: 41px; padding: 8px 10px; border: 5px solid #dce0ec;
+      border-radius: 0; background: #171b20; color: #fff; font: inherit; }
+    output { display: block; min-height: 17px; max-width: 100%; overflow-wrap: anywhere;
+      color: #bac8df; font-size: 11px; text-align: center; }
+    body[data-mode="card"] .pixel-card { padding: 10px; border-width: 4px; }
+    body[data-mode="card"] .pixel-card h1 { font-size: 12px; }
+    body[data-mode="card"] .pixel-card p { font-size: 10px; margin-bottom: 8px; }
+    body[data-mode="card"] .pixel-button { padding: 9px 12px; }
+  </style>
+</head>
+<body>
+  <div id="demo"></div>
+  <script>
+    "use strict";
+    // Only three manually reviewed, isolated native interaction fixtures.
+    // They express the primitive behavior; they do not claim to execute the
+    // upstream React/Tailwind component implementation.
+    const params = new URLSearchParams(location.search);
+    const slug = params.get("item");
+    const mode = params.get("mode") === "detail" ? "detail" : "card";
+    document.body.dataset.mode = mode;
+    const templates = Object.freeze({
+      button: '<button type="button" class="pixel-button" id="action">PRESS ME</button><output id="status" aria-live="polite">Ready</output>',
+      card: '<section class="pixel-card"><h1>QUEST LOG</h1><p>A pixel-framed card with a working action.</p><button type="button" class="pixel-button" id="action">MARK COMPLETE</button><output id="status" aria-live="polite">Pending</output></section>',
+      input: '<label class="pixel-field"><span>RETRO INPUT</span><input class="pixel-input" id="field" aria-label="Retro input" placeholder="Type something…" autocomplete="off"></label><output id="status" aria-live="polite">Waiting for input</output>',
+    });
+    const root = document.getElementById("demo");
+    if (!Object.hasOwn(templates, slug)) {
+      root.textContent = "Interactive example unavailable";
+    } else {
+      root.innerHTML = templates[slug];
+      let presses = 0;
+      const action = document.getElementById("action");
+      if (action) {
+        action.addEventListener("click", () => {
+          presses += 1;
+          const done = slug === "card" && presses % 2 === 1;
+          document.getElementById("status").textContent =
+            slug === "button" ? "Pressed " + presses + (presses === 1 ? " time" : " times")
+            : done ? "Complete" : "Pending";
+          if (slug === "card") action.textContent = done ? "MARK PENDING" : "MARK COMPLETE";
+          parent.postMessage({ type: "registry-atlas:component-state", slug,
+            status: document.getElementById("status").textContent }, "*");
+        });
+      }
+      const field = document.getElementById("field");
+      if (field) field.addEventListener("input", () => {
+        document.getElementById("status").textContent = field.value || "Waiting for input";
+        parent.postMessage({ type: "registry-atlas:component-state", slug,
+          status: document.getElementById("status").textContent }, "*");
+      });
+      root.addEventListener("click", event => {
+        if (mode !== "card" || event.target.closest("button,input,label")) return;
+        parent.postMessage({ type: "registry-atlas:component-open", namespace: "@8bitcn", slug }, "*");
+      });
+    }
+  </script>
+</body>
+</html>

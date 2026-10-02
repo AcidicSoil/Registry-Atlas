@@ -2,6 +2,7 @@ import { buildInstallAgentPrompt, buildInspectionPrompt } from '../core/itemProm
 import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/registryItemDetail.ts';
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import { escapeHtml } from './renderSafety.ts';
+import { renderComponentPreview } from './componentPreview.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -85,8 +86,15 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
 }
 
 function renderPreview(detail: RegistryItemDetail): string {
-  // An upstream screenshot is not an Atlas interactive component.
-  // The URL remains internal source evidence until a reviewed runtime exists.
+  const liveDemo = renderComponentPreview(detail.namespace, detail.slug, 'detail');
+  if (liveDemo) return `
+    <section class="item-preview-live" aria-label="Interactive component example">
+      <div class="catalog-eyebrow">Interactive example</div>
+      ${liveDemo}
+      <p class="muted">Isolated, source-informed interaction example. Upstream React code is not executed.</p>
+    </section>
+  `;
+  // Images are not live components. Preserve discoverability without pretending otherwise.
 
   const facts = [
     detail.author ? `By ${detail.author}` : '',
