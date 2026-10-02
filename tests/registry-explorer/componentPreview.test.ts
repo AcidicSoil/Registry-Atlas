@@ -1,11 +1,25 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error The browser-only test tsconfig omits Node builtin declarations; Vitest runs in Node.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { renderComponentPreview } from '../../src/registry-explorer/ui/componentPreview';
 import { renderCatalogComponentCard } from '../../src/registry-explorer/ui/catalogComponentsView';
 import type { CatalogComponent } from '../../src/registry-explorer/core/catalogQuery';
 
 describe('reviewed sandboxed component examples', () => {
+  it('records the reviewed fixture identities without claiming original source execution', () => {
+    const path = 'src/registry-explorer/data/component-demo-manifest.json';
+    expect(existsSync(path)).toBe(true);
+    const manifest = JSON.parse(readFileSync(path, 'utf8'));
+    expect(manifest.schema).toBe('registry-atlas-component-demos/v1');
+    expect(manifest.items).toHaveLength(3);
+    for (const slug of ['button', 'card', 'input']) {
+      expect(manifest.items.find((entry: {slug:string}) => entry.slug === slug)).toMatchObject({
+        namespace: '@8bitcn', slug, kind: 'source-informed-fixture',
+        status: 'interaction-verified', path: '/Registry-Atlas/component-demos/8bitcn/index.html',
+      });
+    }
+  });
+
   it.each(['button', 'card', 'input'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
     const rendered = renderComponentPreview('@8bitcn', slug, 'card') ?? '';
     expect(rendered).toContain('<iframe');
