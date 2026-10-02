@@ -12,6 +12,7 @@ const COMPONENT_TYPES = new Set(["registry:block", "registry:component", "regist
 const THEME_TYPES = new Set(["registry:style", "registry:theme"]);
 const ICON_TYPES = new Set(["registry:icon"]);
 const ICON_CATEGORIES = new Set(["icon", "icons", "icon-stack", "morph-icon"]);
+const ICON_ONLY_REGISTRIES = new Set(["@svgl", "@heroicons-animated", "@hugeicons-animated", "@hugeicons-animated-vue"]);
 
 const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
   { slug: "ai", label: "AI", categories: ["ai"] },
@@ -22,7 +23,8 @@ const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
   { slug: "charts", label: "Charts", categories: ["charts"] },
 ];
 
-export function assetKindForCatalogItem(item: RegistryCatalogItem): CatalogAssetKind | null {
+export function assetKindForCatalogItem(item: RegistryCatalogItem, namespace?: string): CatalogAssetKind | null {
+  if (namespace && ICON_ONLY_REGISTRIES.has(namespace)) return "icon";
   if (item.type === "registry:page") return "template";
   if (ICON_TYPES.has(item.type) || (item.categories ?? []).some(category => ICON_CATEGORIES.has(normalize(category)))) {
     return "icon";

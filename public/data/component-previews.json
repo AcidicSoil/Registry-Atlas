@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "previews": {
+    "@8bitcn/button": {
+      "imageUrl": "/Registry-Atlas/data/previews/8bitcn/button.jpg",
+      "officialPage": "https://www.8bitcn.com/docs/components/button",
+      "kind": "component",
+      "capturedAt": "2026-10-01T23:38:05.077Z",
+      "verification": "official rendered demo screenshot"
+    },
+    "@8bitcn/card": {
+      "imageUrl": "/Registry-Atlas/data/previews/8bitcn/card.jpg",
+      "officialPage": "https://www.8bitcn.com/docs/components/card",
+      "kind": "component",
+      "capturedAt": "2026-10-01T23:35:51.576Z",
+      "verification": "official rendered demo screenshot"
+    },
+    "@8bitcn/input": {
+      "imageUrl": "/Registry-Atlas/data/previews/8bitcn/input.jpg",
+      "officialPage": "https://www.8bitcn.com/docs/components/input",
+      "kind": "component",
+      "capturedAt": "2026-10-01T23:37:06.546Z",
+      "verification": "official rendered demo screenshot"
+    },
+    "@svgl/mastra": {
+      "imageUrl": "https://svgl.app/library/mastra-icon-light.svg",
+      "officialPage": "https://svgl.app/",
+      "kind": "icon",
+      "capturedAt": "2026-10-01T23:41:00.000Z",
+      "verification": "official gallery image alt and src matched catalog identity"
+    }
+  }
+}

@@ -44,6 +44,7 @@ export interface CatalogQueryOptions {
   page?: number;
   pageSize?: number;
   basePath?: string;
+  visualOnly?: boolean;
 }
 export interface CatalogQueryResult {
   items: CatalogComponent[];
@@ -92,6 +93,7 @@ export function queryCatalogComponents(
   const sort = options.sort ?? "name";
   const query = normalize(options.search ?? "");
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));
+  const visualPreviews = (index as RegistryCatalogIndex & { visualPreviews?: Readonly<Record<string, string>> }).visualPreviews ?? {};
   const reviewedByRegistry = new Map(
     registries.map(registry => [registry.name, reviewedSummaryMap(registry)]),
   );
@@ -106,6 +108,8 @@ export function queryCatalogComponents(
 
     for (const item of index.registries[namespace] ?? []) {
       const overlay = reviewed.get(registryCatalogItemIdentity(item.name));
+      const verifiedPreview = visualPreviews[`${namespace}/${item.name}`];
+      if (options.visualOnly && !(verifiedPreview || overlay?.previewUrl || item.themePreview)) continue;
       if (!matchesFilters(
         item,
         namespace,
@@ -127,7 +131,8 @@ export function queryCatalogComponents(
   const start = (page - 1) * pageSize;
   const items = matches
     .slice(start, start + pageSize)
-    .map(match => toCatalogComponent(match.registry, match.item, match.reviewed, options.basePath));
+    .map(match => toCatalogComponent(match.registry, match.item, match.reviewed, options.basePath,
+      visualPreviews[`${match.registry.name}/${match.item.name}`]));
 
   return {
     items,
@@ -194,6 +199,7 @@ function toCatalogComponent(
   item: RegistryCatalogItem,
   reviewed: RegistryItemSummary | undefined,
   basePath = "/Registry-Atlas/",
+  verifiedPreview?: string,
 ): CatalogComponent {
   return {
     id: `${registry.name}:${item.name}`,
@@ -215,7 +221,7 @@ function toCatalogComponent(
       { kind: "component", namespace: registry.name, slug: item.name },
       basePath,
     ),
-    ...(reviewed?.previewUrl ? { previewUrl: reviewed.previewUrl } : {}),
+    ...((verifiedPreview || reviewed?.previewUrl) ? { previewUrl: verifiedPreview || reviewed?.previewUrl } : {}),
     ...(reviewed?.docsUrl ? { docsUrl: reviewed.docsUrl } : {}),
   };
 }
@@ -278,7 +284,7 @@ function matchesFilters(
   isReviewed: boolean,
 ): boolean {
   if (typeFilter.size > 0 && !typeFilter.has(normalize(item.type))) return false;
-  if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item) ?? "component")) return false;
+  if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item, namespace) ?? "component")) return false;
   const categories = (item.categories ?? []).map(normalize);
   if (categoryFilter.size > 0 && !categories.some(category => categoryFilter.has(category))) {
     return false;

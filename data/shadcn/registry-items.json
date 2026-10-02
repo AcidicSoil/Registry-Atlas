@@ -1905,5 +1905,17 @@
       "files": [],
       "warnings": []
     }
+  ],
+  "@animate-ui": [
+    {
+      "name": "components-animate-avatar-group",
+      "slug": "components-animate-avatar-group",
+      "type": "registry:ui",
+      "source": "official-browser",
+      "provenance": "Official page https://animate-ui.com/docs/components/animate/avatar-group",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "docs_url": "https://animate-ui.com/docs/components/animate/avatar-group"
+    }
   ]
 }

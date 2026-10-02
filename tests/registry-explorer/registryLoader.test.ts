@@ -16,6 +16,7 @@ describe('loadRegistries', () => {
     expect(calls).toEqual([
       '/data/registries.json',
       '/data/registry-catalog-items.json',
+      '/data/component-previews.json',
     ]);
   });
 

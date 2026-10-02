@@ -1,4 +1,4 @@
-import { readFile, appendFile, mkdir, writeFile, stat } from 'node:fs/promises';
+import { readFile, appendFile, mkdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { resolve, join, dirname } from 'node:path';
@@ -271,6 +271,8 @@ async function cli(argv) {
   const batchSize = numericOption(argv, '--batch-size', 10);
   const delayMs = numericOption(argv, '--delay-ms', 1000);
   const maxItemsPerRun = numericOption(argv, '--max-items', Infinity);
+  const apply = argv.includes('--apply');
+  if (apply && !registryName) throw new Error('--apply requires --registry');
   if (batchSize > 200) throw new Error('Batch size exceeds 200');
   // The profile identity and domain permissions come from PPM, not an
   // unchecked user-supplied allowlist or a shared default browser.
@@ -305,11 +307,22 @@ async function cli(argv) {
       pending: totals.pending, registriesAttempted: totals.registriesAttempted,
     })),
   });
+  let correction = { changes: [], unresolved: [] };
+  if (apply) {
+    const runtimeBefore = await readFile('public/data/registries.json', 'utf8');
+    correction = proposeVerifiedLinkUpdates(jobs, journal,
+      JSON.parse(bytes[2]), JSON.parse(runtimeBefore));
+    if (correction.unresolved.length)
+      throw new Error('Cannot apply conflicting evidence: ' + JSON.stringify(correction.unresolved));
+    await persistVerifiedChanges(bytes[2], runtimeBefore, correction);
+  }
   const report = {
     schemaVersion: 'registry-atlas-autonomous-link-audit/v1',
     generatedAt: new Date().toISOString(),
     sourceDigest: digest, profile, server, registry: registryName, slug: selectedSlug,
     screenshotsRequired: false, verifiedCount: summary.verified,
+    sourceUpdatesApplied: apply, corrections: correction.changes,
+    atlasNavigationStillRequired: correction.changes.map(change => change.token),
     ...summary, scopedComplete: summary.complete,
     complete: !registryName && !selectedSlug && summary.complete,
     journalPath, nonVerifiedRows: [...journal.entries.values()]
@@ -319,7 +332,9 @@ async function cli(argv) {
   if (reportPath) await writeFile(resolve(reportPath),
     JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
   console.log(JSON.stringify({ result: 'crawl-finished', report: reportPath,
-    registry: registryName, slug: selectedSlug, ...summary,
+    registry: registryName, slug: selectedSlug,
+    sourceUpdatesApplied: apply, corrections: correction.changes,
+    ...summary,
     scopedComplete: summary.complete,
     complete: !registryName && !selectedSlug && summary.complete }));
   if (summary.unresolved) process.exitCode = 2;
@@ -490,4 +505,39 @@ export async function collectQualifiedRegistryRoutes(browser, registry, targets,
       } });
   }
   return result;
+}
+
+async function persistVerifiedChanges(curatedBefore, runtimeBefore, proposed) {
+  const curatedFile = 'data/shadcn/registry-items.json';
+  const runtimeFile = 'public/data/registries.json';
+  const [curatedNow, runtimeNow] = await Promise.all([
+    readFile(curatedFile, 'utf8'), readFile(runtimeFile, 'utf8'),
+  ]);
+  if (curatedBefore !== curatedNow || runtimeBefore !== runtimeNow)
+    throw new Error('Atlas source/runtime changed during browser audit; apply cancelled');
+  const proposedCurated = JSON.stringify(proposed.curated, null, 2) + '\n';
+  const proposedRuntime = JSON.stringify(proposed.runtime, null, 2) + '\n';
+  if (!proposed.changes.length) return 0;
+  const suffix = '.component-link-audit-' + process.pid + '-' + Date.now() + '.tmp';
+  const cTmp = curatedFile + suffix, rTmp = runtimeFile + suffix;
+  try {
+    await writeFile(cTmp, proposedCurated, { flag: 'wx' });
+    await writeFile(rTmp, proposedRuntime, { flag: 'wx' });
+    if (curatedBefore !== await readFile(curatedFile, 'utf8')
+      || runtimeBefore !== await readFile(runtimeFile, 'utf8'))
+      throw new Error('Atlas records changed before publish');
+    await rename(cTmp, curatedFile);
+    try {
+      await rename(rTmp, runtimeFile);
+    } catch (error) {
+      await writeFile(curatedFile, curatedBefore);
+      throw error;
+    }
+    return proposed.changes.length;
+  } finally {
+    await Promise.all([
+      unlink(cTmp).catch(error => { if (error.code !== 'ENOENT') throw error; }),
+      unlink(rTmp).catch(error => { if (error.code !== 'ENOENT') throw error; }),
+    ]);
+  }
 }

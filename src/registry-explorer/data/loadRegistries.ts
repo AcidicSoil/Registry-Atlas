@@ -97,6 +97,7 @@ type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Respo
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
   const mirrorUrl = `${import.meta.env.BASE_URL}data/registries.json`;
   const catalogUrl = `${import.meta.env.BASE_URL}data/registry-catalog-items.json`;
+  const visualUrl = `${import.meta.env.BASE_URL}data/component-previews.json`;
   const [response, catalogResponse] = await Promise.all([
     fetchImpl(mirrorUrl),
     fetchImpl(catalogUrl),
@@ -112,6 +113,10 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   const mirrorData = await response.json() as unknown;
   const catalogData = await catalogResponse.json() as unknown;
   const catalogIndex = parseRegistryCatalogIndex(catalogData);
+  // Visual captures are optional; missing evidence must never block registry browsing.
+  const previewManifest = await fetchImpl(visualUrl).then(async response =>
+    response.ok ? await response.json() as unknown : null).catch(() => null);
+  const visualPreviews = readVisualPreviewManifest(previewManifest, catalogIndex);
   const validation = validateRegistryMirror(mirrorData);
 
   if (validation.errors.length > 0) {
@@ -123,7 +128,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
 
   return {
     meta: typedMirror.meta,
-    catalogIndex,
+    catalogIndex: Object.assign(catalogIndex, { visualPreviews }),
     warnings: validation.warnings,
     registries: typedMirror.registries.map(record => ({
       name: record.official.name,
@@ -183,6 +188,40 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
     files: item.files,
     warnings: item.warnings,
   }));
+}
+
+export function readVisualPreviewManifest(
+  input: unknown, catalog: RegistryCatalogIndex,
+): Readonly<Record<string, string>> {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
+  const data = input as Record<string, unknown>;
+  if (data.schemaVersion !== 1 || !data.previews || typeof data.previews !== 'object'
+    || Array.isArray(data.previews)) return {};
+  const names = new Map(Object.entries(catalog.registries).map(([ns, items]) =>
+    [ns, new Set(items.map(item => item.name))]));
+  const previews: Record<string, string> = {};
+  for (const [key, entry] of Object.entries(data.previews)) {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
+    const item = entry as Record<string, unknown>;
+    if (typeof item.imageUrl !== 'string' || typeof item.officialPage !== 'string') continue;
+    const separator = key.indexOf('/');
+    if (separator < 1 || !names.get(key.slice(0, separator))?.has(key.slice(separator + 1))) continue;
+    const local = item.imageUrl.startsWith('/Registry-Atlas/data/previews/')
+      && !item.imageUrl.includes('..')
+      && /^\/Registry-Atlas\/data\/previews\/[a-z0-9-]+(?:\/[a-z0-9-]+)*\.(?:jpe?g|png|webp)$/i.test(item.imageUrl);
+    try {
+      const official = new URL(item.officialPage);
+      if (official.protocol !== 'https:' || official.username || official.password) continue;
+      if (!local) {
+        const visual = new URL(item.imageUrl);
+        if (visual.protocol !== 'https:' || visual.origin !== official.origin
+          || visual.username || visual.password
+          || !/\.(?:svg|jpe?g|png|webp)$/i.test(visual.pathname)) continue;
+      }
+    } catch { continue; }
+    previews[key] = item.imageUrl;
+  }
+  return previews;
 }
 
 function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): Map<string, string[]> {
