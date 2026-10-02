@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM reconciliation.
-import { reconcileCoverage } from '../../scripts/reconcile-component-preview-coverage.mjs';
+import { reconcileCoverage, parseReconciliationArgs, domainsFromManagedProfile } from '../../scripts/reconcile-component-preview-coverage.mjs';
 
 const raw = [
   {name: '@alpha', homepage: 'https://alpha.example/'},
@@ -19,6 +19,29 @@ const manifest = {schema: 'registry-atlas-component-demos/v1', items: [{
 const asOf = '2026-10-02T08:00:00.000Z';
 
 describe('independent preview and discovery coverage reconciliation', () => {
+  it('requires a named managed source profile and its running server for CLI reconciliation', () => {
+    expect(() => parseReconciliationArgs(['--journal-dir', '/tmp/atlas'])).toThrow(/--profile/);
+    expect(() => parseReconciliationArgs(['--journal-dir', '/tmp/atlas', '--profile', 'source'])).toThrow(/--server/);
+    expect(() => parseReconciliationArgs(['--journal-dir', '/tmp/atlas', '--profile', 'source',
+      '--server', 'http://127.0.0.1:9878', '--unsupported', 'yes'])).toThrow(/Unknown/);
+    expect(parseReconciliationArgs(['--journal-dir', '/tmp/atlas', '--profile', 'source',
+      '--server', 'http://127.0.0.1:9878'])).toMatchObject({
+      profile: 'source', server: 'http://127.0.0.1:9878', journalDir: '/tmp/atlas',
+    });
+  });
+
+  it('uses only the selected managed profile settings and rejects stale/untrusted status', () => {
+    const status = {ok: true, profile: 'source', data: {
+      instances: [{url: 'http://127.0.0.1:9878', status: 'running'}],
+      settings: {allowedDomains: ['alpha.example']},
+    }};
+    expect(domainsFromManagedProfile(status, 'source', 'http://127.0.0.1:9878')).toEqual(['alpha.example']);
+    expect(() => domainsFromManagedProfile(status, 'source', 'http://127.0.0.1:9877')).toThrow(/running/);
+    expect(() => domainsFromManagedProfile(status, 'other', 'http://127.0.0.1:9878')).toThrow(/profile/);
+    expect(() => domainsFromManagedProfile({...status, data: {...status.data, settings: {}}}, 'source',
+      'http://127.0.0.1:9878')).toThrow(/allowedDomains/);
+  });
+
   it('retains empty registries, separates document and functional stages, and flags unfinished coverage', () => {
     const result = reconcileCoverage(raw, catalog, {}, manifest, {}, {
       asOf, assetExists: () => true,
@@ -26,6 +49,7 @@ describe('independent preview and discovery coverage reconciliation', () => {
     expect(result.summary).toMatchObject({
       rawRegistries: 2, distinctItems: 2,
       pageObserved: 0, notVisited: 2,
+      blockedByProfile: 2,
       fixtureVerified: 1, upstreamBuiltVerified: 0, previewPending: 1,
       complete: false, errors: 0,
     });
