@@ -58,36 +58,47 @@ An empty raw registry, unavailable homepage, site requiring auth, soft-404, dupl
 
 ## Live validation and implementation boundary
 
-2026-10-02: The initial managed `registry-atlas-source-audit` runs observed real `www.8bitcn.com` and `animate-ui.com` documentation routes. A reusable official JSON-index reader is implemented and tested using witnessed-index fixtures, but no tested live page exposed an index anchor; its successful real-site evidence remains outstanding. A bounded scheduler ran against both allowed source domains: a sampled `@8bitcn` batch recorded one observed documentation page and one budget-exhausted identity; a sampled `@animate-ui` batch recovered from an initial empty-navigation failure and verified two documentation pages. Live JSONL journals are under `/tmp/registry-atlas-discovery-batches-20261002` and are **not** published catalog rows. The current source profile allows two sites, leaving 406 source registries profile-blocked. Reconciliation counts all 408 registry identities, 84,145 distinct catalog items, 3 source-informed fixture demos, 0 upstream-built demos, and 84,142 preview-pending identities. This is not a whole-registry crawl, a license review, an executable upstream preview, or a full runtime rollout.
+2026-10-02: The initial managed `registry-atlas-source-audit` runs observed real `www.8bitcn.com` and `animate-ui.com` documentation routes. A reusable official JSON-index reader is implemented and tested using witnessed-index fixtures, but no tested live page exposed an index anchor; its successful real-site evidence remains outstanding. A bounded scheduler ran against both allowed source domains: a sampled `@8bitcn` batch recorded one observed documentation page and one budget-exhausted identity; a sampled `@animate-ui` batch recovered from an initial empty-navigation failure and verified two documentation pages. The earlier live JSONL journals were written under `/tmp/registry-atlas-discovery-batches-20261002` and were **not** published catalog rows; the temporary directory was not retained on the current workstation session. The current source profile allows two sites, leaving 406 source registries profile-blocked. Reconciliation counts all 408 registry identities, 84,145 distinct catalog items, 3 source-informed fixture demos, 0 upstream-built demos, and 84,142 preview-pending identities. This is not a whole-registry crawl, a license review, an executable upstream preview, or a full runtime rollout.
 
 ## Coordination
 
-Use PPM `pinchtab-project-work` PAO ownership before writing; read `pinchtab-profile-manager-frontend` and use the intended managed profile for all browser checks. The earlier crawler and visual overlay changes were integrated only after acquiring PAO ownership; keep the older crawler's independently verified evidence separate from the new discovery journal until the output contracts are bridged. The Atlas UI still omits external component-detail source links while keeping the user-requested official registry homepage links on directory/profile pages. Do not relax the no-external-source-link product contract.
+Use PPM `pinchtab-project-work` PAO ownership before writing; read `pinchtab-profile-manager-frontend` and use the intended managed profile for all browser checks. The earlier crawler and visual overlay changes were integrated only after acquiring PAO ownership; keep the older crawler's independently verified evidence separate from the new discovery journal until the output contracts are bridged. The Atlas UI still omits raw component-detail source links. The user-requested official registry homepage action is now shown once in every registry-specific route header, including component, template, theme and icon-family routes. Do not equate this navigation link with source, build or preview verification.
 ## Operator runbook and rollout gates
 
 Run from the repository root. Do not use Atlas's localhost-only frontend profile to browse external registries. The source profile and tab must already exist and be managed by PPM:
 
 ```bash
+# Discover the single running instance from PPM rather than reusing a stale port.
 pinchtab-profile-manager registry-atlas-source-audit status --json
-pinchtab --server http://127.0.0.1:9877 tab --json
+SOURCE_SERVER="$(pinchtab-profile-manager registry-atlas-source-audit status --json |
+  jq -er '[.data.instances[] | select(.status=="running") | .url]
+    | if length == 1 then .[0] else error("Expected one managed source instance") end')"
+# Save new journals under durable user state. Do not assume old /tmp journals survived.
+JOURNAL_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/registry-atlas/discovery"
+mkdir -p "$JOURNAL_DIR"
+pinchtab --server "$SOURCE_SERVER" tab --json
 
 # Count all registries and show a bounded, profile-allowed next batch without browsing.
 node scripts/schedule-registry-discovery.mjs --profile registry-atlas-source-audit \
-  --server http://127.0.0.1:9877 --journal-dir /tmp/registry-atlas-discovery-batches-20261002 \
+  --server "$SOURCE_SERVER" --journal-dir "$JOURNAL_DIR" \
   --max-registries 2 --dry-run
 
 # Run one bounded batch on an explicit tab belonging to that same profile.
+# Copy a tab ID from the manager-owned tab listing; never use the default server.
+SOURCE_TAB='<managed-source-tab-id>'
 node scripts/schedule-registry-discovery.mjs --profile registry-atlas-source-audit \
-  --server http://127.0.0.1:9877 --tab '<managed-source-tab-id>' \
-  --journal-dir /tmp/registry-atlas-discovery-batches-20261002 \
+  --server "$SOURCE_SERVER" --tab "$SOURCE_TAB" \
+  --journal-dir "$JOURNAL_DIR" \
   --max-registries 1 --per-registry-limit 20 --delay-ms 1000
 
 # Use an exclusive --cursor @namespace to advance through registry-name order.
 # Reconcile actual saved documentation and reviewed visual/functional status separately.
 node scripts/reconcile-component-preview-coverage.mjs \
-  --journal-dir /tmp/registry-atlas-discovery-batches-20261002
+  --journal-dir "$JOURNAL_DIR"
 ```
 
 Keep each registry's JSONL journal and exclusive lock outside published data. A successful run may still report unresolved or budget-exhausted items; resume with increased limits and do not treat `processedThisRun` as `fullyVerified`. A profile domain block requires a separately approved manager configuration, not a silent unrestricted browser fallback. Neither the snapshot, a structured index, nor a screenshot satisfies the review-gated original-source build and independent interaction-verification contracts.
+
+A later live check on 2026-10-02 found no official JSON-index links among 16 anchors on the `www.8bitcn.com` homepage, 11 anchors on the `animate-ui.com` homepage, or 103 anchors at `animate-ui.com/docs/components`; this is bounded negative evidence, not proof that an index does not exist. The earlier `/tmp/registry-atlas-discovery-batches-20261002` journal directory was absent during the later check, so those historical counts must not be treated as freshly reproducible ledger coverage. A fresh bounded run with the managed 9878 source browser instead persisted JSONL under `${XDG_STATE_HOME:-$HOME/.local/state}/registry-atlas/discovery`: `@8bitcn/accordion` and `@animate-ui/components-animate-avatar-group` and `@animate-ui/components-animate-code` are `page-observed`; `@8bitcn/advanced1` is `discovery-budget-exhausted`. The scheduler reported 406 registry origins outside the approved profile. No catalog mutations or source-exact preview builds resulted. Independent reconciliation reproduced three page observations, one unresolved, and 84,142 preview-pending identities. The reconciler's `blockedByProfile` count was not usable at that point because its CLI defaulted to an unrelated wildcard domain policy; it must use the same managed profile domain configuration as scheduling before that count can be trusted.
 
 The review-gated upstream build runtime and comprehensive site-permission rollout remain unfinished. The legacy crawler and discovery engine share navigation and identity resolution, but the audited crawler's `--apply` step remains a separate, explicit operation requiring independent official-source verification. No bulk data promotion was performed. Never claim coverage of all 84,145 previews until every identity actually passes its own original-source, license, dependency, isolation and browser evidence checks.
