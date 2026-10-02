@@ -71,6 +71,10 @@ export async function main(argv, cwd = process.cwd()) {
   try {
   const ledger = await DiscoveryLedger.open(options.journal);
   const browser = new PinchTabBrowser(options.server, options.tab);
+  // An empty hydration snapshot cannot be treated as an empty registry.
+  browser.waitForLinks = async timeoutMs => browser.call('wait', '--fn',
+    "document.querySelectorAll('a[href]').length > 0",
+    '--timeout', String(Math.min(timeoutMs, 4000)));
   const result = await discoverRegistry({
     registry, indexedItems, ledger, browser,
     limit: options.limit, maxPages: options.maxPages,

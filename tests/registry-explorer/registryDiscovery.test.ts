@@ -102,11 +102,166 @@ describe('evidence-based registry discovery', () => {
       browser: fakeBrowser(nestedPages, HOME), ledger: fakeLedger(), checkedAt: at,
     });
     expect(result.records.find((x: any) => x.slug === 'forms/select/async')?.status).toBe('page-observed');
-    for (const slug of ['forms/select', 'lists/select']) {
-      expect(result.records.find((x: any) => x.slug === slug)).toMatchObject({
-        status: 'unresolved', reason: 'ambiguous-component-identity',
+    expect(result.records.find((x: any) => x.slug === 'forms/select')).toMatchObject({
+      status: 'page-observed', docsUrl: 'https://sample.example/docs/forms/select',
+    });
+    expect(result.records.find((x: any) => x.slug === 'lists/select')).toMatchObject({
+      status: 'unresolved', reason: 'not-found-in-observed-navigation',
+    });
+  });
+
+  it('does not misattribute a longer component name to its shorter prefix', async () => {
+    const sample: Record<string, Page> = {
+      [HOME]: { links: [['Components', '/components']] },
+      'https://sample.example/components': { heading: 'Components',
+        links: [
+          ['Button Group', '/docs/components/button-group'],
+          ['Button', '/docs/components/button'],
+          ['Alert Dialog', '/docs/components/alert-dialog'],
+          ['Alert', '/docs/components/alert'],
+        ] },
+      'https://sample.example/docs/components/button-group': { heading: 'Button Group' },
+      'https://sample.example/docs/components/button': { heading: 'Button' },
+      'https://sample.example/docs/components/alert-dialog': { heading: 'Alert Dialog' },
+      'https://sample.example/docs/components/alert': { heading: 'Alert' },
+    };
+    const results = await discoverRegistry({
+      registry, indexedItems: ['button', 'button-group', 'alert', 'alert-dialog'],
+      browser: fakeBrowser(sample, HOME), ledger: fakeLedger(), checkedAt: at,
+    });
+    for (const slug of ['button', 'button-group', 'alert', 'alert-dialog']) {
+      expect(results.records.find((x: any) => x.slug === slug)).toMatchObject({
+        status: 'page-observed', docsUrl: 'https://sample.example/docs/components/' + slug,
       });
     }
+  });
+
+  it('maps flattened catalog identity to observed nested documentation paths without guessing URLs', async () => {
+    const source: Record<string, Page> = {
+      [HOME]: {links: [['Components', '/docs/components']]},
+      'https://sample.example/docs/components': {heading: 'Components',
+        links: [['Animate', '/docs/components/animate'], ['Base', '/docs/components/base']]},
+      'https://sample.example/docs/components/animate': {heading: 'Animate',
+        links: [['Avatar Group', '/docs/components/animate/avatar-group'],
+          ['Code Tabs', '/docs/components/animate/code-tabs']]},
+      'https://sample.example/docs/components/base': {heading: 'Base',
+        links: [['Accordion', '/docs/components/base/accordion']]},
+      'https://sample.example/docs/components/animate/avatar-group': {heading: 'Avatar Group'},
+      'https://sample.example/docs/components/animate/code-tabs': {heading: 'Code Tabs'},
+      'https://sample.example/docs/components/base/accordion': {heading: 'Accordion'},
+    };
+    const browser = fakeBrowser(source, HOME);
+    const result = await discoverRegistry({
+      registry, indexedItems: ['components-animate-avatar-group',
+        'components-animate-code-tabs', 'components-base-accordion'],
+      browser, ledger: fakeLedger(), checkedAt: at,
+      maxDepth: 3, maxPages: 8,
+    });
+    expect(result.records.map((x: any) => [x.slug, x.status])).toEqual([
+      ['components-animate-avatar-group', 'page-observed'],
+      ['components-animate-code-tabs', 'page-observed'],
+      ['components-base-accordion', 'page-observed'],
+    ]);
+    expect(result.records[0].docsUrl).toBe(
+      'https://sample.example/docs/components/animate/avatar-group');
+    expect(browser.navigated).not.toContain('https://sample.example/docs/components-animate-avatar-group');
+  });
+
+  it('distinguishes the official component link from block cards reusing the same label', async () => {
+    const source: Record<string, Page> = {
+      [HOME]: {links: [['Components', '/components']]},
+      'https://sample.example/components': {heading: 'Components',
+        links: [['Accordion', '/docs/components/accordion'],
+          ['Accordion', '/docs/blocks/faq/faq1'],
+          ['Carousel', '/docs/components/carousel'],
+          ['Carousel', '/docs/blocks/features/feature3']]},
+      'https://sample.example/docs/components/accordion': {heading: 'Accordion'},
+      'https://sample.example/docs/blocks/faq/faq1': {heading: 'Accordion'},
+      'https://sample.example/docs/components/carousel': {heading: 'Carousel'},
+      'https://sample.example/docs/blocks/features/feature3': {heading: 'Carousel'},
+    };
+    const browser = fakeBrowser(source, HOME);
+    const result = await discoverRegistry({
+      registry, indexedItems: ['accordion', 'carousel'],
+      browser, ledger: fakeLedger(), checkedAt: at,
+    });
+    for (const slug of ['accordion', 'carousel']) {
+      expect(result.records.find((r: any) => r.slug === slug)).toMatchObject({
+        status: 'page-observed', docsUrl: 'https://sample.example/docs/components/' + slug,
+      });
+    }
+    expect(browser.navigated).not.toContain('https://sample.example/docs/blocks/faq/faq1');
+    expect(browser.navigated).not.toContain('https://sample.example/docs/blocks/features/feature3');
+  });
+
+  it('refuses ambiguous leaf names without a disambiguating observed path', async () => {
+    const sample: Record<string, Page> = {
+      [HOME]: { links: [['Components', '/components']] },
+      'https://sample.example/components': { heading: 'Components',
+        links: [['Select', '/docs/not-revealing-family']] },
+      'https://sample.example/docs/not-revealing-family': { heading: 'Select' },
+    };
+    const result = await discoverRegistry({
+      registry, indexedItems: ['forms/select', 'lists/select'],
+      browser: fakeBrowser(sample, HOME), ledger: fakeLedger(), checkedAt: at,
+    });
+    expect(result.records.map((r: any) => [r.status, r.reason])).toEqual([
+      ['unresolved', 'ambiguous-component-identity'],
+      ['unresolved', 'ambiguous-component-identity'],
+    ]);
+  });
+
+  it('revisits only unresolved items when the discovery budget is increased', async () => {
+    const ledger = fakeLedger();
+    const limited = await discoverRegistry({
+      registry, indexedItems: ['card'], browser: fakeBrowser(pages, HOME),
+      ledger, checkedAt: at, maxPages: 1,
+    });
+    expect(limited.records[0].reason).toBe('discovery-budget-exhausted');
+    const browser = fakeBrowser(pages, HOME);
+    const expanded = await discoverRegistry({
+      registry, indexedItems: ['card'], browser, ledger, checkedAt: at,
+      maxPages: 10,
+    });
+    expect(expanded.records[0]).toMatchObject({status: 'page-observed'});
+    expect(expanded.processed).toBe(1);
+    expect(browser.navigated).toContain('https://sample.example/docs');
+  });
+
+  it('rechecks old discovery revisions rather than trusting previous ambiguous matches', async () => {
+    const source: Record<string, Page> = {
+      [HOME]: { links: [['Components', '/components']] },
+      'https://sample.example/components': { heading: 'Components',
+        links: [['Alert Dialog', '/docs/alert-dialog'], ['Alert', '/docs/alert']] },
+      'https://sample.example/docs/alert-dialog': { heading: 'Alert Dialog' },
+      'https://sample.example/docs/alert': { heading: 'Alert' },
+    };
+    const fp = catalogFingerprint(registry, ['alert', 'alert-dialog']);
+    const ledger = fakeLedger();
+    await ledger.append({schema: 'registry-atlas-discovery/v1',
+      discoveryRevision: 'identity-resolution-v4',
+      token: 'registry:@sample', status: 'discovered', namespace: '@sample',
+      catalogFingerprint: fp, checkedAt: at, exhausted: false,
+      listings: [], ambiguous: [], candidates: [
+        {slug: 'alert', url: 'https://sample.example/docs/alert-dialog',
+          name: 'Alert Dialog', listingUrl: 'https://sample.example/components',
+          matching: 'full-name', navigationSource: 'observed-dom-anchor'},
+      ]});
+    await ledger.append({schema: 'registry-atlas-discovery/v1',
+      discoveryRevision: 'identity-resolution-v4',
+      token: '@sample/alert', status: 'page-observed',
+      catalogFingerprint: fp, checkedAt: at,
+      docsUrl: 'https://sample.example/docs/alert-dialog'});
+    const result = await discoverRegistry({
+      registry, indexedItems: ['alert', 'alert-dialog'],
+      browser: fakeBrowser(source, HOME), ledger, checkedAt: at,
+    });
+    expect(result.records.find((r: any) => r.slug === 'alert')).toMatchObject({
+      docsUrl: 'https://sample.example/docs/alert',
+      status: 'page-observed',
+    });
+    expect(result.processed).toBe(2);
+    expect(ledger.writes.filter(r => r.token === 'registry:@sample')).toHaveLength(2);
   });
 
   it('does not choose between two distinct observed destinations for one title', async () => {
@@ -142,7 +297,8 @@ describe('evidence-based registry discovery', () => {
 
   it('fails closed on unsafe registry roots, budget exhaustion and invalid limit', async () => {
     const unsafe = ['http://sample.example', 'https://127.0.0.1',
-      'https://10.12.0.1', 'https://[::1]', 'https://someone:password@sample.example'];
+      'https://10.12.0.1', 'https://100.64.0.1', 'https://8.8.8.8',
+      'https://[::1]', 'https://someone:password@sample.example'];
     for (const homepage of unsafe) {
       await expect(discoverRegistry({ registry: { ...registry, homepage },
         indexedItems: ['button'], browser: fakeBrowser(pages, HOME),
@@ -192,6 +348,39 @@ describe('evidence-based registry discovery', () => {
     } finally {
       await rm(dir, { recursive: true, force: true });
     }
+  });
+
+  it('waits for browser hydration when a rendered page initially has no observed links', async () => {
+    const source: Record<string, Page> = {
+      [HOME]: {links: [['Components', '/components']]},
+      'https://sample.example/components': {heading: 'Components',
+        links: [['Button', '/docs/button']]},
+      'https://sample.example/docs/button': {heading: 'Button'},
+    };
+    const browser = fakeBrowser(source, HOME);
+    const snapshot = browser.snap, dom = browser.domLinks;
+    let hydrated = false, waited = 0;
+    browser.snap = async () => hydrated ? snapshot() : {url: await browser.url(), nodes: []};
+    browser.domLinks = async () => hydrated ? dom() : [];
+    (browser as any).waitForLinks = async () => {hydrated = true; waited++;};
+    const result = await discoverRegistry({
+      registry, indexedItems: ['button'], browser, ledger: fakeLedger(), checkedAt: at,
+    });
+    expect(waited).toBe(1);
+    expect(result.records[0]).toMatchObject({
+      status: 'page-observed', docsUrl: 'https://sample.example/docs/button',
+    });
+  });
+
+  it('reports unresolved navigation when no evidence appears after the bounded wait', async () => {
+    const browser = fakeBrowser({[HOME]: {heading: 'Empty'}}, HOME);
+    const result = await discoverRegistry({
+      registry, indexedItems: ['button'], browser, ledger: fakeLedger(), checkedAt: at,
+    });
+    expect(result.records[0]).toMatchObject({
+      status: 'unresolved', reason: 'discovery-navigation-error',
+    });
+    expect(result.observationError).toMatch(/no observed navigation/i);
   });
 
   it('can discover a DOM-only component link omitted from the semantic snapshot', async () => {

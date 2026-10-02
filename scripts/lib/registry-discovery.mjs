@@ -4,13 +4,16 @@ import { isAbsolute } from 'node:path';
 import { isIP } from 'node:net';
 
 const SCHEMA = 'registry-atlas-discovery/v1';
+// Bump when identity resolution semantics change; old evidence is not re-promoted.
+const DISCOVERY_REVISION = 'identity-resolution-v5';
 const DIRECTORY = /^(?:docs?|documentation|components|primitives|blocks|patterns|catalog|library|elements|ui|examples|animations|actions|forms|inputs|buttons|navigation|feedback|browse)$/i;
 const normalize = text => String(text ?? '').toLowerCase()
   .replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
 const leaf = item => item.split('/').at(-1);
 const hash = input => createHash('sha256').update(input).digest('hex');
 const isFresh = (row, fingerprint, checkedAt, maxAgeMs) =>
-  row?.catalogFingerprint === fingerprint && typeof row.checkedAt === 'string'
+  row?.discoveryRevision === DISCOVERY_REVISION
+  && row?.catalogFingerprint === fingerprint && typeof row.checkedAt === 'string'
   && Date.parse(checkedAt) >= Date.parse(row.checkedAt)
   && Date.parse(checkedAt) - Date.parse(row.checkedAt) < maxAgeMs;
 
@@ -20,11 +23,7 @@ function officialRoot(homepage) {
   const host = url.hostname.toLowerCase().replace(/^\[|\]$/g, '');
   if (url.protocol !== 'https:' || !host || url.port || url.username || url.password
     || host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')
-    || host.endsWith('.internal') || host.includes('%')
-    || (isIP(host) === 4 && (/^(?:0|10|127|169\.254|192\.168)\./.test(host)
-      || /^172\.(?:1[6-9]|2\d|3[01])\./.test(host)
-      || /^1(?:9[8-9])\./.test(host) || /^2(?:2[4-9]|3\d|4\d|5[0-5])\./.test(host)))
-    || isIP(host) === 6)
+    || host.endsWith('.internal') || host.includes('%') || isIP(host) !== 0)
     throw new Error('Unsafe official homepage');
   return url;
 }
@@ -38,58 +37,88 @@ function sameOrigin(raw, from, root) {
     return u.href;
   } catch { return null; }
 }
-function directoryLink(link) {
+function directoryLink(link, identities) {
   const path = new URL(link.url).pathname.split('/').filter(Boolean);
   const last = path.at(-1) ?? '';
-  return DIRECTORY.test(normalize(link.name).replace(/ /g, '-').replace(/-/g, ''))
-    || DIRECTORY.test(link.name.trim())
-    || DIRECTORY.test(last);
+  if (DIRECTORY.test(link.name.trim()) || DIRECTORY.test(last)) return true;
+  // Follow an *observed* category when its route is a prefix of indexed item
+  // identities, regardless of the website's chosen category name.
+  for (let i = 0; i < path.length; i++) {
+    const prefix = normalize(path.slice(i).join('/'));
+    if (identities.some(slug => normalize(slug).startsWith(prefix + ' '))) return true;
+  }
+  return false;
 }
 async function observedLinks(browser, current, root, remaining) {
-  const snap = await browser.snap();
-  if (snap?.url !== current || await browser.url() !== current)
-    throw new Error('Stale rendered-page observation');
-  const found = new Map();
-  const add = (name, raw, navigationSource) => {
-    const url = sameOrigin(raw, current, root);
-    if (!url || !String(name ?? '').trim() || url === current) return;
-    const key = name.trim() + '\0' + url;
-    if (!found.has(key)) found.set(key, {
-      name: name.trim().slice(0, 180), url,
-      listingUrl: current, navigationSource,
-    });
-  };
-  const semantics = (snap.nodes ?? []).filter(x => x.role === 'link'
-    && typeof x.ref === 'string' && typeof x.name === 'string').slice(0, remaining);
-  for (const node of semantics) add(node.name, await browser.attr(node.ref), 'semantic-ref');
-  if (typeof browser.domLinks === 'function') {
-    for (const node of (await browser.domLinks()).slice(0, remaining)) {
-      add(node.name, node.href, 'observed-dom-anchor');
+  const observe = async () => {
+    const snap = await browser.snap();
+    if (snap?.url !== current || await browser.url() !== current)
+      throw new Error('Stale rendered-page observation');
+    const found = new Map();
+    const add = (name, raw, navigationSource) => {
+      const url = sameOrigin(raw, current, root);
+      if (!url || !String(name ?? '').trim() || url === current) return;
+      const key = name.trim() + '\0' + url;
+      if (!found.has(key)) found.set(key, {
+        name: name.trim().slice(0, 180), url,
+        listingUrl: current, navigationSource,
+      });
+    };
+    const semantics = (snap.nodes ?? []).filter(x => x.role === 'link'
+      && typeof x.ref === 'string' && typeof x.name === 'string').slice(0, remaining);
+    for (const node of semantics) add(node.name, await browser.attr(node.ref), 'semantic-ref');
+    if (typeof browser.domLinks === 'function') {
+      for (const node of (await browser.domLinks()).slice(0, remaining)) {
+        add(node.name, node.href, 'observed-dom-anchor');
+      }
     }
+    return {links: [...found.values()].slice(0, remaining), snap};
+  };
+  let result = await observe();
+  if (!result.links.length && typeof browser.waitForLinks === 'function') {
+    // Wait for an actual browser condition, not a site-specific sleep.
+    try { await browser.waitForLinks(4000); } catch { /* bounded retry below */ }
+    result = await observe();
   }
-  return { links: [...found.values()].slice(0, remaining), snap };
+  if (!result.links.length) throw new Error('No observed navigation links after bounded wait');
+  return result;
 }
 function matchesFor(link, identities, repeatedLeaves) {
   const label = normalize(link.name);
-  const matches = [];
-  for (const slug of identities) {
-    const full = normalize(slug);
-    if (label === full || label.startsWith(full + ' ')) {
-      matches.push({ slug, kind: 'full-name' });
-      continue;
-    }
-    const end = normalize(leaf(slug));
-    const fullPath = slug.split('/').map(encodeURIComponent).join('/');
-    if ((label === end || label.startsWith(end + ' '))
-      && link.url.split('?')[0].endsWith('/' + fullPath)) {
-      if (repeatedLeaves.get(end) === 1) matches.push({ slug, kind: 'unique-leaf-path' });
-      else matches.push({ slug, kind: 'ambiguous-leaf' });
-    } else if ((label === end || label.startsWith(end + ' '))
-      && repeatedLeaves.get(end) > 1) {
-      matches.push({ slug, kind: 'ambiguous-leaf' });
-    }
-  }
-  return matches;
+  const path = new URL(link.url).pathname;
+  const normalizedPath = normalize(path);
+  const observedLeaf = normalize(path.split('/').filter(Boolean).at(-1));
+  const endsWithFullPath = slug => path.endsWith('/' + slug.split('/')
+    .map(encodeURIComponent).join('/'));
+  // Exact observed names take precedence over descriptions or shared leaf names.
+  // E.g. "Alert Dialog" must not also claim @registry/alert.
+  const exact = identities.filter(slug => normalize(slug) === label);
+  if (exact.length) return exact.map(slug => ({slug,
+    kind: endsWithFullPath(slug) ? 'full-name-path' : 'full-name'}));
+  // Flattened catalog names can encode a site's observed nested route.
+  // Compare the *observed destination* with the complete catalog identity,
+  // then bind the live link label to the destination's actual last segment.
+  const structuredPath = identities.filter(slug =>
+    (normalizedPath === normalize(slug)
+      || normalizedPath.endsWith(' ' + normalize(slug)))
+    && (label === observedLeaf || label.startsWith(observedLeaf + ' ')));
+  if (structuredPath.length) return structuredPath.map(slug => ({slug,
+    kind: 'observed-catalog-path', renderedName: observedLeaf}));
+  // A nested identity can be disambiguated by its actual observed link path.
+  // The path is evidence from the page, not a generated target for navigation.
+  const leafPath = identities.filter(slug =>
+    normalize(leaf(slug)) === label && endsWithFullPath(slug));
+  if (leafPath.length) return leafPath.map(slug =>
+    ({slug, kind: 'observed-full-path'}));
+  // Description-bearing links can use a prefix only when their observed
+  // destination ends in that complete component name.
+  const descriptive = identities.filter(slug =>
+    label.startsWith(normalize(slug) + ' ') && endsWithFullPath(slug));
+  if (descriptive.length) return descriptive.map(slug =>
+    ({slug, kind: 'descriptive-full-path'}));
+  return identities.filter(slug => normalize(leaf(slug)) === label
+    && repeatedLeaves.get(label) > 1)
+    .map(slug => ({slug, kind: 'ambiguous-leaf'}));
 }
 async function inspectNavigation({registry, identities, browser, root, maxPages, maxDepth, maxLinks, delayMs}) {
   const origin = root.href;
@@ -121,9 +150,11 @@ async function inspectNavigation({registry, identities, browser, root, maxPages,
         const matched = matchesFor(link, identities, repeatedLeaves);
         for (const match of matched) {
           if (match.kind === 'ambiguous-leaf') ambiguous.add(match.slug);
-          else candidates.push({ ...link, slug: match.slug, matching: match.kind });
+          else candidates.push({ ...link, slug: match.slug, matching: match.kind,
+            ...(match.renderedName ? {renderedName: match.renderedName} : {}) });
         }
-        if (next.depth < maxDepth && directoryLink(link) && !visited.has(link.url)) {
+        if (next.depth < maxDepth && matched.length === 0
+          && directoryLink(link, identities) && !visited.has(link.url)) {
           if (!queue.some(x => x.url === link.url)) queue.push({url: link.url, depth: next.depth + 1});
         }
       }
@@ -190,12 +221,19 @@ export async function discoverRegistry({
   const prefix = registry.name + '/';
   const snapshotToken = 'registry:' + registry.name;
   let snapshot = ledger.get(snapshotToken);
-  if (!isFresh(snapshot, fp, checkedAt, maxAgeMs) || snapshot.status !== 'discovered') {
+  const previouslyExhausted = snapshot?.exhausted && snapshot?.budgets
+    && (maxPages > snapshot.budgets.maxPages
+      || maxLinks > snapshot.budgets.maxLinks
+      || maxDepth > snapshot.budgets.maxDepth);
+  if (!isFresh(snapshot, fp, checkedAt, maxAgeMs) || snapshot.status !== 'discovered'
+    || previouslyExhausted) {
     const nav = await inspectNavigation({
       registry, identities, browser, root, maxPages, maxDepth, maxLinks, delayMs,
     });
-    snapshot = {schema: SCHEMA, token: snapshotToken, namespace: registry.name,
-      status: 'discovered', catalogFingerprint: fp, checkedAt, ...nav};
+    snapshot = {schema: SCHEMA, discoveryRevision: DISCOVERY_REVISION,
+      token: snapshotToken, namespace: registry.name,
+      status: 'discovered', catalogFingerprint: fp, checkedAt,
+      budgets: {maxPages, maxLinks, maxDepth}, ...nav};
     await ledger.append(snapshot);
   }
   let processed = 0;
@@ -203,11 +241,18 @@ export async function discoverRegistry({
   for (const slug of identities) {
     const token = prefix + slug;
     let row = ledger.get(token);
-    if (!isFresh(row, fp, checkedAt, maxAgeMs)) {
+    if (!isFresh(row, fp, checkedAt, maxAgeMs)
+      || (previouslyExhausted && row?.reason === 'discovery-budget-exhausted')) {
       if (processed >= limit) continue;
       const candidates = (snapshot.candidates ?? []).filter(x => x.slug === slug);
-      const unique = [...new Set(candidates.map(x => x.url))];
-      const base = {schema: SCHEMA, token, namespace: registry.name,
+      // When a component listing and an unrelated block reuse a label, the
+      // observed complete item path disambiguates. Two distinct matching
+      // item paths still fail closed as ambiguous.
+      const pathMatches = candidates.filter(x => x.matching.endsWith('-path'));
+      const considered = pathMatches.length ? pathMatches : candidates;
+      const unique = [...new Set(considered.map(x => x.url))];
+      const base = {schema: SCHEMA, discoveryRevision: DISCOVERY_REVISION,
+        token, namespace: registry.name,
         slug, catalogFingerprint: fp, checkedAt};
       if (unique.length !== 1) {
         row = {...base, status: 'unresolved',
@@ -217,7 +262,7 @@ export async function discoverRegistry({
                 : snapshot.error ? 'discovery-navigation-error'
                   : 'not-found-in-observed-navigation'};
       } else {
-        const source = candidates.find(x => x.url === unique[0]);
+        const source = considered.find(x => x.url === unique[0]);
         try {
           if (delayMs) await new Promise(done => setTimeout(done, delayMs));
           await browser.nav(source.url);
@@ -227,7 +272,9 @@ export async function discoverRegistry({
             .map(x => normalize(x.name));
           const full = normalize(slug);
           const itemLeaf = normalize(leaf(slug));
-          const expected = source.matching === 'unique-leaf-path' ? itemLeaf : full;
+          const expected = source.matching === 'observed-catalog-path'
+            ? source.renderedName
+            : source.matching === 'observed-full-path' ? itemLeaf : full;
           if (landed !== source.url || snap.url !== landed
             || !sameOrigin(landed, source.url, root)) {
             row = {...base, status: 'unresolved', reason: 'destination-changed'};
@@ -240,7 +287,8 @@ export async function discoverRegistry({
                 matching: source.matching, navigationSource: source.navigationSource,
                 renderedHeading: (snap.nodes ?? []).find(x =>
                   x.role === 'heading' && normalize(x.name) === expected)?.name,
-                observedUrl: landed },
+                observedUrl: landed,
+                alternateCandidatesDiscarded: candidates.length - considered.length },
             };
           }
         } catch {

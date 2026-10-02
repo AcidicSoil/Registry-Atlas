@@ -16,7 +16,7 @@ Discover each registry's actual navigation/listing structure once, enumerate its
 
 ## Public contract
 
-`discoverRegistry({registry, indexedItems, browser, ledger, limit, maxPages, maxLinks, maxDepth, delayMs, checkedAt})` yields a serializable summary with exact `namespace`, observed listing routes, per-item documentation evidence, unresolved reasons and a checkpoint cursor. Browser is a managed PinchTab adapter exposing only `url`, `snap`, `attr`, `domLinks`, `nav`. No anonymous second browser is opened. Pure tests supply a fake adapter.
+`discoverRegistry({registry, indexedItems, browser, ledger, limit, maxPages, maxLinks, maxDepth, delayMs, checkedAt})` yields a serializable summary with exact `namespace`, observed listing routes, per-item documentation evidence, unresolved reasons and a journal-backed restart position. The journal tracks per-identity outcomes rather than providing an explicit CLI cursor; an independent cursor interface remains a future extension. Browser is a managed PinchTab adapter exposing only `url`, `snap`, `attr`, `domLinks`, `nav`. No anonymous second browser is opened. Pure tests supply a fake adapter.
 
 The exact canonical item identity is `namespace + '/' + item.name`, preserving slashes and case. Duplicate catalog entries with the same identity are deduplicated; two different identities with equal display names are **never merged**.
 
@@ -27,10 +27,10 @@ Discovery evidence contains the homepage origin, listing URL, observed link URL,
 1. Validate official homepage and approved managed source profile; reject private/loopback/link-local literal hosts, credentials, non-HTTPS and cross-origin destinations. Never follow discovered external navigation.
 2. On the homepage enumerate observed semantic links plus observed DOM anchors; find actual directory/listing routes using reusable names and URL features (`components`, `primitives`, `ui`, `patterns`, `blocks`, `docs`, `library`, `catalog`, `elements`).
 3. Traverse observed listing/category links breadth-first, within `maxPages`, `maxLinks`, `maxDepth` and a per-domain minimum delay; record the selected route and its observation. A change of destination, missing link, stale observation, redirect off origin or exhaustion produces an explicit unresolved reason. Never derive routes solely from slugs.
-4. Enumerate component anchors once per visited listing; correlate against **all** indexed names. Prefer full-name match of observed link/heading, allow only unique unambiguous leaf-name matches when full name is unavailable; ambiguous leaf names or multiple destinations are unresolved.
+4. Enumerate component anchors once per visited listing; correlate against **all** indexed names. Prefer exact full-name matches, then observed complete-path matches when a site's catalog flattens nested component names (e.g. `components-animate-avatar-group` versus `/docs/components/animate/avatar-group`). Reject loose prefixes such as `Alert` matching `Alert Dialog`. Where a catalog name is reused on unrelated block cards, a unique *observed* link ending in that exact component path may disambiguate; otherwise preserve an unresolved result. Never fabricate a destination from the item name.
 5. Reopen each candidate destination in the managed browser, independently verify the final origin, URL and rendered heading. A matching title alone without an observed linking page and a distinct catalog identity is insufficient.
 6. Use structured official index URLs when explicitly observed and proven safe; do not execute an arbitrary fetched script or guess `registry.json` locations. A structured index may enumerate identities, but docs links and source remain separate evidence stages.
-7. Store observations and unresolved outcomes; retries use bounded backoff and source freshness rules rather than repeating every source visit indiscriminately.
+7. If an immediately rendered page contains no usable same-origin links, wait for a bounded browser DOM condition and reobserve. Continued emptiness is a navigation error, not proof that a registry has no components. Persist observations and unresolved outcomes; retries use source freshness and a discovery-algorithm revision marker. A larger crawl budget may retry budget-exhausted records; each new matching revision must independently reverify identities. Exponential retry/backoff beyond the existing per-domain minimum delay remains future work.
 
 ## Ledger, batching and reproducibility
 
@@ -50,11 +50,15 @@ An empty raw registry, unavailable homepage, site requiring auth, soft-404, dupl
 
 **Slice A — deterministic discovery core:** two distinct listing structures (flat and multi-level) pass through the same public function; nonmatching docs URL slugs resolve only with observed link plus matching rendered title; nested and duplicate-name ambiguity are not silently accepted; no made-up links; untrusted hosts rejected.
 
-**Slice B — resumable evidence ledger and CLI:** discovery snapshot and per-item checkpoints survive interruption, `--limit` and cursor preserve identity, old fingerprint is invalidated, failures remain explicit; tests show a second run does not repeat verified pages. Managed PinchTab source profile is mandatory for live execution.
+**Slice B — resumable evidence ledger and CLI:** discovery snapshot and per-item checkpoints survive interruption; `--limit` and latest matching journal rows preserve identities; changed fingerprints and discovery revisions invalidate stale evidence. Tests show a second run does not repeat verified pages. An explicit CLI cursor is not yet implemented. Managed PinchTab source profile is mandatory for live execution.
 
 **Slice C — integration:** route existing crawler through the new module only when the current crawler owner has approved the file; remove `@animate-ui` special handling and old slug-only assumptions, preserve previous vetted records and test equivalence against official raw index.
 
 **Slice D — full catalog:** schedule bounded per-registry jobs for all 408 raw registries, independently reconcile preview/source statuses, sample source routes and browsers, publish truthful attempted/verified/blocked/pending counts. No claim of 84k built previews until every actual build and interaction passes its separate evidence gates.
+
+## Live validation and implementation boundary
+
+2026-10-02: Ran bounded discovery with the existing managed `registry-atlas-source-audit` profile, not Atlas's localhost-only UI profile. On `www.8bitcn.com`, observed `/docs` and `/docs/components` and found both direct and `/docs/blocks/gaming/...` routes. On `animate-ui.com`, observed nested `/docs/components/animate/...` routes for four sampled flattened catalog identities. Live evidence is in per-registry JSONL journals under `/tmp`; it is **documentation-page discovery only**, not source retrieval, executable upstream previews or a whole-registry crawl. Deterministic tests cover link ambiguity, nested routes, hydration, source-domain rejection and cache invalidation. No existing dirty crawler source has been overwritten. This phase does not yet implement the structured official-index adapter, full 408-registry scheduling, unrestricted runtime builds or reconciliation.
 
 ## Coordination
 
