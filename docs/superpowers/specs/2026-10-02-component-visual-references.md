@@ -1,7 +1,7 @@
 # Registry Atlas: official component visual references
 
 **Date:** 2026-10-02
-**Status:** Current product requirement; supersedes the source-exact interactive preview requirement.
+**Status:** Current for evidence-backed visual references and source URLs; **superseded as a final completion standard** by `docs/superpowers/specs/2026-10-03-observed-reference-and-route-parity.md`. The user now also requires working interactive previews and full 21st.dev route/content parity. Images remain useful interim references, but are not interaction-verified component coverage.
 
 ## Product contract
 

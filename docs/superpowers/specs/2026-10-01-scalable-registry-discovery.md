@@ -1,6 +1,6 @@
 # Scalable, evidence-based registry discovery — implementation specification
 
-> **Current product scope:** Use this document for observed official URL discovery and catalog-identity evidence only. For screenshots of the actual components, linking and UI publication, see `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The earlier prohibitions on screenshots and requirements for original-source React builds were superseded by the user’s 2026-10-02 clarification.
+> **Current product scope:** Use this document for observed official URL discovery and catalog-identity evidence. Image/official-link evidence is governed by `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The user's later 2026-10-03 requirement for **all functional components and complete 21st.dev route/interaction parity** is governed by `docs/superpowers/specs/2026-10-03-observed-reference-and-route-parity.md`; image or source-only discovery does not satisfy it. Historical source-exact build mandates in this older document are not standalone approval to execute third-party code.
 
 
 **Date:** 2026-10-01
