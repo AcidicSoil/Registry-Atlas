@@ -180,7 +180,8 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
   const nextCursor = eligible.length > start + batch.length && batch.length
     ? batch[batch.length - 1].token : null;
   return { schema: 'registry-atlas-component-preview-coverage/v1',
-    summary, registries, batch, nextCursor, errors };
+    summary, registries, batch, nextCursor, errors,
+    ...(options.includeItems ? { items: rows } : {}) };
 }
 
 async function cli(argv) {
