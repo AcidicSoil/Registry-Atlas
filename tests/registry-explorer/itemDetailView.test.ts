@@ -1,9 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
-import { renderItemDetailView, renderRelatedComponentLinks } from '../../src/registry-explorer/ui/itemDetailView';
+import { renderItemDetailView, renderRelatedComponentLinks, renderLocalBuildOption } from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
+  it('offers an explicit local-only on-demand source preview without pretending it is verified',()=>{
+    const offered=renderLocalBuildOption('@8bitcn','badge','127.0.0.1');
+    expect(offered).toContain('data-local-build-preview="badge"');
+    expect(offered).toContain('not automatically interaction-verified');
+    expect(offered).not.toContain('<iframe');
+    expect(renderLocalBuildOption('@8bitcn','badge','github.io')).toBe('');
+    expect(renderLocalBuildOption('@unreviewed','badge','127.0.0.1')).toBe('');
+    expect(renderLocalBuildOption('@8bitcn','../etc','127.0.0.1')).toBe('');
+  });
+
   it('renders a component-first item page without raw JSON UI labels', () => {
     const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
     const header = root();

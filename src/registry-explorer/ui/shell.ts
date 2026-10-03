@@ -794,6 +794,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
   });
 
   function handleClick(target: HTMLElement): void {
+    const localBuild = target.closest<HTMLButtonElement>('[data-local-build-preview]');
+    if (localBuild) {
+      const slug = localBuild.getAttribute('data-local-build-preview') ?? '';
+      if (!['127.0.0.1','localhost'].includes(window.location.hostname)
+        || !/^[a-z0-9][a-z0-9-]*$/.test(slug)) return;
+      const root = localBuild.closest<HTMLElement>('[data-local-preview-root]');
+      if (!root || root.querySelector('iframe')) return;
+      const frame = document.createElement('iframe');
+      frame.className = 'component-demo-frame component-demo-frame-detail';
+      frame.setAttribute('data-component-demo','@8bitcn/'+slug);
+      frame.setAttribute('title',slug+' local source preview; build-only');
+      frame.setAttribute('sandbox','allow-scripts');
+      frame.setAttribute('referrerpolicy','no-referrer');
+      frame.setAttribute('loading','eager');
+      frame.src = 'http://127.0.0.1:5198/preview/@8bitcn/'+slug;
+      const status = root.querySelector<HTMLElement>('[data-local-preview-status]');
+      if (status) status.textContent = 'Requesting an isolated source build. This is not a verified demo.';
+      frame.addEventListener('load',()=>{
+        if (status) status.textContent = 'The local build service responded. Check the frame for the result; behavior is not verified.';
+      });
+      frame.addEventListener('error',()=>{
+        if (status) status.textContent = 'Local preview service unavailable. Start it with pnpm preview:serve.';
+      });
+      localBuild.disabled = true;
+      root.append(frame);
+      return;
+    }
+
     if (handleInstall(target)) return;
 
 

@@ -3,7 +3,7 @@ import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/regis
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { escapeHtml } from './renderSafety.ts';
-import { renderComponentPreview } from './componentPreview.ts';
+import { renderComponentPreview, verifiedComponentDemo } from './componentPreview.ts';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
 
 export function renderItemDetailView(
@@ -135,16 +135,17 @@ function renderPreview(detail: RegistryItemDetail): string {
       </figcaption>
     </figure>` : null;
   const liveDemo = renderComponentPreview(detail.namespace, detail.slug, 'detail');
+  const localBuild = renderLocalBuildOption(detail.namespace, detail.slug);
   if (liveDemo) return `
     <div class="item-preview-combined">
       <section class="item-preview-live" aria-label="Interactive component example">
         <div class="catalog-eyebrow">Interactive example</div>
         ${liveDemo}
-        <p class="muted">Isolated, source-informed interaction example. Upstream React code is not executed.</p>
+        <p class="muted">${verifiedComponentDemo(detail.namespace, detail.slug)?.kind === 'upstream-built' ? 'Approved upstream React source, running in an isolated preview.' : 'Source-informed interaction example; upstream source is not executed.'}</p>
       </section>
       ${visual ?? ''}
     </div>`;
-  if (visual) return visual;
+  if (visual) return `${visual}${localBuild}`;
   // Images are not live components. Preserve discoverability without pretending otherwise.
 
   const facts = [
@@ -163,8 +164,24 @@ function renderPreview(detail: RegistryItemDetail): string {
         ${facts.map(fact => `<span>${escapeHtml(fact)}</span>`).join('')}
       </div>
       <div class="item-preview-metadata-status">Visual reference not yet available</div>
+      ${localBuild}
     </div>
   `;
+}
+
+export function renderLocalBuildOption(
+  namespace:string, slug:string,
+  hostname=typeof window==='undefined' ? '' : (window.location?.hostname??''),
+): string {
+  if(namespace!=='@8bitcn'||!/^[a-z0-9][a-z0-9-]*$/.test(slug)
+    ||!['127.0.0.1','localhost'].includes(hostname))return '';
+  return `<section class="item-preview-live" data-local-preview-root aria-label="Local source preview">
+    <button class="install-button" type="button" data-local-build-preview="${escapeHtml(slug)}">
+      Build source preview locally
+    </button>
+    <p class="muted" data-local-preview-status role="status">Runs approved upstream source in an isolated frame.
+      Local builds are not automatically interaction-verified.</p>
+  </section>`;
 }
 
 function renderInstallActions(action: InstallActionState, detail: RegistryItemDetail, queuedTokens: ReadonlySet<string>): string {

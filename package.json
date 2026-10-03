@@ -18,7 +18,8 @@
     "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",
     "all": "pnpm sync:registries && pnpm verify",
-    "sync:catalog-evidence": "node scripts/sync-registry-catalog-evidence.mjs"
+    "sync:catalog-evidence": "node scripts/sync-registry-catalog-evidence.mjs",
+    "preview:serve": "node tools/component-preview-host/preview-server.mjs"
   },
   "devDependencies": {
     "react-grab": "^0.1.47",

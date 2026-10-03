@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { dirname, resolve, join, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
+import { homedir } from 'node:os';
 import { buildSharedPreview } from './shared-compiler.mjs';
 const HOST=dirname(fileURLToPath(import.meta.url));
 const ROOT=resolve(HOST,'../..');
@@ -44,7 +45,10 @@ async function publishReviewed(review,outRoot){
  if(!safeRelative(review.sourcePath))throw Error('Unsafe source file');
  const sourcePath=resolve(HOST,review.sourcePath);
  if(!within(join(HOST,'sources'),sourcePath))throw Error('Source must be a reviewed cached registry JSON');
- if(!within(join(ROOT,'public'),outRoot))throw Error('Output must stay in public artifacts');
+ const privateRoot=join(homedir(),'.local','state','registry-atlas','previews');
+ if(resolve(outRoot)!==outRoot)throw Error('Output root must be canonical');
+ if(!within(join(ROOT,'public'),outRoot)&&!within(privateRoot,outRoot))
+   throw Error('Output must stay inside reviewed public or private preview storage');
  const source=await readFile(sourcePath,'utf8');
  if(!/^[a-f0-9]{64}$/i.test(review.licenseSha256??''))throw Error('Missing reviewed license hash');
  const licenseFile=join(dirname(sourcePath),'license.md');
@@ -75,7 +79,9 @@ function metadata(built){return {namespace:built.namespace,slug:built.slug,
  relativePath:'/Registry-Atlas/component-demos/generated/'+built.bundleSha256+'/index.html'};}
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
  const argv=process.argv.slice(2);
- const task=argv[0]==='--registry' && argv.length===3
+ const task=argv[0]==='--registry' && argv.length===5 && argv[3]==='--out-root'
+   ? publishRegistryItem(argv[1],argv[2],{outRoot:argv[4]})
+   : argv[0]==='--registry' && argv.length===3
    ? publishRegistryItem(argv[1],argv[2])
    : argv.length===1 ? publishOne(argv[0])
      : Promise.reject(Error('Usage: node publish.mjs --registry <name> <slug>'));

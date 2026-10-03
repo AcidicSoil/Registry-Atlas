@@ -84,3 +84,19 @@ For this session, 8 additional upstream instances passed interactive managed-bro
 The batch reports and browser proof are in private local state under `~/.local/state/registry-atlas/research`, not distributed as public documentation. **Do not interpret compilation throughput as live runtime parity.** A production on-demand preview broker/CDN and source/runtime policies for additional registries and frameworks are still future implementation work.
 
 The full approved `@8bitcn` component intake observed **56 component entries**, all cached without network intake errors. The offline source compiler processed those 56, producing **28 build-eligible bundles and 28 explicitly blocked items** (unsupported dependencies, relative imports, or unresolved exports). Only the 10 upstream components with individual observed browser interactions are served as `interaction-verified`. The other build-eligible candidates are **not** promoted. Evidence: local state `registry-8bitcn-intake-run9a5c-{1,2}.json`, `shared-previews-all-run9a5c-{1,2}.json`, and `preview-browser-proof-20261003-run9a5c.json`.
+
+## Local on-demand preview host
+
+The standalone local service is `tools/component-preview-host/preview-server.mjs` (`pnpm preview:serve`). It binds only `127.0.0.1:5198`. For a locally served Atlas component page with no interaction-verified manifest preview, `@8bitcn` pages offer **Build source preview locally**. Activating that control inserts an isolated iframe pointed at `http://127.0.0.1:5198/preview/@8bitcn/<slug>`. Published GitHub Pages pages do **not** show the local-control path.
+
+The service discovers allowed namespace names from approved per-registry policies. A request checks its official cached JSON identity, source hash, reviewed registry policy hash, and pinned package lock hash. Missing or unapproved identities are not compiled. For an admitted source revision, an isolated process executes the shared esbuild runner with no network, read-only source/dependencies and a single private writeable cache under `~/.local/state/registry-atlas/previews/cache`; concurrent requests for the same revision share the same build, and subsequent requests hit the memory cache. The browser receives a content-security-policy-constrained HTML iframe; the server does not add results to the verified manifest. The runtime is deliberately a *local development service*, not a public build API or a production CDN. Use a separately reviewed deployment, input quotas, authentication, and stronger filesystem restrictions before exposing any compiler to the internet.
+
+Quick checks while the server is running:
+
+```bash
+curl -fsS http://127.0.0.1:5198/health
+curl -sS -D - -o /dev/null http://127.0.0.1:5198/preview/@8bitcn/badge
+curl -sS -w '%{http_code}\n' http://127.0.0.1:5198/preview/@unreviewed/button
+```
+
+The response header `X-Preview-Verification: build-only` distinguishes a source-compiled preview from an interaction-certified release. It never implies that all 84,145 catalog identities are executable.
