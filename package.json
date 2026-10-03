@@ -14,12 +14,14 @@
     "validate:data": "node scripts/validate-registry-data.mjs",
     "check:product-contract": "node scripts/check-product-contract.mjs",
     "browser:acceptance": "node scripts/check-browser-acceptance.mjs",
-    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:product-contract && pnpm validate:data && pnpm build",
+    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm preview:onboard:test && pnpm check:product-contract && pnpm validate:data && pnpm build",
     "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",
     "all": "pnpm sync:registries && pnpm verify",
     "sync:catalog-evidence": "node scripts/sync-registry-catalog-evidence.mjs",
-    "preview:serve": "node tools/component-preview-host/preview-server.mjs"
+    "preview:serve": "node tools/component-preview-host/preview-server.mjs",
+    "preview:onboard:test": "node --test tools/component-preview-host/onboarding.test.mjs",
+    "preview:onboard": "node tools/component-preview-host/registry-onboarding.mjs"
   },
   "devDependencies": {
     "react-grab": "^0.1.47",
