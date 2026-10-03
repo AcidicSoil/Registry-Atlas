@@ -54,3 +54,33 @@ Both generated artifacts load as sandboxed iframes on their exact Registry Atlas
 ## Limits still open
 
 This is a working **generic pipeline for an approved React registry and two behavior families**, not proof of functional execution for the entire multi-framework catalog. Other registries need approved licenses, dependency graphs and framework adapters. Interactive publication remains per-identity verified. The current GitHub Pages release serves generated cached artifacts, but does not run the compiler at request time; providing an always-on source/build broker, queue and CDN would require a separate deployment, admission controls, and resource quotas. Do not advertise all catalog entries as runnable until their specific source and interaction evidence passes.
+
+## Batch execution and interaction admission (same session)
+
+The pipeline now has two separate bounded CLI stages:
+
+```bash
+H="$PWD/tools/component-preview-host"
+STATE="$HOME/.local/state/registry-atlas/research"
+
+# Network-only source intake, 1–50 official component identities per batch.
+node "$H/ingest-batch.mjs" --registry 8bitcn --limit 50 \
+  --out "$STATE/registry-intake-batch-a.json"
+# Resume at the returned cursor with --after <cursor>; only registry:component entries qualify.
+
+# Offline, network-isolated compile of cached inputs. Neither stage can
+# promote a component into the verified manifest.
+bwrap --unshare-net --ro-bind / / \
+  --bind "$HOME/.local/state/registry-atlas" "$HOME/.local/state/registry-atlas" \
+  --dev-bind /dev /dev --proc /proc --tmpfs /tmp --chdir "$H" -- \
+  node batch-preview.mjs --registry 8bitcn --limit 50 \
+  --out "$STATE/preview-compilation-a.json"
+```
+
+The approved upstream revision supplies one pinned alias graph across 23 shared imports, with 26 exact-version dependencies. The compiler follows **only aliases reachable from each component**. Unsupported libraries are blocked rather than approximated. Generated bundles are versioned by content hash. Live browser admission remains a separate step using `verify-batch.mjs` on prebuilt receipts; its private report records source hashes, original browser controls and before/after state. Build-only rows remain `built-unverified`.
+
+For this session, 8 additional upstream instances passed interactive managed-browser checks: `checkbox` changed unchecked → checked; `switch` changed unchecked → checked; `slider` changed value 50 → 51; `textarea` accepted real text; `toggle` changed pressed state; `tabs` selected the second panel; `accordion` closed its visible answer; and `collapsible` opened its hidden content. The original compiled `button` and `input` were verified previously. These 10 are recorded as upstream-built, interaction-verified; the separate `card` entry remains a source-informed fixture.
+
+The batch reports and browser proof are in private local state under `~/.local/state/registry-atlas/research`, not distributed as public documentation. **Do not interpret compilation throughput as live runtime parity.** A production on-demand preview broker/CDN and source/runtime policies for additional registries and frameworks are still future implementation work.
+
+The full approved `@8bitcn` component intake observed **56 component entries**, all cached without network intake errors. The offline source compiler processed those 56, producing **28 build-eligible bundles and 28 explicitly blocked items** (unsupported dependencies, relative imports, or unresolved exports). Only the 10 upstream components with individual observed browser interactions are served as `interaction-verified`. The other build-eligible candidates are **not** promoted. Evidence: local state `registry-8bitcn-intake-run9a5c-{1,2}.json`, `shared-previews-all-run9a5c-{1,2}.json`, and `preview-browser-proof-20261003-run9a5c.json`.

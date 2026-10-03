@@ -61,6 +61,35 @@ describe('shared compiled preview pipeline', () => {
     await expect(prepareRegistryItem('8bitcn','../button')).rejects.toThrow();
   }, 20_000);
 
+  it.each([
+    {slug:'checkbox',exportName:'Checkbox',marker:'data-preview-checked'},
+    {slug:'switch',exportName:'Switch',marker:'data-preview-checked'},
+    {slug:'toggle',exportName:'Toggle',marker:'data-preview-checked'},
+    {slug:'slider',exportName:'Slider',marker:'data-preview-slider-value'},
+    {slug:'badge',exportName:'Badge',marker:'data-preview-static'},
+  ])('generates semantic $slug behavior from one shared harness',async ({slug,exportName,marker}) => {
+    const code='import React from "react";export function '+exportName+'(props){return React.createElement("button",props,props.children);}';
+    const source=JSON.stringify({name:slug,files:[{path:'ui/'+slug+'.tsx',content:code}],dependencies:[]});
+    const cfg={...review,slug,entryFile:'ui/'+slug+'.tsx',sourceSha256:await hash(source)};
+    const result=await buildSharedPreview(source,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).toContain(marker);
+  },20_000);
+
+  it.each([
+    {slug:'tabs',names:['Tabs','TabsList','TabsTrigger','TabsContent'],text:'SECOND PANEL'},
+    {slug:'accordion',names:['Accordion','AccordionItem','AccordionTrigger','AccordionContent'],text:'FIRST ANSWER'},
+    {slug:'collapsible',names:['Collapsible','CollapsibleTrigger','CollapsibleContent'],text:'EXPANDED CONTENT'},
+  ])('composes a generic $slug interaction using upstream primitive exports',async ({slug,names,text}) => {
+    const code='import React from "react";'+names.map(name=>
+      'export function '+name+'(props){return React.createElement("div",props,props.children);}').join('');
+    const source=JSON.stringify({name:slug,files:[{path:'ui/'+slug+'.tsx',content:code}],dependencies:[]});
+    const cfg={...review,slug,entryFile:'ui/'+slug+'.tsx',sourceSha256:await hash(source)};
+    const result=await buildSharedPreview(source,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).toContain(text);
+  },20_000);
+
   it('blocks stale source, unauthorized dependencies and unsafe remote imports', async () => {
     const checked={...review,sourceSha256:await sourceHash()};
     expect(planSharedPreview(raw,{...checked,sourceSha256:'0'.repeat(64)}).reason).toBe('source-hash-mismatch');

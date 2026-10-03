@@ -13,15 +13,12 @@ describe('reviewed sandboxed component examples', () => {
     expect(existsSync(path)).toBe(true);
     const manifest = JSON.parse(readFileSync(path, 'utf8'));
     expect(manifest.schema).toBe('registry-atlas-component-demos/v1');
-    expect(manifest.items).toHaveLength(3);
-    const sources: Record<string,string> = {
-      button: '228196f5b295e9db209ba6506145acfd3033a6ddfe32eecf4903aa1709a5f770',
-      input: '63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8',
-    };
-    for (const slug of ['button', 'input']) {
+    expect(manifest.items).toHaveLength(11);
+    for (const slug of ['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible']) {
       const original=manifest.items.find((entry: {slug:string}) => entry.slug === slug);
+      const originalSource=readFileSync('tools/component-preview-host/sources/8bitcn/'+slug+'.json');
       expect(original).toMatchObject({namespace:'@8bitcn',slug,kind:'upstream-built',
-        status:'interaction-verified',sourceSha256:sources[slug]});
+        status:'interaction-verified',sourceSha256:createHash('sha256').update(originalSource).digest('hex')});
       expect(original.path).toMatch(/^\/Registry-Atlas\/component-demos\/generated\/[a-f0-9]{64}\/index\.html$/);
     }
     expect(manifest.items.find((entry: {slug:string}) => entry.slug === 'card')).toMatchObject({
@@ -30,15 +27,14 @@ describe('reviewed sandboxed component examples', () => {
     });
   });
 
-  it.each(['button', 'card', 'input'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
+  it.each(['button','card','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
     const rendered = renderComponentPreview('@8bitcn', slug, 'card') ?? '';
     expect(rendered).toContain('<iframe');
     expect(rendered).toContain('sandbox="allow-scripts"');
     expect(rendered).toContain('data-component-demo="@8bitcn/' + slug + '"');
-    const expected=slug==='card' ? '/Registry-Atlas/component-demos/8bitcn/index.html'
-      : slug==='button'
-        ? '/Registry-Atlas/component-demos/generated/7859069b32b6f0173951891af606ddf21be207ddde849436dcaa21e6b83eb5b5/index.html'
-        : '/Registry-Atlas/component-demos/generated/b3fb13afc35b8da5b4ade21fad88386f2f87f26131948593c323d15d15ccf07f/index.html';
+    const entries=JSON.parse(readFileSync('src/registry-explorer/data/component-demo-manifest.json','utf8')).items;
+    const expected=entries.find((item:{namespace:string;slug:string})=>
+      item.namespace==='@8bitcn'&&item.slug===slug)?.path;
     expect(rendered).toContain(expected+'?item='+slug+'&amp;mode=card');
     expect(rendered).not.toContain('allow-same-origin');
     expect(rendered).not.toContain('<img');

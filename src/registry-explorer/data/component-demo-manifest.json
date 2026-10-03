@@ -3,6 +3,20 @@
   "items": [
     {
       "namespace": "@8bitcn",
+      "slug": "accordion",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/e7573d4bed5e716c30d686a01929100b5e1df6cfab806f67ff285d48e29dcc4e/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/accordion",
+        "registryItemUrl": "https://www.8bitcn.com/r/accordion.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:50.665Z",
+      "verifiedAt": "2026-10-03T08:51:50.665Z",
+      "sourceSha256": "b9c4c278d1aeafa259327aea6db6c970aa09ecc0c57a325de9e039c652310af7"
+    },
+    {
+      "namespace": "@8bitcn",
       "slug": "button",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -30,6 +44,34 @@
     },
     {
       "namespace": "@8bitcn",
+      "slug": "checkbox",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/f6832b6081693b2160c61b8efab277038570b77f71b1a1d1bc0d1744e2935af1/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/checkbox",
+        "registryItemUrl": "https://www.8bitcn.com/r/checkbox.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:35.017Z",
+      "verifiedAt": "2026-10-03T08:51:35.017Z",
+      "sourceSha256": "9f7329338588302606a6ce14e8c33de9c4a337a60c7b37f5f6ffc94ee5c1d746"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "collapsible",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/b9d93210a3935b70f0814c68d001ad5db0c9c6d370665d5be7cec81c525e9486/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/collapsible",
+        "registryItemUrl": "https://www.8bitcn.com/r/collapsible.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:53.171Z",
+      "verifiedAt": "2026-10-03T08:51:53.171Z",
+      "sourceSha256": "bf48af54faac48c91fe2a4c56d30f6410d7541236f5534697f594b70a9733c72"
+    },
+    {
+      "namespace": "@8bitcn",
       "slug": "input",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -41,6 +83,76 @@
       "reviewedAt": "2026-10-03T08:23:18Z",
       "verifiedAt": "2026-10-03T08:23:18Z",
       "sourceSha256": "63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "slider",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/1ec307985194536bdf1787a2e84e585622083c4acfe9d1585e2b0bb964261012/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/slider",
+        "registryItemUrl": "https://www.8bitcn.com/r/slider.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:40.709Z",
+      "verifiedAt": "2026-10-03T08:51:40.709Z",
+      "sourceSha256": "817d3ffa42b071ccef544adf757a5da101a5ff552c5d7a4de65bc97bca50ad60"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "switch",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/9ffb7cada3fd2da764044789ab7e5231280f2d91aacc047bf168dbf85f92870d/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/switch",
+        "registryItemUrl": "https://www.8bitcn.com/r/switch.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:37.489Z",
+      "verifiedAt": "2026-10-03T08:51:37.489Z",
+      "sourceSha256": "64483aeb4d6d832d3281e9e19467d6ffff93674e8bcdb277e5d66909e15d6cf0"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "tabs",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/92291dfefb4a164fb766f7e58e095d7e36fabfa4fc2ad677d8b88a5d9b19411d/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/tabs",
+        "registryItemUrl": "https://www.8bitcn.com/r/tabs.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:48.162Z",
+      "verifiedAt": "2026-10-03T08:51:48.162Z",
+      "sourceSha256": "6f454140306a7a4051ce5cdfacc8317487f22709ff7266497c7de38abcae1502"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "textarea",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/99000d998c8c16f1935d0af332f44afa123b0d374a0e9f71f9738eaf538bc16b/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/textarea",
+        "registryItemUrl": "https://www.8bitcn.com/r/textarea.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:43.152Z",
+      "verifiedAt": "2026-10-03T08:51:43.152Z",
+      "sourceSha256": "eab3353a24b12f2a4c16bd62c5ef0bf3539e81eb78c23e7fd0484fec1ee72e35"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "toggle",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/689750a1a10fc02c044133af3dbafcbc65fdf67684070e91c6ea713ba3b5ceaf/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/toggle",
+        "registryItemUrl": "https://www.8bitcn.com/r/toggle.json"
+      },
+      "reviewedAt": "2026-10-03T08:51:45.635Z",
+      "verifiedAt": "2026-10-03T08:51:45.635Z",
+      "sourceSha256": "ed159dd47d2504c140f90fb4a68760aab3cc3caffd0bb616a9feeca470824e00"
     }
   ]
 }

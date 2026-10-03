@@ -76,22 +76,52 @@ export function planSharedPreview(raw,review) {
 }
 
 const harness=(exportName,identity)=> {
- const isText=/^(?:Input|TextArea|Textarea|SearchInput)$/i.test(exportName);
+ const text=/^(?:Input|TextArea|Textarea|SearchInput)$/i.test(exportName);
+ const checkbox=/^(?:Checkbox|Switch)$/i.test(exportName);
+ const toggle=/^Toggle$/i.test(exportName);
+ const slider=/^Slider$/i.test(exportName);
+ const staticComponent=/^(?:Badge|Kbd|Spinner|Card|Alert|Skeleton|Separator|Label|Avatar|Progress|Table)$/i.test(exportName);
+ const composed=['Tabs','Accordion','Collapsible'].includes(exportName);
+ const composition=exportName==='Tabs'
+   ? "React.createElement(Component,{'data-preview-original':'',defaultValue:'first'},React.createElement(Upstream.TabsList,null,React.createElement(Upstream.TabsTrigger,{value:'first'},'FIRST TAB'),React.createElement(Upstream.TabsTrigger,{value:'second'},'SECOND TAB')),React.createElement(Upstream.TabsContent,{value:'first'},'FIRST PANEL'),React.createElement(Upstream.TabsContent,{value:'second'},'SECOND PANEL')),"
+   : exportName==='Accordion'
+     ? "React.createElement(Component,{'data-preview-original':'',type:'single',collapsible:true,defaultValue:'first'},React.createElement(Upstream.AccordionItem,{value:'first'},React.createElement(Upstream.AccordionTrigger,null,'FIRST QUESTION'),React.createElement(Upstream.AccordionContent,null,'FIRST ANSWER'))),"
+     : "React.createElement(Component,{'data-preview-original':'',defaultOpen:false},React.createElement(Upstream.CollapsibleTrigger,null,'EXPAND CONTENT'),React.createElement(Upstream.CollapsibleContent,null,'EXPANDED CONTENT')),";
+ const primitive=composed?composition:checkbox
+   ? "React.createElement(Component,{'data-preview-original':'',checked,onCheckedChange:value=>setChecked(value===true)}),"
+   : toggle
+     ? "React.createElement(Component,{'data-preview-original':'',pressed:checked,onPressedChange:value=>setChecked(value===true)},'TOGGLE ME'),"
+     : slider
+       ? "React.createElement(Component,{'data-preview-original':'',value:[value],min:0,max:100,step:1,onValueChange:values=>setValue(values[0])}),"
+       : text
+         ? "React.createElement(Component,{'data-preview-original':'',type:'text',value:words,disabled,onChange:e=>setWords(e.target.value),placeholder:'Type to test'}),"
+         : staticComponent
+           ? "React.createElement(Component,{'data-preview-original':'','data-preview-static':'',value:56},'UPSTREAM PREVIEW'),"
+           : "React.createElement(Component,{'data-preview-original':'',type:'button',onClick:()=>setCount(n=>n+1),disabled},'PRESS ME'),";
+ const output=composed
+   ? "React.createElement('output',{'data-preview-composed':''},'Interact with the original controls'),"
+   : checkbox||toggle
+   ? "React.createElement('output',{'data-preview-checked':'','aria-live':'polite'},checked?'Checked':'Unchecked'),"
+   : slider
+     ? "React.createElement('output',{'data-preview-slider-value':'','aria-live':'polite'},'Value '+value),"
+     : text
+       ? "React.createElement('output',{'data-preview-input-value':'','aria-live':'polite'},'Typed '+words.length+' characters'),"
+       : staticComponent
+         ? "React.createElement('output',{'data-preview-static':'','aria-live':'polite'},'Original component rendered'),"
+         : "React.createElement('output',{'data-preview-interaction-count':'','aria-live':'polite'},'Activated '+count+' times'),";
+ const toggleDisabled=composed||checkbox||toggle||slider||staticComponent
+   ? "" : "React.createElement('button',{type:'button',className:'toggle',onClick:()=>setDisabled(n=>!n)},disabled?'Enable component':'Disable component')";
  return [
  "import React from 'react';",
  "import {createRoot} from 'react-dom/client';",
  "import * as Upstream from 'virtual:target';",
  "const Component=Upstream["+JSON.stringify(exportName)+"];",
- "function Demo(){const [count,setCount]=React.useState(0);const [disabled,setDisabled]=React.useState(false);const [value,setValue]=React.useState('');",
+ "function Demo(){const [count,setCount]=React.useState(0);const [disabled,setDisabled]=React.useState(false);const [words,setWords]=React.useState('');const [checked,setChecked]=React.useState(false);const [value,setValue]=React.useState(50);",
  "return React.createElement('main',{className:'demo'},",
  "React.createElement('p',{className:'caption'},"+JSON.stringify(identity+" • compiled original source")+"),",
- isText
-  ? "React.createElement(Component,{'data-preview-original':'',type:'text',value,disabled,onChange:e=>setValue(e.target.value),placeholder:'Type to test'}),"
-  : "React.createElement(Component,{'data-preview-original':'',type:'button',onClick:()=>setCount(n=>n+1),disabled},'PRESS ME'),",
- isText
-  ? "React.createElement('output',{'data-preview-input-value':'','aria-live':'polite'},'Typed '+value.length+' characters'),"
-  : "React.createElement('output',{'data-preview-interaction-count':'','aria-live':'polite'},'Activated '+count+' times'),",
- "React.createElement('button',{type:'button',className:'toggle',onClick:()=>setDisabled(n=>!n)},disabled?'Enable component':'Disable component'));}",
+ primitive,
+ output,
+ toggleDisabled+");}",
  "createRoot(document.getElementById('demo')).render(React.createElement(Demo));"
  ].join('\n');
 };
@@ -101,7 +131,15 @@ export async function buildSharedPreview(raw,review){
  if(plan.status!=='eligible')return plan;
  const files=new Map(plan.files.map(f=>[f.path,f]));
  const aliases=new Map();
- for(const [specifier,item] of Object.entries(plan.aliasMap)){
+ // Resolve only aliases reachable from this item. Other reviewed aliases can
+ // require different pinned modules and must not block unrelated components.
+ const pending=plan.files.flatMap(file=>imports(file.content))
+   .filter(name=>name.startsWith('@/')&&!files.has(name.slice(2)));
+ for(let index=0;index<pending.length;index++){
+   const specifier=pending[index];
+   if(aliases.has(specifier))continue;
+   const item=plan.aliasMap[specifier];
+   if(!item)return blocked('unreviewed-alias-import');
    const absolute=resolve(ROOT,item.path);
    if(!absolute.startsWith(ROOT+sep))return blocked('unsafe-alias-path');
    const bytes=await readFile(absolute);
@@ -109,9 +147,11 @@ export async function buildSharedPreview(raw,review){
    const content=bytes.toString('utf8');
    if(/(?:\bimport\s*\(|\brequire\s*\(|\bfetch\s*\()/.test(content))
       return blocked('unreviewed-alias-import');
-   for(const name of imports(content))
-     if(!name.startsWith('@/')&&!plan.dependencyLock[packageName(name)])
+   for(const name of imports(content)){
+     if(name.startsWith('@/'))pending.push(name);
+     else if(!plan.dependencyLock[packageName(name)])
        return blocked('unreviewed-alias-import');
+   }
    aliases.set(specifier,{content});
  }
  const plugin={name:'bounded-registry-sources',setup(b){
