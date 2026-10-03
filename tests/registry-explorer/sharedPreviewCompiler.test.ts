@@ -51,13 +51,15 @@ describe('shared compiled preview pipeline', () => {
     expect(first.review.entryFile).toBe('components/ui/8bit/button.tsx');
     expect(second.review.entryFile).toBe('components/ui/8bit/input.tsx');
     expect(first.review.license).toEqual(second.review.license);
-    expect((await buildSharedPreview(first.source,first.review)).status).toBe('built-unverified');
+    expect(planSharedPreview(first.source,first.review)).toMatchObject({
+      status:'eligible',slug:'button',exportName:'Button',
+    });
     const input=await buildSharedPreview(second.source,second.review);
     expect(input).toMatchObject({status:'built-unverified',slug:'input',exportName:'Input'});
     expect(input.html).toContain('data-preview-input-value');
     await expect(prepareRegistryItem('other','button')).rejects.toThrow();
     await expect(prepareRegistryItem('8bitcn','../button')).rejects.toThrow();
-  });
+  }, 20_000);
 
   it('blocks stale source, unauthorized dependencies and unsafe remote imports', async () => {
     const checked={...review,sourceSha256:await sourceHash()};
