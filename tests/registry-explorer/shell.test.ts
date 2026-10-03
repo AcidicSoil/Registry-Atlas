@@ -34,14 +34,33 @@ describe('registry explorer shell interactions', () => {
     expect(home.aside.innerHTML).not.toContain('mobile-browse-menu');
 
     const harness = setup('', '/Registry-Atlas/components');
-    expect(harness.aside.innerHTML).not.toContain('class="desktop-browse-rail"');
+    expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail"');
+    expect(harness.aside.innerHTML).toContain('data-catalog-category-value="code"');
+    expect(harness.aside.innerHTML).toContain('data-profile-registry="@delta"');
+    expect(harness.aside.innerHTML).toContain('data-sidebar-category-search');
     expect(harness.contentBody.innerHTML).toContain('>Registry<');
     expect(harness.aside.innerHTML).not.toContain('>Collections<');
     expect(harness.aside.innerHTML).not.toContain('>Item types<');
-    expect(harness.aside.innerHTML).not.toContain('>Categories<');
+    expect(harness.aside.innerHTML).toContain('>Categories</h2>');
     expect(harness.aside.innerHTML).not.toContain('>Libraries</button>');
     expect(harness.aside.innerHTML).not.toContain('>Reviewed</button>');
     expect(harness.aside.innerHTML).not.toContain('catalog-sidebar-summary');
+  });
+
+  it('routes sidebar category selections into shareable catalog filters', () => {
+    const home=setup('','/Registry-Atlas/');
+    home.aside.dispatch('click',target({
+      'data-catalog-category-value':'code', 'data-sidebar-category-link':'',
+    }));
+    expect(home.location.pathname).toBe('/Registry-Atlas/components');
+    expect(home.location.search).toContain('category=code');
+    expect(home.aside.innerHTML).toContain('data-catalog-category-value="code"');
+    expect(home.aside.innerHTML).toContain('aria-pressed="true"');
+
+    home.aside.dispatch('click',target({
+      'data-catalog-category-value':'code', 'data-sidebar-category-link':'',
+    }));
+    expect(home.location.search).not.toContain('category=code');
   });
 
   it('places registry asset filters beside sorting, not in navigation', () => {

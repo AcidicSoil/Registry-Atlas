@@ -48,6 +48,7 @@ import { renderCatalogCollection, renderEvidenceUnavailable } from './catalogCol
 import { renderRegistryDirectory } from './registryDirectoryView';
 import { renderRegistryCollection } from './registryCollectionView';
 import { renderCatalogCompare } from './catalogCompareView';
+import { renderCatalogSidebarNavigation } from './catalogSidebarNavigation';
 
 export interface ShellOptions {
   registries: readonly Registry[];
@@ -205,6 +206,26 @@ export function initRegistryExplorer(options: ShellOptions): void {
     (equivalent ?? candidates[0])?.focus();
   }
 
+  const sidebarFacetCache = new Map<string, ReturnType<typeof buildCatalogFacetSummary>>();
+  function facetsForSidebar(): ReturnType<typeof buildCatalogFacetSummary> {
+    const route=state.route;
+    const namespace=route.kind==='registry' ? route.namespace : null;
+    const kind = route.kind==='templates' || route.kind==='template' ? 'template'
+      : route.kind==='themes' || route.kind==='theme' ? 'theme'
+      : route.kind==='icons' || route.kind==='icon-category'
+        || route.kind==='icon-family' ? 'icon' : 'component';
+    const cacheKey=kind+(namespace?':'+namespace:'');
+    let facets=sidebarFacetCache.get(cacheKey);
+    if(!facets){
+      facets=buildCatalogFacetSummary(registries,catalogIndex, {
+        ...(namespace?{registryNames:[namespace]}:{}),
+        assetKinds:[kind],
+      });
+      sidebarFacetCache.set(cacheKey,facets);
+    }
+    return facets;
+  }
+
   function renderSidebar(queued: ReadonlySet<string>, batchCommand: string | null): void {
     const queueMarkup = queued.size > 0
       ? `<section class="catalog-sidebar-queue">
@@ -214,10 +235,30 @@ export function initRegistryExplorer(options: ShellOptions): void {
         </section>`
       : '';
 
-    // Keep filters alongside results, never in the navigation sidebar.
-    roots.aside.innerHTML = queueMarkup
-      ? `<div class="desktop-browse-rail">${queueMarkup}</div>`
-      : '';
+    const selectedRegistry = 'namespace' in state.route
+      ? state.route.namespace : null;
+    const contextFacets=facetsForSidebar();
+    let globalFacets=sidebarFacetCache.get('all:registries');
+    if(!globalFacets){
+      globalFacets=buildCatalogFacetSummary(registries,catalogIndex);
+      sidebarFacetCache.set('all:registries',globalFacets);
+    }
+    const navigation=renderCatalogSidebarNavigation({
+      ...contextFacets,
+      registries:globalFacets.registries,
+    }, {
+      kind:state.route.kind,
+      categories:state.catalogCategories,
+      registry:selectedRegistry,
+      categorySearch:state.facetSearchTerms['sidebar:category']??'',
+      registrySearch:state.facetSearchTerms['sidebar:registry']??'',
+    });
+    roots.aside.innerHTML = `<div class="desktop-browse-rail">${navigation}${queueMarkup}</div>`;
+    for (const input of roots.aside.querySelectorAll<HTMLInputElement>(
+      '[data-sidebar-search-root]',
+    )) {
+      filterSidebarSearch(input);
+    }
   }
 
   function render(): void {
@@ -322,12 +363,21 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderHome(): void {
-    const featured = queryCatalogComponents(registries, catalogIndex, {
+    // Lead with real visual evidence, rather than a row of unknown item tiles.
+    const visualFeatured = queryCatalogComponents(registries, catalogIndex, {
       assetKinds: ['component'],
+      visualOnly: true,
       sort: 'name',
       pageSize: 8,
       basePath: catalogBasePath(),
     });
+    const featured = visualFeatured.items.length ? visualFeatured
+      : queryCatalogComponents(registries, catalogIndex, {
+          assetKinds: ['component'],
+          sort: 'name',
+          pageSize: 8,
+          basePath: catalogBasePath(),
+        });
     renderCatalogLanding(roots.contentHeader, roots.contentBody, {
       itemCount: catalogIndex.meta.item_count,
       registryCount: registries.length,
@@ -361,25 +411,28 @@ export function initRegistryExplorer(options: ShellOptions): void {
       || state.catalogItemTypes.length
       || state.catalogCategories.length,
     );
-    const discoveryBands = hasActiveBrowseConstraint
-      ? []
-      : buildExploreCollectionOptions(facets.categories.map(option => option.value))
-          .slice(0, 3)
-          .map(collection => ({
-            label: collection.label,
-            routePath: catalogRoutePath(
-              { kind: 'explore', collection: collection.slug },
-              catalogBasePath(),
-            ),
-            items: queryCatalogComponents(registries, catalogIndex, {
-              categories: collection.categories,
-              assetKinds: ['component'],
-              sort: 'name',
-              pageSize: 6,
-              basePath: catalogBasePath(),
-            }).items,
-          }))
-          .filter(band => band.items.length > 0);
+    const discoveryBands = hasActiveBrowseConstraint ? [] : [
+      {
+        label:'Visual previews',
+        routePath:catalogRoutePath({kind:'components'},catalogBasePath()),
+        items:queryCatalogComponents(registries,catalogIndex,{
+          assetKinds:['component'],visualOnly:true,sort:'name',pageSize:8,
+          basePath:catalogBasePath(),
+        }).items,
+      },
+      ...buildExploreCollectionOptions(facets.categories.map(option=>option.value))
+        .slice(0,3)
+        .map(collection=>({
+          label:collection.label,
+          routePath:catalogRoutePath(
+            {kind:'explore',collection:collection.slug},catalogBasePath(),
+          ),
+          items:queryCatalogComponents(registries,catalogIndex,{
+            categories:collection.categories,assetKinds:['component'],
+            visualOnly:true,sort:'name',pageSize:6,basePath:catalogBasePath(),
+          }).items,
+        })),
+    ].filter(band=>band.items.length>0);
 
     renderCatalogComponents(roots.contentHeader, roots.contentBody, result, {
       searchTerm: state.searchTerm,
@@ -584,11 +637,17 @@ export function initRegistryExplorer(options: ShellOptions): void {
       route.namespace,
       route.slug,
     );
+    const related=queryCatalogComponents(registries,catalogIndex,{
+      registryNames:[route.namespace],
+      assetKinds:[route.kind==='template'?'template':route.kind==='theme'?'theme':'component'],
+      pageSize:9,sort:'name',basePath:catalogBasePath(),
+    }).items.filter(item=>item.slug!==route.slug).slice(0,8);
     renderItemDetailView(
       roots.contentHeader,
       roots.contentBody,
       key ? itemDetailCache.get(key) ?? summary : summary,
       queued,
+      related,
     );
     if (key && !itemDetailCache.has(key) && summary.status === 'summary-only' && summary.detail.route.status === 'available') {
       void ensureItemDetailLoaded(key, route.namespace, route.slug);
@@ -675,11 +734,36 @@ export function initRegistryExplorer(options: ShellOptions): void {
     );
   });
 
+  function filterSidebarSearch(input: HTMLInputElement): void {
+    const type = input.getAttribute('data-sidebar-search-root');
+    if(type!=='category'&&type!=='registry')return;
+    const term = input.value.trim().toLocaleLowerCase();
+    const list=roots.aside.querySelector<HTMLElement>(`[data-sidebar-list="${type}"]`);
+    if(!list)return;
+    let visible=0;
+    for(const item of list.querySelectorAll<HTMLElement>('[data-sidebar-search-label]')){
+      const name=item.getAttribute('data-sidebar-search-label')??'';
+      item.hidden=!!term&&!name.includes(term);
+      if(!item.hidden)visible++;
+    }
+    const empty=roots.aside.querySelector<HTMLElement>(`[data-sidebar-search-empty="${type}"]`);
+    if(empty)empty.hidden=visible>0;
+  }
+  roots.aside.addEventListener('input', event => {
+    const input=event.target as HTMLInputElement;
+    const type=input.getAttribute('data-sidebar-search-root');
+    if(type!=='category'&&type!=='registry')return;
+    state.facetSearchTerms['sidebar:'+type]=input.value;
+    filterSidebarSearch(input);
+  });
+
   roots.aside.addEventListener('click', event => handleClick(event.target as HTMLElement));
   roots.contentHeader.addEventListener('click', event => handleClick(event.target as HTMLElement));
   roots.contentBody.addEventListener('click', event => {
     const target = event.target as HTMLElement;
-    const link = target.closest<HTMLAnchorElement>('a[data-view-item-registry]');
+    const link = target.closest<HTMLAnchorElement>(
+      'a[data-view-item-registry],a[data-profile-registry]',
+    );
     if (link) {
       const mouse = event as MouseEvent;
       if (mouse.button === 1 || mouse.ctrlKey || mouse.metaKey || mouse.shiftKey || mouse.altKey) return;
@@ -743,8 +827,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const categoryControl = target.closest('[data-catalog-category-value]');
     if (categoryControl) {
       const value = categoryControl.getAttribute('data-catalog-category-value') ?? '';
-      setState({ catalogCategories: value ? toggle(state.catalogCategories, value) : [], discoveryPage: 1 }, 'push',
-        createFocusIdentity(categoryControl, '[data-catalog-category-value]', ['data-catalog-category-value']));
+      const sidebarChoice=categoryControl.hasAttribute('data-sidebar-category-link');
+      const nextRoute: CatalogRoute = sidebarChoice
+        && state.route.kind!=='components' && state.route.kind!=='registry'
+          ? {kind:'components'} : state.route;
+      setState({
+        route:nextRoute,
+        catalogCategories: value ? toggle(state.catalogCategories, value) : [],
+        ...(sidebarChoice&&nextRoute.kind==='components'&&state.route.kind!=='components'
+          ? {searchTerm:'',catalogRegistryNames:[],catalogAssetKinds:[]} : {}),
+        discoveryPage:1,
+      }, 'push', createFocusIdentity(categoryControl,
+        '[data-catalog-category-value]', ['data-catalog-category-value']));
       return;
     }
     const assetControl = target.closest('[data-asset-kind-value]');
@@ -778,7 +872,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     const profile = target.closest('[data-profile-registry]')?.getAttribute('data-profile-registry');
     if (profile) {
-      navigate({ kind: 'registry', namespace: profile }, 'push', { searchTerm: '' });
+      navigate({ kind: 'registry', namespace: profile }, 'push', {
+        searchTerm: '', catalogCategories: [], catalogAssetKinds: [],
+      });
       return;
     }
 

@@ -5,6 +5,7 @@ import type {
   RegistryDirectorySort,
 } from "../core/registryDirectory";
 import { escapeHtml, renderRegistryHomepageLink } from "./renderSafety";
+import { catalogRoutePath } from "../core/catalogRoutes";
 
 const COVERAGE_LABELS: Record<RegistryCatalogCoverage, string> = {
   current: "Current",
@@ -59,18 +60,23 @@ function sortOption(value: RegistryDirectorySort, label: string, selected: strin
 function renderEntry(entry: RegistryDirectoryEntry): string {
   const count = entry.itemCount === 1 ? "1 item" : `${entry.itemCount.toLocaleString()} items`;
   const homepage = renderRegistryHomepageLink(entry.registry.url, "secondary-link");
+  const route = catalogRoutePath({kind:"registry",namespace:entry.registry.name},
+    "/Registry-Atlas/");
   return `
     <article class="registry-directory-card">
-      <div class="registry-directory-copy">
+      <a class="registry-directory-copy registry-directory-open"
+        href="${escapeHtml(route)}" data-profile-registry="${escapeHtml(entry.registry.name)}"
+        aria-label="Open registry ${escapeHtml(entry.registry.name)}">
         <div class="registry-directory-heading">
           <h2>${escapeHtml(entry.registry.name)}</h2>
           <span class="catalog-coverage catalog-coverage-${escapeHtml(entry.coverage)}">${escapeHtml(COVERAGE_LABELS[entry.coverage])}</span>
         </div>
         <p>${escapeHtml(entry.registry.description)}</p>
         <div class="registry-directory-meta"><strong>${escapeHtml(count)}</strong></div>
-      </div>
+      </a>
       <div class="registry-directory-actions">
-        <button class="link-button" type="button" data-profile-registry="${escapeHtml(entry.registry.name)}">View registry</button>
+        <a class="link-button" href="${escapeHtml(route)}"
+          data-profile-registry="${escapeHtml(entry.registry.name)}">View registry</a>
         ${homepage}
       </div>
     </article>

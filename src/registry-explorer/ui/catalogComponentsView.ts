@@ -108,8 +108,20 @@ export function renderCatalogBrowseControls(
   const assetKinds = options.assetCounts
     ? renderAssetKindChips(options.assetCounts, options.selectedAssetKinds ?? []) : "";
   const filters = facets + assetKinds;
+  const activeFilters = [
+    ...state.registryNames.map(value => ({
+      attribute:'data-catalog-registry-value',value,label:'Registry: '+value,
+    })),
+    ...state.categories.map(value => ({
+      attribute:'data-catalog-category-value',value,label:'Category: '+value,
+    })),
+  ];
   return `
     <div class="catalog-filter-bar catalog-filter-bar-compact" role="group" aria-label="Catalog filters and sorting">
+      ${activeFilters.length ? `<div class="catalog-applied-filters" role="group" aria-label="Active filters">
+        ${activeFilters.map(entry=>`<button type="button" class="catalog-applied-filter" ${entry.attribute}="${escapeHtml(entry.value)}"
+          aria-label="Remove ${escapeHtml(entry.label)} filter">${escapeHtml(entry.label)} <span aria-hidden="true">×</span></button>`).join('')}
+      </div>` : ''}
       ${filters ? `<details class="catalog-filter-menu"><summary>Filters${state.registryNames.length + state.itemTypes.length + state.categories.length + (options.selectedAssetKinds?.length ?? 0) ? ` <span class="catalog-filter-count">${state.registryNames.length + state.itemTypes.length + state.categories.length + (options.selectedAssetKinds?.length ?? 0)}</span>` : ''}</summary><div class="catalog-filter-panel">${filters}</div></details>` : ""}
       ${options.hideSort ? '' : `<label class="catalog-filter-control">
         <span>Sort</span>
@@ -179,7 +191,8 @@ export function renderCatalogRailControls(
     ) : "",
     showCategories ? renderRailFacetGroup(
       "Category", "category", boundedFacetOptions(
-        facets.categories.filter(option => COMMON_CATEGORIES.has(option.value) && option.value === option.value.toLowerCase()),
+        facets.categories.filter(option =>
+          COMMON_CATEGORIES.has(option.value) && option.value === option.value.toLowerCase()),
         state.categories, 8,
       ), state.categories, "All categories",
     ) : "",
@@ -206,7 +219,7 @@ export function renderCatalogComponentCard(
   const preview = visual ?? liveDemo
     ?? (routeKind === 'theme' && component.themePreview
       ? renderCatalogThemeSpecimen(component)
-      : '<div class="catalog-component-unavailable">Visual reference not yet available</div>');
+      : '<div class="catalog-component-unavailable" role="img" aria-label="Visual reference not yet available"><span class="catalog-component-unavailable-icon" aria-hidden="true">▧</span></div>');
   const routePath = routeKind === 'component' ? component.routePath
     : component.routePath.replace('/components/', `/${routeKind}s/`);
   const linkAttributes = `href="${escapeHtml(routePath)}"

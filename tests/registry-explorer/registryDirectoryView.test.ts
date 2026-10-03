@@ -22,6 +22,8 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).toContain("Name Z–A");
     expect(body.innerHTML).toContain('<option value="item-count-desc" selected>');
     expect(body.innerHTML).toContain('data-profile-registry="@registrydirectory"');
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory"');
+    expect(body.innerHTML).toContain('class="registry-directory-copy registry-directory-open"');
     expect(body.innerHTML).not.toContain("known items");
     expect(body.innerHTML).toContain('href="https://registry.directory/"');
     expect(body.innerHTML).toContain('>Visit registry homepage</a>');

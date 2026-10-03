@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
-import { renderItemDetailView } from '../../src/registry-explorer/ui/itemDetailView';
+import { renderItemDetailView, renderRelatedComponentLinks } from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
   it('renders a component-first item page without raw JSON UI labels', () => {
@@ -29,6 +29,31 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('Open in v0');
     expect(body.innerHTML).not.toContain('Source record');
     expect(body.innerHTML).not.toContain('href="https://delta.example/r/');
+  });
+
+  it('shows related cards from only the matching registry with safe internal navigation', () => {
+    const related = [{
+      namespace:'@delta',slug:'button',displayName:'Button',type:'registry:component',
+      routePath:'/Registry-Atlas/@delta/components/button',
+    }, {
+      namespace:'@foreign',slug:'button',displayName:'Foreign',type:'registry:component',
+      routePath:'/Registry-Atlas/@foreign/components/button',
+    }, {
+      namespace:'@delta',slug:'code-block',displayName:'Code Block',type:'registry:component',
+      routePath:'/Registry-Atlas/@delta/components/code-block',
+    }].map(({ namespace, slug, displayName, type, routePath }) => ({
+      id: namespace + '/' + slug,
+      namespace, slug, displayName, type, routePath,
+      registry: { ...registryFixture(), name: namespace },
+      item: { name: slug, type },
+      categories: [], reviewed: false,
+    })) satisfies Parameters<typeof renderRelatedComponentLinks>[0];
+    const html=renderRelatedComponentLinks(related,'@delta','code-block');
+    expect(html).toContain('More from @delta');
+    expect(html).toContain('href="/Registry-Atlas/@delta/components/button"');
+    expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).not.toContain('@foreign');
+    expect(html).not.toContain('components/code-block');
   });
 
   it('does not substitute an external source link for an unavailable install action', () => {

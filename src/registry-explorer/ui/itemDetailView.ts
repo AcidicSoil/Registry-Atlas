@@ -1,6 +1,7 @@
 import { buildInstallAgentPrompt, buildInspectionPrompt } from '../core/itemPrompts.ts';
 import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/registryItemDetail.ts';
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
+import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { escapeHtml } from './renderSafety.ts';
 import { renderComponentPreview } from './componentPreview.ts';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
@@ -10,10 +11,11 @@ export function renderItemDetailView(
   bodyRoot: HTMLElement,
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
+  relatedItems: readonly CatalogComponent[] = [],
 ): void {
   const detail = result.detail;
   headerRoot.innerHTML = renderHeader(detail, result.status);
-  bodyRoot.innerHTML = detail ? renderDetailBody(detail, result, queuedTokens) : renderMissingBody(result);
+  bodyRoot.innerHTML = detail ? renderDetailBody(detail, result, queuedTokens, relatedItems) : renderMissingBody(result);
 }
 
 function renderHeader(detail: RegistryItemDetail | null, status: RegistryItemDetailResult['status']): string {
@@ -45,6 +47,7 @@ function renderDetailBody(
   detail: RegistryItemDetail,
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
+  relatedItems: readonly CatalogComponent[] = [],
 ): string {
   const fallback = result.status === 'loaded' || result.status === 'summary-only'
     ? ''
@@ -72,8 +75,39 @@ function renderDetailBody(
         ${renderFilesCard(detail.files)}
         ${renderSourceCard(detail)}
       </section>
+      ${renderRelatedComponentLinks(relatedItems,detail.namespace,detail.slug)}
     </article>
   `;
+}
+
+export function renderRelatedComponentLinks(
+  items: readonly CatalogComponent[],
+  namespace: string,
+  currentSlug: string,
+): string {
+  const related=items.filter(item=>item.namespace===namespace&&item.slug!==currentSlug).slice(0,8);
+  if(!related.length)return '';
+  return `<section class="item-related-section" aria-label="More from the same registry">
+    <div class="item-related-heading">
+      <h2>More from ${escapeHtml(namespace)}</h2>
+      <span>${related.length} items</span>
+    </div>
+    <div class="item-related-list">
+      ${related.map(item=>{
+        const reference=verifiedVisualReference(item.visualReference);
+        return `<a class="item-related-link" href="${escapeHtml(item.routePath)}"
+          data-view-item-registry="${escapeHtml(item.namespace)}"
+          data-view-item-slug="${escapeHtml(item.slug)}"
+          data-view-item-kind="component"
+          aria-label="View ${escapeHtml(item.displayName)} from ${escapeHtml(namespace)}">
+          ${reference ? renderVisualReferenceImage(reference,item.displayName,'item-related-image')
+            : '<span class="item-related-empty" aria-hidden="true">▧</span>'}
+          <span class="item-related-title">${escapeHtml(item.displayName)}</span>
+          <span class="item-related-arrow" aria-hidden="true">↗</span>
+        </a>`;
+      }).join('')}
+    </div>
+  </section>`;
 }
 
 function renderMissingBody(result: RegistryItemDetailResult): string {
