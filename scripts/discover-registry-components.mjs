@@ -3,11 +3,11 @@ import { readFile, open, unlink } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { isAbsolute } from 'node:path';
 import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
-import { discoverRegistry, DiscoveryLedger } from './lib/registry-discovery.mjs';
+import { discoverRegistry, DiscoveryLedger, catalogFingerprint } from './lib/registry-discovery.mjs';
 
 function args(argv) {
   const legal = new Set(['--registry', '--profile', '--server', '--tab', '--journal',
-    '--limit', '--max-pages', '--max-depth', '--max-links', '--delay-ms']);
+    '--limit', '--max-pages', '--max-depth', '--max-links', '--delay-ms', '--sitemap-dir']);
   const opts = {};
   for (let i = 0; i < argv.length; i += 2) {
     const key = argv[i], value = argv[i + 1];
@@ -19,6 +19,8 @@ function args(argv) {
     if (!opts[key]) throw new Error('Missing required ' + key);
   }
   if (!isAbsolute(opts['--journal'])) throw new Error('--journal must be an absolute path');
+  if (opts['--sitemap-dir'] && !isAbsolute(opts['--sitemap-dir']))
+    throw new Error('--sitemap-dir must be an absolute path');
   const numeric = (key, defaultValue) => {
     if (!opts[key]) return defaultValue;
     const num = Number(opts[key]);
@@ -27,6 +29,7 @@ function args(argv) {
   };
   return { registry: opts['--registry'], profile: opts['--profile'],
     server: opts['--server'], tab: opts['--tab'], journal: opts['--journal'],
+    sitemapDir: opts['--sitemap-dir'] ?? null,
     limit: numeric('--limit', 20), maxPages: numeric('--max-pages', 40),
     maxDepth: numeric('--max-depth', 4), maxLinks: numeric('--max-links', 1500),
     delayMs: numeric('--delay-ms', 1000) };
@@ -111,6 +114,26 @@ export async function main(argv, cwd = process.cwd()) {
   ])].filter(x => typeof x === 'string');
   // A journal has one writer at a time; an interrupted worker leaves an explicit
   // lock for operator recovery rather than silently racing another worker.
+  let sitemapCandidates=[];
+  if(options.sitemapDir){
+    const evidencePath=options.sitemapDir+'/'+registry.name.slice(1)+'.json';
+    let candidate=null;
+    try{candidate=JSON.parse(await readFile(evidencePath,'utf8'));}
+    catch(error){if(error.code!=='ENOENT')throw error;}
+    const expectedFingerprint=catalogFingerprint(registry,indexedItems);
+    if(candidate?.schema==='registry-atlas-sitemap-survey/v1'
+      && candidate.namespace===registry.name
+      && candidate.officialHomepage===registry.homepage
+      && candidate.catalogFingerprint===expectedFingerprint
+      && Date.parse(candidate.surveyedAt)>=Date.now()-30*24*60*60*1000
+      && Array.isArray(candidate.matchedPages)
+      && candidate.sitemaps?.some(index=>typeof index.url==='string')) {
+      const sourceUrl=candidate.sitemaps.find(index=>index.kind==='urls')?.url;
+      if(sourceUrl) sitemapCandidates=candidate.matchedPages.map(row=>({
+        slug:row.slug,url:row.url,sitemapUrl:sourceUrl,
+      }));
+    }
+  }
   const lockPath = options.journal + '.lock';
   const lock = await open(lockPath, 'wx', 0o600).catch(error => {
     if (error.code === 'EEXIST') throw new Error('Discovery journal is already claimed');
@@ -123,6 +146,7 @@ export async function main(argv, cwd = process.cwd()) {
     registry, indexedItems, ledger, browser,
     limit: options.limit, maxPages: options.maxPages,
     maxDepth: options.maxDepth, maxLinks: options.maxLinks, delayMs: options.delayMs,
+    sitemapCandidates,
   });
   const outcomes = {};
   for (const record of result.records) {

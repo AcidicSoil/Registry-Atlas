@@ -10,7 +10,7 @@ import { main as runDiscovery } from './discover-registry-components.mjs';
 export function parseRegistryScheduleArgs(argv) {
   const flags = new Set(['--profile', '--server', '--tab', '--journal-dir',
     '--cursor', '--max-registries', '--per-registry-limit', '--max-pages',
-    '--max-depth', '--max-links', '--delay-ms', '--report']);
+    '--max-depth', '--max-links', '--delay-ms', '--report', '--sitemap-dir']);
   const opts = {dryRun: false};
   for (let i = 0; i < argv.length; i++) {
     const key = argv[i];
@@ -28,6 +28,8 @@ export function parseRegistryScheduleArgs(argv) {
   }
   if (!opts.dryRun && !opts['--tab']) throw new Error('Live scheduling requires --tab');
   if (!isAbsolute(opts['--journal-dir'])) throw new Error('--journal-dir must be absolute');
+  if (opts['--sitemap-dir'] && !isAbsolute(opts['--sitemap-dir']))
+    throw new Error('--sitemap-dir must be absolute');
   if (opts['--report'] && !isAbsolute(opts['--report']))
     throw new Error('--report must be absolute');
   const integer = (key, fallback, min, max) => {
@@ -40,7 +42,8 @@ export function parseRegistryScheduleArgs(argv) {
   return {
     profile: opts['--profile'], server: opts['--server'], tab: opts['--tab'],
     journalDir: opts['--journal-dir'], cursor: opts['--cursor'] ?? null,
-    report: opts['--report'] ?? null, dryRun: opts.dryRun,
+    report: opts['--report'] ?? null, sitemapDir: opts['--sitemap-dir'] ?? null,
+    dryRun: opts.dryRun,
     maxRegistries: integer('--max-registries', 2, 1, 20),
     perRegistryLimit: integer('--per-registry-limit', 20, 1, 200),
     maxPages: integer('--max-pages', 40, 1, 250),
@@ -93,6 +96,7 @@ export async function main(argv, cwd = process.cwd()) {
       '--registry', job.namespace,
       '--profile', opts.profile, '--server', opts.server, '--tab', opts.tab,
       '--journal', join(opts.journalDir, job.namespace.slice(1) + '.jsonl'),
+      ...(opts.sitemapDir ? ['--sitemap-dir',opts.sitemapDir] : []),
       '--limit', String(opts.perRegistryLimit),
       '--max-pages', String(opts.maxPages), '--max-depth', String(opts.maxDepth),
       '--max-links', String(opts.maxLinks), '--delay-ms', String(opts.delayMs),

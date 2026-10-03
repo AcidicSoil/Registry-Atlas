@@ -15,6 +15,12 @@ describe('managed-source discovery scheduler CLI', () => {
       '--max-registries', '21'])).toThrow(/max-registries/);
   });
 
+  it('accepts official sitemap survey path only as an absolute directory', () => {
+    expect(parseRegistryScheduleArgs([...required,'--dry-run','--sitemap-dir','/tmp/surveys']))
+      .toMatchObject({sitemapDir:'/tmp/surveys'});
+    expect(()=>parseRegistryScheduleArgs([...required,'--dry-run','--sitemap-dir','relative']))
+      .toThrow(/absolute/);
+  });
   it('rejects flags without values, duplicate flags and relative journal or report paths', () => {
     expect(() => parseRegistryScheduleArgs([...required, '--dry-run', '--dry-run']))
       .toThrow(/Duplicate/);

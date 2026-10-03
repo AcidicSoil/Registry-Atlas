@@ -318,6 +318,51 @@ describe('evidence-based registry discovery', () => {
     expect(ledger.writes.filter(r => r.token === 'registry:@sample')).toHaveLength(2);
   });
 
+  it('uses an official sitemap candidate only after the rendered component heading matches', async () => {
+    const homepage = HOME;
+    const url = 'https://sample.example/docs/card';
+    const base = {[homepage]: {links:[]}, [url]:{heading:'Card'}} as Record<string, Page>;
+    const matched = await discoverRegistry({
+      registry, indexedItems:['card'],browser:fakeBrowser(base,homepage),
+      ledger:fakeLedger(),checkedAt:at,
+      sitemapCandidates:[{slug:'card',url,sitemapUrl:'https://sample.example/sitemap.xml'}],
+    });
+    expect(matched.records[0]).toMatchObject({
+      status:'page-observed',docsUrl:url,
+      evidence:{strategy:'official-sitemap-then-browser-verified',
+        navigationSource:'official-xml-sitemap'},
+    });
+    const fake={...base,[url]:{heading:'Unrelated'}};
+    const mismatch=await discoverRegistry({
+      registry,indexedItems:['card'],browser:fakeBrowser(fake,homepage),
+      ledger:fakeLedger(),checkedAt:at,
+      sitemapCandidates:[{slug:'card',url,sitemapUrl:'https://sample.example/sitemap.xml'}],
+    });
+    expect(mismatch.records[0]).toMatchObject({
+      status:'unresolved',reason:'rendered-identity-mismatch',
+    });
+    const foreign=await discoverRegistry({
+      registry,indexedItems:['card'],browser:fakeBrowser(base,homepage),
+      ledger:fakeLedger(),checkedAt:at,
+      sitemapCandidates:[{slug:'card',url:'https://other.example/docs/card',
+        sitemapUrl:'https://sample.example/sitemap.xml'}],
+    });
+    expect(foreign.records[0].status).not.toBe('page-observed');
+  });
+
+  it('prioritizes sitemap-matched identities in a bounded batch before unobserved catalog items', async () => {
+    const url='https://sample.example/docs/card';
+    const result=await discoverRegistry({
+      registry,indexedItems:['aardvark','card'],
+      browser:fakeBrowser({[HOME]:{links:[]},[url]:{heading:'Card'}},HOME),
+      ledger:fakeLedger(),checkedAt:at,limit:1,
+      sitemapCandidates:[{slug:'card',url,sitemapUrl:'https://sample.example/sitemap.xml'}],
+    });
+    expect(result.processed).toBe(1);
+    expect(result.records[0]).toMatchObject({slug:'card',status:'page-observed'});
+    expect(result.pending).toBe(1);
+  });
+
   it('does not choose between two distinct observed destinations for one title', async () => {
     const alternate: Record<string, Page> = {
       [HOME]: { links: [['Components', '/components']] },

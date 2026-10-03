@@ -254,6 +254,7 @@ export async function discoverRegistry({
   registry, indexedItems, browser, ledger, checkedAt = new Date().toISOString(),
   limit = 100, maxPages = 40, maxDepth = 4, maxLinks = 1500, delayMs = 0,
   maxAgeMs = 24 * 60 * 60 * 1000,
+  sitemapCandidates = [],
 }) {
   const root = officialRoot(registry.homepage);
   if (!/^[a-z0-9@_-]+$/i.test(registry.name)) throw new Error('Invalid registry namespace');
@@ -291,14 +292,33 @@ export async function discoverRegistry({
   }
   let processed = 0;
   const records = [];
-  for (const slug of identities) {
+  // Site-declared exact URLs make a useful bounded browser verification
+  // batch; avoid spending the first N slots on alphabetical unknown items.
+  const siteCandidates=new Set(sitemapCandidates.map(row=>row?.slug));
+  const priorityOrder=[...identities].sort((a,b)=>
+    Number(siteCandidates.has(b))-Number(siteCandidates.has(a))
+      || a.localeCompare(b));
+  for (const slug of priorityOrder) {
     const token = prefix + slug;
     let row = ledger.get(token);
     if (!isFresh(row, fp, checkedAt, maxAgeMs)
       || (previouslyExhausted && row?.reason === 'discovery-budget-exhausted')
       || (previousNavigationError && row?.reason === 'discovery-navigation-error')) {
       if (processed >= limit) continue;
-      const candidates = (snapshot.candidates ?? []).filter(x => x.slug === slug);
+      const candidates = [
+        ...(snapshot.candidates ?? []).filter(x => x.slug === slug),
+        ...sitemapCandidates.filter(x=>x?.slug===slug).flatMap(x=>{
+          const url=sameOrigin(x.url,root.href,root);
+          const sitemapUrl=sameOrigin(x.sitemapUrl,root.href,root);
+          if(!url||!sitemapUrl||url.endsWith('.json'))return [];
+          const leaf=decodeURIComponent(new URL(url).pathname.split('/').filter(Boolean).at(-1)??'');
+          const normalizedLeaf=normalize(leaf);
+          if(!normalizedLeaf)return [];
+          return [{slug,url,listingUrl:sitemapUrl,sitemapUrl,
+            name:leaf,matching:'sitemap-path',
+            navigationSource:'official-xml-sitemap',renderedName:normalizedLeaf}];
+        }),
+      ];
       // When a component listing and an unrelated block reuse a label, the
       // observed complete item path disambiguates. Two distinct matching
       // item paths still fail closed as ambiguous.
@@ -328,6 +348,7 @@ export async function discoverRegistry({
           const itemLeaf = normalize(leaf(slug));
           const expected = source.matching === 'observed-catalog-path'
             || source.matching === 'official-index-name'
+            || source.matching === 'sitemap-path'
             ? source.renderedName
             : source.matching === 'observed-full-path' ? itemLeaf : full;
           if (landed !== source.url || snap.url !== landed
@@ -337,9 +358,11 @@ export async function discoverRegistry({
             row = {...base, status: 'unresolved', reason: 'rendered-identity-mismatch'};
           } else {
             row = {...base, status: 'page-observed', docsUrl: landed,
-              evidence: { strategy: source.indexUrl
-                ? 'observed-structured-index' : 'rendered-navigation',
+              evidence: { strategy: source.sitemapUrl
+                ? 'official-sitemap-then-browser-verified'
+                : source.indexUrl ? 'observed-structured-index' : 'rendered-navigation',
                 ...(source.indexUrl ? {indexUrl: source.indexUrl} : {}),
+                ...(source.sitemapUrl ? {sitemapUrl:source.sitemapUrl} : {}),
                 listingUrl: source.listingUrl,
                 observedLink: source.url, linkName: source.name,
                 matching: source.matching, navigationSource: source.navigationSource,
