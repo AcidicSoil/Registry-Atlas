@@ -46,6 +46,7 @@ export interface ReferenceRoutePlan {
   queue: string[];
   selected: string[];
   pending: string[];
+  deferred: string[];
   nextCursor: string | null;
   complete: boolean;
 }
@@ -56,7 +57,10 @@ export function planReferenceRoutes(input: {
     links?: readonly ReferenceCandidateLink[];
     sidebarGroups?: readonly ReferenceSidebarGroupInput[];
   }>>;
+  errors?: Readonly<Record<string, { checkedAt?: string; message?: string }>>;
   maxRoutes?: number;
+  nowMs?: number;
+  retryDelayMs?: number;
   cursor?: string | null;
 }): ReferenceRoutePlan;
 export function summarizeReferencePage(
@@ -68,6 +72,7 @@ export function main(argv: string[]): Promise<{
   output?: string;
   observed: number;
   pending: number;
+  deferred: number;
   selected?: string[];
   processed?: Array<{ url: string; status: string; reason?: string; links?: number }>;
   errors?: number;

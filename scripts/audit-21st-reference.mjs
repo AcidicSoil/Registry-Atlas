@@ -26,7 +26,8 @@ export function normalized21stUrl(raw, from = SITE) {
   } catch { return null; }
 }
 
-export function planReferenceRoutes({queue=[], observations={}, maxRoutes=5, cursor=null}) {
+export function planReferenceRoutes({queue=[], observations={}, errors={}, maxRoutes=5,
+  cursor=null, nowMs=Date.now(), retryDelayMs=3_600_000}) {
   if (!Number.isInteger(maxRoutes) || maxRoutes<1 || maxRoutes>25)
     throw Error('maxRoutes must be an integer from 1 to 25');
   const known=new Set(), ordered=[];
@@ -45,10 +46,16 @@ export function planReferenceRoutes({queue=[], observations={}, maxRoutes=5, cur
   if(cursor!==null && (!normalizedCursor || !known.has(normalizedCursor)))
     throw Error('Unknown census cursor');
   const start=normalizedCursor?ordered.indexOf(normalizedCursor)+1:0;
-  const pending=ordered.slice(start).filter(url=>!Object.hasOwn(observations,url));
+  const incomplete=ordered.slice(start).filter(url=>!Object.hasOwn(observations,url));
+  const coolingDown=url=>{
+    const checkedAt=Date.parse(errors[url]?.checkedAt??'');
+    return Number.isFinite(checkedAt) && checkedAt<=nowMs && nowMs-checkedAt<retryDelayMs;
+  };
+  const deferred=incomplete.filter(coolingDown);
+  const pending=incomplete.filter(url=>!coolingDown(url));
   const selected=pending.slice(0,maxRoutes);
-  return {queue:ordered,selected,pending,
-    nextCursor:selected.at(-1)??normalizedCursor,complete:pending.length===0};
+  return {queue:ordered,selected,pending,deferred,
+    nextCursor:selected.at(-1)??normalizedCursor,complete:incomplete.length===0};
 }
 
 export function summarizeReferencePage(raw,expectedUrl,observedAt=new Date().toISOString()){
@@ -173,7 +180,8 @@ export async function main(argv){
   const batch=planReferenceRoutes({...state,maxRoutes:opts.maxRoutes,cursor:opts.cursor});
   if(opts.dryRun)return {schema:SCHEMA,dryRun:true,
     observed:Object.keys(state.observations).length,
-    selected:batch.selected,pending:batch.pending.length,nextCursor:batch.nextCursor};
+    selected:batch.selected,pending:batch.pending.length,
+    deferred:batch.deferred.length,nextCursor:batch.nextCursor};
   const manager=toolJson('pinchtab-profile-manager',[opts.profile,'status','--json']);
   if(!manager.ok || !manager.data?.instances?.some(i=>
     i.url===opts.server&&i.status==='running'))throw Error('Unverified managed design profile');
@@ -205,7 +213,8 @@ export async function main(argv){
     const next=planReferenceRoutes({...state,maxRoutes:opts.maxRoutes});
     return {schema:SCHEMA,output:file,processed,
       observed:Object.keys(state.observations).length,pending:next.pending.length,
-      errors:Object.keys(state.errors).length,nextCursor:batch.selected.at(-1)??opts.cursor??null};
+      deferred:next.deferred.length,errors:Object.keys(state.errors).length,
+      nextCursor:batch.selected.at(-1)??opts.cursor??null};
   }finally{await lock.close();await unlink(file+'.lock');}
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){

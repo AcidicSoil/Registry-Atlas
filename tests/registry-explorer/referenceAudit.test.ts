@@ -37,6 +37,26 @@ describe('21st.dev route evidence and replay', () => {
     expect(() => planReferenceRoutes({ queue, observations, maxRoutes: 2, cursor: origin + 'missing' })).toThrow();
   });
 
+  it('defers fresh failures without counting them as complete and retries after cooldown', () => {
+    const failed = 'https://21st.dev/design-bug-bot';
+    const next = 'https://21st.dev/community/icons';
+    const nowMs = Date.parse('2026-10-03T10:00:00.000Z');
+    const input = {
+      queue: [origin, failed, next],
+      observations: { [origin]: { links: [] } },
+      errors: { [failed]: { checkedAt: '2026-10-03T09:50:00.000Z', message: 'Unexpected final route' } },
+      maxRoutes: 2, nowMs, retryDelayMs: 3_600_000,
+    };
+    const plan = planReferenceRoutes(input);
+    expect(plan.selected).toEqual([next]);
+    expect(plan.deferred).toEqual([failed]);
+    expect(plan.complete).toBe(false);
+    const retry = planReferenceRoutes({ ...input, nowMs: nowMs + 3_600_001 });
+    expect(retry.selected).toEqual([failed, next]);
+    expect(retry.deferred).toEqual([]);
+    expect(planReferenceRoutes({ ...input, observations: { ...input.observations, [failed]: { links: [] }, [next]: { links: [] } } }).complete).toBe(true);
+  });
+
   it('keeps observed sidebar groups, content labels and controls distinct from invented catalog facts', () => {
     const raw = {
       url: 'https://21st.dev/community/components', title: 'Components | 21st',
