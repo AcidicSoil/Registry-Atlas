@@ -3,6 +3,7 @@ import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/regis
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import { escapeHtml } from './renderSafety.ts';
 import { renderComponentPreview } from './componentPreview.ts';
+import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -60,7 +61,7 @@ function renderDetailBody(
             ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           </div>
           ${renderPromptActions(detail)}
-          ${renderEvaluationLabels(detail, false)}
+          ${renderEvaluationLabels(detail, Boolean(verifiedVisualReference(detail.visualReference)))}
           ${fallback}
         </div>
       </section>
@@ -86,6 +87,19 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
 }
 
 function renderPreview(detail: RegistryItemDetail): string {
+  const reference = verifiedVisualReference(detail.visualReference);
+  if (reference) return `
+    <figure class="item-preview-reference">
+      <div class="catalog-eyebrow">Visual reference</div>
+      <a class="item-preview-reference-image" href="${escapeHtml(reference.officialPage)}"
+        target="_blank" rel="noreferrer noopener" aria-label="View original ${escapeHtml(detail.title)} component">
+        ${renderVisualReferenceImage(reference, detail.title, 'item-preview-reference-img')}
+      </a>
+      <figcaption>Captured from the official registry page.
+        <a href="${escapeHtml(reference.officialPage)}" target="_blank"
+          rel="noreferrer noopener">View original component ↗</a>
+      </figcaption>
+    </figure>`;
   const liveDemo = renderComponentPreview(detail.namespace, detail.slug, 'detail');
   if (liveDemo) return `
     <section class="item-preview-live" aria-label="Interactive component example">
@@ -111,7 +125,7 @@ function renderPreview(detail: RegistryItemDetail): string {
       <div class="item-preview-metadata-facts">
         ${facts.map(fact => `<span>${escapeHtml(fact)}</span>`).join('')}
       </div>
-      <div class="item-preview-metadata-status">Interactive demo unavailable</div>
+      <div class="item-preview-metadata-status">Visual reference not yet available</div>
     </div>
   `;
 }

@@ -3108,3 +3108,60 @@ aside:has(.aside-inner:empty) {
   .registry-directory-controls { justify-content: flex-start; }
   .registry-directory-controls > label { flex: 0 1 auto; }
 }
+
+/* Official image references are normal page content, not executable component hosts. */
+.catalog-component-card:has(.catalog-component-preview-image) { position: relative; }
+.catalog-component-original {
+  position: absolute;
+  right: var(--space-3);
+  bottom: 7px;
+  font-size: 11px;
+  color: var(--primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.catalog-component-card:has(.catalog-component-original) .catalog-component-card-copy {
+  padding-bottom: 29px;
+}
+.item-preview-reference {
+  margin: 0;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+  min-width: 0;
+}
+.item-preview-reference-image {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  max-height: 460px;
+  overflow: hidden;
+  border-radius: calc(var(--radius-card) / 2);
+  background: var(--secondary);
+}
+.item-preview-reference-img {
+  display: block;
+  max-width: 100%;
+  max-height: 460px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.item-preview-reference figcaption {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+.item-preview-reference figcaption a { color: var(--primary); }
+
+
+/* Missing visuals stay informative without turning each unknown item into a large blank tile. */
+.catalog-component-card:has(.catalog-component-unavailable) .catalog-component-specimen {
+  min-height: 78px;
+  aspect-ratio: auto;
+}
+.catalog-component-card:has(.catalog-component-unavailable) .catalog-component-unavailable {
+  min-height: 78px;
+}

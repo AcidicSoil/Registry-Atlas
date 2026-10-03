@@ -5,6 +5,7 @@ import type {
   Registry,
   RegistryCatalogIndex,
   RegistryItemSummary,
+  RegistryVisualReference,
 } from '../core/registry.schema';
 import { parseRegistryCatalogIndex } from '../core/registryCatalogIndex';
 import {
@@ -116,7 +117,10 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   // Visual captures are optional; missing evidence must never block registry browsing.
   const previewManifest = await fetchImpl(visualUrl).then(async response =>
     response.ok ? await response.json() as unknown : null).catch(() => null);
-  const visualPreviews = readVisualPreviewManifest(previewManifest, catalogIndex);
+  const visualReferences = readVisualReferenceManifest(previewManifest, catalogIndex);
+  const visualPreviews = Object.fromEntries(
+    Object.entries(visualReferences).map(([key, entry]) => [key, entry.imageUrl]),
+  );
   const validation = validateRegistryMirror(mirrorData);
 
   if (validation.errors.length > 0) {
@@ -128,7 +132,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
 
   return {
     meta: typedMirror.meta,
-    catalogIndex: Object.assign(catalogIndex, { visualPreviews }),
+    catalogIndex: Object.assign(catalogIndex, { visualPreviews, visualReferences }),
     warnings: validation.warnings,
     registries: typedMirror.registries.map(record => ({
       name: record.official.name,
@@ -193,13 +197,20 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
 export function readVisualPreviewManifest(
   input: unknown, catalog: RegistryCatalogIndex,
 ): Readonly<Record<string, string>> {
+  return Object.fromEntries(Object.entries(readVisualReferenceManifest(input, catalog))
+    .map(([key, entry]) => [key, entry.imageUrl]));
+}
+
+export function readVisualReferenceManifest(
+  input: unknown, catalog: RegistryCatalogIndex,
+): Readonly<Record<string, RegistryVisualReference>> {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
   const data = input as Record<string, unknown>;
   if (data.schemaVersion !== 1 || !data.previews || typeof data.previews !== 'object'
     || Array.isArray(data.previews)) return {};
   const names = new Map(Object.entries(catalog.registries).map(([ns, items]) =>
     [ns, new Set(items.map(item => item.name))]));
-  const previews: Record<string, string> = {};
+  const previews: Record<string, RegistryVisualReference> = {};
   for (const [key, entry] of Object.entries(data.previews)) {
     if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
     const item = entry as Record<string, unknown>;
@@ -219,7 +230,7 @@ export function readVisualPreviewManifest(
           || !/\.(?:svg|jpe?g|png|webp)$/i.test(visual.pathname)) continue;
       }
     } catch { continue; }
-    previews[key] = item.imageUrl;
+    previews[key] = { imageUrl: item.imageUrl, officialPage: new URL(item.officialPage).href };
   }
   return previews;
 }

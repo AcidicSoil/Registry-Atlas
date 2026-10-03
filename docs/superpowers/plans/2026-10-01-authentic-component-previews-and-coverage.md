@@ -1,5 +1,8 @@
 # Authentic Component Previews and Coverage Implementation Plan
 
+> **Superseded for the current visual-reference requirement (2026-10-02).** The user clarified that previews are images of the actual official component demo, not locally executed copies of upstream code. See `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The build-host, source-license, and interactive-runtime tasks below are historical; they are not prerequisites for the requested visual-reference rollout.
+
+
 > **For agentic workers:** Use the host's available task-by-task implementation workflow. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn the three existing isolated examples into a safe, auditable pipeline for progressively making the remaining Registry Atlas items functionally previewable in both cards and detail pages.

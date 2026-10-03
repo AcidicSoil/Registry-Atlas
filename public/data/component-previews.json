@@ -28,6 +28,27 @@
       "kind": "icon",
       "capturedAt": "2026-10-01T23:41:00.000Z",
       "verification": "official gallery image alt and src matched catalog identity"
+    },
+    "@8bitcn/accordion": {
+      "imageUrl": "/Registry-Atlas/data/previews/8bitcn/accordion-5280427ebdc2.jpg",
+      "officialPage": "https://www.8bitcn.com/docs/components/accordion",
+      "kind": "component",
+      "capturedAt": "2026-10-03T04:03:52.282Z",
+      "verification": "official rendered component demo screenshot"
+    },
+    "@animate-ui/components-animate-avatar-group": {
+      "imageUrl": "/Registry-Atlas/data/previews/animate-ui/components-animate-avatar-group-3d3de8f9b0a6.jpg",
+      "officialPage": "https://animate-ui.com/docs/components/animate/avatar-group",
+      "kind": "component",
+      "capturedAt": "2026-10-03T04:06:25.401Z",
+      "verification": "official rendered component demo screenshot"
+    },
+    "@animate-ui/components-animate-code": {
+      "imageUrl": "/Registry-Atlas/data/previews/animate-ui/components-animate-code-56a81b3e6cfd.jpg",
+      "officialPage": "https://animate-ui.com/docs/components/animate/code",
+      "kind": "component",
+      "capturedAt": "2026-10-03T04:06:28.657Z",
+      "verification": "official rendered component demo screenshot"
     }
   }
 }

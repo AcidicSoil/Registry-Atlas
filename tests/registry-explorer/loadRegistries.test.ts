@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readVisualPreviewManifest } from "../../src/registry-explorer/data/loadRegistries";
+import { readVisualReferenceManifest, readVisualPreviewManifest } from "../../src/registry-explorer/data/loadRegistries";
 import type { RegistryCatalogIndex } from "../../src/registry-explorer/core/registry.schema";
 
 const index: RegistryCatalogIndex = {
@@ -20,6 +20,22 @@ describe("verified visual catalog overlay", () => {
     expect(mapped).toEqual({
       "@alpha/button": "/Registry-Atlas/data/previews/alpha/button.jpg",
       "@svgl/mastra": "https://svgl.app/library/mastra-icon-light.svg",
+    });
+  });
+  it("retains the verified official page with each reference, without trusting generic site thumbnails", () => {
+    const mapped = readVisualReferenceManifest({ schemaVersion: 1, previews: {
+      "@alpha/button": { imageUrl: "/Registry-Atlas/data/previews/alpha/button.jpg",
+        officialPage: "https://alpha.example/docs/button" },
+      "@svgl/mastra": { imageUrl: "https://svgl.app/library/mastra-icon-light.svg",
+        officialPage: "https://svgl.app/" },
+      "@alpha/unlisted": { imageUrl: "/Registry-Atlas/data/previews/alpha/unlisted.jpg",
+        officialPage: "https://alpha.example/docs/unlisted" },
+    } }, index);
+    expect(mapped).toEqual({
+      "@alpha/button": { imageUrl: "/Registry-Atlas/data/previews/alpha/button.jpg",
+        officialPage: "https://alpha.example/docs/button" },
+      "@svgl/mastra": { imageUrl: "https://svgl.app/library/mastra-icon-light.svg",
+        officialPage: "https://svgl.app/" },
     });
   });
   it("rejects raw endpoints, scripts, ambiguous image paths and malformed manifests", () => {

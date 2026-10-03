@@ -77,9 +77,15 @@ export interface RegistryCatalogIndexMeta {
   item_count: number;
 }
 
+export interface RegistryVisualReference {
+  imageUrl: string;
+  officialPage: string;
+}
+
 export interface RegistryCatalogIndex {
   meta: RegistryCatalogIndexMeta;
   registries: Readonly<Record<string, readonly RegistryCatalogItem[]>>;
+  visualReferences?: Readonly<Record<string, RegistryVisualReference>>;
 }
 
 export interface Registry {

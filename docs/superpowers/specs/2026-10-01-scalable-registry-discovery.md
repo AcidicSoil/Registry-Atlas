@@ -1,5 +1,8 @@
 # Scalable, evidence-based registry discovery — implementation specification
 
+> **Current product scope:** Use this document for observed official URL discovery and catalog-identity evidence only. For screenshots of the actual components, linking and UI publication, see `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The earlier prohibitions on screenshots and requirements for original-source React builds were superseded by the user’s 2026-10-02 clarification.
+
+
 **Date:** 2026-10-01
 **Status:** User-approved architecture; implementation staged and evidence-gated.
 **Parent contract:** `docs/superpowers/specs/2026-10-01-authentic-component-previews-and-coverage.md`.

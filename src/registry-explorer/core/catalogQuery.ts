@@ -10,6 +10,7 @@ import type {
   RegistryCatalogIndex,
   RegistryCatalogItem,
   RegistryItemSummary,
+  RegistryVisualReference,
 } from "./registry.schema";
 
 export interface CatalogComponent {
@@ -30,6 +31,7 @@ export interface CatalogComponent {
   item: RegistryCatalogItem;
   routePath: string;
   previewUrl?: string;
+  visualReference?: RegistryVisualReference;
   docsUrl?: string;
 }
 
@@ -94,6 +96,7 @@ export function queryCatalogComponents(
   const query = normalize(options.search ?? "");
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));
   const visualPreviews = (index as RegistryCatalogIndex & { visualPreviews?: Readonly<Record<string, string>> }).visualPreviews ?? {};
+  const visualReferences = index.visualReferences ?? {};
   const reviewedByRegistry = new Map(
     registries.map(registry => [registry.name, reviewedSummaryMap(registry)]),
   );
@@ -132,7 +135,8 @@ export function queryCatalogComponents(
   const items = matches
     .slice(start, start + pageSize)
     .map(match => toCatalogComponent(match.registry, match.item, match.reviewed, options.basePath,
-      visualPreviews[`${match.registry.name}/${match.item.name}`]));
+      visualPreviews[`${match.registry.name}/${match.item.name}`],
+      visualReferences[`${match.registry.name}/${match.item.name}`]));
 
   return {
     items,
@@ -200,6 +204,7 @@ function toCatalogComponent(
   reviewed: RegistryItemSummary | undefined,
   basePath = "/Registry-Atlas/",
   verifiedPreview?: string,
+  visualReference?: RegistryVisualReference,
 ): CatalogComponent {
   return {
     id: `${registry.name}:${item.name}`,
@@ -222,6 +227,7 @@ function toCatalogComponent(
       basePath,
     ),
     ...((verifiedPreview || reviewed?.previewUrl) ? { previewUrl: verifiedPreview || reviewed?.previewUrl } : {}),
+    ...(visualReference ? { visualReference } : {}),
     ...(reviewed?.docsUrl ? { docsUrl: reviewed.docsUrl } : {}),
   };
 }

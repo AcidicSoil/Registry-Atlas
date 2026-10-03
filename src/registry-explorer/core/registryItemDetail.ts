@@ -8,6 +8,7 @@ import type {
   RegistryCatalogIndex,
   RegistryCssVars,
   RegistryItemSummary,
+  RegistryVisualReference,
   RegistryItemSummaryFile,
 } from './registry.schema.ts';
 
@@ -38,6 +39,7 @@ export interface RegistryItemDetail {
   installAction: InstallActionState;
   docsUrl: string | null;
   previewUrl: string | null;
+  visualReference?: RegistryVisualReference;
   evidenceUrl: string | null;
   componentPageUrl: string | null;
   dependencies: readonly string[];
@@ -164,7 +166,10 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   if (!registry) return notFound('Registry not found.', 'missing-registry');
 
   if (registry.itemSummaries?.some(item => item.slug === slug)) {
-    return resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson);
+    return withVisualReference(
+      resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson),
+      catalogIndex.visualReferences?.[`${registryName}/${slug}`],
+    );
   }
 
   const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
@@ -172,6 +177,13 @@ export function resolveRegistryItemDetailFromCatalogIndex(
 
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
+  const reference = catalogIndex.visualReferences?.[`${registryName}/${slug}`];
+  if (reference) {
+    base.visualReference = reference;
+    base.previewUrl = reference.imageUrl;
+    base.componentPageUrl = reference.officialPage;
+    base.visualStatus = 'available';
+  }
   if (base.route.status !== 'available') {
     return { status: 'route-unavailable', detail: base, message: 'Item route unavailable.', reason: base.route.status };
   }
@@ -184,6 +196,19 @@ export function resolveRegistryItemDetailFromCatalogIndex(
     return { status: 'invalid-schema', detail: base, message: 'Registry item data did not match the expected safe shape.', reason: normalized.reason };
   }
   return { status: 'loaded', detail: mergeDetailJson(base, normalized.item, sourceJson), message: null };
+}
+
+function withVisualReference(
+  result: RegistryItemDetailResult,
+  reference: RegistryVisualReference | undefined,
+): RegistryItemDetailResult {
+  if (!reference || !result.detail) return result;
+  return {
+    ...result,
+    detail: { ...result.detail, visualReference: reference,
+      previewUrl: reference.imageUrl, componentPageUrl: reference.officialPage,
+      visualStatus: 'available' },
+  };
 }
 
 export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary): RegistryItemDetail {

@@ -1,10 +1,34 @@
 import { describe, expect, it } from 'vitest';
 import { queryCatalogComponents } from '../../src/registry-explorer/core/catalogQuery';
-import { resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
+import { resolveRegistryItemDetailFromCatalogIndex, resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
 import { renderItemDetailView } from '../../src/registry-explorer/ui/itemDetailView';
+import { renderCatalogComponentCard } from '../../src/registry-explorer/ui/catalogComponentsView';
 import type { Registry, RegistryCatalogIndex } from '../../src/registry-explorer/core/registry.schema';
 
 describe('preview and component page links', () => {
+  it('carries the exact manifest URL and image from the catalog through both card and detail', () => {
+    const registry = registryFixture();
+    const officialPage = 'https://delta.example/docs/components/code-block';
+    const imageUrl = '/Registry-Atlas/data/previews/delta/code-block.jpg';
+    const index: RegistryCatalogIndex = {
+      meta: { registry_count: 1, item_count: 1 },
+      registries: { '@delta': [{ name: 'code-block', title: 'Code Block', type: 'registry:ui' }] },
+      visualReferences: {
+        '@delta/code-block': { officialPage, imageUrl },
+      },
+    };
+    const [component] = queryCatalogComponents([registry], index).items;
+    expect(component?.visualReference).toEqual({officialPage,imageUrl});
+    expect(renderCatalogComponentCard(component!)).toContain(`href="${officialPage}"`);
+    expect(renderCatalogComponentCard(component!)).toContain(`src="${imageUrl}"`);
+    const detail = resolveRegistryItemDetailFromCatalogIndex([registry], index, '@delta', 'code-block');
+    expect(detail.detail?.componentPageUrl).toBe(officialPage);
+    const body = {innerHTML:''} as HTMLElement;
+    renderItemDetailView({innerHTML:''} as HTMLElement,body,detail,new Set());
+    expect(body.innerHTML).toContain(`src="${imageUrl}"`);
+    expect(body.innerHTML).toContain(`href="${officialPage}"`);
+  });
+
   it('keeps preview URLs distinct from component documentation URLs', () => {
     const registry = registryFixture();
     const previewUrl = 'https://delta.example/preview.png';

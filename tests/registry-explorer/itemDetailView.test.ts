@@ -40,7 +40,24 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('href="https://delta.example/components/code-block"');
     expect(body.innerHTML).toContain('<button class="install-button" type="button" disabled>Copy install</button>');
     expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(0);
-    expect(body.innerHTML).toContain('Interactive demo unavailable');
+    expect(body.innerHTML).toContain('Visual reference not yet available');
+  });
+
+  it('shows the recorded component image and a direct link to the actual demo page', () => {
+    const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
+    if (!result.detail) throw new Error('Expected item detail');
+    const body = root();
+    renderItemDetailView(root(), body, { ...result, detail: {
+      ...result.detail,
+      visualReference: {
+        imageUrl: '/Registry-Atlas/data/previews/delta/code-block.jpg',
+        officialPage: 'https://delta.example/docs/code-block',
+      },
+    } }, new Set());
+    expect(body.innerHTML).toContain('src="/Registry-Atlas/data/previews/delta/code-block.jpg"');
+    expect(body.innerHTML).toContain('href="https://delta.example/docs/code-block"');
+    expect(body.innerHTML).toContain('View original component');
+    expect(body.innerHTML).not.toContain('item-preview-metadata');
   });
 
   it.each(['javascript:alert(1)', 'not a URL'])('treats unsafe preview URLs (%s) as unavailable in both imagery and status copy', (previewUrl) => {
@@ -55,7 +72,7 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain('visual available');
     expect(body.innerHTML).not.toContain('preview unavailable');
-    expect(body.innerHTML).toContain('Interactive demo unavailable');
+    expect(body.innerHTML).toContain('Visual reference not yet available');
   });
 
   it.each(['javascript:alert(1)', 'https://user:pass@delta.example/docs', '//attacker.example/docs'])
@@ -192,7 +209,7 @@ describe('enriched detail actions', () => {
     renderItemDetailView(root(), body, result, new Set());
 
     expect(body.innerHTML).not.toContain('<img');
-    expect(body.innerHTML).toContain('Interactive demo unavailable');
+    expect(body.innerHTML).toContain('Visual reference not yet available');
     expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).toContain('Copy install-agent prompt');
     expect(body.innerHTML).toContain('Copy inspection prompt');

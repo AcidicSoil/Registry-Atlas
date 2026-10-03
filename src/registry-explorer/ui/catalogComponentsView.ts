@@ -11,6 +11,7 @@ import type {
 import type { RegistryThemeSwatch } from "../core/registry.schema";
 import { escapeHtml } from "./renderSafety";
 import { renderComponentPreview } from './componentPreview';
+import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference';
 
 const COMMON_CATEGORIES = new Set(["ai", "forms", "form", "dashboard", "marketing", "navigation", "charts"]);
 
@@ -197,13 +198,15 @@ export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: 'component' | 'template' | 'theme' = 'component',
 ): string {
-  const liveDemo = routeKind === 'component'
+  const reference = verifiedVisualReference(component.visualReference);
+  const visual = reference ? renderVisualReferenceImage(reference, component.displayName) : null;
+  const liveDemo = !visual && routeKind === 'component'
     ? renderComponentPreview(component.namespace, component.slug, 'card')
     : null;
-  const preview = liveDemo
+  const preview = visual ?? liveDemo
     ?? (routeKind === 'theme' && component.themePreview
       ? renderCatalogThemeSpecimen(component)
-      : '<div class="catalog-component-unavailable">Interactive demo unavailable</div>');
+      : '<div class="catalog-component-unavailable">Visual reference not yet available</div>');
   const routePath = routeKind === 'component' ? component.routePath
     : component.routePath.replace('/components/', `/${routeKind}s/`);
   const linkAttributes = `href="${escapeHtml(routePath)}"
@@ -223,6 +226,8 @@ export function renderCatalogComponentCard(
         : `<a class="catalog-component-open" ${linkAttributes}>
              <div class="catalog-component-specimen">${preview}</div>${copy}
            </a>`}
+      ${reference ? `<a class="catalog-component-original" href="${escapeHtml(reference.officialPage)}"
+        target="_blank" rel="noreferrer noopener">View original ↗</a>` : ''}
     </article>
   `;
 }

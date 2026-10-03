@@ -1,5 +1,8 @@
 # Authentic, scalable interactive component previews — specification
 
+> **Superseded for the current visual-reference requirement (2026-10-02).** The user clarified that previews are images of the actual official component demo, not locally executed copies of upstream code. See `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The build-host, source-license, and interactive-runtime tasks below are historical; they are not prerequisites for the requested visual-reference rollout.
+
+
 **Date:** 2026-10-01
 **Status:** User-directed implementation contract; staged delivery, not a claim that every indexed component is executable.
 **Repository:** Registry Atlas. Supersedes earlier screenshot-first and external-link frontend proposals where they conflict.
