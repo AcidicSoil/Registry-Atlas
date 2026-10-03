@@ -1,23 +1,33 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error The browser-only test tsconfig omits Node builtin declarations; Vitest runs in Node.
 import { existsSync, readFileSync } from 'node:fs';
+// @ts-expect-error The browser-only test tsconfig omits Node builtin declarations.
+import { createHash } from 'node:crypto';
 import { renderComponentPreview } from '../../src/registry-explorer/ui/componentPreview';
 import { renderCatalogComponentCard } from '../../src/registry-explorer/ui/catalogComponentsView';
 import type { CatalogComponent } from '../../src/registry-explorer/core/catalogQuery';
 
 describe('reviewed sandboxed component examples', () => {
-  it('records the reviewed fixture identities without claiming original source execution', () => {
+  it('distinguishes the browser-verified original source build from handwritten fixtures', () => {
     const path = 'src/registry-explorer/data/component-demo-manifest.json';
     expect(existsSync(path)).toBe(true);
     const manifest = JSON.parse(readFileSync(path, 'utf8'));
     expect(manifest.schema).toBe('registry-atlas-component-demos/v1');
     expect(manifest.items).toHaveLength(3);
-    for (const slug of ['button', 'card', 'input']) {
-      expect(manifest.items.find((entry: {slug:string}) => entry.slug === slug)).toMatchObject({
-        namespace: '@8bitcn', slug, kind: 'source-informed-fixture',
-        status: 'interaction-verified', path: '/Registry-Atlas/component-demos/8bitcn/index.html',
-      });
+    const sources: Record<string,string> = {
+      button: '228196f5b295e9db209ba6506145acfd3033a6ddfe32eecf4903aa1709a5f770',
+      input: '63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8',
+    };
+    for (const slug of ['button', 'input']) {
+      const original=manifest.items.find((entry: {slug:string}) => entry.slug === slug);
+      expect(original).toMatchObject({namespace:'@8bitcn',slug,kind:'upstream-built',
+        status:'interaction-verified',sourceSha256:sources[slug]});
+      expect(original.path).toMatch(/^\/Registry-Atlas\/component-demos\/generated\/[a-f0-9]{64}\/index\.html$/);
     }
+    expect(manifest.items.find((entry: {slug:string}) => entry.slug === 'card')).toMatchObject({
+      namespace:'@8bitcn',slug:'card',kind:'source-informed-fixture',status:'interaction-verified',
+      path:'/Registry-Atlas/component-demos/8bitcn/index.html',
+    });
   });
 
   it.each(['button', 'card', 'input'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
@@ -25,10 +35,28 @@ describe('reviewed sandboxed component examples', () => {
     expect(rendered).toContain('<iframe');
     expect(rendered).toContain('sandbox="allow-scripts"');
     expect(rendered).toContain('data-component-demo="@8bitcn/' + slug + '"');
-    expect(rendered).toContain('component-demos/8bitcn/index.html?item=' + slug + '&amp;mode=card');
+    const expected=slug==='card' ? '/Registry-Atlas/component-demos/8bitcn/index.html'
+      : slug==='button'
+        ? '/Registry-Atlas/component-demos/generated/7859069b32b6f0173951891af606ddf21be207ddde849436dcaa21e6b83eb5b5/index.html'
+        : '/Registry-Atlas/component-demos/generated/b3fb13afc35b8da5b4ade21fad88386f2f87f26131948593c323d15d15ccf07f/index.html';
+    expect(rendered).toContain(expected+'?item='+slug+'&amp;mode=card');
     expect(rendered).not.toContain('allow-same-origin');
     expect(rendered).not.toContain('<img');
     expect(renderComponentPreview('@8bitcn', slug, 'detail')).toContain('&amp;mode=detail');
+  });
+
+  it('checks each verified upstream bundle against its content-addressed path and no-network CSP', () => {
+    const entries=JSON.parse(readFileSync('src/registry-explorer/data/component-demo-manifest.json','utf8')).items;
+    for(const item of entries.filter((entry:{kind:string})=>entry.kind==='upstream-built')){
+      const file='public/'+item.path.slice('/Registry-Atlas/'.length);
+      const html=readFileSync(file,'utf8');
+      const hash=createHash('sha256').update(html).digest('hex');
+      expect(item.path).toContain('/generated/'+hash+'/index.html');
+      expect(html).toContain("connect-src 'none'");
+      expect(html).toContain("form-action 'none'");
+      expect(html).not.toContain('unsafe-eval');
+      expect(item.sourceSha256).toMatch(/^[a-f0-9]{64}$/);
+    }
   });
 
   it('never treats an arbitrary URL or unreviewed registry as runnable', () => {

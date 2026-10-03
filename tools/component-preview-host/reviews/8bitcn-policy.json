@@ -1,0 +1,36 @@
+{
+  "schema": "registry-atlas-shared-preview-policy/v1",
+  "namespace": "@8bitcn",
+  "license": {
+    "decision": "approved",
+    "identifier": "MIT",
+    "reviewer": "source-license-verification-20261003"
+  },
+  "licenseSha256": "1f7c401e999345dc159be2023cb7587d72e044f3e736b378dff8828a7060c31e",
+  "upstreamRevision": "9aedd7165837143803b95cdb2ab111923cf63efe",
+  "sourceUrlPattern": "https://www.8bitcn.com/r/{slug}.json",
+  "sourceDir": "sources/8bitcn",
+  "dependencyLock": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "class-variance-authority": "0.7.1",
+    "radix-ui": "1.6.0",
+    "clsx": "2.1.1",
+    "tailwind-merge": "3.6.0",
+    "esbuild": "0.27.7"
+  },
+  "aliases": {
+    "@/components/ui/button": {
+      "path": "sources/8bitcn/shadcn-button.tsx",
+      "sha256": "cc36af0f8b5019c33cc039fbf03bb952a513072b15b55b53c592b78af3e5f4c4"
+    },
+    "@/lib/utils": {
+      "path": "reviewed-fixtures/8bitcn-base-utils.ts",
+      "sha256": "64fc84c1be627f0d586fb4ba64d824a1604f44282381f5bae68cdf86e10bb6ec"
+    },
+    "@/components/ui/input": {
+      "path": "sources/8bitcn/shadcn-input.tsx",
+      "sha256": "50b2f9bc2a6c8685fd6763538adc05f2d0cc0d8c5827729bd0109acdd3e5f494"
+    }
+  }
+}

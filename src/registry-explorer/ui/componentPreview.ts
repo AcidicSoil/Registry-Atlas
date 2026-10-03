@@ -28,6 +28,9 @@ function isRenderable(entry: unknown): entry is ReviewedDemo {
       || typeof demo.path !== 'string' || !PATH_PATTERN.test(demo.path)
       || typeof demo.reviewedAt !== 'string' || !Number.isFinite(Date.parse(demo.reviewedAt))
       || typeof demo.verifiedAt !== 'string' || !Number.isFinite(Date.parse(demo.verifiedAt))) return false;
+  if (demo.kind === 'upstream-built'
+      && (typeof demo.sourceSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(demo.sourceSha256)
+        || !/^\/Registry-Atlas\/component-demos\/generated\/[a-f0-9]{64}\/index\.html$/.test(demo.path))) return false;
   const source = demo.source;
   if (!source || typeof source !== 'object') return false;
   const record = source as Record<string, unknown>;

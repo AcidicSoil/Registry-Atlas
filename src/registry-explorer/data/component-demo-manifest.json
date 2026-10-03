@@ -4,15 +4,16 @@
     {
       "namespace": "@8bitcn",
       "slug": "button",
-      "kind": "source-informed-fixture",
+      "kind": "upstream-built",
       "status": "interaction-verified",
-      "path": "/Registry-Atlas/component-demos/8bitcn/index.html",
+      "path": "/Registry-Atlas/component-demos/generated/7859069b32b6f0173951891af606ddf21be207ddde849436dcaa21e6b83eb5b5/index.html",
       "source": {
         "docsUrl": "https://www.8bitcn.com/docs/components/button",
         "registryItemUrl": "https://www.8bitcn.com/r/button.json"
       },
-      "reviewedAt": "2026-10-01T20:05:57-05:00",
-      "verifiedAt": "2026-10-01T20:05:57-05:00"
+      "reviewedAt": "2026-10-03T08:23:18Z",
+      "verifiedAt": "2026-10-03T08:23:18Z",
+      "sourceSha256": "228196f5b295e9db209ba6506145acfd3033a6ddfe32eecf4903aa1709a5f770"
     },
     {
       "namespace": "@8bitcn",
@@ -30,15 +31,16 @@
     {
       "namespace": "@8bitcn",
       "slug": "input",
-      "kind": "source-informed-fixture",
+      "kind": "upstream-built",
       "status": "interaction-verified",
-      "path": "/Registry-Atlas/component-demos/8bitcn/index.html",
+      "path": "/Registry-Atlas/component-demos/generated/b3fb13afc35b8da5b4ade21fad88386f2f87f26131948593c323d15d15ccf07f/index.html",
       "source": {
         "docsUrl": "https://www.8bitcn.com/docs/components/input",
         "registryItemUrl": "https://www.8bitcn.com/r/input.json"
       },
-      "reviewedAt": "2026-10-01T20:05:57-05:00",
-      "verifiedAt": "2026-10-01T20:05:57-05:00"
+      "reviewedAt": "2026-10-03T08:23:18Z",
+      "verifiedAt": "2026-10-03T08:23:18Z",
+      "sourceSha256": "63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8"
     }
   ]
 }
