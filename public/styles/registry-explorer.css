@@ -3517,3 +3517,10 @@ aside:has(.aside-inner:empty) {
   outline-offset: 3px;
   border-radius: 6px;
 }
+
+/* A reviewed runnable demo takes priority; the separate source screenshot remains accessible. */
+.catalog-component-reference-visual { position: relative; z-index: 3; padding: 0 12px 12px; }
+.catalog-component-reference-visual > summary { font-size: 12px; color: var(--muted-foreground); cursor: pointer; }
+.catalog-component-reference-visual .catalog-component-preview-image { max-height: 200px; width: 100%; object-fit: contain; }
+.item-preview-combined { display: grid; gap: var(--space-4); min-width: 0; }
+.item-preview-combined .item-preview-reference { min-width: 0; }

@@ -213,10 +213,10 @@ export function renderCatalogComponentCard(
 ): string {
   const reference = verifiedVisualReference(component.visualReference);
   const visual = reference ? renderVisualReferenceImage(reference, component.displayName) : null;
-  const liveDemo = !visual && routeKind === 'component'
+  const liveDemo = routeKind === 'component'
     ? renderComponentPreview(component.namespace, component.slug, 'card')
     : null;
-  const preview = visual ?? liveDemo
+  const preview = liveDemo ?? visual
     ?? (routeKind === 'theme' && component.themePreview
       ? renderCatalogThemeSpecimen(component)
       : '<div class="catalog-component-unavailable" role="img" aria-label="Visual reference not yet available"><span class="catalog-component-unavailable-icon" aria-hidden="true">▧</span></div>');
@@ -235,7 +235,8 @@ export function renderCatalogComponentCard(
     <article class="catalog-component-card catalog-component-card-${routeKind}${liveDemo ? ' catalog-component-card-live' : ''}">
       ${liveDemo
         ? `<div class="catalog-component-specimen">${preview}</div>
-           <a class="catalog-component-open catalog-component-open-live" ${linkAttributes}>${copy}</a>`
+           <a class="catalog-component-open catalog-component-open-live" ${linkAttributes}>${copy}</a>
+           ${visual ? `<details class="catalog-component-reference-visual"><summary>Reference image</summary>${visual}</details>` : ''}`
         : `<a class="catalog-component-open" ${linkAttributes}>
              <div class="catalog-component-specimen">${preview}</div>${copy}
            </a>`}

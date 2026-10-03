@@ -52,6 +52,23 @@ describe('reviewed sandboxed component examples', () => {
     expect(html).not.toContain('href="https:');
   });
 
+  it('renders a reviewed functional demo before an independently accessible visual reference', () => {
+    const component = {
+      namespace: '@8bitcn', slug: 'button', displayName: '8-bit Button',
+      routePath: '/Registry-Atlas/@8bitcn/components/button',
+      visualReference: {
+        imageUrl: '/Registry-Atlas/data/previews/8bitcn/button.jpg',
+        officialPage: 'https://www.8bitcn.com/docs/components/button',
+      },
+    } as CatalogComponent;
+    const html = renderCatalogComponentCard(component);
+    expect(html).toContain('data-component-demo="@8bitcn/button"');
+    expect(html).toContain('src="/Registry-Atlas/data/previews/8bitcn/button.jpg"');
+    expect(html).toContain('View original');
+    expect(html.indexOf('<iframe')).toBeLessThan(html.indexOf('catalog-component-preview-image'));
+    expect(html.indexOf('</iframe>')).toBeLessThan(html.indexOf('catalog-component-open-live'));
+  });
+
   it('only serves reviewed interaction fixtures with no network or form submissions', () => {
     const html = readFileSync('public/component-demos/8bitcn/index.html', 'utf8');
     expect(html).toContain('manually reviewed, isolated native interaction fixtures');

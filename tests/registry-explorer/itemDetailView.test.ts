@@ -56,6 +56,23 @@ describe('renderItemDetailView', () => {
     expect(html).not.toContain('components/code-block');
   });
 
+  it('keeps both the functional demo and sourced image when an item has both', () => {
+    const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
+    if (!result.detail) throw Error('Expected detail fixture');
+    const body = root();
+    renderItemDetailView(root(), body, { ...result, detail: {
+      ...result.detail, namespace: '@8bitcn', slug: 'button',
+      visualReference: {
+        imageUrl: '/Registry-Atlas/data/previews/8bitcn/button.jpg',
+        officialPage: 'https://www.8bitcn.com/docs/components/button',
+      },
+    } }, new Set());
+    expect(body.innerHTML).toContain('data-component-demo="@8bitcn/button"');
+    expect(body.innerHTML).toContain('src="/Registry-Atlas/data/previews/8bitcn/button.jpg"');
+    expect(body.innerHTML).toContain('View original component');
+    expect(body.innerHTML.indexOf('<iframe')).toBeLessThan(body.innerHTML.indexOf('item-preview-reference'));
+  });
+
   it('does not substitute an external source link for an unavailable install action', () => {
     const result = resolveRegistryItemDetailFromSummary([registryFixture({ routeEligible: false })], '@delta', 'code-block');
     const body = root();

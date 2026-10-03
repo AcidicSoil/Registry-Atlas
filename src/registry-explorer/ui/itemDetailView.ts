@@ -122,7 +122,7 @@ function renderMissingBody(result: RegistryItemDetailResult): string {
 
 function renderPreview(detail: RegistryItemDetail): string {
   const reference = verifiedVisualReference(detail.visualReference);
-  if (reference) return `
+  const visual = reference ? `
     <figure class="item-preview-reference">
       <div class="catalog-eyebrow">Visual reference</div>
       <a class="item-preview-reference-image" href="${escapeHtml(reference.officialPage)}"
@@ -133,15 +133,18 @@ function renderPreview(detail: RegistryItemDetail): string {
         <a href="${escapeHtml(reference.officialPage)}" target="_blank"
           rel="noreferrer noopener">View original component ↗</a>
       </figcaption>
-    </figure>`;
+    </figure>` : null;
   const liveDemo = renderComponentPreview(detail.namespace, detail.slug, 'detail');
   if (liveDemo) return `
-    <section class="item-preview-live" aria-label="Interactive component example">
-      <div class="catalog-eyebrow">Interactive example</div>
-      ${liveDemo}
-      <p class="muted">Isolated, source-informed interaction example. Upstream React code is not executed.</p>
-    </section>
-  `;
+    <div class="item-preview-combined">
+      <section class="item-preview-live" aria-label="Interactive component example">
+        <div class="catalog-eyebrow">Interactive example</div>
+        ${liveDemo}
+        <p class="muted">Isolated, source-informed interaction example. Upstream React code is not executed.</p>
+      </section>
+      ${visual ?? ''}
+    </div>`;
+  if (visual) return visual;
   // Images are not live components. Preserve discoverability without pretending otherwise.
 
   const facts = [
