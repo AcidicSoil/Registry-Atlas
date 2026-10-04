@@ -376,3 +376,54 @@ or author-owned metadata are generated. The acceptance matrix now expects
 an actual Authors page, not an intentionally unavailable route. Other
 reference route families such as Newest, Featured and theme editing remain
 separate uncompleted work, as does sitewide 21st.dev behavioral parity.
+
+## R14. Cross-library, same-registry primitive imports (2026-10-04)
+
+The `@watermelon` source compiler now resolves imports such as
+`@/components/ui/accordion` to the exact original
+`src/components/watermelon-ui/accordion.tsx` file **only when** a cached item
+with the same sibling name exists in the same reviewed upstream registry and
+contains precisely one file at that path. Its source JSON bytes and the
+nested source-file identity are checked before compilation; upstream bytes,
+allowlisted imports, network-disabled isolated builds and per-registry browser
+behavior approval remain unchanged. Existing `@8bitcn` alias behavior is
+preserved by tests. `@/components/base-ui/*` imports are **not** substituted
+with superficially similar `watermelon-ui` modules, and missing packages are
+not installed automatically.
+
+A full, single-pass reclassification of all 1,167 cached `@watermelon`
+identity records now yields **73 buildable** items (private exact ledger:
+`~/.local/state/registry-atlas/previews/2026-10-04-watermelon-compile-ledger.json`),
+versus 38 before this
+alias-family correction. Of the remaining 1,094 cached records, the compiler
+reports 910 unreviewed imports, 163 missing or ambiguous entry exports, 13
+unsupported roots, five dynamic-import/network patterns, two unreviewed
+nested aliases, and one unresolved exported symbol. Those numbers represent
+source compilation, not browser or component-interaction certification.
+Import groups overlap: in the unresolved-import class, 510 source records
+reference base-ui, 279 motion libraries and 293 react-icons. The next broad
+source-compatibility improvements must review those package and framework
+families instead of blindly permitting unreviewed code or substituting other
+libraries. The initial 73-artifact *isolated build stage* preceded any browser
+check; browser-proven promotion is separately recorded below when available.
+
+The complete managed-browser pass over all 73 isolated builds recorded **four
+passing interaction checks** (`checkbox`, `switch`, `collapsible`, `select`),
+24 render-only receipts, and 45 other unverified receipts. `checkbox` and
+`switch` had already been published; only `collapsible` and `select` were
+promoted from that pass. The accordion's initial unverified result was traced
+to an incorrect expected state: the actual upstream accordion starts expanded,
+with `aria-expanded=true`. After the complete staged pass, a targeted failure
+investigation demonstrated a browser click closing it to `false` with zero
+browser errors, and a regression test was observed failing before correcting
+the exact provider contract. A subsequent isolated build then browser proof
+promoted `accordion`, leaving **26** catalog identities published as actual
+interaction-verified (**84,119** without proof). No other full-pass failure
+was promoted. Hash-checked, untracked, unreferenced generated HTML for 69
+unpublished receipts was removed; all published and already tracked artifacts
+were preserved. Private evidence is kept under
+`~/.local/state/registry-atlas/previews/2026-10-04-watermelon-full-reviewed-pass.json`
+and `2026-10-04-watermelon-accordion-contract-correction.json` in that same
+directory. A future scalable pass should stage unpublished builds in private
+storage and publish only after browser evidence, rather than relying on
+post-batch cleanup of public generated files.

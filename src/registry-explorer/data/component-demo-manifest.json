@@ -297,6 +297,20 @@
     },
     {
       "namespace": "@watermelon",
+      "slug": "accordion",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/ed353b5c2209cfea66830ff50ff0ff1b91999bbd80d1f07f4922b300cc6049fa/index.html",
+      "source": {
+        "docsUrl": "https://registry.watermelon.sh/r/accordion.json",
+        "registryItemUrl": "https://registry.watermelon.sh/r/accordion.json"
+      },
+      "reviewedAt": "2026-10-04T23:50:48.647Z",
+      "verifiedAt": "2026-10-04T23:50:48.647Z",
+      "sourceSha256": "8cdca270de967266a69dafc59fdbd2a8b1b91370a9beab4bec343519ae545d61"
+    },
+    {
+      "namespace": "@watermelon",
       "slug": "checkbox",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -308,6 +322,34 @@
       "reviewedAt": "2026-10-04T08:16:57.466Z",
       "verifiedAt": "2026-10-04T08:16:57.466Z",
       "sourceSha256": "7b0826b80924996ed417b695f1eaa7900c8a4161bdd562c365c7de0e4cdcfee9"
+    },
+    {
+      "namespace": "@watermelon",
+      "slug": "collapsible",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/906dc40923ea8200177d49222601da7627252aef110d73f30067e38cfb328c64/index.html",
+      "source": {
+        "docsUrl": "https://registry.watermelon.sh/r/collapsible.json",
+        "registryItemUrl": "https://registry.watermelon.sh/r/collapsible.json"
+      },
+      "reviewedAt": "2026-10-04T23:48:33.712Z",
+      "verifiedAt": "2026-10-04T23:48:33.712Z",
+      "sourceSha256": "ab7e300eac4c2c1754e3c37f5b87f74e7a6c80b1398ac4741aa744dfa650bfd4"
+    },
+    {
+      "namespace": "@watermelon",
+      "slug": "select",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/b92b10da0a2df07e0bb26f8d9a2de878bf858ef5f9296ff16135b395f829c983/index.html",
+      "source": {
+        "docsUrl": "https://registry.watermelon.sh/r/select.json",
+        "registryItemUrl": "https://registry.watermelon.sh/r/select.json"
+      },
+      "reviewedAt": "2026-10-04T23:48:33.712Z",
+      "verifiedAt": "2026-10-04T23:48:33.712Z",
+      "sourceSha256": "2797da599206096d4d7500ef6e556931cf7b68eb493493ce9edca56ad3d682fe"
     },
     {
       "namespace": "@watermelon",

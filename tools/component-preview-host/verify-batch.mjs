@@ -52,6 +52,16 @@ const REGISTRY_BEHAVIOR={
    switch:{role:'switch',action:'click',
      probe:"document.querySelector('[role=switch]')?.getAttribute('aria-checked')",
      expectedBefore:'false',expectedAfter:'true'},
+   accordion:{role:'button',name:'FIRST QUESTION',action:'click',
+     probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')",
+     expectedBefore:'true',expectedAfter:'false'},
+   collapsible:{role:'button',name:'EXPAND CONTENT',action:'click',
+     probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')",
+     expectedBefore:'false',expectedAfter:'true'},
+   select:{role:'combobox',name:'CHOOSE ITEM',action:'select-option',
+     optionName:'SECOND CHOICE',
+     probe:"document.querySelector('[role=combobox]')?.textContent?.trim()",
+     expectedBefore:'FIRST CHOICE',expectedAfter:'SECOND CHOICE'},
  },
 };
 const behaviorFor=(slug,namespace='@8bitcn')=>namespace==='@8bitcn'

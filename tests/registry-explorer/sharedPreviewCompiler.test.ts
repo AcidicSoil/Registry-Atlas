@@ -174,6 +174,21 @@ describe('shared compiled preview pipeline', () => {
       status:'eligible',namespace:'@watermelon',slug:'floating-input',
     });
   });
+  it('resolves a cached original primitive behind a reviewed same-registry UI alias',async()=>{
+    const {source,review}=await prepareRegistryItem('watermelon','accordion-04');
+    expect(review.aliases['@/components/ui/accordion']).toMatchObject({
+      path:'sources/watermelon/accordion.json',
+      sourceFile:'src/components/watermelon-ui/accordion.tsx',
+    });
+    const built=await buildSharedPreview(source,review);
+    expect(built).toMatchObject({status:'built-unverified',namespace:'@watermelon',slug:'accordion-04'});
+    expect(built.html).toContain('@watermelon/accordion-04');
+  },20_000);
+  it('does not resolve unrelated base-ui names to a different library',async()=>{
+    const {source,review}=await prepareRegistryItem('watermelon','accordion-1');
+    expect(review.aliases['@/components/base-ui/accordion']).toBeUndefined();
+    expect(planSharedPreview(source,review)).toMatchObject({status:'blocked',reason:'unreviewed-import'});
+  });
   it('uses exact official source files from a second reviewed registry without guessed UI',async()=>{
     const {source,review}=await prepareRegistryItem('watermelon','checkbox');
     expect(review.entryFile).toBe('src/components/watermelon-ui/checkbox.tsx');

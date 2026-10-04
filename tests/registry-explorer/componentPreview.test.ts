@@ -13,7 +13,7 @@ describe('reviewed sandboxed component examples', () => {
     expect(existsSync(path)).toBe(true);
     const manifest = JSON.parse(readFileSync(path, 'utf8'));
     expect(manifest.schema).toBe('registry-atlas-component-demos/v1');
-    expect(manifest.items.length).toBe(23);
+    expect(manifest.items.length).toBe(26);
     expect(new Set(manifest.items.map((item:{namespace:string;slug:string})=>item.namespace+'/'+item.slug)).size)
       .toBe(manifest.items.length);
     for (const slug of ['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select','tooltip','scroll-area','faq1','faq3','difficulty-select','audio-settings','game-faq1']) {
@@ -22,6 +22,14 @@ describe('reviewed sandboxed component examples', () => {
       expect(original).toMatchObject({namespace:'@8bitcn',slug,kind:'upstream-built',
         status:'interaction-verified',sourceSha256:createHash('sha256').update(originalSource).digest('hex')});
       expect(original.path).toMatch(/^\/Registry-Atlas\/component-demos\/generated\/[a-f0-9]{64}\/index\.html$/);
+    }
+    for(const slug of ['accordion','checkbox','collapsible','select','switch']){
+      const original=manifest.items.find((entry: {namespace:string;slug:string})=>
+        entry.namespace==='@watermelon'&&entry.slug===slug);
+      const official=readFileSync('tools/component-preview-host/sources/watermelon/'+slug+'.json');
+      expect(original).toMatchObject({namespace:'@watermelon',slug,kind:'upstream-built',
+        status:'interaction-verified',sourceSha256:createHash('sha256').update(official).digest('hex')});
+      expect(renderComponentPreview('@watermelon',slug,'card')).toContain('sandbox="allow-scripts"');
     }
     expect(manifest.items.some((entry: {kind:string}) => entry.kind === 'source-informed-fixture')).toBe(false);
   });

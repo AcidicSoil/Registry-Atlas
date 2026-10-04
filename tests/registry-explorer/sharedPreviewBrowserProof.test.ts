@@ -1,6 +1,6 @@
 import {describe,expect,it} from 'vitest';
 // @ts-expect-error Node-only generic managed-browser proof module.
-import {assessBehavior,assessStaticRender,verifyReceipts,approvedReceiptRegistry} from '../../tools/component-preview-host/verify-batch.mjs';
+import {assessBehavior,assessStaticRender,verifyReceipts,approvedReceiptRegistry,supportedBehavior} from '../../tools/component-preview-host/verify-batch.mjs';
 
 describe('generic browser proof admission',()=>{
  it.each(['button','input','textarea','checkbox','switch','toggle','slider','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select','tooltip','scroll-area','faq1','faq3'])(
@@ -32,6 +32,23 @@ describe('generic browser proof admission',()=>{
      .toMatchObject({status:'unverified',reason:'unrecognized-behavior'});
    expect(assessBehavior('button','0','1','No errors','@8bitcn').status)
      .toBe('interaction-verified');
+ });
+ it('requires provider-specific original accordion, collapsible, and select transitions',()=>{
+   for(const {slug,before,after} of [
+     {slug:'accordion',before:'true',after:'false'},
+     {slug:'collapsible',before:'false',after:'true'},
+   ]){
+     expect(supportedBehavior(slug,'@watermelon')).toBe(true);
+     expect(assessBehavior(slug,before,after,'No errors','@watermelon').status)
+       .toBe('interaction-verified');
+     expect(assessBehavior(slug,before,'unrelated output','No errors','@watermelon'))
+       .toMatchObject({status:'unverified',reason:'unexpected-action-result'});
+   }
+   expect(supportedBehavior('select','@watermelon')).toBe(true);
+   expect(assessBehavior('select','FIRST CHOICE','SECOND CHOICE','No errors','@watermelon').status)
+     .toBe('interaction-verified');
+   expect(assessBehavior('select','FIRST CHOICE','harness count','No errors','@watermelon'))
+     .toMatchObject({status:'unverified',reason:'unexpected-action-result'});
  });
  it('requires actual upstream checked state for a second registry instead of harness count',()=>{
    expect(assessBehavior('checkbox','false','true','No errors','@watermelon').status)

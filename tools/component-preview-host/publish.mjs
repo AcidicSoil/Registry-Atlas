@@ -41,12 +41,20 @@ export async function prepareRegistryItem(registry,slug){
    &&!(registry==='watermelon'
      &&['src/components/watermelon-ui','components/watermelon'].includes(uiRoot)))
   throw Error('unsupported-registry-ui-root');
+ // The Watermelon registry publishes its shadcn-compatible UI primitives
+ // under src/components/watermelon-ui even when consumers import '@/components/ui'.
+ // Only exact, cached same-registry identities can be bridged. Other families
+ // (notably '@/components/base-ui') remain unresolved, never substituted.
+ const aliasImport=/\b(?:from\s*|import\s*)["'](@\/components\/[a-z0-9-]+\/[a-z0-9-]+(?:\/[a-z0-9-]+)?)["']/g;
  const queue=upstream.files.flatMap(file=>[
-  ...(file.content??'').matchAll(/\b(?:from\s*|import\s*)["'](@\/components\/ui\/[a-z0-9-]+\/[a-z0-9-]+)["']/g)
+  ...(file.content??'').matchAll(aliasImport)
  ].map(match=>match[1]));
  let linkedBytes=0;
  for(let i=0;i<queue.length;i++){
-  const name=queue[i],pattern=new RegExp('^@/'+uiRoot+'/([a-z0-9-]+)$');
+  const name=queue[i],pattern=registry==='watermelon'
+    &&uiRoot==='src/components/watermelon-ui'
+      ?/^@\/components\/(?:ui|watermelon-ui)\/([a-z0-9-]+)$/
+      :new RegExp('^@/'+uiRoot+'/([a-z0-9-]+)$');
   const match=pattern.exec(name);
   if(!match||aliases[name])continue;
   if(Object.keys(aliases).length>100||queue.length>150)throw Error('bounded-alias-budget-exceeded');
@@ -65,8 +73,7 @@ export async function prepareRegistryItem(registry,slug){
   if(typeof content!=='string'||Buffer.byteLength(content)>256000)continue;
   aliases[name]={path:'sources/'+registry+'/'+sibling+'.json',
    sourceFile:target,sha256:sha(bytes)};
-  queue.push(...[...content.matchAll(/\b(?:from\s*|import\s*)["'](@\/components\/ui\/[a-z0-9-]+\/[a-z0-9-]+)["']/g)]
-   .map(m=>m[1]));
+  queue.push(...[...content.matchAll(aliasImport)].map(m=>m[1]));
  }
  const review={...policy,aliases,slug,sourcePath,
   entryFile:matches[0].path,sourceSha256:sha(source)};
