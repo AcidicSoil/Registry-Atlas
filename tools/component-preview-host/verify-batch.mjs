@@ -17,7 +17,20 @@ const TYPES={
   tabs:{role:'tab',name:'SECOND TAB',action:'click',probe:"[...document.querySelectorAll('[role=tabpanel]')].filter(e=>e.getClientRects().length>0).map(e=>e.textContent).join('|')"},
   accordion:{role:'button',name:'FIRST QUESTION',action:'click',probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')"},
   collapsible:{role:'button',name:'EXPAND CONTENT',action:'click',probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')"},
+  dialog:{role:'button',name:'OPEN DIALOG',action:'click',
+    probe:"String(Boolean(document.querySelector('[role=dialog]')))" },
+  'dropdown-menu':{role:'button',name:'OPEN MENU',action:'click',
+    probe:"String(Boolean(document.querySelector('[role=menu]')))" },
+  'radio-group':{role:'radio',name:'SECOND CHOICE',action:'click',
+    probe:"document.querySelector('[data-preview-selection]')?.textContent"},
+  select:{role:'combobox',name:'CHOOSE ITEM',action:'select-option',
+    optionName:'SECOND CHOICE',probe:"document.querySelector('[data-preview-selection]')?.textContent"},
+
 };
+export const supportedBehavior=slug=>Object.hasOwn(TYPES,slug);
+export const assessStaticRender=(rendered,errors)=>rendered===true&&errors==='No errors'
+  ? {status:'render-verified',reason:'no-approved-interaction-contract'}
+  : {status:'unverified',reason:errors==='No errors'?'original-component-not-visible':'browser-error'};
 function tool(command,args,{server,tab}){
  const result=execFileSync('pinchtab',['--server',server,command,...args,'--tab',tab,...(command==='errors'?[]:['--json'])],
   {encoding:'utf8',timeout:16000,maxBuffer:3_000_000});
@@ -33,14 +46,14 @@ export function assessBehavior(slug,before,after,errorText){
 }
 export async function verifyReceipts({receipts,server,tab,base}){
  if(!/^http:\/\/127\.0\.0\.1:\d{2,5}$/.test(server)
-   ||!/^http:\/\/127\.0\.0\.1:\d{2,5}$/.test(base)
-   ||!/^[a-f0-9]{32}$/i.test(tab)||!Array.isArray(receipts)||receipts.length>30)
+   ||!/^http:\/\/127\.0\.0\.1:\d{2,5}(?:\/Registry-Atlas)?$/.test(base)
+   ||!/^[a-f0-9]{32}$/i.test(tab)||!Array.isArray(receipts)||receipts.length>200)
    throw Error('Browser verification requires bounded local PinchTab/preview endpoints');
  const rows=[];
  for(const receipt of receipts){
    const {slug,namespace,bundleSha256,sourceSha256}=receipt;
    if(namespace!=='@8bitcn'||!/^[a-f0-9]{64}$/.test(bundleSha256)
-      ||!/^[a-f0-9]{64}$/.test(sourceSha256)||!TYPES[slug]){
+      ||!/^[a-f0-9]{64}$/.test(sourceSha256)){
      rows.push({slug,status:'unverified',reason:'unrecognized-identity'});continue;
    }
    const local=join(ROOT,'public/component-demos/generated',bundleSha256,'index.html');
@@ -58,15 +71,32 @@ export async function verifyReceipts({receipts,server,tab,base}){
      if(!present.label?.startsWith(namespace+'/'+slug+' • compiled original source')
         ||!present.source.endsWith('/'+bundleSha256+'/index.html'))
        throw Error('Browser source identity mismatch');
+     if(!config){
+       const visible=tool('eval',[
+         "Boolean([...document.querySelectorAll('[data-preview-original]')].some(node=>node.getClientRects().length>0))"
+       ],{server,tab}).result;
+       const errs=tool('errors',[],{server,tab});
+       row={...row,...assessStaticRender(visible===true||visible==='true',errs),
+         observedAt:new Date().toISOString()};
+       rows.push(row);continue;
+     }
      const snap=tool('snap',[],{server,tab});
      const options=snap.nodes.filter(node=>node.role===config.role
        &&(!config.name||node.name===config.name));
      if(options.length!==1)throw Error('Expected exactly one original component control');
      const ref=options[0].ref;
      const before=tool('eval',[config.probe],{server,tab}).result;
-     const args=config.action==='type'?[ref,config.value]
-       :config.action==='press'?[ref,config.value]:[ref];
-     tool(config.action,args,{server,tab});
+     if(config.action==='select-option'){
+       tool('click',[ref],{server,tab});
+       const optionsAfter=tool('snap',[],{server,tab}).nodes
+         .filter(node=>node.role==='option'&&node.name===config.optionName);
+       if(optionsAfter.length!==1)throw Error('Expected exactly one reviewed select option');
+       tool('click',[optionsAfter[0].ref],{server,tab});
+     }else{
+       const args=config.action==='type'?[ref,config.value]
+         :config.action==='press'?[ref,config.value]:[ref];
+       tool(config.action,args,{server,tab});
+     }
      const after=tool('eval',[config.probe],{server,tab}).result;
      const errs=tool('errors',[],{server,tab});
      row={...row,...assessBehavior(slug,before,after,errs),

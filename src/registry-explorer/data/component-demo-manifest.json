@@ -72,6 +72,34 @@
     },
     {
       "namespace": "@8bitcn",
+      "slug": "dialog",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/3ffa63377cb250d883f9dd643730455ed7992782a0d6634434c4486e196ceaa8/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/dialog",
+        "registryItemUrl": "https://www.8bitcn.com/r/dialog.json"
+      },
+      "reviewedAt": "2026-10-04T06:39:33.215Z",
+      "verifiedAt": "2026-10-04T06:39:33.215Z",
+      "sourceSha256": "636aa12b76136f88be009e42adb0aef63e136a304267edc670bf95b5c4d37e90"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "dropdown-menu",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/8548b2eb52626729dbca931a9d65837d98ad47ed27e8bd2c868d1381e64b6f23/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/dropdown-menu",
+        "registryItemUrl": "https://www.8bitcn.com/r/dropdown-menu.json"
+      },
+      "reviewedAt": "2026-10-04T06:39:33.215Z",
+      "verifiedAt": "2026-10-04T06:39:33.215Z",
+      "sourceSha256": "e49b202874616d161cf688dfea1bc9fea759be596226b6d6e7140e2faecb4445"
+    },
+    {
+      "namespace": "@8bitcn",
       "slug": "input",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -83,6 +111,34 @@
       "reviewedAt": "2026-10-03T08:23:18Z",
       "verifiedAt": "2026-10-03T08:23:18Z",
       "sourceSha256": "63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "radio-group",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/7a5b3558de548f6b0bdc331bf34089cfdcab2850373eedee597dc1ba122fcef3/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/radio-group",
+        "registryItemUrl": "https://www.8bitcn.com/r/radio-group.json"
+      },
+      "reviewedAt": "2026-10-04T06:39:33.215Z",
+      "verifiedAt": "2026-10-04T06:39:33.215Z",
+      "sourceSha256": "23ec04457194aba2acbd9bcc459603e722063a5e8e7b8af3320b5482c9137ea6"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "select",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/f74ec22f03d34a2c8e4ff0b836fd9d4275b1ee856ecea053d8af748d579f1864/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/select",
+        "registryItemUrl": "https://www.8bitcn.com/r/select.json"
+      },
+      "reviewedAt": "2026-10-04T06:39:33.215Z",
+      "verifiedAt": "2026-10-04T06:39:33.215Z",
+      "sourceSha256": "e24bd410bd1ff78e0ace22a4870f5fd6dce6855943b1796243625a603c59b786"
     },
     {
       "namespace": "@8bitcn",

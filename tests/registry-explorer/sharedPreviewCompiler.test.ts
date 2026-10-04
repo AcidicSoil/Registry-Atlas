@@ -90,6 +90,47 @@ describe('shared compiled preview pipeline', () => {
     expect(result.html).toContain(text);
   },20_000);
 
+  it.each([
+    {slug:'dialog',names:['Dialog','DialogTrigger','DialogContent','DialogTitle'],control:'OPEN DIALOG',content:'DIALOG CONTENT'},
+    {slug:'dropdown-menu',names:['DropdownMenu','DropdownMenuTrigger','DropdownMenuContent','DropdownMenuItem'],control:'OPEN MENU',content:'MENU ACTION'},
+    {slug:'radio-group',names:['RadioGroup','RadioGroupItem'],control:'SECOND CHOICE',content:'data-preview-selection'},
+  ])('composes the upstream $slug family rather than a generic fake click counter',async ({slug,names,control,content})=>{
+    const file='ui/'+slug+'.tsx';
+    const code='import React from "react";'+names.map(name=>
+      'export function '+name+'(props){return React.createElement("div",props,props.children);}').join('');
+    const source=JSON.stringify({name:slug,files:[{path:file,content:code}],dependencies:[]});
+    const cfg={...review,slug,entryFile:file,sourceSha256:await hash(source)};
+    const result=await buildSharedPreview(source,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).toContain(control);
+    expect(result.html).toContain(content);
+    expect(result.html).not.toContain('PRESS ME');
+  },20_000);
+  it('composes a real select trigger and selectable options, not a fake button',async()=>{
+    const slug='select';
+    const names=['Select','SelectTrigger','SelectValue','SelectContent','SelectItem'];
+    const source=JSON.stringify({name:slug,files:[{path:'ui/select.tsx',
+      content:'import React from "react";'+names.map(name=>
+       'export function '+name+'(props){return React.createElement("div",props,props.children)}').join('')}],dependencies:[]});
+    const cfg={...review,slug,entryFile:'ui/select.tsx',sourceSha256:await hash(source)};
+    const result=await buildSharedPreview(source,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).toContain('CHOOSE ITEM');
+    expect(result.html).toContain('SECOND CHOICE');
+    expect(result.html).toContain('data-preview-selection');
+    expect(result.html).not.toContain('PRESS ME');
+  });
+  it('does not fabricate a click counter for an unknown original component', async () => {
+    const slug='button-group';
+    const sample=JSON.stringify({name:slug,files:[{path:'ui/button-group.tsx',
+      content:'import React from "react";export function ButtonGroup(props){return <div {...props}>{props.children}</div>}'}],dependencies:[]});
+    const cfg={...review,slug,entryFile:'ui/button-group.tsx',sourceSha256:await hash(sample)};
+    const result=await buildSharedPreview(sample,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).toContain('data-preview-generic');
+    expect(result.html).not.toContain('PRESS ME');
+    expect(result.html).not.toContain('data-preview-interaction-count');
+  });
   it('blocks stale source, unauthorized dependencies and unsafe remote imports', async () => {
     const checked={...review,sourceSha256:await sourceHash()};
     expect(planSharedPreview(raw,{...checked,sourceSha256:'0'.repeat(64)}).reason).toBe('source-hash-mismatch');

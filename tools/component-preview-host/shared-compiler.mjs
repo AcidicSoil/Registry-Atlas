@@ -81,13 +81,18 @@ const harness=(exportName,identity)=> {
  const toggle=/^Toggle$/i.test(exportName);
  const slider=/^Slider$/i.test(exportName);
  const staticComponent=/^(?:Badge|Kbd|Spinner|Card|Alert|Skeleton|Separator|Label|Avatar|Progress|Table)$/i.test(exportName);
- const composed=['Tabs','Accordion','Collapsible'].includes(exportName);
- const composition=exportName==='Tabs'
-   ? "React.createElement(Component,{'data-preview-original':'',defaultValue:'first'},React.createElement(Upstream.TabsList,null,React.createElement(Upstream.TabsTrigger,{value:'first'},'FIRST TAB'),React.createElement(Upstream.TabsTrigger,{value:'second'},'SECOND TAB')),React.createElement(Upstream.TabsContent,{value:'first'},'FIRST PANEL'),React.createElement(Upstream.TabsContent,{value:'second'},'SECOND PANEL')),"
-   : exportName==='Accordion'
-     ? "React.createElement(Component,{'data-preview-original':'',type:'single',collapsible:true,defaultValue:'first'},React.createElement(Upstream.AccordionItem,{value:'first'},React.createElement(Upstream.AccordionTrigger,null,'FIRST QUESTION'),React.createElement(Upstream.AccordionContent,null,'FIRST ANSWER'))),"
-     : "React.createElement(Component,{'data-preview-original':'',defaultOpen:false},React.createElement(Upstream.CollapsibleTrigger,null,'EXPAND CONTENT'),React.createElement(Upstream.CollapsibleContent,null,'EXPANDED CONTENT')),";
- const primitive=composed?composition:checkbox
+ const button= /^(?:Button|Counter)$/i.test(exportName);
+ const composition={
+  Tabs:"React.createElement(Component,{'data-preview-original':'',defaultValue:'first'},React.createElement(Upstream.TabsList,null,React.createElement(Upstream.TabsTrigger,{value:'first'},'FIRST TAB'),React.createElement(Upstream.TabsTrigger,{value:'second'},'SECOND TAB')),React.createElement(Upstream.TabsContent,{value:'first'},'FIRST PANEL'),React.createElement(Upstream.TabsContent,{value:'second'},'SECOND PANEL')),",
+  Accordion:"React.createElement(Component,{'data-preview-original':'',type:'single',collapsible:true,defaultValue:'first'},React.createElement(Upstream.AccordionItem,{value:'first'},React.createElement(Upstream.AccordionTrigger,null,'FIRST QUESTION'),React.createElement(Upstream.AccordionContent,null,'FIRST ANSWER'))),",
+  Collapsible:"React.createElement(Component,{'data-preview-original':'',defaultOpen:false},React.createElement(Upstream.CollapsibleTrigger,null,'EXPAND CONTENT'),React.createElement(Upstream.CollapsibleContent,null,'EXPANDED CONTENT')),",
+  Dialog:"React.createElement(Component,{'data-preview-original':''},React.createElement(Upstream.DialogTrigger,{asChild:true},React.createElement('button',{type:'button'},'OPEN DIALOG')),React.createElement(Upstream.DialogContent,null,React.createElement(Upstream.DialogTitle,null,'DIALOG CONTENT'),React.createElement('p',null,'CONTENT OPENED'))),",
+  DropdownMenu:"React.createElement(Component,{'data-preview-original':''},React.createElement(Upstream.DropdownMenuTrigger,{asChild:true},React.createElement('button',{type:'button'},'OPEN MENU')),React.createElement(Upstream.DropdownMenuContent,null,React.createElement(Upstream.DropdownMenuItem,null,'MENU ACTION'))),",
+  RadioGroup:"React.createElement(Component,{'data-preview-original':'',value:selection,onValueChange:setSelection},React.createElement(Upstream.RadioGroupItem,{value:'first','aria-label':'FIRST CHOICE'}),React.createElement(Upstream.RadioGroupItem,{value:'second','aria-label':'SECOND CHOICE'})),",
+  Select:"React.createElement(Component,{'data-preview-original':'',value:selection,onValueChange:setSelection},React.createElement(Upstream.SelectTrigger,{'aria-label':'CHOOSE ITEM'},React.createElement(Upstream.SelectValue,{placeholder:'Choose an item'})),React.createElement(Upstream.SelectContent,null,React.createElement(Upstream.SelectItem,{value:'first'},'FIRST CHOICE'),React.createElement(Upstream.SelectItem,{value:'second'},'SECOND CHOICE'))),",
+ };
+ const composed=Object.hasOwn(composition,exportName);
+ const primitive=composed?composition[exportName]:checkbox
    ? "React.createElement(Component,{'data-preview-original':'',checked,onCheckedChange:value=>setChecked(value===true)}),"
    : toggle
      ? "React.createElement(Component,{'data-preview-original':'',pressed:checked,onPressedChange:value=>setChecked(value===true)},'TOGGLE ME'),"
@@ -97,8 +102,12 @@ const harness=(exportName,identity)=> {
          ? "React.createElement(Component,{'data-preview-original':'',type:'text',value:words,disabled,onChange:e=>setWords(e.target.value),placeholder:'Type to test'}),"
          : staticComponent
            ? "React.createElement(Component,{'data-preview-original':'','data-preview-static':'',value:56},'UPSTREAM PREVIEW'),"
-           : "React.createElement(Component,{'data-preview-original':'',type:'button',onClick:()=>setCount(n=>n+1),disabled},'PRESS ME'),";
- const output=composed
+           : button
+             ? "React.createElement(Component,{'data-preview-original':'',type:'button',onClick:()=>setCount(n=>n+1),disabled},'PRESS ME'),"
+             : "React.createElement(Component,{'data-preview-original':'','data-preview-generic':''},'UPSTREAM PREVIEW'),";
+ const output=['RadioGroup','Select'].includes(exportName)
+   ? "React.createElement('output',{'data-preview-selection':'','aria-live':'polite'},'Selected '+selection),"
+   : composed
    ? "React.createElement('output',{'data-preview-composed':''},'Interact with the original controls'),"
    : checkbox||toggle
    ? "React.createElement('output',{'data-preview-checked':'','aria-live':'polite'},checked?'Checked':'Unchecked'),"
@@ -106,17 +115,17 @@ const harness=(exportName,identity)=> {
      ? "React.createElement('output',{'data-preview-slider-value':'','aria-live':'polite'},'Value '+value),"
      : text
        ? "React.createElement('output',{'data-preview-input-value':'','aria-live':'polite'},'Typed '+words.length+' characters'),"
-       : staticComponent
-         ? "React.createElement('output',{'data-preview-static':'','aria-live':'polite'},'Original component rendered'),"
+       : staticComponent || !button
+         ? "React.createElement('output',{'data-preview-static':'','aria-live':'polite'},'Source-based render; interaction unverified'),"
          : "React.createElement('output',{'data-preview-interaction-count':'','aria-live':'polite'},'Activated '+count+' times'),";
- const toggleDisabled=composed||checkbox||toggle||slider||staticComponent
+ const toggleDisabled=composed||checkbox||toggle||slider||staticComponent||!button
    ? "" : "React.createElement('button',{type:'button',className:'toggle',onClick:()=>setDisabled(n=>!n)},disabled?'Enable component':'Disable component')";
  return [
  "import React from 'react';",
  "import {createRoot} from 'react-dom/client';",
  "import * as Upstream from 'virtual:target';",
  "const Component=Upstream["+JSON.stringify(exportName)+"];",
- "function Demo(){const [count,setCount]=React.useState(0);const [disabled,setDisabled]=React.useState(false);const [words,setWords]=React.useState('');const [checked,setChecked]=React.useState(false);const [value,setValue]=React.useState(50);",
+ "function Demo(){const [count,setCount]=React.useState(0);const [disabled,setDisabled]=React.useState(false);const [words,setWords]=React.useState('');const [checked,setChecked]=React.useState(false);const [value,setValue]=React.useState(50);const [selection,setSelection]=React.useState('first');",
  "return React.createElement('main',{className:'demo'},",
  "React.createElement('p',{className:'caption'},"+JSON.stringify(identity+" • compiled original source")+"),",
  primitive,

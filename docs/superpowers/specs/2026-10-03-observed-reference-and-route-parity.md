@@ -164,3 +164,53 @@ The maximum concurrency is four. The worker retries transient retrieval failures
 Group blockers by reason and dependency family, then review compatibility, licensing and exact versions once per recurring family. Only run source in reviewed isolated build workers and grant interaction-verified status after a component-specific browser gesture. Neither a successful fetch nor a loaded Sandpack iframe qualifies. Unknown frameworks, unsupported source identifiers and non-renderable catalog kinds stay counted, not silently erased.
 
 During initial automated surveying, the dry-run accounted for 1,947 identities outside the safe resolver grammar and 1,108 non-renderable items. The first twelve-item focused run produced nine source resolutions and three blocks; the first sixteen-item cross-registry run produced two source resolutions and fourteen blocks. These are compatibility-triage observations, not sitewide interaction or route-parity coverage.
+
+## R9. Compile-complete before any browser verification (2026-10-04)
+
+The reviewed-build-verify.mjs runner now selects all cached unpublished
+items under the existing policy-approved namespace, not just those with existing
+interaction rules. It attempts the full selected set using the existing local
+network-isolated bwrap compiler, validating original source revisions and
+content-addressed bundles. Only after the entire build stage ends does one
+managed PinchTab browser stage begin. The entire pass is bounded at 200 items
+and it is invoked with --limit all; a registry with more cached items must
+be processed in named, bounded batches.
+
+The browser stage distinguishes:
+
+- interaction-verified: an approved interaction contract produced an observed
+  browser state transition with no browser errors; only these items may be
+  promoted to upstream-built in the published manifest.
+- render-verified: the browser displayed the original source component, but
+  the item has no reviewed interaction rule. This is not a claim of interaction
+  parity and must not enter the verified publication manifest.
+- unverified: rendering, source, browser, or interaction evidence was absent
+  or invalid. Do not publish.
+
+The generic harness no longer invents a fake counter for unknown component
+families. In addition to existing behavior families, the shared original-source
+compiler and managed-browser verifier support dialog, dropdown-menu,
+radio-group, and select. The select browser contract opens the upstream
+combobox, chooses a real option, and checks the upstream value callback.
+
+One full cached-source execution: @8bitcn contained 56 cached source items,
+11 with existing published proof and 45 unpublished. All 45 were attempted
+in the isolated build phase: 17 built, 28 blocked. The single browser phase
+recorded four new interaction-verified components (dialog, dropdown-menu,
+radio-group, select), 12 source-based render-only components and one
+original-component-not-visible failure (tooltip). Only four new immutable
+verified artifacts were retained in the public bundle tree; the 13
+unreferenced render-only or failed public copies were removed after their
+content hashes and Git-untracked status were checked. The private build cache
+and browser-proof evidence were retained. This brings the manifest to
+14 upstream-built interaction-verified entries plus one previously verified
+source-informed fixture.
+
+Important scope: this is a complete stage across the existing reviewed,
+cached @8bitcn namespace, not 21st.dev parity across 84,145 catalog
+identities. Other namespaces remain source-only or unreviewed and must be
+admitted by reviewed license/dependency policies before their source is
+executed. Full catalog-wide source inspection is separately automated by
+R8, and complete interaction parity still requires more reviewed behavior
+contracts and upstream author-demo support. Do not claim 84,145 functional
+previews or promote source-only data into verified evidence.
