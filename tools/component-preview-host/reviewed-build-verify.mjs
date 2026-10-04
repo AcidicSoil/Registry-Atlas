@@ -63,7 +63,7 @@ export function approvedPromotionCandidates(proof,receipts){
  }
  return admitted;
 }
-async function stageArtifact(slug,registry){
+export async function stageArtifact(slug,registry){
  const reply=await fetch(SOURCE_HOST+'/preview/@'+registry+'/'+slug,{signal:AbortSignal.timeout(35_000)});
  if(!reply.ok || reply.headers.get('x-preview-verification')!=='build-only'
    ||!reply.headers.get('content-type')?.startsWith('text/html'))
@@ -85,7 +85,7 @@ async function stageArtifact(slug,registry){
  }
  return {namespace:'@'+registry,slug,sourceSha256:review.sourceSha256,bundleSha256};
 }
-async function saveManifest(admitted,registry){
+export async function saveManifest(admitted,registry){
  const path=join(HOST,'reviews',registry+'-policy.json');
  const policy=JSON.parse(await readFile(path,'utf8'));
  if(policy.schema!=='registry-atlas-shared-preview-policy/v1'

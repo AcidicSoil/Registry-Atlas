@@ -3,7 +3,7 @@ import {describe,expect,it} from 'vitest';
 import {assessBehavior,assessStaticRender,verifyReceipts} from '../../tools/component-preview-host/verify-batch.mjs';
 
 describe('generic browser proof admission',()=>{
- it.each(['button','input','textarea','checkbox','switch','toggle','slider','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select'])(
+ it.each(['button','input','textarea','checkbox','switch','toggle','slider','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select','tooltip','scroll-area','faq1','faq3'])(
  'recognizes actual changing %s behavior',slug=>{
    expect(assessBehavior(slug,'before','after','No errors')).toMatchObject({
      status:'interaction-verified',before:'before',after:'after',
@@ -16,6 +16,18 @@ describe('generic browser proof admission',()=>{
    expect(assessBehavior('badge','old','new','No errors').status).toBe('unverified');
    expect(assessBehavior('checkbox','old','new','ReferenceError: React').status).toBe('unverified');
    expect(assessBehavior('checkbox',null,'new','No errors').status).toBe('unverified');
+ });
+ it('recognizes actual original FAQ accordion state changes and rejects unchanged states',()=>{
+   for(const slug of ['faq1','faq3']){
+     expect(assessBehavior(slug,'false','true','No errors').status).toBe('interaction-verified');
+     expect(assessBehavior(slug,'false','false','No errors').status).toBe('unverified');
+   }
+ });
+ it('requires a real state transition when keyboard scrolling the upstream viewport',()=>{
+   expect(assessBehavior('scroll-area','0','3','No errors').status)
+     .toBe('interaction-verified');
+   expect(assessBehavior('scroll-area','0','0','No errors').status)
+     .toBe('unverified');
  });
  it('records a visible original static component without falsely certifying interaction',()=>{
    expect(assessStaticRender(true,'No errors')).toMatchObject({

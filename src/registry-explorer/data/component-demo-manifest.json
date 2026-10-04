@@ -87,6 +87,34 @@
     },
     {
       "namespace": "@8bitcn",
+      "slug": "faq1",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/67b0376e473fc50ef97429b885f5a4787beb93c5902a31604041eb20b48cbe45/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/faq1",
+        "registryItemUrl": "https://www.8bitcn.com/r/faq1.json"
+      },
+      "reviewedAt": "2026-10-04T07:33:46.045Z",
+      "verifiedAt": "2026-10-04T07:33:46.045Z",
+      "sourceSha256": "18ad456cf30b1df59221ade556bc3ffbec9a7dc9eb105d327385ad0504cdc3ec"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "faq3",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/d8d1c76a21c9f48150e7e98bba5e9d3196a0305b7645e4f1fbaa41d9c9dd6c26/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/faq3",
+        "registryItemUrl": "https://www.8bitcn.com/r/faq3.json"
+      },
+      "reviewedAt": "2026-10-04T07:33:46.045Z",
+      "verifiedAt": "2026-10-04T07:33:46.045Z",
+      "sourceSha256": "3573595ee4bb59605d2d7072c32a6d0bea0a2f52fe69a149c51b4824280c0c2b"
+    },
+    {
+      "namespace": "@8bitcn",
       "slug": "input",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -112,6 +140,20 @@
       "reviewedAt": "2026-10-04T06:39:33.215Z",
       "verifiedAt": "2026-10-04T06:39:33.215Z",
       "sourceSha256": "23ec04457194aba2acbd9bcc459603e722063a5e8e7b8af3320b5482c9137ea6"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "scroll-area",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/119e67e16b934fe89e09545acb9147b702c4c0683c217aa11ae69b2b1163de80/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/scroll-area",
+        "registryItemUrl": "https://www.8bitcn.com/r/scroll-area.json"
+      },
+      "reviewedAt": "2026-10-04T07:29:17.602Z",
+      "verifiedAt": "2026-10-04T07:29:17.602Z",
+      "sourceSha256": "f1c231bfa5d3ccbb94cee882a1ee38d5d417d9643e0b5d28a768b7b6e17b8a87"
     },
     {
       "namespace": "@8bitcn",
@@ -196,6 +238,20 @@
       "reviewedAt": "2026-10-03T08:51:45.635Z",
       "verifiedAt": "2026-10-03T08:51:45.635Z",
       "sourceSha256": "ed159dd47d2504c140f90fb4a68760aab3cc3caffd0bb616a9feeca470824e00"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "tooltip",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/434d7e8a6e9ec1604c19b72e5c1cc4902f38c78ed4be7b2ab6ba2fd90822b234/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/tooltip",
+        "registryItemUrl": "https://www.8bitcn.com/r/tooltip.json"
+      },
+      "reviewedAt": "2026-10-04T07:18:55.977Z",
+      "verifiedAt": "2026-10-04T07:18:55.977Z",
+      "sourceSha256": "7bec449ee089f0e4f0595e5fa153356661e1c8e5c0d93a8a4019f53dbfd3f15b"
     }
   ]
 }

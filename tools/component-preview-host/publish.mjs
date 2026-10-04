@@ -33,7 +33,41 @@ export async function prepareRegistryItem(registry,slug){
  if(upstream.name!==slug||!Array.isArray(upstream.files))throw Error('Source identity mismatch');
  const matches=upstream.files.filter(file=>file.path.endsWith('/'+slug+'.tsx'));
  if(matches.length!==1)throw Error('Ambiguous or missing component export entry');
- const review={...policy,slug,sourcePath,entryFile:matches[0].path,sourceSha256:sha(source)};
+ // Resolve existing first-party aliases from immutable, exact-identity source
+ // JSON in the same registry. Do not invent modules or execute fetched source.
+ const aliases={...policy.aliases};
+ const uiRoot=matches[0].path.split('/').slice(0,3).join('/');
+ if(!/^components\/ui\/[a-z0-9-]+$/.test(uiRoot))
+  throw Error('unsupported-registry-ui-root');
+ const queue=upstream.files.flatMap(file=>[
+  ...(file.content??'').matchAll(/\b(?:from\s*|import\s*)["'](@\/components\/ui\/[a-z0-9-]+\/[a-z0-9-]+)["']/g)
+ ].map(match=>match[1]));
+ let linkedBytes=0;
+ for(let i=0;i<queue.length;i++){
+  const name=queue[i],pattern=new RegExp('^@/'+uiRoot+'/([a-z0-9-]+)$');
+  const match=pattern.exec(name);
+  if(!match||aliases[name])continue;
+  if(Object.keys(aliases).length>100||queue.length>150)throw Error('bounded-alias-budget-exceeded');
+  const sibling=match[1];
+  let bytes;
+  try{bytes=await readFile(join(HOST,'sources',registry,sibling+'.json'));}
+  catch(error){if(error.code==='ENOENT')continue;throw error;}
+  linkedBytes+=bytes.length;
+  if(bytes.length>524288||linkedBytes>3*1024*1024)
+   throw Error('bounded-alias-budget-exceeded');
+  const parsed=JSON.parse(bytes.toString('utf8'));
+  const target=uiRoot+'/'+sibling+'.tsx';
+  if(parsed.name!==sibling||!Array.isArray(parsed.files)
+    ||parsed.files.filter(file=>file.path===target).length!==1)continue;
+  const content=parsed.files.find(file=>file.path===target).content;
+  if(typeof content!=='string'||Buffer.byteLength(content)>256000)continue;
+  aliases[name]={path:'sources/'+registry+'/'+sibling+'.json',
+   sourceFile:target,sha256:sha(bytes)};
+  queue.push(...[...content.matchAll(/\b(?:from\s*|import\s*)["'](@\/components\/ui\/[a-z0-9-]+\/[a-z0-9-]+)["']/g)]
+   .map(m=>m[1]));
+ }
+ const review={...policy,aliases,slug,sourcePath,
+  entryFile:matches[0].path,sourceSha256:sha(source)};
  return {source,review};
 }
 export async function publishRegistryItem(registry,slug,

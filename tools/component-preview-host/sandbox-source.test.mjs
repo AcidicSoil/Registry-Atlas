@@ -1,3 +1,4 @@
+import './fetch-cached-registry.test.mjs';
 import './probe-batch.test.mjs';
 import './preview-probes.test.mjs';
 import {test} from 'node:test';

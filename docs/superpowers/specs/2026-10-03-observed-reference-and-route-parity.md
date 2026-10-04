@@ -244,3 +244,51 @@ identities, 14 upstream interaction-verified, and 84,131 lacking such proof;
 within the latter, 84,106 were pending and 25 source-probe blocked. These
 numbers must never be compared to the source-probe queue as though the
 quantities describe the same population. All counts are point-in-time.
+
+## R11. Full cached-registry ingestion, shared-component linking, original browser proof (2026-10-04)
+
+The bulk official source importer uses the existing reviewed source URL template,
+requires exact source identity and bounded files, and stores upstream source JSON
+without running it. In two stages it ingested the 65 uncached components of
+the 121 @8bitcn catalog records; subsequent runs ingest zero unchanged items.
+This is source cache coverage, not working-demo coverage.
+
+The reviewed build adapter now links same-registry first-party component
+imports through already cached official sibling source JSON. The link is
+bounded to exact UI-root names and validated against the recorded source
+content hash before compiler execution. A tampered sibling fails closed.
+This removes duplicated per-item import registration. Whole-cached-registry
+compile planning improved from 29 buildable / 91 blocked (first 120 cached)
+to 73 buildable / 47 blocked (same 120 items). Builds by themselves are not
+evidence of functioning components.
+
+An expanded compile-then-browser pass on 105 previously unpublished cached
+items compiled 58 and blocked 47. Real browser verification of the upstream
+Tooltip using hover produced one new interaction-verified publication. A
+separate real managed-browser keyboard gesture on the upstream Radix ScrollArea
+moved its viewport scrollTop from 0 to 22 without browser errors and was
+published only after matching the original source hash and bundle checksum.
+Both new reviewed immutable artifacts are retained; unverified temporary
+public build copies are removed. Existing original-source published demos
+remain available.
+
+Working preview coverage therefore improves from 14 to 16 on the fixed
+84,145-item denominator: 84,127 identities still lack published interaction
+proof. The cache of 121 source JSON records and count of 73 buildable
+components must not be substituted for 18 actual browser interaction proofs.
+Unsupported external package and Next.js blocks remain tracked, and broad
+21st.dev route parity is not yet complete.
+
+Default-exported original React blocks had been mounted under a nonexistent
+named export, producing browser identity mismatch despite successful
+compilation. The reviewed compiler now distinguishes a named export from
+the same component's default export. A managed-browser trial loaded actual
+health-bar, advanced1 and faq1 source with no browser errors. The two original
+FAQ author blocks named faq1 and faq3 were compiled as a single stage and
+tested only after both builds finished. Their original accordion triggers
+responded to real browser clicks, each transitioning aria-expanded false
+to true without errors. Both immutable source artifacts were independently
+admitted and published. Their full proof is stored privately under the
+Registry Atlas previews state directory. This increases working previews to
+18 of 84,145, leaving 84,127 without published gesture proof; other compiled
+blocks still require behavior-specific evidence, not guessed UI states.

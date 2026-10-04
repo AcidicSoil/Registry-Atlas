@@ -120,6 +120,30 @@ describe('shared compiled preview pipeline', () => {
     expect(result.html).toContain('data-preview-selection');
     expect(result.html).not.toContain('PRESS ME');
   });
+  it('uses the real upstream scroll-area viewport and a scrolling fixture rather than a fake counter',async()=>{
+    const slug='scroll-area';
+    const code='import React from "react";export function ScrollArea(props){return React.createElement("div",props,props.children)}';
+    const source=JSON.stringify({name:slug,files:[{path:'ui/scroll-area.tsx',content:code}],dependencies:[]});
+    const reviewItem={...review,slug,entryFile:'ui/scroll-area.tsx',sourceSha256:await hash(source)};
+    const built=await buildSharedPreview(source,reviewItem);
+    expect(built.status).toBe('built-unverified');
+    expect(built.html).toContain('SCROLL ITEM ');
+    expect(built.html).toContain('data-preview-original');
+    expect(built.html).not.toContain('PRESS ME');
+  });
+  it('composes the original tooltip provider, trigger and content without a generic fake counter',async()=>{
+    const names=['Tooltip','TooltipProvider','TooltipTrigger','TooltipContent'];
+    const source=JSON.stringify({name:'tooltip',files:[{path:'ui/tooltip.tsx',
+      content:'import React from "react";'+names.map(name=>
+        'export function '+name+'(props){return React.createElement("div",props,props.children)}').join('')}],dependencies:[]});
+    const cfg={...review,slug:'tooltip',entryFile:'ui/tooltip.tsx',sourceSha256:await hash(source)};
+    const result=await buildSharedPreview(source,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).toContain('SHOW TOOLTIP');
+    expect(result.html).toContain('TOOLTIP CONTENT');
+    expect(result.html).not.toContain('PRESS ME');
+    expect(result.html).toContain('data-preview-original');
+  });
   it('does not fabricate an upstream visual, output, or token content for unsupported components',async()=>{
     const slug='button-group';
     const source=JSON.stringify({name:slug,files:[{path:'ui/button-group.tsx',
@@ -143,6 +167,42 @@ describe('shared compiled preview pipeline', () => {
     expect(result.html).not.toContain('PRESS ME');
     expect(result.html).not.toContain('data-preview-interaction-count');
   });
+  it('rejects a tampered linked official source instead of executing it',async()=>{
+    const {source,review}=await prepareRegistryItem('8bitcn','health-bar');
+    const modified={...review,aliases:{
+      ...review.aliases,
+      '@/components/ui/8bit/progress':{
+        ...review.aliases['@/components/ui/8bit/progress'],
+        sha256:'0'.repeat(64),
+      },
+    }};
+    const compiled=await buildSharedPreview(source,modified);
+    expect(compiled).toMatchObject({status:'blocked',reason:'alias-source-hash-mismatch'});
+  },20_000);
+  it('mounts default-exported original components instead of assuming a named export',async()=>{
+    const original='import React from "react"; export default function HealthBar(){return React.createElement("div",null,"REAL SOURCE")};';
+    const source=JSON.stringify({name:'health-bar',files:[{path:'ui/health-bar.tsx',content:original}],dependencies:[]});
+    const cfg={...review,slug:'health-bar',entryFile:'ui/health-bar.tsx',sourceSha256:await hash(source)};
+    const planned=planSharedPreview(source,cfg);
+    expect(planned).toMatchObject({status:'eligible',exportName:'HealthBar',exportKind:'default'});
+    const built=await buildSharedPreview(source,cfg);
+    expect(built).toMatchObject({status:'built-unverified'});
+    expect(built.html).toContain('REAL SOURCE');
+    expect(built.html).toContain('data-preview-original');
+  });
+  it('resolves official same-registry component aliases as one bounded family, without handwritten demos',async()=>{
+    const {source,review}=await prepareRegistryItem('8bitcn','health-bar');
+    expect(review.aliases['@/components/ui/8bit/progress']).toMatchObject({
+      path:'sources/8bitcn/progress.json',
+      sourceFile:'components/ui/8bit/progress.tsx',
+    });
+    const plan=planSharedPreview(source,review);
+    expect(plan.status).toBe('eligible');
+    const compiled=await buildSharedPreview(source,review);
+    expect(compiled.status).toBe('built-unverified');
+    expect(compiled.html).not.toContain('UPSTREAM PREVIEW');
+    expect(compiled.html).toContain("connect-src 'none'");
+  },20_000);
   it('blocks stale source, unauthorized dependencies and unsafe remote imports', async () => {
     const checked={...review,sourceSha256:await sourceHash()};
     expect(planSharedPreview(raw,{...checked,sourceSha256:'0'.repeat(64)}).reason).toBe('source-hash-mismatch');

@@ -25,6 +25,14 @@ const TYPES={
     probe:"document.querySelector('[data-preview-selection]')?.textContent"},
   select:{role:'combobox',name:'CHOOSE ITEM',action:'select-option',
     optionName:'SECOND CHOICE',probe:"document.querySelector('[data-preview-selection]')?.textContent"},
+  tooltip:{role:'button',name:'SHOW TOOLTIP',action:'hover',
+    probe:"String(Boolean([...document.querySelectorAll('[role=tooltip]')].some(e=>e.getClientRects().length>0)))"},
+  'scroll-area':{action:'scroll-keyboard',targetCss:'[data-slot=scroll-area-viewport]',
+    probe:"String(document.querySelector('[data-slot=scroll-area-viewport]')?.scrollTop ?? -1)"},
+  faq1:{role:'button',name:'What platforms do you support?',action:'click',
+    probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')"},
+  faq3:{role:'button',name:'What is 8bitcn?',action:'click',
+    probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')"},
 
 };
 export const supportedBehavior=slug=>Object.hasOwn(TYPES,slug);
@@ -80,13 +88,21 @@ export async function verifyReceipts({receipts,server,tab,base}){
          observedAt:new Date().toISOString()};
        rows.push(row);continue;
      }
-     const snap=tool('snap',[],{server,tab});
-     const options=snap.nodes.filter(node=>node.role===config.role
-       &&(!config.name||node.name===config.name));
-     if(options.length!==1)throw Error('Expected exactly one original component control');
-     const ref=options[0].ref;
+     let ref=null;
+     if(!config.targetCss){
+       const snap=tool('snap',[],{server,tab});
+       const options=snap.nodes.filter(node=>node.role===config.role
+         &&(!config.name||node.name===config.name));
+       if(options.length!==1)throw Error('Expected exactly one original component control');
+       ref=options[0].ref;
+     }
      const before=tool('eval',[config.probe],{server,tab}).result;
-     if(config.action==='select-option'){
+     if(config.action==='scroll-keyboard'){
+       tool('focus',['--css',config.targetCss],{server,tab});
+       tool('press',['PageDown'],{server,tab});
+       tool('wait',['--fn',"document.querySelector('[data-slot=scroll-area-viewport]')?.scrollTop > 0",
+         '--timeout','3000'],{server,tab});
+     }else if(config.action==='select-option'){
        tool('click',[ref],{server,tab});
        const optionsAfter=tool('snap',[],{server,tab}).nodes
          .filter(node=>node.role==='option'&&node.name===config.optionName);
@@ -97,6 +113,8 @@ export async function verifyReceipts({receipts,server,tab,base}){
          :config.action==='press'?[ref,config.value]:[ref];
        tool(config.action,args,{server,tab});
      }
+     if(config.action==='hover')
+       tool('wait',['[role=tooltip]','--timeout','3000'],{server,tab});
      const after=tool('eval',[config.probe],{server,tab}).result;
      const errs=tool('errors',[],{server,tab});
      row={...row,...assessBehavior(slug,before,after,errs),

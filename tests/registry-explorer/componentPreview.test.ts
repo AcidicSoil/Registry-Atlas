@@ -13,10 +13,10 @@ describe('reviewed sandboxed component examples', () => {
     expect(existsSync(path)).toBe(true);
     const manifest = JSON.parse(readFileSync(path, 'utf8'));
     expect(manifest.schema).toBe('registry-atlas-component-demos/v1');
-    expect(manifest.items.length).toBe(14);
+    expect(manifest.items.length).toBe(18);
     expect(new Set(manifest.items.map((item:{namespace:string;slug:string})=>item.namespace+'/'+item.slug)).size)
       .toBe(manifest.items.length);
-    for (const slug of ['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select']) {
+    for (const slug of ['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select','tooltip','scroll-area','faq1','faq3']) {
       const original=manifest.items.find((entry: {slug:string}) => entry.slug === slug);
       const originalSource=readFileSync('tools/component-preview-host/sources/8bitcn/'+slug+'.json');
       expect(original).toMatchObject({namespace:'@8bitcn',slug,kind:'upstream-built',
@@ -26,7 +26,7 @@ describe('reviewed sandboxed component examples', () => {
     expect(manifest.items.some((entry: {kind:string}) => entry.kind === 'source-informed-fixture')).toBe(false);
   });
 
-  it.each(['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
+  it.each(['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select','tooltip','scroll-area','faq1','faq3'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
     const rendered = renderComponentPreview('@8bitcn', slug, 'card') ?? '';
     expect(rendered).toContain('<iframe');
     expect(rendered).toContain('sandbox="allow-scripts"');

@@ -63,19 +63,32 @@ export function planSharedPreview(raw,review) {
       }else if(!review.dependencyLock[packageName(name)])return blocked('unreviewed-import');
     }
   }
-  for(const item of Object.values(aliasMap))
-    if(!safePath(item?.path)||!HASH.test(item.sha256??''))return blocked('unreviewed-alias');
+  for(const item of Object.values(aliasMap)){
+    const linked=item?.sourceFile!==undefined;
+    const registry=review.namespace.slice(1);
+    const fromJson=linked&&typeof item.path==='string'
+      &&new RegExp('^sources/'+registry+'/[a-z0-9-]+\\.json$').test(item.path)
+      &&typeof item.sourceFile==='string'
+      &&new RegExp('^'+review.entryFile.split('/').slice(0,3).join('/')+'/[a-z0-9-]+\\.tsx$').test(item.sourceFile)
+      &&item.path.split('/').at(-1).replace(/\.json$/,'')===
+        item.sourceFile.split('/').at(-1).replace(/\.tsx$/,'');
+    if(!(linked?fromJson:safePath(item?.path))||!HASH.test(item.sha256??''))
+     return blocked('unreviewed-alias');
+  }
   const names=exportsOf(fileMap.get(review.entryFile).content);
   const expected=review.slug.split(/[^a-zA-Z0-9]/)
     .map(segment=>segment[0]?.toUpperCase()+segment.slice(1)).join('');
   const exportName=review.exportName??(names.includes(expected)?expected:names[0]);
   if(!exportName||!names.includes(exportName))return blocked('component-export-unresolved');
+  const entrySource=fileMap.get(review.entryFile).content;
+  const isDefault=new RegExp('\\bexport\\s+default\\s+(?:async\\s+)?(?:function|class)\\s+'+exportName+'\\b').test(entrySource)
+    ||new RegExp('\\bexport\\s+default\\s+'+exportName+'\\s*;').test(entrySource);
   return {status:'eligible',namespace:review.namespace,slug:review.slug,
-    entryFile:review.entryFile,exportName,sourceSha256:review.sourceSha256,
+    entryFile:review.entryFile,exportName,exportKind:isDefault?'default':'named',sourceSha256:review.sourceSha256,
     files:[...fileMap.values()],aliasMap,dependencyLock:review.dependencyLock};
 }
 
-const harness=(exportName,identity)=> {
+const harness=(exportName,identity,exportKind='named')=> {
  const text=/^(?:Input|TextArea|Textarea|SearchInput)$/i.test(exportName);
  const checkbox=/^(?:Checkbox|Switch)$/i.test(exportName);
  const toggle=/^Toggle$/i.test(exportName);
@@ -90,6 +103,8 @@ const harness=(exportName,identity)=> {
   DropdownMenu:"React.createElement(Component,{'data-preview-original':''},React.createElement(Upstream.DropdownMenuTrigger,{asChild:true},React.createElement('button',{type:'button'},'OPEN MENU')),React.createElement(Upstream.DropdownMenuContent,null,React.createElement(Upstream.DropdownMenuItem,null,'MENU ACTION'))),",
   RadioGroup:"React.createElement(Component,{'data-preview-original':'',value:selection,onValueChange:setSelection},React.createElement(Upstream.RadioGroupItem,{value:'first','aria-label':'FIRST CHOICE'}),React.createElement(Upstream.RadioGroupItem,{value:'second','aria-label':'SECOND CHOICE'})),",
   Select:"React.createElement(Component,{'data-preview-original':'',value:selection,onValueChange:setSelection},React.createElement(Upstream.SelectTrigger,{'aria-label':'CHOOSE ITEM'},React.createElement(Upstream.SelectValue,{placeholder:'Choose an item'})),React.createElement(Upstream.SelectContent,null,React.createElement(Upstream.SelectItem,{value:'first'},'FIRST CHOICE'),React.createElement(Upstream.SelectItem,{value:'second'},'SECOND CHOICE'))),",
+  Tooltip:"React.createElement(Upstream.TooltipProvider,{delayDuration:0},React.createElement(Component,null,React.createElement(Upstream.TooltipTrigger,{'data-preview-original':'',asChild:true},React.createElement('button',{type:'button'},'SHOW TOOLTIP')),React.createElement(Upstream.TooltipContent,{side:'bottom'},'TOOLTIP CONTENT'))),",
+  ScrollArea:"React.createElement(Component,{'data-preview-original':'',style:{height:155,width:280,overflow:'hidden'}},...Array.from({length:24},(_,i)=>React.createElement('div',{key:i,className:'scroll-fixture'},'SCROLL ITEM '+(i+1)))),",
  };
  const composed=Object.hasOwn(composition,exportName);
  const primitive=composed?composition[exportName]:checkbox
@@ -124,7 +139,7 @@ const harness=(exportName,identity)=> {
  "import React from 'react';",
  "import {createRoot} from 'react-dom/client';",
  "import * as Upstream from 'virtual:target';",
- "const Component=Upstream["+JSON.stringify(exportName)+"];",
+ "const Component=Upstream["+JSON.stringify(exportKind==='default'?'default':exportName)+"];",
  "function Demo(){const [count,setCount]=React.useState(0);const [disabled,setDisabled]=React.useState(false);const [words,setWords]=React.useState('');const [checked,setChecked]=React.useState(false);const [value,setValue]=React.useState(50);const [selection,setSelection]=React.useState('first');",
  "return React.createElement('main',{className:'demo'},",
  "React.createElement('p',{className:'caption'},"+JSON.stringify(identity+" • compiled original source")+"),",
@@ -153,12 +168,22 @@ export async function buildSharedPreview(raw,review){
    if(!absolute.startsWith(ROOT+sep))return blocked('unsafe-alias-path');
    const bytes=await readFile(absolute);
    if(sha(bytes)!==item.sha256)return blocked('alias-source-hash-mismatch');
-   const content=bytes.toString('utf8');
-   if(/(?:\bimport\s*\(|\brequire\s*\(|\bfetch\s*\()/.test(content))
+   let content=bytes.toString('utf8');
+   if(item.sourceFile){
+     const nested=JSON.parse(content);
+     if(nested.name!==item.sourceFile.split('/').at(-1).replace(/\.tsx$/,'')
+        ||!Array.isArray(nested.files)
+        ||nested.files.filter(file=>file.path===item.sourceFile).length!==1)
+       return blocked('alias-source-identity-mismatch');
+     content=nested.files.find(file=>file.path===item.sourceFile).content;
+   }
+   if(typeof content!=='string'||Buffer.byteLength(content)>256000
+      ||/(?:\bimport\s*\(|\brequire\s*\(|\bfetch\s*\()/.test(content))
       return blocked('unreviewed-alias-import');
    for(const name of imports(content)){
-     if(name.startsWith('@/'))pending.push(name);
-     else if(!plan.dependencyLock[packageName(name)])
+     if(name.startsWith('@/')){
+       if(!files.has(name.slice(2)))pending.push(name);
+     }else if(!plan.dependencyLock[packageName(name)])
        return blocked('unreviewed-alias-import');
    }
    aliases.set(specifier,{content});
@@ -178,7 +203,7 @@ export async function buildSharedPreview(raw,review){
      return {path,namespace:'ra-source'};
    });
    b.onLoad({filter:/.*/,namespace:'ra-virtual'},()=>({
-     contents:harness(plan.exportName,plan.namespace+'/'+plan.slug),loader:'js',resolveDir:ROOT}));
+     contents:harness(plan.exportName,plan.namespace+'/'+plan.slug,plan.exportKind),loader:'js',resolveDir:ROOT}));
    b.onLoad({filter:/.*/,namespace:'ra-source'},args=>{
      const file=files.get(args.path);
      if(!file)throw Error('Missing reviewed file');
@@ -207,7 +232,7 @@ export async function buildSharedPreview(raw,review){
  const html='<!doctype html><html lang="en"><head><meta charset="utf-8">'+
    '<meta http-equiv="Content-Security-Policy" content="'+csp+'">'+
    '<meta name="viewport" content="width=device-width,initial-scale=1">'+
-   '<style>*{box-sizing:border-box}body{margin:0;background:#17191e;color:#eaf0fb;font-family:ui-monospace,monospace}.demo{display:flex;min-height:215px;flex-direction:column;justify-content:center;align-items:center;gap:17px;padding:18px}.caption{font-size:11px;color:#afb6ca;margin:0}button[data-preview-original]{cursor:pointer;padding:13px 25px;border:3px solid #e0e8fc;background:#343f5a;color:white;box-shadow:4px 4px 0 #090a0d;font-weight:700}button[data-preview-original]:disabled{opacity:.4;cursor:not-allowed}.toggle{background:none;border:0;color:#bdd5fc;text-decoration:underline;cursor:pointer}output{font-size:12px}</style><style>'+
+   '<style>*{box-sizing:border-box}body{margin:0;background:#17191e;color:#eaf0fb;font-family:ui-monospace,monospace}.demo{display:flex;min-height:215px;flex-direction:column;justify-content:center;align-items:center;gap:17px;padding:18px}.caption{font-size:11px;color:#afb6ca;margin:0}button[data-preview-original]{cursor:pointer;padding:13px 25px;border:3px solid #e0e8fc;background:#343f5a;color:white;box-shadow:4px 4px 0 #090a0d;font-weight:700}button[data-preview-original]:disabled{opacity:.4;cursor:not-allowed}.toggle{background:none;border:0;color:#bdd5fc;text-decoration:underline;cursor:pointer}output{font-size:12px}[data-slot=scroll-area-viewport]{height:100%;width:100%;overflow:auto!important}.scroll-fixture{min-height:35px;padding:7px;border-bottom:1px solid #445}</style><style>'+
    css.replace(/<\/style/gi,'<\\/style')+'</style></head><body><div id="demo"></div>'+
    '<script>'+boot+'</script></body></html>';
  return {status:'built-unverified',namespace:plan.namespace,slug:plan.slug,
