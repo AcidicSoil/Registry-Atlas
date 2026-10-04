@@ -69,6 +69,25 @@ describe('on-demand preview service',()=>{
   expect(await result.text()).toContain('demo');
   expect((await (await fetch(base+'/health')).json()).approvedRegistries).toEqual(['@8bitcn','@demo']);
  });
+ it('offers opted-in sandbox source for catalog items without an individual review file and rejects hostile origins',async()=>{
+  let calls=0;
+  const project={schema:'registry-atlas-sandpack/v1',namespace:'@demo',slug:'button',
+    mode:'generated-smoke-example',files:{'/App.tsx':{code:'export default ()=>null'}},
+    dependencies:{react:'18.3.1'},warning:'Unverified smoke example'};
+  const base=await host({getSandboxProject:async()=>{calls++;return project;}});
+  const good=await fetch(base+'/sandbox/@demo/button',{headers:{Origin:'http://127.0.0.1:5189'}});
+  expect(good.status).toBe(200);
+  expect(good.headers.get('access-control-allow-origin')).toBe('http://127.0.0.1:5189');
+  expect((await good.json()).files['/App.tsx'].code).toContain('null');
+  const repeat=await fetch(base+'/sandbox/@demo/button');
+  expect(repeat.status).toBe(200);
+  expect(calls).toBe(1);
+  const hostile=await fetch(base+'/sandbox/@demo/button',{headers:{Origin:'https://evil.example'}});
+  expect(hostile.status).toBe(403);
+  expect(hostile.headers.get('access-control-allow-origin')).toBeNull();
+  expect((await fetch(base+'/sandbox/@demo/..%2fprivate')).status).toBeGreaterThanOrEqual(400);
+  expect(calls).toBe(1);
+ });
  it('has stable revision keys and rejects unexpected hash values',()=>{
   expect(requestKey('8bitcn','button','a'.repeat(64),'b'.repeat(64))).toMatch(/^[a-f0-9]{64}$/);
   expect(()=>requestKey('8bitcn','button','bad','b'.repeat(64))).toThrow();

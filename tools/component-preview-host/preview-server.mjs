@@ -7,6 +7,7 @@ import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
+import { loadSandboxProject } from './sandbox-source.mjs';
 
 const HOST=dirname(fileURLToPath(import.meta.url));
 const CACHE=join(homedir(),'.local','state','registry-atlas','previews','cache');
@@ -17,6 +18,8 @@ const sha=v=>createHash('sha256').update(v).digest('hex');
 const MAX_HTML=1024*1024;
 const SAFE_CSP="default-src 'none'; connect-src 'none'; form-action 'none'; object-src 'none'; base-uri 'none'";
 const literalPath=/^\/preview\/@([a-z0-9][a-z0-9-]*)\/([a-z0-9][a-z0-9-]*)$/;
+const sandboxPath=/^\/sandbox\/@([a-z0-9][a-z0-9-]*)\/([a-z0-9][a-z0-9._/-]*)$/;
+const approvedBrowserOrigin=/^http:\/\/(?:127\.0\.0\.1|localhost):(?:5189|5196)$/;
 
 export function requestKey(registry,slug,sourceHash,policyHash){
  if(!NAME.test(registry)||!NAME.test(slug)||!HASH.test(sourceHash)
@@ -93,8 +96,8 @@ export function reviewedRegistries(){
 }
 
 export function createPreviewServer({getSource=sourceRevision,build=isolatedBuild,maxActive=2,
-  approvedRegistries=reviewedRegistries()}={}){
- const pending=new Map(),cached=new Map();
+  approvedRegistries=reviewedRegistries(),getSandboxProject=loadSandboxProject}={}){
+ const pending=new Map(),cached=new Map(),sandboxes=new Map();
  let active=0;
  const server=createServer(async(req,res)=>{
   if(req.socket.remoteAddress!=='127.0.0.1'&&req.socket.remoteAddress!=='::ffff:127.0.0.1')
@@ -104,9 +107,34 @@ export function createPreviewServer({getSource=sourceRevision,build=isolatedBuil
   if(req.method!=='GET'&&req.method!=='HEAD'){
     res.setHeader('Allow','GET, HEAD');return send(res,405,{status:'method-not-allowed'});
   }
-  if(req.url==='/health')return send(res,200,{status:'ready',runtime:'local-build-only',active,
+  if(req.url==='/health')return send(res,200,{status:'ready',runtime:'local-build-plus-source-sandbox',active,
     cached:cached.size,approvedRegistries:approvedRegistries.map(name=>'@'+name)});
   if(typeof req.url!=='string'||req.url.length>160)return send(res,404,{status:'not-found'});
+  const sandbox=sandboxPath.exec(req.url);
+  if(sandbox){
+   if(req.headers.origin&&!approvedBrowserOrigin.test(req.headers.origin)
+      ||req.headers['sec-fetch-site']==='cross-site')
+     return send(res,403,{status:'blocked-origin'});
+   const headers=req.headers.origin
+     ?{'Access-Control-Allow-Origin':req.headers.origin,'Vary':'Origin'}:{};
+   const key=sandbox[1]+'/'+sandbox[2];
+   let record=sandboxes.get(key);
+   if(!record||record.expiresAt<Date.now()){
+     if(sandboxes.size>=16)sandboxes.delete(sandboxes.keys().next().value);
+     const task=Promise.resolve().then(()=>getSandboxProject(sandbox[1],sandbox[2]));
+     record={task,expiresAt:Date.now()+120_000};
+     sandboxes.set(key,record);
+     task.catch(()=>{if(sandboxes.get(key)===record)sandboxes.delete(key);});
+   }
+   try{
+     const project=await record.task;
+     return send(res,200,project,headers);
+   }catch(error){
+     const reason=/^(?:invalid-item-identity|item-not-in-catalog|registry-source-unavailable|unsafe-registry-url|unsupported-registry-item|no-renderable-source|entry-file-not-resolved|component-export-unresolved|conflicting-source-paths|source-file-too-large|too-many-source-files|invalid-package|unsupported-package-specifier|preview-budget-exceeded|upstream-identity-mismatch|unsupported-source-file|author-demo-required)$/.test(error?.message)
+       ?error.message:'registry-preview-unavailable';
+     return send(res,422,{status:'unavailable',reason},headers);
+   }
+  }
   const match=literalPath.exec(req.url);
   if(!match)return send(res,404,{status:'not-found'});
   const registry=match[1],slug=match[2];

@@ -2,4 +2,5 @@ packages:
   - src/*
 
 allowBuilds:
+  es5-ext: false
   esbuild: true

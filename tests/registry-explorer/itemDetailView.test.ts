@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
-import { renderItemDetailView, renderRelatedComponentLinks, renderLocalBuildOption } from '../../src/registry-explorer/ui/itemDetailView';
+import { renderItemDetailView, renderRelatedComponentLinks, renderLocalBuildOption, renderLocalSandboxOption } from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
   it('offers an explicit local-only on-demand source preview without pretending it is verified',()=>{
@@ -12,6 +12,18 @@ describe('renderItemDetailView', () => {
     expect(renderLocalBuildOption('@8bitcn','badge','github.io')).toBe('');
     expect(renderLocalBuildOption('@unreviewed','badge','127.0.0.1')).toBe('');
     expect(renderLocalBuildOption('@8bitcn','../etc','127.0.0.1')).toBe('');
+  });
+
+  it('offers the source preview for multiple registry item types locally, never on static hosting',()=>{
+    for(const type of ['registry:component','registry:ui','registry:block']){
+      const html=renderLocalSandboxOption('@aceternity','sparkles',type,'127.0.0.1');
+      expect(html).toContain('data-source-sandbox-registry="aceternity"');
+      expect(html).toContain('data-source-sandbox-slug="sparkles"');
+      expect(html).toContain('not author demos or verified interactions');
+    }
+    expect(renderLocalSandboxOption('@aceternity','sparkles','registry:ui','github.io')).toBe('');
+    expect(renderLocalSandboxOption('@bad','../private','registry:ui','localhost')).toBe('');
+    expect(renderLocalSandboxOption('@bad','theme','registry:theme','localhost')).toBe('');
   });
 
   it('renders a component-first item page without raw JSON UI labels', () => {

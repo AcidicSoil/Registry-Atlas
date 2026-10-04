@@ -136,6 +136,7 @@ function renderPreview(detail: RegistryItemDetail): string {
     </figure>` : null;
   const liveDemo = renderComponentPreview(detail.namespace, detail.slug, 'detail');
   const localBuild = renderLocalBuildOption(detail.namespace, detail.slug);
+  const sandboxPreview = renderLocalSandboxOption(detail.namespace, detail.slug, detail.type);
   if (liveDemo) return `
     <div class="item-preview-combined">
       <section class="item-preview-live" aria-label="Interactive component example">
@@ -145,7 +146,7 @@ function renderPreview(detail: RegistryItemDetail): string {
       </section>
       ${visual ?? ''}
     </div>`;
-  if (visual) return `${visual}${localBuild}`;
+  if (visual) return `${visual}${localBuild}${sandboxPreview}`;
   // Images are not live components. Preserve discoverability without pretending otherwise.
 
   const facts = [
@@ -165,8 +166,29 @@ function renderPreview(detail: RegistryItemDetail): string {
       </div>
       <div class="item-preview-metadata-status">Visual reference not yet available</div>
       ${localBuild}
+      ${sandboxPreview}
     </div>
   `;
+}
+
+export function renderLocalSandboxOption(
+  namespace: string, slug: string, type: string | null,
+  hostname = typeof window === 'undefined' ? '' : window.location?.hostname ?? '',
+): string {
+  if (!['127.0.0.1', 'localhost'].includes(hostname)
+    || !/^@[a-z0-9][a-z0-9-]*$/.test(namespace)
+    || !/^[a-z0-9][a-z0-9._/-]*$/.test(slug)
+    || slug.split('/').some(part => part === '.' || part === '..')
+    || !['registry:ui', 'registry:component', 'registry:block', 'registry:page', 'registry:item'].includes(type ?? '')) return '';
+  return `<section class="item-preview-live" data-source-sandbox-root aria-label="Source preview">
+    <button class="install-button" type="button"
+      data-source-sandbox-registry="${escapeHtml(namespace.slice(1))}"
+      data-source-sandbox-slug="${escapeHtml(slug)}">Try live source preview</button>
+    <p class="muted" data-source-sandbox-status role="status">
+      Loads original registry code into an external CodeSandbox runtime. Local preview only;
+      generated examples are not author demos or verified interactions.</p>
+    <div data-source-sandbox-mount></div>
+  </section>`;
 }
 
 export function renderLocalBuildOption(

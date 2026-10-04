@@ -794,6 +794,40 @@ export function initRegistryExplorer(options: ShellOptions): void {
   });
 
   function handleClick(target: HTMLElement): void {
+    const sandboxButton = target.closest<HTMLButtonElement>('[data-source-sandbox-registry]');
+    if (sandboxButton) {
+      const registry = sandboxButton.dataset.sourceSandboxRegistry ?? '';
+      const slug = sandboxButton.dataset.sourceSandboxSlug ?? '';
+      const root = sandboxButton.closest<HTMLElement>('[data-source-sandbox-root]');
+      const status = root?.querySelector<HTMLElement>('[data-source-sandbox-status]');
+      const mount = root?.querySelector<HTMLElement>('[data-source-sandbox-mount]');
+      if (!root || !mount || !status || !/^[a-z0-9][a-z0-9-]*$/.test(registry)
+        || !/^[a-z0-9][a-z0-9._/-]*$/.test(slug)
+        || !['127.0.0.1','localhost'].includes(window.location.hostname)) return;
+      sandboxButton.disabled = true;
+      status.textContent = 'Loading original component files and declared dependencies…';
+      void (async () => {
+        try {
+          const result = await fetch('http://127.0.0.1:5198/sandbox/@'+registry+'/'+slug);
+          const project = await result.json();
+          if (!result.ok) throw Error(project.reason ?? 'source-unavailable');
+          if (!root.isConnected) return;
+          const { mountRegistryProject } = await import('./liveRegistryPreview');
+          if (!root.isConnected) return;
+          mountRegistryProject(mount, project);
+          status.textContent = project.warning;
+          mount.style.minHeight = '320px';
+          mount.style.width = '100%';
+        } catch (error) {
+          if (!root.isConnected) return;
+          status.textContent = 'Source preview unavailable: '+
+            (error instanceof Error ? error.message : 'unknown-error')+
+            '. Check the preview server and registry source.';
+          sandboxButton.disabled = false;
+        }
+      })();
+      return;
+    }
     const localBuild = target.closest<HTMLButtonElement>('[data-local-build-preview]');
     if (localBuild) {
       const slug = localBuild.getAttribute('data-local-build-preview') ?? '';
