@@ -121,3 +121,24 @@ This section converts the preview-runtime and migration decisions in the associa
 **Current task slice:** fix source-preview export selection and unpinned dependency fallbacks with failing tests first; do not rewrite the application framework, touch worker-owned source without reconciliation or introduce a second preview-resolver service. Next tasks are a real two-registry source/demo runtime trial, per-item visual/interaction evidence, and measured extension to compatible reviewed dependency families. Sitewide parity and the full inventory remain tracked open until separately proved.
 
 Primary technical references: https://ui.shadcn.com/docs/registry/api-reference ; https://ui.shadcn.com/docs/registry/registry-item-json ; https://sandpack.codesandbox.io/docs/advanced-usage ; https://github.com/21st-dev/skill/blob/main/skills/21st-registry/SKILL.md ; https://html.spec.whatwg.org/multipage/iframe-embed-object.html .
+
+## R7. Source-probe evidence and accurate blockers (2026-10-04 implementation slice)
+
+A local, explicitly bounded probe is **not** permission to publish a component or proof of browser behavior. `tools/component-preview-host/preview-probes.mjs` uses only the official `shadcn/registry` fetch-and-resolve source path used by the opt-in developer runtime. It accepts 1–16 exact catalog identities, never installs remote packages or executes resolved source, and emits metadata only: identity, probe outcome, safe structural blocker code, reviewed-package name when applicable, and observation time. It does not persist arbitrary exception text or source code. Run, inspect, then refresh review evidence deliberately:
+
+```bash
+node tools/component-preview-host/preview-probes.mjs \
+  @8bitcn/button @corecn/button @aceternity/text-generate-effect \
+  @basecn/button @baselayer/button
+```
+
+An approved, reviewed observation can be stored in `tools/component-preview-host/reviews/source-preview-probes.json`. The full-catalog planner reads this report without marking a smoke example as verified:
+
+- `source-resolved` means **unverified** source is available, not an authored or working user demo. Such an identity stays `pending` in coverage until an independent reviewed browser-interaction manifest qualifies it.
+- `blocked` counts a source-size/export/dependency compatibility blocker with its bounded, safe reason; it does not create a published preview. A reviewed, interaction-verified manifest entry wins over a later or earlier source probe for the same exact identity.
+- `unavailable` means a transient source-resolution failure, not a permanent block. It stays `pending`.
+- Probe observations expire after 72 hours. Stale blocked identities return to the pending queue for re-probe; the summary separately reports stale probes. Re-probes must retain the original evidence history in Git when the old report is replaced.
+
+The initial five-identity evidence run yielded two local smoke-source resolutions and three compatibility blocks (`motion`, `@base-ui/react`, and `source-file-too-large`). One of the two source-resolved identities already has a separate verified public artifact; this does not transfer verification to the new runtime. The planner reports **3 blocked**, **84,131 pending**, **10 verified upstream-built** and **one verified source-informed fixture** as of this bounded report. These counts are time-bounded evidence, not catalog-wide build proof.
+
+The local preview service returns safe failure reason codes and reviewed-package names; the existing Atlas detail page explains the reason and leaves the official component link usable. Unknown upstream exceptions are never rendered verbatim. Do not enable `motion`, `@base-ui/react` or other package families solely from a name, because reviewing framework/React-version compatibility, licensing, stylesheet behavior and cross-origin browser interaction remains necessary. The official source resolver contract is documented at https://ui.shadcn.com/docs/registry/api-reference .

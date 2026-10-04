@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { loadSandboxProject } from './sandbox-source.mjs';
+import { classifyPreviewFailure } from './preview-probes.mjs';
 
 const HOST=dirname(fileURLToPath(import.meta.url));
 const CACHE=join(homedir(),'.local','state','registry-atlas','previews','cache');
@@ -130,9 +131,11 @@ export function createPreviewServer({getSource=sourceRevision,build=isolatedBuil
      const project=await record.task;
      return send(res,200,project,headers);
    }catch(error){
-     const reason=/^(?:invalid-item-identity|item-not-in-catalog|registry-source-unavailable|unsafe-registry-url|unsupported-registry-item|no-renderable-source|entry-file-not-resolved|component-export-unresolved|conflicting-source-paths|source-file-too-large|too-many-source-files|invalid-package|unsupported-package-specifier|preview-budget-exceeded|upstream-identity-mismatch|unsupported-source-file|author-demo-required)$/.test(error?.message)
-       ?error.message:'registry-preview-unavailable';
-     return send(res,422,{status:'unavailable',reason},headers);
+     const failure=classifyPreviewFailure(error);
+     return send(res,422,{status:'unavailable',
+       reason:failure.status==='blocked' ? failure.reason : 'registry-preview-unavailable',
+       ...(failure.status==='blocked' && failure.package ? {package:failure.package} : {}),
+     },headers);
    }
   }
   const match=literalPath.exec(req.url);

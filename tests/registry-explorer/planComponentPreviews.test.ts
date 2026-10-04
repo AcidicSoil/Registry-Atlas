@@ -100,4 +100,45 @@ describe('full-catalog preview coverage planner', () => {
     expect(invalid.summary.blocked).toBe(1);
     expect(invalid.errors).toContainEqual(expect.objectContaining({ token: '@a/button' }));
   });
+
+  it('reconciles bounded source probe failures without falsely certifying source-resolved examples',()=>{
+    const attempts={schema:'registry-atlas-source-preview-probes/v1',
+      observedAt:'2026-10-04T06:15:00Z',
+      items:[
+        {namespace:'@a',slug:'card',status:'blocked',reason:'unreviewed-package',package:'motion'},
+        {namespace:'@a',slug:'button',status:'blocked',reason:'source-file-too-large'},
+        {namespace:'@b',slug:'button',status:'source-resolved',mode:'generated-smoke-example',verification:'not-interaction-verified'},
+        {namespace:'@b',slug:'nested/accordion',status:'unavailable',reason:'source-retrieval-failed'}
+      ]};
+    const report=planPreviewCoverage(raw,catalog,reviewed,
+      {attempts,probeNow:'2026-10-04T07:00:00Z',includeItems:true},curated);
+    expect(report.summary).toMatchObject({fixtureVerified:1,blocked:1,pending:3,
+      sourceProbeBlocked:1,sourceProbeResolved:1,sourceProbeUnavailable:1,sourceProbeStale:0,errors:0});
+    expect(report.items.find((x:{token:string})=>x.token==='@a/card')).toMatchObject({
+      status:'blocked',reason:'unreviewed-package',package:'motion'});
+    expect(report.items.find((x:{token:string})=>x.token==='@a/button')?.status).toBe('fixture');
+    expect(report.items.find((x:{token:string})=>x.token==='@b/button')).toMatchObject({
+      status:'pending',probeStatus:'source-resolved'});
+    expect(report.batch.some((x:{token:string})=>x.token==='@a/card')).toBe(false);
+  });
+  it('expires unverified source-probe blockers rather than freezing the catalog',()=>{
+    const attempts={schema:'registry-atlas-source-preview-probes/v1',
+      observedAt:'2026-09-01T06:15:00Z',
+      items:[{namespace:'@a',slug:'card',status:'blocked',reason:'source-file-too-large'}]};
+    const report=planPreviewCoverage(raw,catalog,reviewed,
+      {attempts,probeNow:'2026-10-04T07:00:00Z',includeItems:true},curated);
+    expect(report.summary).toMatchObject({blocked:0,pending:4,sourceProbeStale:1});
+    expect(report.items.find((x:{token:string})=>x.token==='@a/card')?.status).toBe('pending');
+  });
+  it('rejects forged, duplicate or malformed probe reports',()=>{
+    const report={schema:'registry-atlas-source-preview-probes/v1',
+      observedAt:'2026-10-04T06:15:00Z',items:[
+       {namespace:'@other',slug:'button',status:'blocked',reason:'author-demo-required'}]};
+    for(const bad of [report,{...report,items:[report.items[0],report.items[0]]},
+      {...report,items:[{namespace:'@a',slug:'card',status:'blocked',reason:'private-error /secret'}]}]){
+      expect(()=>planPreviewCoverage(raw,catalog,reviewed,
+       {attempts:bad,probeNow:'2026-10-04T07:00:00Z'},curated)).toThrow(/probe/i);
+    }
+  });
+
 });

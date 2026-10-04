@@ -7,6 +7,18 @@ const SCHEMA = 'registry-atlas-component-demos/v1';
 const LOCAL_DEMO = /^\/Registry-Atlas\/component-demos\/[a-z0-9-]+(?:\/[a-z0-9-]+)*\/index\.html$/;
 const NAMESPACE = /^@[a-z0-9][a-z0-9-]*$/;
 const byName = (a, b) => a.localeCompare(b);
+const PROBE_SCHEMA = 'registry-atlas-source-preview-probes/v1';
+const PROBE_REASONS = new Set([
+  'unsupported-registry-item', 'unsafe-registry-url', 'unsupported-registry-url',
+  'no-renderable-source', 'entry-file-not-resolved', 'component-export-unresolved',
+  'conflicting-source-paths', 'source-file-too-large', 'too-many-source-files',
+  'invalid-package', 'unsupported-package-specifier', 'preview-budget-exceeded',
+  'upstream-identity-mismatch', 'unsupported-source-file', 'author-demo-required',
+  'unreviewed-package', 'unpinned-package', 'dependency-version-mismatch',
+]);
+const PACKAGE_NAME = /^(?:@[a-z0-9._-]+\/[a-z0-9._-]+|[a-z0-9._-]+)$/;
+const PROBE_MAX_AGE_MS = 72 * 60 * 60 * 1000;
+
 
 function manifestReason(entry) {
   if (!entry || typeof entry !== 'object') return 'malformed-review';
@@ -127,8 +139,39 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
     }
   }
 
+  const probes = new Map();
+  let observedAt = null;
+  let probesFresh = false;
+  if (options.attempts !== undefined) {
+    const report = options.attempts;
+    const observation = Date.parse(report?.observedAt);
+    const at = Date.parse(options.probeNow ?? new Date().toISOString());
+    if (report?.schema !== PROBE_SCHEMA || !Array.isArray(report.items)
+        || report.items.length > 200 || !Number.isFinite(observation)
+        || !Number.isFinite(at) || observation > at)
+      throw new Error('Invalid source probe report');
+    observedAt = report.observedAt;
+    probesFresh = at - observation <= PROBE_MAX_AGE_MS;
+    for (const probe of report.items) {
+      const token = probe?.namespace + '/' + probe?.slug;
+      if (!source.get(probe?.namespace)?.has(probe?.slug) || probes.has(token)
+          || !['blocked', 'source-resolved', 'unavailable'].includes(probe.status)
+          || (probe.status === 'blocked' && !PROBE_REASONS.has(probe.reason))
+          || (probe.status === 'unavailable' && probe.reason !== 'source-retrieval-failed')
+          || (probe.status === 'source-resolved'
+            && (probe.verification !== 'not-interaction-verified'
+              || !['upstream-demo', 'generated-smoke-example'].includes(probe.mode)))
+          || (probe.package !== undefined && (!['unreviewed-package',
+                'unpinned-package', 'dependency-version-mismatch'].includes(probe.reason)
+              || !PACKAGE_NAME.test(probe.package))))
+        throw new Error('Invalid or duplicate source probe item: ' + token);
+      probes.set(token, probe);
+    }
+  }
   const rows = [];
   const registries = [];
+  let sourceProbeBlocked = 0, sourceProbeResolved = 0;
+  let sourceProbeUnavailable = 0, sourceProbeStale = 0;
   let fixtureVerified = 0;
   let upstreamBuiltVerified = 0;
   let pending = 0;
@@ -144,14 +187,27 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
     for (const slug of [...bucket.keys()].sort(byName)) {
       const item = bucket.get(slug);
       const entry = approved.get(item.token);
-      const status = bad.has(item.token) ? 'blocked'
+      const probe = !entry && !bad.has(item.token) ? probes.get(item.token) : undefined;
+      if (probe) {
+        if (!probesFresh) sourceProbeStale++;
+        else if (probe.status === 'blocked') sourceProbeBlocked++;
+        else if (probe.status === 'source-resolved') sourceProbeResolved++;
+        else sourceProbeUnavailable++;
+      }
+      const probeBlock = probe && probesFresh && probe.status === 'blocked';
+      const status = bad.has(item.token) || probeBlock ? 'blocked'
         : entry?.kind === 'upstream-built' ? 'upstream-built'
           : entry?.kind === 'source-informed-fixture' ? 'fixture' : 'pending';
       if (status === 'fixture') { fixtureVerified++; local.fixtureVerified++; }
       if (status === 'upstream-built') { upstreamBuiltVerified++; local.upstreamBuiltVerified++; }
       if (status === 'blocked') { blocked++; local.blocked++; }
       if (status === 'pending') { pending++; local.pending++; }
-      rows.push({ ...item, status, ...(bad.has(item.token) ? { reason: bad.get(item.token) } : {}) });
+      rows.push({ ...item, status,
+        ...(bad.has(item.token) ? { reason: bad.get(item.token) } : {}),
+        ...(probe ? { probeStatus: probesFresh ? probe.status : 'stale', observedAt } : {}),
+        ...(probeBlock ? { reason: probe.reason,
+          ...(probe.package ? { package: probe.package } : {}) } : {}),
+      });
     }
     if (local.total) local.status = local.blocked ? 'blocked'
       : local.pending ? 'partial' : 'preview-covered';
@@ -160,7 +216,9 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
   const distinctItems = rows.length;
   const summary = { rawRegistries: source.size, populatedRegistries, emptyRegistries,
     indexedRows, indexedDuplicates, indexedDistinct, curatedOnly, distinctItems,
-    fixtureVerified, upstreamBuiltVerified, pending, blocked, errors: errors.length,
+    fixtureVerified, upstreamBuiltVerified, pending, blocked,
+    sourceProbeBlocked, sourceProbeResolved, sourceProbeUnavailable, sourceProbeStale,
+    errors: errors.length,
     // A source-informed recreation does not prove the original upstream component is runnable.
     complete: distinctItems > 0 && pending === 0 && blocked === 0 && errors.length === 0
       && fixtureVerified === 0,
@@ -199,14 +257,17 @@ async function cli(argv) {
   }
   const root = fileURLToPath(new URL('../', import.meta.url));
   const readJson = async path => JSON.parse(await readFile(join(root, path), 'utf8'));
-  const [raw, catalog, manifest, curated] = await Promise.all([
+  const attemptsPath = join(root, 'tools/component-preview-host/reviews/source-preview-probes.json');
+  const [raw, catalog, manifest, curated, attempts] = await Promise.all([
     readJson('data/shadcn/registries.raw.json'),
     readJson('public/data/registry-catalog-items.json'),
     readJson('src/registry-explorer/data/component-demo-manifest.json'),
     readJson('data/shadcn/registry-items.json'),
+    existsSync(attemptsPath) ? readJson('tools/component-preview-host/reviews/source-preview-probes.json')
+      : Promise.resolve(undefined),
   ]);
   const coverage = planPreviewCoverage(raw, catalog, manifest, {
-    ...options,
+    ...options, ...(attempts ? { attempts } : {}),
     assetExists: localPath => existsSync(join(root, 'public',
       localPath.slice('/Registry-Atlas/'.length))),
   }, curated);

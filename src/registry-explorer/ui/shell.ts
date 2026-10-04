@@ -17,6 +17,7 @@ import {
   removeFromInstallQueue,
 } from '../core/installQueue';
 import { renderItemDetailView } from './itemDetailView';
+import { describeSourcePreviewFailure } from './sourcePreviewStatus';
 import { escapeHtml, renderRegistryHomepageLink } from './renderSafety';
 import { buildCatalogFacetSummary, queryCatalogComponents } from '../core/catalogQuery';
 import {
@@ -810,7 +811,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
         try {
           const result = await fetch('http://127.0.0.1:5198/sandbox/@'+registry+'/'+slug);
           const project = await result.json();
-          if (!result.ok) throw Error(project.reason ?? 'source-unavailable');
+          if (!result.ok) {
+            if (root.isConnected) {
+              status.textContent = describeSourcePreviewFailure(project);
+              sandboxButton.disabled = false;
+            }
+            return;
+          }
           if (!root.isConnected) return;
           const { mountRegistryProject } = await import('./liveRegistryPreview');
           if (!root.isConnected) return;

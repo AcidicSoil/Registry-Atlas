@@ -88,6 +88,25 @@ describe('on-demand preview service',()=>{
   expect((await fetch(base+'/sandbox/@demo/..%2fprivate')).status).toBeGreaterThanOrEqual(400);
   expect(calls).toBe(1);
  });
+ it('returns categorized dependency and budget failures without exposing internal exceptions',async()=>{
+  const base=await host({getSandboxProject:async (_registry:string,slug:string)=>{
+    if(slug==='button')throw Error('unreviewed-package: motion');
+    if(slug==='large')throw Error('source-file-too-large');
+    throw Error('sensitive service exception /home/user/PRIVATE');
+  }});
+  const options={headers:{Origin:'http://127.0.0.1:5189'}};
+  const dependency=await fetch(base+'/sandbox/@demo/button',options);
+  expect(dependency.status).toBe(422);
+  expect(await dependency.json()).toMatchObject({
+    status:'unavailable',reason:'unreviewed-package',package:'motion'});
+  const oversized=await fetch(base+'/sandbox/@demo/large',options);
+  expect(await oversized.json()).toMatchObject({
+    status:'unavailable',reason:'source-file-too-large'});
+  const privateError=await fetch(base+'/sandbox/@demo/private',options);
+  const body=await privateError.text();
+  expect(body).toContain('registry-preview-unavailable');
+  expect(body).not.toMatch(/PRIVATE|\/home\/user/);
+ });
  it('has stable revision keys and rejects unexpected hash values',()=>{
   expect(requestKey('8bitcn','button','a'.repeat(64),'b'.repeat(64))).toMatch(/^[a-f0-9]{64}$/);
   expect(()=>requestKey('8bitcn','button','bad','b'.repeat(64))).toThrow();
