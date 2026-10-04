@@ -213,7 +213,8 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
       const entry = approved.get(item.token);
       const probe = !entry && !bad.has(item.token) ? probes.get(item.token) : undefined;
       const age = probe ? probeNow - Date.parse(probe.observedAt) : Infinity;
-      const fresh = probe && age >= 0 && age <= PROBE_MAX_AGE_MS;
+      const fresh = probe && probe.mode !== 'generated-smoke-example'
+        && age >= 0 && age <= PROBE_MAX_AGE_MS;
       if (probe) {
         if (!fresh) sourceProbeStale++;
         else if (probe.status === 'blocked') sourceProbeBlocked++;
@@ -242,7 +243,10 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
   const distinctItems = rows.length;
   const summary = { rawRegistries: source.size, populatedRegistries, emptyRegistries,
     indexedRows, indexedDuplicates, indexedDistinct, curatedOnly, distinctItems,
-    fixtureVerified, upstreamBuiltVerified, pending, blocked,
+    fixtureVerified, upstreamBuiltVerified,
+    interactionVerified: fixtureVerified + upstreamBuiltVerified,
+    interactionUnverified: distinctItems - fixtureVerified - upstreamBuiltVerified,
+    pending, blocked,
     sourceProbeBlocked, sourceProbeResolved, sourceProbeUnavailable, sourceProbeStale,
     errors: errors.length,
     // A source-informed recreation does not prove the original upstream component is runnable.

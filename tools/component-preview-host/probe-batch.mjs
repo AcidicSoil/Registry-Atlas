@@ -64,7 +64,8 @@ function selectProbeWork(rows,previous,{registry,now,after,strategy}){
   if(!RENDERABLE.has(row.itemType)){summary.nonRenderable++;continue;}
   const earlier=previous.get(token);
   const age=earlier?Date.parse(now)-Date.parse(earlier.observedAt):Infinity;
-  if(earlier && age>=0 && age<(earlier.status==='unavailable'?15*60*1000:72*60*60*1000)){
+  if(earlier && earlier.mode!=='generated-smoke-example'
+   && age>=0 && age<(earlier.status==='unavailable'?15*60*1000:72*60*60*1000)){
    summary.alreadyProbed++;continue;
   }
   if(row.status==='blocked'&&!earlier){summary.alreadyProbed++;continue;}
@@ -119,6 +120,7 @@ export async function runProbeBatch(rows,{load=loadSandboxProject,concurrency=2,
    for(let attempt=0;attempt<=retries;attempt++){
     try{
      const source=await load(registry,slug);
+     if(source.mode!=='upstream-demo')throw Error('author-demo-required');
      finding={status:'source-resolved',mode:source.mode,
       verification:'not-interaction-verified',
       fileCount:Object.keys(source.files).length,

@@ -33,6 +33,8 @@ export function reconcileCoverage(raw, catalog, curated, manifest, ledgers, opti
     unresolved: discovery.summary.unresolved,
     fixtureVerified: preview.summary.fixtureVerified,
     upstreamBuiltVerified: preview.summary.upstreamBuiltVerified,
+    interactionVerified: preview.summary.interactionVerified,
+    interactionUnverified: preview.summary.interactionUnverified,
     previewPending: preview.summary.pending,
     previewBlocked: preview.summary.blocked,
     errors: preview.summary.errors,

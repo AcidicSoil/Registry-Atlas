@@ -43,7 +43,7 @@ test('processes independent source probes concurrently, records blocks and retri
    await new Promise(r=>setTimeout(r,7));active--;
    if(slug==='a')throw Error('unreviewed-package: motion');
    if(slug==='b'&&++attempts===1)throw Error('ENOTFOUND /private');
-   return {mode:'generated-smoke-example',files:{'/App.tsx':{}},dependencies:{react:'18.3.1'}};
+   return {mode:'upstream-demo',files:{'/App.tsx':{}},dependencies:{react:'18.3.1'}};
   },wait:async()=>{},
  });
  assert.equal(maxActive,2);
@@ -51,6 +51,18 @@ test('processes independent source probes concurrently, records blocks and retri
  assert.deepEqual(out.map(v=>v.status),['blocked','source-resolved','source-resolved']);
  assert.ok(!JSON.stringify(out).includes('/private'));
  assert.deepEqual(groupProbeEvidence(out).blockers,[{reason:'unreviewed-package',package:'motion',count:1}]);
+});
+test('legacy generated-smoke probe evidence is immediately re-eligible',()=>{
+ const previous=new Map([['@a/a',{namespace:'@a',slug:'a',
+  observedAt:known,status:'source-resolved',mode:'generated-smoke-example'}]]);
+ assert.equal(planProbeBatch(rows,previous,{limit:1,now:known}).batch[0].token,'@a/a');
+});
+test('never promotes a generated sample returned by an injected provider',async()=>{
+ const result=await runProbeBatch(rows.slice(0,1),{
+  now:known,retries:0,load:async()=>({mode:'generated-smoke-example',files:{},dependencies:{}}),
+ });
+ assert.deepEqual(result[0].status,'blocked');
+ assert.equal(result[0].reason,'author-demo-required');
 });
 test('stale journal evidence automatically becomes retry-eligible',()=>{
  const done=new Map([['@a/a',{namespace:'@a',slug:'a',observedAt:'2026-09-01T00:00:00.000Z',status:'blocked',reason:'author-demo-required'}]]);
@@ -61,7 +73,7 @@ test('resumes after a completed batch without re-fetching or skipping pending co
  const previous=new Map();
  const calls=[];
  const load=async (registry,slug)=>{calls.push('@'+registry+'/'+slug);return {
-  mode:'generated-smoke-example',files:{'/App.tsx':{}},dependencies:{react:'18.3.1'}}};
+  mode:'upstream-demo',files:{'/App.tsx':{}},dependencies:{react:'18.3.1'}}};
  const first=planProbeBatch(rows,previous,{limit:2,now:known});
  const output=await runProbeBatch(first.batch,{load,now:known,concurrency:2,retries:0});
  for(const entry of output)previous.set(entry.namespace+'/'+entry.slug,entry);
@@ -75,7 +87,7 @@ test('records each completed batch before moving the resume cursor, including em
  const records=new Map(),persisted=[];
  const result=await runProbeSweep(rows,records,{
   limit:3,batchSize:2,concurrency:2,retries:0,now:known,
-  load:async()=>({mode:'generated-smoke-example',files:{'/App.tsx':{}},dependencies:{react:'18.3.1'}}),
+  load:async()=>({mode:'upstream-demo',files:{'/App.tsx':{}},dependencies:{react:'18.3.1'}}),
   append:async batch=>{persisted.push([...batch]);},
  });
  assert.equal(result.processed,3);
@@ -137,7 +149,7 @@ test('a long sweep enumerates the catalog once instead of rescanning it for ever
  });
  const progress=await runProbeSweep(tracked,new Map(),{
   limit:48,batchSize:1,concurrency:1,retries:0,now:known,
-  load:async()=>({mode:'generated-smoke-example',files:{'/App.tsx':{}},dependencies:{}}),
+  load:async()=>({mode:'upstream-demo',files:{'/App.tsx':{}},dependencies:{}}),
   append:async()=>{},
  });
  assert.equal(progress.processed,48);

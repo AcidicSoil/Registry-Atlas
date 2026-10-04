@@ -8,6 +8,14 @@ describe('one complete reviewed build stage followed by one browser stage',()=>{
   const selected=selectReviewedProofCandidates(['dialog','badge','input','button','badge'],manifest,{limit:200});
   expect(selected).toEqual(['badge','dialog','input']);
  });
+ it('does not promote a mere render to interaction-verified',()=>{
+   const sha='a'.repeat(64),bundle='b'.repeat(64);
+   const receipt={namespace:'@8bitcn',slug:'badge',sourceSha256:sha,bundleSha256:bundle};
+   const proof={schema:'registry-atlas-preview-browser-proof/v1',rows:[
+     {...receipt,status:'render-verified',reason:'no-approved-interaction-contract'},
+   ]};
+   expect(approvedPromotionCandidates(proof,[receipt])).toEqual([]);
+ });
  it('attempts every reviewed candidate before any browser action and never promotes unverified output',async()=>{
   const actions:string[]=[];
   const staged=await runReviewedStages(['badge','dialog','radio-group'],{

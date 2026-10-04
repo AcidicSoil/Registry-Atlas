@@ -129,6 +129,7 @@ export function createPreviewServer({getSource=sourceRevision,build=isolatedBuil
    }
    try{
      const project=await record.task;
+     if(project?.mode!=='upstream-demo')throw Error('author-demo-required');
      return send(res,200,project,headers);
    }catch(error){
      const failure=classifyPreviewFailure(error);

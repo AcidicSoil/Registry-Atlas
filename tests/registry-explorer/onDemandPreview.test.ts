@@ -72,7 +72,7 @@ describe('on-demand preview service',()=>{
  it('offers opted-in sandbox source for catalog items without an individual review file and rejects hostile origins',async()=>{
   let calls=0;
   const project={schema:'registry-atlas-sandpack/v1',namespace:'@demo',slug:'button',
-    mode:'generated-smoke-example',files:{'/App.tsx':{code:'export default ()=>null'}},
+    mode:'upstream-demo',files:{'/App.tsx':{code:'export default ()=>null'}},
     dependencies:{react:'18.3.1'},warning:'Unverified smoke example'};
   const base=await host({getSandboxProject:async()=>{calls++;return project;}});
   const good=await fetch(base+'/sandbox/@demo/button',{headers:{Origin:'http://127.0.0.1:5189'}});
@@ -87,6 +87,15 @@ describe('on-demand preview service',()=>{
   expect(hostile.headers.get('access-control-allow-origin')).toBeNull();
   expect((await fetch(base+'/sandbox/@demo/..%2fprivate')).status).toBeGreaterThanOrEqual(400);
   expect(calls).toBe(1);
+ });
+ it('blocks synthetic smoke examples even when an injected source provider returns one',async()=>{
+  const base=await host({getSandboxProject:async()=>({
+    schema:'registry-atlas-sandpack/v1',mode:'generated-smoke-example',
+    files:{'/App.tsx':{code:'export default ()=><button>fake</button>'}},
+  })});
+  const response=await fetch(base+'/sandbox/@demo/button');
+  expect(response.status).toBe(422);
+  expect(await response.json()).toMatchObject({status:'unavailable',reason:'author-demo-required'});
  });
  it('returns categorized dependency and budget failures without exposing internal exceptions',async()=>{
   const base=await host({getSandboxProject:async (_registry:string,slug:string)=>{

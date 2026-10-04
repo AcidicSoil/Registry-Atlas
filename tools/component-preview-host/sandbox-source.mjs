@@ -62,31 +62,6 @@ function hasDefaultExport(source){
   ||(statement.modifiers?.some(modifier=>modifier.kind===ts.SyntaxKind.DefaultKeyword)
    &&statement.modifiers.some(modifier=>modifier.kind===ts.SyntaxKind.ExportKeyword)));
 }
-function primitiveProps(source, exportName) {
- const ast=ts.createSourceFile('item.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
- let propsType=null;
- function visit(node){
-  if(ts.isVariableDeclaration(node)&&node.name.getText(ast)===exportName
-     &&node.initializer&&(ts.isArrowFunction(node.initializer)||ts.isFunctionExpression(node.initializer)))
-    propsType=node.initializer.parameters[0]?.type??null;
-  if(ts.isFunctionDeclaration(node)&&node.name?.text===exportName)
-    propsType=node.parameters[0]?.type??null;
-  ts.forEachChild(node,visit);
- }
- visit(ast);
- if(!propsType||!ts.isTypeLiteralNode(propsType))return {};
- const props={};
- for(const member of propsType.members){
-  if(!ts.isPropertySignature(member)||member.questionToken
-     ||!ts.isIdentifier(member.name)||member.name.text==='children')continue;
-  const type=member.type?.kind;
-  if(type===ts.SyntaxKind.StringKeyword)props[member.name.text]='Preview component';
-  else if(type===ts.SyntaxKind.NumberKeyword)props[member.name.text]=1;
-  else if(type===ts.SyntaxKind.BooleanKeyword)props[member.name.text]=true;
-  else throw Error('author-demo-required');
- }
- return props;
-}
 function packageVersions(declared){
  const dependencies={'react':'18.3.1','react-dom':'18.3.1'};
  for(const original of declared){
@@ -172,7 +147,7 @@ export function createSandboxProject(item,tree){
  const named=componentExport(source,item.name);
  if(!named&&!namedDemo)throw Error('component-export-unresolved');
  if(namedDemo&&!named&&!hasDefaultExport(source))throw Error('author-demo-required');
- const demo=Boolean(namedDemo);
+ if(!namedDemo)throw Error('author-demo-required');
  const files={};
  const known=new Set(sourceFiles.keys());
  if(!known.has('lib/utils.ts')){
@@ -182,11 +157,7 @@ export function createSandboxProject(item,tree){
   files['/'+name]={code:rewriteAliases(value,name,known),hidden:name!=='lib/utils.ts'};
  }
  const modulePath='./'+entry;
- const sampleAttributes=demo?'':Object.entries(primitiveProps(source,named))
-   .map(([key,value])=>' '+key+'={'+JSON.stringify(value)+'}').join('');
- const App=demo
-  ?'import * as React from "react";\nimport * as AuthorDemo from '+JSON.stringify(modulePath)+';\nconst Demo=AuthorDemo.default ?? AuthorDemo['+JSON.stringify(named)+'];\nexport default function App(){return <div className="preview-stage"><Demo /></div>;}'
-  :'import * as React from "react";\nimport * as Upstream from '+JSON.stringify(modulePath)+';\nconst Component=Upstream['+JSON.stringify(named)+'];\nexport default function App(){return <div className="preview-stage"><Component'+sampleAttributes+'>Preview</Component></div>;}';
+ const App='import * as React from "react";\nimport * as AuthorDemo from '+JSON.stringify(modulePath)+';\nconst Demo=AuthorDemo.default ?? AuthorDemo['+JSON.stringify(named)+'];\nexport default function App(){return <div className="preview-stage"><Demo /></div>;}';
  files['/App.tsx']={code:App,active:true};
  files['/index.tsx']={code:'import React from "react"; import {createRoot} from "react-dom/client"; import App from "./App"; import "./styles.css"; createRoot(document.getElementById("root")!).render(<App />);',hidden:true};
  const styles=['body{margin:0;background:#fff;color:#111;font-family:system-ui,sans-serif;}',
@@ -199,10 +170,9 @@ export function createSandboxProject(item,tree){
  const declared=unique([...(item.dependencies??[]),...(tree.dependencies??[]),...packageImports(sourceFiles)]).filter(x=>x!=='cn');
  const bytes=Buffer.byteLength(JSON.stringify(files));
  if(bytes>MAX_BYTES*2)throw Error('preview-budget-exceeded');
- return {schema:'registry-atlas-sandpack/v1',mode:demo?'upstream-demo':'generated-smoke-example',
+ return {schema:'registry-atlas-sandpack/v1',mode:'upstream-demo',
   entryFile:entry,files,dependencies:packageVersions(declared),
-  warning:demo?'Upstream demo source; browser behavior has not been certified.'
-    :'This is a basic smoke example of original source, not the author\'s demo. Appearance and interaction may differ.'};
+  warning:'Upstream demo source; browser behavior has not been certified.'};
 }
 
 // Reuse the 16 MB local catalog across source probes, refreshing periodically

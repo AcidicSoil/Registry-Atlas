@@ -219,7 +219,7 @@ export function renderCatalogComponentCard(
   const preview = liveDemo ?? visual
     ?? (routeKind === 'theme' && component.themePreview
       ? renderCatalogThemeSpecimen(component)
-      : '<div class="catalog-component-unavailable" role="img" aria-label="Visual reference not yet available"><span class="catalog-component-unavailable-icon" aria-hidden="true">▧</span></div>');
+      : null);
   const routePath = routeKind === 'component' ? component.routePath
     : component.routePath.replace('/components/', `/${routeKind}s/`);
   const linkAttributes = `href="${escapeHtml(routePath)}"
@@ -238,7 +238,7 @@ export function renderCatalogComponentCard(
            <a class="catalog-component-open catalog-component-open-live" ${linkAttributes}>${copy}</a>
            ${visual ? `<details class="catalog-component-reference-visual"><summary>Reference image</summary>${visual}</details>` : ''}`
         : `<a class="catalog-component-open" ${linkAttributes}>
-             <div class="catalog-component-specimen">${preview}</div>${copy}
+             ${preview ? '<div class="catalog-component-specimen">'+preview+'</div>' : ''}${copy}
            </a>`}
       ${reference ? `<a class="catalog-component-original" href="${escapeHtml(reference.officialPage)}"
         target="_blank" rel="noreferrer noopener">View original ↗</a>` : ''}

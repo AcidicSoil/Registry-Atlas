@@ -40,6 +40,7 @@ export async function probeSourcePreviews(ids,{load=loadSandboxProject,now=new D
   const [,registry,slug]=ID.exec(id);
   try{
    const result=await load(registry,slug);
+   if(result.mode!=='upstream-demo')throw Error('author-demo-required');
    items.push({namespace:'@'+registry,slug,status:'source-resolved',
     mode:result.mode,verification:'not-interaction-verified',
     fileCount:Object.keys(result.files).length,

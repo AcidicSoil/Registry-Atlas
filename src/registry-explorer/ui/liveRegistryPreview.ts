@@ -6,7 +6,7 @@ export interface LiveRegistryProject {
   schema: 'registry-atlas-sandpack/v1';
   namespace: string;
   slug: string;
-  mode: 'upstream-demo' | 'generated-smoke-example';
+  mode: 'upstream-demo';
   entryFile: string;
   files: Record<string, { code: string; hidden?: boolean; active?: boolean }>;
   dependencies: Record<string, string>;
@@ -16,7 +16,7 @@ export interface LiveRegistryProject {
 let mounted: Root | null = null;
 
 export function mountRegistryProject(element: HTMLElement, project: LiveRegistryProject): void {
-  if (project.schema !== 'registry-atlas-sandpack/v1'
+  if (project.schema !== 'registry-atlas-sandpack/v1' || project.mode !== 'upstream-demo'
     || !project.files['/App.tsx'] || !project.files['/index.tsx']
     || Object.keys(project.files).length > 75) throw Error('Invalid registry preview project');
 

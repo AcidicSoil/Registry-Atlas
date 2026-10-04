@@ -10,12 +10,12 @@ const item={
 } as CatalogComponent;
 
 describe('reference-gallery cards',()=>{
-  it('keeps the full card link and honest empty visual without a repeated text block',()=>{
+  it('keeps the full card link without a fabricated visual placeholder',()=>{
     const html=renderCatalogComponentCard(item);
     expect(html).toContain('catalog-component-open');
     expect(html).toContain('href="/Registry-Atlas/@alpha/components/button"');
-    expect(html).toContain('aria-label="Visual reference not yet available"');
-    expect(html).toContain('catalog-component-unavailable');
+    expect(html).not.toContain('aria-label="Visual reference not yet available"');
+    expect(html).not.toContain('catalog-component-unavailable');
     expect(html).not.toContain('>Visual reference not yet available</div>');
   });
   it('renders the verified image and its exact independent official link',()=>{

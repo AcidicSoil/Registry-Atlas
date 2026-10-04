@@ -773,26 +773,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
     handleClick(target);
   });
 
-  // Sandboxed examples send only a navigation intent when their empty space is
-  // clicked. Interactive controls inside the iframe never request navigation.
-  window.addEventListener('message', (event: MessageEvent) => {
-    const data = event.data as { type?: string; namespace?: string; slug?: string } | null;
-    if (event.origin !== 'null' || data?.type !== 'registry-atlas:component-open'
-      || data.namespace !== '@8bitcn' || !['button', 'card', 'input'].includes(data.slug ?? '')) return;
-    const frames = roots.contentBody.querySelectorAll<HTMLIFrameElement>('iframe[data-component-demo]');
-    const matched = Array.from(frames).some(frame => {
-      if (frame.contentWindow !== event.source
-        || frame.getAttribute('data-component-demo') !== data.namespace + '/' + data.slug) return false;
-      const src = frame.getAttribute('src');
-      if (!src) return false;
-      const url = new URL(src, window.location.href);
-      return url.origin === window.location.origin
-        && url.pathname === '/Registry-Atlas/component-demos/8bitcn/index.html'
-        && url.searchParams.get('item') === data.slug
-        && url.searchParams.get('mode') === 'card';
-    });
-    if (matched) navigate({ kind: 'component', namespace: data.namespace, slug: data.slug! }, 'push');
-  });
 
   function handleClick(target: HTMLElement): void {
     const sandboxButton = target.closest<HTMLButtonElement>('[data-source-sandbox-registry]');
@@ -819,6 +799,11 @@ export function initRegistryExplorer(options: ShellOptions): void {
             return;
           }
           if (!root.isConnected) return;
+          if (project.mode !== 'upstream-demo') {
+            status.textContent = 'No original author demo is provided for this item.';
+            sandboxButton.disabled = false;
+            return;
+          }
           const { mountRegistryProject } = await import('./liveRegistryPreview');
           if (!root.isConnected) return;
           mountRegistryProject(mount, project);
@@ -827,9 +812,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           mount.style.width = '100%';
         } catch (error) {
           if (!root.isConnected) return;
-          status.textContent = 'Source preview unavailable: '+
-            (error instanceof Error ? error.message : 'unknown-error')+
-            '. Check the preview server and registry source.';
+          status.textContent = 'Original source demo unavailable. Check the local preview server and retry.';
           sandboxButton.disabled = false;
         }
       })();

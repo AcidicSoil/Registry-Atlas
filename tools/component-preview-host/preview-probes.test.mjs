@@ -9,7 +9,7 @@ test('reports source resolution as unverified and records safe structural blocks
   load:async (registry,slug)=>{
    if(registry==='aceternity')throw Error('unreviewed-package: motion');
    if(registry==='baselayer')throw Error('source-file-too-large');
-   return {mode:'generated-smoke-example',files:{'/App.tsx':{},'/index.tsx':{}},
+   return {mode:'upstream-demo',files:{'/App.tsx':{},'/index.tsx':{}},
     dependencies:{react:'18.3.1'}};
   }
  });
@@ -22,6 +22,13 @@ test('reports source resolution as unverified and records safe structural blocks
  assert.equal(result.items[2].reason,'source-file-too-large');
  assert.equal(result.items[0].verification,'not-interaction-verified');
  assert.ok(!JSON.stringify(result).includes('App.tsx'));
+});
+test('treats manufactured smoke source as blocked, never resolved',async()=>{
+ const report=await probeSourcePreviews(['@demo/button'],{
+  load:async()=>({mode:'generated-smoke-example',files:{},dependencies:{}}),
+ });
+ assert.deepEqual(report.summary,{total:1,sourceResolved:0,blocked:1,unavailable:0});
+ assert.equal(report.items[0].reason,'author-demo-required');
 });
 test('never records private errors as evidence or marks transient failures blocked',async()=>{
  const result=await probeSourcePreviews(['@corecn/button'],{

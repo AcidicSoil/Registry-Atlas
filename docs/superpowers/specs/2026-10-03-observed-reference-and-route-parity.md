@@ -214,3 +214,33 @@ executed. Full catalog-wide source inspection is separately automated by
 R8, and complete interaction parity still requires more reviewed behavior
 contracts and upstream author-demo support. Do not claim 84,145 functional
 previews or promote source-only data into verified evidence.
+
+## R10. Authentic previews only; one denominator for working coverage (2026-10-04)
+
+Corrections superseding the earlier manually generated smoke examples and the
+source-informed fixture: do not display or count invented preview visuals.
+The cards omit fabricated placeholder artwork entirely when there is no real
+upstream visual or executable preview. The local sandbox only accepts an
+upstream-authored demo; components without one return author-demo-required
+and are not displayed inside Sandpack. The shared local compiler no longer
+inserts UPSTREAM PREVIEW, guessed required props, or generic fake visual
+content. The manually reconstructed @8bitcn/card interaction fixture was
+unpublished and its fake output file deleted. Its source record remains in
+the catalog, without a preview, rather than being presented as the author's
+actual component. Existing interaction-verified upstream source bundles remain
+available. Source-probe records made with the now-retired generated-smoke
+method are retained as provenance but treated as stale, eligible for re-probe,
+not as source-resolved evidence. No claims based only on a rendered rectangle
+or assistant-generated example are considered working-component proof.
+
+Mathematical invariant: distinctItems = interactionVerified +
+interactionUnverified. Both counts have the same denominator, including
+non-renderable catalog records as catalog identities. pending and blocked
+partition the interaction-unverified set; they are not a distinct measure
+of source-fetch eligibility. 81,043 referred to a narrower source-probe
+queue after its own exclusions, not to working-preview coverage. After removing
+the manually invented fixture the reviewed catalog had 84,145 distinct
+identities, 14 upstream interaction-verified, and 84,131 lacking such proof;
+within the latter, 84,106 were pending and 25 source-probe blocked. These
+numbers must never be compared to the source-probe queue as though the
+quantities describe the same population. All counts are point-in-time.

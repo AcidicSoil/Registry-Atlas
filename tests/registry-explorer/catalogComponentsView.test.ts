@@ -21,12 +21,12 @@ describe("renderCatalogComponents", () => {
       previewUrl: "/Registry-Atlas/data/previews/8bitcn/button.jpg",
     }));
     expect(shown).toContain('data-view-item-registry="@delta"');
-    expect(shown).toContain("Visual reference not yet available");
+    expect(shown).not.toContain("Visual reference not yet available");
     expect(shown).not.toContain("<img");
     expect(shown).not.toContain("Open raw item");
     expect(shown).not.toContain("Source record");
     const withoutPreview = renderCatalogComponentCard(component());
-    expect(withoutPreview).toContain("Visual reference not yet available");
+    expect(withoutPreview).not.toContain("Visual reference not yet available");
     expect(withoutPreview).toContain("catalog-component-open");
   });
   it("renders an evidence-backed image as the primary card visual, with a separate official page link", () => {
@@ -88,13 +88,13 @@ describe("renderCatalogComponents", () => {
       component({ previewUrl: "https://delta.example/preview.png" }),
     ]), { searchTerm: "" });
     expect(withStaticImage.innerHTML).not.toContain("<img");
-    expect(withStaticImage.innerHTML).toContain("Visual reference not yet available");
+    expect(withStaticImage.innerHTML).not.toContain("Visual reference not yet available");
     expect(withStaticImage.innerHTML).toContain("catalog-component-open");
 
     const withoutPreview = root();
     renderCatalogComponents(root(), withoutPreview, result([component()]), { searchTerm: "" });
     expect(withoutPreview.innerHTML).toContain("catalog-component-open");
-    expect(withoutPreview.innerHTML).toContain("Visual reference not yet available");
+    expect(withoutPreview.innerHTML).not.toContain("Visual reference not yet available");
     expect(withoutPreview.innerHTML).not.toContain("catalog-component-metadata-specimen");
   });
 

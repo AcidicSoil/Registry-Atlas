@@ -13,7 +13,7 @@ describe('reviewed sandboxed component examples', () => {
     expect(existsSync(path)).toBe(true);
     const manifest = JSON.parse(readFileSync(path, 'utf8'));
     expect(manifest.schema).toBe('registry-atlas-component-demos/v1');
-    expect(manifest.items.length).toBeGreaterThanOrEqual(15);
+    expect(manifest.items.length).toBe(14);
     expect(new Set(manifest.items.map((item:{namespace:string;slug:string})=>item.namespace+'/'+item.slug)).size)
       .toBe(manifest.items.length);
     for (const slug of ['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select']) {
@@ -23,13 +23,10 @@ describe('reviewed sandboxed component examples', () => {
         status:'interaction-verified',sourceSha256:createHash('sha256').update(originalSource).digest('hex')});
       expect(original.path).toMatch(/^\/Registry-Atlas\/component-demos\/generated\/[a-f0-9]{64}\/index\.html$/);
     }
-    expect(manifest.items.find((entry: {slug:string}) => entry.slug === 'card')).toMatchObject({
-      namespace:'@8bitcn',slug:'card',kind:'source-informed-fixture',status:'interaction-verified',
-      path:'/Registry-Atlas/component-demos/8bitcn/index.html',
-    });
+    expect(manifest.items.some((entry: {kind:string}) => entry.kind === 'source-informed-fixture')).toBe(false);
   });
 
-  it.each(['button','card','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
+  it.each(['button','input','checkbox','switch','slider','textarea','toggle','tabs','accordion','collapsible','dialog','dropdown-menu','radio-group','select'])('uses a sandboxed local interactive page for 8bitcn %s', slug => {
     const rendered = renderComponentPreview('@8bitcn', slug, 'card') ?? '';
     expect(rendered).toContain('<iframe');
     expect(rendered).toContain('sandbox="allow-scripts"');
@@ -95,19 +92,9 @@ describe('reviewed sandboxed component examples', () => {
     expect(html.indexOf('</iframe>')).toBeLessThan(html.indexOf('catalog-component-open-live'));
   });
 
-  it('only serves reviewed interaction fixtures with no network or form submissions', () => {
-    const html = readFileSync('public/component-demos/8bitcn/index.html', 'utf8');
-    expect(html).toContain('manually reviewed, isolated native interaction fixtures');
-    expect(html).toContain("default-src 'none'");
-    expect(html).toContain("form-action 'none'");
-    expect(html).toContain('id="field"');
-    expect(html).toContain('id="action"');
-    expect(html).toContain('addEventListener("click"');
-    expect(html).toContain('addEventListener("input"');
-    expect(html).not.toContain('<img');
-    expect(html).not.toContain('fetch(');
-    expect(html).not.toContain('src="https:');
-    expect(html).not.toContain('registry-atlas:component-state');
-    expect(html).toContain('registry-atlas:component-open');
+  it('never offers the removed handwritten card as a functional preview',()=>{
+    expect(renderComponentPreview('@8bitcn','card','card')).toBeNull();
+    expect(readFileSync('src/registry-explorer/data/component-demo-manifest.json','utf8'))
+      .not.toContain('source-informed-fixture');
   });
 });

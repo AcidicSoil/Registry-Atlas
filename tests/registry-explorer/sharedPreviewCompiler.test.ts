@@ -66,7 +66,7 @@ describe('shared compiled preview pipeline', () => {
     {slug:'switch',exportName:'Switch',marker:'data-preview-checked'},
     {slug:'toggle',exportName:'Toggle',marker:'data-preview-checked'},
     {slug:'slider',exportName:'Slider',marker:'data-preview-slider-value'},
-    {slug:'badge',exportName:'Badge',marker:'data-preview-static'},
+    {slug:'badge',exportName:'Badge',marker:'data-preview-original'},
   ])('generates semantic $slug behavior from one shared harness',async ({slug,exportName,marker}) => {
     const code='import React from "react";export function '+exportName+'(props){return React.createElement("button",props,props.children);}';
     const source=JSON.stringify({name:slug,files:[{path:'ui/'+slug+'.tsx',content:code}],dependencies:[]});
@@ -120,6 +120,18 @@ describe('shared compiled preview pipeline', () => {
     expect(result.html).toContain('data-preview-selection');
     expect(result.html).not.toContain('PRESS ME');
   });
+  it('does not fabricate an upstream visual, output, or token content for unsupported components',async()=>{
+    const slug='button-group';
+    const source=JSON.stringify({name:slug,files:[{path:'ui/button-group.tsx',
+      content:'import React from "react";export function ButtonGroup(props){return React.createElement("div",props,props.children)}'}],dependencies:[]});
+    const cfg={...review,slug,entryFile:'ui/button-group.tsx',sourceSha256:await hash(source)};
+    const result=await buildSharedPreview(source,cfg);
+    expect(result.status).toBe('built-unverified');
+    expect(result.html).not.toContain('UPSTREAM PREVIEW');
+    expect(result.html).not.toContain('Source-based render; interaction unverified');
+    expect(result.html).not.toContain('data-preview-generic');
+    expect(result.html).not.toContain('PRESS ME');
+  });
   it('does not fabricate a click counter for an unknown original component', async () => {
     const slug='button-group';
     const sample=JSON.stringify({name:slug,files:[{path:'ui/button-group.tsx',
@@ -127,7 +139,7 @@ describe('shared compiled preview pipeline', () => {
     const cfg={...review,slug,entryFile:'ui/button-group.tsx',sourceSha256:await hash(sample)};
     const result=await buildSharedPreview(sample,cfg);
     expect(result.status).toBe('built-unverified');
-    expect(result.html).toContain('data-preview-generic');
+    expect(result.html).toContain('data-preview-original');
     expect(result.html).not.toContain('PRESS ME');
     expect(result.html).not.toContain('data-preview-interaction-count');
   });

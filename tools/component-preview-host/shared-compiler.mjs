@@ -101,10 +101,10 @@ const harness=(exportName,identity)=> {
        : text
          ? "React.createElement(Component,{'data-preview-original':'',type:'text',value:words,disabled,onChange:e=>setWords(e.target.value),placeholder:'Type to test'}),"
          : staticComponent
-           ? "React.createElement(Component,{'data-preview-original':'','data-preview-static':'',value:56},'UPSTREAM PREVIEW'),"
+           ? "React.createElement(Component,{'data-preview-original':''}),"
            : button
              ? "React.createElement(Component,{'data-preview-original':'',type:'button',onClick:()=>setCount(n=>n+1),disabled},'PRESS ME'),"
-             : "React.createElement(Component,{'data-preview-original':'','data-preview-generic':''},'UPSTREAM PREVIEW'),";
+             : "React.createElement(Component,{'data-preview-original':''}),";
  const output=['RadioGroup','Select'].includes(exportName)
    ? "React.createElement('output',{'data-preview-selection':'','aria-live':'polite'},'Selected '+selection),"
    : composed
@@ -116,7 +116,7 @@ const harness=(exportName,identity)=> {
      : text
        ? "React.createElement('output',{'data-preview-input-value':'','aria-live':'polite'},'Typed '+words.length+' characters'),"
        : staticComponent || !button
-         ? "React.createElement('output',{'data-preview-static':'','aria-live':'polite'},'Source-based render; interaction unverified'),"
+         ? "null,"
          : "React.createElement('output',{'data-preview-interaction-count':'','aria-live':'polite'},'Activated '+count+' times'),";
  const toggleDisabled=composed||checkbox||toggle||slider||staticComponent||!button
    ? "" : "React.createElement('button',{type:'button',className:'toggle',onClick:()=>setDisabled(n=>!n)},disabled?'Enable component':'Disable component')";

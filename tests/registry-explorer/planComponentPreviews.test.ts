@@ -45,6 +45,13 @@ describe('full-catalog preview coverage planner', () => {
     ]));
   });
 
+  it('uses one fixed total for interaction coverage without conflating the source queue',()=>{
+    const report=planPreviewCoverage(raw,catalog,reviewed,{},curated);
+    expect(report.summary).toMatchObject({distinctItems:5,
+      interactionVerified:1,interactionUnverified:4,pending:4,blocked:0});
+    expect(report.summary.interactionVerified+report.summary.interactionUnverified)
+      .toBe(report.summary.distinctItems);
+  });
   it('paginates only pending exact identities and supports slash-shaped slugs', () => {
     const first = planPreviewCoverage(raw, catalog, reviewed, { limit: 2 }, curated);
     expect(first.batch.map((x: {token: string}) => x.token)).toEqual(['@a/card', '@a/orphan']);
@@ -107,7 +114,7 @@ describe('full-catalog preview coverage planner', () => {
       items:[
         {namespace:'@a',slug:'card',status:'blocked',reason:'unreviewed-package',package:'motion'},
         {namespace:'@a',slug:'button',status:'blocked',reason:'source-file-too-large'},
-        {namespace:'@b',slug:'button',status:'source-resolved',mode:'generated-smoke-example',verification:'not-interaction-verified'},
+        {namespace:'@b',slug:'button',status:'source-resolved',mode:'upstream-demo',verification:'not-interaction-verified'},
         {namespace:'@b',slug:'nested/accordion',status:'unavailable',reason:'source-retrieval-failed'}
       ]};
     const report=planPreviewCoverage(raw,catalog,reviewed,
@@ -120,6 +127,18 @@ describe('full-catalog preview coverage planner', () => {
     expect(report.items.find((x:{token:string})=>x.token==='@b/button')).toMatchObject({
       status:'pending',probeStatus:'source-resolved'});
     expect(report.batch.some((x:{token:string})=>x.token==='@a/card')).toBe(false);
+  });
+  it('treats legacy AI-generated smoke observations as stale, never usable source evidence',()=>{
+    const attempts={schema:'registry-atlas-source-preview-probes/v1',
+      observedAt:'2026-10-04T06:15:00Z',items:[
+        {namespace:'@a',slug:'card',status:'source-resolved',mode:'generated-smoke-example',
+          verification:'not-interaction-verified'}]};
+    const report=planPreviewCoverage(raw,catalog,reviewed,
+      {attempts,probeNow:'2026-10-04T07:00:00Z',includeItems:true},curated);
+    expect(report.summary).toMatchObject({
+      sourceProbeResolved:0,sourceProbeStale:1,interactionVerified:1,interactionUnverified:4});
+    expect(report.items.find((x:{token:string})=>x.token==='@a/card')).toMatchObject({
+      status:'pending',probeStatus:'stale'});
   });
   it('expires unverified source-probe blockers rather than freezing the catalog',()=>{
     const attempts={schema:'registry-atlas-source-preview-probes/v1',

@@ -1,7 +1,7 @@
 import { escapeHtml } from './renderSafety';
 import manifest from '../data/component-demo-manifest.json';
 
-export type DemoKind = 'source-informed-fixture' | 'upstream-built';
+export type DemoKind = 'upstream-built';
 export interface ReviewedDemo {
   namespace: string;
   slug: string;
@@ -23,7 +23,7 @@ function isRenderable(entry: unknown): entry is ReviewedDemo {
   const demo = entry as Record<string, unknown>;
   if (typeof demo.namespace !== 'string' || !TOKEN_PATTERN.test(demo.namespace)
       || typeof demo.slug !== 'string' || !demo.slug || demo.slug.includes('..')
-      || !['source-informed-fixture', 'upstream-built'].includes(String(demo.kind))
+      || demo.kind !== 'upstream-built'
       || demo.status !== 'interaction-verified'
       || typeof demo.path !== 'string' || !PATH_PATTERN.test(demo.path)
       || typeof demo.reviewedAt !== 'string' || !Number.isFinite(Date.parse(demo.reviewedAt))

@@ -31,19 +31,6 @@
     },
     {
       "namespace": "@8bitcn",
-      "slug": "card",
-      "kind": "source-informed-fixture",
-      "status": "interaction-verified",
-      "path": "/Registry-Atlas/component-demos/8bitcn/index.html",
-      "source": {
-        "docsUrl": "https://www.8bitcn.com/docs/components/card",
-        "registryItemUrl": "https://www.8bitcn.com/r/card.json"
-      },
-      "reviewedAt": "2026-10-01T20:05:57-05:00",
-      "verifiedAt": "2026-10-01T20:05:57-05:00"
-    },
-    {
-      "namespace": "@8bitcn",
       "slug": "checkbox",
       "kind": "upstream-built",
       "status": "interaction-verified",
