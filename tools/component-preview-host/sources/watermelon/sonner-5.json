@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sonner-5",
+  "type": "registry:component",
+  "title": "Sonner 5",
+  "description": "Sonner 5. An opinionated toast component for React.",
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/sonner-5.tsx",
+      "type": "registry:component",
+      "content": "'use client'\n\nimport { toast } from 'sonner'\nimport { Button } from '@/components/base-ui/button'\n\nconst Sonner5 = () => {\n  return (\n    <Button\n      variant='outline'\n      className='rounded-2xl bg-zinc-500/5 text-zinc-600 border-zinc-500/20 hover:bg-zinc-500/10 hover:border-zinc-500/30 transition-all duration-300 px-6'\n      onClick={() =>\n        toast('Draft Saved Automatically', {\n          description: 'You can dismiss this message or wait for it to auto-close.',\n          closeButton: true,\n          style: {\n            borderRadius: '14px',\n          },\n          className: 'shadow-lg border border-zinc-100',\n        })\n      }\n    >\n      Show Dismissible Toast\n    </Button>\n  )\n}\n\nexport default Sonner5\n"
+    }
+  ]
+}

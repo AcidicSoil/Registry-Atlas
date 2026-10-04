@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-9",
+  "type": "registry:component",
+  "title": "Alert 9",
+  "description": "Alert 9. A component used to display important messages, notifications, or feedback to the user.",
+  "dependencies": [],
+  "registryDependencies": [
+    "alert",
+    "avatar",
+    "progress"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/alert-9.tsx",
+      "type": "registry:component",
+      "content": "'use client';\n\nimport { useState, useEffect } from 'react';\n\nimport {\n  Alert,\n  AlertDescription,\n  AlertTitle,\n} from '@/components/base-ui/alert';\nimport {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\nimport { Progress } from '@/components/base-ui/progress';\n\nconst Alert9 = () => {\n  const [progress, setProgress] = useState(0);\n\n  useEffect(() => {\n    const timer = setTimeout(() => setProgress(50), 100);\n\n    return () => clearTimeout(timer);\n  }, []);\n\n  return (\n    <Alert className=\" flex gap-3\">\n      <Avatar className=\"rounded-full\">\n        <AvatarImage\n          src=\"https://github.com/shadcn.png\"\n          alt=\"Shadcn\"\n          className=\"rounded-full\"\n        />\n        <AvatarFallback className=\"text-xs\">VP</AvatarFallback>\n      </Avatar>\n\n      <div className=\"flex flex-1 flex-col gap-2\">\n        <div className=\"flex flex-col gap-1\">\n          <AlertTitle>@Shadcn assigned you a task</AlertTitle>\n          <AlertDescription>\n            Finalize the dashboard UI and submit it before tomorrow’s\n            review meeting.\n          </AlertDescription>\n        </div>\n\n        <Progress\n          value={progress}\n          className=\"*:h-2 *:bg-yellow-600/20 *:dark:bg-yellow-400/20 [&_[data-slot=progress-indicator]]:bg-yellow-600! dark:[&_[data-slot=progress-indicator]]:bg-yellow-400!\"\n          aria-label=\"Task progress\"\n        />\n      </div>\n    </Alert>\n  );\n};\n\nexport default Alert9;\n"
+    }
+  ]
+}

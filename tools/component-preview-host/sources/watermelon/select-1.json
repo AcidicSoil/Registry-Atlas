@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "select-1",
+  "type": "registry:component",
+  "title": "Select 1",
+  "description": "Select 1. A versatile selection component that provides a sleek, accessible way to choose options from a list.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "native-select"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/select-1.tsx",
+      "type": "registry:component",
+      "content": "import { useId } from 'react';\n\nimport { Label } from '@/components/base-ui/label';\nimport { NativeSelect } from '@/components/base-ui/native-select';\n\nconst Select1 = () => {\n  const id = useId();\n\n  return (\n    <div className=\"w-full max-w-xs space-y-2\">\n      <Label htmlFor={id} className=\"text-zinc-600 dark:text-zinc-400\">\n        Account Identity Role\n      </Label>\n      <NativeSelect \n        id={id} \n        className=\"w-full rounded-xl border-zinc-200 shadow-xs dark:border-zinc-800 dark:bg-zinc-950 transition-all focus:ring-2 focus:ring-zinc-400/20 dark:focus:ring-zinc-500/20 dark:[&_select]:[color-scheme:dark]\"\n      >\n        <option value=\"owner\" className=\"dark:bg-zinc-950 dark:text-zinc-100\">Organization Owner</option>\n        <option value=\"admin\" className=\"dark:bg-zinc-950 dark:text-zinc-100\">System Administrator</option>\n        <option value=\"editor\" className=\"dark:bg-zinc-950 dark:text-zinc-100\">Content Contributor</option>\n        <option value=\"viewer\" className=\"dark:bg-zinc-950 dark:text-zinc-100\">Platform Observer</option>\n      </NativeSelect>\n    </div>\n  );\n};\n\nexport default Select1;\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge-14",
+  "type": "registry:component",
+  "title": "Badge 14",
+  "description": "Badge 14. A small visual indicator used to highlight status, counts, or labels.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/badge-14.tsx",
+      "type": "registry:component",
+      "content": "'use client';\n\nimport { Badge } from '@/components/base-ui/badge';\n\nimport { FiArrowRight } from 'react-icons/fi';\n\nconst Badge14 = () => {\n  return (\n    <Badge asChild>\n      <a\n        href=\"#\"\n        className=\"group focus-visible:ring-ring/50 inline-flex items-center gap-1 focus-visible:ring-2 focus-visible:outline-0\"\n      >\n        Link\n        <FiArrowRight className=\"size-3 transition-transform duration-200 group-hover:translate-x-1\" />\n      </a>\n    </Badge>\n  );\n};\n\nexport default Badge14;\n"
+    }
+  ]
+}

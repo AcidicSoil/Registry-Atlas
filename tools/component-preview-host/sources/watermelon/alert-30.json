@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-30",
+  "type": "registry:component",
+  "title": "Alert 30",
+  "description": "Alert 30. A component used to display important messages, notifications, or feedback to the user.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "alert"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/alert-30.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Alert,\n  AlertTitle,\n  AlertDescription,\n} from '@/components/base-ui/alert';\nimport { MdError } from 'react-icons/md';\n\nconst Alert30 = () => {\n  return (\n    <Alert className=\"bg-destructive dark:bg-destructive/80 border-none text-white\">\n      <MdError className=\"size-4\" />\n      <AlertTitle>Failed to apply updates</AlertTitle>\n      <AlertDescription className=\"text-white/80\">\n        We couldn’t process your changes. Please refresh and try again.\n      </AlertDescription>\n    </Alert>\n  );\n};\n\nexport default Alert30;\n"
+    }
+  ]
+}

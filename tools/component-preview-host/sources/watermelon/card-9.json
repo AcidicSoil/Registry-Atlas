@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "card-9",
+  "type": "registry:component",
+  "title": "Card 9",
+  "description": "Card 9. A card is a container that displays content in a structured and visually appealing way.",
+  "dependencies": [],
+  "registryDependencies": [
+    "card"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/card-9.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Card,\n  CardContent,\n  CardHeader,\n  CardTitle,\n} from '@/components/base-ui/card';\n\ntype TextCard = {\n  body: string;\n  title: string;\n};\n\nconst textCard: TextCard = {\n  body: 'Map early concepts, align the team around one clear direction, and turn rough ideas into a sharper narrative.',\n  title: 'Concept Review',\n};\n\nconst Card9 = () => {\n  return (\n    <Card className=\"max-w-md gap-0 rounded-none border-sky-500/60 bg-transparent shadow-2xl\">\n      <CardHeader className=\"pb-3\">\n        <CardTitle className=\"text-sky-700 dark:text-sky-400\">\n          {textCard.title}\n        </CardTitle>\n      </CardHeader>\n      <CardContent className=\"text-muted-foreground text-sm leading-6\">\n        {textCard.body}\n      </CardContent>\n    </Card>\n  );\n};\n\nexport default Card9;\n"
+    }
+  ]
+}

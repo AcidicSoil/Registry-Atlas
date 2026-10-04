@@ -52,6 +52,11 @@ function verifiedManifestItems(): ReadonlyMap<string, ReviewedDemo | null> {
 }
 
 const verified = verifiedManifestItems();
+const reviewedNamespaces = new Set([...verified.values()]
+  .filter((entry): entry is ReviewedDemo => entry !== null)
+  .map(entry => entry.namespace));
+export const isReviewedSourceNamespace = (namespace: string): boolean =>
+  reviewedNamespaces.has(namespace);
 
 export function verifiedComponentDemo(namespace: string, slug: string): ReviewedDemo | null {
   return verified.get(namespace + '/' + slug) ?? null;

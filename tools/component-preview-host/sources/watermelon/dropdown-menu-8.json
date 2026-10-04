@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dropdown-menu-8",
+  "type": "registry:component",
+  "title": "Dropdown Menu 8",
+  "description": "Dropdown Menu 8. A menu that displays a list of actions or options when triggered, typically by a button or icon.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "button",
+    "dropdown-menu"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/dropdown-menu-8.tsx",
+      "type": "registry:component",
+      "content": "'use client';\n\nimport {\n  FaUser,\n  FaBell,\n  FaShieldHalved,\n  FaCreditCard,\n  FaGear,\n  FaRightFromBracket,\n} from 'react-icons/fa6';\n\nimport { Button } from '@/components/base-ui/button';\nimport {\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuItem,\n  DropdownMenuLabel,\n  DropdownMenuTrigger,\n} from '@/components/base-ui/dropdown-menu';\n\nconst items = [\n  { label: 'Profile', icon: FaUser },\n  { label: 'Notifications', icon: FaBell },\n  { label: 'Security', icon: FaShieldHalved },\n  { label: 'Billing', icon: FaCreditCard },\n  { label: 'Settings', icon: FaGear },\n];\n\nconst DropdownMenu8 = () => {\n  return (\n    <div>\n      <DropdownMenu>\n        <DropdownMenuTrigger asChild>\n          <Button variant=\"outline\" className=\"rounded-lg\">\n            Account\n          </Button>\n        </DropdownMenuTrigger>\n\n        <DropdownMenuContent className=\"bg-popover w-64 rounded-lg border p-1 shadow-md\" align='center'>\n          <DropdownMenuLabel className=\"px-1 pb-1 text-sm font-semibold\">\n            My Account\n          </DropdownMenuLabel>\n\n          {items.map((item, index) => {\n            const Icon = item.icon;\n\n            return (\n              <DropdownMenuItem\n                key={index}\n                className=\"group flex cursor-pointer items-center gap-3 rounded-lg p-1 transition-all\"\n              >\n                <Icon className=\"text-muted-foreground group-hover:text-foreground transition-all duration-200 group-hover:scale-103\" />\n\n                <span className=\"group-hover:text-foreground text-sm font-medium transition-colors\">\n                  {item.label}\n                </span>\n              </DropdownMenuItem>\n            );\n          })}\n\n          <DropdownMenuItem className=\"group text-destructive mt-1 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1\" variant='destructive'>\n            <FaRightFromBracket className=\"transition-all duration-200 group-hover:translate-x-1\" />\n            <span className=\"text-sm font-medium\">Logout</span>\n          </DropdownMenuItem>\n        </DropdownMenuContent>\n      </DropdownMenu>\n    </div>\n  );\n};\n\nexport default DropdownMenu8;\n"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-23",
+  "type": "registry:component",
+  "title": "Button 23",
+  "description": "Button 23. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-23.tsx",
+      "type": "registry:component",
+      "content": "import { FaBell } from 'react-icons/fa';\n\nimport { Badge } from '@/components/base-ui/badge';\nimport { Button } from '@/components/base-ui/button';\n\nconst Button23 = () => {\n  return (\n    <Button variant=\"outline\" className=\"relative\">\n      <FaBell />\n      Inbox\n      <Badge\n        variant=\"destructive\"\n        className=\"absolute -top-2.5 -right-2.5 h-5 min-w-5 bg-red-600 px-1 text-white tabular-nums dark:bg-red-400\"\n      >\n        8\n      </Badge>\n    </Button>\n  );\n};\n\nexport default Button23;\n"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-2",
+  "type": "registry:component",
+  "title": "Avatar 2",
+  "description": "Avatar 2. Displays images, icons, or text in a circular or rounded shape.",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/avatar-2.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\n\ntype Profile = {\n  name: string;\n  avatar: string;\n};\n\nconst profile: Profile = {\n  name: 'Alex Rivera',\n  avatar: 'https://assets.watermelon.sh/wm_alex.png',\n};\n\nconst getInitials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .map((word) => word.slice(0, 1))\n    .join('');\n\nconst Avatar2 = () => {\n  return (\n    <Avatar className=\"ring-ring ring-2\">\n      <AvatarImage src={profile.avatar} alt={profile.name} />\n      <AvatarFallback className=\"text-xs\">\n        {getInitials(profile.name)}\n      </AvatarFallback>\n    </Avatar>\n  );\n};\n\nexport default Avatar2;\n"
+    }
+  ]
+}

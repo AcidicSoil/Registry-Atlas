@@ -294,6 +294,34 @@
       "reviewedAt": "2026-10-04T07:18:55.977Z",
       "verifiedAt": "2026-10-04T07:18:55.977Z",
       "sourceSha256": "7bec449ee089f0e4f0595e5fa153356661e1c8e5c0d93a8a4019f53dbfd3f15b"
+    },
+    {
+      "namespace": "@watermelon",
+      "slug": "checkbox",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/84d4aa057a7e365e1928f7e53ba1b43078a6519733f656ec1f51713a57fbda6d/index.html",
+      "source": {
+        "docsUrl": "https://registry.watermelon.sh/r/checkbox.json",
+        "registryItemUrl": "https://registry.watermelon.sh/r/checkbox.json"
+      },
+      "reviewedAt": "2026-10-04T08:16:57.466Z",
+      "verifiedAt": "2026-10-04T08:16:57.466Z",
+      "sourceSha256": "7b0826b80924996ed417b695f1eaa7900c8a4161bdd562c365c7de0e4cdcfee9"
+    },
+    {
+      "namespace": "@watermelon",
+      "slug": "switch",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/a4ecfb09c87576cde9100e4fca0f78c122e516e06b03d93d632771b58c19b179/index.html",
+      "source": {
+        "docsUrl": "https://registry.watermelon.sh/r/switch.json",
+        "registryItemUrl": "https://registry.watermelon.sh/r/switch.json"
+      },
+      "reviewedAt": "2026-10-04T08:16:57.466Z",
+      "verifiedAt": "2026-10-04T08:16:57.466Z",
+      "sourceSha256": "1d487296a8538b9f1ece14f78af8670d3be7fb6e07c4e9f71d5e5e71e77510b2"
     }
   ]
 }

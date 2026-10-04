@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch-1",
+  "type": "registry:component",
+  "title": "Switch 1",
+  "description": "Switch 1. A toggle control that allows users to switch between two states, typically on or off.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "switch"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/switch-1.tsx",
+      "type": "registry:component",
+      "content": "import { Label } from '@/components/base-ui/label';\nimport { Switch } from '@/components/base-ui/switch';\n\nconst Switch1 = () => {\n  return (\n    <div className=\"flex items-center space-x-2\">\n      <Switch id=\"notifications\" />\n      <Label htmlFor=\"notifications\">Enable Notifications</Label>\n    </div>\n  );\n};\n\nexport default Switch1;\n"
+    }
+  ]
+}

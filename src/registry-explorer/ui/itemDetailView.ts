@@ -3,7 +3,7 @@ import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/regis
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { escapeHtml } from './renderSafety.ts';
-import { renderComponentPreview, verifiedComponentDemo } from './componentPreview.ts';
+import { renderComponentPreview, verifiedComponentDemo, isReviewedSourceNamespace } from './componentPreview.ts';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
 
 export function renderItemDetailView(
@@ -198,10 +198,11 @@ export function renderLocalBuildOption(
   namespace:string, slug:string,
   hostname=typeof window==='undefined' ? '' : (window.location?.hostname??''),
 ): string {
-  if(namespace!=='@8bitcn'||!/^[a-z0-9][a-z0-9-]*$/.test(slug)
+  if(!isReviewedSourceNamespace(namespace)||!/^[a-z0-9][a-z0-9-]*$/.test(slug)
     ||!['127.0.0.1','localhost'].includes(hostname))return '';
   return `<section class="item-preview-live" data-local-preview-root aria-label="Local source preview">
-    <button class="install-button" type="button" data-local-build-preview="${escapeHtml(slug)}">
+    <button class="install-button" type="button" data-local-build-preview="${escapeHtml(slug)}"
+      data-local-build-registry="${escapeHtml(namespace.slice(1))}">
       Build source preview locally
     </button>
     <p class="muted" data-local-preview-status role="status">Runs approved upstream source in an isolated frame.

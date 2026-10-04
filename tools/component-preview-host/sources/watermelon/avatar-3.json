@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-3",
+  "type": "registry:component",
+  "title": "Avatar 3",
+  "description": "Avatar 3. Displays images, icons, or text in a circular or rounded shape.",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/avatar-3.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\n\ntype Profile = {\n  name: string;\n  avatar: string;\n};\n\nconst profile: Profile = {\n  name: 'Sara Patel',\n  avatar:     'https://assets.watermelon.sh/wm_mia.png',\n};\n\nconst getInitials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .map((word) => word.slice(0, 1))\n    .join('');\n\nconst Avatar3 = () => {\n  return (\n    <Avatar className=\"rounded-sm\">\n      <AvatarImage\n        src={profile.avatar}\n        alt={profile.name}\n        className=\"rounded-sm\"\n      />\n      <AvatarFallback className=\"text-xs\">\n        {getInitials(profile.name)}\n      </AvatarFallback>\n    </Avatar>\n  );\n};\n\nexport default Avatar3;\n"
+    }
+  ]
+}

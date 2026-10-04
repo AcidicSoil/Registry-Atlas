@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sonner-8",
+  "type": "registry:component",
+  "title": "Sonner 8",
+  "description": "Sonner 8. An opinionated toast component for React.",
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/sonner-8.tsx",
+      "type": "registry:component",
+      "content": "'use client'\n\nimport { toast } from 'sonner'\nimport { Button } from '@/components/base-ui/button'\n\nconst Sonner8 = () => {\n  const triggerToast = (position: any) => {\n    toast('Position Updated', {\n      description: `Notification now showing at ${position}.`,\n      position,\n      style: { borderRadius: '12px' },\n      className: 'shadow-lg border border-zinc-100',\n    });\n  };\n\n  return (\n    <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>\n      {[\n        'top-left', 'top-center', 'top-right',\n        'bottom-left', 'bottom-center', 'bottom-right'\n      ].map((pos) => (\n        <Button\n          key={pos}\n          variant='outline'\n          className='rounded-xl bg-zinc-500/5 text-zinc-600 hover:text-zinc-700 dark:hover:text-zinc-500 border-zinc-200 hover:bg-zinc-100 hover:text-zinc-900 transition-all duration-200 capitalize text-xs h-9'\n          onClick={() => triggerToast(pos)}\n        >\n          {pos.replace('-', ' ')}\n        </Button>\n      ))}\n    </div>\n  )\n}\n\nexport default Sonner8\n"
+    }
+  ]
+}

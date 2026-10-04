@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge-13",
+  "type": "registry:component",
+  "title": "Badge 13",
+  "description": "Badge 13. A small visual indicator used to highlight status, counts, or labels.",
+  "dependencies": [],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/badge-13.tsx",
+      "type": "registry:component",
+      "content": "import { Badge } from '@/components/base-ui/badge';\n\nconst Badge13 = () => {\n  return (\n    <Badge className=\"bg-destructive/10 [a&]:hover:bg-destructive/5 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 text-destructive border-none focus-visible:outline-none\">\n      <span className=\"bg-destructive size-2 rounded-full\" aria-hidden=\"true\" />\n      Cancelled\n    </Badge>\n  );\n};\n\nexport default Badge13;\n"
+    }
+  ]
+}

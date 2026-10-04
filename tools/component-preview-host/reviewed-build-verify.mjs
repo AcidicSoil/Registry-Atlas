@@ -59,8 +59,8 @@ export function approvedPromotionCandidates(proof,receipts){
     &&row.bundleSha256===receipt.bundleSha256
     &&HASH.test(row.sourceSha256)&&HASH.test(row.bundleSha256)
     &&typeof row.before==='string'&&typeof row.after==='string'
-    &&row.before!==row.after&&supportedBehavior(row.slug)
-    &&assessBehavior(row.slug,row.before,row.after,'No errors').status==='interaction-verified')
+    &&row.before!==row.after&&supportedBehavior(row.slug,row.namespace)
+    &&assessBehavior(row.slug,row.before,row.after,'No errors',row.namespace).status==='interaction-verified')
    admitted.push(receipt);
  }
  return admitted;

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-22",
+  "type": "registry:component",
+  "title": "Tabs 22",
+  "description": "Tabs 22. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-22.tsx",
+      "type": "registry:component",
+      "content": "import {\n  IconGitBranch,\n  IconGitCommit,\n  IconGitMerge,\n} from '@tabler/icons-react';\n\nimport {\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n} from '@/components/base-ui/tabs';\n\nconst changelog = [\n  {\n    name: 'Version 4.0',\n    value: 'v4',\n    icon: IconGitMerge,\n    date: 'Today',\n    features: [\n      'Introduced a brand new dark mode theme engine with dynamic contrast adjustments.',\n      'Completely rewrote the client-side routing system resulting in 40% faster page loads.',\n      'Added comprehensive multi-language support (i18n) spanning 15+ new locales.',\n      'Officially deprecated the legacy API endpoints and retired v1 documentation.',\n    ],\n  },\n  {\n    name: 'Version 3.2',\n    value: 'v3.2',\n    icon: IconGitCommit,\n    date: 'Last Month',\n    features: [\n      'Resolved a critical memory leak that occurred during prolonged websocket connections.',\n      'Optimized our image pipeline to leverage next-gen formats like WebP and AVIF.',\n      'Added a new dashboard widget allowing administrators to export user analytics to CSV.',\n    ],\n  },\n  {\n    name: 'Version 3.0',\n    value: 'v3',\n    icon: IconGitBranch,\n    date: 'August 2023',\n    features: [\n      'Executed a major structural overhaul of the database schema to handle extreme scale.',\n      'Released the very first public beta of our highly requested mobile application.',\n      'Introduced true end-to-end encryption for all peer-to-peer direct messages.',\n    ],\n  },\n];\n\nconst Tabs22 = () => {\n  return (\n    <Tabs defaultValue=\"v4\" orientation=\"vertical\" className=\"w-full flex gap-3 sm:gap-8 min-h-[200px] px-1\">\n      <TabsList className=\"bg-muted h-full shrink-0 flex-col gap-1 rounded-2xl p-1\">\n        {changelog.map(({ icon: Icon, name, value }) => (\n          <TabsTrigger\n            key={value}\n            value={value}\n            className=\"text-muted-foreground hover:bg-muted/50 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground flex w-full items-center justify-start gap-1.5 sm:gap-2 rounded-xl px-2 sm:px-3 py-1 font-medium transition-all data-[state=active]:shadow-none text-[11px] sm:text-sm\"\n          >\n            <Icon className=\"size-[14px] sm:size-[18px]\" stroke={2.5} />\n            {name}\n          </TabsTrigger>\n        ))}\n      </TabsList>\n\n      <div className=\"flex-1 pb-4\">\n        {changelog.map((tab) => (\n          <TabsContent\n            key={tab.value}\n            value={tab.value}\n            className=\"animate-in fade-in slide-in-from-bottom-2 m-0 duration-500\"\n          >\n            <div className=\"border-border/50 mb-4 flex flex-col items-start justify-between gap-2 border-b pb-3 sm:flex-row sm:items-end\">\n              <h4 className=\"text-foreground text-lg sm:text-2xl font-bold tracking-tight\">\n                Release {tab.name}\n              </h4>\n            </div>\n\n            <ul className=\"space-y-3\">\n              {tab.features.map((feature, idx) => (\n                <li key={idx} className=\"flex items-start gap-2 sm:gap-4\">\n                  <div className=\"bg-primary ring-primary/20 mt-1.5 sm:mt-2 flex h-1 w-1 sm:h-1.5 sm:w-1.5 shrink-0 items-center justify-center rounded-full ring-2 sm:ring-4\" />\n                  <span className=\"text-muted-foreground text-[11px] sm:text-xs\">\n                    {feature}\n                  </span>\n                </li>\n              ))}\n            </ul>\n          </TabsContent>\n        ))}\n      </div>\n    </Tabs>\n  );\n};\n\nexport default Tabs22;\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-28",
+  "type": "registry:component",
+  "title": "Alert 28",
+  "description": "Alert 28. A component used to display important messages, notifications, or feedback to the user.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "alert"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/alert-28.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Alert,\n  AlertTitle,\n  AlertDescription,\n} from '@/components/base-ui/alert';\nimport { GoAlertFill } from 'react-icons/go';\n\nconst Alert28 = () => {\n  return (\n    <Alert className=\"border-none bg-yellow-600 text-white dark:bg-yellow-400\">\n      <GoAlertFill className=\"size-4\" />\n      <AlertTitle>Incomplete setup</AlertTitle>\n      <AlertDescription className=\"text-white/80\">\n        A few required fields are still empty. Fill them in to continue\n        smoothly.\n      </AlertDescription>\n    </Alert>\n  );\n};\n\nexport default Alert28;\n"
+    }
+  ]
+}

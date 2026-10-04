@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-group-3",
+  "type": "registry:component",
+  "title": "ButtonGroup 3",
+  "description": "ButtonGroup 3. A group of buttons that are displayed together.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-group-3.tsx",
+      "type": "registry:component",
+      "content": "import type { LucideIcon } from 'lucide-react';\nimport {\n  Layers3Icon,\n  MessageSquareIcon,\n  PaletteIcon,\n  ScissorsIcon,\n  WandSparklesIcon,\n} from 'lucide-react';\n\nimport { Button } from '@/components/base-ui/button';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipProvider,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\ntype ToolAction = {\n  icon: LucideIcon;\n  label: string;\n};\n\nconst actions: readonly ToolAction[] = [\n  { icon: Layers3Icon, label: 'Layers' },\n  { icon: MessageSquareIcon, label: 'Comment' },\n  { icon: PaletteIcon, label: 'Style' },\n  { icon: ScissorsIcon, label: 'Trim' },\n  { icon: WandSparklesIcon, label: 'Enhance' },\n] as const;\n\nconst ButtonGroup3 = () => {\n  return (\n    <TooltipProvider>\n      <div className=\"bg-muted/20 inline-flex w-fit -space-x-px rounded-md shadow-xs rtl:space-x-reverse\">\n        {actions.map((action, index) => {\n          const Icon = action.icon;\n          const isFirst = index === 0;\n          const isLast = index === actions.length - 1;\n\n          return (\n            <Tooltip key={action.label}>\n              <TooltipTrigger>\n                <Button\n                  className={[\n                    'border-border/70 bg-background hover:bg-muted/30 rounded-none px-3 shadow-none focus-visible:z-10',\n                    isFirst ? 'rounded-l-md' : '',\n                    isLast ? 'rounded-r-md' : '',\n                  ].join(' ')}\n                  variant=\"outline\"\n                >\n                  <Icon className=\"size-4\" />\n                  <span className=\"sr-only\">{action.label}</span>\n                </Button>\n              </TooltipTrigger>\n              <TooltipContent className=\"px-2 py-1 text-xs\">\n                {action.label}\n              </TooltipContent>\n            </Tooltip>\n          );\n        })}\n      </div>\n    </TooltipProvider>\n  );\n};\n\nexport default ButtonGroup3;\n"
+    }
+  ]
+}

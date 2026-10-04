@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip-5",
+  "type": "registry:component",
+  "title": "Tooltip 5",
+  "description": "Tooltip 5. A small popup that appears when a user hovers over or focuses on an element, providing additional information or context.",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar",
+    "button",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tooltip-5.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\nimport { Button } from '@/components/base-ui/button';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\nconst Tooltip5 = () => {\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\" size=\"sm\">\n          Avatar\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent>\n        <div className=\"flex items-center gap-2\">\n          <Avatar className=\"size-5\">\n            <AvatarImage\n              src=\"https://github.com/vanshpatel.png\"\n              alt=\"Vansh Patel\"\n            />\n            <AvatarFallback className=\"text-xs\">VP</AvatarFallback>\n          </Avatar>\n          <p className=\"text-sm font-medium\">Vansh Patel</p>\n        </div>\n      </TooltipContent>\n    </Tooltip>\n  );\n};\n\nexport default Tooltip5;\n"
+    }
+  ]
+}

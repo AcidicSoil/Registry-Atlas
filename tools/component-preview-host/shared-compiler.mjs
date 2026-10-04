@@ -69,7 +69,7 @@ export function planSharedPreview(raw,review) {
     const fromJson=linked&&typeof item.path==='string'
       &&new RegExp('^sources/'+registry+'/[a-z0-9-]+\\.json$').test(item.path)
       &&typeof item.sourceFile==='string'
-      &&new RegExp('^'+review.entryFile.split('/').slice(0,3).join('/')+'/[a-z0-9-]+\\.tsx$').test(item.sourceFile)
+      &&new RegExp('^'+dirname(review.entryFile)+'/[a-z0-9-]+\\.tsx$').test(item.sourceFile)
       &&item.path.split('/').at(-1).replace(/\.json$/,'')===
         item.sourceFile.split('/').at(-1).replace(/\.tsx$/,'');
     if(!(linked?fromJson:safePath(item?.path))||!HASH.test(item.sha256??''))

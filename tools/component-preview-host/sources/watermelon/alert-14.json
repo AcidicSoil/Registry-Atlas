@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-14",
+  "type": "registry:component",
+  "title": "Alert 14",
+  "description": "Alert 14. A component used to display important messages, notifications, or feedback to the user.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "alert"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/alert-14.tsx",
+      "type": "registry:component",
+      "content": "import { GoAlertFill } from 'react-icons/go';\n\nimport { Alert, AlertTitle } from '@/components/base-ui/alert';\n\nconst Alert14 = () => {\n  return (\n    <Alert variant=\"destructive\">\n      <GoAlertFill className=\"size-4\" />\n      <AlertTitle>Oops! Something didn’t work as expected.</AlertTitle>\n    </Alert>\n  );\n};\n\nexport default Alert14;\n"
+    }
+  ]
+}

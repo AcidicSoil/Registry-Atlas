@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip-2",
+  "type": "registry:component",
+  "title": "Tooltip 2",
+  "description": "Tooltip 2. A small popup that appears when a user hovers over or focuses on an element, providing additional information or context.",
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tooltip-2.tsx",
+      "type": "registry:component",
+      "content": "import { Button } from '@/components/base-ui/button';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\nconst Tooltip2 = () => {\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\" size=\"lg\">\n          Neutral\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent className=\"bg-neutral-200 text-neutral-950 dark:bg-neutral-50 [&_svg]:bg-neutral-200 [&_svg]:fill-neutral-200 dark:[&_svg]:bg-neutral-50 dark:[&_svg]:fill-neutral-50\">\n        <p>Consistent appearance across themes</p>\n      </TooltipContent>\n    </Tooltip>\n  );\n};\n\nexport default Tooltip2;\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-13",
+  "type": "registry:component",
+  "title": "Tabs 13",
+  "description": "Tabs 13. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-13.tsx",
+      "type": "registry:component",
+      "content": "import { IconBook2, IconCertificate, IconVideo } from '@tabler/icons-react'\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/base-ui/tabs'\n\nconst learning = [\n  {\n    name: 'Curriculum',\n    value: 'curriculum',\n    icon: IconBook2,\n    content: (\n      <>\n        Explore your <span className='text-foreground font-semibold'>learning path</span>. Access structured modules,\n        downloadable resources, and interactive quizzes designed to master your chosen subject.\n      </>\n    )\n  },\n  {\n    name: 'Live Lessons',\n    value: 'lessons',\n    icon: IconVideo,\n    content: (\n      <>\n        Join our <span className='text-foreground font-semibold'>expert-led sessions</span>. Engage in real-time Q&A,\n        participate in group discussions, and watch recorded sessions at your own convenience.\n      </>\n    )\n  },\n  {\n    name: 'Certification',\n    value: 'certification',\n    icon: IconCertificate,\n    content: (\n      <>\n        Earn your <span className='text-foreground font-semibold'>professional validation</span>. Complete the final\n        assessment to receive a blockchain-verified certificate to showcase your skills to the world.\n      </>\n    )\n  }\n]\n\nconst Tabs13 = () => {\n  return (\n    <Tabs defaultValue='curriculum' className='w-full gap-4 px-1'>\n      <div className='w-fit max-w-full overflow-x-auto overflow-y-hidden scrollbar-hide py-0.5'>\n        <TabsList className='bg-transparent flex w-max justify-start gap-1'>\n          {learning.map(({ icon: Icon, name, value }) => (\n            <TabsTrigger\n              key={value}\n              value={value}\n              className='h-full px-6 flex items-center gap-2 rounded-b-none transition-all duration-300data-[state=active]:rounded-t data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md dark:data-[state=active]:bg-muted/80'\n            >\n              <Icon size={18} stroke={2} />\n              <span className='font-bold text-xs tracking-tight'>{name}</span>\n            </TabsTrigger>\n          ))}\n        </TabsList>\n      </div>\n\n      {learning.map(tab => (\n        <TabsContent\n          key={tab.value}\n          value={tab.value}\n          className='animate-in fade-in slide-in-from-left-2 duration-500'\n        >\n          <div className='bg-background p-6 rounded-3xl border border-muted-foreground/10'>\n            <div className='flex items-center gap-3 mb-4'>\n              <div className='p-2.5 rounded-xl bg-primary/10 text-primary'>\n                <tab.icon size={22} />\n              </div>\n              <h4 className='text-xl font-bold tracking-tight'>{tab.name}</h4>\n            </div>\n            <p className='text-muted-foreground text-sm leading-relaxed max-w-xl'>{tab.content}</p>\n          </div>\n        </TabsContent>\n      ))}\n    </Tabs>\n  )\n}\n\nexport default Tabs13\n"
+    }
+  ]
+}

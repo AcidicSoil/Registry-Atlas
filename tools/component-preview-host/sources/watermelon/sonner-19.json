@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sonner-19",
+  "type": "registry:component",
+  "title": "Sonner 19",
+  "description": "Sonner 19. An opinionated toast component for React.",
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/sonner-19.tsx",
+      "type": "registry:component",
+      "content": "'use client'\n\nimport { toast } from 'sonner'\nimport { Button } from '@/components/base-ui/button'\n\nconst Sonner19 = () => {\n  return (\n    <Button\n      variant='outline'\n      className='rounded-2xl bg-amber-500 dark:bg-amber-600 dark:hover:bg-amber-700 text-white hover:text-white border-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-600/20 dark:shadow-none transition-all duration-300 px-6'\n      onClick={() =>\n        toast.warning('Unusual Activity Detected', {\n          description: 'We noticed a login from a new device in London, UK.',\n          style: {\n            '--normal-bg': 'light-dark(var(--color-amber-600), var(--color-amber-500))',\n            '--normal-text': 'var(--color-white)',\n            '--normal-border': 'light-dark(var(--color-amber-600), var(--color-amber-500))',\n            '--description-color': 'light-dark(var(--color-amber-100), var(--color-amber-200))',\n            borderRadius: '16px',\n          } as React.CSSProperties,\n          className: 'shadow-2xl shadow-amber-600/10',\n        })\n      }\n    >\n      Activate Solid Warning\n    </Button>\n  )\n}\n\nexport default Sonner19\n"
+    }
+  ]
+}

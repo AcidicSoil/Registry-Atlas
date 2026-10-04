@@ -36,8 +36,10 @@ export async function prepareRegistryItem(registry,slug){
  // Resolve existing first-party aliases from immutable, exact-identity source
  // JSON in the same registry. Do not invent modules or execute fetched source.
  const aliases={...policy.aliases};
- const uiRoot=matches[0].path.split('/').slice(0,3).join('/');
- if(!/^components\/ui\/[a-z0-9-]+$/.test(uiRoot))
+ const uiRoot=dirname(matches[0].path);
+ if(!/^components\/ui\/[a-z0-9-]+$/.test(uiRoot)
+   &&!(registry==='watermelon'
+     &&['src/components/watermelon-ui','components/watermelon'].includes(uiRoot)))
   throw Error('unsupported-registry-ui-root');
  const queue=upstream.files.flatMap(file=>[
   ...(file.content??'').matchAll(/\b(?:from\s*|import\s*)["'](@\/components\/ui\/[a-z0-9-]+\/[a-z0-9-]+)["']/g)

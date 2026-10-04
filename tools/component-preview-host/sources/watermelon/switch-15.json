@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch-15",
+  "type": "registry:component",
+  "title": "Switch 15",
+  "description": "Switch 15. A toggle control that allows users to switch between two states, typically on or off.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "switch"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/switch-15.tsx",
+      "type": "registry:component",
+      "content": "'use client';\n\nimport { useState } from 'react';\n\nimport { Label } from '@/components/base-ui/label';\nimport { Switch } from '@/components/base-ui/switch';\n\nconst Switch15 = () => {\n  const [checked, setChecked] = useState<boolean>(true);\n\n  return (\n    <div className=\"inline-flex items-center gap-2\">\n      <Switch\n        id=\"notifications-toggle\"\n        checked={checked}\n        onCheckedChange={setChecked}\n        aria-label=\"Toggle notifications\"\n      />\n      <Label htmlFor=\"notifications-toggle\" className=\"text-sm font-medium\">\n        {checked ? 'Notifications On' : 'Notifications Off'}\n      </Label>\n    </div>\n  );\n};\n\nexport default Switch15;\n"
+    }
+  ]
+}

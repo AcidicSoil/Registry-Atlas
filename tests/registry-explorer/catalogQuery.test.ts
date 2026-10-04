@@ -92,6 +92,16 @@ describe("queryCatalogComponents", () => {
     expect(result.pageCount).toBe(1);
   });
 
+  it('matches the author field exactly rather than guessing from title or description',()=>{
+    const registries=[registry('@alpha')];
+    const idx=index({'@alpha':[
+      {name:'author-name',type:'registry:ui',title:'Alice Example',author:'Bob'},
+      {name:'owned-item',type:'registry:ui',title:'Button',author:'Alice'},
+      {name:'no-owner',type:'registry:ui',title:'Alice Option'},
+    ]});
+    expect(queryCatalogComponents(registries,idx,{author:'Alice',pageSize:10} as any)
+      .items.map(x=>x.slug)).toEqual(['owned-item']);
+  });
   it("never turns registry metadata into a component result", () => {
     const result = queryCatalogComponents(
       [registry("@empty")],

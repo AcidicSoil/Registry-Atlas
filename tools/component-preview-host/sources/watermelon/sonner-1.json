@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sonner-1",
+  "type": "registry:component",
+  "title": "Sonner 1",
+  "description": "Sonner 1. An opinionated toast component for React.",
+  "dependencies": [
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/sonner-1.tsx",
+      "type": "registry:component",
+      "content": "'use client'\n\nimport { toast } from 'sonner'\nimport { Button } from '@/components/base-ui/button'\n\nconst Sonner1 = () => {\n  return (\n    <Button\n      variant='outline'\n      className='rounded-2xl bg-primary/5 text-primary hover:text-primary border-primary/20 hover:bg-primary/10 hover:border-primary/30 transition-all duration-300 px-6'\n      onClick={() =>\n        toast.success('Project deployed successfully!', {\n          description: 'Your changes are now live on the production server.',\n          style: {\n            borderRadius: '16px',\n            padding: '16px',\n          },\n          className: 'border-l-4 border-l-green-500 shadow-2xl',\n        })\n      }\n    >\n      Launch Success Toast\n    </Button>\n  )\n}\n\nexport default Sonner1\n"
+    }
+  ]
+}

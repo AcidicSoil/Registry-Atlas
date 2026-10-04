@@ -44,7 +44,29 @@ const TYPES={
     expectedBefore:'false',expectedAfter:'true'},
 
 };
-export const supportedBehavior=slug=>Object.hasOwn(TYPES,slug);
+const REGISTRY_BEHAVIOR={
+ '@watermelon':{
+   checkbox:{role:'checkbox',action:'click',
+     probe:"document.querySelector('[role=checkbox]')?.getAttribute('aria-checked')",
+     expectedBefore:'false',expectedAfter:'true'},
+   switch:{role:'switch',action:'click',
+     probe:"document.querySelector('[role=switch]')?.getAttribute('aria-checked')",
+     expectedBefore:'false',expectedAfter:'true'},
+ },
+};
+const behaviorFor=(slug,namespace='@8bitcn')=>namespace==='@8bitcn'
+  ?TYPES[slug]:REGISTRY_BEHAVIOR[namespace]?.[slug];
+export const supportedBehavior=(slug,namespace)=>Boolean(behaviorFor(slug,namespace));
+export async function approvedReceiptRegistry(namespace){
+ if(typeof namespace!=='string'||!/^@[a-z0-9][a-z0-9-]*$/.test(namespace))return null;
+ const registry=namespace.slice(1);
+ try{
+   const policy=JSON.parse(await readFile(join(ROOT,'tools/component-preview-host/reviews',registry+'-policy.json'),'utf8'));
+   return policy.schema==='registry-atlas-shared-preview-policy/v1'
+     &&policy.namespace===namespace&&policy.license?.decision==='approved'
+     &&policy.sourceDir==='sources/'+registry ? registry : null;
+ }catch{return null;}
+}
 export const assessStaticRender=(rendered,errors)=>rendered===true&&errors==='No errors'
   ? {status:'render-verified',reason:'no-approved-interaction-contract'}
   : {status:'unverified',reason:errors==='No errors'?'original-component-not-visible':'browser-error'};
@@ -54,12 +76,12 @@ function tool(command,args,{server,tab}){
  if(command==='errors')return result.trim();
  try{return JSON.parse(result);}catch{throw Error('PinchTab returned malformed JSON for '+command);}
 }
-export function assessBehavior(slug,before,after,errorText){
- if(!TYPES[slug])return {status:'unverified',reason:'unrecognized-behavior'};
+export function assessBehavior(slug,before,after,errorText,namespace='@8bitcn'){
+ if(!behaviorFor(slug,namespace))return {status:'unverified',reason:'unrecognized-behavior'};
  if(errorText!=='No errors')return {status:'unverified',reason:'browser-error'};
  if(typeof before!=='string'||typeof after!=='string'||!before||before===after)
    return {status:'unverified',reason:'interaction-unchanged'};
- const behavior=TYPES[slug];
+ const behavior=behaviorFor(slug,namespace);
  if(behavior.expectedBefore!==undefined && before!==behavior.expectedBefore)
    return {status:'unverified',reason:'unexpected-original-state'};
  if(behavior.expectedAfter!==undefined && after!==behavior.expectedAfter)
@@ -74,17 +96,19 @@ export async function verifyReceipts({receipts,server,tab,base}){
  const rows=[];
  for(const receipt of receipts){
    const {slug,namespace,bundleSha256,sourceSha256}=receipt;
-   if(namespace!=='@8bitcn'||!/^[a-f0-9]{64}$/.test(bundleSha256)
+   const registry=await approvedReceiptRegistry(namespace);
+   if(!registry||typeof slug!=='string'||!/^[a-z0-9][a-z0-9-]*$/.test(slug)
+      ||!/^[a-f0-9]{64}$/.test(bundleSha256)
       ||!/^[a-f0-9]{64}$/.test(sourceSha256)){
-     rows.push({slug,status:'unverified',reason:'unrecognized-identity'});continue;
+     rows.push({slug,namespace,status:'unverified',reason:'unrecognized-identity'});continue;
    }
    const local=join(ROOT,'public/component-demos/generated',bundleSha256,'index.html');
    const html=await readFile(local,'utf8');
    if(hash(html)!==bundleSha256)throw Error('Cached artifact checksum mismatch: '+slug);
-   const source=await readFile(join(ROOT,'tools/component-preview-host/sources/8bitcn',slug+'.json'),'utf8');
+   const source=await readFile(join(ROOT,'tools/component-preview-host/sources',registry,slug+'.json'),'utf8');
    if(hash(source)!==sourceSha256)throw Error('Official source revision mismatch: '+slug);
    const url=base+'/component-demos/generated/'+bundleSha256+'/index.html';
-   const config=TYPES[slug];
+   const config=behaviorFor(slug,namespace);
    let row={slug,namespace,sourceSha256,bundleSha256,status:'unverified'};
    try{
      tool('nav',[url],{server,tab});
@@ -131,7 +155,7 @@ export async function verifyReceipts({receipts,server,tab,base}){
        tool('wait',['[role=tooltip]','--timeout','3000'],{server,tab});
      const after=tool('eval',[config.probe],{server,tab}).result;
      const errs=tool('errors',[],{server,tab});
-     row={...row,...assessBehavior(slug,before,after,errs),
+     row={...row,...assessBehavior(slug,before,after,errs,namespace),
        observedAt:new Date().toISOString(),action:config.action,role:config.role};
    }catch(e){row={...row,status:'unverified',reason:String(e.message).slice(0,150)};}
    rows.push(row);

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip-6",
+  "type": "registry:component",
+  "title": "Tooltip 6",
+  "description": "Tooltip 6. A small popup that appears when a user hovers over or focuses on an element, providing additional information or context.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "button",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tooltip-6.tsx",
+      "type": "registry:component",
+      "content": "import { MdInfo } from 'react-icons/md';\n\nimport { Button } from '@/components/base-ui/button';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\nconst Tooltip6 = () => {\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\" size=\"sm\">\n          Learn More\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent className=\"max-w-64 py-3 text-pretty\">\n        <div className=\"space-y-1\">\n          <div className=\"flex items-center gap-2\">\n            <MdInfo className=\"size-4\" />\n            <p className=\"text-sm font-medium\">Helpful Information</p>\n          </div>\n          <p className=\"text-background/80\">\n            This section provides additional context to help you better\n            understand the feature. Use it as a quick guide while\n            navigating.\n          </p>\n        </div>\n      </TooltipContent>\n    </Tooltip>\n  );\n};\n\nexport default Tooltip6;\n"
+    }
+  ]
+}

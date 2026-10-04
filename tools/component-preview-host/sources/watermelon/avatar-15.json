@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-15",
+  "type": "registry:component",
+  "title": "Avatar 15",
+  "description": "Avatar 15. Displays images, icons, or text in a circular or rounded shape.",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/avatar-15.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\n\ntype Profile = {\n  name: string;\n  src: string;\n};\n\nconst avatars: readonly Profile[] = [\n  {\n    src: 'https://assets.watermelon.sh/wm_ben.png',\n    name: 'Mark',\n  },\n  {\n    src: 'https://assets.watermelon.sh/wm_olivia.png',\n    name: 'Olivia',\n  },\n  {\n    src: 'https://assets.watermelon.sh/wm_josh.png',\n    name: 'Josh',\n  },\n  {\n    src: 'https://assets.watermelon.sh/wm_emma.png',\n    name: 'Emma',\n  },\n] as const;\n\nconst getInitials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .map((word) => word.slice(0, 1))\n    .join('');\n\nconst Avatar15 = () => {\n  return (\n    <div className=\"flex -space-x-2.5\">\n      {avatars.map((avatar) => (\n        <Avatar\n          key={avatar.name}\n          className=\"ring-background size-12 shadow-sm ring-2\"\n        >\n          <AvatarImage src={avatar.src} alt={avatar.name} />\n          <AvatarFallback>{getInitials(avatar.name)}</AvatarFallback>\n        </Avatar>\n      ))}\n    </div>\n  );\n};\n\nexport default Avatar15;\n"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-10",
+  "type": "registry:component",
+  "title": "Tabs 10",
+  "description": "Tabs 10. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-10.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n} from '@/components/base-ui/tabs';\n\nconst cloudStorage = [\n  {\n    name: 'Recent',\n    value: 'recent',\n    content: (\n      <>\n        Access your{' '}\n        <span className=\"text-foreground font-semibold\">latest activity</span>.\n        Revisit documents, spreadsheets, and images you've worked on in the last\n        24 hours across all your devices.\n      </>\n    ),\n  },\n  {\n    name: 'Shared',\n    value: 'shared',\n    content: (\n      <>\n        Collaborate on{' '}\n        <span className=\"text-foreground font-semibold\">mutual assets</span>.\n        Review files that team members have granted you access to and manage\n        permissions for your own shared folders.\n      </>\n    ),\n  },\n  {\n    name: 'Archive',\n    value: 'archive',\n    content: (\n      <>\n        Manage your{' '}\n        <span className=\"text-foreground font-semibold\">legacy storage</span>.\n        Securely store long-term records, completed projects, and backup data\n        that isn't required for your daily operations.\n      </>\n    ),\n  },\n];\n\nconst Tabs10 = () => {\n  return (\n    <Tabs defaultValue=\"recent\" className=\"gap-4\">\n      <TabsList className=\"h-12 gap-1 rounded-2xl bg-transparent\">\n        {cloudStorage.map((tab) => (\n          <TabsTrigger\n            key={tab.value}\n            value={tab.value}\n            className=\"data-[state=active]:border-zinc-200 dark:data-[state=active]:border-zinc-800 flex-1 rounded-xl border-2 border-transparent px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all data-[state=active]:shadow-none!\"\n          >\n            {tab.name}\n          </TabsTrigger>\n        ))}\n      </TabsList>\n\n      {cloudStorage.map((tab) => (\n        <TabsContent key={tab.value} value={tab.value}>\n          <div className=\"mb-3 flex items-center gap-2\">\n            <h6 className=\"text-muted-foreground text-[11px] font-bold uppercase\">\n              Cloud Explorer / {tab.name}\n            </h6>\n          </div>\n          <p className=\"text-xs leading-5 font-medium text-zinc-600 italic dark:text-zinc-400\">\n            {tab.content}\n          </p>\n        </TabsContent>\n      ))}\n    </Tabs>\n  );\n};\n\nexport default Tabs10;\n"
+    }
+  ]
+}

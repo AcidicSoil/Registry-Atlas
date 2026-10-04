@@ -72,8 +72,27 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).not.toContain('data-catalog-sort');
   });
 
+  it('opens a real author attribution, reloads its exact query and returns to authors',()=>{
+    const harness=setup('','/Registry-Atlas/authors',undefined,'Source Author');
+    expect(harness.contentBody.innerHTML).toContain('data-author-select="Source Author"');
+    harness.contentBody.dispatch('click',target({'data-author-select':'Source Author'}));
+    expect(harness.location.search).toContain('author=Source+Author');
+    expect(harness.contentHeader.innerHTML).toContain('<h1>Source Author</h1>');
+    expect(harness.contentBody.innerHTML).toContain('data-view-item-registry="@delta"');
+    harness.contentBody.dispatch('click',target({'data-author-clear':''}));
+    expect(harness.location.search).not.toContain('author=');
+    expect(harness.contentBody.innerHTML).toContain('data-author-select="Source Author"');
+    const reloaded=setup('?author=Source+Author','/Registry-Atlas/authors',undefined,'Source Author');
+    expect(reloaded.contentBody.innerHTML).toContain('data-view-item-registry="@delta"');
+  });
+  it('renders the source-attribution authors route even with no indexed named authors',()=>{
+    const harness=setup('','/Registry-Atlas/authors');
+    expect(harness.contentHeader.innerHTML).toContain('<h1>Authors</h1>');
+    expect(harness.contentBody.innerHTML).toContain('No attributed components');
+    expect(harness.contentBody.innerHTML).not.toContain('Top Authors');
+  });
   it('retired routes render not-found instead of a fake browse surface', () => {
-    for (const path of ['/components/featured', '/components/newest', '/authors']) {
+    for (const path of ['/components/featured', '/components/newest']) {
       const harness = setup('', `/Registry-Atlas${path}`);
       expect(harness.contentHeader.innerHTML).toContain('Route not found');
       expect(harness.contentBody.innerHTML).not.toContain('data-view-item-registry');
@@ -400,6 +419,7 @@ function setup(
     dependencies: [],
     files: [],
   }),
+  attributedAuthor?: string,
 ) {
   const location = {
     pathname,
@@ -447,7 +467,7 @@ function setup(
     catalogIndex: {
       meta: { registry_count: 1, item_count: 1 },
       registries: {
-        '@delta': [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui', categories: ['code'] }],
+        '@delta': [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui', categories: ['code'], ...(attributedAuthor?{author:attributedAuthor}:{}) }],
       },
     },
     mirrorMeta: {

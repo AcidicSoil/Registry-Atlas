@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "textarea-20",
+  "type": "registry:component",
+  "title": "Textarea 20",
+  "description": "Textarea 20. A multi-line input field that allows users to enter longer blocks of text, such as messages, descriptions, or comments.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "textarea"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/textarea-20.tsx",
+      "type": "registry:component",
+      "content": "import { useId } from 'react';\n\nimport { Label } from '@/components/base-ui/label';\nimport { Textarea } from '@/components/base-ui/textarea';\n\nconst Textarea20 = () => {\n  const id = useId();\n\n  return (\n    <div className=\"w-full max-w-sm space-y-2\">\n      <Label htmlFor={id}>Project details</Label>\n      <Textarea\n        id={id}\n        placeholder=\"Describe your project requirements...\"\n        className=\"focus-visible:ring-primary/20 focus-visible:border-primary/50\"\n      />\n      <p className=\"text-muted-foreground text-xs\">\n        Include key goals, constraints, or expectations.\n      </p>\n    </div>\n  );\n};\n\nexport default Textarea20;\n"
+    }
+  ]
+}

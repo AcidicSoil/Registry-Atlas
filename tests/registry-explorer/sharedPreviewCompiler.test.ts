@@ -167,6 +167,23 @@ describe('shared compiled preview pipeline', () => {
     expect(result.html).not.toContain('PRESS ME');
     expect(result.html).not.toContain('data-preview-interaction-count');
   });
+  it('accepts the second official flat component root without changing upstream source',async()=>{
+    const {source,review}=await prepareRegistryItem('watermelon','floating-input');
+    expect(review.entryFile).toBe('components/watermelon/floating-input.tsx');
+    expect(planSharedPreview(source,review)).toMatchObject({
+      status:'eligible',namespace:'@watermelon',slug:'floating-input',
+    });
+  });
+  it('uses exact official source files from a second reviewed registry without guessed UI',async()=>{
+    const {source,review}=await prepareRegistryItem('watermelon','checkbox');
+    expect(review.entryFile).toBe('src/components/watermelon-ui/checkbox.tsx');
+    const plan=planSharedPreview(source,review);
+    expect(plan).toMatchObject({status:'eligible',namespace:'@watermelon',slug:'checkbox',exportName:'Checkbox'});
+    const artifact=await buildSharedPreview(source,review);
+    expect(artifact.status).toBe('built-unverified');
+    expect(artifact.html).toContain('@watermelon/checkbox');
+    expect(artifact.html).not.toContain('UPSTREAM PREVIEW');
+  });
   it('rejects a tampered linked official source instead of executing it',async()=>{
     const {source,review}=await prepareRegistryItem('8bitcn','health-bar');
     const modified={...review,aliases:{

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-14",
+  "type": "registry:component",
+  "title": "Button 14",
+  "description": "Button 14. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-14.tsx",
+      "type": "registry:component",
+      "content": "import { FaDownload } from 'react-icons/fa6';\n\nimport { Button } from '@/components/base-ui/button';\n\nconst Button14 = () => {\n  return (\n    <Button className=\"border-primary bg-primary/10 text-foreground border-dashed shadow-none\">\n      <FaDownload />\n      Download\n    </Button>\n  );\n};\n\nexport default Button14;\n"
+    }
+  ]
+}

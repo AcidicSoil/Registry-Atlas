@@ -42,8 +42,8 @@ assert(!componentViewSource.includes('data-catalog-search'), 'Components rail mu
 assert(!componentViewSource.includes('Preview not published'), 'browse cards must use factual specimens instead of empty preview placeholders');
 assert(!shellSource.includes("routeButton({ kind: 'components', lens: 'featured' }, 'Reviewed')"),
   'Reviewed enrichment must not be exposed as Featured navigation');
-assert(!routeSource.includes('lens?: "featured" | "newest"') && !routeSource.includes('kind: "authors"'),
-  'Reviewed, authors, and newest browse routes must remain retired');
+assert(!routeSource.includes('lens?: "featured" | "newest"') && routeSource.includes('kind: "authors"'),
+  'Authors must be supported as attributed catalog records while ranked featured/newest routes remain retired');
 assert(indexSource.includes('data-view="icons">Icon-related assets</button>'),
   'Icons navigation must describe the registry-backed icon-related data honestly');
 assert(!componentViewSource.includes('data-catalog-type-value'),

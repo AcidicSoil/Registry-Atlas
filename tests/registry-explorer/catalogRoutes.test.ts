@@ -85,6 +85,10 @@ describe("catalogRoutes", () => {
 });
 
 describe("corrective route parity", () => {
+  it('round-trips an author attribution directory without inventing author profiles',()=>{
+    expect(parseCatalogRoute('/Registry-Atlas/authors',BASE)).toEqual({kind:'authors'});
+    expect(catalogRoutePath({kind:'authors'},BASE)).toBe('/Registry-Atlas/authors');
+  });
   it("keeps home distinct and parses audited route families", () => {
     expect(parseCatalogRoute("/Registry-Atlas/", BASE)).toEqual({ kind: "home" });
     expect(parseCatalogRoute("/Registry-Atlas/components/explore/ai", BASE)).toEqual({ kind: "explore", collection: "ai" });
@@ -96,8 +100,8 @@ describe("corrective route parity", () => {
     expect(parseCatalogRoute("/Registry-Atlas/icons/c/layout", BASE)).toEqual({ kind: "icon-category", category: "layout" });
   });
 
-  it("retires featured/reviewed, authors, and newest routes", () => {
-    for (const path of ["/components/featured", "/components/reviewed", "/components/newest", "/components/newest/2026-W40", "/authors", "/authored"]) {
+  it("retires unsupported featured/reviewed and newest routes", () => {
+    for (const path of ["/components/featured", "/components/reviewed", "/components/newest", "/components/newest/2026-W40", "/authored"]) {
       expect(parseCatalogRoute(BASE.slice(0, -1) + path, BASE)).toBeNull();
     }
   });

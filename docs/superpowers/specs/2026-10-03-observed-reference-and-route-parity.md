@@ -328,3 +328,51 @@ Other source-compiled blocks and authenticated workflows are still
 unverified; in particular, typing into a login-form field does not prove
 successful authentication and is not admitted as a completed login demo.
 21st.dev full route/interaction parity remains tracked open.
+
+## R13. Second registry execution and source-backed Authors route (2026-10-04)
+
+Registry Atlas now has a second reviewed original-source family, the official
+@watermelon registry at registry.watermelon.sh. Its MIT terms came from
+WatermelonCorp/watermelon-platform, revision
+31d3eee0f12095766c3169b440b77e150024d967. The existing review policy
+and source-batch fetcher admitted its official JSON records through the same
+bounded, exact-identity checks as the first registry. Of 1,166 initially
+uncached eligible identities, 1,162 were retrieved. The four omitted records
+remain unavailable because of identity or source-path validation failures;
+no substitute visuals were generated. Including five previously cached
+records, there are 1,167 local source JSONs. This is **source cache only**.
+
+The existing reviewed compiler now recognizes two real upstream source roots,
+including src/components/watermelon-ui and components/watermelon, while
+preserving exact-file hash checks. An initial full 1,167-source compile stage
+found 36 buildable items; after one root-family correction it found 38. Other
+items remain grouped under unresolved-import, missing entry export, dynamic
+import/network and unsupported-root reasons. These figures must not be
+substituted for interactive coverage.
+
+Browser-proof identity and original-source checks now derive the registry
+from its locally reviewed policy rather than assuming @8bitcn, with a strict
+namespace and slug check before file reads. A single build stage followed
+by a managed-browser stage proved original @watermelon/checkbox and
+@watermelon/switch DOM aria-checked transitions false to true, with no browser
+errors. Both source-hash- and bundle-hash-matched receipts were promoted;
+only those two source-backed artifacts are public. The admission gate rechecks
+the provider-specific state transition; other registries never inherit
+@8bitcn's generic gesture contracts by name alone. Local on-demand source builds now
+recognize namespaces already represented by validated reviewed manifest
+entries; they remain local, build-only and never count as independently
+verified interactions. The fixed catalog denominator is 84,145, with
+23 published interaction-verified and 84,122 unverified identities.
+
+The observed 21st.dev /community/authors route has a new corresponding Atlas
+/authors route. This implementation is specifically a **catalog-attribution
+directory**, not a copy of the external platform's Top Authors ranking or
+account profiles: the local catalog lacks follower/ranking/account evidence.
+It aggregates exact named author fields on distinct component identities,
+escapes imported text, supports filtered/paginated listing, exact-name
+component results and a shareable ?author= URL, and preserves the directory
+on clear and reload. Unknown authors remain unavailable; no inferred profiles
+or author-owned metadata are generated. The acceptance matrix now expects
+an actual Authors page, not an intentionally unavailable route. Other
+reference route families such as Newest, Featured and theme editing remain
+separate uncompleted work, as does sitewide 21st.dev behavioral parity.

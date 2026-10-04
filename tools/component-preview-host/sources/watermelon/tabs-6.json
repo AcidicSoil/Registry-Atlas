@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-6",
+  "type": "registry:component",
+  "title": "Tabs 6",
+  "description": "Tabs 6. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-6.tsx",
+      "type": "registry:component",
+      "content": "import { Badge } from '@/components/base-ui/badge';\nimport {\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n} from '@/components/base-ui/tabs';\n\nconst analytics = [\n  {\n    name: 'Conversions',\n    value: 'conversions',\n    count: '12',\n    content: (\n      <>\n        Track your{' '}\n        <span className=\"text-foreground font-semibold\">\n          funnel success rate\n        </span>\n        . Analyze the percentage of users who complete a desired action, from\n        sign-ups to successful purchases across your platform.\n      </>\n    ),\n  },\n  {\n    name: 'Engagement',\n    value: 'engagement',\n    count: '8',\n    content: (\n      <>\n        Measure your{' '}\n        <span className=\"text-foreground font-semibold\">\n          audience stickiness\n        </span>\n        . Monitor daily active sessions, session time, and click-through rates\n        on your most critical user interfaces.\n      </>\n    ),\n  },\n  {\n    name: 'Bounce Rate',\n    value: 'bounce',\n    count: '24',\n    content: (\n      <>\n        Optimize your{' '}\n        <span className=\"text-foreground font-semibold\">\n          landing performance\n        </span>\n        . Identify pages where users are dropping off and implement design\n        improvements to keep them browsing your site.\n      </>\n    ),\n  },\n];\n\nconst Tabs6 = () => {\n  return (\n    <Tabs defaultValue=\"conversions\" className=\"gap-4\">\n      <TabsList className=\"!h-14 gap-1 rounded-2xl bg-zinc-100/80 px-1 py-1.5 shadow-inner dark:bg-zinc-900/50\">\n        {analytics.map((tab) => (\n          <TabsTrigger\n            key={tab.value}\n            value={tab.value}\n            className=\"data-[state=active]:bg-background data-[state=active]:text-foreground flex h-auto flex-col items-center justify-center gap-0.5 rounded-xl px-2 py-1 text-xs font-semibold tracking-tight transition-all duration-300 data-[state=active]:shadow-md\"\n          >\n            <Badge className=\"bg-primary flex size-5 items-center justify-center rounded-md border-0 p-0 text-[9px] font-bold tabular-nums\">\n              {tab.count}\n            </Badge>\n            <span className=\"text-muted-foreground group-data-[state=active]:text-foreground transition-colors\">\n              {tab.name}\n            </span>\n          </TabsTrigger>\n        ))}\n      </TabsList>\n\n      {analytics.map((tab) => (\n        <TabsContent\n          key={tab.value}\n          value={tab.value}\n          className=\"animate-in fade-in slide-in-from-bottom-2 duration-500\"\n        >\n          <div className=\"flex flex-wrap items-baseline gap-2\">\n            <h4 className=\"text-xl font-black tracking-tight\">{tab.name}</h4>\n            <span className=\"text-muted-foreground/60 text-xs font-medium\">\n              / Performance Metrics\n            </span>\n          </div>\n          <p className=\"text-muted-foreground mt-2 leading-relaxed\">\n            {tab.content}\n          </p>\n        </TabsContent>\n      ))}\n    </Tabs>\n  );\n};\n\nexport default Tabs6;\n"
+    }
+  ]
+}

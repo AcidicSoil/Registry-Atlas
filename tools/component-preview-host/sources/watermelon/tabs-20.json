@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-20",
+  "type": "registry:component",
+  "title": "Tabs 20",
+  "description": "Tabs 20. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-20.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n} from '@/components/base-ui/tabs';\n\nconst audioFeatures = [\n  {\n    name: 'Playlists',\n    value: 'playlists',\n    song: 'Midnight Drive',\n    artist: 'The Midnight',\n    content:\n      'Curate your perfect soundtrack. Organize your favorite tracks into custom playlists for every mood, workout, or late-night drive.',\n  },\n  {\n    name: 'Podcasts',\n    value: 'podcasts',\n    song: 'Tech Today',\n    artist: 'Developer Chronicles',\n    content:\n      'Stay informed and entertained. Subscribe to top-rated tech podcasts, download episodes for offline listening, and never miss an update.',\n  },\n  {\n    name: 'Radio',\n    value: 'radio',\n    song: 'Lo-Fi Chill Beats',\n    artist: 'Global Station',\n    content:\n      'Discover new music effortlessly. Tune into algorithm-generated stations based on your listening history and favorite genres.',\n  },\n];\n\nconst Tabs20 = () => {\n  return (\n    <Tabs\n      defaultValue=\"playlists\"\n      orientation=\"vertical\"\n      className=\"flex gap-4\"\n    >\n      <TabsList className=\"bg-background h-auto shrink-0 flex-col gap-1 rounded-none p-0\">\n        {audioFeatures.map((tab) => (\n          <TabsTrigger\n            key={tab.value}\n            value={tab.value}\n            className=\"flex w-full justify-start rounded-none border-0 border-l-2 border-transparent px-3 py-1 font-medium transition-all data-[state=active]:border-rose-500 data-[state=active]:text-rose-700 data-[state=active]:shadow-none! dark:data-[state=active]:text-rose-400\"\n          >\n            {tab.name}\n          </TabsTrigger>\n        ))}\n      </TabsList>\n\n      <div className=\"flex-1\">\n        {audioFeatures.map((tab) => (\n          <TabsContent\n            key={tab.value}\n            value={tab.value}\n            className=\"animate-in fade-in slide-in-from-right-4 m-0 duration-500\"\n          >\n            <div className=\"rounded-3xl border border-rose-100 bg-rose-50/30 p-6 dark:border-rose-900/30 dark:bg-rose-950/20\">\n              <div className=\"mb-4 flex items-center gap-3\">\n                <div>\n                  <h4 className=\"text-base font-bold tracking-tight text-rose-950 dark:text-rose-50\">\n                    Now Playing: {tab.song}\n                  </h4>\n                  <span className=\"text-[10px] font-bold tracking-widest text-rose-600 uppercase dark:text-rose-400\">\n                    {tab.artist}\n                  </span>\n                </div>\n              </div>\n\n              <p className=\"text-sm leading-relaxed text-rose-900/70 dark:text-rose-100/60\">\n                {tab.content}\n              </p>\n\n              <div className=\"mt-4 overflow-hidden rounded-full outline outline-1 outline-rose-200/50 dark:outline-rose-800/50\">\n                <div className=\"h-1.5 w-full bg-rose-200 dark:bg-rose-900/50\">\n                  <div className=\"h-full w-2/5 rounded-r-full bg-rose-500 dark:bg-rose-400\" />\n                </div>\n              </div>\n            </div>\n          </TabsContent>\n        ))}\n      </div>\n    </Tabs>\n  );\n};\n\nexport default Tabs20;\n"
+    }
+  ]
+}

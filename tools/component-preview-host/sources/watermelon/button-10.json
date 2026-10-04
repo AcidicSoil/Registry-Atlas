@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-10",
+  "type": "registry:component",
+  "title": "Button 10",
+  "description": "Button 10. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-10.tsx",
+      "type": "registry:component",
+      "content": "import { BiSolidZap } from 'react-icons/bi';\n\nimport { Button } from '@/components/base-ui/button';\n\nconst Button10 = () => {\n  return (\n    <Button className=\"bg-transparent bg-gradient-to-r from-sky-600 via-sky-500 to-sky-600 [background-size:200%_auto] [background-position:0%_center] text-white transition-[background-position] duration-500 ease-out hover:bg-transparent hover:[background-position:100%_center] focus-visible:ring-sky-600/20 dark:from-sky-400 dark:via-sky-300 dark:to-sky-400 dark:focus-visible:ring-sky-400/40\">\n      Upgrade <BiSolidZap />\n    </Button>\n  );\n};\n\nexport default Button10;\n"
+    }
+  ]
+}

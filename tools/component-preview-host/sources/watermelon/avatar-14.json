@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-14",
+  "type": "registry:component",
+  "title": "Avatar 14",
+  "description": "Avatar 14. Displays images, icons, or text in a circular or rounded shape.",
+  "dependencies": [],
+  "registryDependencies": [
+    "avatar"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/avatar-14.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Avatar,\n  AvatarFallback,\n  AvatarGroup,\n  AvatarGroupCount,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\n\ntype Profile = {\n  name: string;\n  src: string;\n};\nconst avatars: readonly Profile[] = [\n  {\n    src: 'https://assets.watermelon.sh/wm_ben.png',\n    name: 'Mark',\n  },\n  {\n    src: 'https://assets.watermelon.sh/wm_olivia.png',\n    name: 'Olivia',\n  },\n  {\n    src: 'https://assets.watermelon.sh/wm_josh.png',\n    name: 'Josh',\n  },\n  {\n    src: 'https://assets.watermelon.sh/wm_emma.png',\n    name: 'Emma',\n  },\n] as const;\n\nconst overflowCount = 6;\n\nconst getInitials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .map((word) => word.slice(0, 1))\n    .join('');\n\nconst Avatar14 = () => {\n  return (\n    <AvatarGroup>\n      {avatars.map((avatar) => (\n        <Avatar key={avatar.name}>\n          <AvatarImage src={avatar.src} alt={avatar.name} />\n          <AvatarFallback className=\"text-xs\">\n            {getInitials(avatar.name)}\n          </AvatarFallback>\n        </Avatar>\n      ))}\n      <AvatarGroupCount className=\"text-xs\">+{overflowCount}</AvatarGroupCount>\n    </AvatarGroup>\n  );\n};\n\nexport default Avatar14;\n"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-10",
+  "type": "registry:component",
+  "title": "Avatar 10",
+  "description": "Avatar 10. Displays images, icons, or text in a circular or rounded shape.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "avatar"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/avatar-10.tsx",
+      "type": "registry:component",
+      "content": "import { PlusCircleIcon } from 'lucide-react';\n\nimport {\n  Avatar,\n  AvatarFallback,\n  AvatarImage,\n} from '@/components/base-ui/avatar';\n\ntype Profile = {\n  name: string;\n  avatar: string;\n  actionLabel: string;\n};\n\nconst profile: Profile = {\n  name: 'Emma',\n  avatar: 'https://assets.watermelon.sh/wm_emma.png',\n  actionLabel: 'Invite',\n};\n\nconst getInitials = (name: string) =>\n  name\n    .split(/\\s+/)\n    .map((word) => word.slice(0, 1))\n    .join('');\n\nconst Avatar10 = () => {\n  return (\n    <div className=\"relative w-fit\">\n      <Avatar className=\"size-10\">\n        <AvatarImage src={profile.avatar} alt={profile.name} />\n        <AvatarFallback className=\"text-xs\">\n          {getInitials(profile.name)}\n        </AvatarFallback>\n      </Avatar>\n      <button className=\"focus-visible:ring-ring/50 absolute -right-1 -bottom-1 inline-flex cursor-pointer items-center justify-center rounded-full focus-visible:ring-[3px] focus-visible:outline-none\">\n        <PlusCircleIcon className=\"text-background size-5 fill-slate-400\" />\n        <span className=\"sr-only\">{profile.actionLabel}</span>\n      </button>\n    </div>\n  );\n};\n\nexport default Avatar10;\n"
+    }
+  ]
+}

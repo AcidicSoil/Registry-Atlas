@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "textarea-14",
+  "type": "registry:component",
+  "title": "Textarea 14",
+  "description": "Textarea 14. A multi-line input field that allows users to enter longer blocks of text, such as messages, descriptions, or comments.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "textarea"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/textarea-14.tsx",
+      "type": "registry:component",
+      "content": "import { useId } from 'react';\n\nimport { Label } from '@/components/base-ui/label';\nimport { Textarea } from '@/components/base-ui/textarea';\n\nconst Textarea14 = () => {\n  const id = useId();\n\n  return (\n    <div className=\"w-full max-w-sm space-y-2\">\n      <Label htmlFor={id}>Live input</Label>\n      <Textarea\n        id={id}\n        placeholder=\"Start typing and it will expand...\"\n        className=\"focus-visible:ring-primary/20 focus-visible:border-primary/50 field-sizing-content max-h-30 min-h-0 resize-none rounded-sm py-1.75 shadow-sm\"\n      />\n    </div>\n  );\n};\n\nexport default Textarea14;\n"
+    }
+  ]
+}

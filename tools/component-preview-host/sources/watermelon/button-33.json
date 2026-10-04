@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-33",
+  "type": "registry:component",
+  "title": "Button 33",
+  "description": "Button 33. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "badge",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-33.tsx",
+      "type": "registry:component",
+      "content": "import { IoMailOpenOutline } from 'react-icons/io5';\n\nimport { Badge } from '@/components/base-ui/badge';\nimport { Button } from '@/components/base-ui/button';\n\nconst Button33 = () => {\n  return (\n    <Button variant=\"outline\">\n      <IoMailOpenOutline />\n      Inbox\n      <Badge variant=\"destructive\" className=\"px-1.5 py-px\">\n        99+\n      </Badge>\n    </Button>\n  );\n};\n\nexport default Button33;\n"
+    }
+  ]
+}

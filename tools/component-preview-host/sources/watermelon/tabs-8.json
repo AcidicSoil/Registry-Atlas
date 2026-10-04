@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-8",
+  "type": "registry:component",
+  "title": "Tabs 8",
+  "description": "Tabs 8. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-8.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n} from '@/components/base-ui/tabs';\n\nconst creativeStudio = [\n  {\n    name: 'Illustrate',\n    value: 'illustrate',\n    content: (\n      <>\n        Bring your{' '}\n        <span className=\"text-foreground font-semibold\">visual stories</span> to\n        life. Use advanced vector tools, custom brushes, and layered\n        compositions to create stunning artwork from scratch.\n      </>\n    ),\n  },\n  {\n    name: 'Design',\n    value: 'design',\n    content: (\n      <>\n        Structure your{' '}\n        <span className=\"text-foreground font-semibold\">\n          digital interfaces\n        </span>\n        . Build reusable component libraries, interactive prototypes, and\n        scalable layouts for web and mobile platforms.\n      </>\n    ),\n  },\n  {\n    name: 'Animate',\n    value: 'animate',\n    content: (\n      <>\n        Master the{' '}\n        <span className=\"text-foreground font-semibold\">art of motion</span>.\n        Add fluid transitions, physically-driven physics, and keyframe-based\n        timelines to captivate your audience.\n      </>\n    ),\n  },\n];\n\nconst Tabs8 = () => {\n  return (\n    <Tabs defaultValue=\"illustrate\" className=\"w-full gap-4 px-1\">\n      <div className=\"w-fit max-w-full overflow-x-auto overflow-y-hidden scrollbar-hide py-0.5\">\n        <TabsList className=\"bg-transparent flex w-max justify-start gap-1\">\n          {creativeStudio.map((tab) => (\n            <TabsTrigger\n              key={tab.value}\n              value={tab.value}\n              className=\"rounded-full px-6 py-3 text-xs uppercase transition-all data-[state=active]:bg-indigo-500 data-[state=active]:text-white data-[state=active]:shadow-lg dark:data-[state=active]:bg-indigo-600\"\n            >\n              {tab.name}\n            </TabsTrigger>\n          ))}\n        </TabsList>\n      </div>\n\n      {creativeStudio.map((tab) => (\n        <TabsContent\n          key={tab.value}\n          value={tab.value}\n          className=\"animate-in slide-in-from-bottom-2 fade-in\"\n        >\n          <h6 className=\"mb-2 text-xl font-black tracking-tighter text-indigo-600 italic dark:text-indigo-400\">\n            {tab.name}\n          </h6>\n          <p className=\"text-muted-foreground/90 text-sm leading-relaxed\">\n            {tab.content}\n          </p>\n        </TabsContent>\n      ))}\n    </Tabs>\n  );\n};\n\nexport default Tabs8;\n"
+    }
+  ]
+}

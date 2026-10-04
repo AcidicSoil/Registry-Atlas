@@ -3,6 +3,7 @@ export type CatalogRoute =
   | { kind: "not-found"; path: string }
   | { kind: "components"; pathSearchTerm?: string }
   | { kind: "explore"; collection: string }
+  | { kind: "authors" }
   | { kind: "registries" }
   | { kind: "registry"; namespace: string }
   | { kind: "component"; namespace: string; slug: string }
@@ -48,6 +49,7 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
     return { kind: "explore", collection: decoded[2] };
   }
 
+  if (decoded.length === 1 && decoded[0] === "authors") return { kind: "authors" };
   if (decoded.length === 1 && decoded[0] === "registries") return { kind: "registries" };
   if (decoded.length === 1 && decoded[0] === "templates") return { kind: "templates" };
   if (decoded.length === 1 && decoded[0] === "themes") return { kind: "themes" };
@@ -115,6 +117,7 @@ export function catalogRoutePath(route: CatalogRoute, basePath = "/"): string {
     return joinBase(base, "components");
   }
   if (route.kind === "explore") return joinBase(base, `components/explore/${encodeSegment(route.collection)}`);
+  if (route.kind === "authors") return joinBase(base, "authors");
   if (route.kind === "registries") return joinBase(base, "registries");
   if (route.kind === "templates") return joinBase(base, "templates");
   if (route.kind === "themes") return joinBase(base, "themes");

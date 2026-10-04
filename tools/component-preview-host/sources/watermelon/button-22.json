@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-22",
+  "type": "registry:component",
+  "title": "Button 22",
+  "description": "Button 22. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-22.tsx",
+      "type": "registry:component",
+      "content": "import { FcGoogle } from 'react-icons/fc';\nimport { FaXTwitter, FaGithub, FaFacebook } from 'react-icons/fa6';\n\nimport { Button } from '@/components/base-ui/button';\n\nconst Button22 = () => {\n  return (\n    <div className=\"flex w-full max-w-56 flex-col justify-center gap-4\">\n      <Button\n        variant=\"outline\"\n        className=\"flex items-center gap-2 !border-red-500 bg-red-600/5 !text-red-600\"\n      >\n        <FcGoogle className=\"size-5\" />\n        <span className=\"flex flex-1 justify-center\">Continue with Google</span>\n      </Button>\n\n      <Button\n        variant=\"outline\"\n        className=\"flex items-center gap-2 border-black bg-black/5 text-black dark:border-white dark:text-white\"\n      >\n        <FaXTwitter className=\"size-5\" />\n        <span className=\"flex flex-1 justify-center\">Continue with X</span>\n      </Button>\n\n      <Button\n        variant=\"outline\"\n        className=\"flex items-center gap-2 !border-blue-600 bg-blue-600/5 !text-blue-600\"\n      >\n        <FaFacebook className=\"size-5 text-[#0866fe]\" />\n        <span className=\"flex flex-1 justify-center\">\n          Continue with Facebook\n        </span>\n      </Button>\n\n      <Button\n        variant=\"outline\"\n        className=\"flex items-center gap-2 border-black bg-black/5 text-black dark:border-white dark:text-white\"\n      >\n        <FaGithub className=\"size-5\" />\n        <span className=\"flex flex-1 justify-center\">Continue with GitHub</span>\n      </Button>\n    </div>\n  );\n};\n\nexport default Button22;\n"
+    }
+  ]
+}

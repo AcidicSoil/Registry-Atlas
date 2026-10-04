@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-7",
+  "type": "registry:component",
+  "title": "Button 7",
+  "description": "Button 7. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-7.tsx",
+      "type": "registry:component",
+      "content": "import { Button } from '@/components/base-ui/button';\n\nconst Button7 = () => {\n  return <Button size=\"lg\">Size Large</Button>;\n};\n\nexport default Button7;\n"
+    }
+  ]
+}

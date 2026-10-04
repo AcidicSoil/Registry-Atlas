@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-3",
+  "type": "registry:component",
+  "title": "Tabs 3",
+  "description": "Tabs 3. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "tabs"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-3.tsx",
+      "type": "registry:component",
+      "content": "import { IconBroadcast, IconFlame, IconSearch } from '@tabler/icons-react'\n\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/base-ui/tabs'\n\nconst feeds = [\n  {\n    name: 'Discovery',\n    value: 'discovery',\n    icon: IconSearch,\n    content: (\n      <>\n        Explore <span className='text-foreground font-semibold'>original content</span>, rising creators, and niche\n        communities worldwide. Dive into a personalized feed built from your interests and interactions.\n      </>\n    )\n  },\n  {\n    name: 'Trending',\n    value: 'trending',\n    icon: IconFlame,\n    content: (\n      <>\n        Stay on top of <span className='text-foreground font-semibold'>what&apos;s hot</span>. Find viral conversations,\n        breaking discussions, and the most engaging moments happening right now.\n      </>\n    )\n  },\n  {\n    name: 'Live Streams',\n    value: 'live',\n    icon: IconBroadcast,\n    content: (\n      <>\n        Join <span className='text-foreground font-semibold'>real-time broadcasts</span>. Connect with your favorite\n        hosts through live chat, interactive polls, and exclusive digital events.\n      </>\n    )\n  }\n]\n\nconst Tabs3 = () => {\n  return (\n    <div className='w-full max-w-md'>\n      <Tabs defaultValue='discovery' className='gap-4'>\n        <TabsList className='bg-muted h-10 gap-2 rounded-full px-1 !h-9'>\n          {feeds.map(({ icon: Icon, name, value }) => (\n            <TabsTrigger\n              key={value}\n              value={value}\n              className='rounded-xl px-4 py-3 text-sm font-medium transition-all data-[state=active]:bg-background data-[state=active]:text-primary dark:data-[state=active]:text-primary data-[state=active]:shadow-sm dark:data-[state=active]:bg-muted/80'\n            >\n              <Icon size={14} stroke={2.5} />\n              <span className='hidden sm:inline'>{name}</span>\n            </TabsTrigger>\n          ))}\n        </TabsList>\n\n        {feeds.map(tab => (\n          <TabsContent key={tab.value} value={tab.value} className='animate-in fade-in slide-in-from-top-1 px-1'>\n            <p className='text-muted-foreground/80 text-sm italic leading-relaxed'>{tab.content}</p>\n          </TabsContent>\n        ))}\n      </Tabs>\n    </div>\n  )\n}\n\nexport default Tabs3\n"
+    }
+  ]
+}

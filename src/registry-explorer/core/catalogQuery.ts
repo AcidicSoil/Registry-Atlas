@@ -37,6 +37,7 @@ export interface CatalogComponent {
 
 export interface CatalogQueryOptions {
   search?: string;
+  author?: string;
   registryNames?: readonly string[];
   itemTypes?: readonly string[];
   categories?: readonly string[];
@@ -110,6 +111,7 @@ export function queryCatalogComponents(
     const reviewed = reviewedByRegistry.get(namespace) ?? new Map<string, RegistryItemSummary>();
 
     for (const item of index.registries[namespace] ?? []) {
+      if (options.author !== undefined && item.author?.trim() !== options.author) continue;
       const overlay = reviewed.get(registryCatalogItemIdentity(item.name));
       const verifiedPreview = visualPreviews[`${namespace}/${item.name}`];
       if (options.visualOnly && !(verifiedPreview || overlay?.previewUrl || item.themePreview)) continue;

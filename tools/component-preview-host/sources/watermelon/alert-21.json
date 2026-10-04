@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "alert-21",
+  "type": "registry:component",
+  "title": "Alert 21",
+  "description": "Alert 21. A component used to display important messages, notifications, or feedback to the user.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "alert"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/alert-21.tsx",
+      "type": "registry:component",
+      "content": "import {\n  Alert,\n  AlertTitle,\n  AlertDescription,\n} from '@/components/base-ui/alert';\nimport { MdError } from 'react-icons/md';\n\nconst Alert21 = () => {\n  return (\n    <Alert className=\"bg-primary/5 border-none\">\n      <MdError className=\"size-4\" />\n      <AlertTitle>Supported file formats</AlertTitle>\n      <AlertDescription>\n        You can upload files in PDF, DOCX, JPG, or PNG format for a smooth\n        experience.\n      </AlertDescription>\n    </Alert>\n  );\n};\n\nexport default Alert21;\n"
+    }
+  ]
+}

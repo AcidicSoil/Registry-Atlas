@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "avatar-6",
+  "type": "registry:component",
+  "title": "Avatar 6",
+  "description": "Avatar 6. Displays images, icons, or text in a circular or rounded shape.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "avatar"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/avatar-6.tsx",
+      "type": "registry:component",
+      "content": "import type { LucideIcon } from 'lucide-react';\nimport { BriefcaseIcon } from 'lucide-react';\n\nimport { Avatar, AvatarFallback } from '@/components/base-ui/avatar';\n\ntype Profile = {\n  label: string;\n  icon: LucideIcon;\n};\n\nconst profile: Profile = {\n  label: 'Operations',\n  icon: BriefcaseIcon,\n};\n\nconst Avatar6 = () => {\n  const Icon = profile.icon;\n\n  return (\n    <Avatar>\n      <AvatarFallback className=\"bg-emerald-500/10 text-emerald-600 dark:text-emerald-400\">\n        <Icon className=\"size-4\" />\n      </AvatarFallback>\n    </Avatar>\n  );\n};\n\nexport default Avatar6;\n"
+    }
+  ]
+}

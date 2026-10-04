@@ -1,0 +1,20 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip-4",
+  "type": "registry:component",
+  "title": "Tooltip 4",
+  "description": "Tooltip 4. A small popup that appears when a user hovers over or focuses on an element, providing additional information or context.",
+  "dependencies": [],
+  "registryDependencies": [
+    "badge",
+    "button",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tooltip-4.tsx",
+      "type": "registry:component",
+      "content": "import { Badge } from '@/components/base-ui/badge';\nimport { Button } from '@/components/base-ui/button';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\nconst Tooltip4 = () => {\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\" size=\"sm\">\n          Badge\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent>\n        <div className=\"flex items-center gap-2 whitespace-nowrap\">\n          <span className=\"text-xs\">$99/month per user</span>\n          <Badge\n            variant=\"secondary\"\n            className=\"rounded-full px-2 py-0.5 text-xs\"\n          >\n            Popular\n          </Badge>\n        </div>\n      </TooltipContent>\n    </Tooltip>\n  );\n};\n\nexport default Tooltip4;\n"
+    }
+  ]
+}

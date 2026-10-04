@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-1",
+  "type": "registry:component",
+  "title": "Button 1",
+  "description": "Button 1. An interactive element used to trigger actions, submissions, or navigation.",
+  "dependencies": [],
+  "registryDependencies": [
+    "button"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-1.tsx",
+      "type": "registry:component",
+      "content": "import { Button } from '@/components/base-ui/button';\n\nconst Button1 = () => {\n  return <Button variant=\"default\">Default Button</Button>;\n};\n\nexport default Button1;\n"
+    }
+  ]
+}

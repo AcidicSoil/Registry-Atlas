@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "collapsible-7",
+  "type": "registry:component",
+  "title": "Collapsible 7",
+  "description": "Collapsible 7. A collapsible is a component that allows users to show or hide content.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "card",
+    "collapsible"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/collapsible-7.tsx",
+      "type": "registry:component",
+      "content": "'use client';\n\nimport { useState } from 'react';\n\nimport { ChevronUpIcon } from 'lucide-react';\n\nimport { Button } from '@/components/base-ui/button';\nimport {\n  Card,\n  CardAction,\n  CardContent,\n  CardTitle,\n} from '@/components/base-ui/card';\nimport {\n  Collapsible,\n  CollapsibleContent,\n  CollapsibleTrigger,\n} from '@/components/base-ui/collapsible';\n\ntype HelpCard = {\n  answer: string;\n  imageAlt: string;\n  imageSrc: string;\n  question: string;\n};\n\nconst helpCard: HelpCard = {\n  answer:\n    'Once your shipment is packed, we will send a delivery link by email. You can open it any time to see the courier status and the latest package movement.',\n  imageAlt: 'Package ready for shipment on a desk',\n  imageSrc:\n    'https://images.pexels.com/photos/6169132/pexels-photo-6169132.jpeg?auto=compress&cs=tinysrgb&w=1200',\n  question: 'How can I follow a shipment update?',\n};\n\nconst Collapsible7 = () => {\n  const [open, setOpen] = useState<boolean>(false);\n\n  return (\n    <Card className=\"border-border/70 w-full max-w-md overflow-hidden rounded-none p-0 shadow-xl\">\n      <Collapsible open={open} onOpenChange={setOpen}>\n        <div className=\"flex items-center justify-between px-6 py-5\">\n          <CardTitle className=\"text-base\">{helpCard.question}</CardTitle>\n          <CardAction>\n            <CollapsibleTrigger>\n              <Button variant=\"outline\" size=\"sm\" className=\"border-border/70\">\n                <span>{open ? 'Hide' : 'Show'}</span>\n                <ChevronUpIcon\n                  className={`size-4 transition-transform ${open ? '' : 'rotate-180'}`}\n                />\n              </Button>\n            </CollapsibleTrigger>\n          </CardAction>\n        </div>\n        <CollapsibleContent>\n          <CardContent className=\"space-y-3 px-0 pb-0\">\n            <p className=\"text-muted-foreground px-6 text-sm leading-6\">\n              {helpCard.answer}\n            </p>\n            <img\n              src={helpCard.imageSrc}\n              alt={helpCard.imageAlt}\n              className=\"aspect-video h-70 w-full object-cover\"\n            />\n          </CardContent>\n        </CollapsibleContent>\n      </Collapsible>\n    </Card>\n  );\n};\n\nexport default Collapsible7;\n"
+    }
+  ]
+}

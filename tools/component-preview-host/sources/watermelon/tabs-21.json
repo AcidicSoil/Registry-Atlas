@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tabs-21",
+  "type": "registry:component",
+  "title": "Tabs 21",
+  "description": "Tabs 21. A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+  "dependencies": [
+    "@tabler/icons-react"
+  ],
+  "registryDependencies": [
+    "tabs",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tabs-21.tsx",
+      "type": "registry:component",
+      "content": "import {\n  IconCloudUpload,\n  IconDownload,\n  IconSettings,\n} from '@tabler/icons-react';\n\nimport {\n  Tabs,\n  TabsContent,\n  TabsList,\n  TabsTrigger,\n} from '@/components/base-ui/tabs';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\nconst documentation = [\n  {\n    name: 'Installation',\n    value: 'installation',\n    icon: IconDownload,\n    title: 'Getting Started',\n    content:\n      'Our package requires Node.js v16+ and a modern package manager. Run the installation script in your terminal to automatically configure the necessary dependencies, add utility functions, and inject boilerplate code directly into your current workspace.',\n  },\n  {\n    name: 'Configuration',\n    value: 'config',\n    icon: IconSettings,\n    title: 'Tailoring the Setup',\n    content:\n      'Out of the box, our system provides sensible, secure defaults. However, you can override any setting by creating a unified config file at the root of your project. This allows you to customize the underlying themes, routing logic, and compiler options.',\n  },\n  {\n    name: 'Deployment',\n    value: 'deployment',\n    icon: IconCloudUpload,\n    title: 'Going Live',\n    content:\n      'When you are ready to ship, our CLI wraps your application into an optimized, minified production build. You can deploy it to Vercel, Netlify, or any standard Node server environment simply by passing the production build flag.',\n  },\n];\n\nconst Tabs21 = () => {\n  return (\n    <Tabs\n      defaultValue=\"installation\"\n      orientation=\"vertical\"\n      className=\"flex gap-10\"\n    >\n      <TabsList className=\"bg-muted h-auto flex-col items-center gap-2 rounded-2xl p-1\">\n        {documentation.map(({ icon: Icon, name, value }) => (\n          <Tooltip key={value}>\n            <TooltipTrigger asChild>\n              <span>\n                <TabsTrigger\n                  value={value}\n                  className=\"data-[state=active]:bg-primary data-[state=active]:text-primary-foreground dark:hover:bg-muted dark:data-[state=active]:bg-primary relative flex size-8 items-center justify-center rounded-full py-1 transition-all duration-300 data-[state=active]:shadow-lg\"\n                >\n                  <Icon size={22} stroke={2} />\n                </TabsTrigger>\n              </span>\n            </TooltipTrigger>\n            <TooltipContent\n              className=\"px-3 py-1.5 text-xs font-bold\"\n              side=\"right\"\n            >\n              {name}\n            </TooltipContent>\n          </Tooltip>\n        ))}\n      </TabsList>\n\n      <div className=\"flex-1\">\n        {documentation.map((tab) => (\n          <TabsContent\n            key={tab.value}\n            value={tab.value}\n            className=\"animate-in slide-in-from-right-8 fade-in m-0 duration-500\"\n          >\n            {/* Typographic Layout - No Card Wrapper */}\n            <h3 className=\"text-foreground text-2xl font-semibold tracking-tighter\">\n              {tab.title}.\n            </h3>\n\n            <div className=\"bg-primary my-2.5 h-1 w-12 rounded-full\" />\n\n            <p className=\"text-muted-foreground text-sm\">{tab.content}</p>\n\n            <div className=\"border-border mt-4 border-t border-dashed pt-2\">\n              <p className=\"text-muted-foreground/50 text-xs font-semibold\">\n                Documentation • Last updated today\n              </p>\n            </div>\n          </TabsContent>\n        ))}\n      </div>\n    </Tabs>\n  );\n};\n\nexport default Tabs21;\n"
+    }
+  ]
+}

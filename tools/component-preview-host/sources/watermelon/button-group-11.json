@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-group-11",
+  "type": "registry:component",
+  "title": "ButtonGroup 11",
+  "description": "ButtonGroup 11. A group of buttons that are displayed together.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "dropdown-menu"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/button-group-11.tsx",
+      "type": "registry:component",
+      "content": "'use client';\n\nimport { useMemo, useState } from 'react';\n\nimport type { LucideIcon } from 'lucide-react';\nimport { ChevronDownIcon, SendIcon } from 'lucide-react';\n\nimport { Button } from '@/components/base-ui/button';\nimport {\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuRadioGroup,\n  DropdownMenuRadioItem,\n  DropdownMenuTrigger,\n} from '@/components/base-ui/dropdown-menu';\n\ntype ActionOption = {\n  description: string;\n  icon: LucideIcon;\n  label: string;\n  value: string;\n};\n\nconst options: readonly ActionOption[] = [\n  {\n    description:\n      'Send the update to everyone currently assigned to the thread.',\n    icon: SendIcon,\n    label: 'Send Update',\n    value: 'send',\n  },\n  {\n    description:\n      'Send the message and flag it for follow-up during the next review.',\n    icon: SendIcon,\n    label: 'Send and Review',\n    value: 'review',\n  },\n  {\n    description:\n      'Queue the message as a draft so the team can check it before sending.',\n    icon: SendIcon,\n    label: 'Save as Draft',\n    value: 'draft',\n  },\n] as const;\n\nconst ButtonGroup11 = () => {\n  const [selectedValue, setSelectedValue] = useState<ActionOption['value']>(\n    options[0].value,\n  );\n\n  const selectedOption = useMemo(\n    () =>\n      options.find((option) => option.value === selectedValue) ?? options[0],\n    [selectedValue],\n  );\n\n  const SelectedIcon = selectedOption.icon;\n\n  return (\n    <div className=\"divide-primary-foreground/20 inline-flex w-fit divide-x overflow-hidden rounded-md shadow-xs\">\n      <Button className=\"gap-2 rounded-none rounded-l-md px-3.5 shadow-none focus-visible:z-10\">\n        <SelectedIcon className=\"size-4\" />\n        {selectedOption.label}\n      </Button>\n      <DropdownMenu>\n        <DropdownMenuTrigger>\n          <Button\n            size=\"icon\"\n            className=\"rounded-none rounded-r-md shadow-none focus-visible:z-10\"\n          >\n            <ChevronDownIcon className=\"size-4\" />\n            <span className=\"sr-only\">Select action</span>\n          </Button>\n        </DropdownMenuTrigger>\n        <DropdownMenuContent\n          side=\"bottom\"\n          sideOffset={4}\n          align=\"end\"\n          className=\"w-80 max-w-[calc(100vw-2rem)]\"\n        >\n          <DropdownMenuRadioGroup\n            value={selectedValue}\n            onValueChange={(value) =>\n              setSelectedValue(value as ActionOption['value'])\n            }\n          >\n            {options.map((option) => {\n              const Icon = option.icon;\n\n              return (\n                <DropdownMenuRadioItem\n                  key={option.value}\n                  value={option.value}\n                  className=\"items-start [&>span]:pt-1.5\"\n                >\n                  <div className=\"flex gap-2\">\n                    <Icon className=\"text-muted-foreground mt-0.5 size-4\" />\n                    <div className=\"flex flex-col gap-1\">\n                      <span className=\"text-sm font-medium\">\n                        {option.label}\n                      </span>\n                      <span className=\"text-muted-foreground text-xs\">\n                        {option.description}\n                      </span>\n                    </div>\n                  </div>\n                </DropdownMenuRadioItem>\n              );\n            })}\n          </DropdownMenuRadioGroup>\n        </DropdownMenuContent>\n      </DropdownMenu>\n    </div>\n  );\n};\n\nexport default ButtonGroup11;\n"
+    }
+  ]
+}

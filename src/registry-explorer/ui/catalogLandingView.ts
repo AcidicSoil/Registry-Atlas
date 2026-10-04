@@ -28,6 +28,7 @@ export function renderCatalogLanding(
   const componentsPath = catalogRoutePath({ kind: "components" }, options.basePath);
   const templatesPath = catalogRoutePath({ kind: "templates" }, options.basePath);
   const themesPath = catalogRoutePath({ kind: "themes" }, options.basePath);
+  const authorsPath = catalogRoutePath({ kind: "authors" }, options.basePath);
 
   bodyRoot.innerHTML = `
     <section class="landing-metrics" aria-label="Catalog totals">
@@ -40,6 +41,7 @@ export function renderCatalogLanding(
       <button type="button" data-catalog-route="${escapeHtml(templatesPath)}">Browse templates</button>
       <button type="button" data-catalog-route="${escapeHtml(themesPath)}">Browse themes</button>
       <button type="button" data-catalog-route="${escapeHtml(registriesPath)}">Browse registries</button>
+      <button type="button" data-catalog-route="${escapeHtml(authorsPath)}">Browse authors</button>
     </nav>
     <section class="landing-section">
       <div class="landing-section-heading">

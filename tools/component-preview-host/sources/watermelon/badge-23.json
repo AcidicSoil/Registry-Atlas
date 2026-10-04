@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge-23",
+  "type": "registry:component",
+  "title": "Badge 23",
+  "description": "Badge 23. A small visual indicator used to highlight status, counts, or labels.",
+  "dependencies": [
+    "react-icons"
+  ],
+  "registryDependencies": [
+    "avatar",
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/badge-23.tsx",
+      "type": "registry:component",
+      "content": "import { FaShoppingCart } from 'react-icons/fa';\n\nimport { Avatar, AvatarFallback } from '@/components/base-ui/avatar';\nimport { Badge } from '@/components/ui/badge';\n\nconst Badge23 = () => {\n  return (\n    <div className=\"relative w-fit\">\n      <Avatar className=\"size-9 rounded-sm after:border-none\">\n        <AvatarFallback className=\"rounded-sm\">\n          <FaShoppingCart className=\"size-5\" />\n        </AvatarFallback>\n      </Avatar>\n      <Badge className=\"absolute -top-2.5 -right-2.5 h-5 min-w-5 px-1 tabular-nums\">\n        8\n      </Badge>\n    </div>\n  );\n};\n\nexport default Badge23;\n"
+    }
+  ]
+}

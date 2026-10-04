@@ -47,7 +47,7 @@ const routes = [
   { name: 'components', path: '/components', requireItems: true },
   { name: 'components-search-button', path: '/components/s/button', requireItems: true },
   { name: 'explore-forms', path: '/components/explore/forms', requireItems: true },
-  { name: 'retired-authors', path: '/authors', expectUnavailable: true },
+  { name: 'authors-attribution', path: '/authors', expectAuthors: true },
   { name: 'retired-newest', path: '/components/newest', expectUnavailable: true },
   { name: 'retired-reviewed', path: '/components/featured', expectUnavailable: true },
   {
@@ -134,6 +134,7 @@ function pageState() {
       h1Count: document.querySelectorAll('h1').length,
       evidenceUnavailable: Boolean(document.querySelector('.evidence-unavailable')),
       visibleCatalogItems: document.querySelectorAll('[data-view-item-registry]').length,
+      attributedAuthors: document.querySelectorAll('[data-author-select]').length,
       unlabeledButtons: buttons.filter(element => !accessibleName(element)).length,
       unlabeledLinks: links.filter(element => !accessibleName(element)).length,
       unlabeledFields: fields.filter(element =>
@@ -248,6 +249,9 @@ for (const viewport of viewports) {
     }
     if (route.requireItems && state.visibleCatalogItems === 0) {
       routeFailures.push('expected exact catalog items but none were rendered');
+    }
+    if (route.expectAuthors && (state.heading !== 'Authors' || state.attributedAuthors === 0)) {
+      routeFailures.push('expected source-backed author directory but none was rendered');
     }
     if (!state.heading) routeFailures.push('missing h1');
     if (state.h1Count !== 1) routeFailures.push(`expected one h1, found ${state.h1Count}`);

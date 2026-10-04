@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge-9",
+  "type": "registry:component",
+  "title": "Badge 9",
+  "description": "Badge 9. A small visual indicator used to highlight status, counts, or labels.",
+  "dependencies": [],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/badge-9.tsx",
+      "type": "registry:component",
+      "content": "import { Badge } from '@/components/base-ui/badge';\n\nconst Badge9 = () => {\n  return <Badge className=\"h-5 min-w-5 rounded-sm px-2 tabular-nums\">67</Badge>;\n};\n\nexport default Badge9;\n"
+    }
+  ]
+}

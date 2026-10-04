@@ -14,6 +14,14 @@ describe('renderItemDetailView', () => {
     expect(renderLocalBuildOption('@8bitcn','../etc','127.0.0.1')).toBe('');
   });
 
+  it('offers local original-source builds for newly reviewed namespaces, not just the first registry',()=>{
+    const offered=renderLocalBuildOption('@watermelon','floating-input','127.0.0.1');
+    expect(offered).toContain('data-local-build-registry="watermelon"');
+    expect(offered).toContain('data-local-build-preview="floating-input"');
+    expect(offered).not.toContain('<iframe');
+    expect(renderLocalBuildOption('@watermelon','../etc','localhost')).toBe('');
+    expect(renderLocalBuildOption('@watermelon','floating-input','github.io')).toBe('');
+  });
   it('offers the source preview for multiple registry item types locally, never on static hosting',()=>{
     for(const type of ['registry:component','registry:ui','registry:block']){
       const html=renderLocalSandboxOption('@aceternity','sparkles',type,'127.0.0.1');

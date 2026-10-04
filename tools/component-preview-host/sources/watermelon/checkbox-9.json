@@ -1,0 +1,21 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox-9",
+  "type": "registry:component",
+  "title": "Checkbox 9",
+  "description": "Checkbox 9. A checkbox component for selecting options.",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "checkbox",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/checkbox-9.tsx",
+      "type": "registry:component",
+      "content": "'use client'\n\nimport { useState, type ComponentType, type SVGProps } from 'react'\n\nimport { BriefcaseIcon, FolderKanbanIcon, PenToolIcon } from 'lucide-react'\n\nimport { Checkbox } from '@/components/base-ui/checkbox'\nimport { Label } from '@/components/base-ui/label'\n\ntype FocusOption = {\n  icon: ComponentType<SVGProps<SVGSVGElement>>\n  label: string\n}\n\nconst focusAreas: readonly FocusOption[] = [\n  { label: 'Planning', icon: FolderKanbanIcon },\n  { label: 'Design', icon: PenToolIcon },\n  { label: 'Operations', icon: BriefcaseIcon }\n]\n\nconst Checkbox9 = () => {\n  const [selectedFocusAreas, setSelectedFocusAreas] = useState<string[]>([])\n\n  const handleCheckedChange = (focusAreaLabel: string, checked: boolean) => {\n    setSelectedFocusAreas((previousSelectedFocusAreas) =>\n      checked\n        ? previousSelectedFocusAreas.includes(focusAreaLabel)\n          ? previousSelectedFocusAreas\n          : [...previousSelectedFocusAreas, focusAreaLabel]\n        : previousSelectedFocusAreas.filter(\n            (selectedFocusArea) => selectedFocusArea !== focusAreaLabel\n          )\n    )\n  }\n\n  return (\n    <div className='space-y-4'>\n      <Label className='font-semibold'>Focus areas</Label>\n      <div className='flex flex-col gap-3.5'>\n        {focusAreas.map(({ label, icon: Icon }) => (\n          <div key={label} className='flex items-center gap-2.5'>\n            <Checkbox\n              id={label}\n              checked={selectedFocusAreas.includes(label)}\n              onCheckedChange={(checked) =>\n                handleCheckedChange(label, checked === true)\n              }\n              className='data-checked:border-sky-600 data-checked:bg-sky-600 dark:data-checked:border-sky-500 dark:data-checked:bg-sky-500'\n            />\n            <Label htmlFor={label} className='flex items-center gap-2 text-sm'>\n              <Icon className='size-4 text-muted-foreground' aria-hidden='true' />\n              {label}\n            </Label>\n          </div>\n        ))}\n      </div>\n    </div>\n  )\n}\n\nexport default Checkbox9\n"
+    }
+  ]
+}

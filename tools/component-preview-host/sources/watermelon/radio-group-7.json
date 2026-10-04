@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio-group-7",
+  "type": "registry:component",
+  "title": "Radio Group 7",
+  "description": "Radio Group 7. A set of mutually exclusive options where only one choice can be selected at a time.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "radio-group"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/radio-group-7.tsx",
+      "type": "registry:component",
+      "content": "import { Label } from '@/components/base-ui/label';\nimport { RadioGroup, RadioGroupItem } from '@/components/base-ui/radio-group';\n\nconst RadioGroup7 = () => {\n  return (\n    <RadioGroup defaultValue=\"beginner\" className=\"flex items-center gap-4\">\n      <div className=\"border-border bg-card flex items-center gap-2 rounded-sm border px-4 py-2 shadow-sm\">\n        <RadioGroupItem value=\"beginner\" id=\"beginner\" />\n        <Label htmlFor=\"beginner\">Beginner</Label>\n      </div>\n      <div className=\"border-border bg-card flex items-center gap-2 rounded-sm border px-4 py-2 shadow-sm\">\n        <RadioGroupItem value=\"Advanced\" id=\"advanced\" />\n        <Label htmlFor=\"intermediate\">Advanced</Label>\n      </div>\n    </RadioGroup>\n  );\n};\n\nexport default RadioGroup7;\n"
+    }
+  ]
+}

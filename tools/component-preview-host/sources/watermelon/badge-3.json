@@ -1,0 +1,18 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge-3",
+  "type": "registry:component",
+  "title": "Badge 3",
+  "description": "Badge 3. A small visual indicator used to highlight status, counts, or labels.",
+  "dependencies": [],
+  "registryDependencies": [
+    "badge"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/badge-3.tsx",
+      "type": "registry:component",
+      "content": "import { Badge } from '@/components/base-ui/badge';\n\nconst Badge3 = () => {\n  return <Badge variant=\"outline\">Outline</Badge>;\n};\n\nexport default Badge3;\n"
+    }
+  ]
+}

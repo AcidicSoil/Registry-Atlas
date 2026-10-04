@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "tooltip-9",
+  "type": "registry:component",
+  "title": "Tooltip 9",
+  "description": "Tooltip 9. A small popup that appears when a user hovers over or focuses on an element, providing additional information or context.",
+  "dependencies": [],
+  "registryDependencies": [
+    "button",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/tooltip-9.tsx",
+      "type": "registry:component",
+      "content": "import { Button } from '@/components/base-ui/button';\nimport {\n  Tooltip,\n  TooltipContent,\n  TooltipTrigger,\n} from '@/components/base-ui/tooltip';\n\nconst Tooltip9 = () => {\n  return (\n    <Tooltip>\n      <TooltipTrigger asChild>\n        <Button variant=\"outline\" size=\"sm\">\n          Rounded\n        </Button>\n      </TooltipTrigger>\n      <TooltipContent className=\"rounded-full\">\n        <p>This tooltip is rounded</p>\n      </TooltipContent>\n    </Tooltip>\n  );\n};\n\nexport default Tooltip9;\n"
+    }
+  ]
+}

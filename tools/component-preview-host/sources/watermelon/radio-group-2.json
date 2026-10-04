@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radio-group-2",
+  "type": "registry:component",
+  "title": "Radio Group 2",
+  "description": "Radio Group 2. A set of mutually exclusive options where only one choice can be selected at a time.",
+  "dependencies": [],
+  "registryDependencies": [
+    "label",
+    "radio-group"
+  ],
+  "files": [
+    {
+      "path": "components/watermelon/radio-group-2.tsx",
+      "type": "registry:component",
+      "content": "import { Label } from '@/components/base-ui/label';\nimport { RadioGroup, RadioGroupItem } from '@/components/base-ui/radio-group';\n\nconst RadioGroup2 = () => {\n  return (\n    <RadioGroup defaultValue=\"monthly\">\n      <div className=\"flex items-center gap-2\">\n        <RadioGroupItem\n          value=\"monthly\"\n          id=\"monthly\"\n          className=\"border-primary focus-visible:border-primary border-dashed\"\n        />\n        <Label htmlFor=\"monthly\">Monthly Plan</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <RadioGroupItem\n          value=\"quarterly\"\n          id=\"quarterly\"\n          className=\"border-primary focus-visible:border-primary border-dashed\"\n        />\n        <Label htmlFor=\"quarterly\">Quarterly Plan</Label>\n      </div>\n      <div className=\"flex items-center gap-2\">\n        <RadioGroupItem\n          value=\"yearly\"\n          id=\"yearly\"\n          className=\"border-primary focus-visible:border-primary border-dashed\"\n        />\n        <Label htmlFor=\"yearly\">Yearly Plan</Label>\n      </div>\n    </RadioGroup>\n  );\n};\n\nexport default RadioGroup2;\n"
+    }
+  ]
+}

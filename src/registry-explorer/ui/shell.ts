@@ -50,6 +50,8 @@ import { renderRegistryDirectory } from './registryDirectoryView';
 import { renderRegistryCollection } from './registryCollectionView';
 import { renderCatalogCompare } from './catalogCompareView';
 import { renderCatalogSidebarNavigation } from './catalogSidebarNavigation';
+import { buildAuthorDirectory } from '../core/catalogAuthors';
+import { renderCatalogAuthors } from './catalogAuthorsView';
 
 export interface ShellOptions {
   registries: readonly Registry[];
@@ -74,6 +76,7 @@ interface CopyFeedback {
 
 interface AppState {
   route: CatalogRoute;
+  authorIdentity: string | null;
   returnRoute: CatalogRoute | null;
   compareRegistryNames: string[];
   searchTerm: string;
@@ -121,6 +124,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       if (counts[kind] > 0) directoryAssetCounts[kind] += 1;
     }
   }
+  const authorRows = buildAuthorDirectory(catalogIndex);
   const itemDetailCache = new Map<string, RegistryItemDetailResult>();
   const itemDetailLoading = new Set<string>();
   let state: AppState = {
@@ -279,6 +283,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
         case 'explore':
           renderExploreRoute();
           break;
+        case 'authors':
+          renderAuthorsRoute();
+          break;
         case 'registries':
           renderRegistries();
           break;
@@ -385,6 +392,32 @@ export function initRegistryExplorer(options: ShellOptions): void {
       catalogCount: catalogIndex.meta.registry_count,
       featured,
       basePath: catalogBasePath(),
+    });
+  }
+
+  function renderAuthorsRoute(): void {
+    if (state.route.kind !== 'authors') return;
+    const author=state.authorIdentity;
+    if (!author) {
+      renderCatalogAuthors(roots.contentHeader,roots.contentBody,authorRows,{
+        search:state.searchTerm,page:state.discoveryPage,
+      });
+      return;
+    }
+    if (!authorRows.some(row=>row.name===author)) {
+      renderEvidenceUnavailable(roots.contentHeader,roots.contentBody,
+        'Author attribution unavailable','No exact author attribution matches this URL.',
+        'Return to Authors to browse the catalog records.');
+      return;
+    }
+    const result=queryCatalogComponents(registries,catalogIndex,{
+      author,assetKinds:['component'],search:state.searchTerm,
+      page:state.discoveryPage,basePath:catalogBasePath(),
+    });
+    renderCatalogCollection(roots.contentHeader,roots.contentBody,result,{
+      eyebrow:'Registry Atlas · Catalog attribution',title:author,
+      description:'Original registry item metadata; this is not a verified 21st.dev account profile.',
+      controls:'<button type="button" class="link-button" data-author-clear>All authors</button>',
     });
   }
 
@@ -821,18 +854,20 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const localBuild = target.closest<HTMLButtonElement>('[data-local-build-preview]');
     if (localBuild) {
       const slug = localBuild.getAttribute('data-local-build-preview') ?? '';
+      const registry = localBuild.getAttribute('data-local-build-registry') ?? '';
       if (!['127.0.0.1','localhost'].includes(window.location.hostname)
-        || !/^[a-z0-9][a-z0-9-]*$/.test(slug)) return;
+        || !/^[a-z0-9][a-z0-9-]*$/.test(slug)
+        || !/^[a-z0-9][a-z0-9-]*$/.test(registry)) return;
       const root = localBuild.closest<HTMLElement>('[data-local-preview-root]');
       if (!root || root.querySelector('iframe')) return;
       const frame = document.createElement('iframe');
       frame.className = 'component-demo-frame component-demo-frame-detail';
-      frame.setAttribute('data-component-demo','@8bitcn/'+slug);
+      frame.setAttribute('data-component-demo','@'+registry+'/'+slug);
       frame.setAttribute('title',slug+' local source preview; build-only');
       frame.setAttribute('sandbox','allow-scripts');
       frame.setAttribute('referrerpolicy','no-referrer');
       frame.setAttribute('loading','eager');
-      frame.src = 'http://127.0.0.1:5198/preview/@8bitcn/'+slug;
+      frame.src = 'http://127.0.0.1:5198/preview/@'+registry+'/'+slug;
       const status = root.querySelector<HTMLElement>('[data-local-preview-status]');
       if (status) status.textContent = 'Requesting an isolated source build. This is not a verified demo.';
       frame.addEventListener('load',()=>{
@@ -902,6 +937,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return;
     }
 
+
+    const authorSelected=target.closest('[data-author-select]')?.getAttribute('data-author-select');
+    if(authorSelected && authorRows.some(row=>row.name===authorSelected)){
+      setState({authorIdentity:authorSelected,searchTerm:'',discoveryPage:1},'push');
+      return;
+    }
+    if(target.closest('[data-author-clear]')){
+      setState({authorIdentity:null,searchTerm:'',discoveryPage:1},'push');
+      return;
+    }
 
     const page = target.closest('[data-discovery-page]')?.getAttribute('data-discovery-page');
     if (page) {
@@ -1052,6 +1097,7 @@ function hydrateStateFromUrl(
 
   return {
     route,
+    authorIdentity:route.kind==='authors' ? (params.get('author')?.trim().slice(0,256)||null) : null,
     compareRegistryNames,
     searchTerm,
     discoveryPage: browse.page,
@@ -1120,6 +1166,10 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
     });
     if (state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
     state.catalogAssetKinds.forEach(value => params.append('asset', value));
+  } else if (route.kind === 'authors') {
+    if(state.authorIdentity)params.set('author',state.authorIdentity);
+    if(state.discoveryPage>1)params.set('page',String(state.discoveryPage));
+    if(state.searchTerm.trim())params.set('q',state.searchTerm.trim());
   } else if (route.kind === 'registries') {
     if (state.discoveryPage > 1) params.set('page', String(state.discoveryPage));
     if (state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
@@ -1151,6 +1201,7 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
 
 function primaryViewForRoute(route: CatalogRoute): string | null {
   if (route.kind === 'home') return 'home';
+  if (route.kind === 'authors') return 'discover';
   if (route.kind === 'registries' || route.kind === 'registry') return 'registries';
   if (route.kind === 'templates' || route.kind === 'template') return 'templates';
   if (route.kind === 'themes' || route.kind === 'theme' || route.kind === 'theme-editor') return 'themes';
