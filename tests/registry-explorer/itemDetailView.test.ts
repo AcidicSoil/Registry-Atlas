@@ -78,6 +78,19 @@ describe('renderItemDetailView', () => {
     expect(html).not.toContain('components/code-block');
   });
 
+  it('preserves official source access on an interactive item detail without an observed page image',()=>{
+    const result=resolveRegistryItemDetailFromSummary([registryFixture()],'@delta','code-block');
+    if(!result.detail)throw Error('Expected detail fixture');
+    const body=root();
+    renderItemDetailView(root(),body,{...result,detail:{
+      ...result.detail,namespace:'@8bitcn',slug:'audio-settings',visualReference:undefined,
+    }},new Set());
+    expect(body.innerHTML).toContain('data-component-demo="@8bitcn/audio-settings"');
+    expect(body.innerHTML).toContain('href="https://www.8bitcn.com/r/audio-settings.json"');
+    expect(body.innerHTML).toContain('View official source');
+    expect(body.innerHTML).not.toContain('href="https://www.8bitcn.com/docs/components/audio-settings"');
+    expect(body.innerHTML).not.toContain('item-preview-metadata');
+  });
   it('keeps both the functional demo and sourced image when an item has both', () => {
     const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
     if (!result.detail) throw Error('Expected detail fixture');

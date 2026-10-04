@@ -17,6 +17,20 @@
     },
     {
       "namespace": "@8bitcn",
+      "slug": "audio-settings",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/57a33edb32a97d32b3fb0de676eba79b13de68a2c2e46da85a68b5e1b23398eb/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/audio-settings",
+        "registryItemUrl": "https://www.8bitcn.com/r/audio-settings.json"
+      },
+      "reviewedAt": "2026-10-04T07:43:21.554Z",
+      "verifiedAt": "2026-10-04T07:43:21.554Z",
+      "sourceSha256": "087ee385b4680cb95fa26ad9c1806b09718125bd8e7da17e03f7b8569884535f"
+    },
+    {
+      "namespace": "@8bitcn",
       "slug": "button",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -73,6 +87,20 @@
     },
     {
       "namespace": "@8bitcn",
+      "slug": "difficulty-select",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/706d7e3b37c43c47ff89a33015fcce7632dc938d74660f963ba20965f6775dcd/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/difficulty-select",
+        "registryItemUrl": "https://www.8bitcn.com/r/difficulty-select.json"
+      },
+      "reviewedAt": "2026-10-04T07:43:21.554Z",
+      "verifiedAt": "2026-10-04T07:43:21.554Z",
+      "sourceSha256": "31bad95ea1cff73da748118c1a7e16d2a91521b9bda15a4bbb5a135ea7c9a0f9"
+    },
+    {
+      "namespace": "@8bitcn",
       "slug": "dropdown-menu",
       "kind": "upstream-built",
       "status": "interaction-verified",
@@ -112,6 +140,20 @@
       "reviewedAt": "2026-10-04T07:33:46.045Z",
       "verifiedAt": "2026-10-04T07:33:46.045Z",
       "sourceSha256": "3573595ee4bb59605d2d7072c32a6d0bea0a2f52fe69a149c51b4824280c0c2b"
+    },
+    {
+      "namespace": "@8bitcn",
+      "slug": "game-faq1",
+      "kind": "upstream-built",
+      "status": "interaction-verified",
+      "path": "/Registry-Atlas/component-demos/generated/1e6485079521f70838bcf429d19fbe3bafecbdbf0c94e1872a8eecd9e0bc710d/index.html",
+      "source": {
+        "docsUrl": "https://www.8bitcn.com/docs/components/game-faq1",
+        "registryItemUrl": "https://www.8bitcn.com/r/game-faq1.json"
+      },
+      "reviewedAt": "2026-10-04T07:43:21.554Z",
+      "verifiedAt": "2026-10-04T07:43:21.554Z",
+      "sourceSha256": "9e66b11b6129008979f426e4f706148d4dfdc4b099efb4b9c6fe667aa830e745"
     },
     {
       "namespace": "@8bitcn",

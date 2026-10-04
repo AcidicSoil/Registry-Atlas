@@ -3,7 +3,7 @@ import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/regis
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { escapeHtml } from './renderSafety.ts';
-import { renderComponentPreview } from './componentPreview.ts';
+import { renderComponentPreview, verifiedComponentDemo } from './componentPreview.ts';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
 
 export function renderItemDetailView(
@@ -135,6 +135,7 @@ function renderPreview(detail: RegistryItemDetail): string {
       </figcaption>
     </figure>` : null;
   const liveDemo = renderComponentPreview(detail.namespace, detail.slug, 'detail');
+  const reviewedDemo = verifiedComponentDemo(detail.namespace, detail.slug);
   const localBuild = renderLocalBuildOption(detail.namespace, detail.slug);
   const sandboxPreview = renderLocalSandboxOption(detail.namespace, detail.slug, detail.type);
   if (liveDemo) return `
@@ -143,6 +144,8 @@ function renderPreview(detail: RegistryItemDetail): string {
         <div class="catalog-eyebrow">Interactive example</div>
         ${liveDemo}
         <p class="muted">Original upstream React source, running in an isolated preview.</p>
+        ${!reference && reviewedDemo ? `<a href="${escapeHtml(reviewedDemo.source.registryItemUrl)}"
+          target="_blank" rel="noreferrer noopener">View official source ↗</a>` : ''}
       </section>
       ${visual ?? ''}
     </div>`;

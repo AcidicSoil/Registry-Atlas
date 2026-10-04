@@ -292,3 +292,39 @@ admitted and published. Their full proof is stored privately under the
 Registry Atlas previews state directory. This increases working previews to
 18 of 84,145, leaving 84,127 without published gesture proof; other compiled
 blocks still require behavior-specific evidence, not guessed UI states.
+
+## R12. Source-specific interaction proof and navigable source links (2026-10-04)
+
+Three additional @8bitcn authored interactive components were built in
+one isolated stage and tested against their own real browser state in a
+separate managed PinchTab stage. Difficulty Select changed the actual
+selected upstream button from NORMAL to HARD; Audio Settings changed
+the Mute Audio Radix switch from aria-checked=false to true; and
+Game FAQ 1 expanded its upstream accordion from aria-expanded=false
+to true. Each new contract requires the exact expected initial and
+resulting states; a different change or browser error cannot be promoted.
+The manifest admission path independently rechecks the source-specific
+before/after contract even when a receipt carries valid artifact hashes;
+forged mismatched transitions remain excluded. Versioned source hashes,
+content-addressed bundles, and before/after receipts are in the private
+preview ledger.
+
+All three passed component-specific browser actions; their reviewed
+artifacts were published, bringing the unchanged 84,145-identity
+catalog to 21 interaction-verified / 84,124 interaction-unverified.
+The independent 25 blocked probe findings remain separate from verified
+coverage and are included among the unverified denominator.
+
+For verified live-component cards and details that lack a published,
+independently observed official page screenshot, the UI now exposes a
+separate View official source action using the exact source-JSON URL
+in the reviewed artifact manifest. It does not label the guessed
+documentation pattern as an observed original component page. Verified
+image cards retain their existing View original destination. The
+existing Atlas detail route and original interactive frame remain distinct
+from the new external source action.
+
+Other source-compiled blocks and authenticated workflows are still
+unverified; in particular, typing into a login-form field does not prove
+successful authentication and is not admitted as a completed login demo.
+21st.dev full route/interaction parity remains tracked open.

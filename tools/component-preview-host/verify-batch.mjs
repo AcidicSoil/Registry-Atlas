@@ -33,6 +33,15 @@ const TYPES={
     probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')"},
   faq3:{role:'button',name:'What is 8bitcn?',action:'click',
     probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')"},
+  'difficulty-select':{role:'button',name:'HARD',action:'click',
+    probe:"document.querySelector('button[data-variant=default]')?.textContent?.trim()",
+    expectedBefore:'NORMAL',expectedAfter:'HARD'},
+  'audio-settings':{role:'switch',name:'Mute Audio',action:'click',
+    probe:"document.querySelector('#mute[role=switch]')?.getAttribute('aria-checked')",
+    expectedBefore:'false',expectedAfter:'true'},
+  'game-faq1':{role:'button',name:'+What is 8bitcn? CLEARED',action:'click',
+    probe:"document.querySelector('button[aria-expanded]')?.getAttribute('aria-expanded')",
+    expectedBefore:'false',expectedAfter:'true'},
 
 };
 export const supportedBehavior=slug=>Object.hasOwn(TYPES,slug);
@@ -50,6 +59,11 @@ export function assessBehavior(slug,before,after,errorText){
  if(errorText!=='No errors')return {status:'unverified',reason:'browser-error'};
  if(typeof before!=='string'||typeof after!=='string'||!before||before===after)
    return {status:'unverified',reason:'interaction-unchanged'};
+ const behavior=TYPES[slug];
+ if(behavior.expectedBefore!==undefined && before!==behavior.expectedBefore)
+   return {status:'unverified',reason:'unexpected-original-state'};
+ if(behavior.expectedAfter!==undefined && after!==behavior.expectedAfter)
+   return {status:'unverified',reason:'unexpected-action-result'};
  return {status:'interaction-verified',before,after};
 }
 export async function verifyReceipts({receipts,server,tab,base}){

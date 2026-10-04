@@ -16,7 +16,18 @@ describe('reference-gallery cards',()=>{
     expect(html).toContain('href="/Registry-Atlas/@alpha/components/button"');
     expect(html).not.toContain('aria-label="Visual reference not yet available"');
     expect(html).not.toContain('catalog-component-unavailable');
+    expect(html).not.toContain('View official source');
     expect(html).not.toContain('>Visual reference not yet available</div>');
+  });
+  it('exposes the exact reviewed upstream source of a working demo when no page image was observed',()=>{
+    const html=renderCatalogComponentCard({...item,namespace:'@8bitcn',slug:'audio-settings',
+      displayName:'Audio Settings',
+      routePath:'/Registry-Atlas/@8bitcn/components/audio-settings'});
+    expect(html).toContain('data-component-demo="@8bitcn/audio-settings"');
+    expect(html).toContain('href="https://www.8bitcn.com/r/audio-settings.json"');
+    expect(html).toContain('View official source');
+    expect(html).not.toContain('href="https://www.8bitcn.com/docs/components/audio-settings"');
+    expect(html).toContain('rel="noreferrer noopener"');
   });
   it('renders the verified image and its exact independent official link',()=>{
     const html=renderCatalogComponentCard({...item,visualReference:{

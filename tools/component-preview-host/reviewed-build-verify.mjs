@@ -5,7 +5,7 @@ import {homedir} from 'node:os';
 import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 import {prepareRegistryItem} from './publish.mjs';
-import {verifyReceipts,supportedBehavior} from './verify-batch.mjs';
+import {verifyReceipts,supportedBehavior,assessBehavior} from './verify-batch.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
 const HOST=dirname(fileURLToPath(import.meta.url));
@@ -59,7 +59,9 @@ export function approvedPromotionCandidates(proof,receipts){
     &&row.bundleSha256===receipt.bundleSha256
     &&HASH.test(row.sourceSha256)&&HASH.test(row.bundleSha256)
     &&typeof row.before==='string'&&typeof row.after==='string'
-    &&row.before!==row.after&&supportedBehavior(row.slug))admitted.push(receipt);
+    &&row.before!==row.after&&supportedBehavior(row.slug)
+    &&assessBehavior(row.slug,row.before,row.after,'No errors').status==='interaction-verified')
+   admitted.push(receipt);
  }
  return admitted;
 }

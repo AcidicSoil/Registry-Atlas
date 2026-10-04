@@ -12,6 +12,21 @@ describe('generic browser proof admission',()=>{
      status:'unverified',reason:'interaction-unchanged',
    });
  });
+ it.each([
+   {slug:'difficulty-select',before:'NORMAL',after:'HARD'},
+   {slug:'audio-settings',before:'false',after:'true'},
+   {slug:'game-faq1',before:'false',after:'true'},
+ ])('admits only the source-observed $slug state transition',({slug,before,after})=>{
+   expect(assessBehavior(slug,before,after,'No errors')).toMatchObject({
+     status:'interaction-verified',before,after,
+   });
+   expect(assessBehavior(slug,'unexpected',after,'No errors')).toMatchObject({
+     status:'unverified',reason:'unexpected-original-state',
+   });
+   expect(assessBehavior(slug,before,'unexpected','No errors')).toMatchObject({
+     status:'unverified',reason:'unexpected-action-result',
+   });
+ });
  it('does not accept a browser error, an unsupported type or a missing action response',()=>{
    expect(assessBehavior('badge','old','new','No errors').status).toBe('unverified');
    expect(assessBehavior('checkbox','old','new','ReferenceError: React').status).toBe('unverified');

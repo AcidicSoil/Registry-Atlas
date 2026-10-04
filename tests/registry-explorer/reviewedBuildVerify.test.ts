@@ -16,6 +16,14 @@ describe('one complete reviewed build stage followed by one browser stage',()=>{
    ]};
    expect(approvedPromotionCandidates(proof,[receipt])).toEqual([]);
  });
+ it('rejects forged source-specific before/after transitions even when artifact hashes match',()=>{
+   const receipt={namespace:'@8bitcn',slug:'difficulty-select',
+     sourceSha256:'a'.repeat(64),bundleSha256:'b'.repeat(64)};
+   const proof={schema:'registry-atlas-preview-browser-proof/v1',rows:[
+     {...receipt,status:'interaction-verified',before:'NORMAL',after:'EASY'},
+   ]};
+   expect(approvedPromotionCandidates(proof,[receipt])).toEqual([]);
+ });
  it('attempts every reviewed candidate before any browser action and never promotes unverified output',async()=>{
   const actions:string[]=[];
   const staged=await runReviewedStages(['badge','dialog','radio-group'],{
