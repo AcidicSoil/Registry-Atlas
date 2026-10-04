@@ -130,6 +130,21 @@ describe('full-catalog preview coverage planner', () => {
     expect(report.summary).toMatchObject({blocked:0,pending:4,sourceProbeStale:1});
     expect(report.items.find((x:{token:string})=>x.token==='@a/card')?.status).toBe('pending');
   });
+
+  it('replays an accumulated batch journal using each item’s own observation and existing reviewed-preference',()=>{
+    const journal=new Map([
+      ['@a/card',{schema:'registry-atlas-source-probe-journal/v1',namespace:'@a',slug:'card',status:'blocked',reason:'unreviewed-package',package:'motion',observedAt:'2026-10-04T06:40:00Z'}],
+      ['@b/button',{schema:'registry-atlas-source-probe-journal/v1',namespace:'@b',slug:'button',status:'source-resolved',mode:'generated-smoke-example',verification:'not-interaction-verified',observedAt:'2026-09-25T06:40:00Z'}],
+    ]);
+    const result=planPreviewCoverage(raw,catalog,reviewed,{
+      journal,probeNow:'2026-10-04T07:00:00Z',includeItems:true,
+    },curated);
+    expect(result.summary).toMatchObject({blocked:1,sourceProbeBlocked:1,sourceProbeStale:1,fixtureVerified:1});
+    expect(result.items.find((x:{token:string})=>x.token==='@a/card')).toMatchObject({
+      status:'blocked',reason:'unreviewed-package',package:'motion'});
+    expect(result.items.find((x:{token:string})=>x.token==='@b/button')).toMatchObject({
+      status:'pending',probeStatus:'stale'});
+  });
   it('rejects forged, duplicate or malformed probe reports',()=>{
     const report={schema:'registry-atlas-source-preview-probes/v1',
       observedAt:'2026-10-04T06:15:00Z',items:[

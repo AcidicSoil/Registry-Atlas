@@ -1,3 +1,4 @@
+import './probe-batch.test.mjs';
 import './preview-probes.test.mjs';
 import {test} from 'node:test';
 import assert from 'node:assert/strict';

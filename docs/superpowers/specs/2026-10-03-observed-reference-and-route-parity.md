@@ -142,3 +142,25 @@ An approved, reviewed observation can be stored in `tools/component-preview-host
 The initial five-identity evidence run yielded two local smoke-source resolutions and three compatibility blocks (`motion`, `@base-ui/react`, and `source-file-too-large`). One of the two source-resolved identities already has a separate verified public artifact; this does not transfer verification to the new runtime. The planner reports **3 blocked**, **84,131 pending**, **10 verified upstream-built** and **one verified source-informed fixture** as of this bounded report. These counts are time-bounded evidence, not catalog-wide build proof.
 
 The local preview service returns safe failure reason codes and reviewed-package names; the existing Atlas detail page explains the reason and leaves the official component link usable. Unknown upstream exceptions are never rendered verbatim. Do not enable `motion`, `@base-ui/react` or other package families solely from a name, because reviewing framework/React-version compatibility, licensing, stylesheet behavior and cross-origin browser interaction remains necessary. The official source resolver contract is documented at https://ui.shadcn.com/docs/registry/api-reference .
+
+## R8. Resumable batch source inspection, not manual component enumeration (2026-10-04)
+
+The legacy five-component probe is a debugging diagnostic only. The primary workflow is now an automatic, read-only source survey over the existing Atlas coverage ledger. It reads all 84,145 catalog identities, filters existing verified public previews, unsafe source identifiers and non-renderable types, and defaults to breadth-first selection across registries so one large registry does not monopolize early compatibility review.
+
+Dry-run the next 32 exact identities:
+
+    node scripts/run-preview-probe-batches.mjs --limit 32
+
+Fetch and inspect 64 automatically selected official upstream source items (never execute upstream code):
+
+    node scripts/run-preview-probe-batches.mjs --limit 64 --batch-size 16 --concurrency 2 --execute
+
+The explicit full sweep is also supported, with a bounded worker pool and resumable checkpoints:
+
+    node scripts/run-preview-probe-batches.mjs --limit all --batch-size 16 --concurrency 2 --execute
+
+The maximum concurrency is four. The worker retries transient retrieval failures once, but does not retry deterministic source/dependency blocks within the same sweep. Every successfully finished batch is persisted and synced to the private append-only journal at ~/.local/state/registry-atlas/previews/probe-journal.jsonl before progress advances. The coverage planner automatically reconciles the latest per-item journal observations with the manually reviewed five-item record. Blocked and source-resolved probes expire after 72 hours; transient failures are eligible after 15 minutes. Published interaction-verified previews always take precedence. No private exception strings, upstream source, or executable preview artifacts are stored in this journal.
+
+Group blockers by reason and dependency family, then review compatibility, licensing and exact versions once per recurring family. Only run source in reviewed isolated build workers and grant interaction-verified status after a component-specific browser gesture. Neither a successful fetch nor a loaded Sandpack iframe qualifies. Unknown frameworks, unsupported source identifiers and non-renderable catalog kinds stay counted, not silently erased.
+
+During initial automated surveying, the dry-run accounted for 1,947 identities outside the safe resolver grammar and 1,108 non-renderable items. The first twelve-item focused run produced nine source resolutions and three blocks; the first sixteen-item cross-registry run produced two source resolutions and fourteen blocks. These are compatibility-triage observations, not sitewide interaction or route-parity coverage.

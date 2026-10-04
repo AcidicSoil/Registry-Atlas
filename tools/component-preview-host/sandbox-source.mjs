@@ -205,6 +205,22 @@ export function createSandboxProject(item,tree){
     :'This is a basic smoke example of original source, not the author\'s demo. Appearance and interaction may differ.'};
 }
 
+// Reuse the 16 MB local catalog across source probes, refreshing periodically
+// so the long-lived preview server notices a subsequent catalog sync.
+let sourceIndex;
+let sourceIndexLoadedAt=0;
+async function localSourceIndex(){
+ // Refresh periodically in the long-lived preview server after catalog sync.
+ if(!sourceIndex||Date.now()-sourceIndexLoadedAt>60_000){
+  sourceIndexLoadedAt=Date.now();
+  sourceIndex=Promise.all([
+   readFile(resolve(PROJECT,'data/shadcn/registries.raw.json'),'utf8').then(JSON.parse),
+   readFile(resolve(PROJECT,'public/data/registry-catalog-items.json'),'utf8').then(JSON.parse),
+  ]).catch(error=>{sourceIndex=null;throw error;});
+ }
+ return sourceIndex;
+}
+
 function registryEndpoint(template,name){
  if(typeof template!=='string'||!template.includes('{name}'))throw Error('registry-source-unavailable');
  const source=template.replace('{name}',name);
@@ -218,10 +234,7 @@ function registryEndpoint(template,name){
 export async function loadSandboxProject(registry,slug,{getItems=getRegistryItems,resolveItems=resolveRegistryItems}={}){
  if(!VALID_NAME.test(registry)||!VALID_ITEM.test(slug)||slug.length>128
    ||slug.split('/').some(s=>!s||s==='.'||s==='..'))throw Error('invalid-item-identity');
- const [directory,catalog]=await Promise.all([
-  readFile(resolve(PROJECT,'data/shadcn/registries.raw.json'),'utf8').then(JSON.parse),
-  readFile(resolve(PROJECT,'public/data/registry-catalog-items.json'),'utf8').then(JSON.parse)
- ]);
+ const [directory,catalog]=await localSourceIndex();
  const namespace='@'+registry;
  const listed=catalog.registries?.[namespace]?.find(v=>v.name===slug&&RENDERABLE.has(v.type));
  const definition=directory.find(v=>v.name===namespace);

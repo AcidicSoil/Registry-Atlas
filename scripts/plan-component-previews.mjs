@@ -2,6 +2,8 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { homedir } from 'node:os';
+import { parseProbeJournal } from '../tools/component-preview-host/probe-batch.mjs';
 
 const SCHEMA = 'registry-atlas-component-demos/v1';
 const LOCAL_DEMO = /^\/Registry-Atlas\/component-demos\/[a-z0-9-]+(?:\/[a-z0-9-]+)*\/index\.html$/;
@@ -141,7 +143,6 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
 
   const probes = new Map();
   let observedAt = null;
-  let probesFresh = false;
   if (options.attempts !== undefined) {
     const report = options.attempts;
     const observation = Date.parse(report?.observedAt);
@@ -151,7 +152,6 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
         || !Number.isFinite(at) || observation > at)
       throw new Error('Invalid source probe report');
     observedAt = report.observedAt;
-    probesFresh = at - observation <= PROBE_MAX_AGE_MS;
     for (const probe of report.items) {
       const token = probe?.namespace + '/' + probe?.slug;
       if (!source.get(probe?.namespace)?.has(probe?.slug) || probes.has(token)
@@ -165,9 +165,33 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
                 'unpinned-package', 'dependency-version-mismatch'].includes(probe.reason)
               || !PACKAGE_NAME.test(probe.package))))
         throw new Error('Invalid or duplicate source probe item: ' + token);
-      probes.set(token, probe);
+      probes.set(token, {...probe,observedAt});
     }
   }
+  if (options.journal !== undefined) {
+    if (!(options.journal instanceof Map) || options.journal.size > 100000)
+      throw new Error('Invalid source probe journal');
+    for (const [token, probe] of options.journal) {
+      if (token !== probe.namespace + '/' + probe.slug
+          || !source.get(probe.namespace)?.has(probe.slug)
+          || !['blocked', 'source-resolved', 'unavailable'].includes(probe.status)
+          || (probe.status === 'blocked' && !PROBE_REASONS.has(probe.reason))
+          || (probe.status === 'unavailable' && probe.reason !== 'source-retrieval-failed')
+          || (probe.status === 'source-resolved'
+            && (probe.verification !== 'not-interaction-verified'
+              || !['upstream-demo', 'generated-smoke-example'].includes(probe.mode)))
+          || (probe.package !== undefined && (!['unreviewed-package',
+               'unpinned-package', 'dependency-version-mismatch'].includes(probe.reason)
+               || !PACKAGE_NAME.test(probe.package)))
+          || !Number.isFinite(Date.parse(probe.observedAt)))
+        throw new Error('Invalid source probe journal entry: '+token);
+      const older=probes.get(token);
+      if (!older || Date.parse(older.observedAt) <= Date.parse(probe.observedAt))
+        probes.set(token,probe);
+    }
+  }
+  const probeNow = Date.parse(options.probeNow ?? new Date().toISOString());
+  if (!Number.isFinite(probeNow)) throw Error('Invalid source probe comparison date');
   const rows = [];
   const registries = [];
   let sourceProbeBlocked = 0, sourceProbeResolved = 0;
@@ -188,13 +212,15 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
       const item = bucket.get(slug);
       const entry = approved.get(item.token);
       const probe = !entry && !bad.has(item.token) ? probes.get(item.token) : undefined;
+      const age = probe ? probeNow - Date.parse(probe.observedAt) : Infinity;
+      const fresh = probe && age >= 0 && age <= PROBE_MAX_AGE_MS;
       if (probe) {
-        if (!probesFresh) sourceProbeStale++;
+        if (!fresh) sourceProbeStale++;
         else if (probe.status === 'blocked') sourceProbeBlocked++;
         else if (probe.status === 'source-resolved') sourceProbeResolved++;
         else sourceProbeUnavailable++;
       }
-      const probeBlock = probe && probesFresh && probe.status === 'blocked';
+      const probeBlock = probe && fresh && probe.status === 'blocked';
       const status = bad.has(item.token) || probeBlock ? 'blocked'
         : entry?.kind === 'upstream-built' ? 'upstream-built'
           : entry?.kind === 'source-informed-fixture' ? 'fixture' : 'pending';
@@ -204,7 +230,7 @@ export function planPreviewCoverage(raw, catalog, manifest, options = {}, curate
       if (status === 'pending') { pending++; local.pending++; }
       rows.push({ ...item, status,
         ...(bad.has(item.token) ? { reason: bad.get(item.token) } : {}),
-        ...(probe ? { probeStatus: probesFresh ? probe.status : 'stale', observedAt } : {}),
+        ...(probe ? { probeStatus: fresh ? probe.status : 'stale', observedAt: probe.observedAt } : {}),
         ...(probeBlock ? { reason: probe.reason,
           ...(probe.package ? { package: probe.package } : {}) } : {}),
       });
@@ -266,8 +292,11 @@ async function cli(argv) {
     existsSync(attemptsPath) ? readJson('tools/component-preview-host/reviews/source-preview-probes.json')
       : Promise.resolve(undefined),
   ]);
+  const journalPath = join(homedir(), '.local/state/registry-atlas/previews/probe-journal.jsonl');
+  const journal = existsSync(journalPath)
+    ? parseProbeJournal(await readFile(journalPath,'utf8')) : new Map();
   const coverage = planPreviewCoverage(raw, catalog, manifest, {
-    ...options, ...(attempts ? { attempts } : {}),
+    ...options, ...(attempts ? { attempts } : {}), journal,
     assetExists: localPath => existsSync(join(root, 'public',
       localPath.slice('/Registry-Atlas/'.length))),
   }, curated);
