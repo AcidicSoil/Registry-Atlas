@@ -13,7 +13,7 @@ test('resolves original files, aliases, package imports, and a clearly labeled s
  assert.equal(result.mode,'generated-smoke-example');
  assert.equal(result.entryFile,'components/ui/button.tsx');
  assert.match(result.files['/components/ui/button.tsx'].code,/from "\.\.\/\.\.\/lib\/utils.ts"/);
- assert.equal(result.dependencies['class-variance-authority'],'latest');
+ assert.equal(result.dependencies['class-variance-authority'],'0.7.1');
  assert.equal(result.dependencies['@radix-ui/react-slot'],'1.3.0');
  assert.match(result.files['/styles.css'].code,/--primary: oklch/);
  assert.match(result.warning,/not the author's demo/);
@@ -26,6 +26,11 @@ test('prefers an author-provided demo over a guessed composition',()=>{
  assert.equal(result.mode,'upstream-demo');
  assert.equal(result.entryFile,'demos/default.tsx');
  assert.match(result.files['/App.tsx'].code,/AuthorDemo.default/);
+});
+test('rejects an upstream demo file with no runnable export instead of rendering undefined',()=>{
+ const demo={path:'demos/default.tsx',type:'registry:component',content:'export const settings={size:3};'};
+ assert.throws(()=>createSandboxProject({...original,files:[...original.files,demo]},
+  {...tree,files:[...tree.files,demo]}),/author-demo-required/);
 });
 test('uses upstream registry target for shadcn dependencies',()=>{
  const result=createSandboxProject({...original,files:[{path:'components/ui/8bit/badge.tsx',type:'registry:component'}]},
@@ -42,6 +47,34 @@ test('fills simple required string props from the upstream TypeScript signature'
  const project=createSandboxProject(sample,{files:[{path:sample.files[0].path,content:code}]});
  assert.match(project.files['/App.tsx'].code,/words=\{\"Preview component\"\}/);
  assert.equal(project.mode,'generated-smoke-example');
+});
+test('prefers the export matching the exact component name over a preceding provider',()=>{
+ const sample={name:'button',type:'registry:ui',files:[{path:'components/ui/button.tsx',type:'registry:ui'}]};
+ const code='export function ButtonProvider(){return <div>Provider</div>} export function Button(){return <button>Actual button</button>}';
+ const project=createSandboxProject(sample,{files:[{path:sample.files[0].path,content:code}]});
+ assert.ok(project.files['/App.tsx'].code.includes('Upstream["Button"]'));
+ assert.ok(!project.files['/App.tsx'].code.includes('Upstream["ButtonProvider"]'));
+});
+test('never resolves undeclared or unpinned package versions to latest',()=>{
+ const sample={...original,dependencies:['@radix-ui/react-slot@1.3.0','not-reviewed-package']};
+ assert.throws(()=>createSandboxProject(sample,tree),/unreviewed-package|unpinned-package/);
+});
+test('pins known dependency imports to reviewed versions',()=>{
+ const project=createSandboxProject(original,tree);
+ assert.equal(project.dependencies['class-variance-authority'],'0.7.1');
+ assert.ok(Object.values(project.dependencies).every(v=>v!=='latest'));
+});
+test('ignores fake export declarations in comments when choosing a smoke component',()=>{
+ const sample={name:'button',type:'registry:ui',files:[{path:'components/ui/button.tsx',type:'registry:ui'}]};
+ const code=`// export function Button() { return null; }\nexport function Unrelated(){return <div />;}\nexport function AlsoUnrelated(){return <div />;}`;
+ assert.throws(()=>createSandboxProject(sample,{files:[{path:sample.files[0].path,content:code}]}),/component-export-unresolved/);
+});
+test('ignores dependency-looking strings and comments while collecting imports',()=>{
+ const sample={name:'button',type:'registry:ui',files:[{path:'components/ui/button.tsx',type:'registry:ui'}]};
+ const code=`// import x from "unreviewed-package"\nconst text='require("also-unreviewed")'; export function Button(){return <button>{text}</button>}`;
+ const project=createSandboxProject(sample,{files:[{path:sample.files[0].path,content:code}]});
+ assert.ok(!('unreviewed-package' in project.dependencies));
+ assert.ok(!('also-unreviewed' in project.dependencies));
 });
 test('rejects source components with required complex props rather than fabricating an author demo',()=>{
  const sample={name:'chart',type:'registry:ui',files:[{path:'components/ui/chart.tsx',type:'registry:ui'}]};

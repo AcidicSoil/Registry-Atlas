@@ -1,10 +1,14 @@
 import {readFile} from 'node:fs/promises';
+import {readFileSync} from 'node:fs';
 import {dirname, posix, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {getRegistryItems, resolveRegistryItems} from 'shadcn/registry';
 import ts from 'typescript';
 
-const PROJECT=resolve(dirname(fileURLToPath(import.meta.url)),'../..');
+const HOST=dirname(fileURLToPath(import.meta.url));
+const PROJECT=resolve(HOST,'../..');
+// Browser compilation may request packages; only use versions from the reviewed host manifest.
+const REVIEWED_DEPS=JSON.parse(readFileSync(resolve(HOST,'package.json'),'utf8')).dependencies;
 const VALID_NAME=/^[a-z0-9][a-z0-9-]*$/;
 const VALID_ITEM=/^[a-z0-9][a-z0-9._/-]*$/;
 const SAFE_FILE=/^[a-zA-Z0-9][a-zA-Z0-9/._-]*\.(?:tsx?|jsx?|css)$/;
@@ -29,12 +33,34 @@ function canonicalFile(file){
  }
  return path;
 }
-function componentExport(source){
- const exports=unique([
-  ...[...source.matchAll(/export\s+(?:default\s+)?(?:async\s+)?(?:function|const|class)\s+([A-Z][A-Za-z0-9]*)/g)].map(x=>x[1]),
-  ...[...source.matchAll(/export\s*\{([^}]+)\}/g)].flatMap(x=>x[1].split(',').map(n=>n.trim().split(/\s+as\s+/).at(-1)).filter(n=>/^[A-Z][A-Za-z0-9]*$/.test(n)))
- ]);
- return exports[0]||null;
+function componentExport(source,itemName){
+ const ast=ts.createSourceFile('component.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const names=[];
+ for(const statement of ast.statements){
+  if(ts.isExportDeclaration(statement)&&statement.exportClause
+     &&ts.isNamedExports(statement.exportClause)){
+   for(const exported of statement.exportClause.elements)names.push(exported.name.text);
+   continue;
+  }
+  if(!statement.modifiers?.some(modifier=>modifier.kind===ts.SyntaxKind.ExportKeyword))continue;
+  if(ts.isFunctionDeclaration(statement)||ts.isClassDeclaration(statement)){
+   if(statement.name)names.push(statement.name.text);
+  }else if(ts.isVariableStatement(statement)){
+   for(const declaration of statement.declarationList.declarations)
+    if(ts.isIdentifier(declaration.name))names.push(declaration.name.text);
+  }
+ }
+ const exports=unique(names.filter(name=>/^[A-Z][A-Za-z0-9]*$/.test(name)));
+ const preferred=itemName.split(/[./_-]/).filter(Boolean)
+  .map(part=>part[0].toUpperCase()+part.slice(1)).join('');
+ return exports.includes(preferred)?preferred:exports.length===1?exports[0]:null;
+}
+function hasDefaultExport(source){
+ const ast=ts.createSourceFile('demo.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ return ast.statements.some(statement=>
+  (ts.isExportAssignment(statement)&&!statement.isExportEquals)
+  ||(statement.modifiers?.some(modifier=>modifier.kind===ts.SyntaxKind.DefaultKeyword)
+   &&statement.modifiers.some(modifier=>modifier.kind===ts.SyntaxKind.ExportKeyword)));
 }
 function primitiveProps(source, exportName) {
  const ast=ts.createSourceFile('item.tsx',source,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
@@ -62,27 +88,43 @@ function primitiveProps(source, exportName) {
  return props;
 }
 function packageVersions(declared){
- const dependencies={'react':'18.3.1','react-dom':'18.3.1','clsx':'2.1.1','tailwind-merge':'3.6.0'};
+ const dependencies={'react':'18.3.1','react-dom':'18.3.1'};
  for(const original of declared){
   if(typeof original!=='string'||original.length>130)throw Error('invalid-package');
-  // A scoped package can include an @version only after its scope/name.
   const match=/^(@[a-z0-9._-]+\/[a-z0-9._-]+|[a-z0-9._-]+)(?:@([\^~<>*=.\d\w-]+))?$/.exec(original);
   if(!match)throw Error('unsupported-package-specifier');
   const name=match[1];
-  if(['cn','react','react-dom'].includes(name))continue;
-  dependencies[name]=match[2]||'latest';
+  if(name==='cn')continue;
+  const pinned=REVIEWED_DEPS[name];
+  if(typeof pinned!=='string'||!/^[0-9]+\.[0-9]+\.[0-9]+(?:-[\w.-]+)?$/.test(pinned))
+   throw Error('unreviewed-package: '+name);
+  if(match[2]&&!/^[0-9]+\.[0-9]+\.[0-9]+(?:-[\w.-]+)?$/.test(match[2]))
+   throw Error('unpinned-package: '+name);
+  if(match[2]&&match[2]!==pinned)throw Error('dependency-version-mismatch: '+name);
+  dependencies[name]=pinned;
  }
  return dependencies;
 }
 function packageImports(files) {
  const packages=[];
- for(const source of files.values()){
-  if(!/\b(?:import|export|require)\b/.test(source))continue;
-  for(const match of source.matchAll(/\b(?:from\s*|import\s*|require\s*\()\s*["']([^"']+)["']/g)){
-   const name=match[1];
-   if(name.startsWith('.')||name.startsWith('/')||name.startsWith('@/'))continue;
-   packages.push(name.startsWith('@')?name.split('/').slice(0,2).join('/'):name.split('/')[0]);
+ for(const [filename,source] of files){
+  if(!/\.(?:tsx?|jsx?)$/.test(filename))continue;
+  const ast=ts.createSourceFile(filename,source,ts.ScriptTarget.Latest,true,
+   /\.tsx?$/.test(filename)?ts.ScriptKind.TSX:ts.ScriptKind.JSX);
+  function add(specifier){
+   if(specifier.startsWith('.')||specifier.startsWith('/')||specifier.startsWith('@/'))return;
+   packages.push(specifier.startsWith('@')?specifier.split('/').slice(0,2).join('/'):specifier.split('/')[0]);
   }
+  function visit(node){
+   if((ts.isImportDeclaration(node)||ts.isExportDeclaration(node))
+     &&node.moduleSpecifier&&ts.isStringLiteral(node.moduleSpecifier))add(node.moduleSpecifier.text);
+   if(ts.isCallExpression(node)&&node.arguments.length===1&&ts.isStringLiteral(node.arguments[0])
+     &&(node.expression.kind===ts.SyntaxKind.ImportKeyword
+       ||(ts.isIdentifier(node.expression)&&node.expression.text==='require')))
+    add(node.arguments[0].text);
+   ts.forEachChild(node,visit);
+  }
+  visit(ast);
  }
  return unique(packages);
 }
@@ -127,8 +169,9 @@ export function createSandboxProject(item,tree){
  const entry=canonicalFile(original);
  const source=sourceFiles.get(entry);
  if(!source)throw Error('entry-file-not-resolved');
- const named=componentExport(source);
+ const named=componentExport(source,item.name);
  if(!named&&!namedDemo)throw Error('component-export-unresolved');
+ if(namedDemo&&!named&&!hasDefaultExport(source))throw Error('author-demo-required');
  const demo=Boolean(namedDemo);
  const files={};
  const known=new Set(sourceFiles.keys());

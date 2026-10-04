@@ -78,3 +78,46 @@ Raw observation snapshot: `~/.local/state/registry-atlas/research/21st-dev-20261
 ## Engineering safeguard
 
 A literal copy of third-party protected source/assets, fake popularity counts or unreviewed arbitrary package execution would be brittle and unsafe. Meet the user's requested **functional/visual quality bar** with Atlas's own implementation, source-backed data and isolated allowed demos. Account/commerce/publishing/editor features require real service/data/permission decisions; record their work instead of silently omitting them.
+
+
+## R6. Implementation selection and execution gates — research reconciliation (2026-10-04)
+
+This section converts the preview-runtime and migration decisions in the associated October 3 plan into testable design requirements. It extends R1–R5 rather than claiming those route, identity, feature or catalog acceptance criteria have been met. The source research is `/mnt/c/Users/user/Downloads/21stdev-deepresearch.md` (external to the repo), the current project research is `docs/research/2026-10-03-shared-live-preview-pipeline.md`, and the handoff conversation is `6ac08e9a-56f4-83e9-b9ef-411ae11f6589`.
+
+### Evidence versus assumption
+
+- Current 21st.dev publishing conventions support an authored React/TSX demo, an approved cover and optional video. The historical public 21st application used Sandpack; an observed current component used a versioned CDN iframe. The internal current compiler/bundler is **not verified** by either observation. Do not infer Sandpack or Next.js version from a historical fork.
+- The shadcn `getRegistryItems` and `resolveRegistryItems` APIs provide item files, declared dependencies and styling metadata. They do **not** provide a universal executable demo, a license decision or a browser interaction proof. `addRegistryItems` modifies a project and may run only in an explicitly disposable installation test.
+- The research's Next.js + React + Sandpack suggestion is a *greenfield option*, not a reason to rewrite Atlas's functioning Vite/TypeScript catalog. Preserve the existing shell, routes, registry identity model, discovery jobs, image manifest, existing preview host and published reviewed fixtures.
+- The existing three historical feature-worktree heads are not competing implementations: `feat/frontend-reference-navigation` and `feat/visual-reference-previews` are ancestors of `main`; `feat/registry-traversal-patterns` has its content integrated on main by `0efe4a8`. Preserve their worktrees for provenance. Before any future edits, check current worktree/claim state rather than assuming a previous owner is active.
+
+### Chosen runtime order
+
+1. **Public catalog:** display indexed source metadata and verified original covers; do not launch hundreds of React compilers inside cards. Preserve entire-card internal routing and independent original-page link, keyboard access and missing-visual states. Verified published, sandboxed static demos already in cards remain valid; expansion must be bounded and measured.
+2. **Public detail:** load only a reviewed, immutable, identity- and revision-matched artifact in a sandboxed iframe. Promote to `interaction-verified` only after a component-specific browser state transition. The already documented `@8bitcn` built previews are preserved, not retroactively certified for unrelated identities.
+3. **Local developer experiment:** use the existing `shadcn/registry` resolver to fetch the actual item and declared transitive source. When an upstream author demo is present, prefer that demo. Otherwise use a clearly labeled, narrowly generated smoke example only when an unambiguous safe entry exists; never claim this is the author's intended design or count it as certified behavior. Sandpack may run it only after deliberate local user action, not as an automatic public gallery runtime.
+4. **Future production ingestion:** version-bound official source, permission/license decision, recursive pinned dependency/alias validation, restricted isolated build worker, immutable hash output, browser behavior proof and explicit publication. A public build broker requires authentication, quotas, stricter dependency permissions, CSP and a dedicated no-cookie preview origin. Do not deploy the existing localhost service as an open code-execution endpoint.
+5. **Unsupported item:** keep it searchable and navigable, retain verified image/original link when available, explain the actual reason the interactive demo is pending or blocked, and preserve source evidence for retry. Never substitute an unrelated image, URL guessed from a slug, external runtime with parent auth, or falsely interactive control.
+
+### Small, testable source-preview contract
+
+- Use the **exact** catalog item namespace and name. A source resolver must reject an item absent from the local official directory/catalog, an upstream item name mismatch, invalid registry URL, source path traversal or conflicting destination.
+- An authored demo is an explicit entry from upstream files, not a filename-based guess that silently picks another component. For a generated smoke example with multiple named component exports, select the export exactly matching the normalized item name; if it remains ambiguous, report `component-export-unresolved` and require an authored demo.
+- Dependencies loaded by a client preview must be exact versions already declared in the reviewed host dependency manifest, or the item is blocked as unreviewed/unsupported. Do not silently resolve `latest` or floating versions. Package pins alone do **not** certify source trust, browser isolation or user-visible parity.
+- Retain limits on file count, source bytes, dependency specs and output bytes. Never treat arbitrary CSS/Tailwind configuration and asynchronous browser resources as automatically reproduced. A smoke example can differ materially from original appearance; preserve that warning.
+- The sandbox's trust boundary must be explicit: a Sandpack iframe is a development convenience, not equivalent to the network-isolated `bwrap` compilation or a reviewed cross-origin production artifact. Raw source and dependency download must not run in the Atlas parent DOM; do not give the preview parent auth/cookies or add `allow-same-origin` to a same-origin hostile iframe.
+
+### Verification matrix and completion definition
+
+| Layer | Passing evidence | Failure remains visible |
+|---|---|---|
+| Registry discovery | All current raw registries accounted for, exact item keys, bounded stable cursor, independently observed page identity | candidate-only, stale, blocked and unresolved |
+| Visual references | Exact official component surface/image, source URL and current capture evidence | absent/wrong banner never promoted |
+| Source preview | Actual `shadcn` resolved files, authored-demo preference, unambiguous entry, tested pinned dependencies, no unsafe destination | unsupported exports, unreviewed packages, inconsistent source |
+| Runtime interaction | A real browser action changes the **same** upstream component's state, sandbox/network reviewed, matching card/detail identity | built-only, loaded iframe and rendered-only never promoted |
+| Navigation and controls | Per-route feature ledger, all observed sidebar groups, valid source-backed sorts/filters, keyboard/mobile/reload/back behavior | unavailable data and services explicitly open |
+| Publication | `mise run verify`, browser acceptance, exact source manifest, changes reviewed, no active PAO claims after check-out | do not report the 408-registry/entire reference scope complete |
+
+**Current task slice:** fix source-preview export selection and unpinned dependency fallbacks with failing tests first; do not rewrite the application framework, touch worker-owned source without reconciliation or introduce a second preview-resolver service. Next tasks are a real two-registry source/demo runtime trial, per-item visual/interaction evidence, and measured extension to compatible reviewed dependency families. Sitewide parity and the full inventory remain tracked open until separately proved.
+
+Primary technical references: https://ui.shadcn.com/docs/registry/api-reference ; https://ui.shadcn.com/docs/registry/registry-item-json ; https://sandpack.codesandbox.io/docs/advanced-usage ; https://github.com/21st-dev/skill/blob/main/skills/21st-registry/SKILL.md ; https://html.spec.whatwg.org/multipage/iframe-embed-object.html .
