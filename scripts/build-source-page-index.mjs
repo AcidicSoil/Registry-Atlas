@@ -1,6 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
+import { DatabaseSync } from 'node:sqlite';
+import { exportPatternLinkSnapshot } from './verify-registry-patterns.mjs';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
 
 export const SOURCE_PAGE_SCHEMA = 'registry-atlas-source-page-index/v1';
@@ -189,17 +191,18 @@ async function main(argv) {
   const value = flag => argv[argv.indexOf(flag) + 1];
   for (const flag of ['--output', '--report'])
     if (!value(flag) || value(flag).startsWith('--')) throw new Error('Missing '+flag);
-  const patternFile = value('--pattern-links') ?? 'data/shadcn/verified-registry-pattern-links.json';
-  const patternLinks = await readFile(patternFile,'utf8').then(JSON.parse)
-    .catch(error => { if (error.code === 'ENOENT') return null; throw error; });
+  const sourceDb = new DatabaseSync(value('--db') ?? 'data/shadcn/registry-patterns.sqlite',
+    { readOnly: true });
+  let patternLinks;
+  try { patternLinks = exportPatternLinkSnapshot(sourceDb); }
+  finally { sourceDb.close(); }
   const [raw, catalog, curated, previews, demos] = await Promise.all([
     'data/shadcn/registries.raw.json', 'public/data/registry-catalog-items.json',
     'data/shadcn/registry-items.json', 'public/data/component-previews.json',
     'src/registry-explorer/data/component-demo-manifest.json',
   ].map(file => readFile(file,'utf8').then(JSON.parse)));
-  // The legacy traversal inventory is consulted only before its records are migrated to SQLite.
-  const traversal = Array.isArray(patternLinks?.sitemapLinks) ? null
-    : await readFile('data/shadcn/registry-traversal-patterns.json','utf8').then(JSON.parse);
+  // Pattern evidence is read directly from SQLite. The legacy traversal JSON is retired.
+  const traversal = null;
   const result = buildSourcePageIndex({ raw,catalog,curated,traversal,previews,demos,patternLinks });
   await writeFile(value('--output'), JSON.stringify(result) + '\n');
   await writeFile(value('--report'), JSON.stringify({

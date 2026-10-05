@@ -3,12 +3,18 @@ import {describe,expect,it} from 'vitest';
 import {readFileSync} from 'node:fs';
 // @ts-expect-error Node ESM scripts are tested through Vitest in Node.
 import {buildSourcePageIndex} from '../../scripts/build-source-page-index.mjs';
+// @ts-expect-error Node builtin SQLite types are not in the browser TS config.
+import {DatabaseSync} from 'node:sqlite';
+// @ts-expect-error Node ESM scripts are tested through Vitest in Node.
+import {exportPatternLinkSnapshot} from '../../scripts/verify-registry-patterns.mjs';
 
 const load = (file: string) => JSON.parse(readFileSync(file,'utf8'));
 
 describe('committed source-page artifact',()=>{
   it('is reproducible from the current source evidence without guessed URLs',()=>{
-    const patternLinks=load('data/shadcn/verified-registry-pattern-links.json');
+    const db=new DatabaseSync('data/shadcn/registry-patterns.sqlite',{readOnly:true});
+    const patternLinks=exportPatternLinkSnapshot(db);
+    db.close();
     const latest=patternLinks.links.reduce((max: number,row: {checkedAt:string})=>
       Math.max(max,Date.parse(row.checkedAt) || 0),Date.parse(patternLinks.sourceSnapshotAt));
     const generated=buildSourcePageIndex({

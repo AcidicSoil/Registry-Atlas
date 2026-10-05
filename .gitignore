@@ -48,6 +48,10 @@ codefetch.config.mjs
 .ecc-hooks-disable.bak
 .agents
 
+# SQLite transient companions: the committed snapshot is the .sqlite file only
+*.sqlite-wal
+*.sqlite-shm
+
 # Local git worktrees
 .worktrees/
 .repowise/

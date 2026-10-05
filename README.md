@@ -26,6 +26,20 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 - **Authors and unavailable routes**: Authors lists exact attribution names published in source item metadata, not inferred creator accounts. Featured and Newest remain retired because Atlas does not invent popularity or publication-time rankings. The theme editor explains why editing is not yet supported.
 - **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
+## Original-page pattern database
+
+The source registry URL-pattern store is the versioned SQLite database at `data/shadcn/registry-patterns.sqlite`, using Node 24's built-in SQLite API. The former traversal-pattern JSON and intermediate pattern-link JSON have been removed after migration. The frontend still loads `public/data/component-page-links.json`, which is a **generated static projection**, not the source of truth.
+
+Run `mise run source-pages` to regenerate the public link bundle from SQLite. To inspect unresolved registry sources without visiting upstream pages, use:
+
+```bash
+node scripts/verify-registry-patterns.mjs --db data/shadcn/registry-patterns.sqlite \\
+  --report-only --report .instance/registry-pattern-unverified.json \\
+  --repair-report .instance/registry-pattern-repair-queue.json
+```
+
+For repeatable, bounded verification and browser-assisted repair, see [registry-pattern verification](docs/superpowers/specs/2026-10-04-registry-pattern-verification.md). Verified route patterns can generate matching URLs but do **not** establish that every individual destination has been loaded.
+
 ## Getting Started
 
 ### Prerequisites

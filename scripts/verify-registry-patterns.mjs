@@ -3,6 +3,7 @@ import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
 
 const PATTERN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -192,8 +193,15 @@ export function resolveInferredRoutes(db,namespace) {
   db.exec('COMMIT');
   } catch(error) { db.exec('ROLLBACK'); throw error; }
 }
+export function retryEligibleFailure(reason) {
+  return reason==='identity-mismatch' || String(reason??'').startsWith('network-')
+    || String(reason??'').startsWith('browser-error-')
+    || /^http-(?:408|429|5\d\d)$/.test(reason??'');
+}
+
 export async function verifyRegistryPatterns(db,{
-  registry,samples=2,fetchPage=fetch,checkedAt=new Date().toISOString()
+  registry,samples=2,fetchPage=fetch,checkedAt=new Date().toISOString(),browserPage=null,
+  repairFailed=false,maxAttempts=3
 }={}) {
   if(!Number.isSafeInteger(samples)||samples<1||samples>12)throw Error('Invalid sample count');
   const registries=registry
@@ -207,6 +215,10 @@ export async function verifyRegistryPatterns(db,{
   let checkedPatterns=0,verifiedPatterns=0,failedPatterns=0,missingSamples=0;
   for(const {namespace} of registries) {
     for(const p of list.all(namespace)) {
+      if(repairFailed && p.status==='failed' && (
+        !retryEligibleFailure(p.failure) || db.prepare(
+          "SELECT COUNT(*) AS n FROM pattern_checks WHERE pattern_id=? AND status='failed'"
+        ).get(p.id).n>=maxAttempts))continue;
       if(p.status==='verified' && p.checked_at &&
         Date.parse(checkedAt) >= Date.parse(p.checked_at) &&
         Date.parse(checkedAt)-Date.parse(p.checked_at)<PATTERN_MAX_AGE_MS)continue;
@@ -217,7 +229,16 @@ export async function verifyRegistryPatterns(db,{
         all[Math.floor(i*(all.length-1)/(samples-1))]);
       checkedPatterns++;let reason=null;
       for(const item of chosen) {
-        const response=await checkPatternExample(fetchPage,item.url,item.slug.slice(p.prefix.length));
+        let response=await checkPatternExample(fetchPage,item.url,item.slug.slice(p.prefix.length));
+        if(response.reason==='identity-mismatch' && typeof browserPage==='function') {
+          const root=db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace).homepage;
+          const observed=await browserPage(item.url,item.slug.slice(p.prefix.length),root)
+            .catch(error=>({status:'failed',reason:'browser-error-'+String(error.message).slice(0,75)}));
+          if(observed?.status==='verified' && observed.observedUrl===item.url &&
+            identity(observed.observedIdentity)===identity(item.slug.slice(p.prefix.length)))
+            response={status:'verified',reason:null};
+          else response={status:'failed',reason:observed?.reason??'browser-identity-mismatch'};
+        }
         log.run(p.id,item.slug,item.url,response.status,response.reason,checkedAt);
         if(response.status!=='verified') {reason=response.reason;break;}
       }
@@ -262,29 +283,120 @@ export function exportPatternLinkSnapshot(db) {
   };
 }
 
-export function pendingRegistryNames(db,minExamples=2,max=5,now=new Date().toISOString()) {
+export function pendingRegistryNames(db,minExamples=2,max=5,now=new Date().toISOString(),{retryFailed=false,maxAttempts=3}={}) {
   if(!Number.isSafeInteger(minExamples)||minExamples<1||minExamples>12 ||
-    !Number.isSafeInteger(max)||max<1||max>408)throw Error('Invalid batch limits');
+    !Number.isSafeInteger(max)||max<1||max>408 ||
+    !Number.isSafeInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)throw Error('Invalid batch limits');
   const at=Date.parse(now);
   if(!Number.isFinite(at))throw Error('Invalid verification time');
   const olderThan=new Date(at-PATTERN_MAX_AGE_MS).toISOString();
   return db.prepare(`SELECT p.namespace FROM route_patterns p
     WHERE (p.status='unverified'
-      OR (p.status='verified' AND (p.checked_at IS NULL OR p.checked_at<=?)))
+      OR (p.status='verified' AND (p.checked_at IS NULL OR p.checked_at<=?))
+      OR (?=1 AND p.status='failed'
+        AND (p.failure='identity-mismatch' OR p.failure LIKE 'network-%'
+           OR p.failure LIKE 'browser-error-%' OR p.failure='http-408'
+           OR p.failure='http-429' OR p.failure GLOB 'http-5[0-9][0-9]')
+        AND (SELECT COUNT(*) FROM pattern_checks c WHERE c.pattern_id=p.id
+           AND c.status='failed')<?))
       AND (SELECT COUNT(*) FROM examples e WHERE e.pattern_id=p.id)>=?
-    GROUP BY p.namespace ORDER BY p.namespace LIMIT ?`).all(olderThan,minExamples,max).map(x=>x.namespace);
+    GROUP BY p.namespace ORDER BY p.namespace LIMIT ?`).all(
+      olderThan,retryFailed?1:0,maxAttempts,minExamples,max).map(x=>x.namespace);
+}
+
+
+export function exportPatternRepairQueue(db,{maxAttempts=3}={}) {
+  if(!Number.isSafeInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)
+    throw Error('Invalid repair attempt limit');
+  const patterns=db.prepare(`
+    SELECT p.id,p.namespace,s.homepage,p.template,p.prefix,p.status,p.failure,
+      (SELECT COUNT(*) FROM examples e WHERE e.pattern_id=p.id) AS examples,
+      (SELECT COUNT(*) FROM pattern_checks c WHERE c.pattern_id=p.id
+        AND c.status='failed') AS attempts
+    FROM route_patterns p JOIN sources s ON s.namespace=p.namespace
+      WHERE p.status<>'verified'
+    ORDER BY p.namespace,p.id`).all().map(row=>{
+      const strategy=row.examples<2?'discover-more-examples'
+        : row.failure==='identity-mismatch'?'browser-rendered-identity'
+        : row.failure==='browser-url-mismatch'||row.failure==='browser-identity-mismatch'
+          ?'rediscover-route-family'
+        : row.failure?.startsWith('network-')||/^http-(?:408|429|5\d\d)$/.test(row.failure??'')
+          ?'retry-transient'
+        : /^http-3\d\d$/.test(row.failure??'')?'inspect-redirect'
+        : row.failure?.startsWith('http-')?'check-removed-or-moved'
+        :'verify-representative-pages';
+      const examples=db.prepare('SELECT slug,url FROM examples WHERE pattern_id=? ORDER BY slug LIMIT 3')
+        .all(row.id);
+      return {...row,examples, strategy,exhausted:row.attempts>=maxAttempts};
+    });
+  const counts={};
+  for(const row of patterns)counts[row.strategy]=(counts[row.strategy]??0)+1;
+  return {schema:'registry-atlas-pattern-repair-queue/v1',maxAttempts,
+    totals:{patterns:patterns.length,...counts},patterns};
+}
+
+export function managedBrowserPatternProof({profile,server,tab,exec=execFileSync}) {
+  if(!profile || !server || !tab)throw Error('Browser proof requires profile, server and tab');
+  const status=JSON.parse(exec('pinchtab-profile-manager',
+    [profile,'status','--json'],{encoding:'utf8',timeout:12000}));
+  if(!status.ok || !status.data?.instances?.some(i=>i.status==='running'&&i.url===server))
+    throw Error('Source browser does not belong to the requested managed profile');
+  const allowed=status.data.settings?.allowedDomains??[];
+  const call=(...args)=>JSON.parse(exec('pinchtab',
+    ['--server',server,...args,'--tab',tab,'--json'],
+    {encoding:'utf8',timeout:30000,maxBuffer:8*1024*1024}));
+  return async (url,slug,home)=>{
+    if(!safePage(url,home))return {status:'failed',reason:'unsafe-browser-url'};
+    const hostname=new URL(url).hostname;
+    if(!allowed.some(domain=>domain==='*'||domain===hostname
+      || (domain.startsWith('*.')&&hostname.endsWith(domain.slice(1)))))
+      return {status:'failed',reason:'source-domain-not-allowed'};
+    try {
+      call('nav',url);
+      let snap=call('snap');
+      let final=call('url').url;
+      if(final!==url || snap.url!==url)
+        return {status:'failed',reason:'browser-url-mismatch'};
+      let headings=(snap.nodes??[]).filter(n=>n.role==='heading')
+        .map(n=>identity(n.name));
+      const wanted=identity(slug.split('/').at(-1));
+      if(!headings.includes(wanted)) {
+        // A bounded retry allows common client-rendered docs to hydrate.
+        try {call('wait','--fn',"document.querySelector('h1')?.innerText?.trim().length > 0",
+          '--timeout','4000');}catch{}
+        snap=call('snap');final=call('url').url;
+        headings=(snap.nodes??[]).filter(n=>n.role==='heading')
+          .map(n=>identity(n.name));
+      }
+      if(final!==url||snap.url!==url)
+        return {status:'failed',reason:'browser-url-mismatch'};
+      if(!headings.includes(wanted))
+        return {status:'failed',reason:'browser-identity-mismatch'};
+      return {status:'verified',reason:null,observedUrl:final,observedIdentity:slug};
+    }catch(error){return {status:'failed',reason:'browser-error-'+String(error.message).slice(0,75)};}
+  };
 }
 
 async function main(args) {
-  if(args.includes('--help')){console.log('Usage: --db FILE [--verify-only | --import-only --inventory FILE --catalog FILE --raw FILE] [--curated FILE] [--registry NAME] [--samples 2] [--max-registries 5] [--report FILE] [--links FILE]');return;}
+  if(args.includes('--help')){console.log('Usage: --db FILE [--verify-only | --report-only | --import-only --inventory FILE --catalog FILE --raw FILE] [--registry NAME] [--samples 2] [--max-registries 5] [--passes 1] [--delay-ms 1200] [--repair-failed --profile NAME --browser-server URL --browser-tab ID --max-attempts 3] [--report FILE] [--repair-report FILE] [--links FILE]');return;}
   const get=flag=>args.includes(flag)?args[args.indexOf(flag)+1]:null;
   const verifyOnly=args.includes('--verify-only');
-  if(!get('--db') || (!verifyOnly && ['--inventory','--catalog','--raw'].some(flag=>!get(flag))) ||
-    (verifyOnly && args.includes('--import-only')))throw Error('Missing or conflicting arguments');
+  const reportOnly=args.includes('--report-only');
+  if(!get('--db') || (!verifyOnly && !reportOnly && ['--inventory','--catalog','--raw'].some(flag=>!get(flag))) ||
+    ((verifyOnly||reportOnly) && args.includes('--import-only')))throw Error('Missing or conflicting arguments');
   const max=Number(get('--max-registries')??5),samples=Number(get('--samples')??2);
-  if(!Number.isSafeInteger(max)||max<1||max>408)throw Error('Invalid --max-registries');
+  const passes=Number(get('--passes')??1);
+  const delayMs=Number(get('--delay-ms')??1200);
+  const maxAttempts=Number(get('--max-attempts')??3);
+  const repairFailed=args.includes('--repair-failed');
+  if(repairFailed && (!get('--profile') || !get('--browser-server') || !get('--browser-tab')))
+    throw Error('Repairing failed patterns requires an authorized managed browser profile/server/tab');
+  if(!Number.isSafeInteger(max)||max<1||max>408 ||
+    !Number.isSafeInteger(passes)||passes<1||passes>408 ||
+    !Number.isSafeInteger(delayMs)||delayMs<0||delayMs>60000)
+    throw Error('Invalid batch, pass, or delay limit');
   await mkdir(dirname(resolve(get('--db'))),{recursive:true});
-  const inputs=verifyOnly?null:await Promise.all([
+  const inputs=(verifyOnly||reportOnly)?null:await Promise.all([
     ...['--inventory','--catalog','--raw'].map(flag=>readFile(get(flag),'utf8').then(JSON.parse)),
     readFile(get('--curated')??'data/shadcn/registry-items.json','utf8').then(JSON.parse)]);
   const db=new DatabaseSync(resolve(get('--db')));
@@ -298,13 +410,26 @@ async function main(args) {
       : {registries:db.prepare('SELECT COUNT(*) AS n FROM sources').get().n,
          patterns:db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n,
          examples:db.prepare('SELECT COUNT(*) AS n FROM examples').get().n};
-    const chosen=args.includes('--import-only')?[]:get('--registry')?[get('--registry')]:
-      pendingRegistryNames(db,samples,max);
+    const browserPage=repairFailed
+      ? managedBrowserPatternProof({profile:get('--profile'),server:get('--browser-server'),
+        tab:get('--browser-tab')}) : null;
     const checked=[];
-    for(const registry of chosen)
-      checked.push({namespace:registry,...await verifyRegistryPatterns(db,{registry,samples})});
+    const noOp=args.includes('--import-only')||reportOnly;
+    for(let pass=0;pass<(noOp?0:passes);pass++){
+      const chosen=get('--registry')?(pass===0?[get('--registry')]:[]):
+        pendingRegistryNames(db,samples,max,new Date().toISOString(),
+          {retryFailed:repairFailed,maxAttempts});
+      if(chosen.length===0)break;
+      for(const registry of chosen){
+        checked.push({namespace:registry,pass:pass+1,...await verifyRegistryPatterns(db,{
+          registry,samples,browserPage,repairFailed,maxAttempts})});
+        if(delayMs)await new Promise(done=>setTimeout(done,delayMs));
+      }
+    }
     const coverage=exportPatternCoverage(db,inputs?.[2]??[]);
     if(get('--report'))await writeFile(get('--report'),JSON.stringify(coverage,null,2)+'\n');
+    if(get('--repair-report'))await writeFile(get('--repair-report'),
+      JSON.stringify(exportPatternRepairQueue(db,{maxAttempts}),null,2)+'\n');
     if(get('--links'))await writeFile(get('--links'),JSON.stringify(exportPatternLinkSnapshot(db))+'\n');
     console.log(JSON.stringify({imported,checked,coverage:{
       registries:coverage.registries,unverifiedRegistries:coverage.unverifiedRegistries.length,

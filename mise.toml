@@ -64,11 +64,11 @@ run = "pnpm sync:catalog-evidence"
 
 [tasks."source-pages"]
 description = "Build exact source-page links and coverage from current verified/sitemap evidence"
-run = "node scripts/build-source-page-index.mjs --pattern-links data/shadcn/verified-registry-pattern-links.json --output public/data/component-page-links.json --report data/shadcn/component-page-link-coverage.json"
+run = "node scripts/build-source-page-index.mjs --db data/shadcn/registry-patterns.sqlite --output public/data/component-page-links.json --report data/shadcn/component-page-link-coverage.json"
 
 [tasks."verify:registry-patterns"]
 description = "Verify the next 20 eligible registry patterns from SQLite, refresh unresolved queue and source-page links"
-run = "node scripts/verify-registry-patterns.mjs --db .instance/registry-patterns.sqlite --verify-only --max-registries 20 --samples 2 --report data/shadcn/registry-pattern-unverified.json --links data/shadcn/verified-registry-pattern-links.json && mise run source-pages"
+run = "node scripts/verify-registry-patterns.mjs --db data/shadcn/registry-patterns.sqlite --verify-only --max-registries 20 --samples 2 --report .instance/registry-pattern-unverified.json --repair-report .instance/registry-pattern-repair-queue.json && mise run source-pages"
 
 [tasks.all]
 description = "Refresh registry data and run the full verification gate"

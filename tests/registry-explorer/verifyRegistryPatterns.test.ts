@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 // @ts-ignore Node ESM utility tested in Vitest.
 import { DatabaseSync } from 'node:sqlite';
 // @ts-ignore standalone Node script
-import { importRegistryPatterns, verifyRegistryPatterns, exportPatternCoverage, exportPatternLinkSnapshot, pendingRegistryNames } from '../../scripts/verify-registry-patterns.mjs';
+import { importRegistryPatterns, verifyRegistryPatterns, exportPatternCoverage, exportPatternLinkSnapshot, pendingRegistryNames, exportPatternRepairQueue, managedBrowserPatternProof } from '../../scripts/verify-registry-patterns.mjs';
 
 const inventory = {
   schema: 'registry-atlas-traversal-inventory/v1',
@@ -169,6 +169,101 @@ describe('bounded SQLite registry route-pattern verification', () => {
     ]));
     expect(published.sitemapLinks.some((row:{slug:string})=>row.slug==='outside')).toBe(false);
     expect(published.fingerprints['@one']).toBeTruthy();
+    db.close();
+  });
+
+
+  it('requeues failed identities by repair strategy with a persistent retry cap',async()=>{
+    const db=new DatabaseSync(':memory:');
+    importRegistryPatterns(db,{inventory,catalog,raw});
+    const fails=async()=>new Response('<h1>Unavailable</h1>',{status:200,
+      headers:{'content-type':'text/html'}});
+    await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:fails});
+    expect(pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2}))
+      .toEqual(['@one']);
+    let queue=exportPatternRepairQueue(db,{maxAttempts:2});
+    expect(queue.patterns).toEqual(expect.arrayContaining([
+      expect.objectContaining({namespace:'@one',strategy:'browser-rendered-identity',attempts:1}),
+    ]));
+    await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:fails});
+    expect(pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2}))
+      .toEqual([]);
+    queue=exportPatternRepairQueue(db,{maxAttempts:2});
+    expect(queue.patterns.find((p:any)=>p.namespace==='@one')).toMatchObject({
+      strategy:'browser-rendered-identity',attempts:2,exhausted:true,
+    });
+    db.close();
+  });
+
+  it('promotes a failed static HTML check only after a matching rendered-browser proof',async()=>{
+    const db=new DatabaseSync(':memory:');
+    importRegistryPatterns(db,{inventory,catalog,raw});
+    const visits:string[]=[];
+    const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
+      fetchPage:async()=>new Response('<html><div id="root"></div></html>',{status:200,
+        headers:{'content-type':'text/html'}}),
+      browserPage:async (url:string,slug:string,home:string)=>{
+        visits.push(url);
+        expect(new URL(url).origin).toBe(new URL(home).origin);
+        return {status:'verified',reason:null,observedUrl:url,observedIdentity:slug};
+      },
+    });
+    expect(result.verifiedPatterns).toBe(1);
+    expect(visits).toHaveLength(2);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get().n).toBe(2);
+    db.close();
+  });
+
+  it('checks actual managed browser page URL and heading, without treating a matching URL alone as proof',async()=>{
+    const calls:string[]=[];
+    const execute=(_command:string,args:string[])=>{
+      calls.push(args.join(' '));
+      if(_command==='pinchtab-profile-manager')return JSON.stringify({
+        ok:true,data:{settings:{allowedDomains:['example.org']},
+          instances:[{status:'running',url:'http://127.0.0.1:9877'}]}});
+      if(args.includes('nav'))return JSON.stringify({url:'https://example.org/docs/button'});
+      if(args.includes('url'))return JSON.stringify({url:'https://example.org/docs/button'});
+      if(args.includes('snap'))return JSON.stringify({
+        url:'https://example.org/docs/button',nodes:[{role:'heading',name:'Button'}]});
+      return JSON.stringify({});
+    };
+    const browser=managedBrowserPatternProof({profile:'source-audit',server:'http://127.0.0.1:9877',
+      tab:'a'.repeat(32),exec:execute});
+    expect(await browser('https://example.org/docs/button','button','https://example.org/'))
+      .toMatchObject({status:'verified',observedUrl:'https://example.org/docs/button'});
+    expect(await browser('https://evil.example/docs/button','button','https://example.org/'))
+      .toMatchObject({status:'failed',reason:'unsafe-browser-url'});
+    expect(calls.some(call=>call.includes('nav'))).toBe(true);
+  });
+
+
+  it('does not repeatedly retry an unchanged browser-identity mismatch',async()=>{
+    const db=new DatabaseSync(':memory:');
+    importRegistryPatterns(db,{inventory,catalog,raw});
+    await verifyRegistryPatterns(db,{registry:'@one',samples:2,
+      fetchPage:async()=>new Response('<html><main>Loading</main></html>',{
+        status:200,headers:{'content-type':'text/html'}}),
+      browserPage:async()=>({status:'failed',reason:'browser-identity-mismatch'}),
+    });
+    expect(pendingRegistryNames(db,2,10,new Date().toISOString(),
+      {retryFailed:true,maxAttempts:5})).toEqual([]);
+    expect(exportPatternRepairQueue(db).patterns.find((x:any)=>x.namespace==='@one'))
+      .toMatchObject({strategy:'rediscover-route-family'});
+    db.close();
+  });
+
+  it('never treats a browser redirect to a different page as verification',async()=>{
+    const db=new DatabaseSync(':memory:');
+    importRegistryPatterns(db,{inventory,catalog,raw});
+    const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
+      fetchPage:async()=>new Response('<html><div id="root"></div></html>',{status:200,
+        headers:{'content-type':'text/html'}}),
+      browserPage:async()=>({status:'failed',reason:'browser-url-mismatch'}),
+    });
+    expect(result.verifiedPatterns).toBe(0);
+    expect(db.prepare("SELECT failure FROM route_patterns WHERE namespace='@one'").get()).toEqual({
+      failure:'browser-url-mismatch',
+    });
     db.close();
   });
 
