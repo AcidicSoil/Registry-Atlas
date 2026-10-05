@@ -19,7 +19,7 @@ import {
 import { renderItemDetailView } from './itemDetailView';
 import { describeSourcePreviewFailure } from './sourcePreviewStatus';
 import { escapeHtml, renderRegistryHomepageLink } from './renderSafety';
-import { buildCatalogFacetSummary, queryCatalogComponents } from '../core/catalogQuery';
+import { buildCatalogFacetSummary, catalogDistinctItemCount, queryCatalogComponents } from '../core/catalogQuery';
 import {
   buildRegistryDirectory,
   registryCatalogCoverage,
@@ -387,7 +387,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           basePath: catalogBasePath(),
         });
     renderCatalogLanding(roots.contentHeader, roots.contentBody, {
-      itemCount: catalogIndex.meta.item_count,
+      itemCount: catalogDistinctItemCount(catalogIndex),
       registryCount: registries.length,
       catalogCount: catalogIndex.meta.registry_count,
       featured,

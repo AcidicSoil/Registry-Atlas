@@ -55,7 +55,8 @@ describe('preview and component page links', () => {
     expect(body.innerHTML).not.toContain('Open preview');
     expect(body.innerHTML).not.toContain(`href="${previewUrl}"`);
     expect(body.innerHTML).not.toContain('Visit source documentation');
-    expect(body.innerHTML).not.toContain(`href="${componentPageUrl}"`);
+    expect(body.innerHTML).toContain(`href="${componentPageUrl}"`);
+    expect(body.innerHTML).toContain('View original component');
     expect(body.innerHTML).not.toContain(`href="${previewUrl}" class="secondary-link"`);
   });
 });

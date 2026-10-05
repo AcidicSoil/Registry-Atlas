@@ -4,6 +4,27 @@ import type { Registry } from '../../src/registry-explorer/core/registry.schema'
 import { renderItemDetailView, renderRelatedComponentLinks, renderLocalBuildOption, renderLocalSandboxOption } from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
+  it('links to the exact reviewed original documentation and registry separately', () => {
+    const detail = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
+    const body = root();
+    renderItemDetailView(root(), body, detail, new Set());
+    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
+    expect(body.innerHTML).toContain('View original component');
+    expect(body.innerHTML).toContain('href="https://delta.example/"');
+    expect(body.innerHTML).toContain('View registry');
+    expect(body.innerHTML).not.toContain('href="https://delta.example/r/code-block.json"');
+  });
+
+  it('does not claim a raw item JSON endpoint is a documentation page', () => {
+    const detail = resolveRegistryItemDetailFromSummary([
+      registryFixture({docsUrl: 'https://delta.example/r/code-block.json'}),
+    ], '@delta', 'code-block');
+    const body = root();
+    renderItemDetailView(root(), body, detail, new Set());
+    expect(body.innerHTML).not.toContain('View original component');
+    expect(body.innerHTML).not.toContain('href="https://delta.example/r/code-block.json"');
+  });
+
   it('offers an explicit local-only on-demand source preview without pretending it is verified',()=>{
     const offered=renderLocalBuildOption('@8bitcn','badge','127.0.0.1');
     expect(offered).toContain('data-local-build-preview="badge"');
@@ -46,7 +67,8 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).toContain('Syntax highlighted code block.');
     expect(body.innerHTML).not.toContain('Preview not published');
     expect(body.innerHTML).not.toContain('Visit source documentation');
-    expect(body.innerHTML).not.toContain('href="https://delta.example/components/code-block"');
+    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
+    expect(body.innerHTML).toContain('View original component');
     expect(body.innerHTML).toContain('Inspect first');
     expect(body.innerHTML).toContain('Copy install');
     expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(1);
@@ -78,10 +100,14 @@ describe('renderItemDetailView', () => {
       item: { name: slug, type },
       categories: [], reviewed: false,
     })) satisfies Parameters<typeof renderRelatedComponentLinks>[0];
-    const html=renderRelatedComponentLinks(related,'@delta','code-block');
+    const linked = related.map(item => item.namespace === '@delta' && item.slug === 'button'
+      ? { ...item, docsUrl: 'https://delta.example/docs/components/button' } : item);
+    const html=renderRelatedComponentLinks(linked,'@delta','code-block');
     expect(html).toContain('More from @delta');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/button"');
     expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).toContain('href="https://delta.example/docs/components/button"');
+    expect(html).toContain('View original');
     expect(html).not.toContain('@foreign');
     expect(html).not.toContain('components/code-block');
   });
@@ -116,13 +142,14 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML.indexOf('<iframe')).toBeLessThan(body.innerHTML.indexOf('item-preview-reference'));
   });
 
-  it('does not substitute an external source link for an unavailable install action', () => {
+  it('keeps a verified original link separate from an unavailable install action', () => {
     const result = resolveRegistryItemDetailFromSummary([registryFixture({ routeEligible: false })], '@delta', 'code-block');
     const body = root();
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).not.toContain('href="https://delta.example/components/code-block"');
+    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
+    expect(body.innerHTML).toContain('View original component');
     expect(body.innerHTML).toContain('<button class="install-button" type="button" disabled>Copy install</button>');
     expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(0);
     expect(body.innerHTML).toContain('Visual reference not yet available');

@@ -12,6 +12,7 @@ import type { RegistryThemeSwatch } from "../core/registry.schema";
 import { escapeHtml } from "./renderSafety";
 import { renderComponentPreview, verifiedComponentDemo } from './componentPreview';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference';
+import { verifiedSourcePageUrl } from './sourcePageLink';
 
 const COMMON_CATEGORIES = new Set(["ai", "forms", "form", "dashboard", "marketing", "navigation", "charts"]);
 
@@ -222,6 +223,10 @@ export function renderCatalogComponentCard(
     ?? (routeKind === 'theme' && component.themePreview
       ? renderCatalogThemeSpecimen(component)
       : null);
+  const homepage = component.registry?.url ?? '';
+  const officialPage = verifiedSourcePageUrl(reference?.officialPage, homepage)
+    ?? verifiedSourcePageUrl(component.docsUrl, homepage)
+    ?? verifiedSourcePageUrl(reviewedDemo?.source.docsUrl, homepage);
   const routePath = routeKind === 'component' ? component.routePath
     : component.routePath.replace('/components/', `/${routeKind}s/`);
   const linkAttributes = `href="${escapeHtml(routePath)}"
@@ -242,10 +247,10 @@ export function renderCatalogComponentCard(
         : `<a class="catalog-component-open" ${linkAttributes}>
              ${preview ? '<div class="catalog-component-specimen">'+preview+'</div>' : ''}${copy}
            </a>`}
-      ${reference ? `<a class="catalog-component-original" href="${escapeHtml(reference.officialPage)}"
+      ${officialPage ? `<a class="catalog-component-original" href="${escapeHtml(officialPage)}"
         target="_blank" rel="noreferrer noopener">View original ↗</a>`
         : reviewedDemo ? `<a class="catalog-component-original" href="${escapeHtml(reviewedDemo.source.registryItemUrl)}"
-          target="_blank" rel="noreferrer noopener">View official source ↗</a>` : ''}
+          target="_blank" rel="noreferrer noopener">View item JSON ↗</a>` : ''}
     </article>
   `;
 }

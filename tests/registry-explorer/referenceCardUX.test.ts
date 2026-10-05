@@ -22,11 +22,12 @@ describe('reference-gallery cards',()=>{
   it('exposes the exact reviewed upstream source of a working demo when no page image was observed',()=>{
     const html=renderCatalogComponentCard({...item,namespace:'@8bitcn',slug:'audio-settings',
       displayName:'Audio Settings',
+      registry:{...item.registry,name:'@8bitcn',url:'https://www.8bitcn.com/'},
       routePath:'/Registry-Atlas/@8bitcn/components/audio-settings'});
     expect(html).toContain('data-component-demo="@8bitcn/audio-settings"');
-    expect(html).toContain('href="https://www.8bitcn.com/r/audio-settings.json"');
-    expect(html).toContain('View official source');
-    expect(html).not.toContain('href="https://www.8bitcn.com/docs/components/audio-settings"');
+    expect(html).toContain('href="https://www.8bitcn.com/docs/components/audio-settings"');
+    expect(html).toContain('View original');
+    expect(html).not.toContain('href="https://www.8bitcn.com/r/audio-settings.json"');
     expect(html).toContain('rel="noreferrer noopener"');
   });
   it('renders the verified image and its exact independent official link',()=>{

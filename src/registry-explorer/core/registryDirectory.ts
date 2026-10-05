@@ -1,5 +1,6 @@
 import type { Registry, RegistryCatalogIndex } from "./registry.schema";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
+import { catalogItemCountForRegistry } from "./catalogQuery";
 
 export type RegistryCatalogCoverage = "current" | "stale" | "empty" | "failed";
 export type RegistryDirectorySort = "name" | "item-count-asc" | "item-count-desc" | "name-desc";
@@ -63,7 +64,7 @@ export function buildRegistryDirectory(
     ].some(value => value.toLocaleLowerCase().includes(query)))
     .map(registry => ({
       registry,
-      itemCount: index.registries[registry.name]?.length ?? 0,
+      itemCount: catalogItemCountForRegistry(index, registry.name),
       coverage: registryCatalogCoverage(registry, index),
     }))
     .filter(entry => coverageFilter.size === 0 || coverageFilter.has(entry.coverage))

@@ -42,6 +42,16 @@ function index(registries: RegistryCatalogIndex["registries"]): RegistryCatalogI
 }
 
 describe("registryDirectory", () => {
+  it("counts distinct component identities on a registry profile without altering the raw import", () => {
+    const catalog = index({"@alpha": [
+      {name:"button",type:"registry:ui"},
+      {name:"button",type:"registry:ui"},
+      {name:"forms/button",type:"registry:ui"},
+    ]});
+    expect(catalog.meta.item_count).toBe(3);
+    expect(buildRegistryDirectory([registry("@alpha")],catalog).entries[0].itemCount).toBe(2);
+  });
+
   it("uses compact-index bucket counts instead of reviewed item summaries", () => {
     const catalog = index({
       "@large": Array.from({ length: 125 }, (_, i) => ({ name: `item-${i}`, type: "registry:component" })),

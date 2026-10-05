@@ -10,6 +10,28 @@ import {
 } from "../../src/registry-explorer/ui/catalogComponentsView";
 
 describe("renderCatalogComponents", () => {
+  it("offers the exact reviewed registry component page even without an image", () => {
+    const html = renderCatalogComponentCard({
+      ...component(), docsUrl: "https://delta.example/components/code-block",
+    });
+    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
+    expect(html).toContain('href="https://delta.example/components/code-block"');
+    expect(html).toContain("View original");
+    expect(html).not.toContain("View official source");
+  });
+
+  it("does not confuse a raw JSON route or another registry with a component page", () => {
+    const raw = renderCatalogComponentCard({
+      ...component(), docsUrl: "https://delta.example/r/code-block.json",
+    });
+    expect(raw).not.toContain('catalog-component-original');
+
+    const external = renderCatalogComponentCard({
+      ...component(), docsUrl: "https://another-registry.example/components/code-block",
+    });
+    expect(external).not.toContain("catalog-component-original");
+  });
+
   it("renders multi-selected asset type chips", () => {
     const html = renderAssetKindChips({component: 4, template: 2, theme: 1}, ["template", "theme"]);
     expect(html).toMatch(/data-asset-kind-value="template"\s+aria-pressed="true"/);

@@ -5,6 +5,7 @@ import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { escapeHtml } from './renderSafety.ts';
 import { renderComponentPreview, verifiedComponentDemo, isReviewedSourceNamespace } from './componentPreview.ts';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
+import { verifiedRegistryHomepage, verifiedSourcePageUrl } from './sourcePageLink.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -95,7 +96,10 @@ export function renderRelatedComponentLinks(
     <div class="item-related-list">
       ${related.map(item=>{
         const reference=verifiedVisualReference(item.visualReference);
-        return `<a class="item-related-link" href="${escapeHtml(item.routePath)}"
+        const original=verifiedSourcePageUrl(reference?.officialPage,item.registry.url)
+          ?? verifiedSourcePageUrl(item.docsUrl,item.registry.url)
+          ?? verifiedSourcePageUrl(verifiedComponentDemo(item.namespace,item.slug)?.source.docsUrl,item.registry.url);
+        return `<div class="item-related-entry"><a class="item-related-link" href="${escapeHtml(item.routePath)}"
           data-view-item-registry="${escapeHtml(item.namespace)}"
           data-view-item-slug="${escapeHtml(item.slug)}"
           data-view-item-kind="component"
@@ -104,7 +108,10 @@ export function renderRelatedComponentLinks(
             : '<span class="item-related-empty" aria-hidden="true">▧</span>'}
           <span class="item-related-title">${escapeHtml(item.displayName)}</span>
           <span class="item-related-arrow" aria-hidden="true">↗</span>
-        </a>`;
+        </a>
+        ${original ? `<a class="item-related-original" href="${escapeHtml(original)}"
+          target="_blank" rel="noreferrer noopener">View original ↗</a>` : ''}
+        </div>`;
       }).join('')}
     </div>
   </section>`;
@@ -284,9 +291,18 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
 }
 
 function renderSourceCard(detail: RegistryItemDetail): string {
+  const homepage = verifiedRegistryHomepage(detail.registry.url);
+  const original = verifiedSourcePageUrl(
+    verifiedVisualReference(detail.visualReference)?.officialPage, detail.registry.url,
+  ) ?? verifiedSourcePageUrl(detail.componentPageUrl, detail.registry.url)
+    ?? verifiedSourcePageUrl(verifiedComponentDemo(detail.namespace, detail.slug)?.source.docsUrl, detail.registry.url);
   return `
     <section class="item-detail-card">
       <h2>Source</h2>
+      <div class="item-source-links">
+        ${original ? `<a href="${escapeHtml(original)}" target="_blank" rel="noreferrer noopener">View original component ↗</a>` : ''}
+        ${homepage ? `<a href="${escapeHtml(homepage)}" target="_blank" rel="noreferrer noopener">View registry ↗</a>` : ''}
+      </div>
       <dl class="profile-facts">
         <div class="profile-fact"><dt>Source</dt><dd>${escapeHtml(detail.source)}</dd></div>
         <div class="profile-fact"><dt>Imported from</dt><dd>${escapeHtml(detail.provenance)}</dd></div>

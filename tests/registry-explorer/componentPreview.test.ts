@@ -73,6 +73,7 @@ describe('reviewed sandboxed component examples', () => {
       namespace: '@8bitcn', slug: 'input',
       displayName: '8-bit Input',
       routePath: '/Registry-Atlas/@8bitcn/components/input',
+      registry: {name:'@8bitcn',url:'https://www.8bitcn.com/',description:'8bitcn'},
     } as CatalogComponent;
     const html = renderCatalogComponentCard(component);
     expect(html).toContain('<iframe');
@@ -83,14 +84,16 @@ describe('reviewed sandboxed component examples', () => {
     const primaryLinkStart=html.indexOf('<a class="catalog-component-open');
     const primaryLinkEnd=html.indexOf('</a>',primaryLinkStart);
     expect(html.slice(primaryLinkStart,primaryLinkEnd)).not.toContain('href="https:');
-    expect(html).toContain('href="https://www.8bitcn.com/r/input.json"');
-    expect(html.indexOf('View official source')).toBeGreaterThan(primaryLinkEnd);
+    expect(html).toContain('href="https://www.8bitcn.com/docs/components/input"');
+    expect(html.indexOf('View original')).toBeGreaterThan(primaryLinkEnd);
+    expect(html).not.toContain('href="https://www.8bitcn.com/r/input.json"');
   });
 
   it('renders a reviewed functional demo before an independently accessible visual reference', () => {
     const component = {
       namespace: '@8bitcn', slug: 'button', displayName: '8-bit Button',
       routePath: '/Registry-Atlas/@8bitcn/components/button',
+      registry: {name:'@8bitcn',url:'https://www.8bitcn.com/',description:'8bitcn'},
       visualReference: {
         imageUrl: '/Registry-Atlas/data/previews/8bitcn/button.jpg',
         officialPage: 'https://www.8bitcn.com/docs/components/button',

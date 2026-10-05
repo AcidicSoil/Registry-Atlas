@@ -21,9 +21,9 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 - **Components**: Search real catalog items, select multiple registries and common categories as chips, sort by name or registry in either direction, and share filtered URLs.
 - **Collections**: Explore explicit category collections, templates, themes, and registry-backed icon-related assets without inventing popularity, recency, author, or review rankings.
 - **Registries**: Filter by asset type (components, templates, themes, or icon-related items), sort alphabetically or by item count, and open each registry's catalog. Sync status remains informational, not a primary filter.
-- **Details**: Open canonical nested item routes backed by generated same-origin detail bundles, with the upstream raw item route preserved as provenance.
+- **Details and original pages**: Open canonical nested item routes backed by generated same-origin detail bundles. Where the exact source documentation page is recorded and passes URL checks, gallery cards and details show an independent **View original** link. Registry homepages and installable item JSON are distinct destinations; Atlas never constructs documentation links from guessed slugs.
 - **Compare**: Compare exact catalog identities across registries rather than inferred component families.
-- **Unavailable routes**: Former Featured, Newest, and Authors routes are retired and return Not found. The theme editor explains why editing is not yet supported.
+- **Authors and unavailable routes**: Authors lists exact attribution names published in source item metadata, not inferred creator accounts. Featured and Newest remain retired because Atlas does not invent popularity or publication-time rankings. The theme editor explains why editing is not yet supported.
 - **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
 ## Getting Started

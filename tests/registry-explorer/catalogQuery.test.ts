@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   buildCatalogFacetSummary,
+  catalogItemCountForRegistry,
+  catalogDistinctItemCount,
   queryCatalogComponents,
 } from "../../src/registry-explorer/core/catalogQuery";
 import type {
@@ -47,6 +49,33 @@ function index(registries: RegistryCatalogIndex["registries"]): RegistryCatalogI
 }
 
 describe("queryCatalogComponents", () => {
+  it("counts one exact identity once without collapsing nested names or other registries", () => {
+    const catalog = index({
+      "@alpha": [
+        { name: "button", type: "registry:ui", categories: ["controls"] },
+        { name: "button", type: "registry:ui", categories: ["controls", "experimental"] },
+        { name: "forms/button", type: "registry:ui", categories: ["forms"] },
+      ],
+      "@beta": [{ name: "button", type: "registry:ui", categories: ["controls"] }],
+    });
+    const registries = [registry("@alpha"), registry("@beta")];
+    const first = queryCatalogComponents(registries, catalog, { pageSize: 2 });
+    expect(first.total).toBe(3);
+    expect(first.pageCount).toBe(2);
+    expect(queryCatalogComponents(registries, catalog, { pageSize: 4 })
+      .items.map(item => item.id).sort()).toEqual([
+        "@alpha:button", "@alpha:forms/button", "@beta:button",
+      ]);
+    expect(catalogItemCountForRegistry(catalog, "@alpha")).toBe(2);
+    expect(catalogDistinctItemCount(catalog)).toBe(3);
+    const facets = buildCatalogFacetSummary(registries, catalog);
+    expect(facets.registries).toEqual(expect.arrayContaining([
+      { value: "@alpha", count: 2 }, { value: "@beta", count: 1 },
+    ]));
+    expect(facets.categories.find(entry => entry.value === "controls")?.count).toBe(2);
+    expect(facets.categories.find(entry => entry.value === "experimental")).toBeUndefined();
+  });
+
   it("visual browse excludes unpictured catalog records and uses exact verified visual identities", () => {
     const idx = Object.assign(index({ "@alpha": [
       { name: "button", type: "registry:ui" },

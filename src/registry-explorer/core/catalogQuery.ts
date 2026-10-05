@@ -81,6 +81,17 @@ interface CatalogMatch {
   reviewed?: RegistryItemSummary;
 }
 
+/** The raw import retains duplicate source rows for integrity reporting. */
+function* distinctCatalogItems(items: readonly RegistryCatalogItem[]): Generator<RegistryCatalogItem> {
+  const seen = new Set<string>();
+  for (const item of items) {
+    const key = registryCatalogItemIdentity(item.name);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    yield item;
+  }
+}
+
 export function queryCatalogComponents(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
@@ -110,7 +121,7 @@ export function queryCatalogComponents(
     if (!registry) continue;
     const reviewed = reviewedByRegistry.get(namespace) ?? new Map<string, RegistryItemSummary>();
 
-    for (const item of index.registries[namespace] ?? []) {
+    for (const item of distinctCatalogItems(index.registries[namespace] ?? [])) {
       if (options.author !== undefined && item.author?.trim() !== options.author) continue;
       const overlay = reviewed.get(registryCatalogItemIdentity(item.name));
       const verifiedPreview = visualPreviews[`${namespace}/${item.name}`];
@@ -174,7 +185,7 @@ export function buildCatalogFacetSummary(
     if (!registryByName.has(namespace)) continue;
     const reviewed = reviewedByRegistry.get(namespace) ?? new Map<string, RegistryItemSummary>();
 
-    for (const item of items) {
+    for (const item of distinctCatalogItems(items)) {
       if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item) ?? "component")) continue;
       if (query && !matchesSearch(item, namespace, query)) continue;
       increment(registryCounts, namespace);
@@ -194,11 +205,17 @@ export function buildCatalogFacetSummary(
   };
 }
 
+export function catalogDistinctItemCount(index: RegistryCatalogIndex): number {
+  return Object.keys(index.registries).reduce(
+    (count, namespace) => count + catalogItemCountForRegistry(index, namespace), 0,
+  );
+}
+
 export function catalogItemCountForRegistry(
   index: RegistryCatalogIndex,
   namespace: string,
 ): number {
-  return index.registries[namespace]?.length ?? 0;
+  return [...distinctCatalogItems(index.registries[namespace] ?? [])].length;
 }
 function toCatalogComponent(
   registry: Registry,

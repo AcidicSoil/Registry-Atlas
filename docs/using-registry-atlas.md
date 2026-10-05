@@ -8,15 +8,20 @@ This guide describes behavior available on the current `main` branch. Registry A
 
 Use **Discover** when you know roughly what kind of interface component you need but not which registry provides it.
 
-1. Enter a component or interface concept in the global search field.
-2. Narrow the candidate list with the available Category, Component, and Registry facets.
-3. Use facet search fields when a facet group contains many values.
-4. Sort the filtered candidates by relevance or name.
-5. Open a component peek for quick context, or open the item for its detail view.
+1. Enter a component name or a phrase from its published title, description, author, category, or registry namespace in the global search field.
+2. Use the Category and Registry filters. Select multiple values within a filter to match any selected value; filters in different groups combine.
+3. Sort the results by item name or registry name in either direction.
+4. Open a catalog card to inspect the exact item in Atlas. Use the separate **View original** link where its upstream page is verified.
 
-The search is intentionally useful with rough-language queries. Facets are multi-select, so a discovery session can progressively narrow a broad search without replacing earlier selections.
+Search uses published item data rather than a guessed component taxonomy or a quality/relevance ranking. Empty and unverified source fields remain unavailable.
 
 The Discover list is paginated. Changing the global search or a discovery facet returns the list to its first page.
+
+## Inspect source registry pages
+
+A catalog card opens the corresponding **Registry Atlas item detail**, which keeps the exact registry namespace and full item slug. When Atlas has a reviewed upstream documentation URL for that identity, use **View original** to open that component's page on its source registry. The item detail also provides **View registry** for the source library homepage. These are separate links; a registry's installable item JSON is not a rendered component page.
+
+If no verified documentation URL is available, Atlas does not guess one. The item stays searchable and can still be inspected in Atlas. An image preview is evidence of appearance, not proof that an upstream demo runs. Only individually verified isolated builds appear as interactive examples.
 
 ## Browse registries
 
@@ -44,7 +49,7 @@ The install queue is browser-session state; it is not a persistent project manif
 
 ## Keyboard and accessibility behavior
 
-Interactive component peeks support keyboard focus. `Escape` closes an active peek and returns focus to its trigger. Current navigation marks the active main view with `aria-current="page"`.
+The navigation sidebar, filters, item cards, and separate source links are keyboard-accessible. The active main view uses `aria-current="page"`. Use the item detail link to inspect an entry without activating its embedded component preview or opening an external registry page.
 
 For the maintained release-browser checklist, including keyboard/focus, safe-link, disabled-state, queue, URL-restoration, and copy-command checks, see:
 

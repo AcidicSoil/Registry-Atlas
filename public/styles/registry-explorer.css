@@ -3448,6 +3448,18 @@ aside:has(.aside-inner:empty) {
   display: grid; grid-template-columns: repeat(auto-fill,minmax(min(100%,255px),1fr));
   gap: 8px 14px;
 }
+.item-source-links {
+  display: flex; flex-wrap: wrap; gap: 8px 14px;
+  padding: 0 0 10px;
+  font-size: 12px;
+}
+.item-source-links a:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.item-related-entry { display: flex; flex-direction: column; min-width: 0; }
+.item-related-original {
+  align-self: flex-end; padding: 4px 8px;
+  font-size: 11px; color: var(--muted-foreground);
+}
+.item-related-original:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
 .item-related-link {
   display: flex; align-items: center; min-width: 0; gap: 12px;
   padding: 8px 10px; border: 1px solid var(--border); border-radius: 9px;
