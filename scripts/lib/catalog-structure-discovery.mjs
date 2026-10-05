@@ -128,7 +128,7 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
 
   for (const container of observation.containers ?? []) {
     const owner = String(container.tag ?? '').toUpperCase();
-    if (!['SECTION', 'NAV', 'ASIDE'].includes(owner) || container.heads?.length !== 1) continue;
+    if (!['NAV', 'ASIDE'].includes(owner) || container.heads?.length !== 1) continue;
     const records = recordsForLinks(container.links, {
       baseUrl: observation.url, root, rootDepth, index,
     }).filter(record => record.knownId);
@@ -235,7 +235,9 @@ export function normalizeCatalogKind(rawType) {
   switch (String(rawType ?? '').toLowerCase()) {
     case 'registry:block': return 'block';
     case 'registry:page': return 'page';
-    case 'registry:theme': return 'theme';
+    case 'registry:theme':
+    case 'registry:style':
+      return 'theme';
     case 'registry:icon': return 'icon';
     case 'registry:component':
     case 'registry:ui':
@@ -254,14 +256,55 @@ function canonicalSurfaceUrl(raw, homepage) {
   try {
     const home = new URL(homepage);
     const url = new URL(raw, home);
-    if (home.protocol !== 'https:' || url.protocol !== 'https:' || url.origin !== home.origin
-      || url.username || url.password || url.port || url.hash) return null;
+    const canonicalHost = value => String(value).toLowerCase().replace(/^www\./, '');
+    if (home.protocol !== 'https:' || url.protocol !== 'https:'
+      || canonicalHost(url.hostname) !== canonicalHost(home.hostname)
+      || url.username || url.password || url.port || home.port || url.hash) return null;
     url.search = '';
     if (!url.pathname.endsWith('/')) url.pathname += '/';
     return url.href;
   } catch {
     return null;
   }
+}
+
+const CATALOG_COLLECTION_SEGMENTS = new Set([
+  'components', 'blocks', 'templates', 'themes', 'icons', 'pages',
+  'examples', 'primitives', 'ui', 'catalog', 'library', 'elements',
+]);
+const COLLECTION_KIND_COMPATIBILITY = new Map([
+  ['components', new Set(['component'])],
+  ['blocks', new Set(['block'])],
+  ['templates', new Set(['template', 'page'])],
+  ['pages', new Set(['page', 'template'])],
+  ['themes', new Set(['theme'])],
+  ['icons', new Set(['icon'])],
+]);
+
+export function catalogSurfaceMatchesKnownKinds(rawUrl, homepage, knownItems = []) {
+  if (!knownItems.length) return true;
+  const safe = canonicalSurfaceUrl(rawUrl, homepage);
+  if (!safe) return false;
+  const segments = pathSegments(new URL(safe).pathname).map(segment => segment.toLowerCase());
+  const collection = [...segments].reverse().find(segment => COLLECTION_KIND_COMPATIBILITY.has(segment));
+  if (!collection) return true;
+  const allowed = COLLECTION_KIND_COMPATIBILITY.get(collection);
+  const kinds = new Set(knownItems.map(item => normalizeCatalogKind(item?.type)));
+  return [...allowed].some(kind => kinds.has(kind));
+}
+
+function catalogCollectionAncestor(rawUrl, homepage) {
+  const safe = canonicalSurfaceUrl(rawUrl, homepage);
+  if (!safe) return null;
+  const url = new URL(safe);
+  const parts = pathSegments(url.pathname);
+  let index = -1;
+  for (let i = 0; i < parts.length; i++) {
+    if (CATALOG_COLLECTION_SEGMENTS.has(parts[i].toLowerCase())) index = i;
+  }
+  if (index < 0 || index === parts.length - 1) return null;
+  url.pathname = '/' + parts.slice(0, index + 1).map(part => encodeURIComponent(decodeURIComponent(part))).join('/') + '/';
+  return url.href;
 }
 
 function parentFromObservedItem(rawUrl, itemSlug, homepage) {
@@ -293,33 +336,39 @@ export function deriveCatalogSurfaceCandidates({
   examples = [],
   itemRoutes = [],
   sitemapLinks = [],
+  knownItems = [],
 } = {}) {
   const home = canonicalSurfaceUrl(homepage, homepage);
   if (!home) return [];
   const candidates = new Map();
   const add = (url, source) => {
     const safe = canonicalSurfaceUrl(url, homepage);
-    if (!safe || candidates.has(safe)) return;
+    if (!safe || !catalogSurfaceMatchesKnownKinds(safe, homepage, knownItems) || candidates.has(safe)) return;
     candidates.set(safe, { url: safe, source });
   };
 
   for (const pattern of routePatterns) {
+    if (pattern?.status === 'failed') continue;
     const observed = pattern?.status === 'verified'
       || ['browser-observed', 'official-sitemap', 'observed-navigation']
         .includes(pattern?.source);
     if (!observed || typeof pattern?.template !== 'string'
       || !pattern.template.includes('{slug}')) continue;
     const prefix = pattern.template.slice(0, pattern.template.indexOf('{slug}'));
+    const collection = catalogCollectionAncestor(prefix, homepage);
+    if (collection) add(collection, 'route-pattern-parent');
     add(prefix, 'route-pattern');
   }
 
   for (const example of examples) {
+    if (example?.pattern_status === 'failed') continue;
     const parent = parentFromObservedItem(example?.url, example?.slug, homepage);
     if (parent) add(parent, 'pattern-example');
   }
 
   for (const route of itemRoutes) {
-    if (!['pattern-observed', 'component-page-verified', 'verified'].includes(route?.status))
+    if (route?.pattern_status === 'failed'
+      || !['pattern-observed', 'component-page-verified', 'verified'].includes(route?.status))
       continue;
     const parent = parentFromObservedItem(route?.source_url, route?.slug, homepage);
     if (parent) add(parent, 'item-route');

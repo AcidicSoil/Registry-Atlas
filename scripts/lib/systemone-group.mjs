@@ -23,6 +23,33 @@ function validateGroups(groups) {
   return labels;
 }
 
+function validateCandidateEvidence(state, labels) {
+  if (!state || typeof state !== 'object' || Array.isArray(state))
+    throw new Error('System One group state must be an object');
+  const candidates = state.candidates;
+  if (!Array.isArray(candidates) || candidates.length !== labels.size)
+    throw new Error('System One group state must include evidence for every observed group');
+  const seen = new Set();
+  for (const candidate of candidates) {
+    if (!candidate || typeof candidate.label !== 'string' || !labels.has(candidate.label)
+      || seen.has(candidate.label))
+      throw new Error('System One group evidence must match the exact observed labels');
+    seen.add(candidate.label);
+  }
+  return candidates;
+}
+
+function evidenceCriterion(candidate) {
+  const parts = [];
+  if (candidate?.sourcePattern) parts.push('source pattern: ' + candidate.sourcePattern);
+  if (candidate?.href) parts.push('source link: ' + candidate.href);
+  const examples = Array.isArray(candidate?.examples) ? candidate.examples.slice(0, 2) : [];
+  if (examples.length) parts.push('observed examples: ' + examples
+    .map(example => [example?.id, example?.text].filter(Boolean).join(' — '))
+    .filter(Boolean).join('; '));
+  return parts.join('; ') || 'Source-defined group observed on the same catalog surface.';
+}
+
 function validateAnswer(body, labels) {
   const answer = body?.answers?.group;
   if (answer?.type !== 'choice' || typeof answer.choice !== 'string')
@@ -55,13 +82,15 @@ export async function chooseObservedGroup({
 } = {}) {
   const target = validateEndpoint(endpoint);
   const labels = validateGroups(groups);
-  if (!state || typeof state !== 'object' || Array.isArray(state))
-    throw new Error('System One group state must be an object');
+  const candidates = validateCandidateEvidence(state, labels);
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 120000)
     throw new Error('Invalid System One timeout');
 
-  const criteria = Object.fromEntries([...labels].map(label => [label, null]));
-  criteria[NONE] = null;
+  const evidenceByLabel = new Map(candidates.map(candidate => [candidate.label, candidate]));
+  const criteria = Object.fromEntries([...labels].map(label => [
+    label, evidenceCriterion(evidenceByLabel.get(label)),
+  ]));
+  criteria[NONE] = 'The supplied source evidence does not support assigning this asset to any candidate group.';
   const signal = AbortSignal.timeout(timeoutMs);
 
   let response;
@@ -75,7 +104,7 @@ export async function chooseObservedGroup({
         questions: {
           group: {
             type: 'choice',
-            instructions: 'Choose the exact observed group containing this asset. Use NONE if none applies. Never invent or rename a group.',
+            instructions: 'Choose the exact observed group containing this asset. Use the supplied same-surface candidate evidence; do not choose from label similarity alone. Use NONE when the evidence is insufficient. Never invent or rename a group.',
             criteria,
           },
         },

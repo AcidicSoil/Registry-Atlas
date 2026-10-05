@@ -99,6 +99,28 @@ describe('per-registry catalog structure survey', () => {
     expect(result.items.every((row: any) => row.assignment === 'deterministic')).toBe(true);
   });
 
+  it('does not follow a dynamically observed catalog surface for the wrong asset kind', async () => {
+    const visited: string[] = [];
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('hero-01', 'registry:block')],
+      surfaces: [{ url: 'https://sample.example/', source: 'homepage' }],
+      maxSurfaces: 3,
+      observePage: async (url: string) => {
+        visited.push(url);
+        return page(url, {
+          links: [
+            { text: 'Blocks', href: '/blocks' },
+            { text: 'Templates', href: '/templates' },
+          ],
+        });
+      },
+    });
+
+    expect(visited).toEqual(['https://sample.example/', 'https://sample.example/blocks']);
+    expect(result.surfaces.some((surface: any) => surface.finalUrl.includes('/templates'))).toBe(false);
+  });
+
   it('assigns directly observed group membership without calling Clef', async () => {
     let decisions = 0;
     const result = await surveyRegistryCatalogStructure({
@@ -203,9 +225,38 @@ describe('per-registry catalog structure survey', () => {
 
     expect(calls).toHaveLength(1);
     expect(calls[0].groups).toEqual(['Forms', 'Navigation']);
+    expect(calls[0].state.candidates).toEqual([
+      expect.objectContaining({ label: 'Forms', sourcePattern: 'category-link', href: '/components/forms' }),
+      expect.objectContaining({ label: 'Navigation', sourcePattern: 'category-link', href: '/components/navigation' }),
+    ]);
     expect(result.items[0]).toMatchObject({
       id: 'select', groups: ['Forms'], assignment: 'clef', access: 'unknown',
       decision: { probability: 0.8, confidence: 0.7 },
+    });
+  });
+
+  it('keeps a weak non-NONE decision unresolved instead of accepting a guess', async () => {
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('select')],
+      surfaces: [{ url: 'https://sample.example/components', source: 'fixture' }],
+      observePage: async () => page('https://sample.example/components', {
+        links: [
+          { text: 'Forms', href: '/components/forms' },
+          { text: 'Navigation', href: '/components/navigation' },
+          { text: 'Select', href: '/components/select' },
+        ],
+      }),
+      chooseGroup: async () => ({
+        choice: 'Forms', probability: 0.48,
+        probabilities: { Forms: 0.48, Navigation: 0.42, NONE: 0.10 },
+        confidence: 0.12,
+      }),
+    });
+
+    expect(result.items[0]).toMatchObject({
+      id: 'select', groups: [], assignment: 'unresolved', reason: 'decision-weak',
+      decision: { probability: 0.48, confidence: 0.12 },
     });
   });
 

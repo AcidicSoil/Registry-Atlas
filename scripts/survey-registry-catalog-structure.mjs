@@ -114,10 +114,10 @@ function evidenceFromDatabase(db) {
     'SELECT id, namespace, template, prefix, source, status, checked_at, failure FROM route_patterns'
   ).all()) row(pattern.namespace).routePatterns.push(pattern);
   for (const example of db.prepare(
-    'SELECT p.namespace, e.slug, e.url FROM examples e JOIN route_patterns p ON p.id=e.pattern_id'
+    'SELECT p.namespace, e.slug, e.url, p.status AS pattern_status FROM examples e JOIN route_patterns p ON p.id=e.pattern_id'
   ).all()) row(example.namespace).examples.push(example);
   for (const route of db.prepare(
-    'SELECT namespace, slug, source_url, status, pattern_id FROM item_routes'
+    'SELECT i.namespace, i.slug, i.source_url, i.status, i.pattern_id, p.status AS pattern_status FROM item_routes i LEFT JOIN route_patterns p ON p.id=i.pattern_id'
   ).all()) row(route.namespace).itemRoutes.push(route);
   for (const link of db.prepare(
     'SELECT namespace, slug, url, observed_at FROM sitemap_links'

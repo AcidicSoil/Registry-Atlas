@@ -1,12 +1,12 @@
+// @ts-ignore Node typings are intentionally not a project test dependency.
 import { mkdtemp, readFile } from 'node:fs/promises';
+// @ts-ignore Node typings are intentionally not a project test dependency.
 import { tmpdir } from 'node:os';
+// @ts-ignore Node typings are intentionally not a project test dependency.
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
-import {
-  parseCatalogStructureSurveyArgs,
-  runCatalogStructureSurveyBatches,
-} from '../../scripts/survey-registry-catalog-structure.mjs';
+import { parseCatalogStructureSurveyArgs, runCatalogStructureSurveyBatches } from '../../scripts/survey-registry-catalog-structure.mjs';
 
 describe('catalog structure survey CLI arguments', () => {
   it('allows a full-inventory dry plan without browser arguments', () => {
@@ -82,7 +82,7 @@ describe('catalog structure survey CLI arguments', () => {
       outputDir,
       initialCursor: undefined,
       resume: false,
-      executeBatch: async cursor => {
+      executeBatch: async (cursor: string | undefined) => {
         seen.push(cursor);
         if (!cursor) return { completed: 2, failed: 0, nextCursor: '@b', results: [] };
         if (cursor === '@b') return { completed: 2, failed: 1, nextCursor: '@d', results: [] };
@@ -112,7 +112,7 @@ describe('catalog structure survey CLI arguments', () => {
       outputDir,
       initialCursor: undefined,
       resume: true,
-      executeBatch: async cursor => {
+      executeBatch: async (cursor: string | undefined) => {
         seen.push(cursor);
         return { completed: 1, failed: 0, nextCursor: null, results: [] };
       },

@@ -180,6 +180,35 @@ describe('catalog structure discovery', () => {
     expect(result.groups.every((group: any) => group.sourcePattern === 'category-link')).toBe(true);
   });
 
+  it('does not turn a one-heading marketing section into a source group', () => {
+    const page = observation({
+      url: 'https://example.test/docs',
+      containers: [{
+        tag: 'SECTION',
+        heads: [{ text: 'Three doors into the library.', tag: 'H2' }],
+        links: [
+          { text: 'Icon library', href: '/docs/icon' },
+          { text: 'Shape studio', href: '/docs/shape' },
+          { text: 'Bento studio', href: '/docs/bento-grid' },
+        ],
+      }],
+      links: [
+        { text: 'Icon library', href: '/docs/icon' },
+        { text: 'Shape studio', href: '/docs/shape' },
+        { text: 'Bento studio', href: '/docs/bento-grid' },
+      ],
+    });
+
+    const result = discoverCatalogGroups(page, {
+      knownItems: [item('icon'), item('shape'), item('bento-grid')],
+    });
+
+    expect(result.groups).toEqual([]);
+    expect(result.observedAssets.map((asset: any) => asset.id)).toEqual([
+      'icon', 'shape', 'bento-grid',
+    ]);
+  });
+
   it('keeps a flat catalog group-less even when it has a feature heading', () => {
     const page = observation({
       url: 'https://example.test/docs/components',
@@ -270,6 +299,7 @@ describe('catalog structure discovery', () => {
     expect(normalizeCatalogKind('registry:block')).toBe('block');
     expect(normalizeCatalogKind('registry:page')).toBe('page');
     expect(normalizeCatalogKind('registry:theme')).toBe('theme');
+    expect(normalizeCatalogKind('registry:style')).toBe('theme');
     expect(normalizeCatalogKind('registry:component')).toBe('component');
     expect(normalizeCatalogKind('registry:ui')).toBe('component');
     expect(normalizeCatalogKind('registry:icon')).toBe('icon');
@@ -305,6 +335,89 @@ describe('catalog surface planning', () => {
     ]);
     expect(surfaces.some((surface: any) => surface.url.endsWith('/button/'))).toBe(false);
     expect(surfaces.some((surface: any) => surface.url.endsWith('/guessed/'))).toBe(false);
+  });
+
+  it('adds and prioritizes the nearest catalog collection ancestor for deep route patterns', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/',
+      routePatterns: [
+        { template: 'https://example.test/docs/components/{slug}', source: 'browser-observed', status: 'verified' },
+        { template: 'https://example.test/docs/blocks/gaming/{slug}', source: 'browser-observed', status: 'verified' },
+        { template: 'https://example.test/docs/blocks/authentication/{slug}', source: 'browser-observed', status: 'verified' },
+      ],
+    });
+
+    expect(surfaces.map((surface: any) => surface.url).slice(0, 4)).toEqual([
+      'https://example.test/docs/components/',
+      'https://example.test/docs/blocks/',
+      'https://example.test/docs/blocks/gaming/',
+      'https://example.test/docs/blocks/authentication/',
+    ]);
+  });
+
+  it('rejects collection surfaces that do not match the registry\'s known asset kinds', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/',
+      knownItems: [item('hero-1', 'registry:block'), item('pricing-1', 'registry:block')],
+      routePatterns: [
+        { template: 'https://example.test/blocks/{slug}', source: 'browser-observed', status: 'verified' },
+      ],
+      sitemapLinks: [
+        { slug: 'saas-landing', url: 'https://example.test/templates/saas-landing' },
+        { slug: 'hero-1', url: 'https://example.test/blocks/hero-1' },
+      ],
+    });
+
+    expect(surfaces.map((surface: any) => surface.url)).toEqual([
+      'https://example.test/blocks/',
+      'https://example.test/',
+    ]);
+  });
+
+  it('never uses examples or item routes attached to a failed route pattern', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/',
+      examples: [
+        { slug: 'startup', url: 'https://example.test/templates/startup', pattern_status: 'failed' },
+        { slug: 'button', url: 'https://example.test/blocks/button', pattern_status: 'verified' },
+      ],
+      itemRoutes: [
+        { slug: 'pricing', source_url: 'https://example.test/templates/pricing', status: 'pattern-observed', pattern_status: 'failed' },
+        { slug: 'hero', source_url: 'https://example.test/blocks/hero', status: 'pattern-observed', pattern_status: 'verified' },
+      ],
+    });
+
+    expect(surfaces.map((surface: any) => surface.url)).toEqual([
+      'https://example.test/blocks/',
+      'https://example.test/',
+    ]);
+  });
+
+  it('never uses a failed route pattern even when its source was observed', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/',
+      routePatterns: [
+        { template: 'https://example.test/blocks/{slug}', source: 'browser-observed', status: 'unverified' },
+        { template: 'https://example.test/templates/{slug}', source: 'official-sitemap', status: 'failed' },
+      ],
+    });
+
+    expect(surfaces.map((surface: any) => surface.url)).toEqual([
+      'https://example.test/blocks/',
+      'https://example.test/',
+    ]);
+  });
+
+  it('accepts the canonical bare-domain and www pair for catalog surfaces', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/',
+      knownItems: [item('hero-1', 'registry:block')],
+      routePatterns: [
+        { template: 'https://www.example.test/blocks/{slug}', source: 'browser-observed', status: 'verified' },
+      ],
+    });
+
+    expect(surfaces.map((surface: any) => surface.url)).toContain('https://www.example.test/blocks/');
   });
 
   it('rejects off-origin and non-https surface evidence and deduplicates equivalent parents', () => {

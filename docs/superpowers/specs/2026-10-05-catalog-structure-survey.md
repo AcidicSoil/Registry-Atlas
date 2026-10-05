@@ -92,9 +92,10 @@ Membership resolution is ordered:
 3. **Ambiguous membership.** If the source evidence leaves multiple plausible groups and no direct ownership resolves them, call Clef with only:
    - the observed asset identity/link,
    - exact group labels discovered from the same source surface,
+   - one compact evidence record per allowed label containing its structural source pattern, source link when available, and at most two observed examples,
    - `NONE`.
-   Small candidate sets pass through unchanged. When a surface exposes more than 16 groups, narrow the allowed choices deterministically using token overlap between the observed item ID/text and the exact observed labels. This step may only remove choices; it may not rename or create a label. If no defensible shortlist remains, do not call Clef.
-4. **Unresolved.** If the candidate set is too broad to shortlist, or Clef is disabled, unavailable, invalid, or chooses `NONE`, preserve the item as unresolved rather than inventing a group.
+   Small candidate sets pass through unchanged. When a surface exposes more than 16 groups, narrow the allowed choices deterministically using token overlap between the observed item ID/text and the exact observed labels. This step may only remove choices; it may not rename or create a label. If no defensible shortlist remains, do not call Clef. Clef is instructed to use the supplied evidence rather than label similarity alone.
+4. **Unresolved.** If the candidate set is too broad to shortlist, Clef is disabled/unavailable/invalid, Clef chooses `NONE`, or a non-`NONE` choice is weak, preserve the item as unresolved rather than inventing a group.
 
 Clef may select an observed label. Clef may not create, normalize, merge, or rename a label.
 
@@ -106,12 +107,14 @@ Requirements:
 
 - endpoint must be local HTTP on `127.0.0.1` or `localhost`, exact path `/v1/systemone`;
 - choices are the exact non-empty same-surface discovered labels, or their deterministic shortlist, plus `NONE`;
+- the state must include one evidence record for every supplied group label; bare-label decisions are rejected before the request is sent;
 - duplicate labels are rejected;
 - response choice must be one of the supplied values;
 - all probabilities and confidence must be finite values in `[0,1]`;
+- a non-`NONE` classification is accepted only when its selected probability is greater than `0.5` and strictly greater than every other returned option; otherwise the item remains unresolved as `decision-weak`;
 - timeout/fetch/validation failure is returned as unresolved by the survey, never promoted to a classification.
 
-No confidence threshold is invented in this slice. The survey records probability/confidence for later evaluation.
+Confidence is recorded for evaluation but is not used to rescue a weak or structurally invalid choice. High model confidence cannot override bad source evidence.
 
 ## Read-only survey output
 

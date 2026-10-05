@@ -1,6 +1,7 @@
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import {
+  catalogSurfaceMatchesKnownKinds,
   classifyObservedAccess,
   deriveCatalogSurfaceCandidates,
   discoverCatalogGroups,
@@ -53,6 +54,7 @@ export function planCatalogStructureSurvey(
         examples: evidence.examples ?? [],
         itemRoutes: evidence.itemRoutes ?? [],
         sitemapLinks: evidence.sitemapLinks ?? [],
+        knownItems: items,
       }),
     };
   });
@@ -93,6 +95,44 @@ function mergeGroup(target, group) {
   }
 }
 
+function compactGroupEvidence(groups, labels) {
+  return labels.map(label => {
+    const group = groups.find(candidate => candidate.label === label);
+    const links = group?.links ?? [];
+    const examples = [];
+    for (const link of links) {
+      if (!link?.knownId || examples.length >= 2) continue;
+      examples.push({ id: link.knownId, text: link.text ?? '' });
+    }
+    if (!examples.length) {
+      for (const id of group?.memberIds ?? []) {
+        if (examples.length >= 2) break;
+        examples.push({ id, text: '' });
+      }
+    }
+    return {
+      label,
+      sourcePattern: group?.sourcePattern ?? 'unknown',
+      href: links[0]?.href ?? null,
+      examples,
+    };
+  });
+}
+
+function strongDecision(decision, labels) {
+  const choice = decision?.choice;
+  if (!labels.includes(choice)) return false;
+  const probability = decision?.probability ?? decision?.probabilities?.[choice];
+  if (!Number.isFinite(probability) || probability <= 0.5) return false;
+  const probabilities = decision?.probabilities;
+  if (!probabilities || typeof probabilities !== 'object') return false;
+  const other = [...labels, 'NONE']
+    .filter(label => label !== choice)
+    .map(label => probabilities[label])
+    .filter(Number.isFinite);
+  return other.every(value => probability > value);
+}
+
 function countBy(rows, pick) {
   const result = {};
   for (const row of rows) {
@@ -131,7 +171,7 @@ function surfaceKey(raw) {
   }
 }
 
-function observedSurfaceCandidates(observation, groups, homepage) {
+function observedSurfaceCandidates(observation, groups, homepage, knownItems) {
   const candidates = [];
   const seen = new Set();
   const add = (raw, source, requireCatalogSegment) => {
@@ -139,7 +179,8 @@ function observedSurfaceCandidates(observation, groups, homepage) {
       const url = new URL(raw, observation.url);
       url.hash = '';
       url.search = '';
-      if (!publicSameOrigin(url.href, homepage)) return;
+      if (!publicSameOrigin(url.href, homepage)
+        || !catalogSurfaceMatchesKnownKinds(url.href, homepage, knownItems)) return;
       const segments = url.pathname.split('/').filter(Boolean).map(segment => segment.toLowerCase());
       if (requireCatalogSegment && !CATALOG_PATH_SEGMENTS.has(segments.at(-1))) return;
       const key = surfaceKey(url.href);
@@ -220,7 +261,7 @@ export async function surveyRegistryCatalogStructure({
         observedItemCount: discovered.observedAssets?.length ?? 0,
       });
       for (const candidate of observedSurfaceCandidates(
-        observation, discovered.groups, registry.homepage
+        observation, discovered.groups, registry.homepage, knownItems
       )) {
         const key = surfaceKey(candidate.url);
         if (queuedSurfaces.has(key)) continue;
@@ -284,6 +325,7 @@ export async function surveyRegistryCatalogStructure({
               text: observed.text,
               href: observed.href,
             },
+            candidates: compactGroupEvidence(candidateGroups, decisionLabels),
           },
           groups: decisionLabels,
         });
@@ -296,7 +338,18 @@ export async function surveyRegistryCatalogStructure({
               confidence: decision.confidence ?? null,
             },
           };
-        } else if (decisionLabels.includes(decision?.choice)) {
+        } else if (!decisionLabels.includes(decision?.choice)) {
+          throw new Error('Decision returned a group outside the observed labels');
+        } else if (!strongDecision(decision, decisionLabels)) {
+          row = {
+            ...row,
+            reason: 'decision-weak',
+            decision: {
+              probability: decision.probability ?? decision.probabilities?.[decision.choice] ?? null,
+              confidence: decision.confidence ?? null,
+            },
+          };
+        } else {
           row = {
             ...row,
             groups: [decision.choice],
@@ -307,8 +360,6 @@ export async function surveyRegistryCatalogStructure({
               confidence: decision.confidence ?? null,
             },
           };
-        } else {
-          throw new Error('Decision returned a group outside the observed labels');
         }
       } catch (error) {
         row = { ...row, reason: 'decision-failed' };

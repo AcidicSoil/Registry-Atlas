@@ -2,6 +2,16 @@ import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
 import { chooseObservedGroup } from '../../scripts/lib/systemone-group.mjs';
 
+const stateFor = (...labels: string[]) => ({
+  asset: { id: 'button' },
+  candidates: labels.map(label => ({
+    label,
+    sourcePattern: 'category-link',
+    href: `/components/${label.toLowerCase().replace(/\\s+/g, '-')}`,
+    examples: [],
+  })),
+});
+
 function response(body: unknown, ok = true, status = 200) {
   return {
     ok,
@@ -15,7 +25,7 @@ describe('bounded SystemOne group choice', () => {
   it('sends only exact observed labels plus NONE and returns the selected probability', async () => {
     let sent: any;
     const result = await chooseObservedGroup({
-      state: { asset: { id: 'button' } },
+      state: stateFor('Free', 'Actions'),
       groups: ['Free', 'Actions'],
       fetchImpl: async (_url: string, init: any) => {
         sent = JSON.parse(init.body);
@@ -35,6 +45,9 @@ describe('bounded SystemOne group choice', () => {
     });
 
     expect(Object.keys(sent.questions.group.criteria)).toEqual(['Free', 'Actions', 'NONE']);
+    expect(sent.questions.group.criteria.Actions).toContain('source pattern: category-link');
+    expect(sent.questions.group.criteria.Actions).toContain('/components/actions');
+    expect(sent.questions.group.instructions).toContain('do not choose from label similarity alone');
     expect(sent.questions.group.instructions).toContain('Never invent or rename');
     expect(result).toEqual({
       choice: 'Actions',
@@ -46,29 +59,37 @@ describe('bounded SystemOne group choice', () => {
     });
   });
 
+  it('rejects bare labels without matching source evidence', async () => {
+    await expect(chooseObservedGroup({
+      state: { asset: { id: 'button' } },
+      groups: ['Free'],
+      fetchImpl: async () => response({}),
+    })).rejects.toThrow(/evidence/i);
+  });
+
   it('rejects duplicate or reserved observed labels', async () => {
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free', 'Free'], fetchImpl: async () => response({}),
+      state: stateFor('Free', 'Free'), groups: ['Free', 'Free'], fetchImpl: async () => response({}),
     })).rejects.toThrow(/unique/i);
     await expect(chooseObservedGroup({
-      state: {}, groups: ['NONE'], fetchImpl: async () => response({}),
+      state: stateFor('NONE'), groups: ['NONE'], fetchImpl: async () => response({}),
     })).rejects.toThrow(/NONE/);
   });
 
   it('rejects non-local or wrong-path endpoints', async () => {
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'], endpoint: 'https://example.com/v1/systemone',
+      state: stateFor('Free'), groups: ['Free'], endpoint: 'https://example.com/v1/systemone',
       fetchImpl: async () => response({}),
     })).rejects.toThrow(/local/i);
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'], endpoint: 'http://127.0.0.1:18080/v1/chat/completions',
+      state: stateFor('Free'), groups: ['Free'], endpoint: 'http://127.0.0.1:18080/v1/chat/completions',
       fetchImpl: async () => response({}),
     })).rejects.toThrow(/systemone/i);
   });
 
   it('rejects choices and probabilities outside the supplied options', async () => {
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'],
+      state: stateFor('Free'), groups: ['Free'],
       fetchImpl: async () => response({
         answers: { group: {
           type: 'choice', choice: 'Paid',
@@ -78,7 +99,7 @@ describe('bounded SystemOne group choice', () => {
     })).rejects.toThrow(/allowed/i);
 
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'],
+      state: stateFor('Free'), groups: ['Free'],
       fetchImpl: async () => response({
         answers: { group: {
           type: 'choice', choice: 'Free',
@@ -90,7 +111,7 @@ describe('bounded SystemOne group choice', () => {
 
   it('rejects invalid confidence and malformed responses', async () => {
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'],
+      state: stateFor('Free'), groups: ['Free'],
       fetchImpl: async () => response({
         answers: { group: {
           type: 'choice', choice: 'Free',
@@ -100,19 +121,19 @@ describe('bounded SystemOne group choice', () => {
     })).rejects.toThrow(/confidence/i);
 
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'],
+      state: stateFor('Free'), groups: ['Free'],
       fetchImpl: async () => response({ answers: {} }),
     })).rejects.toThrow(/response/i);
   });
 
   it('surfaces HTTP failure and timeout as errors for the survey to fail closed', async () => {
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'],
+      state: stateFor('Free'), groups: ['Free'],
       fetchImpl: async () => response({ error: 'busy' }, false, 503),
     })).rejects.toThrow(/503/);
 
     await expect(chooseObservedGroup({
-      state: {}, groups: ['Free'], timeoutMs: 100,
+      state: stateFor('Free'), groups: ['Free'], timeoutMs: 100,
       fetchImpl: async (_url: string, init: any) => new Promise((_resolve, reject) => {
         init.signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')));
       }),
