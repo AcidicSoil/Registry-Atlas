@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execFileSync } from 'node:child_process';
-import { readFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
@@ -19,7 +19,7 @@ const VALUE_FLAGS = new Set([
   '--profile', '--server', '--tab', '--output-dir', '--cursor',
   '--max-registries', '--max-surfaces', '--max-links', '--delay-ms', '--decision-url',
 ]);
-const BOOLEAN_FLAGS = new Set(['--dry-run', '--no-clef']);
+const BOOLEAN_FLAGS = new Set(['--dry-run', '--no-clef', '--all-batches', '--resume']);
 
 function boundedInteger(raw, flag, fallback, min, max) {
   if (raw === undefined) return fallback;
@@ -62,7 +62,11 @@ export function parseCatalogStructureSurveyArgs(argv) {
     decisionUrl: values['--decision-url'] ?? DEFAULT_DECISION_URL,
     dryRun,
     useClef: !booleans.has('--no-clef'),
+    ...(booleans.has('--all-batches') ? { allBatches: true } : {}),
+    ...(booleans.has('--resume') ? { resume: true } : {}),
   };
+  if (result.resume && !result.allBatches)
+    throw new Error('--resume requires --all-batches');
 
   if (!dryRun) {
     for (const flag of ['--profile', '--server', '--tab', '--output-dir']) {
@@ -233,15 +237,98 @@ async function loadInputs(cwd) {
   }
 }
 
+
+async function writeJsonAtomic(path, value) {
+  const tmp = path + '.tmp';
+  await writeFile(tmp, JSON.stringify(value, null, 2) + '\n', 'utf8');
+  await rename(tmp, path);
+}
+
+async function readBatchState(outputDir) {
+  try {
+    return JSON.parse(await readFile(join(outputDir, '_state.json'), 'utf8'));
+  } catch (error) {
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
+export async function runCatalogStructureSurveyBatches({
+  outputDir,
+  initialCursor,
+  resume = false,
+  executeBatch,
+  stopAfterBatches = Number.POSITIVE_INFINITY,
+} = {}) {
+  if (!isAbsolute(outputDir ?? '')) throw new Error('Batch output directory must be absolute');
+  if (typeof executeBatch !== 'function') throw new Error('executeBatch is required');
+  if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
+
+  const batchesDir = join(outputDir, '_batches');
+  await mkdir(batchesDir, { recursive: true });
+
+  const previous = resume ? await readBatchState(outputDir) : null;
+  if (resume && !previous) throw new Error('No resumable survey state found');
+  if (previous?.status === 'completed') return previous;
+
+  let cursor = resume ? previous.nextCursor ?? initialCursor : initialCursor;
+  let batches = previous?.batches ?? 0;
+  let completed = previous?.completed ?? 0;
+  let failed = previous?.failed ?? 0;
+  let totalRegistries = previous?.totalRegistries ?? null;
+  let executed = 0;
+
+  while (executed < stopAfterBatches) {
+    const batch = await executeBatch(cursor);
+    batches += 1;
+    executed += 1;
+    completed += batch.completed ?? 0;
+    failed += batch.failed ?? 0;
+    totalRegistries = batch.totalRegistries ?? totalRegistries;
+    const nextCursor = batch.nextCursor ?? null;
+    const batchRecord = {
+      ...batch,
+      batch: batches,
+      cursor: cursor ?? null,
+      nextCursor,
+    };
+    await writeJsonAtomic(join(batchesDir, 'batch-' + String(batches).padStart(4, '0') + '.json'), batchRecord);
+
+    const status = nextCursor === null ? 'completed'
+      : executed >= stopAfterBatches ? 'paused' : 'running';
+    const state = {
+      schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
+      status,
+      batches,
+      completed,
+      failed,
+      totalRegistries,
+      cursor: cursor ?? null,
+      nextCursor,
+      updatedAt: new Date().toISOString(),
+    };
+    await writeJsonAtomic(join(outputDir, '_state.json'), state);
+    console.error('[catalog-structure] batch ' + batches
+      + ': completed=' + (batch.completed ?? 0)
+      + ' failed=' + (batch.failed ?? 0)
+      + ' next=' + (nextCursor ?? 'done'));
+
+    if (nextCursor === null || executed >= stopAfterBatches) return state;
+    cursor = nextCursor;
+  }
+
+  throw new Error('Batch runner stopped unexpectedly');
+}
+
 export async function main(argv, cwd = process.cwd()) {
   const options = parseCatalogStructureSurveyArgs(argv);
   const { raw, catalog, curated, evidence } = await loadInputs(cwd);
-  const plan = planCatalogStructureSurvey(raw, catalog, curated, evidence, {
-    cursor: options.cursor,
-    maxRegistries: options.maxRegistries,
-  });
 
   if (options.dryRun) {
+    const plan = planCatalogStructureSurvey(raw, catalog, curated, evidence, {
+      cursor: options.cursor,
+      maxRegistries: options.maxRegistries,
+    });
     return {
       schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
       dryRun: true,
@@ -258,58 +345,76 @@ export async function main(argv, cwd = process.cwd()) {
 
   validateManagedBrowser(options);
   const observePage = createPinchTabObserver(options);
-  const results = [];
-  for (const job of plan.batch) {
-    const registry = raw.find(candidate => candidate.name === job.namespace);
-    if (!registry) continue;
-    const items = mergeItems(catalog.registries[job.namespace] ?? [], curated[job.namespace] ?? []);
-    try {
-      const artifact = await surveyRegistryCatalogStructure({
-        registry,
-        items,
-        surfaces: job.surfaces,
-        maxSurfaces: options.maxSurfaces,
-        maxLinks: options.maxLinks,
-        observePage,
-        chooseGroup: options.useClef
-          ? request => chooseObservedGroup({
-            ...request,
-            endpoint: options.decisionUrl,
-          })
-          : undefined,
-        catalogFingerprint: catalogFingerprint(registry, items.map(item => item.name)),
-      });
-      const output = await writeRegistrySurveyArtifact(options.outputDir, artifact);
-      results.push({
-        namespace: job.namespace,
-        outcome: 'completed',
-        status: artifact.status,
-        groups: artifact.summary.groups,
-        observedItems: artifact.summary.observedItems,
-        deterministic: artifact.summary.deterministic,
-        clef: artifact.summary.clef,
-        flat: artifact.summary.flat,
-        unresolved: artifact.summary.unresolved,
-        output,
-      });
-    } catch (error) {
-      results.push({
-        namespace: job.namespace,
-        outcome: 'failed',
-        reason: String(error?.message ?? error).slice(0, 250),
-      });
+
+  const executeBatch = async cursor => {
+    const plan = planCatalogStructureSurvey(raw, catalog, curated, evidence, {
+      cursor,
+      maxRegistries: options.maxRegistries,
+    });
+    const results = [];
+    for (const job of plan.batch) {
+      const registry = raw.find(candidate => candidate.name === job.namespace);
+      if (!registry) continue;
+      const items = mergeItems(catalog.registries[job.namespace] ?? [], curated[job.namespace] ?? []);
+      try {
+        const artifact = await surveyRegistryCatalogStructure({
+          registry,
+          items,
+          surfaces: job.surfaces,
+          maxSurfaces: options.maxSurfaces,
+          maxLinks: options.maxLinks,
+          observePage,
+          chooseGroup: options.useClef
+            ? request => chooseObservedGroup({
+              ...request,
+              endpoint: options.decisionUrl,
+            })
+            : undefined,
+          catalogFingerprint: catalogFingerprint(registry, items.map(item => item.name)),
+        });
+        const output = await writeRegistrySurveyArtifact(options.outputDir, artifact);
+        results.push({
+          namespace: job.namespace,
+          outcome: 'completed',
+          status: artifact.status,
+          groups: artifact.summary.groups,
+          observedItems: artifact.summary.observedItems,
+          deterministic: artifact.summary.deterministic,
+          clef: artifact.summary.clef,
+          flat: artifact.summary.flat,
+          unresolved: artifact.summary.unresolved,
+          output,
+        });
+      } catch (error) {
+        results.push({
+          namespace: job.namespace,
+          outcome: 'failed',
+          reason: String(error?.message ?? error).slice(0, 250),
+        });
+      }
     }
+
+    return {
+      schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
+      dryRun: false,
+      totalRegistries: plan.totalRegistries,
+      completed: results.filter(row => row.outcome === 'completed').length,
+      failed: results.filter(row => row.outcome === 'failed').length,
+      nextCursor: plan.nextCursor,
+      results,
+    };
+  };
+
+  if (options.allBatches) {
+    return runCatalogStructureSurveyBatches({
+      outputDir: options.outputDir,
+      initialCursor: options.cursor,
+      resume: options.resume,
+      executeBatch,
+    });
   }
 
-  return {
-    schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
-    dryRun: false,
-    totalRegistries: plan.totalRegistries,
-    completed: results.filter(row => row.outcome === 'completed').length,
-    failed: results.filter(row => row.outcome === 'failed').length,
-    nextCursor: plan.nextCursor,
-    results,
-  };
+  return executeBatch(options.cursor);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

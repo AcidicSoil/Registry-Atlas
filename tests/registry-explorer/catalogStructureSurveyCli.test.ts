@@ -1,6 +1,12 @@
+import { mkdtemp, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
-import { parseCatalogStructureSurveyArgs } from '../../scripts/survey-registry-catalog-structure.mjs';
+import {
+  parseCatalogStructureSurveyArgs,
+  runCatalogStructureSurveyBatches,
+} from '../../scripts/survey-registry-catalog-structure.mjs';
 
 describe('catalog structure survey CLI arguments', () => {
   it('allows a full-inventory dry plan without browser arguments', () => {
@@ -51,6 +57,69 @@ describe('catalog structure survey CLI arguments', () => {
       dryRun: false,
       useClef: false,
     });
+  });
+
+  it('parses automatic batching and resume flags', () => {
+    expect(parseCatalogStructureSurveyArgs([
+      '--profile', 'registry-atlas-source-audit',
+      '--server', 'http://127.0.0.1:9877',
+      '--tab', 'abc',
+      '--output-dir', '/tmp/catalog-structure',
+      '--max-registries', '20',
+      '--all-batches',
+      '--resume',
+    ])).toMatchObject({
+      maxRegistries: 20,
+      allBatches: true,
+      resume: true,
+    });
+  });
+
+  it('runs every batch and persists resumable state after each batch', async () => {
+    const outputDir = await mkdtemp(join(tmpdir(), 'catalog-structure-batches-'));
+    const seen: Array<string | undefined> = [];
+    const result = await runCatalogStructureSurveyBatches({
+      outputDir,
+      initialCursor: undefined,
+      resume: false,
+      executeBatch: async cursor => {
+        seen.push(cursor);
+        if (!cursor) return { completed: 2, failed: 0, nextCursor: '@b', results: [] };
+        if (cursor === '@b') return { completed: 2, failed: 1, nextCursor: '@d', results: [] };
+        return { completed: 1, failed: 0, nextCursor: null, results: [] };
+      },
+    });
+
+    expect(seen).toEqual([undefined, '@b', '@d']);
+    expect(result).toMatchObject({ batches: 3, completed: 5, failed: 1, nextCursor: null });
+    const state = JSON.parse(await readFile(join(outputDir, '_state.json'), 'utf8'));
+    expect(state).toMatchObject({ status: 'completed', batches: 3, completed: 5, failed: 1, nextCursor: null });
+    const batch2 = JSON.parse(await readFile(join(outputDir, '_batches', 'batch-0002.json'), 'utf8'));
+    expect(batch2).toMatchObject({ completed: 2, failed: 1, nextCursor: '@d' });
+  });
+
+  it('resumes from the last persisted cursor without rerunning completed batches', async () => {
+    const outputDir = await mkdtemp(join(tmpdir(), 'catalog-structure-resume-'));
+    await runCatalogStructureSurveyBatches({
+      outputDir,
+      initialCursor: undefined,
+      resume: false,
+      stopAfterBatches: 1,
+      executeBatch: async () => ({ completed: 2, failed: 0, nextCursor: '@b', results: [] }),
+    });
+    const seen: Array<string | undefined> = [];
+    const result = await runCatalogStructureSurveyBatches({
+      outputDir,
+      initialCursor: undefined,
+      resume: true,
+      executeBatch: async cursor => {
+        seen.push(cursor);
+        return { completed: 1, failed: 0, nextCursor: null, results: [] };
+      },
+    });
+
+    expect(seen).toEqual(['@b']);
+    expect(result).toMatchObject({ batches: 2, completed: 3, failed: 0, nextCursor: null });
   });
 
   it('rejects unknown, repeated, or out-of-range arguments', () => {

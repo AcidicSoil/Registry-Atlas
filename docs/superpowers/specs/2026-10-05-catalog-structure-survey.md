@@ -161,7 +161,11 @@ Optional:
 --delay-ms <minimum delay between source-page navigations>
 --decision-url http://127.0.0.1:18080/v1/systemone
 --no-clef
+--all-batches
+--resume
 ```
+
+`--all-batches` treats `--max-registries` as the batch size and automatically follows each `nextCursor` until the inventory is exhausted. After every completed batch it atomically writes `_batches/batch-NNNN.json` and `_state.json` under `--output-dir`. `--resume` requires `--all-batches` and continues from the last persisted `nextCursor`; if a process stops mid-batch, that incomplete batch is safely rerun.
 
 The CLI verifies that the named managed profile is running on the supplied server and that the tab belongs to that server. It never starts an anonymous browser or changes PPM configuration.
 
