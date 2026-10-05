@@ -35,7 +35,7 @@ function args(argv) {
     delayMs: numeric('--delay-ms', 1000) };
 }
 
-function checkedSourceProfile({profile, server}, registry) {
+export function checkedSourceProfile({profile, server}, registry) {
   const raw = execFileSync('pinchtab-profile-manager', [profile, 'status', '--json'],
     { encoding: 'utf8', timeout: 15000 });
   const response = JSON.parse(raw);

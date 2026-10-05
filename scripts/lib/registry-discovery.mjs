@@ -40,7 +40,13 @@ function sameOrigin(raw, from, root) {
 function directoryLink(link, identities) {
   const path = new URL(link.url).pathname.split('/').filter(Boolean);
   const last = path.at(-1) ?? '';
+  // A component page can be the site's observed entry into its docs section
+  // even when the anchor text is generic (for example "Get Started").
+  // Follow that page only when its observed URL contains a directory segment
+  // AND its final segment is an indexed component identity.
   if (DIRECTORY.test(link.name.trim()) || DIRECTORY.test(last)) return true;
+  if (path.some(segment => DIRECTORY.test(segment))
+    && identities.some(slug => normalize(leaf(slug)) === normalize(last))) return true;
   // Follow an *observed* category when its route is a prefix of indexed item
   // identities, regardless of the website's chosen category name.
   for (let i = 0; i < path.length; i++) {

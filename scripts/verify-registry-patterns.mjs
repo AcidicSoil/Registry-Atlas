@@ -201,6 +201,53 @@ export function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
   return {registries,added,removed,changedHomepages};
 }
 
+
+export function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,source='browser-observed'}={}) {
+  initializePatternDatabase(db);
+  if(typeof namespace!=='string'||typeof homepage!=='string'||!Array.isArray(patterns))
+    throw Error('Invalid discovered pattern input');
+  const saved=db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace);
+  if(!saved||saved.homepage!==homepage)throw Error('Discovery source does not match current registry homepage');
+  const insertPattern=db.prepare(`INSERT INTO route_patterns(namespace,template,prefix,source)
+    VALUES(?,?,?,?) ON CONFLICT(namespace,template,prefix) DO UPDATE SET source=excluded.source`);
+  const getPattern=db.prepare('SELECT id,status FROM route_patterns WHERE namespace=? AND template=? AND prefix=?');
+  const hasSlug=db.prepare('SELECT 1 FROM item_routes WHERE namespace=? AND slug=?');
+  const insertExample=db.prepare('INSERT OR IGNORE INTO examples(pattern_id,slug,url) VALUES(?,?,?)');
+  const reset=db.prepare("UPDATE route_patterns SET status='unverified',checked_at=NULL,failure=NULL WHERE id=? AND status<>'verified'");
+  let accepted=0,newPatterns=0,newExamples=0;
+  db.exec('BEGIN IMMEDIATE');
+  try{
+    for(const pattern of patterns){
+      if(!pattern||typeof pattern.urlTemplate!=='string'||typeof pattern.slugPrefix!=='string'
+        ||!Array.isArray(pattern.examples)||!pattern.examples.length)continue;
+      const usable=[];
+      for(const example of pattern.examples){
+        if(!example||typeof example.slug!=='string'||typeof example.url!=='string'
+          ||!hasSlug.get(namespace,example.slug))continue;
+        const expected=resolvePattern({urlTemplate:pattern.urlTemplate,
+          slugPrefix:pattern.slugPrefix},example.slug,homepage);
+        if(expected&&expected===safePage(example.url,homepage))usable.push(example);
+      }
+      if(!usable.length)continue;
+      const before=getPattern.get(namespace,pattern.urlTemplate,pattern.slugPrefix);
+      insertPattern.run(namespace,pattern.urlTemplate,pattern.slugPrefix,source);
+      const row=getPattern.get(namespace,pattern.urlTemplate,pattern.slugPrefix);
+      if(!before)newPatterns++;
+      let added=0;
+      for(const example of usable){
+        const result=insertExample.run(row.id,example.slug,example.url);
+        added+=Number(result.changes||0);
+      }
+      if(added)reset.run(row.id);
+      newExamples+=added;
+      accepted++;
+    }
+    db.exec('COMMIT');
+  }catch(error){db.exec('ROLLBACK');throw error;}
+  resolveInferredRoutes(db,namespace);
+  return {accepted,newPatterns,newExamples};
+}
+
 export async function checkPatternExample(fetchPage,url,slug) {
   try {
     const response=await fetchPage(url,{redirect:'manual',signal:AbortSignal.timeout(9000),

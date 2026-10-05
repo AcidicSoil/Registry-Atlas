@@ -18,7 +18,8 @@ Use route patterns from real official navigation or sitemap evidence. For each r
 
 Statuses distinguish `verified` route patterns, `pattern-observed` exact examples, `pattern-inferred` generated item URLs, and `unverified` unresolved item identities. An inferred URL is **not** an individually loaded page. Keep separate `reviewed`/ `sitemap`/ `pattern` evidence tiers in the static catalog and never label inferred destinations individually verified.
 
-The repair logic is resumable in SQLite:
+The repair logic is resumable in SQLite. For registries that have no usable route family yet, `scripts/discover-registry-routes-to-sqlite.mjs` reuses the evidence-based managed-browser discovery engine, derives route families only from observed official links, merges those proposals directly into SQLite, verifies representative pages, and then sends generated candidates through the individual component-page checker. It does not recreate the retired traversal JSON.
+
 1. Select pending and expired patterns; when `--repair-failed` is supplied, also select prior failures below the attempt cap.
 2. Check sample URLs through HTTP. For `identity-mismatch`, open the **same actual URL** with the authorized managed source browser; check the final URL, official origin and rendered heading after bounded hydration.
 3. Record each result and failure in `pattern_checks`. Promote a family only when all samples pass, then resolve compatible identities. Multiple competing pattern families remain unverified unless exact observed evidence picks one.
