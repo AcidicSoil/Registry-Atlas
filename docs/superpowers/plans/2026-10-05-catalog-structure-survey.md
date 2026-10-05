@@ -1,10 +1,10 @@
-# Catalog Structure Survey Implementation Plan
+# Catalog Classification and Filtering Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
-**Goal:** Build a reusable, read-only catalog structure survey that can address every Registry Atlas registry, discover source-defined groups structurally, assign obvious memberships deterministically, and use Clef only for ambiguous membership among observed labels.
+**Goal:** Build the complete catalog-classification feature: survey every Registry Atlas registry, derive reliable `kind`, source-defined `groups[]`, and `access`, validate the full-run quality, promote approved classifications into generated runtime catalog data, and expose them as usable filters in the Registry Atlas UI.
 
-**Architecture:** Pure library modules own surface planning, structure extraction, kind/access projection, and membership resolution. A bounded local SystemOne adapter owns optional Clef Choice. A CLI owns managed-browser validation, batching/cursor behavior, SQLite reads, navigation, and atomic per-registry survey artifacts. Existing Registry Atlas catalog and route-pattern data remain read-only inputs.
+**Architecture:** Pure library modules own surface planning, structure extraction, kind/access projection, and membership resolution. A bounded local SystemOne adapter owns optional Clef Choice. A survey CLI owns managed-browser validation, batching/cursor behavior, SQLite reads, navigation, and atomic per-registry evidence. A deterministic promotion step turns only reviewed, non-stale survey results into generated catalog fields. Existing catalog query/route/UI layers then expose `kind`, `access`, and source-defined `groups[]` as first-class facets without reusing upstream `categories`.
 
 **Tech Stack:** Node.js ESM, Node 24 built-in `node:sqlite`, Vitest, managed PinchTab CLI, llama.cpp `/v1/systemone`.
 
@@ -12,7 +12,8 @@
 
 ## Global Constraints
 
-- Do not mutate `data/shadcn`, `public/data`, or `data/shadcn/registry-patterns.sqlite`.
+- Tasks 1–6 are read-only with respect to `data/shadcn`, `public/data`, and `data/shadcn/registry-patterns.sqlite`.
+- Promotion tasks may update generated runtime catalog data only through a deterministic, tested generator; never hand-edit generated classifications.
 - Do not create registry-specific category maps or guessed routes.
 - Preserve exact source group labels.
 - Clef choices are exact observed labels plus `NONE`; deterministic direct membership bypasses Clef.
@@ -119,3 +120,110 @@
 - [x] **Step 3: Run `pnpm typecheck`, `pnpm typecheck:test`, relevant discovery tests, and `pnpm build`.**
 - [x] **Step 4: Run `git diff --check`.**
 - [x] **Step 5: Review the diff against the spec; no public/generated catalog mutation is allowed.**
+
+
+### Task 7: Full survey, aggregate report, and quality gate
+
+**Files:**
+- Create: `scripts/aggregate-registry-catalog-structure.mjs`
+- Create: `tests/registry-explorer/catalogStructureAggregate.test.ts`
+- Reuse: `scripts/survey-registry-catalog-structure.mjs`
+
+**Outputs:**
+- Per-registry survey JSON under the selected run directory.
+- `summary.json` with whole-run counts.
+- `review.json` ordered by failed/no-surface/high-unresolved/high-Clef/high-group-count registries.
+
+- [ ] **Step 1: Write failing aggregate tests** for completed/failed/flat/grouped/no-surface counts, item assignment totals, kind/access totals, Clef outcomes, stale fingerprints, and review ordering.
+- [ ] **Step 2: Implement deterministic aggregation** over per-registry artifacts; aggregation must not browse or call Clef.
+- [ ] **Step 3: Run the complete 408-registry survey in resumable batches** and persist the run directory rather than treating `/tmp` batch summaries as the final product.
+- [ ] **Step 4: Generate `summary.json` and `review.json`; inspect the highest-risk registries and fix generic discovery defects rather than registry-name exceptions.**
+- [ ] **Step 5: Rerun affected registries after generic fixes and regenerate the aggregate report.**
+- [ ] **Step 6: Record an explicit promotion gate** identifying which artifacts are current, reviewed, and eligible for runtime promotion.
+
+### Task 8: Promote approved classification into generated catalog data
+
+**Files:**
+- Create: `scripts/promote-registry-catalog-structure.mjs`
+- Modify: `src/registry-explorer/core/registry.schema.ts`
+- Modify: `src/registry-explorer/core/registryCatalogIndex.ts`
+- Modify the generator/sync path that owns `public/data/registry-catalog-items.json`
+- Create: `tests/registry-explorer/catalogStructurePromotion.test.ts`
+- Modify: `tests/registry-explorer/registryCatalogIndex.test.ts` if present, otherwise add equivalent parser coverage.
+
+**Runtime item fields:**
+- `kind`
+- `groups[]`
+- `access: "free" | "paid" | "unknown"`
+- provenance/fingerprint metadata sufficient to reject stale promotion.
+
+- [ ] **Step 1: Write failing promotion tests** proving raw `type` and upstream `categories` are preserved while the three new fields remain separate.
+- [ ] **Step 2: Reject unresolved, stale, mismatched, or unreviewed survey rows.**
+- [ ] **Step 3: Preserve exact group labels and deterministic multi-group membership; do not normalize source labels into existing categories.**
+- [ ] **Step 4: Preserve block/page/template distinctions instead of collapsing `registry:block` into component or `registry:page` into template.**
+- [ ] **Step 5: Integrate promotion into the generated catalog build/sync path so regenerated catalog data is reproducible from authoritative inputs plus approved survey evidence.**
+- [ ] **Step 6: Validate generated counts and fingerprints before accepting the promoted catalog.**
+
+### Task 9: Add kind, access, and group query facets
+
+**Files:**
+- Modify: `src/registry-explorer/core/catalogCollections.ts`
+- Modify: `src/registry-explorer/core/catalogQuery.ts`
+- Modify: `src/registry-explorer/core/catalogRoutes.ts`
+- Modify: `tests/registry-explorer/catalogCollections.test.ts`
+- Modify: `tests/registry-explorer/catalogQuery.test.ts`
+- Modify: `tests/registry-explorer/catalogRoutes.test.ts`
+
+**Interfaces:**
+- `CatalogComponent.kind`
+- `CatalogComponent.groups`
+- `CatalogComponent.access`
+- query options for `kinds`, `groups`, and `access`
+- facet summaries for those fields
+- URL parameters for shareable filter state.
+
+- [ ] **Step 1: Write failing query tests** for kind, access, exact group matching, multi-group membership, and combined registry + kind + access + group filtering.
+- [ ] **Step 2: Use OR semantics within each multi-select facet and AND semantics across different facets.**
+- [ ] **Step 3: Count facets from the promoted fields without mixing source groups into existing `categories`.**
+- [ ] **Step 4: Extend browse query parsing/serialization** so kind/access/group selections survive copy-link, refresh, back, and forward navigation.
+- [ ] **Step 5: Keep existing category behavior intact for upstream categories.**
+
+### Task 10: Expose the filters in the Registry Atlas UI
+
+**Files:**
+- Modify: `src/registry-explorer/ui/catalogComponentsView.ts`
+- Modify: `src/registry-explorer/ui/catalogSidebarNavigation.ts`
+- Modify: `src/registry-explorer/ui/registryCollectionView.ts`
+- Modify: `src/registry-explorer/ui/shell.ts`
+- Modify the relevant catalog styles only if needed.
+- Modify: `tests/registry-explorer/catalogComponentsView.test.ts`
+- Modify: `tests/registry-explorer/catalogSidebarNavigation.test.ts`
+- Modify: `tests/registry-explorer/registryCollectionView.test.ts`
+- Modify: `tests/registry-explorer/shell.test.ts`
+
+- [ ] **Step 1: Add a global Kind filter** using the promoted catalog kinds, including block/page/template/theme/icon where present.
+- [ ] **Step 2: Add a global Access filter** for Free, Paid, and Unknown.
+- [ ] **Step 3: Add a Group filter** backed only by promoted source-defined `groups[]`.
+- [ ] **Step 4: On a selected registry/registry page, show that registry's exact group labels and counts.**
+- [ ] **Step 5: On flat registries, omit the Group filter entirely rather than rendering an empty control.**
+- [ ] **Step 6: In cross-registry browsing, allow exact-label group matching while labeling the facet as source-defined groups, not a universal category taxonomy.**
+- [ ] **Step 7: Render active filter chips and clear behavior for kind/access/group consistently with the existing registry/category controls.**
+- [ ] **Step 8: Verify keyboard/ARIA behavior and responsive layout for the new controls.**
+
+### Task 11: End-to-end product verification
+
+**Files:**
+- Modify only when verification exposes a real defect.
+
+- [ ] **Step 1: Run focused promotion/query/route/UI tests.**
+- [ ] **Step 2: Run the full test suite, `pnpm typecheck`, `pnpm typecheck:test`, `pnpm build`, product-contract checks, data validation, and `git diff --check`.**
+- [ ] **Step 3: Browser-verify representative UI flows** through the normal Registry Atlas interface:
+  - free blocks;
+  - themes only;
+  - selected registry + Pricing group;
+  - cross-registry Navigation group;
+  - flat registry with no Group control;
+  - combined registry + kind + access + group.
+- [ ] **Step 4: Confirm copied URLs reproduce the same filters after reload.**
+- [ ] **Step 5: Confirm no UI facet is sourced from unresolved/stale survey evidence.**
+- [ ] **Step 6: Review the final diff against the product goal: the survey is evidence infrastructure; the shipped outcome is usable catalog filtering.**

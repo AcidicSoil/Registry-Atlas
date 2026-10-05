@@ -1,4 +1,4 @@
-# Registry Atlas — catalog structure classification survey
+# Registry Atlas — catalog classification and filtering
 
 **Date:** 2026-10-05  
 **Status:** Approved direction; implementation authorized in this conversation.  
@@ -9,7 +9,7 @@
 
 Registry Atlas needs to preserve how each source registry organizes its catalog so users can later filter items by source-defined groups such as `Free`, `Agents`, `Hero`, `Pricing`, or `FAQ`, while also distinguishing components, blocks, pages, templates, themes, icons, and other catalog asset kinds.
 
-This first implementation is a **read-only shadow survey**. It must not mutate `data/shadcn`, `public/data`, the route-pattern SQLite database, or frontend runtime data.
+The feature is delivered in stages. Stage 1 is a **read-only shadow survey** that must not mutate `data/shadcn`, `public/data`, the route-pattern SQLite database, or frontend runtime data. After full-run quality review, later stages promote approved classifications into generated runtime catalog data and expose them through the query layer and UI filters defined below.
 
 ## Core item model
 
@@ -197,29 +197,92 @@ Deterministic fixture tests must cover:
 
 Tests use serialized page observations or fake browser adapters. Unit tests do not access the network.
 
+## Production promotion
+
+The survey is a validation and evidence stage, not the final product. After the full run is reviewed, approved classifications are promoted into generated Registry Atlas catalog data.
+
+Promotion rules:
+
+- preserve raw source `type` and existing upstream `categories`;
+- add separate generated fields for `kind`, `groups[]`, and `access`;
+- never copy unresolved classifications into runtime catalog data;
+- preserve exact source group labels and multi-group membership;
+- retain provenance sufficient to trace each promoted value back to the survey artifact and source fingerprint;
+- reject stale survey artifacts whose catalog/source fingerprint no longer matches current inputs;
+- promotion is deterministic and does not call Clef.
+
+The runtime catalog must not repurpose existing `categories` for source-defined groups. Categories and source groups have different provenance and meaning.
+
+## Query and UI behavior
+
+The promoted fields become first-class catalog query facets.
+
+Global filters:
+
+- **Kind** — component, block, page, template, theme, icon, and other normalized kinds supported by the catalog;
+- **Access** — free, paid, unknown;
+- **Registry** — existing registry filter.
+
+Source-group behavior:
+
+- when one registry is selected, expose that registry's exact source-defined groups as a Group filter;
+- when no registry is selected, group filtering may match exact labels across registries, but the UI must make clear that labels come from source registries rather than one global taxonomy;
+- flat registries with `groups: []` must not show an empty Group control;
+- multi-group items match any selected group using the same OR-within-facet semantics as existing category filters;
+- combining registry + kind + access + group uses AND-across-facets semantics.
+
+The browse URL must preserve these filters so links are shareable and back/forward navigation works.
+
+Expected user capabilities include:
+
+- show only free blocks;
+- show only themes;
+- show Pricing items from a selected registry;
+- show Navigation components across registries where that exact group label exists;
+- browse a registry using the same group labels that registry exposes on its source site.
+
+## Full-run reporting
+
+The all-registry run must produce an aggregate report in addition to per-registry evidence.
+
+The aggregate report includes:
+
+- registries surveyed/completed/failed/no-surface/flat/grouped;
+- total items, observed items, deterministic assignments, Clef assignments, flat items, unresolved items;
+- counts by normalized kind;
+- counts by access;
+- Clef call/NONE/failure counts;
+- registries ordered for review by failures, unresolved rate, unusually high group count, and heavy Clef usage;
+- source/catalog fingerprints so reruns can identify stale results.
+
+This report is the quality gate used to decide which survey results are safe to promote.
+
 ## Acceptance criteria
 
-The first implementation is complete when:
+The end-to-end feature is complete when:
 
 1. The one-off v1-v8 evaluation logic has a reusable home in tested library modules rather than being the only implementation.
 2. A dry/planning pass can enumerate all current registries from authoritative local data.
-3. A bounded live survey can process multiple heterogeneous registries through the same code and write resumable per-registry reports.
+3. A live survey can process the full registry inventory through the same bounded, resumable code path and write per-registry evidence plus an aggregate report.
 4. Direct structural membership bypasses Clef.
 5. Ambiguous membership can use Clef only from exact observed group labels plus `NONE`.
 6. Flat sites remain group-less without false categories.
-7. No production/generated catalog data is mutated.
-8. Focused tests, source/test typechecks, build, and relevant existing discovery tests pass.
-9. The managed source-audit profile is used for live browser verification; unrelated profiles remain untouched.
+7. Reviewed, non-stale survey results can be promoted deterministically into generated runtime catalog data without overwriting source categories.
+8. Runtime catalog items expose `kind`, `groups[]`, and `access`.
+9. Catalog query/facet code can filter and count those fields.
+10. Browse URLs preserve kind/access/group selections.
+11. The UI exposes Kind and Access globally and source-defined Group filtering where applicable.
+12. Registry views use that registry's exact groups; flat registries do not show an empty group filter.
+13. Combined filters such as free + block + registry + group are covered by tests.
+14. Full tests, source/test typechecks, build, product/data validation, and relevant browser verification pass.
+15. The managed source-audit profile is used for source browsing; unrelated profiles remain untouched.
 
 ## Out of scope
 
-- Loading survey output into the frontend.
-- Adding Group/Free/Paid facets to the UI.
-- Automatically publishing group/access classifications.
 - Creating registry-specific category maps.
+- Inventing a universal taxonomy for source-defined group labels.
 - Inferring paid status from absence of a Free label.
+- Promoting unresolved or stale survey classifications.
 - Executing third-party component code.
 - Replacing the existing route-pattern database, source-page verifier, or catalog sync.
-- Claiming every registry has been browsed merely because the runner can address all registries.
-
-A later reviewed slice can promote selected survey fields into generated runtime catalog data and add UI facets after full-survey quality is measured.
+- Claiming a classification is source-observed when it came only from model inference.
