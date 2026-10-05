@@ -20,7 +20,7 @@ function publicHome(raw) {
     return u;
   } catch { return null; }
 }
-function safePage(raw,root) {
+export function safePage(raw,root) {
   const home=publicHome(root),page=publicHome(raw);
   if(!home || !page || page.origin!==home.origin || page.hash ||
     /%2f|%5c|%00/i.test(page.pathname) ||
@@ -28,7 +28,7 @@ function safePage(raw,root) {
     page.pathname.replace(/\/+$/,'')===home.pathname.replace(/\/+$/,''))return null;
   return page.href;
 }
-function resolvePattern(pattern,slug,homepage) {
+export function resolvePattern(pattern,slug,homepage) {
   if(!validSlug(slug)||typeof pattern.slugPrefix!=='string'||
     !slug.startsWith(pattern.slugPrefix) ||
     typeof pattern.urlTemplate!=='string'||
@@ -148,6 +148,59 @@ export function importRegistryPatterns(db,{inventory,catalog,curated={},raw,now=
   return {registries:count,patterns:db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n,
     examples:db.prepare('SELECT COUNT(*) AS n FROM examples').get().n};
 }
+/** Reconcile official identities after sync without re-importing the retired traversal JSON. */
+export function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
+  if(!Array.isArray(raw)||!catalog?.registries)throw Error('Invalid current registry catalog');
+  initializePatternDatabase(db);
+  const saved=db.prepare('SELECT namespace,homepage,fingerprint FROM sources WHERE namespace=?');
+  const upsert=db.prepare(`INSERT INTO sources(namespace,homepage,fingerprint) VALUES(?,?,?)
+    ON CONFLICT(namespace) DO UPDATE SET homepage=excluded.homepage,
+      fingerprint=excluded.fingerprint`);
+  const insert=db.prepare('INSERT OR IGNORE INTO item_routes(namespace,slug) VALUES(?,?)');
+  const remove=db.prepare('DELETE FROM item_routes WHERE namespace=? AND slug=?');
+  let registries=0,added=0,removed=0,changedHomepages=0;
+  const affected=new Set();
+  db.exec('BEGIN IMMEDIATE');
+  try{
+    for(const reg of raw){
+      const name=reg.name;
+      if(typeof name!=='string'||typeof reg.homepage!=='string')continue;
+      const names=[...new Set([
+        ...(catalog.registries[name]??[]).map(x=>x.name),
+        ...(curated[name]??[]).map(x=>x.slug),
+      ].filter(validSlug))].sort();
+      const expected=new Set(names);
+      const fingerprint=catalogFingerprint(reg,names);
+      const prior=saved.get(name);
+      if(prior&&prior.homepage!==reg.homepage){
+        db.prepare('DELETE FROM item_routes WHERE namespace=?').run(name);
+        db.prepare('DELETE FROM route_patterns WHERE namespace=?').run(name);
+        db.prepare('DELETE FROM sitemap_links WHERE namespace=?').run(name);
+        changedHomepages++;
+        affected.add(name);
+      }
+      upsert.run(name,reg.homepage,fingerprint);
+      const existing=db.prepare('SELECT slug FROM item_routes WHERE namespace=?').all(name);
+      for(const row of existing){
+        if(expected.has(row.slug))continue;
+        remove.run(name,row.slug);
+        removed++;
+        affected.add(name);
+      }
+      for(const slug of names){
+        if(insert.run(name,slug).changes){
+          added++;
+          affected.add(name);
+        }
+      }
+      registries++;
+    }
+    db.exec('COMMIT');
+  }catch(error){db.exec('ROLLBACK');throw error;}
+  for(const namespace of affected)resolveInferredRoutes(db,namespace);
+  return {registries,added,removed,changedHomepages};
+}
+
 export async function checkPatternExample(fetchPage,url,slug) {
   try {
     const response=await fetchPage(url,{redirect:'manual',signal:AbortSignal.timeout(9000),
@@ -280,6 +333,12 @@ export function exportPatternLinkSnapshot(db) {
       FROM item_routes i JOIN route_patterns p ON p.id=i.pattern_id AND p.status='verified'
       WHERE i.source_url IS NOT NULL AND p.checked_at IS NOT NULL
       ORDER BY i.namespace,i.slug`).all(),
+    verifiedPages:db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='component_url_checks'").get()
+      ?db.prepare(`SELECT namespace,slug,url,checked_at AS checkedAt FROM component_url_checks
+        WHERE status='verified' AND url IS NOT NULL ORDER BY namespace,slug`).all():[],
+    missingPages:db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='component_url_checks'").get()
+      ?db.prepare(`SELECT namespace,slug,url FROM component_url_checks
+        WHERE status='missing' AND url IS NOT NULL ORDER BY namespace,slug`).all():[],
   };
 }
 
@@ -345,7 +404,7 @@ export function managedBrowserPatternProof({profile,server,tab,exec=execFileSync
   const call=(...args)=>JSON.parse(exec('pinchtab',
     ['--server',server,...args,'--tab',tab,'--json'],
     {encoding:'utf8',timeout:30000,maxBuffer:8*1024*1024}));
-  return async (url,slug,home)=>{
+  return async (url,slug,home,expectedTitle=null)=>{
     if(!safePage(url,home))return {status:'failed',reason:'unsafe-browser-url'};
     const hostname=new URL(url).hostname;
     if(!allowed.some(domain=>domain==='*'||domain===hostname
@@ -359,8 +418,8 @@ export function managedBrowserPatternProof({profile,server,tab,exec=execFileSync
         return {status:'failed',reason:'browser-url-mismatch'};
       let headings=(snap.nodes??[]).filter(n=>n.role==='heading')
         .map(n=>identity(n.name));
-      const wanted=identity(slug.split('/').at(-1));
-      if(!headings.includes(wanted)) {
+      const wanted=[slug.split('/').at(-1),expectedTitle].map(identity).filter(Boolean);
+      if(!headings.some(heading=>wanted.includes(heading))) {
         // A bounded retry allows common client-rendered docs to hydrate.
         try {call('wait','--fn',"document.querySelector('h1')?.innerText?.trim().length > 0",
           '--timeout','4000');}catch{}
@@ -370,9 +429,11 @@ export function managedBrowserPatternProof({profile,server,tab,exec=execFileSync
       }
       if(final!==url||snap.url!==url)
         return {status:'failed',reason:'browser-url-mismatch'};
-      if(!headings.includes(wanted))
+      const observedHeading=headings.find(heading=>wanted.includes(heading));
+      if(!observedHeading)
         return {status:'failed',reason:'browser-identity-mismatch'};
-      return {status:'verified',reason:null,observedUrl:final,observedIdentity:slug};
+      return {status:'verified',reason:null,observedUrl:final,
+        observedIdentity:slug,observedHeading};
     }catch(error){return {status:'failed',reason:'browser-error-'+String(error.message).slice(0,75)};}
   };
 }

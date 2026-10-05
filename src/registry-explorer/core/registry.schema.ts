@@ -86,7 +86,7 @@ export interface RegistryVisualReference {
 export interface RegistrySourcePage {
   url: string;
   level: 'reviewed' | 'sitemap' | 'pattern';
-  source: 'reviewed-summary' | 'visual-reference' | 'interaction-verified-demo' | 'official-sitemap' | 'verified-route-pattern';
+  source: 'reviewed-summary' | 'visual-reference' | 'interaction-verified-demo' | 'component-page-verified' | 'official-sitemap' | 'verified-route-pattern';
   observedAt?: string;
 }
 

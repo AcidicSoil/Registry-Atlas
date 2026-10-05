@@ -68,6 +68,52 @@ describe('published original-page source index', () => {
     expect(result.coverage.rejections['invalid-url']).toBeGreaterThan(0);
   });
 
+  it('promotes only current, exact individually checked pages from SQLite',()=>{
+    const link={namespace:'@alpha',slug:'forms/button',
+      url:'https://alpha.example/docs/forms/button',checkedAt:surveyedAt};
+    const output=buildSourcePageIndex(input({
+      curated:{},traversal:null,patternLinks:{
+        schema:'registry-atlas-pattern-links/v1',
+        sourceSnapshotAt:surveyedAt,
+        sitemapLinks:[],
+        fingerprints:Object.fromEntries(raw.map(source=>[source.name,
+          catalogFingerprint(source,source.name==='@alpha'
+            ? ['button','card','forms/button']:['button'])])),
+        links:[],verifiedPages:[
+          link,
+          {namespace:'@alpha',slug:'card',url:'https://alpha.example/docs/card',
+            checkedAt:'2020-01-01T00:00:00Z'},
+          {namespace:'@beta',slug:'button',url:'https://alpha.example/docs/button',checkedAt:surveyedAt},
+        ],
+      },
+    }));
+    expect(output.pages['@alpha/forms/button']).toMatchObject({
+      level:'reviewed',source:'component-page-verified',url:link.url,
+    });
+    expect(output.pages['@alpha/card']).toBeUndefined();
+    expect(output.pages['@beta/button']).toBeUndefined();
+    expect(output.coverage.rejections.stale).toBeGreaterThan(0);
+  });
+
+  it('does not publish a confirmed 404 even when an older official sitemap listed it',()=>{
+    const result=buildSourcePageIndex(input({
+      curated:{},traversal:null,patternLinks:{
+        schema:'registry-atlas-pattern-links/v1',
+        sourceSnapshotAt:surveyedAt,
+        fingerprints:Object.fromEntries(raw.map(source=>[source.name,
+          catalogFingerprint(source,source.name==='@alpha'
+            ? ['button','card','forms/button']:['button'])])),
+        sitemapLinks:[{namespace:'@alpha',slug:'button',
+          url:'https://alpha.example/docs/button',observedAt:surveyedAt}],
+        links:[],verifiedPages:[],
+        missingPages:[{namespace:'@alpha',slug:'button',
+          url:'https://alpha.example/docs/button'}],
+      },
+    }));
+    expect(result.pages['@alpha/button']).toBeUndefined();
+    expect(result.coverage.rejections['confirmed-missing']).toBe(1);
+  });
+
   it('reads independently published sitemap evidence from SQLite export without legacy traversal JSON',()=> {
     const snapshot={
       schema:'registry-atlas-pattern-links/v1',

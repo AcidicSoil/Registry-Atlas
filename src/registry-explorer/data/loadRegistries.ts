@@ -282,11 +282,11 @@ export function readSourcePageManifest(
     if (!names.get(namespace)?.has(slug)) continue;
     const record = value as Record<string, unknown>;
     const validLevel = (record.level === 'reviewed'
-        && ['reviewed-summary', 'visual-reference', 'interaction-verified-demo'].includes(String(record.source)))
+        && ['reviewed-summary', 'visual-reference', 'interaction-verified-demo', 'component-page-verified'].includes(String(record.source)))
       || (record.level === 'sitemap' && record.source === 'official-sitemap')
       || (record.level === 'pattern' && record.source === 'verified-route-pattern');
     if (!validLevel || typeof record.url !== 'string') continue;
-    if (record.level === 'sitemap' || record.level === 'pattern') {
+    if (record.level === 'sitemap' || record.level === 'pattern' || record.source === 'component-page-verified') {
       const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
       const age = Date.now() - observed;
       if (!Number.isFinite(age) || age < 0 || age > 30 * 24 * 60 * 60 * 1000) continue;

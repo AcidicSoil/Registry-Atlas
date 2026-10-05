@@ -8,6 +8,8 @@ The versioned **`data/shadcn/registry-patterns.sqlite`** is the durable route-pa
 
 **`public/data/component-page-links.json` stays:** Registry Atlas is a static Vite application. This one generated delivery artifact contains links and evidence tiers, never the SQLite database. Run `mise run source-pages` to regenerate it directly from the database. Source item JSON, the catalog, and verified visual evidence are separate upstream datasets; do not delete them as part of the route-pattern migration. A transient `.instance/registry-patterns.sqlite` was the initial migration scratch database, not the new source of truth.
 
+The normal `mise run source-pages` task reconciles the currently synced official registry and catalog identities directly into SQLite before generating the frontend bundle. New slugs are inserted without invalidating unchanged verified patterns; retired slugs are removed and a changed official homepage invalidates old source-route evidence. The retired traversal JSON is **not** needed for future catalog refreshes. Discovery of entirely new route families still requires new actual source evidence, not a made-up URL template.
+
 Track the SQLite file in Git. Ignore `*.sqlite-wal` and `*.sqlite-shm`. Keep transactions short; do not run multiple writers. Commit a verified DB snapshot and the matching runtime generated link artifact together. Git binary diff size is the trade-off for versioning this file as requested; move the mutable DB to managed storage and publish a versioned snapshot if write concurrency or storage growth becomes significant.
 
 ## Verification loop
@@ -31,12 +33,11 @@ Run from the existing Registry Atlas worktree:
 # Regenerate the static, checked source-link projection from SQLite.
 mise run source-pages
 
-# Export the current unresolved-registry list AND categorized pattern failures,
-# without any network calls:
-node scripts/verify-registry-patterns.mjs \
+# Export one registry-grouped report containing unresolved component slugs,
+# candidate URLs, pattern examples and failures; no network calls:
+node scripts/verify-component-pages.mjs \
   --db data/shadcn/registry-patterns.sqlite --report-only \
-  --report .instance/registry-pattern-unverified.json \
-  --repair-report .instance/registry-pattern-repair-queue.json
+  --report .instance/component-verification-queue.json
 
 # Automated bounded retry, using the authorized source-audit PinchTab profile:
 node scripts/verify-registry-patterns.mjs \
@@ -45,11 +46,15 @@ node scripts/verify-registry-patterns.mjs \
   --browser-server http://127.0.0.1:9877 \
   --browser-tab "$SOURCE_AUDIT_TAB" \
   --samples 2 --max-registries 5 --passes 10 \
-  --max-attempts 3 --delay-ms 1200 \
-  --report .instance/registry-pattern-unverified.json \
-  --repair-report .instance/registry-pattern-repair-queue.json
+  --max-attempts 3 --delay-ms 1200
 
-# Then update the delivered static link bundle and verify app behavior:
+# Validate individual candidate URLs in a source-friendly batch, then republish:
+mise run verify:component-pages
+
+# For all candidates, use an explicitly requested, restartable long-running run:
+node scripts/verify-component-pages.mjs \
+  --db data/shadcn/registry-patterns.sqlite --all --delay-ms 1200 \
+  --report .instance/component-verification-queue.json
 mise run source-pages
 mise run verify
 ```
@@ -60,7 +65,11 @@ Obtain `SOURCE_AUDIT_TAB` from the active `registry-atlas-source-audit` managed 
 
 The initial database migration recorded **408 registries, 938 patterns and 17,398 observed examples**. Before this repair increment, **364 patterns** were marked verified; **518 failed**, including **512 identity mismatches** that deserve browser fallback rather than repeated identical HTTP checks; **56** were pending/insufficient. The item-route table contained **20,169 observed or inferred assignments** and **63,976 unresolved**. A pattern failure may be caused by a JavaScript-hydrated page, a different visible title, an expired upstream page, a mislabeled source identity, or an access restriction; these cases require different remediation.
 
-**Completion requires no unresolved valid item identities and no expired required patterns.** Inaccessible sources and changed/removed items must remain explicitly marked blocked or invalid rather than being counted as successful. Full destination-by-destination monitoring is separate from verification of registry URL templates. The runtime static JSON is an export, not a second source of truth.
+**Component URL verification is now implemented as a separate check in the same database.** `scripts/verify-component-pages.mjs` uses exact sitemap/verified-pattern candidates plus uniquely applicable *unverified-pattern hypotheses* that are checked but never published without individual success. Each candidate has one persisted status: `pending`, `verified`, `missing`, `unresolved`, or `transient`. It accepts the published component title or slug, requires a matching HTTPS page, and can use the authorized source browser for JavaScript-rendered identity checks. Confirmed 404/410 destinations are suppressed from the public source-link bundle. Individual verified pages become `component-page-verified` reviewed links; the runtime label is **View original**. Results are refreshed after 30 days or reset on source URL/title changes.
+
+The **only routine operator report** is `.instance/component-verification-queue.json`: one registry-grouped JSON containing all unresolved slugs, their candidate URL, status and reason, plus the registry's pattern families and observed example slugs. It is generated on demand; SQLite remains authoritative. This distinguishes *pattern verified* from *each generated URL actually checked*. A full run against tens of thousands of upstream sites can require many hours at safe request rates. A finite test batch is evidence of functionality, not an assertion that all sites are verified.
+
+**Data-completion requires no unresolved valid item identities, no expired required patterns and no remaining failed component checks.** Inaccessible sources and changed/removed items must remain explicitly marked blocked or invalid rather than being counted as successful. The runtime static JSON is an export, not a second source of truth.
 
 ## Verification and rollback
 

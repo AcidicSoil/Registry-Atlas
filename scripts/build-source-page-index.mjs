@@ -39,7 +39,11 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
     [namespace, new Set(items.map(item => item.name))]));
   const candidatePages = new Map();
   const rejected = { stale: 0, ambiguous: 0, 'unknown-item': 0,
-    'invalid-url': 0, 'reviewed-conflict': 0, 'fingerprint-mismatch': 0, 'sitemap-review-disagreement': 0 };
+    'invalid-url': 0, 'reviewed-conflict': 0, 'fingerprint-mismatch': 0,
+    'sitemap-review-disagreement': 0, 'confirmed-missing': 0 };
+  const missingPages = new Map((patternLinks?.missingPages ?? []).map(row => [
+    row.namespace + '/' + row.slug, row.url,
+  ]));
   const offer = (token, page) => {
     const saved = candidatePages.get(token);
     if (!saved) { candidatePages.set(token, [page]); return; }
@@ -116,6 +120,26 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
       });
     }
   }
+  if (patternLinks?.schema === 'registry-atlas-pattern-links/v1'
+    && Array.isArray(patternLinks.verifiedPages)) {
+    for (const row of patternLinks.verifiedPages) {
+      const registry = known.get(row.namespace);
+      if (!registry || !names.get(row.namespace)?.has(row.slug)) {
+        rejected['unknown-item']++;
+        continue;
+      }
+      const checked = Date.parse(row.checkedAt ?? '');
+      if (!Number.isFinite(checked) || checked > nowMs || nowMs - checked > MAX_AGE_MS) {
+        rejected.stale++;
+        continue;
+      }
+      const url = exactOfficialPage(row.url, registry.homepage);
+      if (!url) { rejected['invalid-url']++; continue; }
+      offer(row.namespace + '/' + row.slug, {
+        url, level:'reviewed',source:'component-page-verified',observedAt:row.checkedAt,
+      });
+    }
+  }
   for (const [namespace, items] of Object.entries(curated)) {
     const registry = known.get(namespace);
     if (!registry) continue;
@@ -157,6 +181,10 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
     if (!choices.length) continue;
     if (new Set(choices.map(entry => entry.url)).size !== 1) {
       rejected[reviewed.length ? 'reviewed-conflict' : 'ambiguous']++;
+      continue;
+    }
+    if (missingPages.get(token) === choices[0].url) {
+      rejected['confirmed-missing']++;
       continue;
     }
     // Keep independently reviewed URLs authoritative, but surface discrepancies.

@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 // @ts-ignore Node ESM utility tested in Vitest.
 import { DatabaseSync } from 'node:sqlite';
 // @ts-ignore standalone Node script
-import { importRegistryPatterns, verifyRegistryPatterns, exportPatternCoverage, exportPatternLinkSnapshot, pendingRegistryNames, exportPatternRepairQueue, managedBrowserPatternProof } from '../../scripts/verify-registry-patterns.mjs';
+import { importRegistryPatterns, verifyRegistryPatterns, exportPatternCoverage, exportPatternLinkSnapshot, pendingRegistryNames, exportPatternRepairQueue, managedBrowserPatternProof, reconcileRegistryCatalog } from '../../scripts/verify-registry-patterns.mjs';
 
 const inventory = {
   schema: 'registry-atlas-traversal-inventory/v1',
@@ -264,6 +264,40 @@ describe('bounded SQLite registry route-pattern verification', () => {
     expect(db.prepare("SELECT failure FROM route_patterns WHERE namespace='@one'").get()).toEqual({
       failure:'browser-url-mismatch',
     });
+    db.close();
+  });
+
+  it('reconciles newly synced slugs without requiring or reviving the removed traversal JSON',async()=>{
+    const db=new DatabaseSync(':memory:');
+    const initial={inventory,catalog,raw};
+    importRegistryPatterns(db,initial);
+    await verifyRegistryPatterns(db,{registry:'@one',samples:2,
+      fetchPage:async(url:string)=>getHtml(url)});
+    const updated=structuredClone(catalog);
+    updated.registries['@one'].push({name:'new-component'});
+    const result=reconcileRegistryCatalog(db,{raw,catalog:updated});
+    expect(result).toMatchObject({added:1,removed:0,changedHomepages:0});
+    expect(db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get())
+      .toEqual({status:'verified'});
+    expect(db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='new-component'").get())
+      .toEqual({source_url:'https://one.example/docs/new-component',status:'pattern-inferred'});
+    expect(reconcileRegistryCatalog(db,{raw,catalog:updated}).added).toBe(0);
+    const removed=structuredClone(updated);
+    removed.registries['@one']=removed.registries['@one'].filter((item:any)=>item.name!=='new-component');
+    expect(reconcileRegistryCatalog(db,{raw,catalog:removed}).removed).toBe(1);
+    expect(db.prepare("SELECT slug FROM item_routes WHERE namespace='@one' AND slug='new-component'").get()).toBeUndefined();
+    db.close();
+  });
+  it('invalidates previously verified paths when an official registry changes its homepage',async()=>{
+    const db=new DatabaseSync(':memory:');
+    importRegistryPatterns(db,{inventory,catalog,raw});
+    await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async(url:string)=>getHtml(url)});
+    const replaced=raw.map(row=>row.name==='@one'
+      ?{...row,homepage:'https://updated-one.example'}:row);
+    expect(reconcileRegistryCatalog(db,{raw:replaced,catalog}).changedHomepages).toBe(1);
+    expect(db.prepare("SELECT COUNT(*) AS n FROM route_patterns WHERE namespace='@one'").get()).toEqual({n:0});
+    expect(db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='button'").get())
+      .toEqual({source_url:null,status:'unverified'});
     db.close();
   });
 

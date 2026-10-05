@@ -30,15 +30,28 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 
 The source registry URL-pattern store is the versioned SQLite database at `data/shadcn/registry-patterns.sqlite`, using Node 24's built-in SQLite API. The former traversal-pattern JSON and intermediate pattern-link JSON have been removed after migration. The frontend still loads `public/data/component-page-links.json`, which is a **generated static projection**, not the source of truth.
 
-Run `mise run source-pages` to regenerate the public link bundle from SQLite. To inspect unresolved registry sources without visiting upstream pages, use:
+Run `mise run source-pages` to regenerate the public link bundle from SQLite. The unified on-demand report and batch-verification commands are below.
+
+The **per-component URL verifier** checks those generated URLs individually and persists verified, missing, transient and unresolved results in the same SQLite database. It accepts published component titles as well as slugs, and does not call a generic HTTP 200 response proof of component identity.
 
 ```bash
-node scripts/verify-registry-patterns.mjs --db data/shadcn/registry-patterns.sqlite \\
-  --report-only --report .instance/registry-pattern-unverified.json \\
-  --repair-report .instance/registry-pattern-repair-queue.json
+# Safe bounded execution (20 URLs; three per registry), then publish source links:
+mise run verify:component-pages
+
+# All eligible URLs, rate-limited and restartable; this can run for many hours:
+node scripts/verify-component-pages.mjs \\
+  --db data/shadcn/registry-patterns.sqlite --all --delay-ms 1200 \\
+  --report .instance/component-verification-queue.json
+mise run source-pages
+
+# Read one registry-grouped report with every unresolved slug, its candidate
+# URL when present, observed examples, and the route-pattern failure:
+node scripts/verify-component-pages.mjs \\
+  --db data/shadcn/registry-patterns.sqlite --report-only \\
+  --report .instance/component-verification-queue.json
 ```
 
-For repeatable, bounded verification and browser-assisted repair, see [registry-pattern verification](docs/superpowers/specs/2026-10-04-registry-pattern-verification.md). Verified route patterns can generate matching URLs but do **not** establish that every individual destination has been loaded.
+The SQLite snapshot is the authority. Running `mise run source-pages` also reconciles current official registry and component identities into SQLite before publishing links, without requiring the retired traversal JSON. The JSON report under `.instance/` is an on-demand handoff, not a second store. For bounded pattern repair and optional browser-assisted verification, see [registry-pattern verification](docs/superpowers/specs/2026-10-04-registry-pattern-verification.md). A verified route pattern does **not** establish that every individual destination has been loaded.
 
 ## Getting Started
 

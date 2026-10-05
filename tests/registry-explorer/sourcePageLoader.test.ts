@@ -22,6 +22,19 @@ describe('optional original source-page manifest',()=>{
     expect(pages['@alpha/button']).toMatchObject({level:'reviewed'});
     expect(pages['@beta/button'].url).toBe('https://beta.example/docs/button');
   });
+  it('accepts individually verified page evidence only while its check is current',()=>{
+    const pages=readSourcePageManifest({
+      schema:'registry-atlas-source-page-index/v1',pages:{
+        '@alpha/button':{url:'https://alpha.example/docs/button',
+          level:'reviewed',source:'component-page-verified',observedAt},
+        '@alpha/forms/button':{url:'https://alpha.example/docs/forms/button',
+          level:'reviewed',source:'component-page-verified',observedAt:'2020-01-01T00:00:00Z'},
+      },
+    },index,registries);
+    expect(pages['@alpha/button']).toMatchObject({level:'reviewed'});
+    expect(pages['@alpha/forms/button']).toBeUndefined();
+  });
+
   it('accepts recently checked route-pattern links but not stale or foreign ones',()=> {
     const pages=readSourcePageManifest({schema:'registry-atlas-source-page-index/v1',pages:{
       '@alpha/forms/button':{url:'https://alpha.example/docs/forms/button',
