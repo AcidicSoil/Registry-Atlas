@@ -83,7 +83,7 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
 
   const add = (label, sourcePattern, records = [], metadata = {}) => {
     const key = slug(label);
-    if (!key || key === rootLeaf || groups.some(group => slug(group.label) === key)) return;
+    if (!key || key === rootLeaf || key === 'categories' || groups.some(group => slug(group.label) === key)) return;
     const memberIds = [...new Set(records.map(record => record.knownId).filter(Boolean))];
     groups.push({
       label: clean(label),
@@ -121,9 +121,8 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
     else if (nestedAligned.length) add(range.text, 'heading-range', known, {
       headingTag: range.tag ?? '', ownerTag: owner,
     });
-    else if (categoryLink) add(range.text, 'category-card', [], {
+    else if (categoryLink) add(range.text, 'category-card', [categoryLink], {
       headingTag: range.tag ?? '', ownerTag: owner,
-      links: undefined,
     });
   }
 
@@ -169,7 +168,7 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
     baseUrl: observation.url, root, rootDepth, index,
   })) {
     if (!record.knownId || observedAssets.some(asset => asset.id === record.knownId)) continue;
-    observedAssets.push({ id: record.knownId, text: record.text, href: record.href });
+    observedAssets.push({ id: record.knownId, text: record.text, href: record.href, sourceUrl: observation.url });
   }
 
   return { root, groups, observedAssets };
@@ -180,6 +179,48 @@ export function resolveDirectMembership(assetId, groups = []) {
   return groups
     .filter(group => Array.isArray(group?.memberIds) && group.memberIds.includes(assetId))
     .map(group => group.label);
+}
+
+const GENERIC_DECISION_TOKENS = new Set([
+  'all', 'block', 'blocks', 'component', 'components', 'group', 'groups',
+  'item', 'items', 'section', 'sections',
+]);
+const MAX_DECISION_GROUPS = 16;
+
+function decisionTokens(value) {
+  return String(value ?? '')
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(token => token.length >= 3 && !GENERIC_DECISION_TOKENS.has(token));
+}
+
+export function shortlistObservedGroupLabels(asset, groups = []) {
+  const labels = [...new Set(groups
+    .map(group => clean(typeof group === 'string' ? group : group?.label))
+    .filter(Boolean))];
+  if (labels.length <= MAX_DECISION_GROUPS) return labels;
+
+  const assetTokens = decisionTokens([asset?.id, asset?.text].filter(Boolean).join(' '));
+  if (!assetTokens.length) return [];
+
+  return labels
+    .map((label, index) => {
+      const labelTokens = decisionTokens(label);
+      let score = 0;
+      for (const left of assetTokens) {
+        for (const right of labelTokens) {
+          if (left === right) score += 3;
+          else if (left.length >= 4 && right.length >= 4
+            && (left.includes(right) || right.includes(left))) score += 1;
+        }
+      }
+      return { label, index, score };
+    })
+    .filter(row => row.score > 0)
+    .sort((a, b) => b.score - a.score || a.index - b.index)
+    .slice(0, MAX_DECISION_GROUPS)
+    .map(row => row.label);
 }
 
 export function classifyObservedAccess({ groups = [], markers = [] } = {}) {

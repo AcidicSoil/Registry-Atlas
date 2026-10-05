@@ -60,6 +60,45 @@ describe('catalog structure survey planning', () => {
 });
 
 describe('per-registry catalog structure survey', () => {
+  it('follows an observed catalog link from the homepage within the surface budget', async () => {
+    const visited: string[] = [];
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('hero-01', 'registry:block'), item('hero-02', 'registry:block')],
+      surfaces: [{ url: 'https://sample.example/', source: 'homepage' }],
+      maxSurfaces: 2,
+      observePage: async (url: string) => {
+        visited.push(url);
+        if (url === 'https://sample.example/') {
+          return page(url, {
+            links: [
+              { text: 'Blocks', href: '/blocks' },
+              { text: 'About', href: '/about' },
+            ],
+          });
+        }
+        return page('https://sample.example/blocks', {
+          ranges: [{
+            text: 'Hero',
+            ownerTag: 'NAV',
+            links: [
+              { text: 'Hero 01', href: '/blocks/hero-01' },
+              { text: 'Hero 02', href: '/blocks/hero-02' },
+            ],
+          }],
+          links: [
+            { text: 'Hero 01', href: '/blocks/hero-01' },
+            { text: 'Hero 02', href: '/blocks/hero-02' },
+          ],
+        });
+      },
+    });
+
+    expect(visited).toEqual(['https://sample.example/', 'https://sample.example/blocks']);
+    expect(result.groups.map((group: any) => group.label)).toEqual(['Hero']);
+    expect(result.items.every((row: any) => row.assignment === 'deterministic')).toBe(true);
+  });
+
   it('assigns directly observed group membership without calling Clef', async () => {
     let decisions = 0;
     const result = await surveyRegistryCatalogStructure({
@@ -97,6 +136,48 @@ describe('per-registry catalog structure survey', () => {
     expect(result.summary.access).toEqual({ free: 2, paid: 0, unknown: 2 });
   });
 
+  it('never offers Clef groups discovered on unrelated surfaces', async () => {
+    let decisions = 0;
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('button-01'), item('card-01'), item('card-02')],
+      surfaces: [
+        { url: 'https://sample.example/components/button', source: 'fixture' },
+        { url: 'https://sample.example/blocks/card', source: 'fixture' },
+      ],
+      observePage: async (url: string) => {
+        if (url.endsWith('/components/button')) {
+          return page(url, {
+            links: [{ text: 'Button 01', href: '/components/button/button-01' }],
+          });
+        }
+        return page(url, {
+          ranges: [{
+            text: 'All Card Blocks',
+            ownerTag: 'NAV',
+            links: [
+              { text: 'Card 01', href: '/blocks/card/card-01' },
+              { text: 'Card 02', href: '/blocks/card/card-02' },
+            ],
+          }],
+          links: [{ text: 'Card 01', href: '/blocks/card/card-01' }],
+        });
+      },
+      chooseGroup: async () => {
+        decisions++;
+        return { choice: 'All Card Blocks', probability: 0.99, confidence: 0.99 };
+      },
+    });
+
+    expect(decisions).toBe(0);
+    expect(result.items.find((row: any) => row.id === 'button-01')).toMatchObject({
+      groups: [], assignment: 'flat',
+    });
+    expect(result.items.find((row: any) => row.id === 'card-01')).toMatchObject({
+      groups: ['All Card Blocks'], assignment: 'deterministic',
+    });
+  });
+
   it('uses Clef only for an observed item whose membership is ambiguous', async () => {
     const calls: any[] = [];
     const result = await surveyRegistryCatalogStructure({
@@ -128,6 +209,126 @@ describe('per-registry catalog structure survey', () => {
     });
   });
 
+  it('narrows a large same-surface group set before calling Clef', async () => {
+    const calls: any[] = [];
+    const categoryLinks = [
+      ...Array.from({ length: 20 }, (_, index) => ({
+        text: `Category ${index}`, href: `/components/category-${index}`,
+      })),
+      { text: 'Button', href: '/components/button' },
+      { text: 'Button Group', href: '/components/button-group' },
+      { text: 'Border Button', href: '/components/border-button' },
+    ];
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('border-button')],
+      surfaces: [{ url: 'https://sample.example/components', source: 'fixture' }],
+      observePage: async () => page('https://sample.example/components', {
+        links: categoryLinks,
+      }),
+      chooseGroup: async (request: any) => {
+        calls.push(request);
+        return {
+          choice: 'Button', probability: 0.7,
+          probabilities: { Button: 0.7, 'Button Group': 0.2, NONE: 0.1 },
+          confidence: 0.6,
+        };
+      },
+    });
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0].groups).toEqual(['Button', 'Button Group']);
+    expect(result.items[0]).toMatchObject({
+      id: 'border-button', groups: ['Button'], assignment: 'clef',
+    });
+  });
+
+  it('rejects a decision label that was not in the narrowed candidate shortlist', async () => {
+    const links = [
+      ...Array.from({ length: 20 }, (_, index) => ({
+        text: `Category ${index}`, href: `/components/category-${index}`,
+      })),
+      { text: 'Button', href: '/components/button' },
+      { text: 'Button Group', href: '/components/button-group' },
+      { text: 'Avatar', href: '/components/avatar' },
+      { text: 'Border Button', href: '/components/border-button' },
+    ];
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('border-button')],
+      surfaces: [{ url: 'https://sample.example/components', source: 'fixture' }],
+      observePage: async () => page('https://sample.example/components', { links }),
+      chooseGroup: async () => ({
+        choice: 'Avatar', probability: 0.9,
+        probabilities: { Avatar: 0.9, NONE: 0.1 }, confidence: 0.8,
+      }),
+    });
+
+    expect(result.items[0]).toMatchObject({
+      id: 'border-button', groups: [], assignment: 'unresolved', reason: 'decision-failed',
+    });
+    expect(result.errors).toEqual([
+      expect.objectContaining({ type: 'decision', item: 'border-button' }),
+    ]);
+  });
+
+  it('keeps merged group evidence scoped to every source surface where it was observed', async () => {
+    const calls: any[] = [];
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('select')],
+      surfaces: [
+        { url: 'https://sample.example/components', source: 'fixture' },
+        { url: 'https://sample.example/components/featured', source: 'fixture' },
+      ],
+      maxSurfaces: 2,
+      observePage: async (url: string) => url.endsWith('/featured')
+        ? page(url, { links: [
+          { text: 'Forms', href: '/components/featured/forms' },
+          { text: 'Navigation', href: '/components/featured/navigation' },
+          { text: 'Select', href: '/components/featured/select' },
+        ] })
+        : page(url, { links: [
+          { text: 'Forms', href: '/components/forms' },
+          { text: 'Navigation', href: '/components/navigation' },
+        ] }),
+      chooseGroup: async (request: any) => {
+        calls.push(request);
+        return {
+          choice: 'Forms', probability: 0.8,
+          probabilities: { Forms: 0.8, Navigation: 0.1, NONE: 0.1 }, confidence: 0.7,
+        };
+      },
+    });
+
+    expect(calls).toHaveLength(1);
+    expect(calls[0].groups).toEqual(['Forms', 'Navigation']);
+    expect(result.items[0]).toMatchObject({ groups: ['Forms'], assignment: 'clef' });
+  });
+
+  it('leaves a large ambiguous group set unresolved when no evidence-based shortlist exists', async () => {
+    let decisions = 0;
+    const links = [
+      ...Array.from({ length: 20 }, (_, index) => ({
+        text: `Category ${index}`, href: `/components/category-${index}`,
+      })),
+      { text: 'Sparkline', href: '/components/sparkline' },
+    ];
+    const result = await surveyRegistryCatalogStructure({
+      registry: registry('@sample'),
+      items: [item('sparkline')],
+      surfaces: [{ url: 'https://sample.example/components', source: 'fixture' }],
+      observePage: async () => page('https://sample.example/components', { links }),
+      chooseGroup: async () => { decisions++; return { choice: 'NONE' }; },
+    });
+
+    expect(decisions).toBe(0);
+    expect(result.items[0]).toMatchObject({
+      id: 'sparkline', groups: [], assignment: 'unresolved',
+      reason: 'decision-candidates-too-broad',
+    });
+  });
+
   it('treats an observed flat catalog as group-less without calling Clef', async () => {
     let decisions = 0;
     const result = await surveyRegistryCatalogStructure({
@@ -149,6 +350,30 @@ describe('per-registry catalog structure survey', () => {
       ['magic-card', [], 'flat'],
       ['globe', [], 'flat'],
     ]);
+  });
+
+  it('accepts a canonical bare-domain to www redirect but not unrelated subdomains', async () => {
+    const accepted = await surveyRegistryCatalogStructure({
+      registry: registry('@sample', 'https://example.test/'),
+      items: [item('button')],
+      surfaces: [{ url: 'https://example.test/components', source: 'fixture' }],
+      observePage: async () => page('https://www.example.test/components', {
+        links: [{ text: 'Button', href: '/components/button' }],
+      }),
+    });
+    expect(accepted.status).toBe('surveyed');
+    expect(accepted.items[0]).toMatchObject({ id: 'button', assignment: 'flat' });
+
+    const rejected = await surveyRegistryCatalogStructure({
+      registry: registry('@sample', 'https://example.test/'),
+      items: [item('button')],
+      surfaces: [{ url: 'https://example.test/components', source: 'fixture' }],
+      observePage: async () => page('https://docs.example.test/components', {
+        links: [{ text: 'Button', href: '/components/button' }],
+      }),
+    });
+    expect(rejected.status).toBe('navigation-failed');
+    expect(rejected.errors[0].message).toMatch(/official registry origin/i);
   });
 
   it('leaves an ambiguous item unresolved when Clef fails', async () => {

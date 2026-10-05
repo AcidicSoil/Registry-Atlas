@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
-import { classifyObservedAccess, deriveCatalogSurfaceCandidates, discoverCatalogGroups, normalizeCatalogKind, resolveDirectMembership } from '../../scripts/lib/catalog-structure-discovery.mjs';
+import { classifyObservedAccess, deriveCatalogSurfaceCandidates, discoverCatalogGroups, normalizeCatalogKind, resolveDirectMembership, shortlistObservedGroupLabels } from '../../scripts/lib/catalog-structure-discovery.mjs';
 
 type Link = { text: string; href: string; heading?: string };
 type Range = { text: string; tag?: string; ownerTag?: string; links: Link[] };
@@ -53,6 +53,26 @@ describe('catalog structure discovery', () => {
       ['Free', ['input-otp', 'navigation-menu']],
       ['Agents', ['reasoning-steps', 'file-diff']],
     ]);
+  });
+
+  it('rejects a generic Categories umbrella heading even when it contains catalog links', () => {
+    const page = observation({
+      url: 'https://example.test/components',
+      ranges: [{
+        text: 'Categories',
+        ownerTag: 'NAV',
+        links: [
+          { text: 'Button', href: '/components/button' },
+          { text: 'Card', href: '/components/card' },
+        ],
+      }],
+    });
+
+    const result = discoverCatalogGroups(page, {
+      knownItems: [item('button'), item('card')],
+    });
+
+    expect(result.groups).toEqual([]);
   });
 
   it('does not turn unrelated FAQ/help headings into groups', () => {
@@ -135,6 +155,9 @@ describe('catalog structure discovery', () => {
       ['Hero Sections', 'category-card'],
       ['Pricing Sections', 'category-card'],
     ]);
+    expect(result.groups[0].links).toEqual([
+      expect.objectContaining({ href: '/blocks/hero-sections' }),
+    ]);
   });
 
   it('discovers a peer category-link collection and preserves exact labels', () => {
@@ -210,6 +233,30 @@ describe('catalog structure discovery', () => {
 
     expect(resolveDirectMembership('button', groups)).toEqual(['Free', 'Actions']);
     expect(resolveDirectMembership('missing', groups)).toEqual([]);
+  });
+
+  it('keeps small observed group sets unchanged for bounded decisions', () => {
+    const groups = ['Forms', 'Navigation'].map(label => ({ label }));
+    expect(shortlistObservedGroupLabels({ id: 'select', text: 'Select' }, groups)).toEqual([
+      'Forms', 'Navigation',
+    ]);
+  });
+
+  it('narrows large observed group sets by exact item-label token overlap', () => {
+    const groups = [
+      ...Array.from({ length: 20 }, (_, index) => ({ label: `Category ${index}` })),
+      { label: 'Button' },
+      { label: 'Button Group' },
+      { label: 'Avatar' },
+    ];
+    expect(shortlistObservedGroupLabels({ id: 'border-button', text: 'Border Button' }, groups)).toEqual([
+      'Button', 'Button Group',
+    ]);
+  });
+
+  it('returns no shortlist for a large group set with no item-label overlap', () => {
+    const groups = Array.from({ length: 20 }, (_, index) => ({ label: `Category ${index}` }));
+    expect(shortlistObservedGroupLabels({ id: 'sparkline', text: 'Sparkline' }, groups)).toEqual([]);
   });
 
   it('classifies explicit access evidence without treating non-Free as paid', () => {

@@ -74,7 +74,8 @@ A group record preserves:
 {
   label: string;          // exact source text
   sourcePattern: string;  // generic structural pattern
-  sourceUrl: string;
+  sourceUrl: string;      // first observed source URL
+  sourceUrls: string[];   // every surveyed surface that supplied this exact label
   memberIds: string[];    // exact known identities directly supported by structure
   links: { text: string; href: string; knownId?: string }[];
 }
@@ -90,9 +91,10 @@ Membership resolution is ordered:
 2. **Deterministic multi-membership.** If the source explicitly places an item in multiple groups, preserve all directly observed groups.
 3. **Ambiguous membership.** If the source evidence leaves multiple plausible groups and no direct ownership resolves them, call Clef with only:
    - the observed asset identity/link,
-   - exact group labels discovered from that source,
+   - exact group labels discovered from the same source surface,
    - `NONE`.
-4. **Unresolved.** If Clef is disabled, unavailable, invalid, or chooses `NONE`, preserve the item as unresolved rather than inventing a group.
+   Small candidate sets pass through unchanged. When a surface exposes more than 16 groups, narrow the allowed choices deterministically using token overlap between the observed item ID/text and the exact observed labels. This step may only remove choices; it may not rename or create a label. If no defensible shortlist remains, do not call Clef.
+4. **Unresolved.** If the candidate set is too broad to shortlist, or Clef is disabled, unavailable, invalid, or chooses `NONE`, preserve the item as unresolved rather than inventing a group.
 
 Clef may select an observed label. Clef may not create, normalize, merge, or rename a label.
 
@@ -103,7 +105,7 @@ Clef may select an observed label. Clef may not create, normalize, merge, or ren
 Requirements:
 
 - endpoint must be local HTTP on `127.0.0.1` or `localhost`, exact path `/v1/systemone`;
-- choices are the exact non-empty discovered labels plus `NONE`;
+- choices are the exact non-empty same-surface discovered labels, or their deterministic shortlist, plus `NONE`;
 - duplicate labels are rejected;
 - response choice must be one of the supplied values;
 - all probabilities and confidence must be finite values in `[0,1]`;
@@ -173,7 +175,7 @@ A planning/report-only mode may enumerate all registries and seed surfaces witho
 - flat catalog: valid `groups: []`, not a failure;
 - group extraction ambiguity: keep candidate evidence; do not invent a label;
 - Clef failure: item remains unresolved;
-- page redirect off official origin: reject;
+- page redirect off the official host: reject; the exact bare-host/`www` canonical pair is accepted because many official homepages redirect between those two forms;
 - output file collision: overwrite only the same registry's survey file through atomic partial-file replacement; never touch source data.
 
 ## Tests

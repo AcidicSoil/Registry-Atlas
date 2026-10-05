@@ -6,6 +6,7 @@ import {
   discoverCatalogGroups,
   normalizeCatalogKind,
   resolveDirectMembership,
+  shortlistObservedGroupLabels,
 } from './catalog-structure-discovery.mjs';
 
 export const CATALOG_STRUCTURE_SURVEY_SCHEMA = 'registry-atlas-catalog-structure-survey/v1';
@@ -71,11 +72,16 @@ function mergeGroup(target, group) {
   if (!existing) {
     target.push({
       ...group,
+      sourceUrls: [...new Set([...(group.sourceUrls ?? []), group.sourceUrl].filter(Boolean))],
       memberIds: [...new Set(group.memberIds ?? [])],
       links: [...(group.links ?? [])],
     });
     return;
   }
+  existing.sourceUrls = [...new Set([
+    ...(existing.sourceUrls ?? [existing.sourceUrl].filter(Boolean)),
+    ...(group.sourceUrls ?? [group.sourceUrl].filter(Boolean)),
+  ])];
   existing.memberIds = [...new Set([...(existing.memberIds ?? []), ...(group.memberIds ?? [])])];
   const keys = new Set((existing.links ?? []).map(link => String(link.href) + '\0' + String(link.text)));
   for (const link of group.links ?? []) {
@@ -96,15 +102,62 @@ function countBy(rows, pick) {
   return result;
 }
 
+const CATALOG_PATH_SEGMENTS = new Set([
+  'components', 'blocks', 'templates', 'themes', 'icons', 'pages',
+  'examples', 'primitives', 'ui', 'catalog', 'library', 'elements',
+]);
+
+const canonicalHost = host => String(host).toLowerCase().replace(/^www\./, '');
+
 function publicSameOrigin(raw, homepage) {
   try {
     const page = new URL(raw);
     const home = new URL(homepage);
     return page.protocol === 'https:' && home.protocol === 'https:'
-      && page.origin === home.origin && !page.username && !page.password && !page.port;
+      && canonicalHost(page.hostname) === canonicalHost(home.hostname)
+      && !page.username && !page.password && !page.port
+      && !home.username && !home.password && !home.port;
   } catch {
     return false;
   }
+}
+
+function surfaceKey(raw) {
+  try {
+    const url = new URL(raw);
+    return canonicalHost(url.hostname) + (url.pathname.replace(/\/+$/, '') || '/');
+  } catch {
+    return String(raw);
+  }
+}
+
+function observedSurfaceCandidates(observation, groups, homepage) {
+  const candidates = [];
+  const seen = new Set();
+  const add = (raw, source, requireCatalogSegment) => {
+    try {
+      const url = new URL(raw, observation.url);
+      url.hash = '';
+      url.search = '';
+      if (!publicSameOrigin(url.href, homepage)) return;
+      const segments = url.pathname.split('/').filter(Boolean).map(segment => segment.toLowerCase());
+      if (requireCatalogSegment && !CATALOG_PATH_SEGMENTS.has(segments.at(-1))) return;
+      const key = surfaceKey(url.href);
+      if (seen.has(key)) return;
+      seen.add(key);
+      candidates.push({ url: url.href, source });
+    } catch {
+      // Invalid observed links are ignored.
+    }
+  };
+  for (const link of observation.links ?? [])
+    add(link.href, 'observed-catalog-link', true);
+  for (const group of groups) {
+    if (!['category-card', 'category-link'].includes(group.sourcePattern)) continue;
+    for (const link of group.links ?? [])
+      add(link.href, 'observed-group-link', false);
+  }
+  return candidates;
 }
 
 export async function surveyRegistryCatalogStructure({
@@ -133,7 +186,12 @@ export async function surveyRegistryCatalogStructure({
   const visitedSurfaces = [];
   const errors = [];
 
-  for (const surface of surfaces.slice(0, maxSurfaces)) {
+  const pendingSurfaces = surfaces.map(surface => ({ ...surface }));
+  const queuedSurfaces = new Set(pendingSurfaces.map(surface => surfaceKey(surface.url)));
+  let attemptedSurfaces = 0;
+  while (pendingSurfaces.length && attemptedSurfaces < maxSurfaces) {
+    const surface = pendingSurfaces.shift();
+    attemptedSurfaces++;
     try {
       const observation = await observePage(surface.url, { maxLinks });
       if (!publicSameOrigin(observation?.url, registry.homepage))
@@ -141,7 +199,18 @@ export async function surveyRegistryCatalogStructure({
       const discovered = discoverCatalogGroups(observation, { knownItems });
       for (const group of discovered.groups) mergeGroup(groups, group);
       for (const asset of discovered.observedAssets ?? []) {
-        if (!observedAssets.has(asset.id)) observedAssets.set(asset.id, asset);
+        const existing = observedAssets.get(asset.id);
+        if (existing) {
+          if (!existing.sourceUrls.includes(asset.sourceUrl))
+            existing.sourceUrls.push(asset.sourceUrl);
+        } else {
+          observedAssets.set(asset.id, {
+            id: asset.id,
+            text: asset.text,
+            href: asset.href,
+            sourceUrls: [asset.sourceUrl],
+          });
+        }
       }
       visitedSurfaces.push({
         requestedUrl: surface.url,
@@ -150,6 +219,14 @@ export async function surveyRegistryCatalogStructure({
         groupCount: discovered.groups.length,
         observedItemCount: discovered.observedAssets?.length ?? 0,
       });
+      for (const candidate of observedSurfaceCandidates(
+        observation, discovered.groups, registry.homepage
+      )) {
+        const key = surfaceKey(candidate.url);
+        if (queuedSurfaces.has(key)) continue;
+        queuedSurfaces.add(key);
+        pendingSurfaces.push(candidate);
+      }
     } catch (error) {
       errors.push({
         type: 'surface',
@@ -159,11 +236,15 @@ export async function surveyRegistryCatalogStructure({
     }
   }
 
-  const labels = groups.map(group => group.label);
   const classified = [];
   for (const sourceItem of knownItems) {
     const direct = resolveDirectMembership(sourceItem.name, groups);
     const observed = observedAssets.get(sourceItem.name);
+    const candidateGroups = observed
+      ? groups.filter(group => (group.sourceUrls ?? [group.sourceUrl])
+        .some(sourceUrl => observed.sourceUrls.includes(sourceUrl)))
+      : [];
+    const candidateLabels = candidateGroups.map(group => group.label);
     let row = {
       id: sourceItem.name,
       rawKind: sourceItem.type ?? 'registry:item',
@@ -182,20 +263,29 @@ export async function surveyRegistryCatalogStructure({
       };
     } else if (!observed) {
       row = { ...row, reason: 'not-observed-on-surveyed-surface' };
-    } else if (!groups.length) {
+    } else if (!candidateLabels.length) {
       row = { ...row, groups: [], access: 'unknown', assignment: 'flat' };
     } else if (typeof chooseGroup !== 'function') {
       row = { ...row, reason: 'ambiguous-no-decision-model' };
     } else {
+      const decisionLabels = shortlistObservedGroupLabels(observed, candidateGroups);
+      if (!decisionLabels.length) {
+        row = { ...row, reason: 'decision-candidates-too-broad' };
+        classified.push(row);
+        continue;
+      }
       try {
         const decision = await chooseGroup({
           state: {
             registry: registry.name,
-            page: visitedSurfaces.map(surface => surface.finalUrl),
-            asset: observed,
-            observedGroups: labels,
+            page: observed.sourceUrls,
+            asset: {
+              id: observed.id,
+              text: observed.text,
+              href: observed.href,
+            },
           },
-          groups: labels,
+          groups: decisionLabels,
         });
         if (decision?.choice === 'NONE') {
           row = {
@@ -206,7 +296,7 @@ export async function surveyRegistryCatalogStructure({
               confidence: decision.confidence ?? null,
             },
           };
-        } else if (labels.includes(decision?.choice)) {
+        } else if (decisionLabels.includes(decision?.choice)) {
           row = {
             ...row,
             groups: [decision.choice],
