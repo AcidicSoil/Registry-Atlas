@@ -156,6 +156,7 @@ Optional:
 --max-registries <bounded batch>
 --max-surfaces <per registry>
 --max-links <per surface>
+--delay-ms <minimum delay between source-page navigations>
 --decision-url http://127.0.0.1:18080/v1/systemone
 --no-clef
 ```

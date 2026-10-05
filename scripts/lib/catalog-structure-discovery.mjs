@@ -164,7 +164,15 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
     }
   }
 
-  return { root, groups };
+  const observedAssets = [];
+  for (const record of recordsForLinks(observation.links, {
+    baseUrl: observation.url, root, rootDepth, index,
+  })) {
+    if (!record.knownId || observedAssets.some(asset => asset.id === record.knownId)) continue;
+    observedAssets.push({ id: record.knownId, text: record.text, href: record.href });
+  }
+
+  return { root, groups, observedAssets };
 }
 
 export function resolveDirectMembership(assetId, groups = []) {

@@ -87,7 +87,7 @@
 **Interfaces:**
 - Produces: `planCatalogStructureSurvey(...)`
 - Produces: `surveyRegistryCatalogStructure(...)`
-- CLI writes `registry-atlas-catalog-structure-survey/v1` per-registry JSON.
+- CLI writes `registry-atlas-catalog-structure-survey/v1` per-registry JSON and enforces a bounded minimum delay between live source-page navigations.
 
 - [ ] **Step 1: Write failing tests** with fake browser/page observations for batching, cursor, atomic output model, flat catalogs, direct membership bypassing Clef, ambiguous membership invoking Clef, Clef failure -> unresolved, and kind/access counts.
 - [ ] **Step 2: Run focused test and confirm RED.**

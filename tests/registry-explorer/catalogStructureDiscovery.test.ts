@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
-import {
-  classifyObservedAccess,
-  deriveCatalogSurfaceCandidates,
-  discoverCatalogGroups,
-  normalizeCatalogKind,
-  resolveDirectMembership,
-} from '../../scripts/lib/catalog-structure-discovery.mjs';
+import { classifyObservedAccess, deriveCatalogSurfaceCandidates, discoverCatalogGroups, normalizeCatalogKind, resolveDirectMembership } from '../../scripts/lib/catalog-structure-discovery.mjs';
 
 type Link = { text: string; href: string; heading?: string };
 type Range = { text: string; tag?: string; ownerTag?: string; links: Link[] };
