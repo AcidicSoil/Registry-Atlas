@@ -97,7 +97,17 @@ async function observedLinks(browser, current, root, remaining) {
     };
     const semantics = (snap.nodes ?? []).filter(x => x.role === 'link'
       && typeof x.ref === 'string' && typeof x.name === 'string').slice(0, remaining);
-    for (const node of semantics) add(node.name, await browser.attr(node.ref), 'semantic-ref');
+    for (const node of semantics) {
+      try {
+        add(node.name, await browser.attr(node.ref), 'semantic-ref');
+      } catch (error) {
+        // A DOM update can invalidate one snapshot ref. Only suppress that
+        // specific stale-ref error; observed DOM anchors are checked below.
+        if (!/No node with given id found|ref(?:erence)?[^\n]*not found/i.test(
+          String(error?.message ?? error),
+        )) throw error;
+      }
+    }
     if (typeof browser.domLinks === 'function') {
       for (const node of (await browser.domLinks()).slice(0, remaining)) {
         add(node.name, node.href, 'observed-dom-anchor');

@@ -1,5 +1,6 @@
 import type { CatalogCompareResult } from "../core/catalogCompare";
 import { escapeHtml } from "./renderSafety";
+import { sourcePageNavigation } from "./sourcePageLink";
 
 const REGISTRY_PICKER_LIMIT = 10;
 
@@ -95,10 +96,18 @@ function renderTable(result: CatalogCompareResult): string {
   const rows = result.rows.map(row => `
     <tr>
       <th scope="row"><code>${escapeHtml(row.slug)}</code></th>
-      ${row.cells.map(cell => cell.present
-        ? `<td><button class="compare-presence-link" type="button" data-view-item-registry="${escapeHtml(cell.namespace)}" data-view-item-slug="${escapeHtml(row.slug)}">Present</button></td>`
-        : '<td><span class="muted">Not listed</span></td>'
-      ).join("")}
+      ${row.cells.map(cell => {
+        if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
+        const original = sourcePageNavigation(cell.registryHomepage ?? '', {
+          referenceUrl: cell.referenceUrl, docsUrl: cell.docsUrl,
+          sourcePage: cell.sourcePage,
+        });
+        return `<td><button class="compare-presence-link" type="button"
+          data-view-item-registry="${escapeHtml(cell.namespace)}" data-view-item-slug="${escapeHtml(row.slug)}">Present</button>
+          ${original ? `<a class="compare-source-link" href="${escapeHtml(original.url)}"
+            target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>` : ''}
+          </td>`;
+      }).join("")}
     </tr>
   `).join("");
 

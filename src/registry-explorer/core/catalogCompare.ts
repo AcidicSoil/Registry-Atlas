@@ -1,11 +1,15 @@
 import { catalogRoutePath } from "./catalogRoutes";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
-import type { Registry, RegistryCatalogIndex, RegistryCatalogItem } from "./registry.schema";
+import type { Registry, RegistryCatalogIndex, RegistryCatalogItem, RegistrySourcePage } from "./registry.schema";
 
 export interface CatalogCompareCell {
   namespace: string;
   present: boolean;
   routePath?: string;
+  sourcePage?: RegistrySourcePage;
+  registryHomepage?: string;
+  docsUrl?: string;
+  referenceUrl?: string;
 }
 
 export interface CatalogCompareRow {
@@ -49,6 +53,7 @@ export function buildCatalogComparison(
   options: CatalogCompareOptions = {},
 ): CatalogCompareResult {
   const available = new Set(registries.map(registry => registry.name));
+  const registryByName = new Map(registries.map(registry => [registry.name, registry]));
   const selectedRegistryNames = [...new Set(registryNames)]
     .filter(name => available.has(name))
     .slice(0, 4);
@@ -99,6 +104,10 @@ export function buildCatalogComparison(
                 { kind: "component", namespace, slug: item.name },
                 options.basePath ?? "/Registry-Atlas/",
               ),
+              registryHomepage: registryByName.get(namespace)?.url,
+              sourcePage: index.sourcePages?.[`${namespace}/${item.name}`],
+              referenceUrl: index.visualReferences?.[`${namespace}/${item.name}`]?.officialPage,
+              docsUrl: registryByName.get(namespace)?.itemSummaries?.find(summary => summary.slug === item.name)?.docsUrl,
             }
           : { namespace, present: false };
       }),

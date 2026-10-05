@@ -9,6 +9,7 @@ import type {
   RegistryCssVars,
   RegistryItemSummary,
   RegistryVisualReference,
+  RegistrySourcePage,
   RegistryItemSummaryFile,
 } from './registry.schema.ts';
 
@@ -40,6 +41,7 @@ export interface RegistryItemDetail {
   docsUrl: string | null;
   previewUrl: string | null;
   visualReference?: RegistryVisualReference;
+  sourcePage?: RegistrySourcePage;
   evidenceUrl: string | null;
   componentPageUrl: string | null;
   dependencies: readonly string[];
@@ -166,10 +168,10 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   if (!registry) return notFound('Registry not found.', 'missing-registry');
 
   if (registry.itemSummaries?.some(item => item.slug === slug)) {
-    return withVisualReference(
+    return withSourcePage(withVisualReference(
       resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson),
       catalogIndex.visualReferences?.[`${registryName}/${slug}`],
-    );
+    ), catalogIndex.sourcePages?.[`${registryName}/${slug}`]);
   }
 
   const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
@@ -177,6 +179,7 @@ export function resolveRegistryItemDetailFromCatalogIndex(
 
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
+  base.sourcePage = catalogIndex.sourcePages?.[`${registryName}/${slug}`];
   const reference = catalogIndex.visualReferences?.[`${registryName}/${slug}`];
   if (reference) {
     base.visualReference = reference;
@@ -196,6 +199,13 @@ export function resolveRegistryItemDetailFromCatalogIndex(
     return { status: 'invalid-schema', detail: base, message: 'Registry item data did not match the expected safe shape.', reason: normalized.reason };
   }
   return { status: 'loaded', detail: mergeDetailJson(base, normalized.item, sourceJson), message: null };
+}
+
+function withSourcePage(
+  result: RegistryItemDetailResult, sourcePage: RegistrySourcePage | undefined,
+): RegistryItemDetailResult {
+  if (!sourcePage || !result.detail) return result;
+  return { ...result, detail: { ...result.detail, sourcePage } };
 }
 
 function withVisualReference(

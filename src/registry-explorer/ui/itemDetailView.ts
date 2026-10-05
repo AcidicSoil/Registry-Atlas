@@ -5,7 +5,7 @@ import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { escapeHtml } from './renderSafety.ts';
 import { renderComponentPreview, verifiedComponentDemo, isReviewedSourceNamespace } from './componentPreview.ts';
 import { verifiedVisualReference, renderVisualReferenceImage } from './visualReference.ts';
-import { verifiedRegistryHomepage, verifiedSourcePageUrl } from './sourcePageLink.ts';
+import { sourcePageNavigation, verifiedRegistryHomepage } from './sourcePageLink.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -96,9 +96,11 @@ export function renderRelatedComponentLinks(
     <div class="item-related-list">
       ${related.map(item=>{
         const reference=verifiedVisualReference(item.visualReference);
-        const original=verifiedSourcePageUrl(reference?.officialPage,item.registry.url)
-          ?? verifiedSourcePageUrl(item.docsUrl,item.registry.url)
-          ?? verifiedSourcePageUrl(verifiedComponentDemo(item.namespace,item.slug)?.source.docsUrl,item.registry.url);
+        const original=sourcePageNavigation(item.registry.url, {
+          referenceUrl: reference?.officialPage, docsUrl: item.docsUrl,
+          demoUrl: verifiedComponentDemo(item.namespace,item.slug)?.source.docsUrl,
+          sourcePage: item.sourcePage,
+        });
         return `<div class="item-related-entry"><a class="item-related-link" href="${escapeHtml(item.routePath)}"
           data-view-item-registry="${escapeHtml(item.namespace)}"
           data-view-item-slug="${escapeHtml(item.slug)}"
@@ -109,8 +111,8 @@ export function renderRelatedComponentLinks(
           <span class="item-related-title">${escapeHtml(item.displayName)}</span>
           <span class="item-related-arrow" aria-hidden="true">↗</span>
         </a>
-        ${original ? `<a class="item-related-original" href="${escapeHtml(original)}"
-          target="_blank" rel="noreferrer noopener">View original ↗</a>` : ''}
+        ${original ? `<a class="item-related-original" href="${escapeHtml(original.url)}"
+          target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>` : ''}
         </div>`;
       }).join('')}
     </div>
@@ -292,15 +294,19 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
 
 function renderSourceCard(detail: RegistryItemDetail): string {
   const homepage = verifiedRegistryHomepage(detail.registry.url);
-  const original = verifiedSourcePageUrl(
-    verifiedVisualReference(detail.visualReference)?.officialPage, detail.registry.url,
-  ) ?? verifiedSourcePageUrl(detail.componentPageUrl, detail.registry.url)
-    ?? verifiedSourcePageUrl(verifiedComponentDemo(detail.namespace, detail.slug)?.source.docsUrl, detail.registry.url);
+  const original = sourcePageNavigation(detail.registry.url, {
+    referenceUrl: verifiedVisualReference(detail.visualReference)?.officialPage,
+    docsUrl: detail.componentPageUrl,
+    demoUrl: verifiedComponentDemo(detail.namespace, detail.slug)?.source.docsUrl,
+    sourcePage: detail.sourcePage,
+  });
   return `
     <section class="item-detail-card">
       <h2>Source</h2>
       <div class="item-source-links">
-        ${original ? `<a href="${escapeHtml(original)}" target="_blank" rel="noreferrer noopener">View original component ↗</a>` : ''}
+        ${original ? `<a href="${escapeHtml(original.url)}" target="_blank" rel="noreferrer noopener">${escapeHtml(
+          original.level === 'reviewed' ? 'View original component' : original.label,
+        )} ↗</a>` : ''}
         ${homepage ? `<a href="${escapeHtml(homepage)}" target="_blank" rel="noreferrer noopener">View registry ↗</a>` : ''}
       </div>
       <dl class="profile-facts">

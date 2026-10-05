@@ -6,8 +6,10 @@ import type {
   RegistryCatalogIndex,
   RegistryItemSummary,
   RegistryVisualReference,
+  RegistrySourcePage,
 } from '../core/registry.schema';
 import { parseRegistryCatalogIndex } from '../core/registryCatalogIndex';
+import { verifiedSourcePageUrl } from '../ui/sourcePageLink';
 import {
   type MirrorValidationIssue,
   validateRegistryMirror,
@@ -99,6 +101,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   const mirrorUrl = `${import.meta.env.BASE_URL}data/registries.json`;
   const catalogUrl = `${import.meta.env.BASE_URL}data/registry-catalog-items.json`;
   const visualUrl = `${import.meta.env.BASE_URL}data/component-previews.json`;
+  const sourcePageUrl = `${import.meta.env.BASE_URL}data/component-page-links.json`;
   const [response, catalogResponse] = await Promise.all([
     fetchImpl(mirrorUrl),
     fetchImpl(catalogUrl),
@@ -114,13 +117,20 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   const mirrorData = await response.json() as unknown;
   const catalogData = await catalogResponse.json() as unknown;
   const catalogIndex = parseRegistryCatalogIndex(catalogData);
-  // Visual captures are optional; missing evidence must never block registry browsing.
-  const previewManifest = await fetchImpl(visualUrl).then(async response =>
+  // Optional capture and source indexes should not add sequential network round trips.
+  const readOptional = (url: string) => fetchImpl(url).then(async response =>
     response.ok ? await response.json() as unknown : null).catch(() => null);
+  const [previewManifest, sourcePageManifest] = await Promise.all([
+    readOptional(visualUrl), readOptional(sourcePageUrl),
+  ]);
   const visualReferences = readVisualReferenceManifest(previewManifest, catalogIndex);
   const visualPreviews = Object.fromEntries(
     Object.entries(visualReferences).map(([key, entry]) => [key, entry.imageUrl]),
   );
+  const officialSites = (mirrorData as RegistryMirrorData)?.registries?.map(row => ({
+    name: row.official?.name, url: row.official?.homepage,
+  })) ?? [];
+  const sourcePages = readSourcePageManifest(sourcePageManifest, catalogIndex, officialSites);
   const validation = validateRegistryMirror(mirrorData);
 
   if (validation.errors.length > 0) {
@@ -132,7 +142,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
 
   return {
     meta: typedMirror.meta,
-    catalogIndex: Object.assign(catalogIndex, { visualPreviews, visualReferences }),
+    catalogIndex: Object.assign(catalogIndex, { visualPreviews, visualReferences, sourcePages }),
     warnings: validation.warnings,
     registries: typedMirror.registries.map(record => ({
       name: record.official.name,
@@ -249,4 +259,42 @@ function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): M
   });
 
   return grouped;
+}
+
+/** Optional evidence artifact. Unknown identities, hosts and tiers fail closed. */
+export function readSourcePageManifest(
+  input: unknown,
+  catalog: RegistryCatalogIndex,
+  registries: readonly { name: string; url: string }[],
+): Readonly<Record<string, RegistrySourcePage>> {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
+  const manifest = input as Record<string, unknown>;
+  if (manifest.schema !== 'registry-atlas-source-page-index/v1'
+    || !manifest.pages || typeof manifest.pages !== 'object' || Array.isArray(manifest.pages)) return {};
+  const roots = new Map(registries.map(registry => [registry.name, registry.url]));
+  const names = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
+    [namespace, new Set(items.map(item => item.name))]));
+  const pages: Record<string, RegistrySourcePage> = {};
+  for (const [token, value] of Object.entries(manifest.pages)) {
+    const split = token.indexOf('/');
+    if (split < 1 || !value || typeof value !== 'object' || Array.isArray(value)) continue;
+    const namespace = token.slice(0, split), slug = token.slice(split + 1);
+    if (!names.get(namespace)?.has(slug)) continue;
+    const record = value as Record<string, unknown>;
+    const validLevel = (record.level === 'reviewed'
+        && ['reviewed-summary', 'visual-reference', 'interaction-verified-demo'].includes(String(record.source)))
+      || (record.level === 'sitemap' && record.source === 'official-sitemap');
+    if (!validLevel || typeof record.url !== 'string') continue;
+    if (record.level === 'sitemap') {
+      const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
+      const age = Date.now() - observed;
+      if (!Number.isFinite(age) || age < 0 || age > 30 * 24 * 60 * 60 * 1000) continue;
+    }
+    const url = verifiedSourcePageUrl(record.url, roots.get(namespace) ?? '');
+    if (!url || url !== record.url) continue;
+    pages[token] = { url, level: record.level as RegistrySourcePage['level'],
+      source: record.source as RegistrySourcePage['source'],
+      ...(record.level === 'sitemap' ? { observedAt: record.observedAt as string } : {}) };
+  }
+  return pages;
 }

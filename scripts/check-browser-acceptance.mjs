@@ -204,6 +204,24 @@ function networkEntryKey(entry) {
   return String(entry?.requestId ?? entry?.id ?? JSON.stringify(entry));
 }
 
+function capturePairedScreenshot(screenshot, expectedUrl) {
+  const args = ['capture', '--tab', tab, '--require-pair',
+    '--beyond-viewport', '--format', 'png', '--output', screenshot];
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const capture = run(args, { allowFailure: true });
+    if (capture.status === 0) return;
+    const error = capture.stderr || capture.stdout;
+    if (!/pairing broken: navigation observed during capture window/.test(error)
+      || run(['url', '--tab', tab]).stdout !== expectedUrl) {
+      throw new Error('Paired capture failed: ' + error);
+    }
+    // The page moved during capture. Reobserve the current page and retry
+    // a bounded number of times without accepting an unpaired screenshot.
+    run(['snap', '--tab', tab, '--max-tokens', '300']);
+  }
+  throw new Error('Could not obtain a stable paired screenshot after 3 attempts');
+}
+
 for (const viewport of viewports) {
   const viewportArgs = ['set', 'viewport', String(viewport.width), String(viewport.height), '--tab', tab];
   if (viewport.mobile) viewportArgs.push('--mobile');
@@ -218,14 +236,7 @@ for (const viewport of viewports) {
     run(['nav', url, '--tab', tab, '--timeout', '30']);
 
     const screenshot = path.join(outputDir, `${viewport.name}-${route.name}.png`);
-    run([
-      'capture',
-      '--tab', tab,
-      '--require-pair',
-      '--beyond-viewport',
-      '--format', 'png',
-      '--output', screenshot,
-    ]);
+    capturePairedScreenshot(screenshot, url);
 
     const state = pageState();
     const errors = run(['errors', '--tab', tab, '--limit', '50']).stdout;

@@ -62,6 +62,10 @@ run = "pnpm sync:registries"
 description = "Refresh registry catalog evidence"
 run = "pnpm sync:catalog-evidence"
 
+[tasks."source-pages"]
+description = "Build exact source-page links and coverage from current verified/sitemap evidence"
+run = "node scripts/build-source-page-index.mjs --output public/data/component-page-links.json --report data/shadcn/component-page-link-coverage.json"
+
 [tasks.all]
 description = "Refresh registry data and run the full verification gate"
 run = "pnpm all"

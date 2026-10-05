@@ -82,10 +82,19 @@ export interface RegistryVisualReference {
   officialPage: string;
 }
 
+/** A sitemap listing is discoverable but not independently page-verified. */
+export interface RegistrySourcePage {
+  url: string;
+  level: 'reviewed' | 'sitemap';
+  source: 'reviewed-summary' | 'visual-reference' | 'interaction-verified-demo' | 'official-sitemap';
+  observedAt?: string;
+}
+
 export interface RegistryCatalogIndex {
   meta: RegistryCatalogIndexMeta;
   registries: Readonly<Record<string, readonly RegistryCatalogItem[]>>;
   visualReferences?: Readonly<Record<string, RegistryVisualReference>>;
+  sourcePages?: Readonly<Record<string, RegistrySourcePage>>;
 }
 
 export interface Registry {

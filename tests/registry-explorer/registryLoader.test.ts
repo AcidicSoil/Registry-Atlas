@@ -17,6 +17,7 @@ describe('loadRegistries', () => {
       '/data/registries.json',
       '/data/registry-catalog-items.json',
       '/data/component-previews.json',
+      '/data/component-page-links.json',
     ]);
   });
 

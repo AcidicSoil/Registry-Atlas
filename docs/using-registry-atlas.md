@@ -11,15 +11,15 @@ Use **Discover** when you know roughly what kind of interface component you need
 1. Enter a component name or a phrase from its published title, description, author, category, or registry namespace in the global search field.
 2. Use the Category and Registry filters. Select multiple values within a filter to match any selected value; filters in different groups combine.
 3. Sort the results by item name or registry name in either direction.
-4. Open a catalog card to inspect the exact item in Atlas. Use the separate **View original** link where its upstream page is verified.
+4. Open a catalog card to inspect the exact item in Atlas. Use **View original** for a reviewed source page or **View sitemap-listed page** for an official sitemap candidate.
 
-Search uses published item data rather than a guessed component taxonomy or a quality/relevance ranking. Empty and unverified source fields remain unavailable.
+Search uses published item data rather than a guessed component taxonomy or a quality/relevance ranking. Entries with no upstream page evidence remain searchable; no original-page URL is guessed.
 
 The Discover list is paginated. Changing the global search or a discovery facet returns the list to its first page.
 
 ## Inspect source registry pages
 
-A catalog card opens the corresponding **Registry Atlas item detail**, which keeps the exact registry namespace and full item slug. When Atlas has a reviewed upstream documentation URL for that identity, use **View original** to open that component's page on its source registry. The item detail also provides **View registry** for the source library homepage. These are separate links; a registry's installable item JSON is not a rendered component page.
+A catalog card opens the corresponding **Registry Atlas item detail**, which keeps the exact registry namespace and full item slug. **View original** uses an independently reviewed page. **View sitemap-listed page** uses an exact link published by the upstream registry's XML sitemap; that destination has not necessarily been loaded or checked recently. Sitemap entries expire in Atlas after 30 days without new evidence. The item detail also provides **View registry** for the source library homepage. Registry homepages and installable item JSON are separate resources, not rendered component pages.
 
 If no verified documentation URL is available, Atlas does not guess one. The item stays searchable and can still be inspected in Atlas. An image preview is evidence of appearance, not proof that an upstream demo runs. Only individually verified isolated builds appear as interactive examples.
 

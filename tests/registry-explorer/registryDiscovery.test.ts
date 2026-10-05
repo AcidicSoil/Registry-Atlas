@@ -56,6 +56,21 @@ const pages: Record<string, Page> = {
 const at = '2026-10-01T20:00:00.000Z';
 
 describe('evidence-based registry discovery', () => {
+  it('continues from observed DOM links when a semantic ref is stale', async () => {
+    const source: Record<string, Page> = {
+      [HOME]: { links: [['Button','/docs/components/button']] },
+      'https://sample.example/docs/components/button': { heading: 'Button' },
+    };
+    const browser = fakeBrowser(source, HOME);
+    (browser as any).attr = async () => { throw new Error('No node with given id found'); };
+    const result = await discoverRegistry({
+      registry, indexedItems:['button'], browser, ledger:fakeLedger(), checkedAt:at,
+      maxPages:2,
+    });
+    expect(result.records[0]).toMatchObject({
+      status:'page-observed', docsUrl:'https://sample.example/docs/components/button',
+    });
+  });
   it('uses an observed official JSON index with exact names and explicit docs URLs, then verifies the rendered page', async () => {
     const sample: Record<string, Page> = {
       [HOME]: { links: [['Registry index', '/r/registry.json'], ['Docs', '/docs']] },

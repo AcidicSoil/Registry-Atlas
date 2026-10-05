@@ -3,6 +3,17 @@ import type { CatalogCompareResult } from "../../src/registry-explorer/core/cata
 import { renderCatalogCompare } from "../../src/registry-explorer/ui/catalogCompareView";
 
 describe("renderCatalogCompare", () => {
+  it('renders original and provisional links in source-specific comparison cells',()=>{
+    const body=root();
+    const cell=result();
+    cell.rows[0].cells[0]={namespace:'@a',present:true,routePath:'/Registry-Atlas/@a/components/button',
+      registryHomepage:'https://example.test',
+      sourcePage:{url:'https://example.test/docs/button',level:'sitemap',source:'official-sitemap'}};
+    renderCatalogCompare(root(),body,cell,['@a','@b']);
+    expect(body.innerHTML).toContain('href="https://example.test/docs/button"');
+    expect(body.innerHTML).toContain('View sitemap-listed page');
+    expect(body.innerHTML).toContain('data-view-item-slug="button"');
+  });
   it("renders exact catalog presence with links to real component routes", () => {
     const body = root();
     renderCatalogCompare(root(), body, result(), ["@a", "@b", "@c"], "");

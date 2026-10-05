@@ -39,3 +39,29 @@ export function verifiedRegistryHomepage(candidate: string): string | null {
     return null;
   }
 }
+
+import type { RegistrySourcePage } from '../core/registry.schema';
+
+/** Prefer separately reviewed pages; never describe sitemap-only links as verified. */
+export function sourcePageNavigation(
+  homepage: string,
+  candidates: {
+    referenceUrl?: string | null;
+    docsUrl?: string | null;
+    demoUrl?: string | null;
+    sourcePage?: RegistrySourcePage;
+  },
+): { url: string; label: string; level: 'reviewed' | 'sitemap' } | null {
+  const reviewed = [candidates.referenceUrl, candidates.docsUrl, candidates.demoUrl]
+    .map(url => verifiedSourcePageUrl(url, homepage)).find(Boolean);
+  if (reviewed) return { url: reviewed, label: 'View original', level: 'reviewed' };
+  const page = candidates.sourcePage;
+  if (!page) return null;
+  const url = verifiedSourcePageUrl(page.url, homepage);
+  if (!url) return null;
+  return page.level === 'reviewed'
+    ? { url, label: 'View original', level: 'reviewed' }
+    : page.level === 'sitemap'
+      ? { url, label: 'View sitemap-listed page', level: 'sitemap' }
+      : null;
+}

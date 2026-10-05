@@ -796,6 +796,16 @@
       ],
       "install_command": "npx shadcn@latest add @8bitcn/button-group",
       "docs_url": "https://www.8bitcn.com/docs/components/button-group"
+    },
+    {
+      "name": "input-otp",
+      "slug": "input-otp",
+      "type": "registry:component",
+      "source": "official-browser",
+      "provenance": "Official page https://www.8bitcn.com/docs/components/input-otp",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "docs_url": "https://www.8bitcn.com/docs/components/input-otp"
     }
   ],
   "@assistant-ui": [
@@ -1916,6 +1926,18 @@
       "catalog_status": "available",
       "route_eligible": true,
       "docs_url": "https://animate-ui.com/docs/components/animate/avatar-group"
+    }
+  ],
+  "@aceternity": [
+    {
+      "name": "3d-globe",
+      "slug": "3d-globe",
+      "type": "registry:ui",
+      "source": "official-browser",
+      "provenance": "Official page https://ui.aceternity.com/components/3d-globe",
+      "catalog_status": "available",
+      "route_eligible": true,
+      "docs_url": "https://ui.aceternity.com/components/3d-globe"
     }
   ]
 }

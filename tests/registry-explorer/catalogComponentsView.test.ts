@@ -10,6 +10,15 @@ import {
 } from "../../src/registry-explorer/ui/catalogComponentsView";
 
 describe("renderCatalogComponents", () => {
+  it("labels official sitemap pages as provisional while preserving Atlas routes", () => {
+    const html=renderCatalogComponentCard({...component(),
+      sourcePage:{url:'https://delta.example/docs/code-block',
+        level:'sitemap',source:'official-sitemap'}});
+    expect(html).toContain('href="https://delta.example/docs/code-block"');
+    expect(html).toContain('View sitemap-listed page');
+    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
+    expect(html).not.toContain('View original ↗');
+  });
   it("offers the exact reviewed registry component page even without an image", () => {
     const html = renderCatalogComponentCard({
       ...component(), docsUrl: "https://delta.example/components/code-block",

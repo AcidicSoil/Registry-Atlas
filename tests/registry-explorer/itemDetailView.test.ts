@@ -1,9 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { resolveRegistryItemDetailFromSummary } from '../../src/registry-explorer/core/registryItemDetail';
+import { resolveRegistryItemDetailFromSummary, resolveRegistryItemDetailFromCatalogIndex } from '../../src/registry-explorer/core/registryItemDetail';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
 import { renderItemDetailView, renderRelatedComponentLinks, renderLocalBuildOption, renderLocalSandboxOption } from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
+  it('provides provisional sitemap links in Source when independently reviewed docs are missing',()=>{
+    const result=resolveRegistryItemDetailFromCatalogIndex([registryFixture()],{
+      meta:{registry_count:1,item_count:1},
+      registries:{'@delta':[{name:'source-only',type:'registry:ui'}]},
+      sourcePages:{'@delta/source-only':{url:'https://delta.example/docs/source-only',
+        level:'sitemap',source:'official-sitemap'}},
+    },'@delta','source-only');
+    const body=root();
+    renderItemDetailView(root(),body,result,new Set());
+    expect(body.innerHTML).toContain('href="https://delta.example/docs/source-only"');
+    expect(body.innerHTML).toContain('View sitemap-listed page');
+    expect(body.innerHTML).not.toContain('View original component ↗');
+  });
   it('links to the exact reviewed original documentation and registry separately', () => {
     const detail = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
     const body = root();
