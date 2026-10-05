@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
 import {
   classifyObservedAccess,
+  deriveCatalogSurfaceCandidates,
   discoverCatalogGroups,
   normalizeCatalogKind,
   resolveDirectMembership,
@@ -234,3 +235,54 @@ describe('catalog structure discovery', () => {
     expect(normalizeCatalogKind('registry:unknown')).toBe('other');
   });
 });
+
+
+describe('catalog surface planning', () => {
+  it('derives collection surfaces from observed route templates without fabricating item URLs', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/',
+      routePatterns: [
+        { template: 'https://example.test/docs/{slug}/', source: 'browser-observed', status: 'verified' },
+        { template: 'https://example.test/blocks/{slug}', source: 'official-sitemap', status: 'unverified' },
+      ],
+      examples: [
+        { slug: 'forms/select', url: 'https://example.test/docs/forms/select/' },
+      ],
+      itemRoutes: [
+        { slug: 'button', source_url: 'https://example.test/docs/button/', status: 'pattern-observed' },
+        { slug: 'guessed', source_url: 'https://example.test/docs/guessed/', status: 'pattern-inferred' },
+      ],
+      sitemapLinks: [
+        { slug: 'card', url: 'https://example.test/docs/card/' },
+      ],
+    });
+
+    expect(surfaces.map((surface: any) => surface.url)).toEqual([
+      'https://example.test/docs/',
+      'https://example.test/blocks/',
+      'https://example.test/',
+    ]);
+    expect(surfaces.some((surface: any) => surface.url.endsWith('/button/'))).toBe(false);
+    expect(surfaces.some((surface: any) => surface.url.endsWith('/guessed/'))).toBe(false);
+  });
+
+  it('rejects off-origin and non-https surface evidence and deduplicates equivalent parents', () => {
+    const surfaces = deriveCatalogSurfaceCandidates({
+      homepage: 'https://example.test/catalog',
+      routePatterns: [
+        { template: 'https://evil.test/docs/{slug}', source: 'browser-observed', status: 'verified' },
+        { template: 'http://example.test/docs/{slug}', source: 'browser-observed', status: 'verified' },
+        { template: 'https://example.test/catalog/{slug}', source: 'browser-observed', status: 'verified' },
+      ],
+      examples: [
+        { slug: 'button', url: 'https://example.test/catalog/button' },
+        { slug: 'card', url: 'https://evil.test/catalog/card' },
+      ],
+    });
+
+    expect(surfaces).toEqual([
+      expect.objectContaining({ url: 'https://example.test/catalog/' }),
+    ]);
+  });
+});
+

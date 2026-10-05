@@ -199,3 +199,89 @@ export function normalizeCatalogKind(rawType) {
       return 'other';
   }
 }
+
+
+function canonicalSurfaceUrl(raw, homepage) {
+  try {
+    const home = new URL(homepage);
+    const url = new URL(raw, home);
+    if (home.protocol !== 'https:' || url.protocol !== 'https:' || url.origin !== home.origin
+      || url.username || url.password || url.port || url.hash) return null;
+    url.search = '';
+    if (!url.pathname.endsWith('/')) url.pathname += '/';
+    return url.href;
+  } catch {
+    return null;
+  }
+}
+
+function parentFromObservedItem(rawUrl, itemSlug, homepage) {
+  if (typeof itemSlug !== 'string' || !itemSlug.trim()) return null;
+  const safe = canonicalSurfaceUrl(rawUrl, homepage);
+  if (!safe) return null;
+  const url = new URL(safe);
+  let path;
+  let slugParts;
+  try {
+    path = pathSegments(url.pathname).map(decodeURIComponent);
+    slugParts = pathSegments(itemSlug).map(decodeURIComponent);
+  } catch {
+    return null;
+  }
+  if (!slugParts.length || slugParts.length > path.length) return null;
+  const tail = path.slice(-slugParts.length).map(slug).join('/');
+  const expected = slugParts.map(slug).join('/');
+  if (tail !== expected) return null;
+  const parent = '/' + path.slice(0, -slugParts.length)
+    .map(part => encodeURIComponent(part)).join('/');
+  url.pathname = (parent === '/' ? '/' : parent + '/');
+  return url.href;
+}
+
+export function deriveCatalogSurfaceCandidates({
+  homepage,
+  routePatterns = [],
+  examples = [],
+  itemRoutes = [],
+  sitemapLinks = [],
+} = {}) {
+  const home = canonicalSurfaceUrl(homepage, homepage);
+  if (!home) return [];
+  const candidates = new Map();
+  const add = (url, source) => {
+    const safe = canonicalSurfaceUrl(url, homepage);
+    if (!safe || candidates.has(safe)) return;
+    candidates.set(safe, { url: safe, source });
+  };
+
+  for (const pattern of routePatterns) {
+    const observed = pattern?.status === 'verified'
+      || ['browser-observed', 'official-sitemap', 'observed-navigation']
+        .includes(pattern?.source);
+    if (!observed || typeof pattern?.template !== 'string'
+      || !pattern.template.includes('{slug}')) continue;
+    const prefix = pattern.template.slice(0, pattern.template.indexOf('{slug}'));
+    add(prefix, 'route-pattern');
+  }
+
+  for (const example of examples) {
+    const parent = parentFromObservedItem(example?.url, example?.slug, homepage);
+    if (parent) add(parent, 'pattern-example');
+  }
+
+  for (const route of itemRoutes) {
+    if (!['pattern-observed', 'component-page-verified', 'verified'].includes(route?.status))
+      continue;
+    const parent = parentFromObservedItem(route?.source_url, route?.slug, homepage);
+    if (parent) add(parent, 'item-route');
+  }
+
+  for (const link of sitemapLinks) {
+    const parent = parentFromObservedItem(link?.url, link?.slug, homepage);
+    if (parent) add(parent, 'sitemap');
+  }
+
+  add(home, 'homepage');
+  return [...candidates.values()];
+}
+
