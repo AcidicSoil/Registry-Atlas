@@ -3,12 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { chooseObservedGroup } from '../../scripts/lib/systemone-group.mjs';
 
 const stateFor = (...labels: string[]) => ({
-  asset: { id: 'button' },
-  candidates: labels.map(label => ({
+  asset: { id: 'button', text: 'Button' },
+  candidates: labels.map((label, index) => ({
     label,
-    sourcePattern: 'category-link',
-    href: `/components/${label.toLowerCase().replace(/\\s+/g, '-')}`,
-    examples: [],
+    pattern: 'link',
+    path: index === 0 ? 1 : 0,
+    overlap: index === 0 ? 1 : 0,
+    samples: [],
   })),
 });
 
@@ -44,11 +45,12 @@ describe('bounded SystemOne group choice', () => {
       },
     });
 
+    expect(sent.state).toEqual(stateFor('Free', 'Actions'));
     expect(Object.keys(sent.questions.group.criteria)).toEqual(['Free', 'Actions', 'NONE']);
-    expect(sent.questions.group.criteria.Actions).toContain('source pattern: category-link');
-    expect(sent.questions.group.criteria.Actions).toContain('/components/actions');
-    expect(sent.questions.group.instructions).toContain('do not choose from label similarity alone');
-    expect(sent.questions.group.instructions).toContain('Never invent or rename');
+    expect(sent.questions.group.criteria).toEqual({ Free: null, Actions: null, NONE: null });
+    expect(sent.questions.group.instructions).toContain('Candidate facts');
+    expect(sent.questions.group.instructions).toContain('NONE');
+    expect(JSON.stringify(sent)).not.toContain('http');
     expect(result).toEqual({
       choice: 'Actions',
       probability: 0.96,
@@ -59,12 +61,32 @@ describe('bounded SystemOne group choice', () => {
     });
   });
 
-  it('rejects bare labels without matching source evidence', async () => {
+  it('keeps an eight-way bounded request compact', async () => {
+    let body = '';
+    const groups = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
+    await chooseObservedGroup({
+      state: stateFor(...groups),
+      groups,
+      fetchImpl: async (_url: string, init: any) => {
+        body = init.body;
+        return response({
+          answers: { group: {
+            type: 'choice', choice: 'One',
+            probabilities: Object.fromEntries([...groups.map(label => [label, label === 'One' ? 0.6 : 0.05]), ['NONE', 0.05]]),
+            confidence: 0.55,
+          } },
+        });
+      },
+    });
+    expect(body.length).toBeLessThan(1800);
+  });
+
+  it('rejects bare labels without matching compact candidate state', async () => {
     await expect(chooseObservedGroup({
       state: { asset: { id: 'button' } },
       groups: ['Free'],
       fetchImpl: async () => response({}),
-    })).rejects.toThrow(/evidence/i);
+    })).rejects.toThrow(/candidate facts/i);
   });
 
   it('rejects duplicate or reserved observed labels', async () => {

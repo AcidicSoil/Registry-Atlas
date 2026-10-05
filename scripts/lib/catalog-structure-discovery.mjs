@@ -155,7 +155,10 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
     peerCandidates.push({ label, href: link.href, pathname });
   }
   const distinctPeerPaths = new Set(peerCandidates.map(candidate => candidate.pathname));
-  if (distinctPeerPaths.size >= 2) {
+  const knownItemLinks = recordsForLinks(observation.links, {
+    baseUrl: observation.url, root, rootDepth, index,
+  }).filter(record => record.knownId).length;
+  if (distinctPeerPaths.size >= 2 && peerCandidates.length > knownItemLinks) {
     for (const candidate of peerCandidates) {
       add(candidate.label, 'category-link', [{
         text: candidate.label, href: candidate.href, pathname: candidate.pathname, knownId: null,
@@ -185,7 +188,7 @@ const GENERIC_DECISION_TOKENS = new Set([
   'all', 'block', 'blocks', 'component', 'components', 'group', 'groups',
   'item', 'items', 'section', 'sections',
 ]);
-const MAX_DECISION_GROUPS = 16;
+const MAX_DECISION_GROUPS = 8;
 
 function decisionTokens(value) {
   return String(value ?? '')
@@ -195,26 +198,43 @@ function decisionTokens(value) {
     .filter(token => token.length >= 3 && !GENERIC_DECISION_TOKENS.has(token));
 }
 
+export function decisionOverlapScore(asset, label) {
+  const assetTokens = decisionTokens([asset?.id, asset?.text].filter(Boolean).join(' '));
+  const labelTokens = decisionTokens(label);
+  let score = 0;
+  for (const left of assetTokens) {
+    for (const right of labelTokens) {
+      if (left === right) score += 3;
+      else if (left.length >= 4 && right.length >= 4
+        && (left.includes(right) || right.includes(left))) score += 1;
+    }
+  }
+  return score;
+}
+
+function groupPathAffinity(assetHref, group) {
+  if (!assetHref) return 0;
+  let assetPath;
+  try { assetPath = new URL(assetHref, 'https://catalog.invalid').pathname.replace(/\/$/, ''); }
+  catch { return 0; }
+  return (group?.links ?? []).some(link => {
+    try {
+      const groupPath = new URL(link?.href, 'https://catalog.invalid').pathname.replace(/\/$/, '');
+      return groupPath && assetPath.startsWith(groupPath + '/');
+    } catch { return false; }
+  }) ? 4 : 0;
+}
+
 export function shortlistObservedGroupLabels(asset, groups = []) {
   const labels = [...new Set(groups
     .map(group => clean(typeof group === 'string' ? group : group?.label))
     .filter(Boolean))];
   if (labels.length <= MAX_DECISION_GROUPS) return labels;
 
-  const assetTokens = decisionTokens([asset?.id, asset?.text].filter(Boolean).join(' '));
-  if (!assetTokens.length) return [];
-
   return labels
     .map((label, index) => {
-      const labelTokens = decisionTokens(label);
-      let score = 0;
-      for (const left of assetTokens) {
-        for (const right of labelTokens) {
-          if (left === right) score += 3;
-          else if (left.length >= 4 && right.length >= 4
-            && (left.includes(right) || right.includes(left))) score += 1;
-        }
-      }
+      const group = groups.find(candidate => clean(typeof candidate === 'string' ? candidate : candidate?.label) === label);
+      const score = decisionOverlapScore(asset, label) + groupPathAffinity(asset?.href, group);
       return { label, index, score };
     })
     .filter(row => row.score > 0)

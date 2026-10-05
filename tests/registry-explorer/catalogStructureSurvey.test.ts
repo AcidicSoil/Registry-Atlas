@@ -225,17 +225,20 @@ describe('per-registry catalog structure survey', () => {
 
     expect(calls).toHaveLength(1);
     expect(calls[0].groups).toEqual(['Forms', 'Navigation']);
-    expect(calls[0].state.candidates).toEqual([
-      expect.objectContaining({ label: 'Forms', sourcePattern: 'category-link', href: '/components/forms' }),
-      expect.objectContaining({ label: 'Navigation', sourcePattern: 'category-link', href: '/components/navigation' }),
-    ]);
+    expect(calls[0].state).toEqual({
+      asset: { id: 'select', text: 'Select' },
+      candidates: [
+        { label: 'Forms', pattern: 'link', path: 0, overlap: 0, samples: [] },
+        { label: 'Navigation', pattern: 'link', path: 0, overlap: 0, samples: [] },
+      ],
+    });
     expect(result.items[0]).toMatchObject({
       id: 'select', groups: ['Forms'], assignment: 'clef', access: 'unknown',
       decision: { probability: 0.8, confidence: 0.7 },
     });
   });
 
-  it('keeps a weak non-NONE decision unresolved instead of accepting a guess', async () => {
+  it('records a bounded non-NONE decision without inventing a probability threshold', async () => {
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('select')],
@@ -255,7 +258,7 @@ describe('per-registry catalog structure survey', () => {
     });
 
     expect(result.items[0]).toMatchObject({
-      id: 'select', groups: [], assignment: 'unresolved', reason: 'decision-weak',
+      id: 'select', groups: ['Forms'], assignment: 'clef',
       decision: { probability: 0.48, confidence: 0.12 },
     });
   });

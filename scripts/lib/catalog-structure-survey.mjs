@@ -4,6 +4,7 @@ import {
   catalogSurfaceMatchesKnownKinds,
   classifyObservedAccess,
   deriveCatalogSurfaceCandidates,
+  decisionOverlapScore,
   discoverCatalogGroups,
   normalizeCatalogKind,
   resolveDirectMembership,
@@ -95,42 +96,47 @@ function mergeGroup(target, group) {
   }
 }
 
-function compactGroupEvidence(groups, labels) {
-  return labels.map(label => {
-    const group = groups.find(candidate => candidate.label === label);
-    const links = group?.links ?? [];
-    const examples = [];
-    for (const link of links) {
-      if (!link?.knownId || examples.length >= 2) continue;
-      examples.push({ id: link.knownId, text: link.text ?? '' });
-    }
-    if (!examples.length) {
-      for (const id of group?.memberIds ?? []) {
-        if (examples.length >= 2) break;
-        examples.push({ id, text: '' });
-      }
-    }
-    return {
-      label,
-      sourcePattern: group?.sourcePattern ?? 'unknown',
-      href: links[0]?.href ?? null,
-      examples,
-    };
-  });
+const DECISION_PATTERN = new Map([
+  ['category-link', 'link'],
+  ['category-card', 'card'],
+  ['heading-range', 'range'],
+  ['semantic-container', 'container'],
+]);
+
+function decisionPathAffinity(assetHref, group) {
+  if (!assetHref) return 0;
+  let assetPath;
+  try { assetPath = new URL(assetHref, 'https://catalog.invalid').pathname.replace(/\/$/, ''); }
+  catch { return 0; }
+  return (group?.links ?? []).some(link => {
+    try {
+      const groupPath = new URL(link?.href, 'https://catalog.invalid').pathname.replace(/\/$/, '');
+      return groupPath && assetPath.startsWith(groupPath + '/');
+    } catch { return false; }
+  }) ? 1 : 0;
 }
 
-function strongDecision(decision, labels) {
-  const choice = decision?.choice;
-  if (!labels.includes(choice)) return false;
-  const probability = decision?.probability ?? decision?.probabilities?.[choice];
-  if (!Number.isFinite(probability) || probability <= 0.5) return false;
-  const probabilities = decision?.probabilities;
-  if (!probabilities || typeof probabilities !== 'object') return false;
-  const other = [...labels, 'NONE']
-    .filter(label => label !== choice)
-    .map(label => probabilities[label])
-    .filter(Number.isFinite);
-  return other.every(value => probability > value);
+function compactDecisionState(asset, groups, labels) {
+  return {
+    asset: {
+      id: String(asset?.id ?? '').slice(0, 120),
+      ...(asset?.text ? { text: String(asset.text).slice(0, 120) } : {}),
+    },
+    candidates: labels.map(label => {
+      const group = groups.find(candidate => candidate.label === label);
+      const samples = [...new Set([
+        ...(group?.links ?? []).map(link => link?.knownId).filter(Boolean),
+        ...(group?.memberIds ?? []),
+      ])].slice(0, 2).map(value => String(value).slice(0, 80));
+      return {
+        label,
+        pattern: DECISION_PATTERN.get(group?.sourcePattern) ?? 'other',
+        path: decisionPathAffinity(asset?.href, group),
+        overlap: Math.min(99, decisionOverlapScore(asset, label)),
+        samples,
+      };
+    }),
+  };
 }
 
 function countBy(rows, pick) {
@@ -317,16 +323,7 @@ export async function surveyRegistryCatalogStructure({
       }
       try {
         const decision = await chooseGroup({
-          state: {
-            registry: registry.name,
-            page: observed.sourceUrls,
-            asset: {
-              id: observed.id,
-              text: observed.text,
-              href: observed.href,
-            },
-            candidates: compactGroupEvidence(candidateGroups, decisionLabels),
-          },
+          state: compactDecisionState(observed, candidateGroups, decisionLabels),
           groups: decisionLabels,
         });
         if (decision?.choice === 'NONE') {
@@ -340,15 +337,6 @@ export async function surveyRegistryCatalogStructure({
           };
         } else if (!decisionLabels.includes(decision?.choice)) {
           throw new Error('Decision returned a group outside the observed labels');
-        } else if (!strongDecision(decision, decisionLabels)) {
-          row = {
-            ...row,
-            reason: 'decision-weak',
-            decision: {
-              probability: decision.probability ?? decision.probabilities?.[decision.choice] ?? null,
-              confidence: decision.confidence ?? null,
-            },
-          };
         } else {
           row = {
             ...row,

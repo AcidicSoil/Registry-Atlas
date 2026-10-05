@@ -180,6 +180,29 @@ describe('catalog structure discovery', () => {
     expect(result.groups.every((group: any) => group.sourcePattern === 'category-link')).toBe(true);
   });
 
+  it('does not treat a small minority of unknown peer item links as categories', () => {
+    const page = observation({
+      url: 'https://example.test/components',
+      links: [
+        { text: 'Button', href: '/components/button' },
+        { text: 'Input', href: '/components/input' },
+        { text: 'Card', href: '/components/card' },
+        { text: 'Dialog', href: '/components/dialog' },
+        { text: 'Lamp Effect', href: '/components/lamp-effect' },
+        { text: 'Signup Form', href: '/components/signup-form' },
+      ],
+    });
+
+    const result = discoverCatalogGroups(page, {
+      knownItems: [item('button'), item('input'), item('card'), item('dialog')],
+    });
+
+    expect(result.groups).toEqual([]);
+    expect(result.observedAssets.map((asset: any) => asset.id)).toEqual([
+      'button', 'input', 'card', 'dialog',
+    ]);
+  });
+
   it('does not turn a one-heading marketing section into a source group', () => {
     const page = observation({
       url: 'https://example.test/docs',
