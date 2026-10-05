@@ -2,6 +2,8 @@
 
 **Status:** Implementation specification, 2026-10-04. **Parent:** `2026-10-03-observed-reference-and-route-parity.md`. **Execution:** `docs/superpowers/plans/2026-10-03-observed-reference-and-route-parity.md` and the separate corrective implementation plan discussed with the requester. This specification consolidates their compatible requirements; it does not supersede the broader full-parity goal.
 
+**Subsequent scope decision (2026-10-04):** The requester explicitly extended this first-slice contract to all applicable item routes and approved a persistent SQLite registry-pattern database. The earlier restrictions below against a database and against publishing non-individually-reviewed links apply only to the original first slice. The controlling extension is `2026-10-04-registry-pattern-verification.md`: separately label reviewed, official-sitemap, and pattern-matched destinations. Never represent pattern-matched pages as individually page-verified.
+
 ## Purpose and source authority
 
 Improve the existing Registry Atlas catalog, rather than build a second application, registry crawler, database or preview host. The current shadcn directory, exact catalog identities, same-origin bundles, evidence journals, capture pipeline, isolated demo compiler and vanilla TypeScript/Vite interface remain authoritative.

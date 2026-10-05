@@ -23,9 +23,12 @@ export function exactOfficialPage(url, homepage) {
   } catch { return null; }
 }
 
-export function buildSourcePageIndex({ raw, catalog, curated, traversal, previews, demos, now = new Date().toISOString() }) {
-  if (traversal?.schema !== 'registry-atlas-traversal-inventory/v1'
-    || !Array.isArray(raw) || !catalog?.registries || !Array.isArray(traversal.registries))
+export function buildSourcePageIndex({ raw, catalog, curated, traversal, previews, demos, patternLinks, now = new Date().toISOString() }) {
+  const databaseSitemaps = patternLinks?.schema === 'registry-atlas-pattern-links/v1'
+    && Array.isArray(patternLinks.sitemapLinks);
+  if ((!databaseSitemaps && (traversal?.schema !== 'registry-atlas-traversal-inventory/v1'
+      || !Array.isArray(traversal.registries)))
+    || !Array.isArray(raw) || !catalog?.registries)
     throw new Error('Unsupported source inventory');
   const nowMs = Date.parse(now);
   if (!Number.isFinite(nowMs)) throw new Error('Invalid observation time');
@@ -41,7 +44,21 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
     if (!saved.some(entry => entry.url === page.url && entry.level === page.level))
       saved.push(page);
   };
-  for (const row of traversal.registries) {
+  const databaseGroups = new Map();
+  if (databaseSitemaps) for (const page of patternLinks.sitemapLinks) {
+    if (typeof page?.namespace !== 'string' || typeof page?.observedAt !== 'string') continue;
+    const key = page.namespace + '\\0' + page.observedAt;
+    if (!databaseGroups.has(key)) databaseGroups.set(key,{
+      namespace:page.namespace,
+      homepage:known.get(page.namespace)?.homepage,
+      catalogFingerprint:patternLinks.fingerprints?.[page.namespace],
+      sitemapSurveyedAt:page.observedAt,
+      sitemapPages:[],
+    });
+    databaseGroups.get(key).sitemapPages.push({slug:page.slug,url:page.url});
+  }
+  const sitemapRows = databaseSitemaps ? [...databaseGroups.values()] : traversal.registries;
+  for (const row of sitemapRows) {
     const registry = known.get(row.namespace);
     if (!registry || row.homepage !== registry.homepage) continue;
     const slugs = [...new Set([
@@ -74,6 +91,27 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
     for (const [token, urls] of matches) {
       if (urls.size !== 1) { rejected.ambiguous++; candidatePages.set(token, []); continue; }
       offer(token, { url: [...urls][0], level: 'sitemap', source: 'official-sitemap', observedAt: row.sitemapSurveyedAt });
+    }
+  }
+  if (patternLinks?.schema === 'registry-atlas-pattern-links/v1'
+    && Array.isArray(patternLinks.links)) {
+    for (const row of patternLinks.links) {
+      if (!['pattern-observed','pattern-inferred'].includes(row.status)) continue;
+      const registry = known.get(row.namespace);
+      if (!registry || !names.get(row.namespace)?.has(row.slug)) {
+        rejected['unknown-item']++;
+        continue;
+      }
+      const checked = Date.parse(row.checkedAt ?? '');
+      if (!Number.isFinite(checked) || checked > nowMs || nowMs - checked > MAX_AGE_MS) {
+        rejected.stale++;
+        continue;
+      }
+      const url = exactOfficialPage(row.source_url, registry.homepage);
+      if (!url) { rejected['invalid-url']++; continue; }
+      offer(row.namespace+'/'+row.slug,{
+        url,level:'pattern',source:'verified-route-pattern',observedAt:row.checkedAt,
+      });
     }
   }
   for (const [namespace, items] of Object.entries(curated)) {
@@ -112,7 +150,8 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
   for (const token of [...candidatePages.keys()].sort()) {
     const entries = candidatePages.get(token);
     const reviewed = entries.filter(entry => entry.level === 'reviewed');
-    const choices = reviewed.length ? reviewed : entries;
+    const sitemap = entries.filter(entry => entry.level === 'sitemap');
+    const choices = reviewed.length ? reviewed : sitemap.length ? sitemap : entries;
     if (!choices.length) continue;
     if (new Set(choices.map(entry => entry.url)).size !== 1) {
       rejected[reviewed.length ? 'reviewed-conflict' : 'ambiguous']++;
@@ -129,12 +168,14 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
   const indexedCount = [...names.values()].reduce((count, slugs) => count + slugs.size, 0);
   return {
     schema: SOURCE_PAGE_SCHEMA,
-    sourceSnapshotAt: traversal.generatedAt ?? null,
+    sourceSnapshotAt: databaseSitemaps
+      ? patternLinks.sourceSnapshotAt ?? null : traversal.generatedAt ?? null,
     coverage: {
       distinctIndexed: indexedCount,
       published: levels.length,
       reviewed: levels.filter(entry => entry.level === 'reviewed').length,
       sitemap: levels.filter(entry => entry.level === 'sitemap').length,
+      pattern: levels.filter(entry => entry.level === 'pattern').length,
       missing: indexedCount - levels.length,
       rejections: rejected,
     },
@@ -148,17 +189,22 @@ async function main(argv) {
   const value = flag => argv[argv.indexOf(flag) + 1];
   for (const flag of ['--output', '--report'])
     if (!value(flag) || value(flag).startsWith('--')) throw new Error('Missing '+flag);
-  const [raw, catalog, curated, traversal, previews, demos] = await Promise.all([
+  const patternFile = value('--pattern-links') ?? 'data/shadcn/verified-registry-pattern-links.json';
+  const patternLinks = await readFile(patternFile,'utf8').then(JSON.parse)
+    .catch(error => { if (error.code === 'ENOENT') return null; throw error; });
+  const [raw, catalog, curated, previews, demos] = await Promise.all([
     'data/shadcn/registries.raw.json', 'public/data/registry-catalog-items.json',
-    'data/shadcn/registry-items.json', 'data/shadcn/registry-traversal-patterns.json',
-    'public/data/component-previews.json',
+    'data/shadcn/registry-items.json', 'public/data/component-previews.json',
     'src/registry-explorer/data/component-demo-manifest.json',
   ].map(file => readFile(file,'utf8').then(JSON.parse)));
-  const result = buildSourcePageIndex({ raw,catalog,curated,traversal,previews,demos });
+  // The legacy traversal inventory is consulted only before its records are migrated to SQLite.
+  const traversal = Array.isArray(patternLinks?.sitemapLinks) ? null
+    : await readFile('data/shadcn/registry-traversal-patterns.json','utf8').then(JSON.parse);
+  const result = buildSourcePageIndex({ raw,catalog,curated,traversal,previews,demos,patternLinks });
   await writeFile(value('--output'), JSON.stringify(result) + '\n');
   await writeFile(value('--report'), JSON.stringify({
     schema: SOURCE_PAGE_SCHEMA, sourceSnapshotAt: result.sourceSnapshotAt,
-    ...result.coverage, note: 'sitemap links have not been individually browser-verified',
+    ...result.coverage, note: 'Sitemap and pattern-derived links have not all been individually page-verified',
   }, null, 2) + '\n');
   console.log(JSON.stringify(result.coverage));
 }

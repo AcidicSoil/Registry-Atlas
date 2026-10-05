@@ -51,7 +51,7 @@ export function sourcePageNavigation(
     demoUrl?: string | null;
     sourcePage?: RegistrySourcePage;
   },
-): { url: string; label: string; level: 'reviewed' | 'sitemap' } | null {
+): { url: string; label: string; level: 'reviewed' | 'sitemap' | 'pattern' } | null {
   const reviewed = [candidates.referenceUrl, candidates.docsUrl, candidates.demoUrl]
     .map(url => verifiedSourcePageUrl(url, homepage)).find(Boolean);
   if (reviewed) return { url: reviewed, label: 'View original', level: 'reviewed' };
@@ -63,5 +63,7 @@ export function sourcePageNavigation(
     ? { url, label: 'View original', level: 'reviewed' }
     : page.level === 'sitemap'
       ? { url, label: 'View sitemap-listed page', level: 'sitemap' }
-      : null;
+      : page.level === 'pattern'
+        ? { url, label: 'View pattern-matched page', level: 'pattern' }
+        : null;
 }

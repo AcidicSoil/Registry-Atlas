@@ -2,18 +2,19 @@
   "schema": "registry-atlas-source-page-index/v1",
   "sourceSnapshotAt": "2026-10-03T04:44:51.796Z",
   "distinctIndexed": 84133,
-  "published": 17330,
+  "published": 30235,
   "reviewed": 38,
   "sitemap": 17292,
-  "missing": 66803,
+  "pattern": 12905,
+  "missing": 53898,
   "rejections": {
     "stale": 0,
     "ambiguous": 0,
     "unknown-item": 0,
-    "invalid-url": 18,
+    "invalid-url": 16,
     "reviewed-conflict": 0,
     "fingerprint-mismatch": 0,
     "sitemap-review-disagreement": 0
   },
-  "note": "sitemap links have not been individually browser-verified"
+  "note": "Sitemap and pattern-derived links have not all been individually page-verified"
 }

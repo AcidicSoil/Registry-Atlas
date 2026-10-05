@@ -22,6 +22,20 @@ describe('optional original source-page manifest',()=>{
     expect(pages['@alpha/button']).toMatchObject({level:'reviewed'});
     expect(pages['@beta/button'].url).toBe('https://beta.example/docs/button');
   });
+  it('accepts recently checked route-pattern links but not stale or foreign ones',()=> {
+    const pages=readSourcePageManifest({schema:'registry-atlas-source-page-index/v1',pages:{
+      '@alpha/forms/button':{url:'https://alpha.example/docs/forms/button',
+        level:'pattern',source:'verified-route-pattern',observedAt},
+      '@alpha/button':{url:'https://alpha.example/docs/button',
+        level:'pattern',source:'verified-route-pattern',observedAt:'2020-01-01T00:00:00Z'},
+      '@beta/button':{url:'https://alpha.example/docs/button',
+        level:'pattern',source:'verified-route-pattern',observedAt},
+    }},index,registries);
+    expect(pages['@alpha/forms/button']?.level).toBe('pattern');
+    expect(pages['@alpha/button']).toBeUndefined();
+    expect(pages['@beta/button']).toBeUndefined();
+  });
+
   it('expires sitemap entries without discarding enduring reviewed evidence',()=>{
     const pages=readSourcePageManifest({schema:'registry-atlas-source-page-index/v1',pages:{
       '@alpha/forms/button':{url:'https://alpha.example/docs/forms/button',level:'sitemap',

@@ -50,6 +50,44 @@ describe('published original-page source index', () => {
     expect(output.coverage.sitemap).toBe(2);
     expect(output.coverage.reviewed).toBe(1);
   });
+  it('publishes current unambiguous pattern-backed routes only when individually absent',()=> {
+    const result=buildSourcePageIndex(input({curated:{},patternLinks:{
+      schema:'registry-atlas-pattern-links/v1',links:[
+        {namespace:'@alpha',slug:'card',source_url:'https://alpha.example/docs/card',status:'pattern-inferred',checkedAt:surveyedAt},
+        {namespace:'@beta',slug:'button',source_url:'https://beta.example/docs/button',status:'pattern-observed',checkedAt:surveyedAt},
+        {namespace:'@alpha',slug:'not-indexed',source_url:'https://alpha.example/docs/wrong',status:'pattern-inferred',checkedAt:surveyedAt},
+        {namespace:'@alpha',slug:'button',source_url:'https://foreign.example/docs/button',status:'pattern-inferred',checkedAt:surveyedAt},
+      ],
+    }}));
+    expect(result.pages['@alpha/card']).toMatchObject({
+      url:'https://alpha.example/docs/card',level:'pattern',source:'verified-route-pattern',
+    });
+    expect(result.pages['@beta/button']?.level).toBe('sitemap');
+    expect(result.coverage.pattern).toBe(1);
+    expect(result.coverage.rejections['unknown-item']).toBeGreaterThan(0);
+    expect(result.coverage.rejections['invalid-url']).toBeGreaterThan(0);
+  });
+
+  it('reads independently published sitemap evidence from SQLite export without legacy traversal JSON',()=> {
+    const snapshot={
+      schema:'registry-atlas-pattern-links/v1',
+      sourceSnapshotAt:'2026-10-03T20:00:00.000Z',
+      fingerprints:Object.fromEntries(raw.map(source => [source.name,
+        catalogFingerprint(source,source.name==='@alpha'
+          ? ['button','card','forms/button']:['button'])])),
+      sitemapLinks:[
+        {namespace:'@alpha',slug:'forms/button',url:'https://alpha.example/docs/forms/button',observedAt:surveyedAt},
+        {namespace:'@beta',slug:'button',url:'https://beta.example/docs/button',observedAt:surveyedAt},
+      ],links:[],
+    };
+    const result=buildSourcePageIndex(input({traversal:null,curated:{},patternLinks:snapshot}));
+    expect(result.coverage.sitemap).toBe(2);
+    expect(result.pages['@alpha/forms/button']).toMatchObject({
+      level:'sitemap',url:'https://alpha.example/docs/forms/button',
+    });
+    expect(result.sourceSnapshotAt).toBe(snapshot.sourceSnapshotAt);
+  });
+
   it('rejects stale, foreign, generic, ambiguous, and unknown sitemap routes', () => {
     const modified=structuredClone(traversal);
     modified.registries[0].sitemapPages.push(

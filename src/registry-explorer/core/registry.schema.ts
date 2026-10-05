@@ -85,8 +85,8 @@ export interface RegistryVisualReference {
 /** A sitemap listing is discoverable but not independently page-verified. */
 export interface RegistrySourcePage {
   url: string;
-  level: 'reviewed' | 'sitemap';
-  source: 'reviewed-summary' | 'visual-reference' | 'interaction-verified-demo' | 'official-sitemap';
+  level: 'reviewed' | 'sitemap' | 'pattern';
+  source: 'reviewed-summary' | 'visual-reference' | 'interaction-verified-demo' | 'official-sitemap' | 'verified-route-pattern';
   observedAt?: string;
 }
 

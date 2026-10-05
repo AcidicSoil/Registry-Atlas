@@ -283,9 +283,10 @@ export function readSourcePageManifest(
     const record = value as Record<string, unknown>;
     const validLevel = (record.level === 'reviewed'
         && ['reviewed-summary', 'visual-reference', 'interaction-verified-demo'].includes(String(record.source)))
-      || (record.level === 'sitemap' && record.source === 'official-sitemap');
+      || (record.level === 'sitemap' && record.source === 'official-sitemap')
+      || (record.level === 'pattern' && record.source === 'verified-route-pattern');
     if (!validLevel || typeof record.url !== 'string') continue;
-    if (record.level === 'sitemap') {
+    if (record.level === 'sitemap' || record.level === 'pattern') {
       const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
       const age = Date.now() - observed;
       if (!Number.isFinite(age) || age < 0 || age > 30 * 24 * 60 * 60 * 1000) continue;
@@ -294,7 +295,8 @@ export function readSourcePageManifest(
     if (!url || url !== record.url) continue;
     pages[token] = { url, level: record.level as RegistrySourcePage['level'],
       source: record.source as RegistrySourcePage['source'],
-      ...(record.level === 'sitemap' ? { observedAt: record.observedAt as string } : {}) };
+      ...(record.level === 'sitemap' || record.level === 'pattern'
+        ? { observedAt: record.observedAt as string } : {}) };
   }
   return pages;
 }
