@@ -2,12 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM module.
-import {
-  flattenCatalogTaxonomy,
-  taxonomyDescendantIds,
-  taxonomyNodeMap,
-  validateCatalogTaxonomy,
-} from '../../scripts/lib/catalog-taxonomy.mjs';
+import { flattenCatalogTaxonomy, taxonomyDescendantIds, taxonomyNodeMap, validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs';
 
 function leaf(id: string, aliases: string[] = []) {
   return {

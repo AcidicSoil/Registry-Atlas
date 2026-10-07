@@ -6,7 +6,7 @@ import { validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs'
 // @ts-ignore Standalone Node ESM modules.
 import { buildCatalogClassificationState } from '../../scripts/lib/catalog-classification-state.mjs';
 // @ts-ignore Standalone Node ESM modules.
-import { findDeterministicAliasClassification } from '../../scripts/lib/catalog-classifier.mjs';
+import { classifyCatalogItem, findDeterministicAliasClassification } from '../../scripts/lib/catalog-classifier.mjs';
 
 const taxonomy = validateCatalogTaxonomy(
   JSON.parse(readFileSync('data/catalog-taxonomy/v1.json', 'utf8')),
@@ -131,5 +131,139 @@ describe('deterministic canonical alias classification', () => {
     const b = findDeterministicAliasClassification(second, taxonomy);
     expect(a?.inputFingerprint).toBe(b?.inputFingerprint);
     expect(findDeterministicAliasClassification(changed, taxonomy)).toBeNull();
+  });
+});
+
+const beamTaxonomy = validateCatalogTaxonomy({
+  version: 'beam-v1',
+  roots: [
+    {
+      id: 'application', label: 'Application', aliases: [], what: 'Application surfaces.',
+      notFor: [], examples: [],
+      children: [{
+        id: 'application/app-shell', label: 'App Shell', aliases: ['app shell'],
+        what: 'Application frame.', notFor: [], examples: [], children: [],
+      }],
+    },
+    {
+      id: 'ai', label: 'AI', aliases: [], what: 'AI interfaces.',
+      notFor: [], examples: [],
+      children: [{
+        id: 'ai/chat', label: 'AI Chat', aliases: ['ai chat'], what: 'AI conversation.',
+        notFor: [], examples: [], children: [],
+      }],
+    },
+  ],
+});
+
+function ambiguousState() {
+  return buildCatalogClassificationState({
+    namespace: '@demo',
+    item: { name: 'workspace-assistant', title: 'Workspace Assistant', kind: 'block' },
+  });
+}
+
+describe('hierarchical canonical classification', () => {
+  it('bypasses choose entirely for deterministic aliases', async () => {
+    let calls = 0;
+    const result = await classifyCatalogItem({
+      state: buildCatalogClassificationState({
+        namespace: '@demo', item: { name: 'app-shell', title: 'App Shell', kind: 'block' },
+      }),
+      taxonomy: beamTaxonomy,
+      choose: async () => { calls += 1; throw new Error('must not run'); },
+    });
+    expect(calls).toBe(0);
+    expect(result).toMatchObject({ primary: 'application/app-shell', method: 'deterministic-alias' });
+  });
+
+  it('returns explicit unclassified when UNCLASSIFIED wins the root decision', async () => {
+    const result = await classifyCatalogItem({
+      state: ambiguousState(), taxonomy: beamTaxonomy, beamWidth: 1,
+      choose: async ({ node }: any) => {
+        expect(node).toBeNull();
+        return {
+          choice: 'UNCLASSIFIED',
+          probabilities: { application: 0.1, ai: 0.2, UNCLASSIFIED: 0.7 },
+          confidence: 0.6, model: 'fixture',
+        };
+      },
+    });
+    expect(result).toMatchObject({
+      taxonomyVersion: 'beam-v1', primary: null, path: [], method: 'unclassified',
+    });
+    expect(result.systemOne.decisions).toHaveLength(1);
+    expect(result.systemOne.decisions[0].probabilities.UNCLASSIFIED).toBe(0.7);
+  });
+
+  it('lets THIS_CATEGORY terminate at the current parent', async () => {
+    const result = await classifyCatalogItem({
+      state: ambiguousState(), taxonomy: beamTaxonomy, beamWidth: 1,
+      choose: async ({ node }: any) => node === null ? {
+        choice: 'application',
+        probabilities: { application: 0.8, ai: 0.1, UNCLASSIFIED: 0.1 },
+        confidence: 0.7, model: 'fixture',
+      } : {
+        choice: 'THIS_CATEGORY',
+        probabilities: { 'application/app-shell': 0.3, THIS_CATEGORY: 0.7 },
+        confidence: 0.5, model: 'fixture',
+      },
+    });
+    expect(result).toMatchObject({ primary: 'application', path: ['application'], method: 'system-one' });
+  });
+
+  it('uses beam width 2 so a runner-up root can overtake after deeper evidence', async () => {
+    const expanded: string[] = [];
+    const result = await classifyCatalogItem({
+      state: ambiguousState(), taxonomy: beamTaxonomy,
+      choose: async ({ node }: any) => {
+        expanded.push(node?.id ?? 'ROOT');
+        if (node === null) return {
+          choice: 'application',
+          probabilities: { application: 0.55, ai: 0.45, UNCLASSIFIED: 0 },
+          confidence: 0.1, model: 'fixture',
+        };
+        if (node.id === 'application') return {
+          choice: 'application/app-shell',
+          probabilities: { 'application/app-shell': 0.51, THIS_CATEGORY: 0.49 },
+          confidence: 0.05, model: 'fixture',
+        };
+        return {
+          choice: 'ai/chat',
+          probabilities: { 'ai/chat': 0.99, THIS_CATEGORY: 0.01 },
+          confidence: 0.05, model: 'fixture',
+        };
+      },
+    });
+
+    expect(expanded).toEqual(['ROOT', 'application', 'ai']);
+    expect(result).toMatchObject({
+      primary: 'ai/chat', path: ['ai', 'ai/chat'], method: 'system-one',
+      systemOne: { beamWidth: 2 },
+    });
+    expect(result.systemOne.finalPathScore).toBeCloseTo(Math.sqrt(0.45 * 0.99), 8);
+    expect(result.systemOne.runnerUpPathScore).toBeCloseTo(Math.sqrt(0.55 * 0.51), 8);
+    expect(result.systemOne.separation).toBeGreaterThan(1);
+    expect(result.systemOne.decisions).toHaveLength(3);
+    expect(result.systemOne.decisions[0]).toMatchObject({
+      nodeId: null,
+      probabilities: { application: 0.55, ai: 0.45, UNCLASSIFIED: 0 },
+    });
+  });
+
+  it('uses geometric-mean path scoring and does not apply a probability threshold', async () => {
+    const result = await classifyCatalogItem({
+      state: ambiguousState(), taxonomy: beamTaxonomy, beamWidth: 1,
+      choose: async ({ node }: any) => node === null ? {
+        choice: 'ai', probabilities: { application: 0.29, ai: 0.4, UNCLASSIFIED: 0.31 },
+        confidence: 0.01, model: 'fixture',
+      } : {
+        choice: 'ai/chat', probabilities: { 'ai/chat': 0.51, THIS_CATEGORY: 0.49 },
+        confidence: 0.01, model: 'fixture',
+      },
+    });
+    expect(result.primary).toBe('ai/chat');
+    expect(result.systemOne.finalPathScore).toBeCloseTo(Math.sqrt(0.4 * 0.51), 8);
+    expect(result.systemOne.decisions[0].confidence).toBe(0.01);
   });
 });
