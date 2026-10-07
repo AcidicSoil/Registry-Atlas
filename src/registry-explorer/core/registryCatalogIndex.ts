@@ -1,6 +1,9 @@
 import { resolveRegistryItemRoute } from './itemRoutes';
 import type {
+  CatalogCanonicalKind,
   Registry,
+  RegistryCatalogAccess,
+  RegistryCatalogCanonical,
   RegistryCatalogIndex,
   RegistryCatalogItem,
   RegistryItemSummary,
@@ -18,6 +21,10 @@ const DISCOVERABLE_REGISTRY_ITEM_TYPES = new Set([
   'registry:theme',
   'registry:icon',
 ]);
+const CATALOG_CANONICAL_KINDS = new Set<CatalogCanonicalKind>([
+  'component', 'block', 'page', 'template', 'theme', 'icon', 'other',
+]);
+const CANONICAL_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
 
 const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [
   'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
@@ -221,6 +228,17 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
     }
     categories = value.categories.map(item => item.trim()).filter(Boolean);
   }
+  const kind = value.kind === undefined ? undefined : parseCanonicalKind(value.kind);
+  const canonical = value.canonical === undefined ? undefined : parseCanonical(value.canonical);
+  let sourceGroups: string[] | undefined;
+  if (value.sourceGroups !== undefined) {
+    if (!Array.isArray(value.sourceGroups)
+      || value.sourceGroups.some(group => typeof group !== 'string' || !group.trim())) {
+      throw new Error('Registry catalog index validation failed: item sourceGroups must be non-empty strings');
+    }
+    sourceGroups = value.sourceGroups.map(group => group.trim());
+  }
+  const access = value.access === undefined ? undefined : parseAccess(value.access);
 
   return {
     name,
@@ -229,9 +247,79 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
     ...(description ? { description } : {}),
     ...(author ? { author } : {}),
     ...(categories?.length ? { categories } : {}),
+    ...(kind ? { kind } : {}),
+    ...(canonical ? { canonical } : {}),
+    ...(sourceGroups?.length ? { sourceGroups } : {}),
+    ...(access ? { access } : {}),
     ...(fileCount !== null ? { fileCount } : {}),
     ...(themePreview ? { themePreview } : {}),
   };
+}
+
+function parseCanonicalKind(value: unknown): CatalogCanonicalKind {
+  if (typeof value !== 'string' || !CATALOG_CANONICAL_KINDS.has(value as CatalogCanonicalKind)) {
+    throw new Error('Registry catalog index validation failed: item kind is invalid');
+  }
+  return value as CatalogCanonicalKind;
+}
+
+function parseCanonical(value: unknown): RegistryCatalogCanonical {
+  if (!isRecord(value)) {
+    throw new Error('Registry catalog index validation failed: item canonical must be an object');
+  }
+  const taxonomyVersion = optionalString(value.taxonomyVersion);
+  if (!taxonomyVersion) {
+    throw new Error('Registry catalog index validation failed: item canonical taxonomyVersion is required');
+  }
+  let primary: string | null;
+  if (value.primary === null) {
+    primary = null;
+  } else {
+    const parsedPrimary = optionalString(value.primary);
+    if (!parsedPrimary) {
+      throw new Error('Registry catalog index validation failed: item canonical primary is invalid');
+    }
+    primary = parsedPrimary;
+  }
+  if (!Array.isArray(value.path) || value.path.some(id => typeof id !== 'string' || !CANONICAL_ID_PATTERN.test(id))) {
+    throw new Error('Registry catalog index validation failed: item canonical path is invalid');
+  }
+  const path = [...value.path] as string[];
+  if (primary === null) {
+    if (path.length !== 0) {
+      throw new Error('Registry catalog index validation failed: item canonical path must be empty when primary is null');
+    }
+  } else {
+    if (!CANONICAL_ID_PATTERN.test(primary) || path.length === 0 || path.at(-1) !== primary) {
+      throw new Error('Registry catalog index validation failed: item canonical path must end at primary');
+    }
+    for (let index = 0; index < path.length; index += 1) {
+      const id = path[index]!;
+      const segments = id.split('/');
+      if (index === 0) {
+        if (segments.length !== 1) {
+          throw new Error('Registry catalog index validation failed: item canonical path must start at a root');
+        }
+      } else {
+        const parent = path[index - 1]!;
+        if (!id.startsWith(`${parent}/`) || segments.length !== parent.split('/').length + 1) {
+          throw new Error('Registry catalog index validation failed: item canonical path must be hierarchical');
+        }
+      }
+    }
+  }
+  return { taxonomyVersion, primary, path };
+}
+
+function parseAccess(value: unknown): RegistryCatalogAccess {
+  if (!isRecord(value) || (value.normalized !== 'free' && value.normalized !== 'paid')) {
+    throw new Error('Registry catalog index validation failed: item access normalized value is invalid');
+  }
+  const sourceLabel = optionalString(value.sourceLabel);
+  if (!sourceLabel) {
+    throw new Error('Registry catalog index validation failed: item access sourceLabel is required');
+  }
+  return { normalized: value.normalized, sourceLabel };
 }
 
 function parseThemePreview(value: unknown): RegistryThemePreview | undefined {

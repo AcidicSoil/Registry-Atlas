@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "registryDefaults": {
+    "@svgl": "icon",
+    "@heroicons-animated": "icon",
+    "@hugeicons-animated": "icon",
+    "@hugeicons-animated-vue": "icon"
+  }
+}

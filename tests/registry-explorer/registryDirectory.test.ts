@@ -113,7 +113,7 @@ describe("registry asset-type filters", () => {
       "@themes": [{ name: "tint", type: "registry:theme" }],
       "@mixed": [{ name: "button", type: "registry:ui" }, { name: "landing", type: "registry:page" }],
     });
-    const filtered = buildRegistryDirectory(regs, data, { assetKinds: ["template", "theme"], sort: "name-desc" });
+    const filtered = buildRegistryDirectory(regs, data, { assetKinds: ["page", "theme"], sort: "name-desc" });
     expect(filtered.entries.map(entry => entry.registry.name)).toEqual(["@themes", "@templates", "@mixed"]);
   });
 });

@@ -57,6 +57,26 @@ export type RegistryCssVars = Readonly<Partial<Record<
   Readonly<Record<string, string>>
 >>>;
 
+export type CatalogCanonicalKind =
+  | 'component'
+  | 'block'
+  | 'page'
+  | 'template'
+  | 'theme'
+  | 'icon'
+  | 'other';
+
+export interface RegistryCatalogCanonical {
+  taxonomyVersion: string;
+  primary: string | null;
+  path: readonly string[];
+}
+
+export interface RegistryCatalogAccess {
+  normalized: 'free' | 'paid';
+  sourceLabel: string;
+}
+
 export interface RegistryCatalogItem {
   name: string;
   type: string;
@@ -64,6 +84,10 @@ export interface RegistryCatalogItem {
   description?: string;
   author?: string;
   categories?: readonly string[];
+  kind?: CatalogCanonicalKind;
+  canonical?: RegistryCatalogCanonical;
+  sourceGroups?: readonly string[];
+  access?: RegistryCatalogAccess;
   fileCount?: number;
   themePreview?: RegistryThemePreview;
 }

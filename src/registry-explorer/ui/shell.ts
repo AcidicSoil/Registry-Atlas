@@ -117,7 +117,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const counts = { component: 0, template: 0, theme: 0, icon: 0 };
     for (const item of items) {
       const kind = assetKindForCatalogItem(item);
-      if (kind) counts[kind] += 1;
+      if (kind === 'component' || kind === 'template' || kind === 'theme' || kind === 'icon') {
+        counts[kind] += 1;
+      }
     }
     registryAssetCounts.set(namespace, counts);
     for (const kind of Object.keys(counts) as AssetKindToken[]) {
