@@ -1,3 +1,6 @@
+import type { CatalogAssetKind } from './catalogCollections';
+import { DEFAULT_CATALOG_TAXONOMY_IDS } from './catalogTaxonomy';
+
 export type CatalogRoute =
   | { kind: "home" }
   | { kind: "not-found"; path: string }
@@ -26,10 +29,17 @@ export interface CatalogBrowseQueryState {
   registryNames: string[];
   itemTypes: string[];
   categories: string[];
+  assetKinds: CatalogAssetKind[];
+  canonicalIds: string[];
+  access: Array<'free' | 'paid'>;
   reviewed: CatalogReviewedFilter;
 }
 
 const CATALOG_SORTS = new Set<CatalogSort>(["name", "name-desc", "registry", "registry-desc"]);
+const CATALOG_ASSET_KINDS = new Set<CatalogAssetKind>([
+  'component', 'block', 'page', 'template', 'theme', 'icon', 'other',
+]);
+const CATALOG_ACCESS_VALUES = new Set(['free', 'paid'] as const);
 
 export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRoute | null {
   const relative = stripBasePath(pathname, basePath);
@@ -90,6 +100,10 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
     itemTypes: [],
     categories: uniqueValues(params.getAll("category").filter(isSafeFacetValue)),
+    assetKinds: uniqueValues(params.getAll('asset').filter(isCatalogAssetKind)) as CatalogAssetKind[],
+    canonicalIds: uniqueValues(params.getAll('canonical').filter(value =>
+      isSafeFacetValue(value) && DEFAULT_CATALOG_TAXONOMY_IDS.has(value))),
+    access: uniqueValues(params.getAll('access').filter(isCatalogAccess)) as Array<'free' | 'paid'>,
     reviewed: "all",
   };
 }
@@ -103,6 +117,15 @@ export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URL
   });
   state.categories.forEach(value => {
     if (isSafeFacetValue(value)) params.append("category", value);
+  });
+  state.assetKinds.forEach(value => {
+    if (CATALOG_ASSET_KINDS.has(value)) params.append('asset', value);
+  });
+  state.canonicalIds.forEach(value => {
+    if (isSafeFacetValue(value) && DEFAULT_CATALOG_TAXONOMY_IDS.has(value)) params.append('canonical', value);
+  });
+  state.access.forEach(value => {
+    if (CATALOG_ACCESS_VALUES.has(value)) params.append('access', value);
   });
   return params;
 }
@@ -185,6 +208,14 @@ function uniqueValues(values: readonly string[]): string[] {
 
 function isSafeFacetValue(value: string): boolean {
   return Boolean(value) && value.length <= 96 && !/[\u0000-\u001f\u007f]/.test(value);
+}
+
+function isCatalogAssetKind(value: string): value is CatalogAssetKind {
+  return CATALOG_ASSET_KINDS.has(value as CatalogAssetKind);
+}
+
+function isCatalogAccess(value: string): value is 'free' | 'paid' {
+  return CATALOG_ACCESS_VALUES.has(value as 'free' | 'paid');
 }
 
 function encodeNamespace(value: string): string {

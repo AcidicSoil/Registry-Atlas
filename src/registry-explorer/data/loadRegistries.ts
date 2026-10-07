@@ -9,6 +9,7 @@ import type {
   RegistrySourcePage,
 } from '../core/registry.schema';
 import { parseRegistryCatalogIndex } from '../core/registryCatalogIndex';
+import { parseCatalogTaxonomy, type CatalogTaxonomy } from '../core/catalogTaxonomy';
 import { verifiedSourcePageUrl } from '../ui/sourcePageLink';
 import {
   type MirrorValidationIssue,
@@ -28,6 +29,7 @@ export interface RegistryMirrorMeta {
 export interface LoadedRegistryData {
   registries: Registry[];
   catalogIndex: RegistryCatalogIndex;
+  taxonomy: CatalogTaxonomy;
   meta: RegistryMirrorMeta;
   warnings: MirrorValidationIssue[];
 }
@@ -100,11 +102,13 @@ type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Respo
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
   const mirrorUrl = `${import.meta.env.BASE_URL}data/registries.json`;
   const catalogUrl = `${import.meta.env.BASE_URL}data/registry-catalog-items.json`;
+  const taxonomyUrl = `${import.meta.env.BASE_URL}data/catalog-taxonomy.json`;
   const visualUrl = `${import.meta.env.BASE_URL}data/component-previews.json`;
   const sourcePageUrl = `${import.meta.env.BASE_URL}data/component-page-links.json`;
-  const [response, catalogResponse] = await Promise.all([
+  const [response, catalogResponse, taxonomyResponse] = await Promise.all([
     fetchImpl(mirrorUrl),
     fetchImpl(catalogUrl),
+    fetchImpl(taxonomyUrl),
   ]);
 
   if (!response.ok) {
@@ -113,10 +117,15 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   if (!catalogResponse.ok) {
     throw new Error(`Registry catalog index fetch failed: ${catalogResponse.status} ${catalogResponse.statusText}`);
   }
+  if (!taxonomyResponse.ok) {
+    throw new Error(`Catalog taxonomy fetch failed: ${taxonomyResponse.status} ${taxonomyResponse.statusText}`);
+  }
 
   const mirrorData = await response.json() as unknown;
   const catalogData = await catalogResponse.json() as unknown;
+  const taxonomyData = await taxonomyResponse.json() as unknown;
   const catalogIndex = parseRegistryCatalogIndex(catalogData);
+  const taxonomy = parseCatalogTaxonomy(taxonomyData);
   // Optional capture and source indexes should not add sequential network round trips.
   const readOptional = (url: string) => fetchImpl(url).then(async response =>
     response.ok ? await response.json() as unknown : null).catch(() => null);
@@ -143,6 +152,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   return {
     meta: typedMirror.meta,
     catalogIndex: Object.assign(catalogIndex, { visualPreviews, visualReferences, sourcePages }),
+    taxonomy,
     warnings: validation.warnings,
     registries: typedMirror.registries.map(record => ({
       name: record.official.name,

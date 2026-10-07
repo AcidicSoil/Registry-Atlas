@@ -4,6 +4,7 @@ import {
   type CatalogSort,
 } from "./catalogRoutes";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
+import { DEFAULT_CATALOG_TAXONOMY, catalogTaxonomySearchValues } from "./catalogTaxonomy";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import type {
   Registry,
@@ -44,6 +45,8 @@ export interface CatalogQueryOptions {
   itemTypes?: readonly string[];
   categories?: readonly string[];
   assetKinds?: readonly CatalogAssetKind[];
+  canonicalIds?: readonly string[];
+  access?: readonly ('free' | 'paid')[];
   reviewed?: CatalogReviewedFilter;
   sort?: CatalogSort;
   page?: number;
@@ -70,6 +73,8 @@ export interface CatalogFacetSummary {
   registries: CatalogFacetOption[];
   itemTypes: CatalogFacetOption[];
   categories: CatalogFacetOption[];
+  canonical: CatalogFacetOption[];
+  access?: CatalogFacetOption[];
   reviewedCount: number;
   unreviewedCount: number;
 }
@@ -105,6 +110,8 @@ export function queryCatalogComponents(
   const typeFilter = new Set(options.itemTypes?.map(normalize).filter(Boolean) ?? []);
   const categoryFilter = new Set(options.categories?.map(normalize).filter(Boolean) ?? []);
   const assetKindFilter = new Set(options.assetKinds ?? []);
+  const canonicalFilter = new Set(options.canonicalIds ?? []);
+  const accessFilter = new Set(options.access ?? []);
   const reviewedFilter = options.reviewed ?? "all";
   const sort = options.sort ?? "name";
   const query = normalize(options.search ?? "");
@@ -135,6 +142,8 @@ export function queryCatalogComponents(
         typeFilter,
         categoryFilter,
         assetKindFilter,
+        canonicalFilter,
+        accessFilter,
         reviewedFilter,
         Boolean(overlay),
       )) continue;
@@ -168,11 +177,13 @@ export function queryCatalogComponents(
 export function buildCatalogFacetSummary(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
-  options: Pick<CatalogQueryOptions, "search" | "registryNames" | "assetKinds"> = {},
+  options: Pick<CatalogQueryOptions, "search" | "registryNames" | "assetKinds" | "canonicalIds" | "access"> = {},
 ): CatalogFacetSummary {
   const registryFilter = new Set(options.registryNames?.map(value => value.trim()).filter(Boolean) ?? []);
   const query = normalize(options.search ?? "");
   const assetKindFilter = new Set(options.assetKinds ?? []);
+  const canonicalFilter = new Set(options.canonicalIds ?? []);
+  const accessFilter = new Set(options.access ?? []);
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));
   const reviewedByRegistry = new Map(
     registries.map(registry => [registry.name, reviewedSummaryMap(registry)]),
@@ -180,6 +191,8 @@ export function buildCatalogFacetSummary(
   const registryCounts = new Map<string, number>();
   const typeCounts = new Map<string, number>();
   const categoryCounts = new Map<string, number>();
+  const canonicalCounts = new Map<string, number>();
+  const accessCounts = new Map<string, number>();
   let reviewedCount = 0;
   let unreviewedCount = 0;
 
@@ -189,11 +202,17 @@ export function buildCatalogFacetSummary(
     const reviewed = reviewedByRegistry.get(namespace) ?? new Map<string, RegistryItemSummary>();
 
     for (const item of distinctCatalogItems(items)) {
-      if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item) ?? "component")) continue;
+      if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item, namespace))) continue;
+      if (canonicalFilter.size > 0
+        && !(item.canonical?.path ?? []).some(id => canonicalFilter.has(id))) continue;
+      if (accessFilter.size > 0
+        && (!item.access || !accessFilter.has(item.access.normalized))) continue;
       if (query && !matchesSearch(item, namespace, query)) continue;
       increment(registryCounts, namespace);
       increment(typeCounts, item.type);
       for (const category of item.categories ?? []) increment(categoryCounts, category);
+      for (const id of item.canonical?.path ?? []) increment(canonicalCounts, id);
+      if (item.access) increment(accessCounts, item.access.normalized);
       if (reviewed.has(registryCatalogItemIdentity(item.name))) reviewedCount += 1;
       else unreviewedCount += 1;
     }
@@ -203,6 +222,8 @@ export function buildCatalogFacetSummary(
     registries: facetOptions(registryCounts),
     itemTypes: facetOptions(typeCounts),
     categories: facetOptions(categoryCounts),
+    canonical: facetOptions(canonicalCounts),
+    ...(accessCounts.size > 0 ? { access: facetOptions(accessCounts) } : {}),
     reviewedCount,
     unreviewedCount,
   };
@@ -310,15 +331,21 @@ function matchesFilters(
   typeFilter: ReadonlySet<string>,
   categoryFilter: ReadonlySet<string>,
   assetKindFilter: ReadonlySet<CatalogAssetKind>,
+  canonicalFilter: ReadonlySet<string>,
+  accessFilter: ReadonlySet<'free' | 'paid'>,
   reviewedFilter: CatalogReviewedFilter,
   isReviewed: boolean,
 ): boolean {
   if (typeFilter.size > 0 && !typeFilter.has(normalize(item.type))) return false;
-  if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item, namespace) ?? "component")) return false;
+  if (assetKindFilter.size > 0 && !assetKindFilter.has(assetKindForCatalogItem(item, namespace))) return false;
   const categories = (item.categories ?? []).map(normalize);
   if (categoryFilter.size > 0 && !categories.some(category => categoryFilter.has(category))) {
     return false;
   }
+  if (canonicalFilter.size > 0
+    && !(item.canonical?.path ?? []).some(id => canonicalFilter.has(id))) return false;
+  if (accessFilter.size > 0
+    && (!item.access || !accessFilter.has(item.access.normalized))) return false;
   if (reviewedFilter === "reviewed" && !isReviewed) return false;
   if (reviewedFilter === "unreviewed" && isReviewed) return false;
   if (!query) return true;
@@ -327,6 +354,9 @@ function matchesFilters(
 }
 
 function matchesSearch(item: RegistryCatalogItem, namespace: string, query: string): boolean {
+  const canonicalValues = item.canonical?.path?.length
+    ? catalogTaxonomySearchValues(DEFAULT_CATALOG_TAXONOMY, item.canonical.path)
+    : [];
   return [
     item.name,
     item.title ?? "",
@@ -335,6 +365,7 @@ function matchesSearch(item: RegistryCatalogItem, namespace: string, query: stri
     item.type,
     namespace,
     ...(item.categories ?? []),
+    ...canonicalValues,
   ].some(value => normalize(value).includes(query));
 }
 

@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { loadRegistries } from '../../src/registry-explorer/data/loadRegistries';
+import { DEFAULT_CATALOG_TAXONOMY } from '../../src/registry-explorer/core/catalogTaxonomy';
 
 describe('loadRegistries', () => {
   it('fetches the runtime mirror from the Vite base path', async () => {
     const calls: string[] = [];
     const fetchImpl = async (input: RequestInfo | URL) => {
-      calls.push(String(input));
-      return jsonResponse(String(input).endsWith('registry-catalog-items.json')
-        ? createCatalogIndex()
-        : createMirror());
+      const url = String(input);
+      calls.push(url);
+      if (url.endsWith('registry-catalog-items.json')) return jsonResponse(createCatalogIndex());
+      if (url.endsWith('catalog-taxonomy.json')) return jsonResponse(DEFAULT_CATALOG_TAXONOMY);
+      return jsonResponse(createMirror());
     };
 
     await loadRegistries(fetchImpl);
@@ -16,6 +18,7 @@ describe('loadRegistries', () => {
     expect(calls).toEqual([
       '/data/registries.json',
       '/data/registry-catalog-items.json',
+      '/data/catalog-taxonomy.json',
       '/data/component-previews.json',
       '/data/component-page-links.json',
     ]);
@@ -69,6 +72,16 @@ describe('loadRegistries', () => {
     expect(data.registries[0]?.itemSummaries?.[0]?.previewUrl).toBe(
       'https://example.com/previews/button.png',
     );
+  });
+
+  it('loads and validates the required runtime canonical taxonomy', async () => {
+    const data = await loadRegistries(fetchFixture());
+    expect(data.taxonomy.version).toBe('v1');
+    expect(data.taxonomy.roots.some(root => root.id === 'application')).toBe(true);
+
+    await expect(loadRegistries(fetchFixture(createMirror(), createCatalogIndex(), {
+      version: 'v1', roots: [{ id: 'Application', children: [] }],
+    }))).rejects.toThrow(/catalog taxonomy/i);
   });
 
   it('preserves mirror metadata and validation warnings separately', async () => {
@@ -146,10 +159,17 @@ function jsonResponse(data: unknown): Response {
   } as Response;
 }
 
-function fetchFixture(mirror: unknown = createMirror(), catalog: unknown = createCatalogIndex()) {
-  return async (input: RequestInfo | URL) => jsonResponse(
-    String(input).endsWith('registry-catalog-items.json') ? catalog : mirror,
-  );
+function fetchFixture(
+  mirror: unknown = createMirror(),
+  catalog: unknown = createCatalogIndex(),
+  taxonomy: unknown = DEFAULT_CATALOG_TAXONOMY,
+) {
+  return async (input: RequestInfo | URL) => {
+    const url = String(input);
+    if (url.endsWith('registry-catalog-items.json')) return jsonResponse(catalog);
+    if (url.endsWith('catalog-taxonomy.json')) return jsonResponse(taxonomy);
+    return jsonResponse(mirror);
+  };
 }
 
 function createCatalogIndex() {

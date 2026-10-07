@@ -41,6 +41,7 @@ import {
   assetKindForCatalogItem,
   buildExploreCollectionOptions,
   exploreCollectionBySlug,
+  type CatalogAssetKind,
 } from '../core/catalogCollections';
 import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
 import { renderCatalogComponents, renderCatalogBrowseControls, type AssetKindToken } from './catalogComponentsView';
@@ -88,7 +89,9 @@ interface AppState {
   catalogRegistryNames: string[];
   catalogItemTypes: string[];
   catalogCategories: string[];
-  catalogAssetKinds: AssetKindToken[];
+  catalogAssetKinds: CatalogAssetKind[];
+  catalogCanonicalIds: string[];
+  catalogAccess: Array<'free' | 'paid'>;
   catalogReviewed: CatalogReviewedFilter;
   registryCoverage: RegistryCatalogCoverage[];
   registrySort: RegistryDirectorySort;
@@ -172,6 +175,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
       registryNames: state.catalogRegistryNames,
       itemTypes: state.catalogItemTypes,
       categories: state.catalogCategories,
+      assetKinds: state.catalogAssetKinds,
+      canonicalIds: state.catalogCanonicalIds,
+      access: state.catalogAccess,
       reviewed: 'all',
     };
   }
@@ -525,7 +531,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
       '<div class="registry-directory-controls" aria-label="Registry directory controls">' +
       renderCatalogBrowseControls(catalogBrowseState(), {
         hideSort: true, assetCounts: directoryAssetCounts,
-        selectedAssetKinds: state.catalogAssetKinds,
+        selectedAssetKinds: state.catalogAssetKinds.filter((kind): kind is AssetKindToken =>
+          kind === 'component' || kind === 'template' || kind === 'theme' || kind === 'icon'),
       }),
     );
 
@@ -557,7 +564,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
         }),
         showRegistries: false,
         assetCounts: registryAssetCounts.get(registry.name) ?? {},
-        selectedAssetKinds: state.catalogAssetKinds,
+        selectedAssetKinds: state.catalogAssetKinds.filter((kind): kind is AssetKindToken =>
+          kind === 'component' || kind === 'template' || kind === 'theme' || kind === 'icon'),
       }),
     });
   }
@@ -1107,7 +1115,9 @@ function hydrateStateFromUrl(
     catalogRegistryNames: browse.registryNames.filter(name => registries.some(registry => registry.name === name)),
     catalogItemTypes: browse.itemTypes,
     catalogCategories: browse.categories,
-    catalogAssetKinds: [...new Set(params.getAll("asset"))].filter((kind): kind is AssetKindToken => ["component", "template", "theme", "icon"].includes(kind)),
+    catalogAssetKinds: browse.assetKinds,
+    catalogCanonicalIds: browse.canonicalIds,
+    catalogAccess: browse.access,
     catalogReviewed: browse.reviewed,
     registryCoverage,
     registrySort,
@@ -1131,6 +1141,9 @@ function catalogBrowseStateForUrl(state: AppState): CatalogBrowseQueryState {
     registryNames: state.catalogRegistryNames,
     itemTypes: [],
     categories: state.catalogCategories,
+    assetKinds: state.catalogAssetKinds,
+    canonicalIds: state.catalogCanonicalIds,
+    access: state.catalogAccess,
     reviewed: 'all',
   };
 }
@@ -1154,6 +1167,9 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
       registryNames: state.catalogRegistryNames,
       itemTypes: state.catalogItemTypes,
       categories: state.catalogCategories,
+      assetKinds: state.catalogAssetKinds,
+      canonicalIds: state.catalogCanonicalIds,
+      access: state.catalogAccess,
       reviewed: state.catalogReviewed,
     });
     if (!route.pathSearchTerm && state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
@@ -1164,10 +1180,12 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
       registryNames: [],
       itemTypes: state.catalogItemTypes,
       categories: state.catalogCategories,
+      assetKinds: state.catalogAssetKinds,
+      canonicalIds: state.catalogCanonicalIds,
+      access: state.catalogAccess,
       reviewed: state.catalogReviewed,
     });
     if (state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
-    state.catalogAssetKinds.forEach(value => params.append('asset', value));
   } else if (route.kind === 'authors') {
     if(state.authorIdentity)params.set('author',state.authorIdentity);
     if(state.discoveryPage>1)params.set('page',String(state.discoveryPage));

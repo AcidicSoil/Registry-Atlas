@@ -66,6 +66,9 @@ describe("catalogRoutes", () => {
       sort: "name",
       itemTypes: [],
       categories: ["forms"],
+      assetKinds: [],
+      canonicalIds: [],
+      access: [],
       reviewed: "all",
       registryNames: ["@alpha"],
     });
@@ -117,5 +120,32 @@ describe("corrective route parity", () => {
     const themeRoute: CatalogRoute = { kind: "theme", namespace: "@demo", slug: "vercel" };
     expect(parseCatalogRoute(catalogRoutePath(templateRoute, BASE), BASE)).toEqual(templateRoute);
     expect(parseCatalogRoute(catalogRoutePath(themeRoute, BASE), BASE)).toEqual(themeRoute);
+  });
+});
+
+
+describe('canonical catalog browse URL state', () => {
+  it('round-trips canonical ids, accurate asset kinds, and explicit access values', () => {
+    const state = parseCatalogBrowseQuery(new URLSearchParams(
+      'registry=%40alpha&asset=block&asset=component&canonical=application%2Fapp-shell&canonical=ai%2Fchat&access=free&access=paid',
+    ));
+    expect(state).toMatchObject({
+      registryNames: ['@alpha'],
+      assetKinds: ['block', 'component'],
+      canonicalIds: ['application/app-shell', 'ai/chat'],
+      access: ['free', 'paid'],
+    });
+    expect(serializeCatalogBrowseQuery(state).toString()).toBe(
+      'registry=%40alpha&asset=block&asset=component&canonical=application%2Fapp-shell&canonical=ai%2Fchat&access=free&access=paid',
+    );
+  });
+
+  it('ignores unknown canonical ids, invalid kinds, invalid access values, and unsafe facet input', () => {
+    const state = parseCatalogBrowseQuery(new URLSearchParams(
+      'asset=widget&asset=block&canonical=application%2Fnot-real&canonical=application&access=unknown&access=free&canonical=%00bad',
+    ));
+    expect(state.assetKinds).toEqual(['block']);
+    expect(state.canonicalIds).toEqual(['application']);
+    expect(state.access).toEqual(['free']);
   });
 });

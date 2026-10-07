@@ -335,3 +335,119 @@ describe("queryCatalogComponents", () => {
     expect(result.items.map(item => item.id)).toEqual(["@beta:card"]);
   });
 });
+
+
+describe('canonical taxonomy catalog queries', () => {
+  const canonicalCatalog = index({
+    '@alpha': [
+      {
+        name: 'workspace-frame', title: 'Workspace Frame', type: 'registry:block', kind: 'block',
+        categories: ['Layouts'],
+        canonical: { taxonomyVersion: 'v1', primary: 'application/app-shell', path: ['application', 'application/app-shell'] },
+        access: { normalized: 'free', sourceLabel: 'Free' },
+      },
+      {
+        name: 'mystery', title: 'Mystery Surface', type: 'registry:component', kind: 'component',
+        canonical: { taxonomyVersion: 'v1', primary: null, path: [] },
+      },
+    ],
+    '@beta': [
+      {
+        name: 'product-frame', title: 'Product Frame', type: 'registry:block', kind: 'block',
+        categories: ['Application'],
+        canonical: { taxonomyVersion: 'v1', primary: 'application/app-shell', path: ['application', 'application/app-shell'] },
+        access: { normalized: 'paid', sourceLabel: 'Pro' },
+      },
+      {
+        name: 'ops-overview', title: 'Ops Overview', type: 'registry:block', kind: 'block',
+        canonical: { taxonomyVersion: 'v1', primary: 'application/dashboard', path: ['application', 'application/dashboard'] },
+      },
+    ],
+    '@gamma': [
+      {
+        name: 'assistant-thread', title: 'Assistant Thread', type: 'registry:block', kind: 'block',
+        categories: ['Assistant'],
+        canonical: { taxonomyVersion: 'v1', primary: 'ai/chat', path: ['ai', 'ai/chat'] },
+      },
+      {
+        name: 'primary-action', title: 'Primary Action', type: 'registry:component', kind: 'component',
+        canonical: { taxonomyVersion: 'v1', primary: 'controls/button', path: ['controls', 'controls/button'] },
+      },
+    ],
+  });
+  const canonicalRegistries = [registry('@alpha'), registry('@beta'), registry('@gamma')];
+
+  it('filters equivalent cross-registry items by canonical id and accurate kind', () => {
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      assetKinds: ['block'], canonicalIds: ['application/app-shell'], pageSize: 20,
+    }).items.map(item => item.id)).toEqual(['@beta:product-frame', '@alpha:workspace-frame']);
+
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      canonicalIds: ['ai/chat'], pageSize: 20,
+    }).items.map(item => item.id)).toEqual(['@gamma:assistant-thread']);
+
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      assetKinds: ['component'], canonicalIds: ['controls/button'], pageSize: 20,
+    }).items.map(item => item.id)).toEqual(['@gamma:primary-action']);
+  });
+
+  it('matches parent canonical nodes by descendant path and ORs canonical selections', () => {
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      canonicalIds: ['application'], pageSize: 20,
+    }).items.map(item => item.id).sort()).toEqual([
+      '@alpha:workspace-frame', '@beta:ops-overview', '@beta:product-frame',
+    ]);
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      canonicalIds: ['application/app-shell', 'ai/chat'], pageSize: 20,
+    }).items.map(item => item.id).sort()).toEqual([
+      '@alpha:workspace-frame', '@beta:product-frame', '@gamma:assistant-thread',
+    ]);
+  });
+
+  it('ANDs registry, kind, canonical, and explicit access while keeping unclassified visible otherwise', () => {
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      registryNames: ['@alpha'], assetKinds: ['block'], canonicalIds: ['application/app-shell'],
+      access: ['free'], pageSize: 20,
+    }).items.map(item => item.id)).toEqual(['@alpha:workspace-frame']);
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      registryNames: ['@alpha'], access: ['paid'], pageSize: 20,
+    }).total).toBe(0);
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, { pageSize: 20 })
+      .items.some(item => item.id === '@alpha:mystery')).toBe(true);
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      canonicalIds: ['application'], pageSize: 20,
+    }).items.some(item => item.id === '@alpha:mystery')).toBe(false);
+  });
+
+  it('searches canonical labels and aliases without removing source-field search', () => {
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      search: 'workspace shell', pageSize: 20,
+    }).items.map(item => item.id).sort()).toEqual(['@alpha:workspace-frame', '@beta:product-frame']);
+    expect(queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+      search: 'assistant', pageSize: 20,
+    }).items.map(item => item.id)).toEqual(['@gamma:assistant-thread']);
+  });
+
+  it('counts canonical ancestors and exposes access facets only when explicit metadata exists', () => {
+    const facets = buildCatalogFacetSummary(canonicalRegistries, canonicalCatalog);
+    expect(facets.canonical).toEqual(expect.arrayContaining([
+      { value: 'application', count: 3 },
+      { value: 'application/app-shell', count: 2 },
+      { value: 'ai/chat', count: 1 },
+      { value: 'controls/button', count: 1 },
+    ]));
+    expect(facets.access).toEqual([
+      { value: 'free', count: 1 },
+      { value: 'paid', count: 1 },
+    ]);
+
+    const noAccess = buildCatalogFacetSummary(
+      [registry('@plain')],
+      index({ '@plain': [{
+        name: 'button', type: 'registry:ui', kind: 'component',
+        canonical: { taxonomyVersion: 'v1', primary: 'controls/button', path: ['controls', 'controls/button'] },
+      }] }),
+    );
+    expect(noAccess.access).toBeUndefined();
+  });
+});
