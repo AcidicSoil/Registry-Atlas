@@ -1,0 +1,112 @@
+{
+  "version": "gold-v1",
+  "taxonomyVersion": "v1",
+  "reviewedAt": "2026-10-06T00:00:00.000Z",
+  "records": [
+    {
+      "registry": "@7ovr",
+      "sourceUrl": "https://7ovr.com/blocks",
+      "item": {
+        "name": "app-shell-1",
+        "title": "Sidebar Dashboard Shell",
+        "description": "App shell pairing a collapsible sidebar with a top bar carrying search, notifications, and a user menu, over a dashboard of revenue and user stat cards.",
+        "kind": "block"
+      },
+      "sourceHints": { "categories": ["app-shell"] },
+      "expected": { "kind": "block", "primary": "application/app-shell", "path": ["application", "application/app-shell"] }
+    },
+    {
+      "registry": "@7ovr",
+      "sourceUrl": "https://7ovr.com/blocks",
+      "item": {
+        "name": "ai-chat-1",
+        "title": "Assistant Thread With Timestamps",
+        "description": "AI assistant chat interface with user and assistant bubbles, avatars, message timestamps, auto-following scroll, and a single-line composer.",
+        "kind": "block"
+      },
+      "sourceHints": { "categories": ["ai-chat"] },
+      "expected": { "kind": "block", "primary": "ai/chat", "path": ["ai", "ai/chat"] }
+    },
+    {
+      "registry": "@efferd",
+      "sourceUrl": "https://efferd.com/blocks",
+      "item": {
+        "name": "app-shell-1",
+        "description": "Dashboard shell with max-width bordered frame, full-width divider, sidebar, breadcrumb header, and skeleton content grid.",
+        "kind": "block"
+      },
+      "sourceHints": { "categories": ["app-shell"] },
+      "expected": { "kind": "block", "primary": "application/app-shell", "path": ["application", "application/app-shell"] }
+    },
+    {
+      "registry": "@8bitcn",
+      "item": {
+        "name": "button",
+        "title": "8-bit Button",
+        "description": "A simple 8-bit button component",
+        "kind": "component"
+      },
+      "expected": { "kind": "component", "primary": "controls/button", "path": ["controls", "controls/button"] }
+    },
+    {
+      "registry": "@8bitcn",
+      "item": {
+        "name": "dashboard-01",
+        "title": "8-bit Dashboard 01",
+        "description": "A complete 8-bit styled dashboard with sidebar navigation, stats cards, charts, and data table with drag-and-drop functionality.",
+        "kind": "page"
+      },
+      "sourceHints": { "categories": ["dashboard"] },
+      "expected": { "kind": "page", "primary": "application/dashboard", "path": ["application", "application/dashboard"] }
+    },
+    {
+      "registry": "@aceternity",
+      "item": { "name": "tailwindcss-buttons", "title": "Tailwind CSS Buttons", "kind": "component" },
+      "expected": { "kind": "component", "primary": "controls/button", "path": ["controls", "controls/button"] }
+    },
+    {
+      "registry": "@boardui",
+      "sourceUrl": "https://www.boardui.com/components",
+      "item": { "name": "color", "title": "Color", "description": "The full palette and semantic tokens.", "kind": "component" },
+      "sourceHints": { "categories": ["Foundations"] },
+      "expected": { "kind": "component", "primary": "foundation/color", "path": ["foundation", "foundation/color"] }
+    },
+    {
+      "registry": "@boardui",
+      "sourceUrl": "https://www.boardui.com/components",
+      "item": { "name": "typography", "title": "Typography", "description": "Type scale, weights, and text styles.", "kind": "component" },
+      "sourceHints": { "categories": ["Foundations"] },
+      "expected": { "kind": "component", "primary": "foundation/typography", "path": ["foundation", "foundation/typography"] }
+    },
+    {
+      "registry": "@boardui",
+      "sourceUrl": "https://www.boardui.com/components/ai-chat",
+      "item": { "name": "ai-chat", "title": "AI Chat", "description": "Full chat app with code panel and composer.", "kind": "template" },
+      "expected": { "kind": "template", "primary": "ai/chat", "path": ["ai", "ai/chat"] }
+    },
+    {
+      "registry": "@boardui",
+      "sourceUrl": "https://www.boardui.com/components/chat-starter",
+      "item": { "name": "chat-starter", "title": "Chat Starter", "description": "Free, deployable chat on your own model key.", "kind": "template" },
+      "expected": { "kind": "template", "primary": "ai/chat", "path": ["ai", "ai/chat"] }
+    },
+    {
+      "registry": "@boardui",
+      "sourceUrl": "https://www.boardui.com/components",
+      "item": { "name": "ai-image-generation", "title": "AI Image Generation", "description": "Prompt thread with generation frame and gallery panel.", "kind": "template" },
+      "expected": { "kind": "template", "primary": "ai/generation", "path": ["ai", "ai/generation"] }
+    },
+    {
+      "registry": "@bencho",
+      "sourceUrl": "https://bencho.dev/",
+      "item": { "name": "generate", "title": "Generate", "description": "Interactive generation micro-interaction.", "kind": "component" },
+      "expected": { "kind": "component", "primary": "ai/generation", "path": ["ai", "ai/generation"] }
+    },
+    {
+      "registry": "@bencho",
+      "sourceUrl": "https://bencho.dev/",
+      "item": { "name": "particles", "title": "Particles", "description": "Interactive particle hover effect.", "kind": "component" },
+      "expected": { "kind": "component", "primary": null, "path": [] }
+    }
+  ]
+}
