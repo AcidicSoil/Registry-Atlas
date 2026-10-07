@@ -1,4 +1,6 @@
 import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries, writeRegistryItemDetailBundles } from './sync-registry-catalog-evidence.mjs';
+import { applyCatalogClassificationOverlay, stripCatalogClassificationFields, validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
+import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -12,6 +14,10 @@ const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.js
 const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
 const REGISTRY_CATALOG_ITEMS_PATH = 'public/data/registry-catalog-items.json';
 const REGISTRY_ITEM_DETAILS_DIR = 'public/data/registry-item-details';
+const CATALOG_TAXONOMY_SOURCE_PATH = 'data/catalog-taxonomy/v1.json';
+const CATALOG_CLASSIFICATION_OVERLAY_PATH = 'data/catalog-taxonomy/classifications.json';
+const CATALOG_ACCESS_RULES_PATH = 'data/catalog-taxonomy/access-rules.json';
+const RUNTIME_CATALOG_TAXONOMY_PATH = 'public/data/catalog-taxonomy.json';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   aliases: [],
@@ -148,6 +154,22 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummarie
   };
 }
 
+export function projectReviewedCatalogClassifications(
+  itemsByNamespace,
+  { taxonomy, overlay = null, accessRules = {} } = {},
+) {
+  const reviewedTaxonomy = validateCatalogTaxonomy(taxonomy);
+  const stripped = stripCatalogClassificationFields(itemsByNamespace);
+  if (!overlay) {
+    return {
+      itemsByNamespace: stripped,
+      report: { applied: 0, stale: 0, missing: 0 },
+    };
+  }
+  const reviewedOverlay = validateCatalogClassificationOverlay(overlay, reviewedTaxonomy);
+  return applyCatalogClassificationOverlay(stripped, reviewedOverlay, accessRules);
+}
+
 export function projectCuratedSummaries(runtime, curated) {
   if (!Array.isArray(runtime?.registries)) throw new Error('Expected an official runtime mirror');
   const names = new Map(runtime.registries.map((entry, index) => [entry.official.name, index]));
@@ -228,6 +250,17 @@ async function main() {
     previous: previousCatalogEvidence,
     previousItems: previousCatalogIndex?.registries ?? {},
   });
+  const [taxonomyValue, classificationOverlay, accessRules] = await Promise.all([
+    readJsonIfExists(CATALOG_TAXONOMY_SOURCE_PATH),
+    readJsonIfExists(CATALOG_CLASSIFICATION_OVERLAY_PATH),
+    readJsonIfExists(CATALOG_ACCESS_RULES_PATH),
+  ]);
+  if (!taxonomyValue) throw new Error(`Missing canonical taxonomy: ${CATALOG_TAXONOMY_SOURCE_PATH}`);
+  const taxonomy = validateCatalogTaxonomy(taxonomyValue);
+  const classificationProjection = projectReviewedCatalogClassifications(
+    catalogSync.itemsByNamespace,
+    { taxonomy, overlay: classificationOverlay, accessRules: accessRules ?? {} },
+  );
   const catalogEvidenceByNamespace = catalogSync.evidence;
   const syncedAt = new Date().toISOString();
 
@@ -271,11 +304,12 @@ async function main() {
     meta: {
       source_url: SOURCE_URL,
       synced_at: syncedAt,
-      registry_count: Object.keys(catalogSync.itemsByNamespace).length,
+      registry_count: Object.keys(classificationProjection.itemsByNamespace).length,
       item_count: catalogSync.report.discoverable_item_count,
     },
-    registries: catalogSync.itemsByNamespace,
+    registries: classificationProjection.itemsByNamespace,
   });
+  await writeJson(RUNTIME_CATALOG_TAXONOMY_PATH, taxonomy);
   await writeRegistryItemDetailBundles(REGISTRY_ITEM_DETAILS_DIR, catalogSync.freshDetailsByNamespace);
   await writeJson(RUNTIME_OUTPUT_PATH, runtimeData);
   await writeJson(REPORT_OUTPUT_PATH, report);

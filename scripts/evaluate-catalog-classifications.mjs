@@ -74,7 +74,7 @@ function stable(value) {
   return value;
 }
 
-function fingerprint(value) {
+export function catalogArtifactFingerprint(value) {
   return 'sha256:' + createHash('sha256').update(JSON.stringify(stable(value))).digest('hex');
 }
 
@@ -191,8 +191,8 @@ export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = 
     schema: 'registry-atlas.catalog-classification-evaluation.v1',
     taxonomyVersion: reviewed.taxonomyVersion,
     goldVersion: reviewed.version,
-    goldFingerprint: fingerprint(reviewed),
-    classificationRunFingerprint: fingerprint(beamItems),
+    goldFingerprint: catalogArtifactFingerprint(reviewed),
+    classificationRunFingerprint: catalogArtifactFingerprint(beamItems),
     metrics,
     greedyVsBeam: greedyMetrics ? {
       beamExactAccuracy: metrics.exactPrimary.accuracy,
@@ -205,7 +205,7 @@ export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = 
       separation: numericSummary(separations),
     },
   };
-  return { ...base, evaluationReportFingerprint: fingerprint(base) };
+  return { ...base, evaluationReportFingerprint: catalogArtifactFingerprint(base) };
 }
 
 export function validatePromotionReview(value) {

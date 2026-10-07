@@ -50,6 +50,13 @@ describe('registry catalog canonical fields', () => {
     }))).toThrow(/kind/i);
   });
 
+  it('rejects canonical nodes that are not present in the approved runtime taxonomy', () => {
+    expect(() => parseRegistryCatalogIndex(rawIndex({
+      name: 'card', type: 'registry:block',
+      canonical: { taxonomyVersion: 'v1', primary: 'application/not-real', path: ['application', 'application/not-real'] },
+    }))).toThrow(/canonical.*taxonomy|unknown canonical/i);
+  });
+
   it('rejects malformed canonical paths and primary/path disagreement', () => {
     expect(() => parseRegistryCatalogIndex(rawIndex({
       name: 'card', type: 'registry:block',

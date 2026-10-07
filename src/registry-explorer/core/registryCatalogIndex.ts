@@ -1,3 +1,4 @@
+import catalogTaxonomy from '../../../data/catalog-taxonomy/v1.json';
 import { resolveRegistryItemRoute } from './itemRoutes';
 import type {
   CatalogCanonicalKind,
@@ -25,6 +26,17 @@ const CATALOG_CANONICAL_KINDS = new Set<CatalogCanonicalKind>([
   'component', 'block', 'page', 'template', 'theme', 'icon', 'other',
 ]);
 const CANONICAL_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
+const CANONICAL_TAXONOMY_VERSION = catalogTaxonomy.version;
+type RuntimeTaxonomyNode = { id: string; children: readonly RuntimeTaxonomyNode[] };
+const CANONICAL_TAXONOMY_PATHS = new Map<string, readonly string[]>();
+for (const root of catalogTaxonomy.roots as readonly RuntimeTaxonomyNode[]) {
+  const visit = (node: RuntimeTaxonomyNode, path: readonly string[]): void => {
+    const next = [...path, node.id];
+    CANONICAL_TAXONOMY_PATHS.set(node.id, next);
+    for (const child of node.children) visit(child, next);
+  };
+  visit(root, []);
+}
 
 const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [
   'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
@@ -271,6 +283,9 @@ function parseCanonical(value: unknown): RegistryCatalogCanonical {
   if (!taxonomyVersion) {
     throw new Error('Registry catalog index validation failed: item canonical taxonomyVersion is required');
   }
+  if (taxonomyVersion !== CANONICAL_TAXONOMY_VERSION) {
+    throw new Error('Registry catalog index validation failed: item canonical taxonomy version is not the approved runtime taxonomy');
+  }
   let primary: string | null;
   if (value.primary === null) {
     primary = null;
@@ -306,6 +321,13 @@ function parseCanonical(value: unknown): RegistryCatalogCanonical {
           throw new Error('Registry catalog index validation failed: item canonical path must be hierarchical');
         }
       }
+    }
+    const approvedPath = CANONICAL_TAXONOMY_PATHS.get(primary);
+    if (!approvedPath) {
+      throw new Error('Registry catalog index validation failed: unknown canonical taxonomy node');
+    }
+    if (approvedPath.length !== path.length || approvedPath.some((id, index) => id !== path[index])) {
+      throw new Error('Registry catalog index validation failed: item canonical path does not match approved taxonomy');
     }
   }
   return { taxonomyVersion, primary, path };
