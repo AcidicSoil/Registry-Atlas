@@ -35,32 +35,97 @@ describe('registry explorer shell interactions', () => {
 
     const harness = setup('', '/Registry-Atlas/components');
     expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail"');
-    expect(harness.aside.innerHTML).toContain('data-catalog-category-value="code"');
     expect(harness.aside.innerHTML).toContain('data-profile-registry="@delta"');
-    expect(harness.aside.innerHTML).toContain('data-sidebar-category-search');
+    expect(harness.aside.innerHTML).not.toContain('data-catalog-category-value');
+    expect(harness.aside.innerHTML).not.toContain('data-sidebar-category-search');
     expect(harness.contentBody.innerHTML).toContain('>Registry<');
     expect(harness.aside.innerHTML).not.toContain('>Collections<');
     expect(harness.aside.innerHTML).not.toContain('>Item types<');
-    expect(harness.aside.innerHTML).toContain('>Categories</h2>');
+    expect(harness.aside.innerHTML).not.toContain('>Categories</h2>');
     expect(harness.aside.innerHTML).not.toContain('>Libraries</button>');
     expect(harness.aside.innerHTML).not.toContain('>Reviewed</button>');
     expect(harness.aside.innerHTML).not.toContain('catalog-sidebar-summary');
   });
 
-  it('routes sidebar category selections into shareable catalog filters', () => {
-    const home=setup('','/Registry-Atlas/');
-    home.aside.dispatch('click',target({
-      'data-catalog-category-value':'code', 'data-sidebar-category-link':'',
-    }));
-    expect(home.location.pathname).toBe('/Registry-Atlas/components');
-    expect(home.location.search).toContain('category=code');
-    expect(home.aside.innerHTML).toContain('data-catalog-category-value="code"');
-    expect(home.aside.innerHTML).toContain('aria-pressed="true"');
+  it('routes canonical sidebar selections into shareable catalog filters', () => {
+    const harness=setup('', '/Registry-Atlas/components', undefined, undefined, canonicalCatalogItems());
+    expect(harness.aside.innerHTML).toContain('data-catalog-canonical-value="application/app-shell"');
 
-    home.aside.dispatch('click',target({
-      'data-catalog-category-value':'code', 'data-sidebar-category-link':'',
+    harness.aside.dispatch('click',target({
+      'data-catalog-canonical-value':'application/app-shell',
     }));
-    expect(home.location.search).not.toContain('category=code');
+
+    expect(harness.location.pathname).toBe('/Registry-Atlas/components');
+    expect(harness.location.search).toContain('canonical=application%2Fapp-shell');
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*aria-pressed="true"/);
+    expect(harness.contentBody.innerHTML).toContain('Free App Shell');
+    expect(harness.contentBody.innerHTML).not.toContain('Paid AI Chat');
+
+    harness.aside.dispatch('click',target({
+      'data-catalog-canonical-value':'application/app-shell',
+    }));
+    expect(harness.location.search).not.toContain('canonical=');
+  });
+
+  it('filters all canonical kinds without relabeling blocks or pages', () => {
+    const harness=setup('', '/Registry-Atlas/components', undefined, undefined, canonicalCatalogItems());
+
+    expect(harness.contentBody.innerHTML).toContain('data-asset-kind-value="block"');
+    expect(harness.contentBody.innerHTML).toContain('>Blocks<');
+    expect(harness.contentBody.innerHTML).toContain('data-asset-kind-value="page"');
+    expect(harness.contentBody.innerHTML).toContain('>Pages<');
+
+    harness.contentBody.dispatch('click', target({ 'data-asset-kind-value': 'block' }));
+    expect(harness.location.search).toContain('asset=block');
+    expect(harness.contentBody.innerHTML).toContain('Free App Shell');
+    expect(harness.contentBody.innerHTML).toContain('Paid AI Chat');
+    expect(harness.contentBody.innerHTML).not.toContain('Dashboard Page');
+    expect(harness.contentHeader.innerHTML).toContain('<h1>Catalog</h1>');
+  });
+
+  it('shows Access only when explicit metadata exists and keeps it shareable', () => {
+    const harness=setup('', '/Registry-Atlas/components', undefined, undefined, canonicalCatalogItems());
+
+    expect(harness.contentBody.innerHTML).toContain('data-catalog-access-value="free"');
+    expect(harness.contentBody.innerHTML).toContain('data-catalog-access-value="paid"');
+
+    harness.contentBody.dispatch('click', target({ 'data-catalog-access-value': 'free' }));
+    expect(harness.location.search).toContain('access=free');
+    expect(harness.contentBody.innerHTML).toContain('Free App Shell');
+    expect(harness.contentBody.innerHTML).not.toContain('Paid AI Chat');
+    expect(harness.contentBody.innerHTML).toContain('Access: Free');
+
+    harness.contentBody.dispatch('click', target({ 'data-catalog-access-value': 'free' }));
+    expect(harness.location.search).not.toContain('access=');
+
+    const noAccess=setup('', '/Registry-Atlas/components', undefined, undefined, canonicalCatalogItems().map(item => {
+      const { access: _access, ...rest } = item;
+      return rest;
+    }));
+    expect(noAccess.contentBody.innerHTML).not.toContain('data-catalog-access-value');
+  });
+
+  it('rehydrates canonical, kind, and access URL state on reload', () => {
+    const harness=setup(
+      '?asset=block&canonical=application%2Fapp-shell&access=free',
+      '/Registry-Atlas/components',
+      undefined,
+      undefined,
+      canonicalCatalogItems(),
+    );
+
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*aria-pressed="true"/);
+    expect(harness.contentBody.innerHTML).toMatch(/data-asset-kind-value="block"[\s\S]*aria-pressed="true"/);
+    expect(harness.contentBody.innerHTML).toContain('Access: Free');
+    expect(harness.contentBody.innerHTML).toContain('Free App Shell');
+    expect(harness.contentBody.innerHTML).not.toContain('Paid AI Chat');
+  });
+
+  it('shows canonical classification for source-flat registry items', () => {
+    const harness=setup('', '/Registry-Atlas/@delta', undefined, undefined, canonicalCatalogItems());
+    expect(harness.aside.innerHTML).toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(harness.aside.innerHTML).toContain('>App Shell<');
+    expect(harness.contentBody.innerHTML).not.toContain('data-catalog-category-value="app-shell"');
   });
 
   it('places registry asset filters beside sorting, not in navigation', () => {
@@ -253,6 +318,19 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).toContain('aria-pressed="false"');
   });
 
+  it('retains focus while toggling a canonical category', () => {
+    const harness = setup('', '/Registry-Atlas/components', undefined, undefined, canonicalCatalogItems());
+    const option = target({ 'data-catalog-canonical-value': 'application/app-shell' });
+    const replacement = target({ 'data-catalog-canonical-value': 'application/app-shell' });
+    harness.aside.querySelectorAll = selector =>
+      selector.includes('[data-catalog-canonical-value]') ? [replacement] : [];
+
+    harness.aside.dispatch('click', option);
+
+    expect(replacement.focus).toHaveBeenCalled();
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*aria-pressed="true"/);
+  });
+
   it('does not render the retired inferred component facet system', () => {
     const harness = setup('?view=discover&component=code-block');
 
@@ -420,6 +498,7 @@ function setup(
     files: [],
   }),
   attributedAuthor?: string,
+  catalogItems?: any[],
 ) {
   const location = {
     pathname,
@@ -467,7 +546,7 @@ function setup(
     catalogIndex: {
       meta: { registry_count: 1, item_count: 1 },
       registries: {
-        '@delta': [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui', categories: ['code'], ...(attributedAuthor?{author:attributedAuthor}:{}) }],
+        '@delta': catalogItems ?? [{ name: 'catalog-only', title: 'Catalog Only', type: 'registry:ui', categories: ['code'], ...(attributedAuthor?{author:attributedAuthor}:{}) }],
       },
     },
     mirrorMeta: {
@@ -571,6 +650,59 @@ function targetWithFocus(attributes: Record<string, string>, focus: ReturnType<t
     hasAttribute: (name: string) => name in attributes,
     closest: () => null,
   };
+}
+
+function canonicalCatalogItems(): any[] {
+  return [
+    {
+      name: 'free-app-shell',
+      title: 'Free App Shell',
+      description: 'A flat-source application shell.',
+      type: 'registry:block',
+      kind: 'block',
+      canonical: {
+        taxonomyVersion: 'v1',
+        primary: 'application/app-shell',
+        path: ['application', 'application/app-shell'],
+      },
+      access: { normalized: 'free', sourceLabel: 'Free' },
+    },
+    {
+      name: 'paid-ai-chat',
+      title: 'Paid AI Chat',
+      description: 'An AI chat surface.',
+      type: 'registry:block',
+      kind: 'block',
+      canonical: {
+        taxonomyVersion: 'v1',
+        primary: 'ai/chat',
+        path: ['ai', 'ai/chat'],
+      },
+      access: { normalized: 'paid', sourceLabel: 'Pro' },
+    },
+    {
+      name: 'button-basic',
+      title: 'Button Basic',
+      type: 'registry:ui',
+      kind: 'component',
+      canonical: {
+        taxonomyVersion: 'v1',
+        primary: 'controls/button',
+        path: ['controls', 'controls/button'],
+      },
+    },
+    {
+      name: 'dashboard-page',
+      title: 'Dashboard Page',
+      type: 'registry:page',
+      kind: 'page',
+      canonical: {
+        taxonomyVersion: 'v1',
+        primary: 'application/dashboard',
+        path: ['application', 'application/dashboard'],
+      },
+    },
+  ];
 }
 
 function registryFixture(): Registry {

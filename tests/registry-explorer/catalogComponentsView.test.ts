@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-explorer/core/catalogQuery";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
+import { DEFAULT_CATALOG_TAXONOMY } from "../../src/registry-explorer/core/catalogTaxonomy";
 import {
   renderCatalogBrowseControls,
   renderAssetKindChips,
@@ -82,8 +83,8 @@ describe("renderCatalogComponents", () => {
 
     renderCatalogComponents(header, body, result([component({ previewUrl: "https://delta.example/preview.png" })]), { searchTerm: "" });
 
-    expect(header.innerHTML).toContain("Components");
-    expect(header.innerHTML).toContain("1 component");
+    expect(header.innerHTML).toContain("<h1>Catalog</h1>");
+    expect(header.innerHTML).toContain("1 item");
     expect(body.innerHTML).toContain("data-view-item-registry=\"@delta\"");
     expect(body.innerHTML).toContain("data-view-item-slug=\"code-block\"");
     expect(body.innerHTML).toContain("Code Block");
@@ -152,6 +153,7 @@ describe("renderCatalogComponents", () => {
       registries: [{ value: "@delta", count: 12 }],
       itemTypes: [{ value: "registry:ui", count: 10 }],
       categories: [{ value: "forms", count: 4 }],
+      canonical: [],
       reviewedCount: 2,
       unreviewedCount: 10,
     };
@@ -161,6 +163,9 @@ describe("renderCatalogComponents", () => {
       registryNames: ["@delta"],
       itemTypes: ["registry:ui"],
       categories: ["forms"],
+      assetKinds: [],
+      canonicalIds: [],
+      access: [],
       reviewed: "unreviewed" as const,
     };
 
@@ -169,9 +174,13 @@ describe("renderCatalogComponents", () => {
     expect(rail).toContain('data-catalog-registry-value="@delta"');
     expect(rail).toContain('>Registry<');
     expect(rail).not.toContain('data-catalog-type-value');
-    expect(rail).toContain('data-catalog-category-value="forms"');
-    expect(rail).toContain('>Category<');
+    expect(rail).not.toContain('data-catalog-category-value="forms"');
+    expect(rail).not.toContain('>Source category<');
     expect(rail).not.toContain('>Item types<');
+
+    const localRail = renderCatalogRailControls(facets, state, { showCategories: true });
+    expect(localRail).toContain('data-catalog-category-value="forms"');
+    expect(localRail).toContain('>Source category<');
 
     const toolbar = renderCatalogBrowseControls(state);
     expect(toolbar).not.toContain('data-catalog-filter="registry"');
@@ -187,7 +196,8 @@ describe("renderCatalogComponents", () => {
 
   it("keeps active asset filters clearable without duplicating the directory sorter", () => {
     const markup = renderCatalogBrowseControls({
-      page: 1, sort: "name", registryNames: [], itemTypes: [], categories: [], reviewed: "all",
+      page: 1, sort: "name", registryNames: [], itemTypes: [], categories: [],
+      assetKinds: [], canonicalIds: [], access: [], reviewed: "all",
     }, {
       assetCounts: { component: 4, template: 2 },
       selectedAssetKinds: ["component"],
@@ -209,6 +219,9 @@ describe("renderCatalogComponents", () => {
         registryNames: [],
         itemTypes: ["registry:block"],
         categories: [],
+        assetKinds: [],
+        canonicalIds: [],
+        access: [],
         reviewed: "all",
       },
     });
@@ -216,7 +229,7 @@ describe("renderCatalogComponents", () => {
     expect(body.innerHTML).not.toContain('data-catalog-reviewed');
     expect(body.innerHTML).toContain('data-catalog-sort');
     expect(body.innerHTML).toContain('data-catalog-clear');
-    expect(body.innerHTML).toContain('No components are available');
+    expect(body.innerHTML).toContain('No catalog items are available');
   });
 
   it("renders truthful pagination over the full query result", () => {
@@ -293,3 +306,64 @@ function registry(): Registry {
     itemSummaries: [],
   };
 }
+
+
+describe("canonical catalog filter controls", () => {
+  const facets = {
+    registries: [{ value: "@delta", count: 7 }],
+    itemTypes: [],
+    categories: [{ value: "app-shell", count: 2 }],
+    canonical: [
+      { value: "application", count: 4 },
+      { value: "application/app-shell", count: 2 },
+      { value: "ai", count: 2 },
+      { value: "ai/chat", count: 2 },
+      { value: "controls", count: 1 },
+      { value: "controls/button", count: 1 },
+    ],
+    access: [{ value: "free", count: 3 }, { value: "paid", count: 1 }],
+    reviewedCount: 0,
+    unreviewedCount: 7,
+  };
+
+  const state = {
+    page: 1,
+    sort: "name" as const,
+    registryNames: [],
+    itemTypes: [],
+    categories: [],
+    assetKinds: ["block", "page"] as const,
+    canonicalIds: ["application/app-shell"],
+    access: ["free"] as const,
+    reviewed: "all" as const,
+  };
+
+  it("renders all canonical kinds without collapsing block/page into legacy labels", () => {
+    const html = renderAssetKindChips({ block: 4, page: 2, component: 1 }, ["block", "page"] as any);
+    expect(html).toContain('data-asset-kind-value="block"');
+    expect(html).toContain('>Blocks<');
+    expect(html).toContain('data-asset-kind-value="page"');
+    expect(html).toContain('>Pages<');
+    expect(html).not.toMatch(/data-asset-kind-value="block"[^>]*>[^<]*Components/);
+  });
+
+  it("renders canonical and conditional access state as removable filters without duplicating the hierarchy", () => {
+    const html = renderCatalogBrowseControls(state as any, {
+      facets,
+      taxonomy: DEFAULT_CATALOG_TAXONOMY,
+    } as any);
+    expect(html).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*Category: App Shell/);
+    expect(html).toContain('data-catalog-access-value="free"');
+    expect(html).toMatch(/data-catalog-access-value="free"[\s\S]*aria-pressed="true"/);
+    expect(html).toContain("Access: Free");
+    expect(html).toContain(">Access<");
+    expect(html).not.toContain(">Canonical category<");
+  });
+
+  it("omits the access facet when the current facet set has no explicit access metadata", () => {
+    const withoutAccess = { ...facets, access: undefined };
+    const html = renderCatalogBrowseControls({ ...state, access: [] } as any, { facets: withoutAccess } as any);
+    expect(html).not.toContain('data-catalog-access-value');
+    expect(html).not.toContain(">Access<");
+  });
+});

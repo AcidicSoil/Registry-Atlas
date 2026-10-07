@@ -53,7 +53,7 @@ export function renderRegistryCollection(
         ${result.items.length
           ? `
             ${renderMeta(result)}
-            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item, assetKindForCatalogItem(item.item) === "theme" ? "theme" : assetKindForCatalogItem(item.item) === "template" ? "template" : "component")).join("")}</div>
+            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
             ${renderPagination(result)}
           `
           : renderEmptyRegistryInventory(options.coverage)}
@@ -98,4 +98,13 @@ function renderPagination(result: CatalogQueryResult): string {
       <button type="button" data-discovery-page="${result.page + 1}" ${result.hasNextPage ? "" : "disabled"}>Next</button>
     </nav>
   `;
+}
+
+function legacyCardRouteKind(
+  item: CatalogQueryResult['items'][number],
+): 'component' | 'template' | 'theme' {
+  const kind = assetKindForCatalogItem(item.item, item.namespace);
+  if (kind === 'theme') return 'theme';
+  if (kind === 'template') return 'template';
+  return 'component';
 }

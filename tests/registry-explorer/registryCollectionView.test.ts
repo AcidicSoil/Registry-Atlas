@@ -25,6 +25,43 @@ describe("renderRegistryCollection", () => {
     // The shell owns the single route-level homepage action, avoiding duplicate links.
     expect(header.innerHTML).not.toContain('>Visit registry homepage</a>');
   });
+
+  it("keeps a promoted block on the legacy component detail route without requiring source categories", () => {
+    const header = root();
+    const body = root();
+    const promoted = result();
+    promoted.items = [{
+      ...promoted.items[0]!,
+      id: "@registrydirectory:app-shell",
+      slug: "app-shell",
+      displayName: "App Shell",
+      categories: [],
+      item: {
+        name: "app-shell",
+        title: "App Shell",
+        type: "registry:block",
+        kind: "block",
+        canonical: {
+          taxonomyVersion: "v1",
+          primary: "application/app-shell",
+          path: ["application", "application/app-shell"],
+        },
+      },
+      routePath: "/Registry-Atlas/@registrydirectory/components/app-shell",
+    }];
+    promoted.total = 1;
+    promoted.pageCount = 1;
+    promoted.hasNextPage = false;
+
+    renderRegistryCollection(header, body, registry(), promoted, {
+      coverage: "current",
+      controls: '<button data-catalog-canonical-value="application/app-shell">App Shell</button>',
+    });
+
+    expect(body.innerHTML).toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/components/app-shell"');
+    expect(body.innerHTML).not.toContain('data-catalog-category-value');
+  });
 });
 
 function root(): HTMLElement {

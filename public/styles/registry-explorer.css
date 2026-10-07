@@ -3239,6 +3239,24 @@ aside:has(.aside-inner:empty) {
   max-height: none;
 }
 .sidebar-browse-libraries .sidebar-browser-list { max-height: 340px; overflow-y: auto; }
+.sidebar-canonical-tree { gap: 2px; }
+.sidebar-canonical-family {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+.sidebar-canonical-children {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+  margin-left: 10px;
+  padding-left: 7px;
+  border-left: 1px solid var(--border);
+}
+.sidebar-browser-canonical.depth-1,
+.sidebar-browser-canonical.depth-2 {
+  min-height: 31px;
+}
 .sidebar-browser-item {
   display: flex;
   width: 100%;
