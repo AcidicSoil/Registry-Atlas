@@ -1,17 +1,17 @@
 # Registry Atlas — Remaining Work
 
-Updated: 2026-10-07
+Updated: 2026-10-08
 
 This list tracks the remaining work in the active `feat/clef-identity-decision` worktree after the SQLite migration and current frontend/exemplar pass.
 
 ## P0 — Finish card deeplink behavior across every route and view
 
-- [ ] Enforce one shared card-link contract for Home, Explore, Components, Blocks, Pages, Templates, Themes, Icons, registry profiles, related-item cards, and comparison cells.
-- [ ] Every card must expose a direct Atlas item deeplink.
-- [ ] When a real upstream item/component/page route exists in Registry Atlas route metadata, expose it as the external source action.
-- [ ] Do not use raw registry JSON as the browse-card action. Keep raw JSON only on detail/inspection surfaces.
-- [ ] Consume the canonical SQLite route/item metadata rather than restoring runtime JSON artifacts.
-- [ ] Audit source-link coverage by route and by registry after the resolver is complete.
+- [x] Shared browse item cards expose an explicit Atlas item deeplink (`View component/block/page/template/theme/icon`).
+- [x] Verified upstream item/component/page routes render separately as `Source ↗`.
+- [x] Raw registry JSON is removed from browse-card actions and remains detail/inspection-only.
+- [x] Browse-card source resolution consumes canonical SQLite route/item metadata rather than restoring runtime JSON artifacts.
+- [ ] Browser-audit Home, Explore, Components, Blocks, Pages, Templates, Themes, Icons, registry profiles, related-item cards, and comparison cells for the same link contract.
+- [ ] Audit upstream source-link coverage by route and by registry after the resolver is complete.
 
 ## P0 — Finish 21st.dev exemplar layout/functionality parity
 
@@ -24,13 +24,24 @@ This list tracks the remaining work in the active `feat/clef-identity-decision` 
 
 ## P0 — Audit route metadata and bad card titles
 
+Initial SQLite audit result: **95 low-information display-title candidates**.
+
+- **36 blocks** — all 36 are `@shadcnuikit` items `illustration1` … `illustration36` whose visible titles are only `1` … `36`. This is the highest-priority defect and is visible on `/blocks`.
+- **48 icons** — mostly legitimate terse semantic icon names such as `x`, `tv`, `at`, and `h1`; do not blanket-expand these.
+- **5 components** — mixed cases such as `2048`, `404`, `v0`, and `X`; review contextually because several are legitimate product/component names.
+- **3 generic items** and **3 `ui` items** — review their source metadata because the visible labels are too generic to classify automatically.
+
+Remaining work:
+
 - [ ] Audit **every browse route/view** for cards whose visible title is not meaningful metadata.
-- [ ] Specifically detect numeric-only titles such as `45`, `42`, `54`, numeric sequences, hashes/IDs, placeholder labels, filename-like labels, and other raw source identifiers leaking into the card title.
+- [ ] For `@shadcnuikit` illustration blocks, recover descriptive source-backed titles from existing registry metadata, source-page headings/metadata, sitemap/anchor evidence, or other durable evidence.
 - [ ] Record each affected route, namespace, slug, item kind, current title source, and the better metadata source that should replace it.
 - [ ] Fix the problem in the canonical ingestion/normalization/database layer. Do not patch individual cards in the renderer.
 - [ ] Preserve the raw source slug/identifier separately for routing/install identity.
-- [ ] Add tests that reject numeric-only/identifier-only display titles when better title/name metadata exists.
+- [ ] Add validation/tests for numeric-only **block/page/template/theme** display titles, with explicit allowlisting when a numeric title is genuinely the product name.
+- [ ] Keep terse icon identifiers valid by default; short icon names are not automatically metadata defects.
 - [ ] Re-run the route audit for Components, Blocks, Pages, Templates, Themes, Icons, Home/Explore, registry profiles, and any mixed result surfaces.
+- [ ] Specifically verify `/blocks` and the `@shadcnuikit` registry view no longer render bare numbered titles.
 
 ## P1 — Complete registry identity/icon coverage
 

@@ -197,17 +197,19 @@ export function renderCatalogComponentCard(
         <p class="catalog-component-description">${escapeHtml(supportingCopy)}</p>
         ${themeData}
       </a>
-      ${original ? `<div class="catalog-component-source-actions" aria-label="Source links">
-        <a class="catalog-component-original" href="${escapeHtml(original.url)}"
+      <div class="catalog-component-source-actions" aria-label="Item links">
+        <a class="catalog-component-deeplink" href="${escapeHtml(routePath)}"
+          data-item-deeplink-kind="${escapeHtml(routeKind)}">${escapeHtml(itemActionLabel(routeKind))}</a>
+        ${original ? `<a class="catalog-component-original" href="${escapeHtml(original.url)}"
           data-source-level="${escapeHtml(original.level)}"
           target="_blank" rel="noreferrer noopener"
-          aria-label="${escapeHtml(sourceActionLabel(routeKind))} on source registry">${escapeHtml(sourceActionLabel(routeKind))} ↗</a>
-      </div>` : ''}
+          aria-label="Open source page on ${escapeHtml(component.namespace)}">Source ↗</a>` : ''}
+      </div>
     </article>
   `;
 }
 
-function sourceActionLabel(
+function itemActionLabel(
   routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon',
 ): string {
   return 'View ' + routeKind;

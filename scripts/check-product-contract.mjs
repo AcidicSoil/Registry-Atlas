@@ -98,9 +98,11 @@ assert(!detailViewSource.includes('data-source-sandbox')
     && !detailViewSource.includes('<iframe'),
   'item detail must not expose fake/local component previews');
 assert(componentViewSource.includes('sourcePageNavigation')
-    && componentViewSource.includes('sourceActionLabel')
+    && componentViewSource.includes('itemActionLabel')
+    && componentViewSource.includes('catalog-component-deeplink')
+    && componentViewSource.includes('Source ↗')
     && !componentViewSource.includes('View item JSON'),
-  'catalog cards must deeplink source component pages and must not expose raw item JSON actions');
+  'catalog cards must expose an internal item deeplink, keep upstream pages as separate Source links, and never expose raw item JSON actions');
 assert(detailViewSource.includes('View item JSON'),
   'item details may expose direct item JSON links for inspection');
 assert(componentViewSource.includes('renderRegistryIcon')

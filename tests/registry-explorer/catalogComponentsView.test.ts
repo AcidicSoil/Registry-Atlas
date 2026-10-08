@@ -35,9 +35,11 @@ describe("renderCatalogComponents", () => {
       sourcePage:{url:'https://delta.example/docs/code-block',
         level:'sitemap',source:'official-sitemap'}});
     expect(html).toContain('href="https://delta.example/docs/code-block"');
-    expect(html).toContain('View component');
+    expect(html).toContain('Source ↗');
     expect(html).toContain('data-source-level="sitemap"');
+    expect(html).toContain('class="catalog-component-deeplink"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
+    expect(html).toContain('View component');
     expect(html).not.toContain('View original ↗');
     expect(html).not.toContain('View item JSON');
   });
@@ -52,8 +54,11 @@ describe("renderCatalogComponents", () => {
       },
     });
     expect(html).toContain('class="catalog-component-source-actions"');
-    expect(html).toContain('href="https://delta.example/components/code-block"');
+    expect(html).toContain('class="catalog-component-deeplink"');
+    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
     expect(html).toContain("View component");
+    expect(html).toContain('href="https://delta.example/components/code-block"');
+    expect(html).toContain('Source ↗');
     expect(html).not.toContain('href="https://delta.example/r/code-block.json"');
     expect(html).not.toContain("View item JSON");
   });
@@ -82,6 +87,8 @@ describe("renderCatalogComponents", () => {
     expect(html).not.toContain('href="https://delta.example/r/new-york-v4/code-block.json"');
     expect(html).not.toContain("View item JSON");
     expect(html).not.toContain("catalog-component-original");
+    expect(html).toContain('class="catalog-component-deeplink"');
+    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
   });
 
   it("keeps component records visible without fake preview surfaces", () => {
