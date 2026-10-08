@@ -1,11 +1,11 @@
 import { execFileSync } from 'node:child_process';
-import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { DiscoveryLedger } from './lib/registry-discovery.mjs';
 import { planRegistryDiscovery, executeDiscoveryBatch } from './lib/registry-discovery-schedule.mjs';
-import { planPreviewCoverage } from './plan-component-previews.mjs';
 import { main as runDiscovery } from './discover-registry-components.mjs';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 export function parseRegistryScheduleArgs(argv) {
   const flags = new Set(['--profile', '--server', '--tab', '--journal-dir',
@@ -77,18 +77,17 @@ async function readLedgers(raw, directory) {
 export async function main(argv, cwd = process.cwd()) {
   const opts = parseRegistryScheduleArgs(argv);
   const allowedDomains = verifiedProfile(opts);
-  const [raw, catalog, curated, manifest] = await Promise.all([
-    readFile(join(cwd, 'data/shadcn/registries.raw.json'), 'utf8').then(JSON.parse),
-    readFile(join(cwd, 'public/data/registry-catalog-items.json'), 'utf8').then(JSON.parse),
-    readFile(join(cwd, 'data/shadcn/registry-items.json'), 'utf8').then(JSON.parse),
-    readFile(join(cwd, 'src/registry-explorer/data/component-demo-manifest.json'), 'utf8').then(JSON.parse),
-  ]);
+  const database = openAtlasCoreDatabase(cwd, { readOnly: true });
+  const state = readAtlasState(database);
+  database.close();
+  const raw = state.rawRegistries;
+  const catalog = state.catalog;
+  const curated = state.curated;
   const asOf = new Date().toISOString();
   const before = planRegistryDiscovery(raw, catalog, curated,
     await readLedgers(raw, opts.journalDir), {
       asOf, cursor: opts.cursor, maxRegistries: opts.maxRegistries, allowedDomains,
     });
-  const previewCoverage = planPreviewCoverage(raw, catalog, manifest, {limit: 1}, curated).summary;
   let execution = [];
   if (!opts.dryRun && before.batch.length) {
     await mkdir(opts.journalDir, {recursive: true});
@@ -114,7 +113,7 @@ export async function main(argv, cwd = process.cwd()) {
       totalItems: job.totalItems, remaining: job.remaining})),
     nextCursor: before.nextCursor,
     before: before.summary, after: after.summary,
-    previewCoverage, execution,
+    execution,
     errors: execution.filter(row => row.outcome === 'failed').length,
     // Page observations are not build/interaction verification.
     note: 'Catalog, documentation, source, build and browser proof are distinct stages.',

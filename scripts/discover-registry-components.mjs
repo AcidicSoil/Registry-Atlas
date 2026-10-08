@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { isAbsolute } from 'node:path';
 import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
 import { discoverRegistry, DiscoveryLedger, catalogFingerprint } from './lib/registry-discovery.mjs';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 function args(argv) {
   const legal = new Set(['--registry', '--profile', '--server', '--tab', '--journal',
@@ -100,11 +101,12 @@ export function configureManagedSourceBrowser(browser) {
 
 export async function main(argv, cwd = process.cwd()) {
   const options = args(argv);
-  const [raw, catalog, curated] = await Promise.all([
-    readFile(cwd + '/data/shadcn/registries.raw.json', 'utf8').then(JSON.parse),
-    readFile(cwd + '/public/data/registry-catalog-items.json', 'utf8').then(JSON.parse),
-    readFile(cwd + '/data/shadcn/registry-items.json', 'utf8').then(JSON.parse),
-  ]);
+  const database = openAtlasCoreDatabase(cwd, { readOnly: true });
+  const state = readAtlasState(database);
+  database.close();
+  const raw = state.rawRegistries;
+  const catalog = state.catalog;
+  const curated = state.curated;
   const registry = raw.find(item => item.name === options.registry);
   if (!registry) throw new Error('Unknown exact raw registry namespace');
   checkedSourceProfile(options, registry);

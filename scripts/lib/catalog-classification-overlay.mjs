@@ -90,8 +90,9 @@ function currentInputFingerprint(namespace, rawItem, overlayItem) {
 
 function explicitAccess(namespace, labels, accessRules) {
   const registryRules = accessRules?.registries?.[namespace];
-  if (!registryRules || typeof registryRules !== 'object' || Array.isArray(registryRules)) return undefined;
-  const normalizedRules = new Map(Object.entries(registryRules).map(([label, normalized]) => [label.trim().toLowerCase(), normalized]));
+  const normalizedRules = registryRules && typeof registryRules === 'object' && !Array.isArray(registryRules)
+    ? new Map(Object.entries(registryRules).map(([label, normalized]) => [label.trim().toLowerCase(), normalized]))
+    : new Map();
   const matches = [];
   for (const label of labels) {
     if (typeof label !== 'string' || !label.trim()) continue;
@@ -100,7 +101,18 @@ function explicitAccess(namespace, labels, accessRules) {
   }
   const normalizedValues = new Set(matches.map(match => match.normalized));
   if (normalizedValues.size > 1) throw new Error(`Conflicting explicit access labels for ${namespace}`);
-  return matches[0];
+  if (matches[0]) return matches[0];
+
+  const fallback = accessRules?.registryDefaults?.[namespace];
+  if (!fallback || typeof fallback !== 'object' || Array.isArray(fallback)) return undefined;
+  if ((fallback.normalized !== 'free' && fallback.normalized !== 'paid')
+    || typeof fallback.sourceLabel !== 'string' || !fallback.sourceLabel.trim()) {
+    throw new Error(`Invalid registry-level access rule for ${namespace}`);
+  }
+  return {
+    normalized: fallback.normalized,
+    sourceLabel: fallback.sourceLabel.trim(),
+  };
 }
 
 export function stripCatalogClassificationFields(itemsByNamespace) {

@@ -1,15 +1,19 @@
 import type { CatalogAssetKind } from './catalogCollections';
-import { DEFAULT_CATALOG_TAXONOMY_IDS } from './catalogTaxonomy';
+import { isDefaultCatalogTaxonomyId } from './catalogTaxonomy';
 
 export type CatalogRoute =
   | { kind: "home" }
   | { kind: "not-found"; path: string }
   | { kind: "components"; pathSearchTerm?: string }
+  | { kind: "blocks" }
+  | { kind: "pages" }
   | { kind: "explore"; collection: string }
   | { kind: "authors" }
   | { kind: "registries" }
   | { kind: "registry"; namespace: string }
   | { kind: "component"; namespace: string; slug: string }
+  | { kind: "block"; namespace: string; slug: string }
+  | { kind: "page"; namespace: string; slug: string }
   | { kind: "templates" }
   | { kind: "template"; namespace: string; slug: string }
   | { kind: "themes" }
@@ -20,7 +24,7 @@ export type CatalogRoute =
   | { kind: "icon-category"; category: string }
   | { kind: "compare" };
 
-export type CatalogSort = "name" | "name-desc" | "registry" | "registry-desc";
+export type CatalogSort = "name" | "registry";
 export type CatalogReviewedFilter = "all" | "reviewed" | "unreviewed";
 
 export interface CatalogBrowseQueryState {
@@ -35,7 +39,7 @@ export interface CatalogBrowseQueryState {
   reviewed: CatalogReviewedFilter;
 }
 
-const CATALOG_SORTS = new Set<CatalogSort>(["name", "name-desc", "registry", "registry-desc"]);
+const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry"]);
 const CATALOG_ASSET_KINDS = new Set<CatalogAssetKind>([
   'component', 'block', 'page', 'template', 'theme', 'icon', 'other',
 ]);
@@ -52,6 +56,8 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
 
   if (decoded.length === 0) return { kind: "home" };
   if (decoded.length === 1 && decoded[0] === "components") return { kind: "components" };
+  if (decoded.length === 1 && decoded[0] === "blocks") return { kind: "blocks" };
+  if (decoded.length === 1 && decoded[0] === "pages") return { kind: "pages" };
   if (decoded.length === 3 && decoded[0] === "components" && decoded[1] === "s") {
     return { kind: "components", pathSearchTerm: decoded[2] };
   }
@@ -79,11 +85,13 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
   if (!namespace || !isSafeNamespace(namespace)) return null;
   if (decoded.length === 1) return { kind: "registry", namespace };
 
-  if (decoded.length >= 3 && ["components", "templates", "themes"].includes(decoded[1])) {
+  if (decoded.length >= 3 && ["components", "blocks", "pages", "templates", "themes"].includes(decoded[1])) {
     const slugSegments = decoded.slice(2);
     if (!slugSegments.every(isSafeItemSegment)) return null;
     const slug = slugSegments.join("/");
     if (decoded[1] === "components") return { kind: "component", namespace, slug };
+    if (decoded[1] === "blocks") return { kind: "block", namespace, slug };
+    if (decoded[1] === "pages") return { kind: "page", namespace, slug };
     if (decoded[1] === "templates") return { kind: "template", namespace, slug };
     return { kind: "theme", namespace, slug };
   }
@@ -96,13 +104,13 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
   const sortValue = params.get("sort");
   return {
     page: Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1,
-    sort: sortValue && CATALOG_SORTS.has(sortValue as CatalogSort) ? sortValue as CatalogSort : "name",
+    sort: normalizeCatalogSort(sortValue),
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
     itemTypes: [],
     categories: uniqueValues(params.getAll("category").filter(isSafeFacetValue)),
     assetKinds: uniqueValues(params.getAll('asset').filter(isCatalogAssetKind)) as CatalogAssetKind[],
     canonicalIds: uniqueValues(params.getAll('canonical').filter(value =>
-      isSafeFacetValue(value) && DEFAULT_CATALOG_TAXONOMY_IDS.has(value))),
+      isSafeFacetValue(value) && isDefaultCatalogTaxonomyId(value))),
     access: uniqueValues(params.getAll('access').filter(isCatalogAccess)) as Array<'free' | 'paid'>,
     reviewed: "all",
   };
@@ -122,7 +130,7 @@ export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URL
     if (CATALOG_ASSET_KINDS.has(value)) params.append('asset', value);
   });
   state.canonicalIds.forEach(value => {
-    if (isSafeFacetValue(value) && DEFAULT_CATALOG_TAXONOMY_IDS.has(value)) params.append('canonical', value);
+    if (isSafeFacetValue(value) && isDefaultCatalogTaxonomyId(value)) params.append('canonical', value);
   });
   state.access.forEach(value => {
     if (CATALOG_ACCESS_VALUES.has(value)) params.append('access', value);
@@ -139,6 +147,8 @@ export function catalogRoutePath(route: CatalogRoute, basePath = "/"): string {
     if (route.pathSearchTerm) return joinBase(base, `components/s/${encodeSegment(route.pathSearchTerm)}`);
     return joinBase(base, "components");
   }
+  if (route.kind === "blocks") return joinBase(base, "blocks");
+  if (route.kind === "pages") return joinBase(base, "pages");
   if (route.kind === "explore") return joinBase(base, `components/explore/${encodeSegment(route.collection)}`);
   if (route.kind === "authors") return joinBase(base, "authors");
   if (route.kind === "registries") return joinBase(base, "registries");
@@ -160,7 +170,10 @@ export function catalogRoutePath(route: CatalogRoute, basePath = "/"): string {
   if (slugSegments.length === 0 || !slugSegments.every(isSafeItemSegment)) {
     throw new Error(`Unsafe catalog slug: ${route.slug}`);
   }
-  const kindSegment = route.kind === "component" ? "components" : route.kind === "template" ? "templates" : "themes";
+  const kindSegment = route.kind === "component" ? "components"
+    : route.kind === "block" ? "blocks"
+      : route.kind === "page" ? "pages"
+        : route.kind === "template" ? "templates" : "themes";
   return joinBase(base, `${namespace}/${kindSegment}/${slugSegments.map(encodeSegment).join("/")}`);
 }
 
@@ -216,6 +229,11 @@ function isCatalogAssetKind(value: string): value is CatalogAssetKind {
 
 function isCatalogAccess(value: string): value is 'free' | 'paid' {
   return CATALOG_ACCESS_VALUES.has(value as 'free' | 'paid');
+}
+
+function normalizeCatalogSort(value: string | null): CatalogSort {
+  if (value === 'registry' || value === 'registry-desc') return 'registry';
+  return 'name';
 }
 
 function encodeNamespace(value: string): string {

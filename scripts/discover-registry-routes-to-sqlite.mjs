@@ -10,6 +10,7 @@ import {
   reconcileRegistryCatalog,
 } from './verify-registry-patterns.mjs';
 import { seedComponentCandidates, verifyComponentCandidates } from './verify-component-pages.mjs';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 function memoryLedger(namespace) {
   const rows=new Map();
@@ -88,7 +89,7 @@ function parseArgs(argv) {
     return value;
   };
   return {
-    db:opts['--db']??'data/shadcn/registry-patterns.sqlite',
+    db:opts['--db']??'data/registry-atlas.sqlite',
     registry:opts['--registry'],profile:opts['--profile'],server:opts['--server'],tab:opts['--tab'],
     limit:number('--limit',20,1,200),maxPages:number('--max-pages',40,1,250),
     maxDepth:number('--max-depth',4,0,10),maxLinks:number('--max-links',1500,1,10000),
@@ -99,11 +100,10 @@ function parseArgs(argv) {
 
 export async function main(argv,cwd=process.cwd()) {
   const options=parseArgs(argv);
-  const [raw,catalog,curated]=await Promise.all([
-    readFile(cwd+'/data/shadcn/registries.raw.json','utf8').then(JSON.parse),
-    readFile(cwd+'/public/data/registry-catalog-items.json','utf8').then(JSON.parse),
-    readFile(cwd+'/data/shadcn/registry-items.json','utf8').then(JSON.parse),
-  ]);
+  const core=openAtlasCoreDatabase(cwd,{readOnly:true});
+  const state=readAtlasState(core);
+  core.close();
+  const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const registry=raw.find(row=>row.name===options.registry);
   if(!registry)throw Error('Unknown exact registry namespace');
   const indexedItems=[...new Set([

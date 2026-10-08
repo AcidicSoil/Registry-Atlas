@@ -68,7 +68,11 @@ describe('registry catalog evidence sync', () => {
     ]);
     expect(result.report.failure_count).toBe(0);
     expect(result.itemsByNamespace['@style']).toEqual([
-      { name: 'button', type: 'registry:ui' },
+      {
+        name: 'button',
+        type: 'registry:ui',
+        rawItemUrl: 'https://example.com/r/new-york-v4/button.json',
+      },
     ]);
   });
 
@@ -119,8 +123,16 @@ describe('registry catalog evidence sync', () => {
 
     expect(result.report.registry_count).toBe(2);
     expect(result.report.fetched_catalog_count).toBe(2);
-    expect(result.itemsByNamespace['@alpha']).toEqual([{ name: 'button', type: 'registry:ui' }]);
-    expect(result.itemsByNamespace['@beta']).toEqual([{ name: 'input', type: 'registry:ui' }]);
+    expect(result.itemsByNamespace['@alpha']).toEqual([{
+      name: 'button',
+      type: 'registry:ui',
+      rawItemUrl: 'https://alpha.example/r/button.json',
+    }]);
+    expect(result.itemsByNamespace['@beta']).toEqual([{
+      name: 'input',
+      type: 'registry:ui',
+      rawItemUrl: 'https://beta.example/r/input.json',
+    }]);
     expect(result.evidence['@alpha']).not.toHaveProperty('component_tags');
     expect(result.evidence['@beta']).not.toHaveProperty('component_tags');
   });
@@ -148,6 +160,32 @@ describe('registry catalog evidence sync', () => {
       { name: 'button', type: 'registry:ui', categories: ['forms'] },
       { name: 'theme', type: 'registry:theme' },
       { name: 'icons', type: 'registry:icon', categories: ['icons'] },
+    ]);
+  });
+
+  it('derives exact raw item URLs from the resolved catalog URL without guessing style placeholders', () => {
+    expect(buildCompactCatalogItems({
+      items: [
+        { name: 'c-aspect-ratio-3', type: 'registry:block' },
+        { name: 'nested/example', type: 'registry:page' },
+      ],
+    }, 'https://reui.io/r/styles/base-nova/registry.json?v=build-123')).toEqual([
+      {
+        name: 'c-aspect-ratio-3',
+        type: 'registry:block',
+        rawItemUrl: 'https://reui.io/r/styles/base-nova/c-aspect-ratio-3.json?v=build-123',
+      },
+      {
+        name: 'nested/example',
+        type: 'registry:page',
+        rawItemUrl: 'https://reui.io/r/styles/base-nova/nested/example.json?v=build-123',
+      },
+    ]);
+
+    expect(buildCompactCatalogItems({
+      items: [{ name: 'button', type: 'registry:ui' }],
+    }, 'https://example.com/api/catalog.json')).toEqual([
+      { name: 'button', type: 'registry:ui' },
     ]);
   });
 

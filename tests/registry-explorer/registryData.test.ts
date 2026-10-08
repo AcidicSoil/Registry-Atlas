@@ -1,7 +1,36 @@
 import { describe, expect, it } from 'vitest';
-import mirrorData from '../../public/data/registries.json';
-import catalogIndexData from '../../public/data/registry-catalog-items.json';
 import { parseRegistryCatalogIndex } from '../../src/registry-explorer/core/registryCatalogIndex';
+import type { RegistryCatalogIndex } from '../../src/registry-explorer/core/registry.schema';
+import {
+  readRepositoryCatalog,
+  readRepositoryRegistrySnapshot,
+} from './testAtlasDatabase';
+
+interface RuntimeSummary {
+  slug: string;
+  route_eligible?: boolean;
+  install_token?: string;
+  raw_item_url?: string;
+  evidence_url?: string;
+}
+
+interface RuntimeRegistryRecord {
+  official: { name: string };
+  atlas: { item_summaries: RuntimeSummary[] };
+}
+
+interface RuntimeRegistrySnapshot {
+  meta: {
+    source_url?: string;
+    upstream_count: number;
+    registry_count: number;
+    local_count: number;
+  };
+  registries: RuntimeRegistryRecord[];
+}
+
+const mirrorData = readRepositoryRegistrySnapshot<RuntimeRegistrySnapshot>();
+const catalogIndexData = readRepositoryCatalog<RegistryCatalogIndex>();
 
 describe('registryData mirror artifact', () => {
   it('tracks the official shadcn registry source metadata', () => {

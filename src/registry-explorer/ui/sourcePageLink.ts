@@ -46,14 +46,11 @@ import type { RegistrySourcePage } from '../core/registry.schema';
 export function sourcePageNavigation(
   homepage: string,
   candidates: {
-    referenceUrl?: string | null;
     docsUrl?: string | null;
-    demoUrl?: string | null;
     sourcePage?: RegistrySourcePage;
   },
 ): { url: string; label: string; level: 'reviewed' | 'sitemap' | 'pattern' } | null {
-  const reviewed = [candidates.referenceUrl, candidates.docsUrl, candidates.demoUrl]
-    .map(url => verifiedSourcePageUrl(url, homepage)).find(Boolean);
+  const reviewed = verifiedSourcePageUrl(candidates.docsUrl, homepage);
   if (reviewed) return { url: reviewed, label: 'View original', level: 'reviewed' };
   const page = candidates.sourcePage;
   if (!page) return null;

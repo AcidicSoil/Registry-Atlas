@@ -7,6 +7,7 @@ async function bootstrap() {
     const contentHeader = document.getElementById('contentHeader');
     const contentBody = document.getElementById('contentBody');
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const sidebarContext = document.getElementById('sidebarContext');
     const tabs = document.querySelectorAll('.primary-nav [data-view]');
     const appSidebar = document.getElementById('appSidebar');
     const sidebarToggle = document.getElementById('sidebarToggle') as HTMLButtonElement | null;
@@ -59,6 +60,7 @@ async function bootstrap() {
           contentBody,
           tabs,
           searchInput,
+          ...(sidebarContext ? { sidebarContext } : {}),
         },
       });
     } else {

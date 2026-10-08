@@ -8,6 +8,7 @@ import {
   type RegistryItemDetailResult,
 } from '../core/registryItemDetail.ts';
 import type { Registry, RegistryCatalogIndex } from '../core/registry.schema.ts';
+import { loadDetailRuntimeDatabase, queryOneJson } from './runtimeDatabase.ts';
 
 export async function loadRegistryItemDetail(
   registries: readonly Registry[],
@@ -61,7 +62,7 @@ async function loadResolvedRegistryItemDetail(
     return summaryResult;
   }
 
-  const localResult = await loadSameOriginDetailBundle(
+  const localResult = await loadDatabaseDetail(
     summaryResult,
     resolveWithPayload,
     namespace,
@@ -98,7 +99,7 @@ async function loadResolvedRegistryItemDetail(
   }
 }
 
-async function loadSameOriginDetailBundle(
+async function loadDatabaseDetail(
   summaryResult: Extract<RegistryItemDetailResult, { status: 'summary-only' }>,
   resolveWithPayload: (payload: unknown) => RegistryItemDetailResult,
   namespace: string | null | undefined,
@@ -108,15 +109,11 @@ async function loadSameOriginDetailBundle(
   if (!registryName) return null;
 
   try {
-    const response = await fetchImpl(registryItemDetailBundleUrl(registryName));
-    if (!response.ok) return null;
-
-    const payload: unknown = await response.json();
-    if (!Array.isArray(payload)) return null;
-    const item = payload.find(candidate =>
-      isRecord(candidate)
-      && typeof candidate.name === 'string'
-      && candidate.name === summaryResult.detail.slug
+    const database = await loadDetailRuntimeDatabase(fetchImpl);
+    const item = queryOneJson<unknown>(
+      database,
+      'SELECT payload_json FROM atlas_item_details WHERE namespace=? AND name=? LIMIT 1',
+      [registryName, summaryResult.detail.slug],
     );
     if (!item) return null;
 
@@ -133,11 +130,6 @@ async function loadSameOriginDetailBundle(
   } catch {
     return null;
   }
-}
-
-export function registryItemDetailBundleUrl(namespace: string): string {
-  const normalized = namespace.trim().replace(/^@/, '');
-  return `${import.meta.env.BASE_URL}data/registry-item-details/${encodeURIComponent(normalized)}.json`;
 }
 
 export function buildSummaryOnlyRegistryItemDetail(
@@ -159,8 +151,4 @@ export function buildSummaryOnlyRegistryItemDetail(
     detail: buildBaseDetail(registry, summary),
     message: 'Full item JSON was not loaded; showing catalog summary details.',
   };
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

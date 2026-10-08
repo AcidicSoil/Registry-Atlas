@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   assetKindForCatalogItem,
   buildExploreCollectionOptions,
+  configureCatalogKindOverrides,
   filterCatalogItemsByAssetKind,
 } from "../../src/registry-explorer/core/catalogCollections";
 import type { RegistryCatalogItem } from "../../src/registry-explorer/core/registry.schema";
+import { readRepositoryDocument } from "./testAtlasDatabase";
+
+configureCatalogKindOverrides(readRepositoryDocument("catalog-kind-overrides"));
 
 describe("catalogCollections", () => {
   it("normalizes structural kinds without collapsing blocks or pages", () => {
@@ -19,9 +23,14 @@ describe("catalogCollections", () => {
     expect(assetKindForCatalogItem({ name: "mystery", type: "registry:unsupported" })).toBe("other");
   });
 
-  it("uses an explicitly promoted kind before legacy fallback inference", () => {
+  it("uses exact source template categories and explicitly promoted kinds before fallback inference", () => {
     expect(assetKindForCatalogItem({
       name: "landing-template",
+      type: "registry:page",
+      categories: ["templates"],
+    })).toBe("template");
+    expect(assetKindForCatalogItem({
+      name: "landing-template-promoted",
       type: "registry:page",
       kind: "template",
     })).toBe("template");

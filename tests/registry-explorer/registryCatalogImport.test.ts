@@ -83,14 +83,22 @@ describe('registry catalog import', () => {
     expect(report.skipped).toEqual([]);
   });
 
-  it('preserves reviewed preview URLs during normalization', () => {
+  it('drops obsolete preview URLs while preserving source-backed item metadata', () => {
     const imported = normalizeImportedItem('@example', {
       name: 'button',
       route_eligible: true,
       preview_url: 'https://example.com/previews/button.png',
+      docs_url: 'https://example.com/components/button',
+      raw_item_url: 'https://example.com/r/button.json',
+      evidence_url: 'https://example.com/r/registry.json',
     });
 
-    expect(imported?.preview_url).toBe('https://example.com/previews/button.png');
+    expect(imported).not.toHaveProperty('preview_url');
+    expect(imported).toMatchObject({
+      docs_url: 'https://example.com/components/button',
+      raw_item_url: 'https://example.com/r/button.json',
+      evidence_url: 'https://example.com/r/registry.json',
+    });
   });
 
   it('skips invalid imported item slugs', () => {

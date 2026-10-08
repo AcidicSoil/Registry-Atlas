@@ -1,23 +1,20 @@
-import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries, writeRegistryItemDetailBundles } from './sync-registry-catalog-evidence.mjs';
+import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries } from './sync-registry-catalog-evidence.mjs';
 import { applyCatalogClassificationOverlay, stripCatalogClassificationFields, validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
 import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import path from 'node:path';
+import {
+  openAtlasCoreDatabase,
+  openAtlasDetailDatabase,
+  putDocument,
+  readAtlasState,
+  replaceCatalogEvidence,
+  replaceCatalogSnapshot,
+  replaceItemDetails,
+  replaceRawRegistries,
+  replaceRegistrySnapshot,
+} from './lib/atlas-storage.mjs';
 import { pathToFileURL } from 'node:url';
 
 const SOURCE_URL = 'https://ui.shadcn.com/r/registries.json';
-const RAW_OUTPUT_PATH = 'data/shadcn/registries.raw.json';
-const REPORT_OUTPUT_PATH = 'data/shadcn/sync-report.json';
-const RUNTIME_OUTPUT_PATH = 'public/data/registries.json';
-const REGISTRY_ITEMS_PATH = 'data/shadcn/registry-items.json';
-const REGISTRY_CATALOG_EVIDENCE_PATH = 'data/shadcn/registry-catalog-evidence.json';
-const REGISTRY_CATALOG_EVIDENCE_REPORT_PATH = 'data/shadcn/registry-catalog-evidence-report.json';
-const REGISTRY_CATALOG_ITEMS_PATH = 'public/data/registry-catalog-items.json';
-const REGISTRY_ITEM_DETAILS_DIR = 'public/data/registry-item-details';
-const CATALOG_TAXONOMY_SOURCE_PATH = 'data/catalog-taxonomy/v1.json';
-const CATALOG_CLASSIFICATION_OVERLAY_PATH = 'data/catalog-taxonomy/classifications.json';
-const CATALOG_ACCESS_RULES_PATH = 'data/catalog-taxonomy/access-rules.json';
-const RUNTIME_CATALOG_TAXONOMY_PATH = 'public/data/catalog-taxonomy.json';
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   aliases: [],
@@ -27,25 +24,6 @@ const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   catalog_status: 'unavailable',
   item_summaries: [],
 });
-
-async function readJsonIfExists(filePath) {
-  try {
-    return JSON.parse(await readFile(filePath, 'utf8'));
-  } catch (error) {
-    if (error && error.code === 'ENOENT') return null;
-    throw error;
-  }
-}
-
-async function writeJson(filePath, value) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
-}
-
-async function writeCompactJson(filePath, value) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value)}\n`);
-}
 
 function normalizeNamespace(value) {
   if (typeof value !== 'string') return '';
@@ -107,7 +85,6 @@ function normalizeItemSummary(item) {
     install_command: optionalString(item.install_command),
     raw_item_url: optionalString(item.raw_item_url),
     docs_url: optionalString(item.docs_url),
-    preview_url: optionalString(item.preview_url),
     evidence_url: optionalString(item.evidence_url),
     evidence_note: optionalString(item.evidence_note),
     dependencies: normalizeStringArray(item.dependencies),
@@ -218,107 +195,119 @@ function changedRegistries(previousRegistries, nextRegistries) {
 }
 
 async function main() {
-  if (process.argv.includes('--local-curated-only')) {
-    const [runtime, curated] = await Promise.all([
-      readJsonIfExists(RUNTIME_OUTPUT_PATH),
-      readJsonIfExists(REGISTRY_ITEMS_PATH),
-    ]);
-    const projected = projectCuratedSummaries(runtime, curated);
-    await writeJson(RUNTIME_OUTPUT_PATH, projected);
-    console.log(`Projected verified curated item summaries into ${RUNTIME_OUTPUT_PATH} without fetching upstream registries`);
-    return;
-  }
-  const response = await fetch(SOURCE_URL);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${SOURCE_URL}: ${response.status} ${response.statusText}`);
-  }
+  const core = openAtlasCoreDatabase();
+  const details = openAtlasDetailDatabase();
+  try {
+    const state = readAtlasState(core);
 
-  const upstream = await response.json();
-  if (!Array.isArray(upstream)) {
-    throw new Error('Official registry directory response must be a JSON array.');
-  }
+    if (process.argv.includes('--local-curated-only')) {
+      const projected = projectCuratedSummaries(state.runtime, state.curated);
+      replaceRegistrySnapshot(core, projected);
+      console.log('Projected curated item summaries directly into data/registry-atlas.sqlite');
+      return;
+    }
 
-  const previousRuntimeData = await readJsonIfExists(RUNTIME_OUTPUT_PATH);
-  const previousRegistries = Array.isArray(previousRuntimeData?.registries)
-    ? previousRuntimeData.registries
-    : [];
-  const previousEnrichment = readPreviousEnrichment(previousRuntimeData);
-  const itemSummariesByNamespace = await readJsonIfExists(REGISTRY_ITEMS_PATH) ?? {};
-  const previousCatalogEvidence = await readJsonIfExists(REGISTRY_CATALOG_EVIDENCE_PATH) ?? {};
-  const previousCatalogIndex = await readJsonIfExists(REGISTRY_CATALOG_ITEMS_PATH);
-  const catalogSync = await syncCatalogEvidenceForRegistries(upstream, {
-    previous: previousCatalogEvidence,
-    previousItems: previousCatalogIndex?.registries ?? {},
-  });
-  const [taxonomyValue, classificationOverlay, accessRules] = await Promise.all([
-    readJsonIfExists(CATALOG_TAXONOMY_SOURCE_PATH),
-    readJsonIfExists(CATALOG_CLASSIFICATION_OVERLAY_PATH),
-    readJsonIfExists(CATALOG_ACCESS_RULES_PATH),
-  ]);
-  if (!taxonomyValue) throw new Error(`Missing canonical taxonomy: ${CATALOG_TAXONOMY_SOURCE_PATH}`);
-  const taxonomy = validateCatalogTaxonomy(taxonomyValue);
-  const classificationProjection = projectReviewedCatalogClassifications(
-    catalogSync.itemsByNamespace,
-    { taxonomy, overlay: classificationOverlay, accessRules: accessRules ?? {} },
-  );
-  const catalogEvidenceByNamespace = catalogSync.evidence;
-  const syncedAt = new Date().toISOString();
+    const response = await fetch(SOURCE_URL);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${SOURCE_URL}: ${response.status} ${response.statusText}`);
+    }
 
-  const registries = upstream.map(registry =>
-    normalizeOfficialRegistry(registry, previousEnrichment, itemSummariesByNamespace, catalogEvidenceByNamespace)
-  );
+    const upstream = await response.json();
+    if (!Array.isArray(upstream)) {
+      throw new Error('Official registry directory response must be a JSON array.');
+    }
 
-  const runtimeData = {
-    meta: {
+    const previousRuntimeData = state.runtime;
+    const previousRegistries = Array.isArray(previousRuntimeData?.registries)
+      ? previousRuntimeData.registries
+      : [];
+    const previousEnrichment = readPreviousEnrichment(previousRuntimeData);
+    const catalogSync = await syncCatalogEvidenceForRegistries(upstream, {
+      previous: state.catalogEvidence,
+      previousItems: state.catalog?.registries ?? {},
+    });
+
+    if (!state.taxonomy) throw new Error('Missing catalog-taxonomy document in data/registry-atlas.sqlite');
+    const taxonomy = validateCatalogTaxonomy(state.taxonomy);
+    const classificationProjection = projectReviewedCatalogClassifications(
+      catalogSync.itemsByNamespace,
+      {
+        taxonomy,
+        overlay: state.classificationOverlay,
+        accessRules: state.accessRules ?? {},
+      },
+    );
+    const catalogEvidenceByNamespace = catalogSync.evidence;
+    const syncedAt = new Date().toISOString();
+
+    const registries = upstream.map(registry =>
+      normalizeOfficialRegistry(
+        registry,
+        previousEnrichment,
+        state.curated,
+        catalogEvidenceByNamespace,
+      )
+    );
+
+    const runtimeData = {
+      meta: {
+        source_url: SOURCE_URL,
+        synced_at: syncedAt,
+        upstream_count: upstream.length,
+        registry_count: registries.length,
+        local_count: registries.length,
+        validation_status: 'not_run',
+        report_path: 'database:registry-sync-report',
+      },
+      registries,
+    };
+
+    const previousNames = new Set(sortedNames(previousRegistries));
+    const nextNames = new Set(sortedNames(registries));
+    const added = [...nextNames].filter(name => !previousNames.has(name))
+      .sort((a, b) => a.localeCompare(b));
+    const removed = [...previousNames].filter(name => !nextNames.has(name))
+      .sort((a, b) => a.localeCompare(b));
+
+    const report = {
       source_url: SOURCE_URL,
       synced_at: syncedAt,
       upstream_count: upstream.length,
-      registry_count: registries.length,
       local_count: registries.length,
-      validation_status: 'not_run',
-      report_path: REPORT_OUTPUT_PATH,
-    },
-    registries,
-  };
+      previous_count: previousRegistries.length,
+      added,
+      removed,
+      changed: changedRegistries(previousRegistries, registries),
+    };
 
-  const previousNames = new Set(sortedNames(previousRegistries));
-  const nextNames = new Set(sortedNames(registries));
-  const added = [...nextNames].filter(name => !previousNames.has(name)).sort((a, b) => a.localeCompare(b));
-  const removed = [...previousNames].filter(name => !nextNames.has(name)).sort((a, b) => a.localeCompare(b));
+    replaceRawRegistries(core, upstream);
+    replaceCatalogEvidence(core, catalogEvidenceByNamespace);
+    putDocument(core, 'catalog-evidence-report', 'sync-report', catalogSync.report);
+    replaceCatalogSnapshot(core, {
+      meta: {
+        source_url: SOURCE_URL,
+        synced_at: syncedAt,
+        registry_count: Object.keys(classificationProjection.itemsByNamespace).length,
+        item_count: catalogSync.report.discoverable_item_count,
+      },
+      registries: classificationProjection.itemsByNamespace,
+    });
+    for (const [namespace, rows] of Object.entries(catalogSync.freshDetailsByNamespace)) {
+      replaceItemDetails(details, namespace, rows);
+    }
+    replaceRegistrySnapshot(core, runtimeData);
+    putDocument(core, 'registry-sync-report', 'sync-report', report);
+    putDocument(core, 'catalog-classification-projection-report', 'sync-report',
+      classificationProjection.report);
 
-  const report = {
-    source_url: SOURCE_URL,
-    synced_at: syncedAt,
-    upstream_count: upstream.length,
-    local_count: registries.length,
-    previous_count: previousRegistries.length,
-    added,
-    removed,
-    changed: changedRegistries(previousRegistries, registries),
-  };
-
-  await writeJson(RAW_OUTPUT_PATH, upstream);
-  await writeJson(REGISTRY_CATALOG_EVIDENCE_PATH, catalogEvidenceByNamespace);
-  await writeJson(REGISTRY_CATALOG_EVIDENCE_REPORT_PATH, catalogSync.report);
-  await writeCompactJson(REGISTRY_CATALOG_ITEMS_PATH, {
-    meta: {
-      source_url: SOURCE_URL,
-      synced_at: syncedAt,
-      registry_count: Object.keys(classificationProjection.itemsByNamespace).length,
-      item_count: catalogSync.report.discoverable_item_count,
-    },
-    registries: classificationProjection.itemsByNamespace,
-  });
-  await writeJson(RUNTIME_CATALOG_TAXONOMY_PATH, taxonomy);
-  await writeRegistryItemDetailBundles(REGISTRY_ITEM_DETAILS_DIR, catalogSync.freshDetailsByNamespace);
-  await writeJson(RUNTIME_OUTPUT_PATH, runtimeData);
-  await writeJson(REPORT_OUTPUT_PATH, report);
-
-  console.log(`Synced ${registries.length} registries from ${SOURCE_URL}`);
-  console.log(`Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`);
-  console.log(`Raw: ${RAW_OUTPUT_PATH}`);
-  console.log(`Runtime: ${RUNTIME_OUTPUT_PATH}`);
-  console.log(`Report: ${REPORT_OUTPUT_PATH}`);
+    console.log(`Synced ${registries.length} registries from ${SOURCE_URL}`);
+    console.log(`Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`);
+    console.log('Canonical registry/catalog state: data/registry-atlas.sqlite');
+    console.log('Canonical item details: data/registry-details.sqlite');
+  } finally {
+    details.close();
+    core.close();
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

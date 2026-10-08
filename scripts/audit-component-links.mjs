@@ -2,13 +2,15 @@ import { readFile, writeFile, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
+import {
+  openAtlasCoreDatabase,
+  putDocument,
+  readAtlasState,
+  readCuratedItemSummaries,
+  replaceCuratedItemSummaries,
+} from './lib/atlas-storage.mjs';
 
 const SCHEMA = 'registry-atlas-component-link-evidence/v1';
-const PUBLIC_PATHS = {
-  raw: 'data/shadcn/registries.raw.json',
-  catalog: 'public/data/registry-catalog-items.json',
-  curated: 'data/shadcn/registry-items.json',
-};
 function publicHttps(input) {
   if (typeof input !== 'string') return null;
   try {
@@ -205,7 +207,9 @@ export function summarizeAuditCoverage(inventory, evaluation, independentlyRevie
 }
 
 async function loadJson(file) { return JSON.parse(await readFile(file, 'utf8')); }
-const checksum = value => createHash('sha256').update(value).digest('hex');
+const checksum = value => createHash('sha256').update(
+  typeof value === 'string' ? value : JSON.stringify(value),
+).digest('hex');
 async function main(argv) {
   const args = new Set(argv);
   const indexOf = key => argv.indexOf(key);
@@ -220,19 +224,23 @@ async function main(argv) {
     throw new Error('--recheck-browser requires --server and --tab');
   if ((indexOf('--evidence') >= 0 && !evidenceFile) || (indexOf('--report') >= 0 && !reportPath))
     throw new Error('Missing path for --evidence or --report');
-  const [rawText, catalogText, curatedText] = await Promise.all([
-    readFile(PUBLIC_PATHS.raw, 'utf8'), readFile(PUBLIC_PATHS.catalog, 'utf8'),
-    readFile(PUBLIC_PATHS.curated, 'utf8'),
-  ]);
-  const inventory = inventoryLinks(JSON.parse(rawText), JSON.parse(catalogText), JSON.parse(curatedText));
-  const metadata = { rawSha256: checksum(rawText), catalogSha256: checksum(catalogText),
-    curatedSha256: checksum(curatedText) };
+  const database = openAtlasCoreDatabase(process.cwd());
+  const state = readAtlasState(database);
+  const raw = state.rawRegistries;
+  const catalog = state.catalog;
+  const curated = state.curated;
+  const inventory = inventoryLinks(raw, catalog, curated);
+  const metadata = {
+    rawSha256: checksum(raw),
+    catalogSha256: checksum(catalog),
+    curatedSha256: checksum(curated),
+  };
   let evaluation = { repaired: [], confirmedUnchanged: [], unresolved: [], verifiedUrls: [] };
   if (evidenceFile) {
     const evidence = await loadJson(evidenceFile);
     if (evidence.schemaVersion !== SCHEMA || !Array.isArray(evidence.records))
       throw new Error('Unsupported browser evidence manifest');
-    evaluation = applyVerifiedLinks(inventory, JSON.parse(curatedText), evidence.records);
+    evaluation = applyVerifiedLinks(inventory, curated, evidence.records);
     if (apply && evaluation.unresolved.length) throw new Error(`Refusing partial apply: ${JSON.stringify(evaluation.unresolved)}`);
     if (apply && args.has('--recheck-browser')) {
       const browser = new PinchTabBrowser(valueOf('--server'), valueOf('--tab'));
@@ -244,9 +252,10 @@ async function main(argv) {
         const file = record?.browser?.capturePath;
         if (!file || !(await stat(file).catch(() => null))?.isFile()) throw new Error(`Missing PinchTab capture: ${file}`);
       }
-      if ((await readFile(PUBLIC_PATHS.curated, 'utf8')) !== curatedText) throw new Error('Curated records changed during audit');
-      if (evaluation.repaired.length)
-        await writeFile(PUBLIC_PATHS.curated, JSON.stringify(evaluation.curated, null, 2) + '\n');
+      if (checksum(readCuratedItemSummaries(database)) !== metadata.curatedSha256) {
+        throw new Error('Curated records changed during audit');
+      }
+      if (evaluation.repaired.length) replaceCuratedItemSummaries(database, evaluation.curated);
     }
   }
   const coverage = summarizeAuditCoverage(inventory, evaluation,
@@ -263,6 +272,8 @@ async function main(argv) {
     },
     apply,
   };
+  putDocument(database, 'component-link-audit-report', 'audit-report', report);
+  database.close();
   if (reportPath) await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
   console.log(JSON.stringify({
     mode: apply ? 'apply' : 'dry-run',

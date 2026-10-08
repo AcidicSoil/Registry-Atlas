@@ -9,7 +9,6 @@ export interface CatalogCompareCell {
   sourcePage?: RegistrySourcePage;
   registryHomepage?: string;
   docsUrl?: string;
-  referenceUrl?: string;
 }
 
 export interface CatalogCompareRow {
@@ -106,7 +105,6 @@ export function buildCatalogComparison(
               ),
               registryHomepage: registryByName.get(namespace)?.url,
               sourcePage: index.sourcePages?.[`${namespace}/${item.name}`],
-              referenceUrl: index.visualReferences?.[`${namespace}/${item.name}`]?.officialPage,
               docsUrl: registryByName.get(namespace)?.itemSummaries?.find(summary => summary.slug === item.name)?.docsUrl,
             }
           : { namespace, present: false };

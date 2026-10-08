@@ -11,14 +11,16 @@ describe('item prompts', () => {
     expect(prompt).toContain('@delta/code-block');
     expect(prompt).toContain('npx shadcn@latest view @delta/code-block');
     expect(prompt).toContain('npx shadcn@latest add @delta/code-block');
-    expect(prompt).toContain('Task: Evaluate and install Code Block from @delta');
-    expect(prompt).toContain('Inspect command: npx shadcn@latest view @delta/code-block');
-    expect(prompt).toContain('Install command: npx shadcn@latest add @delta/code-block');
+    expect(prompt).toContain('Install Code Block from @delta into this repository.');
+    expect(prompt).toContain('Inspect: npx shadcn@latest view @delta/code-block');
+    expect(prompt).toContain('Install: npx shadcn@latest add @delta/code-block');
     expect(prompt).toContain('Dependencies: shiki');
-    expect(prompt).toContain('Expected files: registry/code-block.tsx');
-    expect(prompt).toContain('Do not modify unrelated code');
-    expect(prompt).toContain('Run the relevant tests, typecheck, lint, or build');
-    expect(prompt).toContain('Report:');
+    expect(prompt).toContain('Files: registry/code-block.tsx');
+    expect(prompt).toContain('Do the work:');
+    expect(prompt).toContain('Resolve only direct integration conflicts and keep unrelated code unchanged.');
+    expect(prompt).toContain('Run the relevant repository verification commands.');
+    expect(prompt).toContain('Return the files changed, dependency changes, and verification results.');
+    expect(prompt).not.toContain('possible adoption');
   });
 
   it('returns null instead of inventing commands for disabled installs', () => {
@@ -33,9 +35,11 @@ describe('item prompts', () => {
     expect(prompt).toContain('Files: registry/code-block.tsx');
     expect(prompt).toContain('Warnings: review generated styles');
     expect(prompt).toContain('Evidence: https://delta.example/evidence');
-    expect(prompt).toContain('Do not install the item.');
-    expect(prompt).toContain('Recommendation: use or skip');
-    expect(prompt).toContain('Conflicts or overwrite risk');
+    expect(prompt).toContain('Do not modify the repository.');
+    expect(prompt).toContain('Return what the item provides, the files and dependencies it would add or change');
+    expect(prompt).toContain('the direct integration points in this repository');
+    expect(prompt).not.toContain('Recommendation: use or skip');
+    expect(prompt).not.toContain('Conflicts or overwrite risk');
   });
   it('returns null when inspection metadata has no grounding', () => {
     const detail = enabledDetail();

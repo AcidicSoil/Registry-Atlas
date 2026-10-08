@@ -31,7 +31,7 @@ const traversal = {
 const input = (opts: Record<string,unknown> = {}) => ({
   raw, catalog, curated:{'@alpha':[{
     slug:'button',docs_url:'https://alpha.example/components/button',
-  }]}, traversal, previews:{ previews:{} }, now,...opts,
+  }]}, traversal, now,...opts,
 });
 
 describe('published original-page source index', () => {
@@ -167,34 +167,5 @@ describe('published original-page source index', () => {
     });
     expect(result.coverage.rejections['sitemap-review-disagreement']).toBe(1);
   });
-  it('does not replace conflicting reviewed pages with sitemap candidates', () => {
-    const result=buildSourcePageIndex(input({previews:{previews:{
-      '@alpha/button':{officialPage:'https://alpha.example/docs/button',imageUrl:'/Registry-Atlas/data/previews/alpha/button.jpg'},
-    }}}));
-    expect(result.pages['@alpha/button']).toBeUndefined();
-    expect(result.coverage.rejections['reviewed-conflict']).toBe(1);
-  });
-  it('includes independently interaction-verified source demos but not unverified fixtures',()=>{
-    const demo={items:[{
-      namespace:'@alpha',slug:'card',kind:'upstream-built',status:'interaction-verified',
-      sourceSha256:'a'.repeat(64),source:{docsUrl:'https://alpha.example/docs/card'},
-    },{
-      namespace:'@alpha',slug:'forms/button',kind:'source-informed-fixture',status:'interaction-verified',
-      sourceSha256:'b'.repeat(64),source:{docsUrl:'https://alpha.example/docs/other'},
-    }]};
-    const output=buildSourcePageIndex(input({demos:demo}));
-    expect(output.pages['@alpha/card']).toMatchObject({
-      url:'https://alpha.example/docs/card', level:'reviewed',
-      source:'interaction-verified-demo',
-    });
-    expect(output.pages['@alpha/forms/button'].url).toBe('https://alpha.example/docs/forms/button');
-  });
-  it('uses independently captured source pages ahead of matching sitemap entries', () => {
-    const result=buildSourcePageIndex(input({curated:{},previews:{previews:{
-      '@alpha/button':{officialPage:'https://alpha.example/docs/button',imageUrl:'/Registry-Atlas/data/previews/alpha/button.jpg'},
-    }}}));
-    expect(result.pages['@alpha/button']).toMatchObject({
-      url:'https://alpha.example/docs/button',level:'reviewed',
-    });
-  });
+
 });

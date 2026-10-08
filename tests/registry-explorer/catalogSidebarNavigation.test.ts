@@ -29,60 +29,75 @@ const facets: CatalogFacetSummary = {
   ],
   registries:[{value:'@alpha',count:150},{value:'@beta',count:25}],
   itemTypes:[],
+  access:[{value:'free',count:11},{value:'paid',count:4}],
   reviewedCount:0,
   unreviewedCount:0,
 };
 
-describe('canonical taxonomy sidebar navigation', () => {
-  it('renders the canonical hierarchy with counts and pressed state', () => {
+describe('catalog browse sidebar', () => {
+  it('uses the exemplar source → sort → categories → access row order', () => {
     const html=renderCatalogSidebarNavigation(facets, {
       canonicalIds:['application/app-shell'],
-      registry:'@beta',
+      registryNames:['@beta'],
       kind:'components',
-      canonicalSearch:'',
-      registrySearch:'',
+      sort:'registry',
+      access:['free'],
     }, taxonomy);
 
-    expect(html).toContain('aria-label="Browse canonical categories"');
-    expect(html).toContain('data-sidebar-canonical-search');
+    const sourcePosition=html.indexOf('shadcn directory');
+    const sortPosition=html.indexOf('>Sort<');
+    const categoryPosition=html.indexOf('>Categories<');
+    const accessPosition=html.indexOf('>Access<');
+
+    expect(sourcePosition).toBeGreaterThanOrEqual(0);
+    expect(sortPosition).toBeGreaterThan(sourcePosition);
+    expect(categoryPosition).toBeGreaterThan(sortPosition);
+    expect(accessPosition).toBeGreaterThan(categoryPosition);
+
+    expect(html).toContain('data-catalog-sort-value="registry"');
+    expect(html).toMatch(/data-catalog-sort-value="registry"[\s\S]*?aria-pressed="true"/);
     expect(html).toContain('data-catalog-canonical-value="application"');
-    expect(html).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*aria-pressed="true"/);
-    expect(html).toContain('>Application<');
-    expect(html).toContain('>App Shell<');
-    expect(html).toContain('>AI<');
-    expect(html).toContain('>Controls<');
-    expect(html).toContain('data-profile-registry="@beta"');
-    expect(html).toContain('aria-current="page"');
+    expect(html).toMatch(/data-catalog-canonical-value="application"[\s\S]*?aria-pressed="true"/);
+    expect(html).toContain('data-catalog-access-value="free"');
+    expect(html).toMatch(/data-catalog-access-value="free"[\s\S]*?aria-pressed="true"/);
+    expect(html).not.toContain('<select');
+    expect(html).not.toContain('type="checkbox"');
+    expect(html).not.toContain('type="radio"');
+    expect(html).not.toContain('<details');
   });
 
-  it('keeps source categories out of the global semantic rail while preserving registry navigation', () => {
+  it('keeps high-cardinality registry discovery in the single global search instead of a second selector', () => {
     const html=renderCatalogSidebarNavigation(facets, {
       canonicalIds:[],
-      registry:'@alpha',
-      kind:'registry',
-      canonicalSearch:'ai',
-      registrySearch:'beta',
+      registryNames:[],
+      kind:'components',
+      sort:'name',
+      access:[],
     }, taxonomy);
 
-    expect(html).toContain('value="ai"');
-    expect(html).toContain('value="beta"');
-    expect(html).toContain('data-catalog-canonical-value=""');
-    expect(html).toContain('data-profile-registry="@alpha"');
-    expect(html).toContain('data-profile-registry="@beta"');
-    expect(html).not.toContain('data-catalog-category-value');
+    expect(html).toContain('shadcn directory');
+    expect(html).toContain('data-catalog-sort-value="name"');
+    expect(html).not.toContain('data-catalog-registry-select');
+    expect(html).not.toContain('data-sidebar-registry-search');
+    expect(html).not.toContain('data-sidebar-search-root');
+    expect(html).not.toContain('@alpha');
+    expect(html).not.toContain('@beta');
     expect(html).not.toContain('custom&lt;script&gt;');
   });
 
-  it('keeps parent nodes selectable and exposes descendant counts from canonical facets', () => {
+  it('shows only top-level taxonomy rows while a selected child activates its parent row', () => {
     const html=renderCatalogSidebarNavigation(facets, {
-      canonicalIds:['application'],
-      registry:null,
+      canonicalIds:['application/app-shell'],
+      registryNames:[],
       kind:'components',
-      canonicalSearch:'',
-      registrySearch:'',
+      sort:'name',
+      access:[],
     }, taxonomy);
-    expect(html).toMatch(/data-catalog-canonical-value="application"[\s\S]*aria-pressed="true"/);
+
+    expect(html).toContain('data-catalog-canonical-value="application"');
+    expect(html).toMatch(/data-catalog-canonical-value="application"[\s\S]*?aria-pressed="true"/);
     expect(html).toMatch(/>Application<[\s\S]*>4</);
-    expect(html).toContain('aria-expanded="true"');
+    expect(html).not.toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(html).not.toContain('>App Shell<');
   });
 });

@@ -1,5 +1,4 @@
 import {describe,expect,it} from 'vitest';
-// @ts-expect-error Node builtin is used by the standalone scripts.
 import {DatabaseSync} from 'node:sqlite';
 // @ts-expect-error Standalone Node ESM helper.
 import {discoverRegistryIntoSqlite} from '../../scripts/discover-registry-routes-to-sqlite.mjs';

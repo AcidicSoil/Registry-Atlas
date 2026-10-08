@@ -15,7 +15,7 @@ describe('optional original source-page manifest',()=>{
   it('accepts separate exact identities and distinguishes sitemap from reviewed evidence',()=>{
     const pages=readSourcePageManifest({schema:'registry-atlas-source-page-index/v1',pages:{
       '@alpha/forms/button':{url:'https://alpha.example/docs/forms/button',level:'sitemap',source:'official-sitemap',observedAt},
-      '@alpha/button':{url:'https://alpha.example/docs/button',level:'reviewed',source:'visual-reference'},
+      '@alpha/button':{url:'https://alpha.example/docs/button',level:'reviewed',source:'reviewed-summary'},
       '@beta/button':{url:'https://beta.example/docs/button',level:'sitemap',source:'official-sitemap',observedAt},
     }},index,registries);
     expect(pages['@alpha/forms/button']).toMatchObject({level:'sitemap'});
@@ -62,8 +62,8 @@ describe('optional original source-page manifest',()=>{
     const pages=readSourcePageManifest({schema:'registry-atlas-source-page-index/v1',pages:{
       '@alpha/forms/button':{url:'https://beta.example/docs/forms/button',level:'sitemap',source:'official-sitemap'},
       '@alpha/button':{url:'https://alpha.example/r/button.json',level:'sitemap',source:'official-sitemap'},
-      '@beta/button':{url:'http://beta.example/docs/button',level:'reviewed',source:'visual-reference'},
-      '@alpha/not-indexed':{url:'https://alpha.example/docs/nonexistent',level:'reviewed',source:'visual-reference'},
+      '@beta/button':{url:'http://beta.example/docs/button',level:'reviewed',source:'reviewed-summary'},
+      '@alpha/not-indexed':{url:'https://alpha.example/docs/nonexistent',level:'reviewed',source:'reviewed-summary'},
     }},index,registries);
     expect(pages).toEqual({});
     expect(readSourcePageManifest({schema:'bad',pages:{}},index,registries)).toEqual({});

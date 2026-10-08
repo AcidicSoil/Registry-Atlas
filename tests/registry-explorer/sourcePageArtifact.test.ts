@@ -1,40 +1,57 @@
-import {describe,expect,it} from 'vitest';
-// @ts-expect-error Node builtin types are unavailable in the browser-only test config.
-import {readFileSync} from 'node:fs';
-// @ts-expect-error Node ESM scripts are tested through Vitest in Node.
-import {buildSourcePageIndex} from '../../scripts/build-source-page-index.mjs';
-// @ts-expect-error Node builtin SQLite types are not in the browser TS config.
-import {DatabaseSync} from 'node:sqlite';
-// @ts-expect-error Node ESM scripts are tested through Vitest in Node.
-import {exportPatternLinkSnapshot} from '../../scripts/verify-registry-patterns.mjs';
+import { describe, expect, it } from 'vitest';
+// @ts-ignore Standalone Node ESM scripts are tested through Vitest in Node.
+import { buildSourcePageIndex } from '../../scripts/build-source-page-index.mjs';
+// @ts-ignore Standalone Node ESM scripts are tested through Vitest in Node.
+import { exportPatternLinkSnapshot } from '../../scripts/verify-registry-patterns.mjs';
+// @ts-ignore Standalone Node ESM module intentionally has no TypeScript declaration.
+import * as atlasStorage from '../../scripts/lib/atlas-storage.mjs';
+const {
+  openAtlasCoreDatabase,
+  readAtlasState,
+  readDocument,
+} = atlasStorage;
 
-const load = (file: string) => JSON.parse(readFileSync(file,'utf8'));
+describe('database source-page index', () => {
+  it('is reproducible from current SQLite evidence without guessed URLs or preview artifacts', () => {
+    const database = openAtlasCoreDatabase(process.cwd(), { readOnly: true });
+    try {
+      const state = readAtlasState(database);
+      const patternLinks = exportPatternLinkSnapshot(database);
+      const latest = patternLinks.links.reduce(
+        (max: number, row: { checkedAt: string }) =>
+          Math.max(max, Date.parse(row.checkedAt) || 0),
+        Date.parse(patternLinks.sourceSnapshotAt),
+      );
+      const generated = buildSourcePageIndex({
+        raw: state.rawRegistries,
+        catalog: state.catalog,
+        curated: state.curated,
+        traversal: null,
+        patternLinks,
+        now: new Date(latest + 24 * 60 * 60 * 1000).toISOString(),
+      });
+      const persistedMeta = readDocument(database, 'source-page-index-meta');
 
-describe('committed source-page artifact',()=>{
-  it('is reproducible from the current source evidence without guessed URLs',()=>{
-    const db=new DatabaseSync('data/shadcn/registry-patterns.sqlite',{readOnly:true});
-    const patternLinks=exportPatternLinkSnapshot(db);
-    db.close();
-    const latest=patternLinks.links.reduce((max: number,row: {checkedAt:string})=>
-      Math.max(max,Date.parse(row.checkedAt) || 0),Date.parse(patternLinks.sourceSnapshotAt));
-    const generated=buildSourcePageIndex({
-      raw:load('data/shadcn/registries.raw.json'),
-      catalog:load('public/data/registry-catalog-items.json'),
-      curated:load('data/shadcn/registry-items.json'),
-      previews:load('public/data/component-previews.json'),
-      demos:load('src/registry-explorer/data/component-demo-manifest.json'),
-      traversal:null,patternLinks,
-      now:new Date(latest+24*60*60*1000).toISOString(),
-    });
-    const published=load('public/data/component-page-links.json');
-    expect(published).toEqual(generated);
-    expect(generated.coverage.published).toBe(
-      generated.coverage.reviewed+generated.coverage.sitemap+generated.coverage.pattern);
-    expect(generated.coverage.distinctIndexed).toBe(
-      generated.coverage.published+generated.coverage.missing);
-    expect(published.pages['@8bitcn/input-otp']).toMatchObject({
-      url:'https://www.8bitcn.com/docs/components/input-otp',
-      level:'reviewed',
-    });
-  });
+      expect(state.sourcePages).toEqual(generated.pages);
+      expect(persistedMeta).toMatchObject({
+        schema: generated.schema,
+        sourceSnapshotAt: generated.sourceSnapshotAt,
+        coverage: generated.coverage,
+      });
+      expect(generated.coverage.published).toBe(
+        generated.coverage.reviewed
+          + generated.coverage.sitemap
+          + generated.coverage.pattern,
+      );
+      expect(generated.coverage.distinctIndexed).toBe(
+        generated.coverage.published + generated.coverage.missing,
+      );
+      expect(generated.pages['@8bitcn/input-otp']).toMatchObject({
+        url: 'https://www.8bitcn.com/docs/components/input-otp',
+        level: 'reviewed',
+      });
+    } finally {
+      database.close();
+    }
+  }, 30_000);
 });

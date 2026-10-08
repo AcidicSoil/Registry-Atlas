@@ -105,7 +105,7 @@ describe("registry asset-type filters", () => {
     expect(buildRegistryDirectory([registry("@unknown")], items, {assetKinds:["component"]}).total).toBe(0);
   });
 
-  it("matches any selected asset type and supports reverse alphabetical order", () => {
+  it("matches any selected asset type and uses the approved alphabetical sort", () => {
     const regs = [registry("@components"), registry("@templates"), registry("@themes"), registry("@mixed")];
     const data = index({
       "@components": [{ name: "button", type: "registry:ui" }],
@@ -113,8 +113,8 @@ describe("registry asset-type filters", () => {
       "@themes": [{ name: "tint", type: "registry:theme" }],
       "@mixed": [{ name: "button", type: "registry:ui" }, { name: "landing", type: "registry:page" }],
     });
-    const filtered = buildRegistryDirectory(regs, data, { assetKinds: ["page", "theme"], sort: "name-desc" });
-    expect(filtered.entries.map(entry => entry.registry.name)).toEqual(["@themes", "@templates", "@mixed"]);
+    const filtered = buildRegistryDirectory(regs, data, { assetKinds: ["page", "theme"], sort: "name" });
+    expect(filtered.entries.map(entry => entry.registry.name)).toEqual(["@mixed", "@templates", "@themes"]);
   });
 });
 

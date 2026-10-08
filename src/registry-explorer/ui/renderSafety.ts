@@ -41,6 +41,7 @@ export function renderExternalLink(
 export function renderRegistryHomepageLink(
   homepage: string,
   className = 'link-button registry-homepage-link',
+  label = 'Visit registry homepage',
 ): string {
   const url = toSafeExternalUrl(homepage);
   if (!url || url.username || url.password) return '';
@@ -48,7 +49,7 @@ export function renderRegistryHomepageLink(
   if (!host || host === 'localhost' || host.endsWith('.localhost')
     || host.endsWith('.local') || host.endsWith('.internal')
     || host.includes(':') || /^\d+(?:\.\d+){3}$/.test(host)) return '';
-  return renderExternalLink(url.href, 'Visit registry homepage', className);
+  return renderExternalLink(url.href, label, className);
 }
 
 export function renderSafeExternalImage(

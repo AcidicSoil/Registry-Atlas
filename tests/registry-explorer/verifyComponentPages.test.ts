@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-// @ts-expect-error Node builtin type declarations are not present in browser tsconfig.
 import { DatabaseSync } from 'node:sqlite';
 // @ts-expect-error Node ESM file exercised under Vitest.
 import { importRegistryPatterns, verifyRegistryPatterns } from '../../scripts/verify-registry-patterns.mjs';

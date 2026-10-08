@@ -5,6 +5,8 @@ import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
+import { putDocument, readAtlasState } from './lib/atlas-storage.mjs';
+import { ensureAtlasCoreSchema } from './lib/atlas-database.mjs';
 
 const PATTERN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const identity = text => String(text).toLowerCase().replace(/[-_/]+/g,' ')
@@ -39,34 +41,7 @@ export function resolvePattern(pattern,slug,homepage) {
   return safePage(pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/,encoded),homepage);
 }
 export function initializePatternDatabase(db) {
-  db.exec(`
-    PRAGMA foreign_keys=ON;
-    CREATE TABLE IF NOT EXISTS sources(
-      namespace TEXT PRIMARY KEY, homepage TEXT NOT NULL, fingerprint TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS route_patterns(
-      id INTEGER PRIMARY KEY,namespace TEXT NOT NULL REFERENCES sources(namespace),
-      template TEXT NOT NULL,prefix TEXT NOT NULL,source TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'unverified', checked_at TEXT, failure TEXT,
-      UNIQUE(namespace,template,prefix));
-    CREATE TABLE IF NOT EXISTS examples(
-      pattern_id INTEGER NOT NULL REFERENCES route_patterns(id) ON DELETE CASCADE,
-      slug TEXT NOT NULL,url TEXT NOT NULL,PRIMARY KEY(pattern_id,slug,url));
-    CREATE TABLE IF NOT EXISTS sitemap_links(
-      namespace TEXT NOT NULL REFERENCES sources(namespace),
-      slug TEXT NOT NULL, url TEXT NOT NULL, observed_at TEXT NOT NULL,
-      PRIMARY KEY(namespace,slug,url));
-    CREATE TABLE IF NOT EXISTS metadata(key TEXT PRIMARY KEY, value TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS pattern_checks(
-      id INTEGER PRIMARY KEY,pattern_id INTEGER NOT NULL REFERENCES route_patterns(id) ON DELETE CASCADE,
-      slug TEXT NOT NULL,url TEXT NOT NULL,status TEXT NOT NULL,reason TEXT,checked_at TEXT NOT NULL);
-    CREATE TABLE IF NOT EXISTS item_routes(
-      namespace TEXT NOT NULL REFERENCES sources(namespace),slug TEXT NOT NULL,
-      source_url TEXT, status TEXT NOT NULL DEFAULT 'unverified',
-      pattern_id INTEGER REFERENCES route_patterns(id) ON DELETE SET NULL,
-      PRIMARY KEY(namespace,slug));
-    CREATE INDEX IF NOT EXISTS ix_patterns ON route_patterns(namespace,status);
-    CREATE INDEX IF NOT EXISTS ix_items ON item_routes(status);
-  `);
+  ensureAtlasCoreSchema(db);
 }
 export function importRegistryPatterns(db,{inventory,catalog,curated={},raw,now=new Date().toISOString()}) {
   if(inventory?.schema!=='registry-atlas-traversal-inventory/v1' ||
@@ -486,12 +461,13 @@ export function managedBrowserPatternProof({profile,server,tab,exec=execFileSync
 }
 
 async function main(args) {
-  if(args.includes('--help')){console.log('Usage: --db FILE [--verify-only | --report-only | --import-only --inventory FILE --catalog FILE --raw FILE] [--registry NAME] [--samples 2] [--max-registries 5] [--passes 1] [--delay-ms 1200] [--repair-failed --profile NAME --browser-server URL --browser-tab ID --max-attempts 3] [--report FILE] [--repair-report FILE] [--links FILE]');return;}
+  if(args.includes('--help')){console.log('Usage: [--db FILE] [--verify-only | --report-only | --import-only --inventory FILE] [--registry NAME] [--samples 2] [--max-registries 5] [--passes 1] [--delay-ms 1200] [--repair-failed --profile NAME --browser-server URL --browser-tab ID --max-attempts 3] [--report FILE] [--repair-report FILE] [--links FILE]');return;}
   const get=flag=>args.includes(flag)?args[args.indexOf(flag)+1]:null;
   const verifyOnly=args.includes('--verify-only');
   const reportOnly=args.includes('--report-only');
-  if(!get('--db') || (!verifyOnly && !reportOnly && ['--inventory','--catalog','--raw'].some(flag=>!get(flag))) ||
-    ((verifyOnly||reportOnly) && args.includes('--import-only')))throw Error('Missing or conflicting arguments');
+  if((!verifyOnly && !reportOnly && !get('--inventory'))
+    || ((verifyOnly||reportOnly) && args.includes('--import-only')))
+    throw Error('Missing or conflicting arguments');
   const max=Number(get('--max-registries')??5),samples=Number(get('--samples')??2);
   const passes=Number(get('--passes')??1);
   const delayMs=Number(get('--delay-ms')??1200);
@@ -503,18 +479,21 @@ async function main(args) {
     !Number.isSafeInteger(passes)||passes<1||passes>408 ||
     !Number.isSafeInteger(delayMs)||delayMs<0||delayMs>60000)
     throw Error('Invalid batch, pass, or delay limit');
-  await mkdir(dirname(resolve(get('--db'))),{recursive:true});
-  const inputs=(verifyOnly||reportOnly)?null:await Promise.all([
-    ...['--inventory','--catalog','--raw'].map(flag=>readFile(get(flag),'utf8').then(JSON.parse)),
-    readFile(get('--curated')??'data/shadcn/registry-items.json','utf8').then(JSON.parse)]);
-  const db=new DatabaseSync(resolve(get('--db')));
+  const dbPath=resolve(get('--db')??'data/registry-atlas.sqlite');
+  await mkdir(dirname(dbPath),{recursive:true});
+  const db=new DatabaseSync(dbPath);
   db.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');
   try {
+    const state=readAtlasState(db);
+    const inventory=get('--inventory')
+      ?JSON.parse(await readFile(get('--inventory'),'utf8')):null;
     if(verifyOnly && !db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='sources'").get())
       throw Error('Pattern database not initialized; first run --import-only with the source inventory');
     initializePatternDatabase(db);
+    const inputs=inventory
+      ?{inventory,catalog:state.catalog,raw:state.rawRegistries,curated:state.curated}:null;
     const imported=inputs
-      ? importRegistryPatterns(db,{inventory:inputs[0],catalog:inputs[1],raw:inputs[2],curated:inputs[3]})
+      ?importRegistryPatterns(db,inputs)
       : {registries:db.prepare('SELECT COUNT(*) AS n FROM sources').get().n,
          patterns:db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n,
          examples:db.prepare('SELECT COUNT(*) AS n FROM examples').get().n};
@@ -534,11 +513,16 @@ async function main(args) {
         if(delayMs)await new Promise(done=>setTimeout(done,delayMs));
       }
     }
-    const coverage=exportPatternCoverage(db,inputs?.[2]??[]);
+    const coverage=exportPatternCoverage(db,state.rawRegistries);
+    const repairQueue=exportPatternRepairQueue(db,{maxAttempts});
+    const links=exportPatternLinkSnapshot(db);
+    putDocument(db,'registry-pattern-coverage','verification-report',coverage);
+    putDocument(db,'registry-pattern-repair-queue','verification-report',repairQueue);
+    putDocument(db,'registry-pattern-links','verification-report',links);
     if(get('--report'))await writeFile(get('--report'),JSON.stringify(coverage,null,2)+'\n');
     if(get('--repair-report'))await writeFile(get('--repair-report'),
-      JSON.stringify(exportPatternRepairQueue(db,{maxAttempts}),null,2)+'\n');
-    if(get('--links'))await writeFile(get('--links'),JSON.stringify(exportPatternLinkSnapshot(db))+'\n');
+      JSON.stringify(repairQueue,null,2)+'\n');
+    if(get('--links'))await writeFile(get('--links'),JSON.stringify(links)+'\n');
     console.log(JSON.stringify({imported,checked,coverage:{
       registries:coverage.registries,unverifiedRegistries:coverage.unverifiedRegistries.length,
       totals:coverage.totals}},null,2));

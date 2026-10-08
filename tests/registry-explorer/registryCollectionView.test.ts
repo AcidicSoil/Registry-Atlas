@@ -26,7 +26,7 @@ describe("renderRegistryCollection", () => {
     expect(header.innerHTML).not.toContain('>Visit registry homepage</a>');
   });
 
-  it("keeps a promoted block on the legacy component detail route without requiring source categories", () => {
+  it("routes a promoted block to its first-class block detail route", () => {
     const header = root();
     const body = root();
     const promoted = result();
@@ -59,7 +59,7 @@ describe("renderRegistryCollection", () => {
     });
 
     expect(body.innerHTML).toContain('data-catalog-canonical-value="application/app-shell"');
-    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/components/app-shell"');
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/blocks/app-shell"');
     expect(body.innerHTML).not.toContain('data-catalog-category-value');
   });
 });
@@ -98,7 +98,6 @@ function result(): CatalogQueryResult {
       reviewed: false,
       item: { name: "tree/menu-navigation-tree", type: "registry:component", categories: ["navigation"] },
       routePath: "/Registry-Atlas/@registrydirectory/components/tree/menu-navigation-tree",
-      previewUrl: "https://registry.directory/previews/navigation-tree.png",
     }],
     total: 13544,
     page: 1,

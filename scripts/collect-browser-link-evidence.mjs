@@ -1,7 +1,8 @@
-import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
+import { writeFile, mkdir, stat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { resolve, join } from 'node:path';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 const SCHEMA = 'registry-atlas-component-link-evidence/v1';
 
@@ -234,11 +235,12 @@ async function main(argv) {
   const registryName = opt('--registry');
   const slugs = [...new Set(opt('--slugs').split(',').map(x => x.trim()).filter(Boolean))];
   if (slugs.length < 1 || slugs.length > 200) throw new Error('Pass 1 to 200 indexed slugs');
-  const [registries, catalog, curated] = await Promise.all([
-    readFile('data/shadcn/registries.raw.json', 'utf8').then(JSON.parse),
-    readFile('public/data/registry-catalog-items.json', 'utf8').then(JSON.parse),
-    readFile('data/shadcn/registry-items.json', 'utf8').then(JSON.parse),
-  ]);
+  const database = openAtlasCoreDatabase(process.cwd(), { readOnly: true });
+  const state = readAtlasState(database);
+  database.close();
+  const registries = state.rawRegistries;
+  const catalog = state.catalog;
+  const curated = state.curated;
   const registry = registries.find(r => r.name === registryName);
   if (!registry) throw new Error('Unknown official registry: ' + registryName);
   const indexed = new Set((catalog.registries?.[registryName] ?? []).map(x => x.name));

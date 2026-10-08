@@ -1,15 +1,32 @@
-# Registry Atlas — catalog classification and filtering
+# Registry Atlas — source catalog structure survey
 
-**Date:** 2026-10-05  
-**Status:** Approved direction; implementation authorized in this conversation.  
-**Repository:** `registry-atlas`  
+**Date:** 2026-10-05
+**Status:** Historical/supplemental evidence design. Superseded as the primary classification model by `2026-10-06-canonical-catalog-taxonomy-design.md`.
+**Repository:** `registry-atlas`
 **Parent contracts:** `2026-10-01-scalable-registry-discovery.md`, `2026-10-04-component-catalog-and-deep-links.md`, and `2026-10-04-registry-pattern-verification.md`.
+
+## Migration status
+
+This document preserves the design and implementation contract for discovering **source-defined** catalog structure. It is no longer the primary Registry Atlas classification design.
+
+The canonical product taxonomy is defined by:
+
+`docs/superpowers/specs/2026-10-06-canonical-catalog-taxonomy-design.md`
+
+Rules after that migration:
+
+- survey `groups[]` remain exact source labels and provenance evidence only;
+- survey `groups[]` MUST NOT be promoted directly into global canonical categories;
+- reviewed source groups may be converted explicitly into `sourceHints.verifiedGroups` for the canonical classifier;
+- source groups may remain visible as registry-local metadata or secondary filters;
+- global semantic browse uses Registry Atlas-owned canonical IDs, not recovered website taxonomies;
+- browser/source discovery failure does not block canonical classification from local catalog metadata.
 
 ## Purpose
 
-Registry Atlas needs to preserve how each source registry organizes its catalog so users can later filter items by source-defined groups such as `Free`, `Agents`, `Hero`, `Pricing`, or `FAQ`, while also distinguishing components, blocks, pages, templates, themes, icons, and other catalog asset kinds.
+Registry Atlas still needs to preserve how each source registry organizes its catalog so maintainers can use source-defined groups such as `Free`, `Agents`, `Hero`, `Pricing`, or `FAQ` as evidence and registry-local provenance while also distinguishing components, blocks, pages, templates, themes, icons, and other catalog asset kinds.
 
-The feature is delivered in stages. Stage 1 is a **read-only shadow survey** that must not mutate `data/shadcn`, `public/data`, the route-pattern SQLite database, or frontend runtime data. After full-run quality review, later stages promote approved classifications into generated runtime catalog data and expose them through the query layer and UI filters defined below.
+The survey remains a **read-only shadow evidence pass**. It must not mutate `data/shadcn`, `public/data`, the route-pattern SQLite database, or frontend runtime data. Any later use of survey evidence must flow through the reviewed canonical-classification pipeline rather than direct `groups[]` promotion.
 
 ## Core item model
 

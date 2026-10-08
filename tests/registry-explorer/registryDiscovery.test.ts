@@ -455,7 +455,7 @@ describe('evidence-based registry discovery', () => {
       });
       expect(changed.catalogFingerprint).not.toBe(first.catalogFingerprint);
       expect(changed.records.some((x: any) => x.slug === 'new-component')).toBe(true);
-      const lines = (await readFile(path, 'utf8')).trim().split('\n').map(JSON.parse);
+      const lines = (await readFile(path, 'utf8')).trim().split('\n').map(line => JSON.parse(line));
       expect(lines.filter((x: any) => x.token === 'registry:@sample')).toHaveLength(2);
       expect(catalogFingerprint(registry, ['card', 'new-component']))
         .toBe(changed.catalogFingerprint);

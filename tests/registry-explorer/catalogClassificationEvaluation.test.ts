@@ -1,8 +1,7 @@
-// @ts-ignore Node typings are intentionally not a project test dependency.
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
 import { evaluateCatalogClassifications, validateGoldSet, validatePromotionReview } from '../../scripts/evaluate-catalog-classifications.mjs';
+import { readRepositoryDocument } from './testAtlasDatabase';
 
 function item(namespace: string, name: string, kind: string, primary: string | null, path: string[], systemOne?: any) {
   return {
@@ -23,7 +22,7 @@ const gold = validateGoldSet({
 
 describe('canonical classification gold set', () => {
   it('contains reviewed cross-registry examples for the approved priority concepts', () => {
-    const reviewed = validateGoldSet(JSON.parse(readFileSync('data/catalog-taxonomy/gold.json', 'utf8')));
+    const reviewed = validateGoldSet(readRepositoryDocument('catalog-gold-set'));
     const keys = new Set(reviewed.records.map((row: any) => `${row.registry}/${row.item.name}:${row.expected.primary}`));
     expect(keys.has('@7ovr/app-shell-1:application/app-shell')).toBe(true);
     expect(keys.has('@efferd/app-shell-1:application/app-shell')).toBe(true);

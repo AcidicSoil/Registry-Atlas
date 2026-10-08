@@ -28,7 +28,6 @@ export interface RegistryItemSummary {
   installCommand?: string;
   rawItemUrl?: string;
   docsUrl?: string;
-  previewUrl?: string;
   evidenceUrl?: string;
   evidenceNote?: string;
   dependencies?: readonly string[];
@@ -80,6 +79,7 @@ export interface RegistryCatalogAccess {
 export interface RegistryCatalogItem {
   name: string;
   type: string;
+  rawItemUrl?: string;
   title?: string;
   description?: string;
   author?: string;
@@ -101,30 +101,35 @@ export interface RegistryCatalogIndexMeta {
   item_count: number;
 }
 
-export interface RegistryVisualReference {
-  imageUrl: string;
-  officialPage: string;
-}
-
 /** A sitemap listing is discoverable but not independently page-verified. */
 export interface RegistrySourcePage {
   url: string;
   level: 'reviewed' | 'sitemap' | 'pattern';
-  source: 'reviewed-summary' | 'visual-reference' | 'interaction-verified-demo' | 'component-page-verified' | 'official-sitemap' | 'verified-route-pattern';
+  source: 'reviewed-summary' | 'component-page-verified' | 'official-sitemap' | 'verified-route-pattern';
   observedAt?: string;
 }
 
 export interface RegistryCatalogIndex {
   meta: RegistryCatalogIndexMeta;
   registries: Readonly<Record<string, readonly RegistryCatalogItem[]>>;
-  visualReferences?: Readonly<Record<string, RegistryVisualReference>>;
   sourcePages?: Readonly<Record<string, RegistrySourcePage>>;
+  itemRoutes?: Readonly<Record<string, {
+    url: string;
+    status: string;
+  }>>;
+  routePatterns?: Readonly<Record<string, readonly {
+    urlTemplate: string;
+    slugPrefix: string;
+    source: string;
+    checkedAt?: string;
+  }[]>>;
 }
 
 export interface Registry {
   name: string;
   url: string;
   description: string;
+  iconUrl?: string;
   framework?: string;
   license?: string;
   atlas?: {

@@ -26,32 +26,34 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 - **Authors and unavailable routes**: Authors lists exact attribution names published in source item metadata, not inferred creator accounts. Featured and Newest remain retired because Atlas does not invent popularity or publication-time rankings. The theme editor explains why editing is not yet supported.
 - **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
-## Original-page pattern database
+## Canonical databases and original-page evidence
 
-The source registry URL-pattern store is the versioned SQLite database at `data/shadcn/registry-patterns.sqlite`, using Node 24's built-in SQLite API. The former traversal-pattern JSON and intermediate pattern-link JSON have been removed after migration. The frontend still loads `public/data/component-page-links.json`, which is a **generated static projection**, not the source of truth.
+Registry Atlas stores canonical application state in two versioned SQLite databases:
 
-Run `mise run source-pages` to regenerate the public link bundle from SQLite. The unified on-demand report and batch-verification commands are below.
+- `data/registry-atlas.sqlite` — official registry directory data, runtime registry records, compact catalog items, taxonomy documents, reviewed classifications, source-page evidence, route-pattern verification, and operational reports.
+- `data/registry-details.sqlite` — normalized exact-item detail payloads used for lazy detail loading.
 
-The **per-component URL verifier** checks those generated URLs individually and persists verified, missing, transient and unresolved results in the same SQLite database. It accepts published component titles as well as slugs, and does not call a generic HTTP 200 response proof of component identity.
+The browser does not load canonical JSON projections. `predev` and `prebuild` generate compressed runtime copies at `public/data/registry-atlas.sqlite.gz` and `public/data/registry-details.sqlite.gz`.
+
+Run `mise run source-pages` to reconcile exact source-page links from current verified route-pattern and sitemap evidence into `data/registry-atlas.sqlite`. The per-component verifier persists verified, missing, transient, and unresolved outcomes in the same database. A generic HTTP 200 response is never sufficient proof of component identity.
 
 ```bash
-# Safe bounded execution (20 URLs; three per registry), then publish source links:
+# Safe bounded execution (20 URLs; three per registry), then rebuild source-page rows:
 mise run verify:component-pages
 
 # All eligible URLs, rate-limited and restartable; this can run for many hours:
 node scripts/verify-component-pages.mjs \\
-  --db data/shadcn/registry-patterns.sqlite --all --delay-ms 1200 \\
+  --all --delay-ms 1200 \\
   --report .instance/component-verification-queue.json
 mise run source-pages
 
-# Read one registry-grouped report with every unresolved slug, its candidate
-# URL when present, observed examples, and the route-pattern failure:
+# Export one registry-grouped unresolved queue without creating another data store:
 node scripts/verify-component-pages.mjs \\
-  --db data/shadcn/registry-patterns.sqlite --report-only \\
+  --report-only \\
   --report .instance/component-verification-queue.json
 ```
 
-The SQLite snapshot is the authority. Running `mise run source-pages` also reconciles current official registry and component identities into SQLite before publishing links, without requiring the retired traversal JSON. The JSON report under `.instance/` is an on-demand handoff, not a second store. For bounded pattern repair and optional browser-assisted verification, see [registry-pattern verification](docs/superpowers/specs/2026-10-04-registry-pattern-verification.md). A verified route pattern does **not** establish that every individual destination has been loaded.
+The SQLite databases are authoritative. JSON files under `.instance/` are optional operator reports only. For bounded pattern repair and optional browser-assisted verification, see [registry-pattern verification](docs/superpowers/specs/2026-10-04-registry-pattern-verification.md). A verified route pattern does **not** establish that every individual destination has been loaded.
 
 ## Getting Started
 
@@ -122,7 +124,7 @@ It exercises the canonical route family at desktop and 390px mobile widths and c
 
 ### Refreshing Registry Data
 
-Registry Atlas mirrors the official shadcn directory and its reachable registry catalogs into generated local artifacts. Refresh them explicitly when you want to review upstream changes:
+Registry Atlas mirrors the official shadcn directory and its reachable registry catalogs into the canonical SQLite databases. Refresh them explicitly when you want to review upstream changes:
 
 ```bash
 mise run import:catalog
@@ -131,19 +133,18 @@ mise run validate:data
 mise run verify
 ```
 
-`mise run import:catalog` refreshes the curated Atlas item-summary enrichment sample in `data/shadcn/registry-items.json`.
+`mise run import:catalog` refreshes curated Atlas item-summary enrichment in `data/registry-atlas.sqlite` and records its import report as an `atlas_documents` row.
 
 `mise run sync:registries` refreshes:
 
-- the official directory mirror;
-- catalog coverage evidence;
-- the compact real-item index in `public/data/registry-catalog-items.json`;
-- safe same-origin detail bundles in `public/data/registry-item-details/`;
-- the runtime registry mirror in `public/data/registries.json`.
+- the official directory mirror and runtime registry records in `data/registry-atlas.sqlite`;
+- catalog coverage evidence and compact real-item rows in `data/registry-atlas.sqlite`;
+- reviewed canonical classification projection and source metadata in `data/registry-atlas.sqlite`;
+- normalized exact-item details in `data/registry-details.sqlite`.
 
-The active runtime intentionally does **not** use the retired inferred component taxonomy. Asset classification is based on explicit catalog item types/categories, and missing signals remain unavailable rather than being guessed.
+`pnpm prepare:runtime-db` then builds the two compressed browser runtime databases under `public/data/`. The active runtime intentionally does **not** use the retired inferred component taxonomy. Asset classification is based on reviewed canonical data and explicit source facts; missing signals remain unavailable rather than being guessed.
 
-Review `data/shadcn/registry-catalog-import-report.json`, `data/shadcn/sync-report.json`, `data/shadcn/registry-catalog-evidence-report.json`, `public/data/registries.json`, `public/data/registry-catalog-items.json`, and the generated detail-bundle directory before accepting regenerated data. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
+Use `mise run validate:data`, `mise run check:product-contract`, and the database-backed report documents before accepting regenerated state. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
 
 ### Building for Production
 
@@ -156,7 +157,7 @@ mise run preview
 
 ## Architecture
 
-Registry Atlas uses modular vanilla TypeScript with generated JSON artifacts and no heavy frontend framework.
+Registry Atlas uses modular vanilla TypeScript with SQLite-backed runtime data and no heavy frontend framework.
 
 The canonical browser surface is:
 
@@ -198,7 +199,7 @@ src/registry-explorer/
 - **Exact catalog identity**: every browse result maps to a real upstream `namespace + item name`.
 - **Canonical routes**: landing, components, collections, registries, typed assets, exact details, and Compare are represented by one route model rather than catch-all fallback behavior.
 - **Evidence-backed classification**: Components/Templates/Themes/Icons are derived only from explicit item type/category facts.
-- **Same-origin detail bundles**: safe normalized item metadata is generated during sync so detail correctness does not depend on third-party browser CORS.
+- **Same-origin detail database**: safe normalized item metadata is generated during sync and loaded lazily from the compressed runtime detail database, so detail correctness does not depend on third-party browser CORS.
 - **Explicit coverage state**: registries distinguish current, stale, empty, and unavailable catalogs.
 - **No inferred inventory**: the retired component taxonomy/discovery/matrix stack is not part of the active runtime contract.
 
@@ -206,11 +207,11 @@ src/registry-explorer/
 
 ### Maintaining Registry Data
 
-The official shadcn directory is the source for registry membership. Use the generated mirror workflow instead of manually editing runtime artifacts:
+The official shadcn directory is the source for registry membership. Use the database workflow instead of manually editing runtime projections:
 
 1. Run `mise run import:catalog` to refresh curated Atlas item-summary enrichment.
-2. Run `mise run sync:registries` to refresh directory/catalog evidence, compact items, detail bundles, and the runtime mirror.
-3. Review the generated reports and artifacts.
+2. Run `mise run sync:registries` to refresh directory/catalog evidence, compact items, exact-item details, and the runtime registry records.
+3. Run `pnpm prepare:runtime-db` to regenerate the compressed browser databases.
 4. Run `mise run validate:data`.
 5. Run `mise run verify`.
 6. Run the managed browser acceptance matrix before release/deployment changes.

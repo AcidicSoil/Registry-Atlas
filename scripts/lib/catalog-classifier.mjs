@@ -36,6 +36,19 @@ function pathFor(recordsById, id) {
   return path;
 }
 
+export function findDeterministicKindClassification(state, taxonomy) {
+  const records = flattenCatalogTaxonomy(taxonomy);
+  const recordsById = new Map(records.map(record => [record.id, record]));
+  if (state?.item?.kind !== 'icon' || !recordsById.has('foundation/iconography')) return null;
+  return {
+    taxonomyVersion: taxonomy.version,
+    primary: 'foundation/iconography',
+    path: pathFor(recordsById, 'foundation/iconography'),
+    method: 'deterministic-kind',
+    inputFingerprint: fingerprintState(state),
+  };
+}
+
 export function findDeterministicAliasClassification(state, taxonomy) {
   const records = flattenCatalogTaxonomy(taxonomy);
   const recordsById = new Map(records.map(record => [record.id, record]));
@@ -127,8 +140,10 @@ export async function classifyCatalogItem({
     throw new Error('Catalog classification beamWidth must be an integer from 1 to 8');
   }
 
-  const deterministic = findDeterministicAliasClassification(state, validated);
-  if (deterministic) return deterministic;
+  const deterministicKind = findDeterministicKindClassification(state, validated);
+  if (deterministicKind) return deterministicKind;
+  const deterministicAlias = findDeterministicAliasClassification(state, validated);
+  if (deterministicAlias) return deterministicAlias;
 
   const records = flattenCatalogTaxonomy(validated);
   const byId = new Map(records.map(record => [record.id, record]));

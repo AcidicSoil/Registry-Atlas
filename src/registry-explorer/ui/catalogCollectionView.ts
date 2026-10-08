@@ -6,8 +6,9 @@ export interface CatalogCollectionViewOptions {
   eyebrow: string;
   title: string;
   description: string;
-  routeKind?: 'component' | 'template' | 'theme';
+  routeKind?: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon';
   controls?: string;
+  layout?: 'grid' | 'list';
   emptyTitle?: string;
   emptyBody?: string;
 }
@@ -43,7 +44,7 @@ export function renderCatalogCollection(
   bodyRoot.innerHTML = `
     ${options.controls ?? ""}
     <div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>
-    <div class="catalog-component-grid catalog-collection-grid-${options.routeKind ?? "component"}">
+    <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-${options.routeKind ?? "component"}">
       ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
     </div>
     ${result.pageCount > 1 ? `

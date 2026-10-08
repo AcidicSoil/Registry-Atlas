@@ -6,6 +6,13 @@ import {
   serializeCatalogBrowseQuery,
   type CatalogRoute,
 } from "../../src/registry-explorer/core/catalogRoutes";
+import {
+  configureDefaultCatalogTaxonomy,
+  parseCatalogTaxonomy,
+} from "../../src/registry-explorer/core/catalogTaxonomy";
+import { readRepositoryDocument } from "./testAtlasDatabase";
+
+configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy")));
 
 const BASE = "/Registry-Atlas/";
 
@@ -109,10 +116,10 @@ describe("corrective route parity", () => {
     }
   });
 
-  it("round-trips multi-select registry and category chips with practical sorts", () => {
-    const state = parseCatalogBrowseQuery(new URLSearchParams("registry=%40alpha&registry=%40beta&category=forms&category=ai&sort=name-desc"));
-    expect(state).toMatchObject({ registryNames: ["@alpha", "@beta"], categories: ["forms", "ai"], sort: "name-desc" });
-    expect(serializeCatalogBrowseQuery(state).toString()).toBe("sort=name-desc&registry=%40alpha&registry=%40beta&category=forms&category=ai");
+  it("preserves legacy multi-value browse URLs while using only approved sorts", () => {
+    const state = parseCatalogBrowseQuery(new URLSearchParams("registry=%40alpha&registry=%40beta&category=forms&category=ai&sort=registry"));
+    expect(state).toMatchObject({ registryNames: ["@alpha", "@beta"], categories: ["forms", "ai"], sort: "registry" });
+    expect(serializeCatalogBrowseQuery(state).toString()).toBe("sort=registry&registry=%40alpha&registry=%40beta&category=forms&category=ai");
   });
 
   it("round-trips typed asset detail routes", () => {

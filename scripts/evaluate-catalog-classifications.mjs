@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 import { createHash } from 'node:crypto';
-import { readFile, readdir, stat, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import {
+  openAtlasCoreDatabase,
+  putDocument,
+  readClassificationRun,
+  readClassificationRunItems,
+  readDocument,
+} from './lib/atlas-storage.mjs';
 
 const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
 const FINGERPRINT = /^sha256:[a-f0-9]{64}$/;
@@ -222,44 +227,55 @@ export function validatePromotionReview(value) {
   return value;
 }
 
-async function loadItems(path) {
-  const info = await stat(path);
-  if (info.isDirectory()) {
-    const files = (await readdir(path)).filter(name => name.endsWith('.json') && !name.startsWith('_')).sort();
-    const items = [];
-    for (const file of files) {
-      const parsed = JSON.parse(await readFile(resolve(path, file), 'utf8'));
-      if (Array.isArray(parsed.items)) items.push(...parsed.items);
-    }
-    return items;
-  }
-  const parsed = JSON.parse(await readFile(path, 'utf8'));
-  if (Array.isArray(parsed)) return parsed;
-  if (Array.isArray(parsed.items)) return parsed.items;
-  throw new Error(`Classification input ${path} does not contain items`);
-}
-
-function parseArgs(argv) {
-  const output = { gold: 'data/catalog-taxonomy/gold.json', beam: null, greedy: null, output: null };
+export function parseEvaluationArgs(argv) {
+  const output = {
+    beamRun: null,
+    greedyRun: null,
+    document: 'catalog-classification-evaluation',
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
-    if (!['--gold', '--beam', '--greedy', '--output'].includes(flag)) throw new Error(`Unknown argument: ${flag}`);
+    if (!['--beam-run', '--greedy-run', '--document'].includes(flag)) {
+      throw new Error(`Unknown argument: ${flag}`);
+    }
     const value = argv[++index];
     if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
-    output[flag.slice(2)] = value;
+    if (flag === '--beam-run') output.beamRun = value;
+    else if (flag === '--greedy-run') output.greedyRun = value;
+    else output.document = value;
   }
-  if (!output.beam) throw new Error('Missing required --beam');
+  if (!output.beamRun) throw new Error('Missing required --beam-run');
+  if (!/^[a-z0-9][a-z0-9._:-]{0,119}$/i.test(output.document)) {
+    throw new Error('Evaluation document name is invalid');
+  }
   return output;
 }
 
 export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
-  const options = parseArgs(argv);
-  const gold = JSON.parse(await readFile(resolve(cwd, options.gold), 'utf8'));
-  const beamItems = await loadItems(resolve(cwd, options.beam));
-  const greedyItems = options.greedy ? await loadItems(resolve(cwd, options.greedy)) : null;
-  const report = evaluateCatalogClassifications({ gold, beamItems, greedyItems });
-  if (options.output) await writeFile(resolve(cwd, options.output), JSON.stringify(report, null, 2) + '\n');
-  return report;
+  const options = parseEvaluationArgs(argv);
+  const database = openAtlasCoreDatabase(cwd);
+  try {
+    const gold = readDocument(database, 'catalog-gold-set');
+    if (!gold) throw new Error('Catalog gold set is missing from the Atlas database');
+    const beamRun = readClassificationRun(database, options.beamRun);
+    if (!beamRun) throw new Error(`Unknown beam classification run: ${options.beamRun}`);
+    const beamItems = readClassificationRunItems(database, options.beamRun);
+    const greedyItems = options.greedyRun
+      ? readClassificationRunItems(database, options.greedyRun)
+      : null;
+    if (options.greedyRun && !readClassificationRun(database, options.greedyRun)) {
+      throw new Error(`Unknown greedy classification run: ${options.greedyRun}`);
+    }
+    const report = {
+      ...evaluateCatalogClassifications({ gold, beamItems, greedyItems }),
+      beamRunId: options.beamRun,
+      ...(options.greedyRun ? { greedyRunId: options.greedyRun } : {}),
+    };
+    putDocument(database, options.document, 'taxonomy-evaluation', report);
+    return report;
+  } finally {
+    database.close();
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

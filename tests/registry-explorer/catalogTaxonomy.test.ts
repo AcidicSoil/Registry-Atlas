@@ -1,8 +1,7 @@
-// @ts-ignore Node typings are intentionally not a project test dependency.
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM module.
 import { flattenCatalogTaxonomy, taxonomyDescendantIds, taxonomyNodeMap, validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs';
+import { readRepositoryDocument } from './testAtlasDatabase';
 
 function leaf(id: string, aliases: string[] = []) {
   return {
@@ -22,7 +21,7 @@ function taxonomyWithRoots(roots: any[]) {
 
 describe('canonical catalog taxonomy', () => {
   it('validates and indexes the approved v1 taxonomy', () => {
-    const raw = JSON.parse(readFileSync('data/catalog-taxonomy/v1.json', 'utf8'));
+    const raw = readRepositoryDocument('catalog-taxonomy');
     const taxonomy = validateCatalogTaxonomy(raw);
     const flat = flattenCatalogTaxonomy(taxonomy);
     const byId = taxonomyNodeMap(taxonomy);
@@ -37,6 +36,20 @@ describe('canonical catalog taxonomy', () => {
     expect(byId.has('controls/button')).toBe(true);
     expect(byId.has('foundation/color')).toBe(true);
     expect(byId.has('foundation/typography')).toBe(true);
+  });
+
+  it('does not admit generic site navigation labels as canonical nodes or aliases', () => {
+    const raw = readRepositoryDocument('catalog-taxonomy');
+    const taxonomy = validateCatalogTaxonomy(raw);
+    const records = flattenCatalogTaxonomy(taxonomy);
+    const semanticLabels = new Set(records.flatMap((record: any) => [
+      record.id.toLowerCase(),
+      record.label.toLowerCase(),
+      ...record.aliases.map((alias: string) => alias.toLowerCase()),
+    ]));
+    for (const navigationLabel of ['docs', 'privacy', 'license']) {
+      expect(semanticLabels.has(navigationLabel)).toBe(false);
+    }
   });
 
   it('returns recursive descendants without unrelated branches', () => {

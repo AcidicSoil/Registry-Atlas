@@ -1,9 +1,13 @@
-import { readFile, writeFile } from 'node:fs/promises';
 import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
-import { DatabaseSync } from 'node:sqlite';
 import { exportPatternLinkSnapshot } from './verify-registry-patterns.mjs';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
+import {
+  openAtlasCoreDatabase,
+  putDocument,
+  readAtlasState,
+  replaceSourcePages,
+} from './lib/atlas-storage.mjs';
 
 export const SOURCE_PAGE_SCHEMA = 'registry-atlas-source-page-index/v1';
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -25,7 +29,7 @@ export function exactOfficialPage(url, homepage) {
   } catch { return null; }
 }
 
-export function buildSourcePageIndex({ raw, catalog, curated, traversal, previews, demos, patternLinks, now = new Date().toISOString() }) {
+export function buildSourcePageIndex({ raw, catalog, curated, traversal, patternLinks, now = new Date().toISOString() }) {
   const databaseSitemaps = patternLinks?.schema === 'registry-atlas-pattern-links/v1'
     && Array.isArray(patternLinks.sitemapLinks);
   if ((!databaseSitemaps && (traversal?.schema !== 'registry-atlas-traversal-inventory/v1'
@@ -153,25 +157,6 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
       else rejected['invalid-url']++;
     }
   }
-  for (const demo of demos?.items ?? []) {
-    if (demo.kind !== 'upstream-built' || demo.status !== 'interaction-verified'
-      || !/^[a-f0-9]{64}$/.test(demo.sourceSha256 ?? '')) continue;
-    const namespace=demo.namespace, slug=demo.slug;
-    const registry=known.get(namespace);
-    if (!registry || !names.get(namespace)?.has(slug)) continue;
-    const url=exactOfficialPage(demo.source?.docsUrl, registry.homepage);
-    if (url) offer(namespace+'/'+slug,
-      {url,level:'reviewed',source:'interaction-verified-demo'});
-  }
-  for (const [token, reference] of Object.entries(previews?.previews ?? {})) {
-    const split = token.indexOf('/');
-    const namespace = token.slice(0, split), slug = token.slice(split + 1);
-    const registry = known.get(namespace);
-    if (!registry || !names.get(namespace)?.has(slug)) continue;
-    const url = exactOfficialPage(reference.officialPage, registry.homepage);
-    if (url) offer(token, { url, level: 'reviewed', source: 'visual-reference' });
-  }
-
   const pages = {};
   for (const token of [...candidatePages.keys()].sort()) {
     const entries = candidatePages.get(token);
@@ -213,31 +198,34 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, preview
   };
 }
 
-async function main(argv) {
-  if (!['--output', '--report'].every(flag => argv.includes(flag)))
-    throw new Error('Usage: --output <manifest> --report <coverage>');
-  const value = flag => argv[argv.indexOf(flag) + 1];
-  for (const flag of ['--output', '--report'])
-    if (!value(flag) || value(flag).startsWith('--')) throw new Error('Missing '+flag);
-  const sourceDb = new DatabaseSync(value('--db') ?? 'data/shadcn/registry-patterns.sqlite',
-    { readOnly: true });
-  let patternLinks;
-  try { patternLinks = exportPatternLinkSnapshot(sourceDb); }
-  finally { sourceDb.close(); }
-  const [raw, catalog, curated, previews, demos] = await Promise.all([
-    'data/shadcn/registries.raw.json', 'public/data/registry-catalog-items.json',
-    'data/shadcn/registry-items.json', 'public/data/component-previews.json',
-    'src/registry-explorer/data/component-demo-manifest.json',
-  ].map(file => readFile(file,'utf8').then(JSON.parse)));
-  // Pattern evidence is read directly from SQLite. The legacy traversal JSON is retired.
-  const traversal = null;
-  const result = buildSourcePageIndex({ raw,catalog,curated,traversal,previews,demos,patternLinks });
-  await writeFile(value('--output'), JSON.stringify(result) + '\n');
-  await writeFile(value('--report'), JSON.stringify({
-    schema: SOURCE_PAGE_SCHEMA, sourceSnapshotAt: result.sourceSnapshotAt,
-    ...result.coverage, note: 'Sitemap and pattern-derived links have not all been individually page-verified',
-  }, null, 2) + '\n');
-  console.log(JSON.stringify(result.coverage));
+async function main() {
+  const database = openAtlasCoreDatabase();
+  try {
+    const state = readAtlasState(database);
+    const patternLinks = exportPatternLinkSnapshot(database);
+    const result = buildSourcePageIndex({
+      raw: state.rawRegistries,
+      catalog: state.catalog,
+      curated: state.curated,
+      traversal: null,
+      patternLinks,
+    });
+    replaceSourcePages(database, result.pages);
+    putDocument(database, 'source-page-index-meta', 'runtime-meta', {
+      schema: result.schema,
+      sourceSnapshotAt: result.sourceSnapshotAt,
+      coverage: result.coverage,
+    });
+    putDocument(database, 'source-page-coverage', 'sync-report', {
+      schema: SOURCE_PAGE_SCHEMA,
+      sourceSnapshotAt: result.sourceSnapshotAt,
+      ...result.coverage,
+      note: 'Sitemap and pattern-derived links have not all been individually page-verified',
+    });
+    console.log(JSON.stringify(result.coverage));
+  } finally {
+    database.close();
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)

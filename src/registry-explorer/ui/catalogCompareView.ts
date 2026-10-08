@@ -99,7 +99,7 @@ function renderTable(result: CatalogCompareResult): string {
       ${row.cells.map(cell => {
         if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
         const original = sourcePageNavigation(cell.registryHomepage ?? '', {
-          referenceUrl: cell.referenceUrl, docsUrl: cell.docsUrl,
+          docsUrl: cell.docsUrl,
           sourcePage: cell.sourcePage,
         });
         return `<td><button class="compare-presence-link" type="button"

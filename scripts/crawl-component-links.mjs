@@ -1,4 +1,4 @@
-import { readFile, appendFile, mkdir, writeFile, rename, unlink } from 'node:fs/promises';
+import { readFile, appendFile, mkdir, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { resolve, join, dirname } from 'node:path';
@@ -7,8 +7,19 @@ import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
 import { discoverRegistry } from './lib/registry-discovery.mjs';
 import { configureManagedSourceBrowser } from './discover-registry-components.mjs';
 import { recoverOfficialItem } from './recover-item-evidence.mjs';
+import {
+  openAtlasCoreDatabase,
+  readAtlasState,
+  replaceCuratedAndRegistrySnapshot,
+} from './lib/atlas-storage.mjs';
 const VALID_SLUG = /^[a-z0-9][a-z0-9_-]*$/;
 const hash = value => createHash('sha256').update(value).digest('hex');
+const atlasStateDigest = state => hash(JSON.stringify({
+  rawRegistries: state.rawRegistries,
+  catalog: state.catalog,
+  curated: state.curated,
+  runtime: state.runtime,
+}));
 const wait = ms => new Promise(done => setTimeout(done, ms));
 function publicHomepage(raw) {
   try {
@@ -321,11 +332,13 @@ async function cli(argv) {
   // The profile identity and domain permissions come from PPM, not an
   // unchecked user-supplied allowlist or a shared default browser.
   const siteAllowed = managedSitePolicy(profile, server);
-  const files = ['data/shadcn/registries.raw.json',
-    'public/data/registry-catalog-items.json', 'data/shadcn/registry-items.json'];
-  const bytes = await Promise.all(files.map(file => readFile(file, 'utf8')));
-  const digest = hash(bytes.join('\n--source-boundary--\n'));
-  const [registries, catalog, curated] = bytes.map(JSON.parse);
+  const database = openAtlasCoreDatabase();
+  try {
+  const state = readAtlasState(database);
+  const registries = state.rawRegistries;
+  const catalog = state.catalog;
+  const curated = state.curated;
+  const digest = atlasStateDigest(state);
   if (registryName && !registries.some(r => r.name === registryName))
     throw new Error('Unknown registry in official inventory');
   const jobs = planRegistryCrawl(registries, catalog, curated,
@@ -339,7 +352,12 @@ async function cli(argv) {
     throw new Error('Source inventory changed; use a new journal, do not mix snapshots');
   await mkdir(dirname(journalPath), { recursive: true });
   if (!prior) await writeFile(manifestPath,
-    JSON.stringify({ digest, registry: registryName, files, createdAt: new Date().toISOString() }) + '\n',
+    JSON.stringify({
+      digest,
+      registry: registryName,
+      database: 'data/registry-atlas.sqlite',
+      createdAt: new Date().toISOString(),
+    }) + '\n',
     { flag: 'wx' });
   const journal = await JsonlJournal.open(journalPath);
   const browser = configureManagedSourceBrowser(new PinchTabBrowser(server, tab));
@@ -353,12 +371,10 @@ async function cli(argv) {
   });
   let correction = { changes: [], unresolved: [] };
   if (apply) {
-    const runtimeBefore = await readFile('public/data/registries.json', 'utf8');
-    correction = proposeVerifiedLinkUpdates(jobs, journal,
-      JSON.parse(bytes[2]), JSON.parse(runtimeBefore));
+    correction = proposeVerifiedLinkUpdates(jobs, journal, curated, state.runtime);
     if (correction.unresolved.length)
       throw new Error('Cannot apply conflicting evidence: ' + JSON.stringify(correction.unresolved));
-    await persistVerifiedChanges(bytes[2], runtimeBefore, correction);
+    await persistVerifiedChanges(database, digest, correction);
   }
   const report = {
     schemaVersion: 'registry-atlas-autonomous-link-audit/v1',
@@ -382,6 +398,9 @@ async function cli(argv) {
     scopedComplete: summary.complete,
     complete: !registryName && !selectedSlug && summary.complete }));
   if (summary.unresolved) process.exitCode = 2;
+  } finally {
+    database.close();
+  }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   cli(process.argv.slice(2)).catch(error => {
@@ -454,37 +473,12 @@ function structuredDocsPath(fact) {
   return { file: paths[0], route: '/docs/' + paths[0].slice('registry/'.length, -'/index.tsx'.length),
     title: fact.summary?.title ?? null };
 }
-async function persistVerifiedChanges(curatedBefore, runtimeBefore, proposed) {
-  const curatedFile = 'data/shadcn/registry-items.json';
-  const runtimeFile = 'public/data/registries.json';
-  const [curatedNow, runtimeNow] = await Promise.all([
-    readFile(curatedFile, 'utf8'), readFile(runtimeFile, 'utf8'),
-  ]);
-  if (curatedBefore !== curatedNow || runtimeBefore !== runtimeNow)
-    throw new Error('Atlas source/runtime changed during browser audit; apply cancelled');
-  const proposedCurated = JSON.stringify(proposed.curated, null, 2) + '\n';
-  const proposedRuntime = JSON.stringify(proposed.runtime, null, 2) + '\n';
+async function persistVerifiedChanges(database, sourceDigest, proposed) {
   if (!proposed.changes.length) return 0;
-  const suffix = '.component-link-audit-' + process.pid + '-' + Date.now() + '.tmp';
-  const cTmp = curatedFile + suffix, rTmp = runtimeFile + suffix;
-  try {
-    await writeFile(cTmp, proposedCurated, { flag: 'wx' });
-    await writeFile(rTmp, proposedRuntime, { flag: 'wx' });
-    if (curatedBefore !== await readFile(curatedFile, 'utf8')
-      || runtimeBefore !== await readFile(runtimeFile, 'utf8'))
-      throw new Error('Atlas records changed before publish');
-    await rename(cTmp, curatedFile);
-    try {
-      await rename(rTmp, runtimeFile);
-    } catch (error) {
-      await writeFile(curatedFile, curatedBefore);
-      throw error;
-    }
-    return proposed.changes.length;
-  } finally {
-    await Promise.all([
-      unlink(cTmp).catch(error => { if (error.code !== 'ENOENT') throw error; }),
-      unlink(rTmp).catch(error => { if (error.code !== 'ENOENT') throw error; }),
-    ]);
+  const current = readAtlasState(database);
+  if (atlasStateDigest(current) !== sourceDigest) {
+    throw new Error('Atlas database changed during browser audit; apply cancelled');
   }
+  replaceCuratedAndRegistrySnapshot(database, proposed.curated, proposed.runtime);
+  return proposed.changes.length;
 }

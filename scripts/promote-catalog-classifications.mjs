@@ -1,34 +1,16 @@
 #!/usr/bin/env node
-import { mkdir, readFile, readdir, stat, writeFile } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
+import {
+  openAtlasCoreDatabase,
+  readClassificationRun,
+  readClassificationRunItems,
+  readDocument,
+  replaceClassificationOverlay,
+} from './lib/atlas-storage.mjs';
 import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
 import { catalogArtifactFingerprint, validatePromotionReview } from './evaluate-catalog-classifications.mjs';
 
-const DEFAULT_TAXONOMY = 'data/catalog-taxonomy/v1.json';
-const DEFAULT_OUTPUT = 'data/catalog-taxonomy/classifications.json';
-
-async function readJson(path) {
-  return JSON.parse(await readFile(path, 'utf8'));
-}
-
-async function loadClassificationItems(path) {
-  const info = await stat(path);
-  if (info.isDirectory()) {
-    const items = [];
-    const files = (await readdir(path)).filter(name => name.endsWith('.json') && !name.startsWith('_')).sort();
-    for (const file of files) {
-      const value = await readJson(resolve(path, file));
-      if (Array.isArray(value.items)) items.push(...value.items);
-    }
-    return items;
-  }
-  const value = await readJson(path);
-  if (Array.isArray(value)) return value;
-  if (Array.isArray(value.items)) return value.items;
-  throw new Error('Classification run does not contain items');
-}
 
 function evaluationFingerprint(value) {
   const base = { ...value };
@@ -90,44 +72,56 @@ export function buildReviewedClassificationOverlay({ taxonomy, classifications, 
   return validateCatalogClassificationOverlay(overlay, reviewedTaxonomy);
 }
 
-function parseArgs(argv) {
+export function parsePromotionArgs(argv) {
   const options = {
-    taxonomy: DEFAULT_TAXONOMY,
-    classifications: null,
-    evaluation: null,
-    review: null,
-    output: DEFAULT_OUTPUT,
+    runId: null,
+    evaluationDocument: 'catalog-classification-evaluation',
+    reviewDocument: 'catalog-promotion-review',
   };
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
-    if (!['--taxonomy', '--classifications', '--evaluation', '--review', '--output'].includes(flag)) {
+    if (!['--run-id', '--evaluation-document', '--review-document'].includes(flag)) {
       throw new Error(`Unknown argument: ${flag}`);
     }
     const value = argv[++index];
     if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
-    options[flag.slice(2)] = value;
+    if (flag === '--run-id') options.runId = value;
+    else if (flag === '--evaluation-document') options.evaluationDocument = value;
+    else options.reviewDocument = value;
   }
-  for (const key of ['classifications', 'evaluation', 'review']) {
-    if (!options[key]) throw new Error(`Missing required --${key}`);
-  }
+  if (!options.runId) throw new Error('Missing required --run-id');
   return options;
 }
 
 export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
-  const options = parseArgs(argv);
-  const [taxonomyValue, classifications, evaluation, review] = await Promise.all([
-    readJson(resolve(cwd, options.taxonomy)),
-    loadClassificationItems(resolve(cwd, options.classifications)),
-    readJson(resolve(cwd, options.evaluation)),
-    readJson(resolve(cwd, options.review)),
-  ]);
-  const overlay = buildReviewedClassificationOverlay({
-    taxonomy: taxonomyValue, classifications, evaluation, review,
-  });
-  const output = resolve(cwd, options.output);
-  await mkdir(dirname(output), { recursive: true });
-  await writeFile(output, JSON.stringify(overlay, null, 2) + '\n');
-  return overlay;
+  const options = parsePromotionArgs(argv);
+  const database = openAtlasCoreDatabase(cwd);
+  try {
+    const taxonomyValue = readDocument(database, 'catalog-taxonomy');
+    if (!taxonomyValue) throw new Error('Catalog taxonomy is missing from the Atlas database');
+    const run = readClassificationRun(database, options.runId);
+    if (!run || run.status !== 'completed') {
+      throw new Error(`Classification run is not complete: ${options.runId}`);
+    }
+    const classifications = readClassificationRunItems(database, options.runId);
+    const evaluation = readDocument(database, options.evaluationDocument);
+    const review = readDocument(database, options.reviewDocument);
+    if (!evaluation) throw new Error(`Evaluation document is missing: ${options.evaluationDocument}`);
+    if (!review) throw new Error(`Promotion review document is missing: ${options.reviewDocument}`);
+    if (evaluation.beamRunId && evaluation.beamRunId !== options.runId) {
+      throw new Error('Evaluation document belongs to a different classification run');
+    }
+    const overlay = buildReviewedClassificationOverlay({
+      taxonomy: taxonomyValue,
+      classifications,
+      evaluation,
+      review,
+    });
+    replaceClassificationOverlay(database, overlay);
+    return overlay;
+  } finally {
+    database.close();
+  }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

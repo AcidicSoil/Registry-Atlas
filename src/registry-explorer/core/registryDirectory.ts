@@ -3,7 +3,7 @@ import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollect
 import { catalogItemCountForRegistry } from "./catalogQuery";
 
 export type RegistryCatalogCoverage = "current" | "stale" | "empty" | "failed";
-export type RegistryDirectorySort = "name" | "item-count-asc" | "item-count-desc" | "name-desc";
+export type RegistryDirectorySort = "name" | "item-count-desc";
 
 export interface RegistryDirectoryEntry {
   registry: Registry;
@@ -106,13 +106,9 @@ function compareEntries(
   b: RegistryDirectoryEntry,
   sort: RegistryDirectorySort,
 ): number {
-  if (sort === "item-count-asc") {
-    return a.itemCount - b.itemCount || a.registry.name.localeCompare(b.registry.name);
-  }
   if (sort === "item-count-desc") {
     return b.itemCount - a.itemCount || a.registry.name.localeCompare(b.registry.name);
   }
-  if (sort === "name-desc") return b.registry.name.localeCompare(a.registry.name);
   return a.registry.name.localeCompare(b.registry.name);
 }
 

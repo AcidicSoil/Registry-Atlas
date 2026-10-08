@@ -1,30 +1,19 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import {
+  openAtlasCoreDatabase,
+  putDocument,
+  readCuratedItemSummaries,
+  replaceCuratedItemSummaries,
+} from './lib/atlas-storage.mjs';
 
 const DEFAULT_SOURCE_PATH = 'registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json';
-const DEFAULT_ITEMS_OUTPUT_PATH = 'data/shadcn/registry-items.json';
-const DEFAULT_REPORT_OUTPUT_PATH = 'data/shadcn/registry-catalog-import-report.json';
 
 const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-async function readJsonIfExists(filePath) {
-  try {
-    return JSON.parse(await readFile(filePath, 'utf8'));
-  } catch (error) {
-    if (error && error.code === 'ENOENT') return null;
-    throw error;
-  }
-}
-
 async function readJson(filePath) {
   return JSON.parse(await readFile(filePath, 'utf8'));
-}
-
-async function writeJson(filePath, value) {
-  await mkdir(path.dirname(filePath), { recursive: true });
-  await writeFile(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 export function normalizeNamespace(value) {
@@ -108,7 +97,6 @@ export function normalizeImportedItem(namespace, item, warnings = []) {
     install_command: installCommand,
     raw_item_url: normalizeOptionalString(item.raw_item_url),
     docs_url: normalizeOptionalString(item.docs_url),
-    preview_url: normalizeOptionalString(item.preview_url),
     evidence_url: normalizeOptionalString(item.evidence_url),
     evidence_note: normalizeOptionalString(item.evidence_note),
     dependencies: normalizeStringArray(item.dependencies),
@@ -176,17 +164,14 @@ export function buildImportReport(catalog, importResult) {
 function parseArgs(argv) {
   const options = {
     source: DEFAULT_SOURCE_PATH,
-    output: DEFAULT_ITEMS_OUTPUT_PATH,
-    report: DEFAULT_REPORT_OUTPUT_PATH,
     dryRun: false,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
     if (arg === '--source') options.source = argv[++index] ?? options.source;
-    else if (arg === '--output') options.output = argv[++index] ?? options.output;
-    else if (arg === '--report') options.report = argv[++index] ?? options.report;
     else if (arg === '--dry-run') options.dryRun = true;
+    else throw new Error(`Unknown argument: ${arg}`);
   }
 
   return options;
@@ -195,19 +180,24 @@ function parseArgs(argv) {
 async function main(argv = process.argv.slice(2)) {
   const options = parseArgs(argv);
   const catalog = await readJson(options.source);
-  const existing = await readJsonIfExists(options.output) ?? {};
-  const importResult = buildRegistryItemsByNamespace(catalog, existing);
-  const report = buildImportReport(catalog, importResult);
+  const database = openAtlasCoreDatabase();
+  try {
+    const existing = readCuratedItemSummaries(database);
+    const importResult = buildRegistryItemsByNamespace(catalog, existing);
+    const report = buildImportReport(catalog, importResult);
 
-  if (!options.dryRun) {
-    await writeJson(options.output, importResult.itemsByNamespace);
-    await writeJson(options.report, report);
+    if (!options.dryRun) {
+      replaceCuratedItemSummaries(database, importResult.itemsByNamespace);
+      putDocument(database, 'catalog-import-report', 'sync-report', report);
+    }
+
+    console.log(`Imported ${report.item_count} item summaries across ${report.registry_count} registries`);
+    console.log(`Namespaces: ${report.namespaces.join(', ')}`);
+    if (report.warnings.length > 0) console.log(`Warnings: ${report.warnings.length}`);
+    if (report.skipped.length > 0) console.log(`Skipped: ${report.skipped.length}`);
+  } finally {
+    database.close();
   }
-
-  console.log(`Imported ${report.item_count} item summaries across ${report.registry_count} registries`);
-  console.log(`Namespaces: ${report.namespaces.join(', ')}`);
-  if (report.warnings.length > 0) console.log(`Warnings: ${report.warnings.length}`);
-  if (report.skipped.length > 0) console.log(`Skipped: ${report.skipped.length}`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

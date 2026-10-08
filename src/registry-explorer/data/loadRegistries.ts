@@ -5,16 +5,28 @@ import type {
   Registry,
   RegistryCatalogIndex,
   RegistryItemSummary,
-  RegistryVisualReference,
   RegistrySourcePage,
 } from '../core/registry.schema';
 import { parseRegistryCatalogIndex } from '../core/registryCatalogIndex';
-import { parseCatalogTaxonomy, type CatalogTaxonomy } from '../core/catalogTaxonomy';
+import {
+  configureDefaultCatalogTaxonomy,
+  parseCatalogTaxonomy,
+  type CatalogTaxonomy,
+} from '../core/catalogTaxonomy';
+import { configureCatalogKindOverrides } from '../core/catalogCollections';
 import { verifiedSourcePageUrl } from '../ui/sourcePageLink';
 import {
   type MirrorValidationIssue,
   validateRegistryMirror,
 } from '../core/registryMirror';
+import {
+  loadRuntimeDatabase,
+  queryDocument,
+  queryJsonRows,
+  queryOptionalDocument,
+  queryKeyedJson,
+  queryMetaJson,
+} from './runtimeDatabase';
 
 export interface RegistryMirrorMeta {
   source_url: string;
@@ -74,8 +86,6 @@ interface RegistryMirrorRecord {
       rawItemUrl?: string;
       docs_url?: string;
       docsUrl?: string;
-      preview_url?: string;
-      previewUrl?: string;
       evidence_url?: string;
       evidenceUrl?: string;
       evidence_note?: string;
@@ -97,48 +107,135 @@ interface RegistryMirrorData {
   registries: RegistryMirrorRecord[];
 }
 
-type FetchLike = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
+interface RegistryIconDocument {
+  schema?: string;
+  icons?: Record<string, {
+    url?: string;
+    source?: string;
+    homepage?: string;
+    observedAt?: string;
+  }>;
+}
+
+type FetchLike = typeof fetch;
 
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
-  const mirrorUrl = `${import.meta.env.BASE_URL}data/registries.json`;
-  const catalogUrl = `${import.meta.env.BASE_URL}data/registry-catalog-items.json`;
-  const taxonomyUrl = `${import.meta.env.BASE_URL}data/catalog-taxonomy.json`;
-  const visualUrl = `${import.meta.env.BASE_URL}data/component-previews.json`;
-  const sourcePageUrl = `${import.meta.env.BASE_URL}data/component-page-links.json`;
-  const [response, catalogResponse, taxonomyResponse] = await Promise.all([
-    fetchImpl(mirrorUrl),
-    fetchImpl(catalogUrl),
-    fetchImpl(taxonomyUrl),
-  ]);
+  const database = await loadRuntimeDatabase('data/registry-atlas.sqlite.gz', fetchImpl);
+  let mirrorData: RegistryMirrorData;
+  let catalogData: unknown;
+  let taxonomyData: unknown;
+  let kindOverridesData: unknown;
+  let sourcePageManifest: unknown;
+  let registryIcons: RegistryIconDocument | null = null;
+  const itemRoutes: Record<string, { url: string; status: string }> = {};
+  const routePatterns: Record<string, Array<{
+    urlTemplate: string;
+    slugPrefix: string;
+    source: string;
+    checkedAt?: string;
+  }>> = {};
+  try {
+    mirrorData = {
+      meta: queryMetaJson<RegistryMirrorMeta>(database, 'registry_snapshot_meta'),
+      registries: queryJsonRows<RegistryMirrorRecord>(
+        database,
+        'SELECT payload_json FROM atlas_registries ORDER BY namespace',
+      ),
+    };
+    const catalogMeta = queryMetaJson<Record<string, unknown>>(database, 'catalog_snapshot_meta');
+    const namespaceRows = database.exec(
+      'SELECT namespace FROM atlas_catalog_namespaces ORDER BY namespace',
+    )[0];
+    const registries: Record<string, unknown[]> = {};
+    if (namespaceRows) {
+      const namespaceIndex = namespaceRows.columns.indexOf('namespace');
+      for (const row of namespaceRows.values) {
+        const namespace = String(row[namespaceIndex] ?? '');
+        if (namespace) registries[namespace] = [];
+      }
+    }
+    const catalogRows = database.exec(
+      'SELECT namespace,payload_json FROM atlas_catalog_items ORDER BY namespace,name',
+    )[0];
+    if (catalogRows) {
+      const namespaceIndex = catalogRows.columns.indexOf('namespace');
+      const payloadIndex = catalogRows.columns.indexOf('payload_json');
+      for (const row of catalogRows.values) {
+        const namespace = String(row[namespaceIndex] ?? '');
+        const payload = row[payloadIndex];
+        if (!namespace || typeof payload !== 'string') continue;
+        (registries[namespace] ??= []).push(JSON.parse(payload) as unknown);
+      }
+    }
+    catalogData = { meta: catalogMeta, registries };
+    taxonomyData = queryDocument(database, 'catalog-taxonomy');
+    kindOverridesData = queryDocument(database, 'catalog-kind-overrides');
+    registryIcons = queryOptionalDocument<RegistryIconDocument>(database, 'registry-icons');
+    const pages = queryKeyedJson<RegistrySourcePage>(
+      database,
+      'SELECT namespace,slug,payload_json FROM atlas_source_pages ORDER BY namespace,slug',
+      ['namespace', 'slug'],
+    );
 
-  if (!response.ok) {
-    throw new Error(`Registry mirror fetch failed: ${response.status} ${response.statusText}`);
-  }
-  if (!catalogResponse.ok) {
-    throw new Error(`Registry catalog index fetch failed: ${catalogResponse.status} ${catalogResponse.statusText}`);
-  }
-  if (!taxonomyResponse.ok) {
-    throw new Error(`Catalog taxonomy fetch failed: ${taxonomyResponse.status} ${taxonomyResponse.statusText}`);
+    const itemRouteRows = database.exec(
+      'SELECT namespace,slug,source_url,status FROM atlas_item_routes ORDER BY namespace,slug',
+    )[0];
+    if (itemRouteRows) {
+      const namespaceIndex = itemRouteRows.columns.indexOf('namespace');
+      const slugIndex = itemRouteRows.columns.indexOf('slug');
+      const urlIndex = itemRouteRows.columns.indexOf('source_url');
+      const statusIndex = itemRouteRows.columns.indexOf('status');
+      for (const row of itemRouteRows.values) {
+        const namespace = String(row[namespaceIndex] ?? '');
+        const slug = String(row[slugIndex] ?? '');
+        const url = String(row[urlIndex] ?? '');
+        const status = String(row[statusIndex] ?? '');
+        if (!namespace || !slug || !url) continue;
+        itemRoutes[`${namespace}/${slug}`] = { url, status };
+      }
+    }
+
+    const patternRows = database.exec(
+      'SELECT namespace,template,prefix,source,checked_at FROM atlas_route_patterns ORDER BY namespace,template,prefix',
+    )[0];
+    if (patternRows) {
+      const namespaceIndex = patternRows.columns.indexOf('namespace');
+      const templateIndex = patternRows.columns.indexOf('template');
+      const prefixIndex = patternRows.columns.indexOf('prefix');
+      const sourceIndex = patternRows.columns.indexOf('source');
+      const checkedIndex = patternRows.columns.indexOf('checked_at');
+      for (const row of patternRows.values) {
+        const namespace = String(row[namespaceIndex] ?? '');
+        const urlTemplate = String(row[templateIndex] ?? '');
+        const slugPrefix = String(row[prefixIndex] ?? '');
+        const source = String(row[sourceIndex] ?? '');
+        const checkedAt = row[checkedIndex] === null ? '' : String(row[checkedIndex] ?? '');
+        if (!namespace || !urlTemplate) continue;
+        (routePatterns[namespace] ??= []).push({
+          urlTemplate,
+          slugPrefix,
+          source,
+          ...(checkedAt ? { checkedAt } : {}),
+        });
+      }
+    }
+
+    const sourcePageMeta = queryDocument<Record<string, unknown>>(
+      database,
+      'source-page-index-meta',
+    );
+    sourcePageManifest = { ...sourcePageMeta, pages };
+  } finally {
+    database.close();
   }
 
-  const mirrorData = await response.json() as unknown;
-  const catalogData = await catalogResponse.json() as unknown;
-  const taxonomyData = await taxonomyResponse.json() as unknown;
-  const catalogIndex = parseRegistryCatalogIndex(catalogData);
   const taxonomy = parseCatalogTaxonomy(taxonomyData);
-  // Optional capture and source indexes should not add sequential network round trips.
-  const readOptional = (url: string) => fetchImpl(url).then(async response =>
-    response.ok ? await response.json() as unknown : null).catch(() => null);
-  const [previewManifest, sourcePageManifest] = await Promise.all([
-    readOptional(visualUrl), readOptional(sourcePageUrl),
-  ]);
-  const visualReferences = readVisualReferenceManifest(previewManifest, catalogIndex);
-  const visualPreviews = Object.fromEntries(
-    Object.entries(visualReferences).map(([key, entry]) => [key, entry.imageUrl]),
-  );
-  const officialSites = (mirrorData as RegistryMirrorData)?.registries?.map(row => ({
+  configureDefaultCatalogTaxonomy(taxonomy);
+  configureCatalogKindOverrides(kindOverridesData);
+  const catalogIndex = parseRegistryCatalogIndex(catalogData);
+  const officialSites = mirrorData.registries.map(row => ({
     name: row.official?.name, url: row.official?.homepage,
-  })) ?? [];
+  }));
   const sourcePages = readSourcePageManifest(sourcePageManifest, catalogIndex, officialSites);
   const validation = validateRegistryMirror(mirrorData);
 
@@ -151,13 +248,14 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
 
   return {
     meta: typedMirror.meta,
-    catalogIndex: Object.assign(catalogIndex, { visualPreviews, visualReferences, sourcePages }),
+    catalogIndex: Object.assign(catalogIndex, { sourcePages, itemRoutes, routePatterns }),
     taxonomy,
     warnings: validation.warnings,
     registries: typedMirror.registries.map(record => ({
       name: record.official.name,
       url: record.official.homepage,
       description: record.official.description,
+      iconUrl: registryIcons?.icons?.[record.official.name]?.url || undefined,
       atlas: {
         aliases: record.atlas?.aliases ?? [],
         coverageStatus: record.atlas?.coverage_status ?? 'unverified',
@@ -203,7 +301,6 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
     installCommand: item.install_command ?? item.installCommand,
     rawItemUrl: item.raw_item_url ?? item.rawItemUrl,
     docsUrl: item.docs_url ?? item.docsUrl,
-    previewUrl: item.preview_url ?? item.previewUrl,
     evidenceUrl: item.evidence_url ?? item.evidenceUrl,
     evidenceNote: item.evidence_note ?? item.evidenceNote,
     dependencies: item.dependencies,
@@ -212,47 +309,6 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
     files: item.files,
     warnings: item.warnings,
   }));
-}
-
-export function readVisualPreviewManifest(
-  input: unknown, catalog: RegistryCatalogIndex,
-): Readonly<Record<string, string>> {
-  return Object.fromEntries(Object.entries(readVisualReferenceManifest(input, catalog))
-    .map(([key, entry]) => [key, entry.imageUrl]));
-}
-
-export function readVisualReferenceManifest(
-  input: unknown, catalog: RegistryCatalogIndex,
-): Readonly<Record<string, RegistryVisualReference>> {
-  if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
-  const data = input as Record<string, unknown>;
-  if (data.schemaVersion !== 1 || !data.previews || typeof data.previews !== 'object'
-    || Array.isArray(data.previews)) return {};
-  const names = new Map(Object.entries(catalog.registries).map(([ns, items]) =>
-    [ns, new Set(items.map(item => item.name))]));
-  const previews: Record<string, RegistryVisualReference> = {};
-  for (const [key, entry] of Object.entries(data.previews)) {
-    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) continue;
-    const item = entry as Record<string, unknown>;
-    if (typeof item.imageUrl !== 'string' || typeof item.officialPage !== 'string') continue;
-    const separator = key.indexOf('/');
-    if (separator < 1 || !names.get(key.slice(0, separator))?.has(key.slice(separator + 1))) continue;
-    const local = item.imageUrl.startsWith('/Registry-Atlas/data/previews/')
-      && !item.imageUrl.includes('..')
-      && /^\/Registry-Atlas\/data\/previews\/[a-z0-9-]+(?:\/[a-z0-9-]+)*\.(?:jpe?g|png|webp)$/i.test(item.imageUrl);
-    try {
-      const official = new URL(item.officialPage);
-      if (official.protocol !== 'https:' || official.username || official.password) continue;
-      if (!local) {
-        const visual = new URL(item.imageUrl);
-        if (visual.protocol !== 'https:' || visual.origin !== official.origin
-          || visual.username || visual.password
-          || !/\.(?:svg|jpe?g|png|webp)$/i.test(visual.pathname)) continue;
-      }
-    } catch { continue; }
-    previews[key] = { imageUrl: item.imageUrl, officialPage: new URL(item.officialPage).href };
-  }
-  return previews;
 }
 
 function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): Map<string, string[]> {
@@ -292,7 +348,7 @@ export function readSourcePageManifest(
     if (!names.get(namespace)?.has(slug)) continue;
     const record = value as Record<string, unknown>;
     const validLevel = (record.level === 'reviewed'
-        && ['reviewed-summary', 'visual-reference', 'interaction-verified-demo', 'component-page-verified'].includes(String(record.source)))
+        && ['reviewed-summary', 'component-page-verified'].includes(String(record.source)))
       || (record.level === 'sitemap' && record.source === 'official-sitemap')
       || (record.level === 'pattern' && record.source === 'verified-route-pattern');
     if (!validLevel || typeof record.url !== 'string') continue;

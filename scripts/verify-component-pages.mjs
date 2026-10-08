@@ -1,8 +1,9 @@
 import { DatabaseSync } from 'node:sqlite';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { initializePatternDatabase, safePage, resolvePattern, managedBrowserPatternProof, reconcileRegistryCatalog } from './verify-registry-patterns.mjs';
+import { readAtlasState } from './lib/atlas-storage.mjs';
 
 const REFRESH_MS = 30 * 86400000;
 const normalize = text => String(text ?? '').replace(/<[^>]*>/g,' ').replace(/&(?:amp|nbsp);/g,' ')
@@ -263,21 +264,17 @@ export function exportComponentQueue(db){
 }
 async function main(argv){
   if(argv.includes('--help')){
-    console.log('Usage: --db FILE [--catalog FILE] [--report FILE] [--report-only] [--registry @namespace] [--all] [--max-pages 20] [--max-per-registry 5] [--delay-ms 1200] [--attempt-limit 3] [--retry-failed] [--profile NAME --browser-server URL --browser-tab ID]');
+    console.log('Usage: [--db FILE] [--report FILE] [--report-only] [--registry @namespace] [--all] [--max-pages 20] [--max-per-registry 5] [--delay-ms 1200] [--attempt-limit 3] [--retry-failed] [--profile NAME --browser-server URL --browser-tab ID]');
     return;
   }
   const get=flag=>argv.includes(flag)?argv[argv.indexOf(flag)+1]:null;
-  const dbFile=get('--db')??'data/shadcn/registry-patterns.sqlite';
-  const catalogFile=get('--catalog')??'public/data/registry-catalog-items.json';
+  const dbFile=get('--db')??'data/registry-atlas.sqlite';
   await mkdir(dirname(resolve(dbFile)),{recursive:true});
   const db=new DatabaseSync(resolve(dbFile));
   db.exec('PRAGMA journal_mode=WAL;PRAGMA foreign_keys=ON;PRAGMA busy_timeout=5000;');
   try{
-    const [catalog,raw,curated]=await Promise.all([
-      readFile(catalogFile,'utf8').then(JSON.parse),
-      readFile('data/shadcn/registries.raw.json','utf8').then(JSON.parse),
-      readFile('data/shadcn/registry-items.json','utf8').then(JSON.parse),
-    ]);
+    const state=readAtlasState(db);
+    const catalog=state.catalog,raw=state.rawRegistries,curated=state.curated;
     const reconciled=reconcileRegistryCatalog(db,{raw,catalog,curated});
     const seeded=seedComponentCandidates(db,{catalog});
     const browserPage=get('--profile')&&get('--browser-server')&&get('--browser-tab')

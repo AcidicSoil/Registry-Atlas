@@ -8,7 +8,6 @@ import type {
   RegistryCatalogIndex,
   RegistryCssVars,
   RegistryItemSummary,
-  RegistryVisualReference,
   RegistrySourcePage,
   RegistryItemSummaryFile,
 } from './registry.schema.ts';
@@ -39,8 +38,6 @@ export interface RegistryItemDetail {
   route: ResolvedItemRoute;
   installAction: InstallActionState;
   docsUrl: string | null;
-  previewUrl: string | null;
-  visualReference?: RegistryVisualReference;
   sourcePage?: RegistrySourcePage;
   evidenceUrl: string | null;
   componentPageUrl: string | null;
@@ -49,7 +46,6 @@ export interface RegistryItemDetail {
   registryDependencies: readonly string[];
   files: readonly RegistryItemSummaryFile[];
   warnings: readonly string[];
-  visualStatus: 'available' | 'unavailable';
   loadedFromJson: boolean;
   /** Internal agent/maintainer data only. Do not render this in the normal user UI. */
   rawSource?: unknown;
@@ -168,10 +164,10 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   if (!registry) return notFound('Registry not found.', 'missing-registry');
 
   if (registry.itemSummaries?.some(item => item.slug === slug)) {
-    return withSourcePage(withVisualReference(
+    return withSourcePage(
       resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson),
-      catalogIndex.visualReferences?.[`${registryName}/${slug}`],
-    ), catalogIndex.sourcePages?.[`${registryName}/${slug}`]);
+      catalogIndex.sourcePages?.[`${registryName}/${slug}`],
+    );
   }
 
   const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
@@ -180,13 +176,6 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
   base.sourcePage = catalogIndex.sourcePages?.[`${registryName}/${slug}`];
-  const reference = catalogIndex.visualReferences?.[`${registryName}/${slug}`];
-  if (reference) {
-    base.visualReference = reference;
-    base.previewUrl = reference.imageUrl;
-    base.componentPageUrl = reference.officialPage;
-    base.visualStatus = 'available';
-  }
   if (base.route.status !== 'available') {
     return { status: 'route-unavailable', detail: base, message: 'Item route unavailable.', reason: base.route.status };
   }
@@ -206,19 +195,6 @@ function withSourcePage(
 ): RegistryItemDetailResult {
   if (!sourcePage || !result.detail) return result;
   return { ...result, detail: { ...result.detail, sourcePage } };
-}
-
-function withVisualReference(
-  result: RegistryItemDetailResult,
-  reference: RegistryVisualReference | undefined,
-): RegistryItemDetailResult {
-  if (!reference || !result.detail) return result;
-  return {
-    ...result,
-    detail: { ...result.detail, visualReference: reference,
-      previewUrl: reference.imageUrl, componentPageUrl: reference.officialPage,
-      visualStatus: 'available' },
-  };
 }
 
 export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary): RegistryItemDetail {
@@ -242,7 +218,6 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
     rawItemUrl: summary.rawItemUrl,
   });
   const docsUrl = summary.docsUrl ?? null;
-  const previewUrl = summary.previewUrl ?? null;
 
   return {
     registry,
@@ -263,7 +238,6 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
     route,
     installAction,
     docsUrl,
-    previewUrl,
     evidenceUrl: summary.evidenceUrl ?? null,
     componentPageUrl: docsUrl,
     dependencies: summary.dependencies ?? [],
@@ -271,7 +245,6 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
     registryDependencies: summary.registryDependencies ?? [],
     files: summary.files ?? [],
     warnings: summary.warnings ?? [],
-    visualStatus: previewUrl ? 'available' : 'unavailable',
     loadedFromJson: false,
   };
 }

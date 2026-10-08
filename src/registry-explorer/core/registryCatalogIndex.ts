@@ -1,5 +1,5 @@
-import catalogTaxonomy from '../../../data/catalog-taxonomy/v1.json';
 import { resolveRegistryItemRoute } from './itemRoutes';
+import { catalogTaxonomyNodeMap, getDefaultCatalogTaxonomy } from './catalogTaxonomy';
 import type {
   CatalogCanonicalKind,
   Registry,
@@ -26,17 +26,6 @@ const CATALOG_CANONICAL_KINDS = new Set<CatalogCanonicalKind>([
   'component', 'block', 'page', 'template', 'theme', 'icon', 'other',
 ]);
 const CANONICAL_ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
-const CANONICAL_TAXONOMY_VERSION = catalogTaxonomy.version;
-type RuntimeTaxonomyNode = { id: string; children: readonly RuntimeTaxonomyNode[] };
-const CANONICAL_TAXONOMY_PATHS = new Map<string, readonly string[]>();
-for (const root of catalogTaxonomy.roots as readonly RuntimeTaxonomyNode[]) {
-  const visit = (node: RuntimeTaxonomyNode, path: readonly string[]): void => {
-    const next = [...path, node.id];
-    CANONICAL_TAXONOMY_PATHS.set(node.id, next);
-    for (const child of node.children) visit(child, next);
-  };
-  visit(root, []);
-}
 
 const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [
   'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
@@ -187,7 +176,12 @@ export function compactCatalogItemToSummary(
   item: RegistryCatalogItem,
 ): RegistryItemSummary {
   const route = registry.mirror
-    ? resolveRegistryItemRoute(registry.name, registry.mirror.registryUrlTemplate, item.name)
+    ? resolveRegistryItemRoute(
+        registry.name,
+        registry.mirror.registryUrlTemplate,
+        item.name,
+        item.rawItemUrl,
+      )
     : null;
   const evidenceUrl = registry.atlas?.catalogEvidenceUrl;
   const pathLeaf = item.name.split('/').filter(Boolean).at(-1) ?? item.name;
@@ -226,6 +220,7 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
   }
 
   const title = optionalString(value.title);
+  const rawItemUrl = optionalString(value.rawItemUrl);
   const description = optionalString(value.description);
   const author = optionalString(value.author);
   const fileCount = value.fileCount === undefined ? null : numberValue(value.fileCount);
@@ -255,6 +250,7 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
   return {
     name,
     type,
+    ...(rawItemUrl ? { rawItemUrl } : {}),
     ...(title ? { title } : {}),
     ...(description ? { description } : {}),
     ...(author ? { author } : {}),
@@ -283,7 +279,8 @@ function parseCanonical(value: unknown): RegistryCatalogCanonical {
   if (!taxonomyVersion) {
     throw new Error('Registry catalog index validation failed: item canonical taxonomyVersion is required');
   }
-  if (taxonomyVersion !== CANONICAL_TAXONOMY_VERSION) {
+  const configuredTaxonomy = getDefaultCatalogTaxonomy();
+  if (configuredTaxonomy && taxonomyVersion !== configuredTaxonomy.version) {
     throw new Error('Registry catalog index validation failed: item canonical taxonomy version is not the approved runtime taxonomy');
   }
   let primary: string | null;
@@ -322,12 +319,15 @@ function parseCanonical(value: unknown): RegistryCatalogCanonical {
         }
       }
     }
-    const approvedPath = CANONICAL_TAXONOMY_PATHS.get(primary);
-    if (!approvedPath) {
-      throw new Error('Registry catalog index validation failed: unknown canonical taxonomy node');
-    }
-    if (approvedPath.length !== path.length || approvedPath.some((id, index) => id !== path[index])) {
-      throw new Error('Registry catalog index validation failed: item canonical path does not match approved taxonomy');
+    if (configuredTaxonomy) {
+      const approved = catalogTaxonomyNodeMap(configuredTaxonomy).get(primary);
+      if (!approved) {
+        throw new Error('Registry catalog index validation failed: unknown canonical taxonomy node');
+      }
+      const approvedPath = primary.split('/').map((_, index, parts) => parts.slice(0, index + 1).join('/'));
+      if (approvedPath.length !== path.length || approvedPath.some((id, index) => id !== path[index])) {
+        throw new Error('Registry catalog index validation failed: item canonical path does not match approved taxonomy');
+      }
     }
   }
   return { taxonomyVersion, primary, path };

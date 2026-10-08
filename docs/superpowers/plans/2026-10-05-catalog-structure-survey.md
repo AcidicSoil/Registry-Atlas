@@ -1,10 +1,12 @@
-# Catalog Classification and Filtering Implementation Plan
+# Source Catalog Structure Survey Implementation Plan
+
+> **Migration notice:** This plan is complete historical work for source-structure discovery. It is superseded as the primary product-classification plan by `docs/superpowers/plans/2026-10-06-canonical-catalog-taxonomy.md` and the corresponding canonical-taxonomy design. Do not continue this plan by promoting survey `groups[]` into a global taxonomy.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
-**Goal:** Build the complete catalog-classification feature: survey every Registry Atlas registry, derive reliable `kind`, source-defined `groups[]`, and `access`, validate the full-run quality, promote approved classifications into generated runtime catalog data, and expose them as usable filters in the Registry Atlas UI.
+**Goal:** Preserve source-defined catalog structure as evidence: survey Registry Atlas registries, derive reliable `kind`, source-defined `groups[]`, and explicit source access evidence, and retain those results for provenance, registry-local UX, and reviewed canonical-classifier hints.
 
-**Architecture:** Pure library modules own surface planning, structure extraction, kind/access projection, and membership resolution. A bounded local SystemOne adapter owns optional Clef Choice. A survey CLI owns managed-browser validation, batching/cursor behavior, SQLite reads, navigation, and atomic per-registry evidence. A deterministic promotion step turns only reviewed, non-stale survey results into generated catalog fields. Existing catalog query/route/UI layers then expose `kind`, `access`, and source-defined `groups[]` as first-class facets without reusing upstream `categories`.
+**Architecture:** Pure library modules own surface planning, structure extraction, kind/access projection, and membership resolution. A bounded local SystemOne adapter owns optional Clef Choice. A survey CLI owns managed-browser validation, batching/cursor behavior, SQLite reads, navigation, and atomic per-registry evidence. Survey output is evidence-only. Canonical promotion, global semantic facets, and runtime taxonomy ownership belong to the 2026-10-06 canonical-taxonomy pipeline; direct survey `groups[]` promotion is prohibited.
 
 **Tech Stack:** Node.js ESM, Node 24 built-in `node:sqlite`, Vitest, managed PinchTab CLI, llama.cpp `/v1/systemone`.
 

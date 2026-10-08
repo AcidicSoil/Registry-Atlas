@@ -1,5 +1,3 @@
-import taxonomySource from '../../../data/catalog-taxonomy/v1.json';
-
 export interface CatalogTaxonomyNode {
   id: string;
   label: string;
@@ -132,5 +130,22 @@ export function catalogTaxonomySearchValues(taxonomy: CatalogTaxonomy, ids: read
   return [...new Set(output)];
 }
 
-export const DEFAULT_CATALOG_TAXONOMY = parseCatalogTaxonomy(taxonomySource);
-export const DEFAULT_CATALOG_TAXONOMY_IDS = new Set(catalogTaxonomyNodeMap(DEFAULT_CATALOG_TAXONOMY).keys());
+let defaultCatalogTaxonomy: CatalogTaxonomy | null = null;
+
+export function configureDefaultCatalogTaxonomy(taxonomy: CatalogTaxonomy): void {
+  defaultCatalogTaxonomy = taxonomy;
+}
+
+export function getDefaultCatalogTaxonomy(): CatalogTaxonomy | null {
+  return defaultCatalogTaxonomy;
+}
+
+export function isDefaultCatalogTaxonomyId(id: string): boolean {
+  if (!defaultCatalogTaxonomy) return true;
+  return catalogTaxonomyNodeMap(defaultCatalogTaxonomy).has(id);
+}
+
+export function defaultCatalogTaxonomySearchValues(ids: readonly string[]): string[] {
+  if (!defaultCatalogTaxonomy) return [...ids];
+  return catalogTaxonomySearchValues(defaultCatalogTaxonomy, ids);
+}

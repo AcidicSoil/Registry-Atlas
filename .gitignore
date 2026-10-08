@@ -51,6 +51,8 @@ codefetch.config.mjs
 # SQLite transient companions: the committed snapshot is the .sqlite file only
 *.sqlite-wal
 *.sqlite-shm
+/public/data/*.sqlite
+/public/data/*.sqlite.gz
 
 # Local git worktrees
 .worktrees/

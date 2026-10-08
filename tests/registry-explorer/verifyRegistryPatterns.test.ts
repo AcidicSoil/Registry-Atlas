@@ -77,7 +77,7 @@ describe('bounded SQLite registry route-pattern verification', () => {
     expect(result.verifiedPatterns).toBe(0);
     expect(db.prepare("SELECT status FROM item_routes WHERE namespace='@one' AND slug='forms/input'").get())
       .toEqual({status:'unverified'});
-    expect(db.prepare("SELECT COUNT(*) AS n FROM pattern_checks").get().n).toBeGreaterThan(0);
+    expect((db.prepare("SELECT COUNT(*) AS n FROM pattern_checks").get() as { n: number }).n).toBeGreaterThan(0);
     db.close();
   });
   it('resolves a prefixed catalog identity from a verified leaf route pattern', async()=>{
@@ -210,7 +210,7 @@ describe('bounded SQLite registry route-pattern verification', () => {
     });
     expect(result.verifiedPatterns).toBe(1);
     expect(visits).toHaveLength(2);
-    expect(db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get().n).toBe(2);
+    expect((db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get() as { n: number }).n).toBe(2);
     db.close();
   });
 
@@ -306,9 +306,9 @@ describe('bounded SQLite registry route-pattern verification', () => {
     const opts={inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'};
     importRegistryPatterns(db,opts);
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async (url:string)=>getHtml(url)});
-    const n=db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n;
+    const n=(db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get() as { n: number }).n;
     importRegistryPatterns(db,opts);
-    expect(db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n).toBe(n);
+    expect((db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get() as { n: number }).n).toBe(n);
     expect(db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get())
       .toEqual({status:'verified'});
     db.close();

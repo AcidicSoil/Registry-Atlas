@@ -4,7 +4,6 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
-import { DatabaseSync } from 'node:sqlite';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
 import {
   CATALOG_STRUCTURE_SURVEY_SCHEMA,
@@ -13,6 +12,7 @@ import {
   writeRegistrySurveyArtifact,
 } from './lib/catalog-structure-survey.mjs';
 import { chooseObservedGroup } from './lib/systemone-group.mjs';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 const DEFAULT_DECISION_URL = 'http://127.0.0.1:18080/v1/systemone';
 const VALUE_FLAGS = new Set([
@@ -224,16 +224,17 @@ function createPinchTabObserver({ server, tab, delayMs }) {
 }
 
 async function loadInputs(cwd) {
-  const [raw, catalog, curated] = await Promise.all([
-    readFile(join(cwd, 'data/shadcn/registries.raw.json'), 'utf8').then(JSON.parse),
-    readFile(join(cwd, 'public/data/registry-catalog-items.json'), 'utf8').then(JSON.parse),
-    readFile(join(cwd, 'data/shadcn/registry-items.json'), 'utf8').then(JSON.parse),
-  ]);
-  const db = new DatabaseSync(join(cwd, 'data/shadcn/registry-patterns.sqlite'), { readOnly: true });
+  const database = openAtlasCoreDatabase(cwd, { readOnly: true });
   try {
-    return { raw, catalog, curated, evidence: evidenceFromDatabase(db) };
+    const state = readAtlasState(database);
+    return {
+      raw: state.rawRegistries,
+      catalog: state.catalog,
+      curated: state.curated,
+      evidence: evidenceFromDatabase(database),
+    };
   } finally {
-    db.close();
+    database.close();
   }
 }
 

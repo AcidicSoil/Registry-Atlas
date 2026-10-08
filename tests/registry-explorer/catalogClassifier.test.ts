@@ -1,5 +1,3 @@
-// @ts-ignore Node typings are intentionally not a project test dependency.
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM modules.
 import { validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs';
@@ -7,10 +5,9 @@ import { validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs'
 import { buildCatalogClassificationState } from '../../scripts/lib/catalog-classification-state.mjs';
 // @ts-ignore Standalone Node ESM modules.
 import { classifyCatalogItem, findDeterministicAliasClassification } from '../../scripts/lib/catalog-classifier.mjs';
+import { readRepositoryDocument } from './testAtlasDatabase';
 
-const taxonomy = validateCatalogTaxonomy(
-  JSON.parse(readFileSync('data/catalog-taxonomy/v1.json', 'utf8')),
-);
+const taxonomy = validateCatalogTaxonomy(readRepositoryDocument('catalog-taxonomy'));
 
 describe('catalog classification state', () => {
   it('builds a compact browser-independent state from local item metadata', () => {
@@ -31,6 +28,35 @@ describe('catalog classification state', () => {
     expect(state.item.kind).toBe('block');
     expect(state).not.toHaveProperty('sourceHints');
     expect(JSON.stringify(state)).not.toContain('@flat');
+  });
+
+  it('does not treat legacy survey groups as canonical evidence without explicit reviewed conversion', () => {
+    const legacySurveyRecord = buildCatalogClassificationState({
+      namespace: '@legacy',
+      item: { name: 'mystery-shell', title: 'Mystery Surface', kind: 'block' },
+      groups: ['App Shell'],
+    } as any);
+    expect(legacySurveyRecord).not.toHaveProperty('sourceHints');
+    expect(findDeterministicAliasClassification(legacySurveyRecord, taxonomy)).toBeNull();
+
+    const reviewedConversion = buildCatalogClassificationState({
+      namespace: '@legacy',
+      item: { name: 'mystery-shell', title: 'Mystery Surface', kind: 'block' },
+      sourceHints: { verifiedGroups: ['App Shell'] },
+    });
+    expect(findDeterministicAliasClassification(reviewedConversion, taxonomy)?.primary)
+      .toBe('application/app-shell');
+  });
+
+  it('classifies from local semantic metadata even when no browser/source evidence is available', () => {
+    const state = buildCatalogClassificationState({
+      namespace: '@offline',
+      item: { name: 'button', title: 'Button', kind: 'component' },
+    });
+    expect(findDeterministicAliasClassification(state, taxonomy)).toMatchObject({
+      primary: 'controls/button',
+      method: 'deterministic-alias',
+    });
   });
 
   it('keeps only non-empty trusted source hints and rejects arbitrary page/navigation evidence', () => {
@@ -175,6 +201,25 @@ describe('hierarchical canonical classification', () => {
     });
     expect(calls).toBe(0);
     expect(result).toMatchObject({ primary: 'application/app-shell', method: 'deterministic-alias' });
+  });
+
+  it('classifies normalized icon kind as foundation/iconography without System One', async () => {
+    let calls = 0;
+    const result = await classifyCatalogItem({
+      state: buildCatalogClassificationState({
+        namespace: '@icons',
+        item: { name: 'accessibility', title: 'Accessibility', kind: 'icon' },
+      }),
+      taxonomy,
+      choose: async () => { calls += 1; throw new Error('must not run'); },
+    });
+
+    expect(calls).toBe(0);
+    expect(result).toMatchObject({
+      primary: 'foundation/iconography',
+      path: ['foundation', 'foundation/iconography'],
+      method: 'deterministic-kind',
+    });
   });
 
   it('returns explicit unclassified when UNCLASSIFIED wins the root decision', async () => {

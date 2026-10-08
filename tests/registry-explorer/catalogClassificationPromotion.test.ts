@@ -1,5 +1,3 @@
-// @ts-ignore Node typings are intentionally not a project test dependency.
-import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM modules.
 import { buildCatalogClassificationState } from '../../scripts/lib/catalog-classification-state.mjs';
@@ -15,9 +13,10 @@ import { buildReviewedClassificationOverlay } from '../../scripts/promote-catalo
 import { catalogArtifactFingerprint } from '../../scripts/evaluate-catalog-classifications.mjs';
 // @ts-ignore Standalone Node ESM script.
 import { projectReviewedCatalogClassifications } from '../../scripts/sync-shadcn-registries.mjs';
+import { readRepositoryDocument } from './testAtlasDatabase';
 
-const taxonomy = validateCatalogTaxonomy(JSON.parse(readFileSync('data/catalog-taxonomy/v1.json', 'utf8')));
-const accessRules = JSON.parse(readFileSync('data/catalog-taxonomy/access-rules.json', 'utf8'));
+const taxonomy = validateCatalogTaxonomy(readRepositoryDocument('catalog-taxonomy'));
+const accessRules = readRepositoryDocument('catalog-access-rules');
 
 function classification(namespace = '@7ovr', name = 'app-shell-1', categories = ['app-shell']) {
   const kind = 'block';
@@ -122,8 +121,41 @@ describe('classification overlay application', () => {
       canonical: { taxonomyVersion: 'v1', primary: 'application/app-shell', path: ['application', 'application/app-shell'] },
       sourceGroups: ['App'],
     });
-    expect(promoted).not.toHaveProperty('access');
+    expect(promoted.access).toEqual({ normalized: 'free', sourceLabel: 'Free' });
     expect(result.report).toMatchObject({ applied: 1, stale: 0 });
+  });
+
+  it('uses a reviewed registry-level access default only when the source registry has explicit semantics', () => {
+    const entries = [
+      classification('@7ovr', 'app-shell-default', ['app-shell']),
+      classification('@8bitcn', 'plain-block', ['layout']),
+    ];
+    const { evaluation, review } = reviewedBundle(entries);
+    const overlay = buildReviewedClassificationOverlay({
+      taxonomy, classifications: entries, evaluation, review,
+    });
+    const result = applyCatalogClassificationOverlay({
+      '@7ovr': [{
+        name: 'app-shell-default',
+        type: 'registry:block',
+        title: 'Sidebar Dashboard Shell',
+        description: 'App shell with navigation.',
+        categories: ['app-shell'],
+      }],
+      '@8bitcn': [{
+        name: 'plain-block',
+        type: 'registry:block',
+        title: 'Sidebar Dashboard Shell',
+        description: 'App shell with navigation.',
+        categories: ['layout'],
+      }],
+    }, overlay, accessRules).itemsByNamespace;
+
+    expect(result['@7ovr'][0].access).toEqual({
+      normalized: 'free',
+      sourceLabel: 'Free',
+    });
+    expect(result['@8bitcn'][0]).not.toHaveProperty('access');
   });
 
   it('normalizes explicit reviewed access labels but never invents unknown access', () => {
@@ -182,7 +214,10 @@ describe('classification overlay application', () => {
       kind: 'block',
       canonical: { primary: 'application/app-shell', path: ['application', 'application/app-shell'] },
     });
-    expect(projected.itemsByNamespace['@7ovr'][0]).not.toHaveProperty('access');
+    expect(projected.itemsByNamespace['@7ovr'][0].access).toEqual({
+      normalized: 'free',
+      sourceLabel: 'Free',
+    });
   });
 
   it('is durable and idempotent across identical upstream refreshes', () => {

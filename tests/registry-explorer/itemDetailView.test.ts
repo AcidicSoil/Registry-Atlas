@@ -1,222 +1,134 @@
 import { describe, expect, it } from 'vitest';
-import { resolveRegistryItemDetailFromSummary, resolveRegistryItemDetailFromCatalogIndex } from '../../src/registry-explorer/core/registryItemDetail';
+import {
+  resolveRegistryItemDetailFromCatalogIndex,
+  resolveRegistryItemDetailFromSummary,
+} from '../../src/registry-explorer/core/registryItemDetail';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
-import { renderItemDetailView, renderRelatedComponentLinks, renderLocalBuildOption, renderLocalSandboxOption } from '../../src/registry-explorer/ui/itemDetailView';
+import type { CatalogComponent } from '../../src/registry-explorer/core/catalogQuery';
+import {
+  renderItemDetailView,
+  renderRelatedComponentLinks,
+} from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
-  it('provides provisional sitemap links in Source when independently reviewed docs are missing',()=>{
-    const result=resolveRegistryItemDetailFromCatalogIndex([registryFixture()],{
-      meta:{registry_count:1,item_count:1},
-      registries:{'@delta':[{name:'source-only',type:'registry:ui'}]},
-      sourcePages:{'@delta/source-only':{url:'https://delta.example/docs/source-only',
-        level:'sitemap',source:'official-sitemap'}},
-    },'@delta','source-only');
-    const body=root();
-    renderItemDetailView(root(),body,result,new Set());
-    expect(body.innerHTML).toContain('href="https://delta.example/docs/source-only"');
-    expect(body.innerHTML).toContain('View sitemap-listed page');
-    expect(body.innerHTML).not.toContain('View original component ↗');
-  });
-  it('links to the exact reviewed original documentation and registry separately', () => {
-    const detail = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
+  it('renders the reviewed original page, item JSON, and registry as separate source actions', () => {
+    const result = resolveRegistryItemDetailFromSummary(
+      [registryFixture()],
+      '@delta',
+      'code-block',
+    );
     const body = root();
-    renderItemDetailView(root(), body, detail, new Set());
+
+    renderItemDetailView(root(), body, result, new Set());
+
     expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
     expect(body.innerHTML).toContain('View original component');
+    expect(body.innerHTML).toContain('href="https://delta.example/r/code-block.json"');
+    expect(body.innerHTML).toContain('View item JSON');
     expect(body.innerHTML).toContain('href="https://delta.example/"');
     expect(body.innerHTML).toContain('View registry');
-    expect(body.innerHTML).not.toContain('href="https://delta.example/r/code-block.json"');
   });
 
-  it('does not claim a raw item JSON endpoint is a documentation page', () => {
-    const detail = resolveRegistryItemDetailFromSummary([
-      registryFixture({docsUrl: 'https://delta.example/r/code-block.json'}),
-    ], '@delta', 'code-block');
-    const body = root();
-    renderItemDetailView(root(), body, detail, new Set());
-    expect(body.innerHTML).not.toContain('View original component');
-    expect(body.innerHTML).not.toContain('href="https://delta.example/r/code-block.json"');
-  });
-
-  it('offers an explicit local-only on-demand source preview without pretending it is verified',()=>{
-    const offered=renderLocalBuildOption('@8bitcn','badge','127.0.0.1');
-    expect(offered).toContain('data-local-build-preview="badge"');
-    expect(offered).toContain('not automatically interaction-verified');
-    expect(offered).not.toContain('<iframe');
-    expect(renderLocalBuildOption('@8bitcn','badge','github.io')).toBe('');
-    expect(renderLocalBuildOption('@unreviewed','badge','127.0.0.1')).toBe('');
-    expect(renderLocalBuildOption('@8bitcn','../etc','127.0.0.1')).toBe('');
-  });
-
-  it('offers local original-source builds for newly reviewed namespaces, not just the first registry',()=>{
-    const offered=renderLocalBuildOption('@watermelon','floating-input','127.0.0.1');
-    expect(offered).toContain('data-local-build-registry="watermelon"');
-    expect(offered).toContain('data-local-build-preview="floating-input"');
-    expect(offered).not.toContain('<iframe');
-    expect(renderLocalBuildOption('@watermelon','../etc','localhost')).toBe('');
-    expect(renderLocalBuildOption('@watermelon','floating-input','github.io')).toBe('');
-  });
-  it('offers the source preview for multiple registry item types locally, never on static hosting',()=>{
-    for(const type of ['registry:component','registry:ui','registry:block']){
-      const html=renderLocalSandboxOption('@aceternity','sparkles',type,'127.0.0.1');
-      expect(html).toContain('data-source-sandbox-registry="aceternity"');
-      expect(html).toContain('data-source-sandbox-slug="sparkles"');
-      expect(html).toContain('not author demos or verified interactions');
-    }
-    expect(renderLocalSandboxOption('@aceternity','sparkles','registry:ui','github.io')).toBe('');
-    expect(renderLocalSandboxOption('@bad','../private','registry:ui','localhost')).toBe('');
-    expect(renderLocalSandboxOption('@bad','theme','registry:theme','localhost')).toBe('');
-  });
-
-  it('renders a component-first item page without raw JSON UI labels', () => {
-    const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
-    const header = root();
-    const body = root();
-
-    renderItemDetailView(header, body, result, new Set());
-
-    expect(header.innerHTML).toContain('Code Block');
-    expect(body.innerHTML).toContain('item-preview-metadata');
-    expect(body.innerHTML).toContain('Syntax highlighted code block.');
-    expect(body.innerHTML).not.toContain('Preview not published');
-    expect(body.innerHTML).not.toContain('Visit source documentation');
-    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
-    expect(body.innerHTML).toContain('View original component');
-    expect(body.innerHTML).toContain('Inspect first');
-    expect(body.innerHTML).toContain('Copy install');
-    expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(1);
-    expect(body.innerHTML).toContain('Dependencies');
-    expect(body.innerHTML).toContain('<dt>Warnings</dt>');
-    expect(`${header.innerHTML}${body.innerHTML}`).not.toContain('Raw JSON');
-    expect(body.innerHTML).not.toContain('Open raw item');
-    expect(body.innerHTML).not.toContain('Open registry homepage');
-    expect(body.innerHTML).not.toContain('Registry homepage');
-    expect(body.innerHTML).not.toContain('Open in v0');
-    expect(body.innerHTML).not.toContain('Source record');
-    expect(body.innerHTML).not.toContain('href="https://delta.example/r/');
-  });
-
-  it('shows related cards from only the matching registry with safe internal navigation', () => {
-    const related = [{
-      namespace:'@delta',slug:'button',displayName:'Button',type:'registry:component',
-      routePath:'/Registry-Atlas/@delta/components/button',
-    }, {
-      namespace:'@foreign',slug:'button',displayName:'Foreign',type:'registry:component',
-      routePath:'/Registry-Atlas/@foreign/components/button',
-    }, {
-      namespace:'@delta',slug:'code-block',displayName:'Code Block',type:'registry:component',
-      routePath:'/Registry-Atlas/@delta/components/code-block',
-    }].map(({ namespace, slug, displayName, type, routePath }) => ({
-      id: namespace + '/' + slug,
-      namespace, slug, displayName, type, routePath,
-      registry: { ...registryFixture(), name: namespace },
-      item: { name: slug, type },
-      categories: [], reviewed: false,
-    })) satisfies Parameters<typeof renderRelatedComponentLinks>[0];
-    const linked = related.map(item => item.namespace === '@delta' && item.slug === 'button'
-      ? { ...item, docsUrl: 'https://delta.example/docs/components/button' } : item);
-    const html=renderRelatedComponentLinks(linked,'@delta','code-block');
-    expect(html).toContain('More from @delta');
-    expect(html).toContain('href="/Registry-Atlas/@delta/components/button"');
-    expect(html).toContain('data-view-item-registry="@delta"');
-    expect(html).toContain('href="https://delta.example/docs/components/button"');
-    expect(html).toContain('View original');
-    expect(html).not.toContain('@foreign');
-    expect(html).not.toContain('components/code-block');
-  });
-
-  it('preserves official source access on an interactive item detail without an observed page image',()=>{
-    const result=resolveRegistryItemDetailFromSummary([registryFixture()],'@delta','code-block');
-    if(!result.detail)throw Error('Expected detail fixture');
-    const body=root();
-    renderItemDetailView(root(),body,{...result,detail:{
-      ...result.detail,namespace:'@8bitcn',slug:'audio-settings',visualReference:undefined,
-    }},new Set());
-    expect(body.innerHTML).toContain('data-component-demo="@8bitcn/audio-settings"');
-    expect(body.innerHTML).toContain('href="https://www.8bitcn.com/r/audio-settings.json"');
-    expect(body.innerHTML).toContain('View official source');
-    expect(body.innerHTML).not.toContain('href="https://www.8bitcn.com/docs/components/audio-settings"');
-    expect(body.innerHTML).not.toContain('item-preview-metadata');
-  });
-  it('keeps both the functional demo and sourced image when an item has both', () => {
-    const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
-    if (!result.detail) throw Error('Expected detail fixture');
-    const body = root();
-    renderItemDetailView(root(), body, { ...result, detail: {
-      ...result.detail, namespace: '@8bitcn', slug: 'button',
-      visualReference: {
-        imageUrl: '/Registry-Atlas/data/previews/8bitcn/button.jpg',
-        officialPage: 'https://www.8bitcn.com/docs/components/button',
+  it('uses provisional sitemap source links when no reviewed item page is available', () => {
+    const result = resolveRegistryItemDetailFromCatalogIndex(
+      [registryFixture()],
+      {
+        meta: { registry_count: 1, item_count: 1 },
+        registries: { '@delta': [{ name: 'source-only', type: 'registry:ui' }] },
+        sourcePages: {
+          '@delta/source-only': {
+            url: 'https://delta.example/docs/source-only',
+            level: 'sitemap',
+            source: 'official-sitemap',
+          },
+        },
       },
-    } }, new Set());
-    expect(body.innerHTML).toContain('data-component-demo="@8bitcn/button"');
-    expect(body.innerHTML).toContain('src="/Registry-Atlas/data/previews/8bitcn/button.jpg"');
-    expect(body.innerHTML).toContain('View original component');
-    expect(body.innerHTML.indexOf('<iframe')).toBeLessThan(body.innerHTML.indexOf('item-preview-reference'));
-  });
-
-  it('keeps a verified original link separate from an unavailable install action', () => {
-    const result = resolveRegistryItemDetailFromSummary([registryFixture({ routeEligible: false })], '@delta', 'code-block');
+      '@delta',
+      'source-only',
+    );
     const body = root();
 
     renderItemDetailView(root(), body, result, new Set());
 
-    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
-    expect(body.innerHTML).toContain('View original component');
-    expect(body.innerHTML).toContain('<button class="install-button" type="button" disabled>Copy install</button>');
-    expect((body.innerHTML.match(/install-button install-button-primary/g) ?? [])).toHaveLength(0);
-    expect(body.innerHTML).toContain('Visual reference not yet available');
+    expect(body.innerHTML).toContain('href="https://delta.example/docs/source-only"');
+    expect(body.innerHTML).toContain('View sitemap-listed page');
   });
 
-  it('shows the recorded component image and a direct link to the actual demo page', () => {
-    const result = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
-    if (!result.detail) throw new Error('Expected item detail');
+  it('does not expose fake preview or local-build surfaces', () => {
     const body = root();
-    renderItemDetailView(root(), body, { ...result, detail: {
-      ...result.detail,
-      visualReference: {
-        imageUrl: '/Registry-Atlas/data/previews/delta/code-block.jpg',
-        officialPage: 'https://delta.example/docs/code-block',
-      },
-    } }, new Set());
-    expect(body.innerHTML).toContain('src="/Registry-Atlas/data/previews/delta/code-block.jpg"');
-    expect(body.innerHTML).toContain('href="https://delta.example/docs/code-block"');
-    expect(body.innerHTML).toContain('View original component');
-    expect(body.innerHTML).not.toContain('item-preview-metadata');
-  });
+    renderItemDetailView(
+      root(),
+      body,
+      resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block'),
+      new Set(),
+    );
 
-  it.each(['javascript:alert(1)', 'not a URL'])('treats unsafe preview URLs (%s) as unavailable in both imagery and status copy', (previewUrl) => {
-    const result = resolveRegistryItemDetailFromSummary([registryFixture({ previewUrl })], '@delta', 'code-block');
-    const body = root();
-
-    renderItemDetailView(root(), body, result, new Set());
-
-    expect(body.innerHTML).toContain('item-preview-metadata');
+    expect(body.innerHTML).not.toContain('<iframe');
+    expect(body.innerHTML).not.toContain('data-component-demo');
+    expect(body.innerHTML).not.toContain('data-local-build-preview');
+    expect(body.innerHTML).not.toContain('data-source-sandbox');
+    expect(body.innerHTML).not.toContain('Visual reference');
     expect(body.innerHTML).not.toContain('Preview not published');
-    expect(body.innerHTML).not.toContain('<img');
-    expect(body.innerHTML).not.toContain('Open preview');
-    expect(body.innerHTML).not.toContain('visual available');
-    expect(body.innerHTML).not.toContain('preview unavailable');
-    expect(body.innerHTML).toContain('Visual reference not yet available');
   });
 
-  it.each(['javascript:alert(1)', 'https://user:pass@delta.example/docs', '//attacker.example/docs'])
-    ('does not expose unsafe source documentation (%s)', (docsUrl) => {
-      const result = resolveRegistryItemDetailFromSummary(
-        [registryFixture({ docsUrl })], '@delta', 'code-block');
-      const body = root();
-      renderItemDetailView(root(), body, result, new Set());
-      expect(body.innerHTML).not.toContain('Visit source documentation');
-      expect(body.innerHTML).not.toContain('href="javascript:');
-      expect(body.innerHTML).not.toContain('user:pass@');
-    });
+  it('renders concise install and inspection copy actions without defensive review boilerplate', () => {
+    const body = root();
+    renderItemDetailView(
+      root(),
+      body,
+      resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block'),
+      new Set(),
+    );
+
+    expect(body.innerHTML).toContain('Copy install-agent prompt');
+    expect(body.innerHTML).toContain('Copy inspection prompt');
+    expect(body.innerHTML).toContain('Copy link');
+    expect(body.innerHTML).toContain('Do the work:');
+    expect(body.innerHTML).toContain('Do not modify the repository.');
+    expect(body.innerHTML).not.toContain('possible adoption');
+    expect(body.innerHTML).not.toContain('Security, provenance, maintenance');
+    expect(body.innerHTML).not.toContain('Copy review prompt');
+  });
+
+  it('renders grounded dependencies and files while omitting empty technical groups', () => {
+    const populated = root();
+    renderItemDetailView(
+      root(),
+      populated,
+      resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block'),
+      new Set(),
+    );
+    expect(populated.innerHTML).toContain('<h2>Dependencies</h2>');
+    expect(populated.innerHTML).toContain('lucide-react');
+    expect(populated.innerHTML).toContain('<h2>Files</h2>');
+    expect(populated.innerHTML).toContain('registry/code-block.tsx');
+
+    const empty = root();
+    renderItemDetailView(
+      root(),
+      empty,
+      resolveRegistryItemDetailFromSummary(
+        [registryFixture({ emptyTechnicalDetails: true })],
+        '@delta',
+        'code-block',
+      ),
+      new Set(),
+    );
+    expect(empty.innerHTML).not.toContain('<h2>Dependencies</h2>');
+    expect(empty.innerHTML).not.toContain('<h2>Files</h2>');
+    expect(empty.innerHTML).toContain('<h2>Source</h2>');
+  });
 
   it('escapes imported item text and file fields', () => {
-    const result = resolveRegistryItemDetailFromSummary([registryFixture({
-      title: '<img src=x onerror=alert(1)>',
-      description: 'A&B <script>alert(1)</script>',
-      filePath: 'registry/<bad>.tsx',
-    })], '@delta', 'code-block');
+    const result = resolveRegistryItemDetailFromSummary(
+      [registryFixture({
+        title: '<img src=x onerror=alert(1)>',
+        description: 'A&B <script>alert(1)</script>',
+        filePath: 'registry/<bad>.tsx',
+      })],
+      '@delta',
+      'code-block',
+    );
     const header = root();
     const body = root();
 
@@ -228,48 +140,78 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('<script>alert(1)</script>');
   });
 
-  it('omits empty technical groups and inferred recommendation sections', () => {
-    const registry = registryFixture({ emptyTechnicalDetails: true });
-    const result = resolveRegistryItemDetailFromSummary([registry], '@delta', 'code-block');
+  it.each([
+    'javascript:alert(1)',
+    'https://user:pass@delta.example/docs',
+    '//attacker.example/docs',
+  ])('does not expose unsafe source documentation (%s)', docsUrl => {
     const body = root();
+    renderItemDetailView(
+      root(),
+      body,
+      resolveRegistryItemDetailFromSummary(
+        [registryFixture({ docsUrl })],
+        '@delta',
+        'code-block',
+      ),
+      new Set(),
+    );
 
-    renderItemDetailView(root(), body, result, new Set());
-
-    expect(body.innerHTML).not.toContain('<h2>Dependencies</h2>');
-    expect(body.innerHTML).not.toContain('<h2>Dev dependencies</h2>');
-    expect(body.innerHTML).not.toContain('<h2>Registry dependencies</h2>');
-    expect(body.innerHTML).not.toContain('<h2>Files</h2>');
-    expect(body.innerHTML).toContain('<h2>Source</h2>');
-    expect(body.innerHTML).not.toContain('Review third-party registry code before installing.');
-    expect(body.innerHTML).not.toContain('install-safety-note');
-    expect(body.innerHTML).not.toContain('Similar patterns');
-    expect(body.innerHTML).not.toContain('Alternate terminology');
+    expect(body.innerHTML).not.toContain('href="javascript:');
+    expect(body.innerHTML).not.toContain('user:pass@');
+    expect(body.innerHTML).not.toContain('attacker.example');
   });
 
-  it('renders safe fallback states for failed detail loading', () => {
-    const base = resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block');
-    const detail = base.detail;
-    expect(detail).not.toBeNull();
-    const header = root();
+  it('renders safe fallback copy when full detail loading fails', () => {
+    const base = resolveRegistryItemDetailFromSummary(
+      [registryFixture()],
+      '@delta',
+      'code-block',
+    );
+    expect(base.detail).not.toBeNull();
     const body = root();
 
-    renderItemDetailView(header, body, {
+    renderItemDetailView(root(), body, {
       status: 'fetch-error',
-      detail,
+      detail: base.detail,
       message: 'Registry item could not be loaded from the network.',
       reason: 'network-error',
     }, new Set());
 
-    expect(header.innerHTML).toContain('Summary');
-    expect(header.innerHTML).not.toContain('Catalog summary');
     expect(body.innerHTML).toContain('Full item details could not be loaded');
-    expect(body.innerHTML).not.toContain('Open component page');
-    expect(body.innerHTML).not.toContain('Open raw item');
-    expect(body.innerHTML).not.toContain('Open registry homepage');
-    expect(body.innerHTML).not.toContain('Registry homepage');
     expect(body.innerHTML).not.toContain('Open in v0');
-    expect(body.innerHTML).not.toContain('Source record');
-    expect(body.innerHTML).not.toContain('href="https://delta.example/r/');
+  });
+});
+
+describe('renderRelatedComponentLinks', () => {
+  it('uses the correct first-class detail route and direct source links for related blocks', () => {
+    const html = renderRelatedComponentLinks([
+      catalogItem('current', 'component'),
+      catalogItem('app-shell', 'block'),
+    ], '@delta', 'current');
+
+    expect(html).toContain('href="/Registry-Atlas/@delta/blocks/app-shell"');
+    expect(html).toContain('data-view-item-kind="block"');
+    expect(html).toContain('Item JSON');
+    expect(html).toContain('registry-icon-related');
+  });
+
+  it('uses source-backed template categories for template detail routes', () => {
+    const template = catalogItem('starter', 'block');
+    template.item = {
+      ...template.item,
+      type: 'registry:block',
+      categories: ['templates'],
+    };
+    template.categories = ['templates'];
+
+    const html = renderRelatedComponentLinks([
+      catalogItem('current', 'component'),
+      template,
+    ], '@delta', 'current');
+
+    expect(html).toContain('href="/Registry-Atlas/@delta/templates/starter"');
+    expect(html).toContain('data-view-item-kind="template"');
   });
 });
 
@@ -277,7 +219,14 @@ function root(): HTMLElement {
   return { innerHTML: '' } as HTMLElement;
 }
 
-function registryFixture(options: { title?: string; description?: string; filePath?: string; previewUrl?: string; docsUrl?: string; emptyTechnicalDetails?: boolean; routeEligible?: boolean } = {}): Registry {
+function registryFixture(options: {
+  title?: string;
+  description?: string;
+  filePath?: string;
+  docsUrl?: string;
+  emptyTechnicalDetails?: boolean;
+  routeEligible?: boolean;
+} = {}): Registry {
   return {
     name: '@delta',
     url: 'https://delta.example',
@@ -298,53 +247,71 @@ function registryFixture(options: { title?: string; description?: string; filePa
       localCount: 1,
       warnings: [],
     },
-    itemSummaries: [
-      {
-        name: 'Code Block',
-        slug: 'code-block',
-        title: options.title ?? 'Code Block',
-        description: options.description ?? 'Syntax highlighted code block.',
+    itemSummaries: [{
+      name: 'Code Block',
+      slug: 'code-block',
+      title: options.title ?? 'Code Block',
+      description: options.description ?? 'Syntax highlighted code block.',
+      type: 'registry:ui',
+      category: 'code',
+      source: 'registry-json',
+      provenance: 'fixture',
+      catalogStatus: 'available',
+      confidence: 'high',
+      routeEligible: options.routeEligible ?? true,
+      rawItemUrl: 'https://delta.example/r/code-block.json',
+      docsUrl: options.docsUrl ?? 'https://delta.example/components/code-block',
+      evidenceUrl: 'https://delta.example/evidence',
+      installCommand: 'npx shadcn@latest add @delta/code-block',
+      viewCommand: 'npx shadcn@latest view @delta/code-block',
+      warnings: ['review generated styles'],
+      dependencies: options.emptyTechnicalDetails ? [] : ['lucide-react'],
+      devDependencies: [],
+      registryDependencies: [],
+      files: options.emptyTechnicalDetails ? [] : [{
+        path: options.filePath ?? 'registry/code-block.tsx',
         type: 'registry:ui',
-        category: 'code',
-        source: 'registry-json',
-        provenance: 'fixture',
-        catalogStatus: 'available',
-        confidence: 'high',
-        routeEligible: options.routeEligible ?? true,
-        rawItemUrl: 'https://delta.example/r/code-block.json',
-        docsUrl: options.docsUrl ?? 'https://delta.example/components/code-block',
-        previewUrl: options.previewUrl,
-        evidenceUrl: 'https://delta.example/evidence',
-        warnings: ['review generated styles'],
-        dependencies: options.emptyTechnicalDetails ? [] : ['shiki'],
-        devDependencies: [],
-        registryDependencies: [],
-        files: options.emptyTechnicalDetails ? [] : [{ path: options.filePath ?? 'registry/code-block.tsx', type: 'registry:ui', target: 'components/code-block.tsx' }],
-      },
-    ],
+        target: 'components/code-block.tsx',
+      }],
+    }],
   };
 }
 
-describe('enriched detail actions', () => {
-  it('renders grounded prompts, copy link, and real previews without inferred recommendations', () => {
-    const delta = registryFixture({ previewUrl: 'https://delta.example/preview.png' });
-    const result = resolveRegistryItemDetailFromSummary([delta], '@delta', 'code-block');
-    const body = root();
-
-    renderItemDetailView(root(), body, result, new Set());
-
-    expect(body.innerHTML).not.toContain('<img');
-    expect(body.innerHTML).toContain('Visual reference not yet available');
-    expect(body.innerHTML).not.toContain('Preview not published');
-    expect(body.innerHTML).toContain('Copy install-agent prompt');
-    expect(body.innerHTML).toContain('Copy inspection prompt');
-    expect(body.innerHTML).not.toContain('Copy review prompt');
-    expect(body.innerHTML).not.toContain('Open in v0');
-    expect(body.innerHTML).not.toContain('v0.dev/chat/api/open');
-    expect(body.innerHTML).toContain('Copy link');
-    expect(body.innerHTML).toContain('data-copy-current-url');
-    expect(body.innerHTML).not.toContain('Alternate terminology');
-    expect(body.innerHTML).not.toContain('Similar patterns');
-    expect(body.innerHTML).not.toContain('Related registries');
-  });
-});
+function catalogItem(
+  slug: string,
+  kind: 'component' | 'block' | 'page' | 'template' | 'theme',
+): CatalogComponent {
+  const registry = registryFixture();
+  const rawType = kind === 'block'
+    ? 'registry:block'
+    : kind === 'page' || kind === 'template'
+      ? 'registry:page'
+      : kind === 'theme'
+        ? 'registry:theme'
+        : 'registry:component';
+  return {
+    id: `@delta:${slug}`,
+    namespace: '@delta',
+    registry,
+    slug,
+    displayName: slug,
+    type: rawType,
+    categories: [],
+    reviewed: false,
+    item: {
+      name: slug,
+      type: rawType,
+      kind,
+    },
+    routePath: `/Registry-Atlas/@delta/components/${slug}`,
+    reviewedSummary: {
+      name: slug,
+      slug,
+      source: 'registry-json',
+      provenance: 'fixture',
+      catalogStatus: 'available',
+      routeEligible: true,
+      rawItemUrl: `https://delta.example/r/${slug}.json`,
+    },
+  };
+}

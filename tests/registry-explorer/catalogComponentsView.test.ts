@@ -1,33 +1,61 @@
 import { describe, expect, it } from "vitest";
 import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-explorer/core/catalogQuery";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
-import { DEFAULT_CATALOG_TAXONOMY } from "../../src/registry-explorer/core/catalogTaxonomy";
+import { parseCatalogTaxonomy } from "../../src/registry-explorer/core/catalogTaxonomy";
 import {
   renderCatalogBrowseControls,
-  renderAssetKindChips,
   renderCatalogComponentCard,
   renderCatalogComponents,
-  renderCatalogRailControls,
 } from "../../src/registry-explorer/ui/catalogComponentsView";
 
+const TEST_TAXONOMY = parseCatalogTaxonomy({
+  version: "v1",
+  roots: [{
+    id: "application",
+    label: "Application",
+    aliases: ["app"],
+    what: "Application surfaces",
+    notFor: [],
+    examples: [],
+    children: [{
+      id: "application/app-shell",
+      label: "App Shell",
+      aliases: ["workspace shell"],
+      what: "Application shell",
+      notFor: [],
+      examples: [],
+      children: [],
+    }],
+  }],
+});
+
 describe("renderCatalogComponents", () => {
-  it("labels official sitemap pages as provisional while preserving Atlas routes", () => {
+  it("deeplinks sitemap-backed component pages while preserving provenance metadata", () => {
     const html=renderCatalogComponentCard({...component(),
       sourcePage:{url:'https://delta.example/docs/code-block',
         level:'sitemap',source:'official-sitemap'}});
     expect(html).toContain('href="https://delta.example/docs/code-block"');
-    expect(html).toContain('View sitemap-listed page');
+    expect(html).toContain('View component');
+    expect(html).toContain('data-source-level="sitemap"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
     expect(html).not.toContain('View original ↗');
+    expect(html).not.toContain('View item JSON');
   });
-  it("offers the exact reviewed registry component page even without an image", () => {
+  it("uses the source component deeplink on cards and never exposes raw item JSON", () => {
+    const base = component();
     const html = renderCatalogComponentCard({
-      ...component(), docsUrl: "https://delta.example/components/code-block",
+      ...base,
+      docsUrl: "https://delta.example/components/code-block",
+      item: {
+        ...base.item,
+        rawItemUrl: "https://delta.example/r/code-block.json",
+      },
     });
-    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
+    expect(html).toContain('class="catalog-component-source-actions"');
     expect(html).toContain('href="https://delta.example/components/code-block"');
-    expect(html).toContain("View original");
-    expect(html).not.toContain("View official source");
+    expect(html).toContain("View component");
+    expect(html).not.toContain('href="https://delta.example/r/code-block.json"');
+    expect(html).not.toContain("View item JSON");
   });
 
   it("does not confuse a raw JSON route or another registry with a component page", () => {
@@ -42,48 +70,38 @@ describe("renderCatalogComponents", () => {
     expect(external).not.toContain("catalog-component-original");
   });
 
-  it("renders multi-selected asset type chips", () => {
-    const html = renderAssetKindChips({component: 4, template: 2, theme: 1}, ["template", "theme"]);
-    expect(html).toMatch(/data-asset-kind-value="template"\s+aria-pressed="true"/);
-    expect(html).toMatch(/data-asset-kind-value="theme"\s+aria-pressed="true"/);
-    expect(html).not.toContain('data-asset-kind-value="icon"');
-  });
-  it("keeps component records visible without claiming that an image is an interactive demo", () => {
-    const shown = renderCatalogComponentCard(component({
-      previewUrl: "/Registry-Atlas/data/previews/8bitcn/button.jpg",
-    }));
-    expect(shown).toContain('data-view-item-registry="@delta"');
-    expect(shown).not.toContain("Visual reference not yet available");
-    expect(shown).not.toContain("<img");
-    expect(shown).not.toContain("Open raw item");
-    expect(shown).not.toContain("Source record");
-    const withoutPreview = renderCatalogComponentCard(component());
-    expect(withoutPreview).not.toContain("Visual reference not yet available");
-    expect(withoutPreview).toContain("catalog-component-open");
-  });
-  it("renders an evidence-backed image as the primary card visual, with a separate official page link", () => {
-    const html = renderCatalogComponentCard(component({
-      visualReference: {
-        imageUrl: "/Registry-Atlas/data/previews/delta/code-block.jpg",
-        officialPage: "https://delta.example/docs/code-block",
+  it("does not substitute raw item JSON when no source component deeplink exists", () => {
+    const base = component();
+    const html = renderCatalogComponentCard({
+      ...base,
+      item: {
+        ...base.item,
+        rawItemUrl: "https://delta.example/r/new-york-v4/code-block.json",
       },
-    }));
-    expect(html).toContain('class="catalog-component-preview-image"');
-    expect(html).toContain('src="/Registry-Atlas/data/previews/delta/code-block.jpg"');
-    expect(html).toContain('alt="Code Block visual reference"');
-    expect(html).toContain('href="https://delta.example/docs/code-block"');
-    expect(html).toContain('rel="noreferrer noopener"');
-    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
-    expect(html).not.toContain("Interactive demo unavailable");
+    } as CatalogComponent);
+    expect(html).not.toContain('href="https://delta.example/r/new-york-v4/code-block.json"');
+    expect(html).not.toContain("View item JSON");
+    expect(html).not.toContain("catalog-component-original");
+  });
+
+  it("keeps component records visible without fake preview surfaces", () => {
+    const html = renderCatalogComponentCard(component());
+    expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).toContain("catalog-component-open");
+    expect(html).not.toContain("Visual reference");
+    expect(html).toContain("data-registry-icon-image");
+    expect(html).not.toContain("catalog-component-preview-image");
+    expect(html).not.toContain("<iframe");
+    expect(html).not.toContain("data-component-demo");
   });
 
   it("renders real component cards as action-light detail links", () => {
     const header = root();
     const body = root();
 
-    renderCatalogComponents(header, body, result([component({ previewUrl: "https://delta.example/preview.png" })]), { searchTerm: "" });
+    renderCatalogComponents(header, body, result([component()]), { searchTerm: "" });
 
-    expect(header.innerHTML).toContain("<h1>Catalog</h1>");
+    expect(header.innerHTML).toContain("<h1>Components</h1>");
     expect(header.innerHTML).toContain("1 item");
     expect(body.innerHTML).toContain("data-view-item-registry=\"@delta\"");
     expect(body.innerHTML).toContain("data-view-item-slug=\"code-block\"");
@@ -96,12 +114,12 @@ describe("renderCatalogComponents", () => {
 
   it("renders evidence-backed discovery bands before the full component grid", () => {
     const body = root();
-    renderCatalogComponents(root(), body, result([component({ previewUrl: "https://delta.example/preview.png" })]), {
+    renderCatalogComponents(root(), body, result([component()]), {
       searchTerm: "",
       discoveryBands: [{
         label: "Forms",
         routePath: "/Registry-Atlas/components/explore/forms",
-        items: [component({ previewUrl: "https://delta.example/preview.png" })],
+        items: [component()],
       }],
     });
 
@@ -114,20 +132,14 @@ describe("renderCatalogComponents", () => {
     );
   });
 
-  it("renders all catalog entries but labels absent functional previews accurately", () => {
-    const withStaticImage = root();
-    renderCatalogComponents(root(), withStaticImage, result([
-      component({ previewUrl: "https://delta.example/preview.png" }),
-    ]), { searchTerm: "" });
-    expect(withStaticImage.innerHTML).not.toContain("<img");
-    expect(withStaticImage.innerHTML).not.toContain("Visual reference not yet available");
-    expect(withStaticImage.innerHTML).toContain("catalog-component-open");
-
-    const withoutPreview = root();
-    renderCatalogComponents(root(), withoutPreview, result([component()]), { searchTerm: "" });
-    expect(withoutPreview.innerHTML).toContain("catalog-component-open");
-    expect(withoutPreview.innerHTML).not.toContain("Visual reference not yet available");
-    expect(withoutPreview.innerHTML).not.toContain("catalog-component-metadata-specimen");
+  it("renders all catalog entries as metadata cards without preview placeholders", () => {
+    const body = root();
+    renderCatalogComponents(root(), body, result([component()]), { searchTerm: "" });
+    expect(body.innerHTML).toContain("catalog-component-open");
+    expect(body.innerHTML).toContain("data-registry-icon-image");
+    expect(body.innerHTML).not.toContain("catalog-component-preview-image");
+    expect(body.innerHTML).not.toContain("Visual reference");
+    expect(body.innerHTML).not.toContain("Preview not published");
   });
 
   it("renders native theme swatches only in theme mode", () => {
@@ -148,68 +160,48 @@ describe("renderCatalogComponents", () => {
     expect(componentHtml).not.toContain("catalog-theme-swatches");
   });
 
-  it("splits browse dimensions into the rail and keeps the content toolbar compact", () => {
-    const facets = {
-      registries: [{ value: "@delta", count: 12 }],
-      itemTypes: [{ value: "registry:ui", count: 10 }],
-      categories: [{ value: "forms", count: 4 }],
-      canonical: [],
-      reviewedCount: 2,
-      unreviewedCount: 10,
-    };
+  it("renders only the applied catalog scope in results, never a second control toolbar", () => {
     const state = {
       page: 2,
       sort: "registry" as const,
       registryNames: ["@delta"],
-      itemTypes: ["registry:ui"],
-      categories: ["forms"],
+      itemTypes: [],
+      categories: [],
       assetKinds: [],
       canonicalIds: [],
-      access: [],
+      access: ["free"] as Array<"free" | "paid">,
       reviewed: "unreviewed" as const,
     };
 
-    const rail = renderCatalogRailControls(facets, state);
-    expect(rail).not.toContain('data-catalog-search');
-    expect(rail).toContain('data-catalog-registry-value="@delta"');
-    expect(rail).toContain('>Registry<');
-    expect(rail).not.toContain('data-catalog-type-value');
-    expect(rail).not.toContain('data-catalog-category-value="forms"');
-    expect(rail).not.toContain('>Source category<');
-    expect(rail).not.toContain('>Item types<');
-
-    const localRail = renderCatalogRailControls(facets, state, { showCategories: true });
-    expect(localRail).toContain('data-catalog-category-value="forms"');
-    expect(localRail).toContain('>Source category<');
-
-    const toolbar = renderCatalogBrowseControls(state);
-    expect(toolbar).not.toContain('data-catalog-filter="registry"');
-    expect(toolbar).not.toContain('data-catalog-filter="type"');
-    expect(toolbar).not.toContain('data-catalog-filter="category"');
-    expect(toolbar).not.toContain('data-catalog-reviewed');
-    expect(toolbar).toContain('data-catalog-sort');
-    expect(toolbar).not.toContain('Reviewed first');
-    expect(toolbar).not.toContain('<option value="type"');
-    expect(toolbar).toContain('<option value="name"');
-    expect(toolbar).toContain('<option value="registry"');
+    const context = renderCatalogBrowseControls(state, {
+      searchTerm: "button",
+    });
+    expect(context).toContain('Search: “button”');
+    expect(context).toContain('Registry: @delta');
+    expect(context).toContain('Access: Free');
+    expect(context).toContain('data-catalog-clear');
+    expect(context).not.toContain('data-catalog-search');
+    expect(context).not.toContain('data-catalog-registry-select');
+    expect(context).not.toContain('data-catalog-access-select');
+    expect(context).not.toContain('data-catalog-sort');
+    expect(context).not.toContain('<select');
+    expect(context).not.toContain('<details');
   });
 
-  it("keeps active asset filters clearable without duplicating the directory sorter", () => {
+  it("renders selected asset type only as removable applied context", () => {
     const markup = renderCatalogBrowseControls({
       page: 1, sort: "name", registryNames: [], itemTypes: [], categories: [],
-      assetKinds: [], canonicalIds: [], access: [], reviewed: "all",
+      assetKinds: ["component"], canonicalIds: [], access: [], reviewed: "all",
     }, {
-      assetCounts: { component: 4, template: 2 },
       selectedAssetKinds: ["component"],
-      hideSort: true,
     });
-    expect(markup).toContain("<summary>Filters");
+    expect(markup).toContain('Asset type: Components');
     expect(markup).toContain('data-asset-kind-value="component"');
     expect(markup).toContain('data-catalog-clear');
-    expect(markup).not.toContain('data-catalog-sort');
+    expect(markup).not.toContain('data-asset-kind-select');
   });
 
-  it("keeps filters visible when a filter combination has no matches", () => {
+  it("keeps applied filter context visible when a filter combination has no matches", () => {
     const body = root();
     renderCatalogComponents(root(), body, result([]), {
       searchTerm: "",
@@ -226,9 +218,10 @@ describe("renderCatalogComponents", () => {
       },
     });
 
-    expect(body.innerHTML).not.toContain('data-catalog-reviewed');
-    expect(body.innerHTML).toContain('data-catalog-sort');
+    expect(body.innerHTML).toContain('Type: block');
     expect(body.innerHTML).toContain('data-catalog-clear');
+    expect(body.innerHTML).not.toContain('data-catalog-sort');
+    expect(body.innerHTML).not.toContain('<select');
     expect(body.innerHTML).toContain('No catalog items are available');
   });
 
@@ -268,8 +261,6 @@ function result(items: CatalogComponent[]): CatalogQueryResult {
 }
 
 function component(options: {
-  previewUrl?: string;
-  visualReference?: CatalogComponent["visualReference"];
   themePreview?: CatalogComponent["themePreview"];
 } = {}): CatalogComponent {
   return {
@@ -285,8 +276,6 @@ function component(options: {
     reviewed: false,
     item: { name: "code-block", title: "Code Block", type: "registry:ui", categories: ["code"] },
     routePath: "/Registry-Atlas/@delta/components/code-block",
-    ...(options.previewUrl ? { previewUrl: options.previewUrl } : {}),
-    ...(options.visualReference ? { visualReference: options.visualReference } : {}),
     ...(options.themePreview ? { themePreview: options.themePreview } : {}),
   };
 }
@@ -308,62 +297,45 @@ function registry(): Registry {
 }
 
 
-describe("canonical catalog filter controls", () => {
-  const facets = {
-    registries: [{ value: "@delta", count: 7 }],
-    itemTypes: [],
-    categories: [{ value: "app-shell", count: 2 }],
-    canonical: [
-      { value: "application", count: 4 },
-      { value: "application/app-shell", count: 2 },
-      { value: "ai", count: 2 },
-      { value: "ai/chat", count: 2 },
-      { value: "controls", count: 1 },
-      { value: "controls/button", count: 1 },
-    ],
-    access: [{ value: "free", count: 3 }, { value: "paid", count: 1 }],
-    reviewedCount: 0,
-    unreviewedCount: 7,
-  };
-
+describe("catalog applied-filter context", () => {
   const state = {
     page: 1,
     sort: "name" as const,
     registryNames: [],
     itemTypes: [],
     categories: [],
-    assetKinds: ["block", "page"] as const,
+    assetKinds: ["block"] as const,
     canonicalIds: ["application/app-shell"],
     access: ["free"] as const,
     reviewed: "all" as const,
   };
 
-  it("renders all canonical kinds without collapsing block/page into legacy labels", () => {
-    const html = renderAssetKindChips({ block: 4, page: 2, component: 1 }, ["block", "page"] as any);
+  it("renders asset type as removable context with the same catalog vocabulary", () => {
+    const html = renderCatalogBrowseControls(state as any, {
+      selectedAssetKinds: ["block"],
+    });
     expect(html).toContain('data-asset-kind-value="block"');
-    expect(html).toContain('>Blocks<');
-    expect(html).toContain('data-asset-kind-value="page"');
-    expect(html).toContain('>Pages<');
-    expect(html).not.toMatch(/data-asset-kind-value="block"[^>]*>[^<]*Components/);
+    expect(html).toContain('Asset type: Blocks');
+    expect(html).not.toContain('data-asset-kind-select');
   });
 
-  it("renders canonical and conditional access state as removable filters without duplicating the hierarchy", () => {
+  it("renders canonical and access state as removable context without duplicating selection controls", () => {
     const html = renderCatalogBrowseControls(state as any, {
-      facets,
-      taxonomy: DEFAULT_CATALOG_TAXONOMY,
-    } as any);
+      taxonomy: TEST_TAXONOMY,
+    });
     expect(html).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*Category: App Shell/);
     expect(html).toContain('data-catalog-access-value="free"');
-    expect(html).toMatch(/data-catalog-access-value="free"[\s\S]*aria-pressed="true"/);
     expect(html).toContain("Access: Free");
-    expect(html).toContain(">Access<");
-    expect(html).not.toContain(">Canonical category<");
+    expect(html).not.toContain('data-catalog-access-select');
+    expect(html).not.toContain('data-catalog-canonical-checkbox');
+    expect(html).not.toContain('<select');
   });
 
-  it("omits the access facet when the current facet set has no explicit access metadata", () => {
-    const withoutAccess = { ...facets, access: undefined };
-    const html = renderCatalogBrowseControls({ ...state, access: [] } as any, { facets: withoutAccess } as any);
+  it("omits access context when no access filter is active", () => {
+    const html = renderCatalogBrowseControls({ ...state, access: [] } as any, {
+      taxonomy: TEST_TAXONOMY,
+    });
     expect(html).not.toContain('data-catalog-access-value');
-    expect(html).not.toContain(">Access<");
+    expect(html).not.toContain("Access: Free");
   });
 });

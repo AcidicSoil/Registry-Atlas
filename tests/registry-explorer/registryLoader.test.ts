@@ -1,254 +1,225 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it } from 'vitest';
+import { mkdtemp, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { DatabaseSync } from 'node:sqlite';
+import { gunzipSync } from 'node:zlib';
 import { loadRegistries } from '../../src/registry-explorer/data/loadRegistries';
-import { DEFAULT_CATALOG_TAXONOMY } from '../../src/registry-explorer/core/catalogTaxonomy';
+import {
+  configureSqlJsWasmBinaryForTests,
+  resetRuntimeDatabaseCachesForTests,
+} from '../../src/registry-explorer/data/runtimeDatabase';
+// @ts-ignore Standalone Node ESM module intentionally has no TS declarations.
+import * as atlasDatabase from '../../scripts/lib/atlas-database.mjs';
+// @ts-ignore Standalone Node ESM module intentionally has no TS declarations.
+import * as runtimeBuilder from '../../scripts/build-runtime-databases.mjs';
 
-describe('loadRegistries', () => {
-  it('fetches the runtime mirror from the Vite base path', async () => {
+const {
+  ensureAtlasCoreSchema,
+  ensureAtlasDetailSchema,
+  putDocument,
+  replaceCatalogSnapshot,
+  replaceRegistrySnapshot,
+  replaceSourcePages,
+} = atlasDatabase;
+const { buildRuntimeDatabases } = runtimeBuilder;
+
+beforeAll(async () => {
+  configureSqlJsWasmBinaryForTests(
+    new Uint8Array(await readFile('node_modules/sql.js/dist/sql-wasm.wasm')),
+  );
+});
+afterEach(() => resetRuntimeDatabaseCachesForTests());
+
+describe('loadRegistries SQLite runtime', () => {
+  it('fetches one runtime database from the Vite base path and maps registry state', async () => {
+    const fixture = await runtimeFixture();
     const calls: string[] = [];
-    const fetchImpl = async (input: RequestInfo | URL) => {
-      const url = String(input);
-      calls.push(url);
-      if (url.endsWith('registry-catalog-items.json')) return jsonResponse(createCatalogIndex());
-      if (url.endsWith('catalog-taxonomy.json')) return jsonResponse(DEFAULT_CATALOG_TAXONOMY);
-      return jsonResponse(createMirror());
-    };
+    const data = await loadRegistries(async input => {
+      calls.push(String(input));
+      return gzipResponse(fixture.coreGzipPath);
+    });
 
-    await loadRegistries(fetchImpl);
-
-    expect(calls).toEqual([
-      '/data/registries.json',
-      '/data/registry-catalog-items.json',
-      '/data/catalog-taxonomy.json',
-      '/data/component-previews.json',
-      '/data/component-page-links.json',
-    ]);
-  });
-
-  it('converts normalized mirror records into display registries', async () => {
-    const data = await loadRegistries(fetchFixture());
-
+    expect(calls).toEqual(['/data/registry-atlas.sqlite.gz']);
+    expect(data.meta.source_url).toBe('https://ui.shadcn.com/r/registries.json');
+    expect(data.taxonomy.version).toBe('v1');
+    expect(data.taxonomy.roots[0]?.id).toBe('application');
     expect(data.registries).toEqual([
       expect.objectContaining({
         name: '@example',
         url: 'https://example.com',
         description: 'Example registry.',
-        atlas: {
+        atlas: expect.objectContaining({
           aliases: ['example-ui'],
           coverageStatus: 'inferred',
           confidence: 'medium',
-          notes: 'Fixture notes',
           catalogStatus: 'partial',
-          comparisonEvidence: 'catalog',
-          catalogItemCount: 2,
-          catalogEvidenceUrl: 'https://example.com/r/registry.json',
-        },
+          catalogItemCount: 1,
+        }),
         itemSummaries: [
           expect.objectContaining({
             slug: 'button',
-            source: 'known-catalog',
-            provenance: 'fixture',
             rawItemUrl: 'https://example.com/r/button.json',
-            evidenceUrl: 'https://example.com/r/registry.json',
-            registryDependencies: ['card'],
-            dependencies: ['lucide-react'],
-            files: [{ path: 'registry/button.tsx', type: 'registry:ui', target: 'components/button.tsx' }],
+            docsUrl: 'https://example.com/components/button',
           }),
-          expect.objectContaining({ slug: 'card', source: 'known-catalog', provenance: 'fixture' }),
         ],
-        mirror: {
-          officialName: '@example',
-          registryUrlTemplate: 'https://example.com/r/{name}.json',
-          sourceUrl: 'https://ui.shadcn.com/r/registries.json',
-          syncedAt: '2026-05-25T17:28:25.832Z',
-          upstreamCount: 1,
-          localCount: 1,
-          warnings: [],
-        },
       }),
     ]);
+    expect(data.catalogIndex.registries['@example']?.[0]).toMatchObject({
+      name: 'button',
+      type: 'registry:ui',
+    });
+    expect(data.catalogIndex.sourcePages?.['@example/button']).toMatchObject({
+      url: 'https://example.com/components/button',
+      level: 'reviewed',
+      source: 'component-page-verified',
+    });
+  }, 30_000);
 
-    expect(data.registries[0]?.framework).toBeUndefined();
-    expect(data.registries[0]?.license).toBeUndefined();
-    expect(data.registries[0]?.itemSummaries?.[0]?.previewUrl).toBe(
-      'https://example.com/previews/button.png',
-    );
-  });
+  it('accepts a gzip transport response whose body was already decoded by fetch', async () => {
+    const fixture = await runtimeFixture();
+    const compressed = await readFile(fixture.coreGzipPath);
+    const data = await loadRegistries(async () => new Response(gunzipSync(compressed), {
+      status: 200,
+      headers: {
+        'content-encoding': 'gzip',
+        'content-type': 'application/octet-stream',
+      },
+    }));
 
-  it('loads and validates the required runtime canonical taxonomy', async () => {
-    const data = await loadRegistries(fetchFixture());
-    expect(data.taxonomy.version).toBe('v1');
-    expect(data.taxonomy.roots.some(root => root.id === 'application')).toBe(true);
+    expect(data.registries[0]?.name).toBe('@example');
+    expect(data.catalogIndex.registries['@example']?.[0]?.name).toBe('button');
+  }, 30_000);
 
-    await expect(loadRegistries(fetchFixture(createMirror(), createCatalogIndex(), {
-      version: 'v1', roots: [{ id: 'Application', children: [] }],
-    }))).rejects.toThrow(/catalog taxonomy/i);
-  });
+  it('preserves valid empty catalog namespaces from the database', async () => {
+    const fixture = await runtimeFixture({ includeEmptyNamespace: true });
+    const data = await loadRegistries(async () => gzipResponse(fixture.coreGzipPath));
 
-  it('preserves mirror metadata and validation warnings separately', async () => {
-    const data = await loadRegistries(fetchFixture(createMirror({
-      homepage: 'http://example.com',
-    })));
+    expect(data.catalogIndex.meta.registry_count).toBe(2);
+    expect(data.catalogIndex.registries['@empty']).toEqual([]);
+  }, 30_000);
 
-    expect(data.meta.source_url).toBe('https://ui.shadcn.com/r/registries.json');
-    expect(data.meta.upstream_count).toBe(1);
-    expect(data.warnings.map(warning => warning.code)).toEqual(['url-http']);
-  });
+  it('surfaces mirror validation warnings from database-backed records', async () => {
+    const fixture = await runtimeFixture({ homepage: 'http://example.com' });
+    const data = await loadRegistries(async () => gzipResponse(fixture.coreGzipPath));
 
-  it('ignores retired inferred taxonomy fields from older mirrors', async () => {
-    const mirror = createMirror() as any;
-    mirror.registries[0].atlas.primary_focus = ['support'];
-    mirror.registries[0].atlas.component_tags = ['button'];
-    const data = await loadRegistries(fetchFixture(mirror));
+    expect(data.warnings.map(warning => warning.code)).toContain('url-http');
+  }, 30_000);
 
-    expect(data.registries[0]).not.toHaveProperty('primary_focus');
-    expect(data.registries[0]).not.toHaveProperty('component_tags');
-  });
-
-  it('throws when the runtime mirror cannot be fetched', async () => {
-    await expect(loadRegistries(async () => ({
-      ok: false,
+  it('fails when the runtime database cannot be fetched', async () => {
+    await expect(loadRegistries(async () => new Response('', {
       status: 404,
       statusText: 'Not Found',
-    } as Response))).rejects.toThrow('Registry mirror fetch failed');
-  });
-
-  it('throws when runtime mirror validation fails', async () => {
-    await expect(loadRegistries(fetchFixture(createMirror({
-      name: 'example',
-    })))).rejects.toThrow('Registry mirror validation failed');
-  });
-
-  it('ignores unsupported compact-index item types', async () => {
-    const catalog = createCatalogIndex();
-    catalog.registries['@example'].push({
-      name: 'helpers',
-      title: 'Helpers',
-      type: 'registry:lib',
-      categories: ['internal'],
-    });
-    const data = await loadRegistries(fetchFixture(createMirror(), catalog));
-
-    expect(data.catalogIndex.registries['@example']).toHaveLength(1);
-    expect(data.catalogIndex.registries['@example']?.[0]?.name).toBe('command-palette-pro');
-  });
-
-  it('rejects compact-index metadata count mismatches', async () => {
-    const catalog = createCatalogIndex();
-    catalog.meta.item_count = 2;
-
-    await expect(loadRegistries(fetchFixture(createMirror(), catalog)))
-      .rejects.toThrow('Registry catalog index validation failed');
-  });
-
-  it('throws when the compact catalog index is malformed', async () => {
-    await expect(loadRegistries(fetchFixture(createMirror(), {
-      meta: { item_count: 1 },
-      registries: {
-        '@example': [{ name: '', type: 'registry:ui' }],
-      },
-    }))).rejects.toThrow('Registry catalog index validation failed');
+    }))).rejects.toThrow('Runtime database fetch failed');
   });
 });
 
-function jsonResponse(data: unknown): Response {
-  return {
-    ok: true,
-    status: 200,
-    statusText: 'OK',
-    json: async () => data,
-  } as Response;
-}
-
-function fetchFixture(
-  mirror: unknown = createMirror(),
-  catalog: unknown = createCatalogIndex(),
-  taxonomy: unknown = DEFAULT_CATALOG_TAXONOMY,
-) {
-  return async (input: RequestInfo | URL) => {
-    const url = String(input);
-    if (url.endsWith('registry-catalog-items.json')) return jsonResponse(catalog);
-    if (url.endsWith('catalog-taxonomy.json')) return jsonResponse(taxonomy);
-    return jsonResponse(mirror);
-  };
-}
-
-function createCatalogIndex() {
-  return {
-    meta: {
-      source_url: 'https://ui.shadcn.com/r/registries.json',
-      synced_at: '2026-09-28T00:00:00.000Z',
-      registry_count: 1,
-      item_count: 1,
-    },
-    registries: {
-      '@example': [
-        { name: 'command-palette-pro', title: 'Command Palette Pro', type: 'registry:ui', categories: ['navigation'] },
-      ],
-    },
-  };
-}
-
-function createMirror(options: {
-  name?: string;
+async function runtimeFixture(options: {
   homepage?: string;
-  registryUrlTemplate?: string;
+  includeEmptyNamespace?: boolean;
 } = {}) {
-  return {
+  const dir = await mkdtemp(join(tmpdir(), 'registry-atlas-loader-'));
+  const corePath = join(dir, 'core.sqlite');
+  const detailPath = join(dir, 'details.sqlite');
+  const outputDir = join(dir, 'runtime');
+
+  const core = new DatabaseSync(corePath);
+  ensureAtlasCoreSchema(core);
+  replaceRegistrySnapshot(core, {
     meta: {
       source_url: 'https://ui.shadcn.com/r/registries.json',
-      synced_at: '2026-05-25T17:28:25.832Z',
+      synced_at: '2026-10-07T00:00:00.000Z',
       upstream_count: 1,
       registry_count: 1,
       local_count: 1,
       validation_status: 'not_run',
-      report_path: 'data/shadcn/sync-report.json',
+      report_path: 'database:registry-sync-report',
     },
-    registries: [
-      {
-        official: {
-          name: options.name ?? '@example',
-          homepage: options.homepage ?? 'https://example.com',
-          registry_url_template: options.registryUrlTemplate ?? 'https://example.com/r/{name}.json',
-          description: 'Example registry.',
-        },
-        atlas: {
-          aliases: ['example-ui'],
-          coverage_status: 'inferred',
-          confidence: 'medium',
-          notes: 'Fixture notes',
-          catalog_status: 'partial',
-          comparison_evidence: 'catalog',
-          catalog_item_count: 2,
-          catalog_evidence_url: 'https://example.com/r/registry.json',
-          item_summaries: [
-            {
-              name: 'Button',
-              slug: 'button',
-              source: 'known-catalog',
-              provenance: 'fixture',
-              catalog_status: 'available',
-              route_eligible: true,
-              preview_url: 'https://example.com/previews/button.png',
-              raw_item_url: 'https://example.com/r/button.json',
-              evidence_url: 'https://example.com/r/registry.json',
-              dependencies: ['lucide-react'],
-              registryDependencies: ['card'],
-              files: [{ path: 'registry/button.tsx', type: 'registry:ui', target: 'components/button.tsx' }],
-            },
-            {
-              name: 'Card',
-              slug: 'card',
-              source: 'known-catalog',
-              provenance: 'fixture',
-              catalog_status: 'partial',
-              route_eligible: true,
-            },
-          ],
-        },
-        status: {
-          warnings: [],
-        },
+    registries: [{
+      official: {
+        name: '@example',
+        homepage: options.homepage ?? 'https://example.com',
+        registry_url_template: 'https://example.com/r/{name}.json',
+        description: 'Example registry.',
       },
-    ],
+      atlas: {
+        aliases: ['example-ui'],
+        coverage_status: 'inferred',
+        confidence: 'medium',
+        notes: 'Fixture notes',
+        catalog_status: 'partial',
+        comparison_evidence: 'catalog',
+        catalog_item_count: 1,
+        catalog_evidence_url: 'https://example.com/r/registry.json',
+        item_summaries: [{
+          name: 'Button',
+          slug: 'button',
+          source: 'known-catalog',
+          provenance: 'fixture',
+          catalog_status: 'available',
+          route_eligible: true,
+          raw_item_url: 'https://example.com/r/button.json',
+          docs_url: 'https://example.com/components/button',
+          evidence_url: 'https://example.com/r/registry.json',
+        }],
+      },
+      status: { warnings: [] },
+    }],
+  });
+  replaceCatalogSnapshot(core, {
+    meta: {
+      source_url: 'https://ui.shadcn.com/r/registries.json',
+      registry_count: options.includeEmptyNamespace ? 2 : 1,
+      item_count: 1,
+    },
+    registries: {
+      '@example': [{ name: 'button', type: 'registry:ui', categories: ['controls'] }],
+      ...(options.includeEmptyNamespace ? { '@empty': [] } : {}),
+    },
+  });
+  putDocument(core, 'catalog-taxonomy', 'taxonomy', taxonomyFixture());
+  putDocument(core, 'catalog-kind-overrides', 'taxonomy-support', { registryDefaults: {} });
+  putDocument(core, 'source-page-index-meta', 'runtime-meta', {
+    schema: 'registry-atlas-source-page-index/v1',
+    sourceSnapshotAt: '2026-10-07T00:00:00.000Z',
+    coverage: {},
+  });
+  replaceSourcePages(core, {
+    '@example/button': {
+      url: 'https://example.com/components/button',
+      level: 'reviewed',
+      source: 'component-page-verified',
+      observedAt: new Date().toISOString(),
+    },
+  });
+  core.close();
+
+  const details = new DatabaseSync(detailPath);
+  ensureAtlasDetailSchema(details);
+  details.close();
+
+  const built = await buildRuntimeDatabases({ corePath, detailPath, outputDir });
+  return built;
+}
+
+function taxonomyFixture() {
+  return {
+    version: 'v1',
+    roots: [{
+      id: 'application',
+      label: 'Application',
+      aliases: ['app'],
+      what: 'Application surfaces',
+      notFor: [],
+      examples: [],
+      children: [],
+    }],
   };
+}
+
+async function gzipResponse(path: string): Promise<Response> {
+  return new Response(await readFile(path), {
+    status: 200,
+    headers: { 'content-type': 'application/gzip' },
+  });
 }

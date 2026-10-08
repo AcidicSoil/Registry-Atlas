@@ -4,14 +4,14 @@ import {
   type CatalogSort,
 } from "./catalogRoutes";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
-import { DEFAULT_CATALOG_TAXONOMY, catalogTaxonomySearchValues } from "./catalogTaxonomy";
+import { defaultCatalogTaxonomySearchValues } from "./catalogTaxonomy";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
+import { resolveSourceItemRoute, type SourceItemKind } from "./sourceItemRoute";
 import type {
   Registry,
   RegistryCatalogIndex,
   RegistryCatalogItem,
   RegistryItemSummary,
-  RegistryVisualReference,
   RegistrySourcePage,
 } from "./registry.schema";
 
@@ -32,8 +32,6 @@ export interface CatalogComponent {
   reviewedSummary?: RegistryItemSummary;
   item: RegistryCatalogItem;
   routePath: string;
-  previewUrl?: string;
-  visualReference?: RegistryVisualReference;
   sourcePage?: RegistrySourcePage;
   docsUrl?: string;
 }
@@ -52,7 +50,6 @@ export interface CatalogQueryOptions {
   page?: number;
   pageSize?: number;
   basePath?: string;
-  visualOnly?: boolean;
 }
 export interface CatalogQueryResult {
   items: CatalogComponent[];
@@ -116,8 +113,6 @@ export function queryCatalogComponents(
   const sort = options.sort ?? "name";
   const query = normalize(options.search ?? "");
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));
-  const visualPreviews = (index as RegistryCatalogIndex & { visualPreviews?: Readonly<Record<string, string>> }).visualPreviews ?? {};
-  const visualReferences = index.visualReferences ?? {};
   const reviewedByRegistry = new Map(
     registries.map(registry => [registry.name, reviewedSummaryMap(registry)]),
   );
@@ -133,8 +128,6 @@ export function queryCatalogComponents(
     for (const item of distinctCatalogItems(index.registries[namespace] ?? [])) {
       if (options.author !== undefined && item.author?.trim() !== options.author) continue;
       const overlay = reviewed.get(registryCatalogItemIdentity(item.name));
-      const verifiedPreview = visualPreviews[`${namespace}/${item.name}`];
-      if (options.visualOnly && !(verifiedPreview || overlay?.previewUrl || item.themePreview)) continue;
       if (!matchesFilters(
         item,
         namespace,
@@ -158,10 +151,15 @@ export function queryCatalogComponents(
   const start = (page - 1) * pageSize;
   const items = matches
     .slice(start, start + pageSize)
-    .map(match => toCatalogComponent(match.registry, match.item, match.reviewed, options.basePath,
-      visualPreviews[`${match.registry.name}/${match.item.name}`],
-      visualReferences[`${match.registry.name}/${match.item.name}`],
-      index.sourcePages?.[`${match.registry.name}/${match.item.name}`]));
+    .map(match => toCatalogComponent(
+      match.registry,
+      match.item,
+      match.reviewed,
+      options.basePath,
+      index.sourcePages?.[`${match.registry.name}/${match.item.name}`],
+      index.itemRoutes?.[`${match.registry.name}/${match.item.name}`],
+      index.routePatterns?.[match.registry.name],
+    ));
 
   return {
     items,
@@ -246,10 +244,26 @@ function toCatalogComponent(
   item: RegistryCatalogItem,
   reviewed: RegistryItemSummary | undefined,
   basePath = "/Registry-Atlas/",
-  verifiedPreview?: string,
-  visualReference?: RegistryVisualReference,
   sourcePage?: RegistrySourcePage,
+  directRoute?: { url: string; status: string },
+  routePatterns?: NonNullable<RegistryCatalogIndex['routePatterns']>[string],
 ): CatalogComponent {
+  const assetKind = assetKindForCatalogItem(item, registry.name);
+  const sourceKind: SourceItemKind = assetKind === 'other' ? 'component' : assetKind;
+  const resolvedUrl = sourcePage ? null : resolveSourceItemRoute({
+    homepage: registry.url,
+    slug: item.name,
+    kind: sourceKind,
+    categories: item.categories ?? [],
+    directRoute,
+    patterns: routePatterns,
+  });
+  const resolvedSourcePage = sourcePage ?? (resolvedUrl ? {
+    url: resolvedUrl,
+    level: 'pattern' as const,
+    source: 'verified-route-pattern' as const,
+  } : undefined);
+
   return {
     id: `${registry.name}:${item.name}`,
     namespace: registry.name,
@@ -270,9 +284,7 @@ function toCatalogComponent(
       { kind: "component", namespace: registry.name, slug: item.name },
       basePath,
     ),
-    ...((verifiedPreview || reviewed?.previewUrl) ? { previewUrl: verifiedPreview || reviewed?.previewUrl } : {}),
-    ...(visualReference ? { visualReference } : {}),
-    ...(sourcePage ? { sourcePage } : {}),
+    ...(resolvedSourcePage ? { sourcePage: resolvedSourcePage } : {}),
     ...(reviewed?.docsUrl ? { docsUrl: reviewed.docsUrl } : {}),
   };
 }
@@ -294,16 +306,6 @@ function compareCatalogMatches(
   const aName = displayName(a);
   const bName = displayName(b);
 
-  if (sort === "name-desc") {
-    return bName.localeCompare(aName)
-      || a.registry.name.localeCompare(b.registry.name)
-      || a.item.name.localeCompare(b.item.name);
-  }
-  if (sort === "registry-desc") {
-    return b.registry.name.localeCompare(a.registry.name)
-      || aName.localeCompare(bName)
-      || a.item.name.localeCompare(b.item.name);
-  }
   if (sort === "registry") {
     return a.registry.name.localeCompare(b.registry.name)
       || aName.localeCompare(bName)
@@ -355,7 +357,7 @@ function matchesFilters(
 
 function matchesSearch(item: RegistryCatalogItem, namespace: string, query: string): boolean {
   const canonicalValues = item.canonical?.path?.length
-    ? catalogTaxonomySearchValues(DEFAULT_CATALOG_TAXONOMY, item.canonical.path)
+    ? defaultCatalogTaxonomySearchValues(item.canonical.path)
     : [];
   return [
     item.name,

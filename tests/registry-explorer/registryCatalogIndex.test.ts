@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { parseRegistryCatalogIndex } from '../../src/registry-explorer/core/registryCatalogIndex';
+import {
+  configureDefaultCatalogTaxonomy,
+  parseCatalogTaxonomy,
+} from '../../src/registry-explorer/core/catalogTaxonomy';
+import { readRepositoryDocument } from './testAtlasDatabase';
+
+configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument('catalog-taxonomy')));
 
 function rawIndex(item: Record<string, unknown>) {
   return {

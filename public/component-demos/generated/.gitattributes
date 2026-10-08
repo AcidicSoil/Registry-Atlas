@@ -1,2 +1,0 @@
-# Immutable content-addressed browser bundles must retain their exact checksummed bytes.
-*/index.html -whitespace

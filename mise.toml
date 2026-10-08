@@ -62,17 +62,21 @@ run = "pnpm sync:registries"
 description = "Refresh registry catalog evidence"
 run = "pnpm sync:catalog-evidence"
 
+[tasks."sync:registry-icons"]
+description = "Discover source-backed registry icons from registry homepages and persist them to SQLite"
+run = "pnpm sync:registry-icons"
+
 [tasks."source-pages"]
 description = "Build exact source-page links and coverage from current verified/sitemap evidence"
-run = "node scripts/verify-component-pages.mjs --db data/shadcn/registry-patterns.sqlite --report-only --report .instance/component-verification-queue.json && node scripts/build-source-page-index.mjs --db data/shadcn/registry-patterns.sqlite --output public/data/component-page-links.json --report data/shadcn/component-page-link-coverage.json"
+run = "node scripts/verify-component-pages.mjs --report-only --report .instance/component-verification-queue.json && node scripts/build-source-page-index.mjs"
 
 [tasks."verify:registry-patterns"]
 description = "Verify the next 20 eligible registry patterns from SQLite, refresh unresolved queue and source-page links"
-run = "node scripts/verify-registry-patterns.mjs --db data/shadcn/registry-patterns.sqlite --verify-only --max-registries 20 --samples 2 && mise run source-pages"
+run = "node scripts/verify-registry-patterns.mjs --verify-only --max-registries 20 --samples 2 && mise run source-pages"
 
 [tasks."verify:component-pages"]
 description = "Verify a bounded batch of exact original-component URLs, persist outcomes, publish links, and export a unified slug queue"
-run = "node scripts/verify-component-pages.mjs --db data/shadcn/registry-patterns.sqlite --max-pages 20 --max-per-registry 3 --delay-ms 1200 --report .instance/component-verification-queue.json && mise run source-pages"
+run = "node scripts/verify-component-pages.mjs --max-pages 20 --max-per-registry 3 --delay-ms 1200 --report .instance/component-verification-queue.json && mise run source-pages"
 
 [tasks.all]
 description = "Refresh registry data and run the full verification gate"

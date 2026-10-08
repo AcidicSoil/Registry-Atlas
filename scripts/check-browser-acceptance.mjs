@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 const server = process.env.PINCHTAB_SERVER;
 const tab = process.env.PINCHTAB_TAB;
@@ -13,26 +14,47 @@ if (!server || !tab) {
   process.exit(2);
 }
 
-const catalog = JSON.parse(readFileSync('public/data/registry-catalog-items.json', 'utf8'));
+const database = openAtlasCoreDatabase(process.cwd(), { readOnly: true });
+const atlasState = readAtlasState(database);
+database.close();
+const catalog = atlasState.catalog;
+const kindDefaults = atlasState.kindOverrides?.registryDefaults ?? {};
 const entries = Object.entries(catalog.registries);
 const flat = entries.flatMap(([namespace, items]) =>
-  items.map(item => ({ namespace, ...item })));
+  items.map(item => ({ namespace, ...item, assetKind: assetKind(item, namespace) })));
 
-const componentTypes = new Set(['registry:block', 'registry:component', 'registry:ui', 'registry:item']);
-const simple = flat.find(item => item.name === 'button' && componentTypes.has(item.type))
-  ?? flat.find(item => componentTypes.has(item.type));
-const nested = flat.find(item => componentTypes.has(item.type) && item.name.includes('/'));
-const template = flat.find(item => item.type === 'registry:page');
-const theme = flat.find(item => item.type === 'registry:style' || item.type === 'registry:theme');
-const icon = flat.find(item =>
-  item.type === 'registry:icon'
-  || (item.categories ?? []).some(category => ['icon', 'icons', 'icon-stack', 'morph-icon'].includes(String(category).toLowerCase())));
+function assetKind(item, namespace) {
+  const categories = (item.categories ?? []).map(value => String(value).trim().toLowerCase());
+  if (categories.some(value => value === 'template' || value === 'templates')) return 'template';
+  if (item.kind) return item.kind;
+  if (kindDefaults[namespace]) return kindDefaults[namespace];
+  if (item.type === 'registry:icon'
+    || categories.some(value => ['icon', 'icons', 'icon-stack', 'morph-icon'].includes(value))) {
+    return 'icon';
+  }
+  if (item.type === 'registry:block') return 'block';
+  if (item.type === 'registry:page') return 'page';
+  if (item.type === 'registry:style' || item.type === 'registry:theme') return 'theme';
+  if (['registry:component', 'registry:ui', 'registry:item'].includes(item.type)) return 'component';
+  return 'other';
+}
+
+const simple = flat.find(item => item.name === 'button' && item.assetKind === 'component')
+  ?? flat.find(item => item.assetKind === 'component');
+const nested = flat.find(item => item.assetKind === 'component' && item.name.includes('/'));
+const block = flat.find(item => item.assetKind === 'block');
+const page = flat.find(item => item.assetKind === 'page');
+const template = flat.find(item => item.assetKind === 'template');
+const theme = flat.find(item => item.assetKind === 'theme');
+const icon = flat.find(item => item.assetKind === 'icon');
 const largeRegistry = entries
   .map(([namespace, items]) => ({ namespace, count: items.length }))
   .sort((a, b) => b.count - a.count)[0];
 const comparisonRegistry = entries.find(([namespace]) => namespace !== largeRegistry?.namespace)?.[0];
 
-for (const [label, value] of Object.entries({ simple, nested, template, theme, icon, largeRegistry, comparisonRegistry })) {
+for (const [label, value] of Object.entries({
+  simple, nested, block, page, template, theme, icon, largeRegistry, comparisonRegistry,
+})) {
   if (!value) {
     console.error(`Unable to derive real acceptance identity: ${label}`);
     process.exit(2);
@@ -46,6 +68,8 @@ const routes = [
   { name: 'home', path: '/' },
   { name: 'components', path: '/components', requireItems: true },
   { name: 'components-search-button', path: '/components/s/button', requireItems: true },
+  { name: 'blocks', path: '/blocks', requireItems: true },
+  { name: 'pages', path: '/pages', requireItems: true },
   { name: 'explore-forms', path: '/components/explore/forms', requireItems: true },
   { name: 'authors-attribution', path: '/authors', expectAuthors: true },
   { name: 'retired-newest', path: '/components/newest', expectUnavailable: true },
@@ -62,6 +86,14 @@ const routes = [
   {
     name: 'component-nested',
     path: `/${nsPath(nested.namespace)}/components/${itemPath(nested)}`,
+  },
+  {
+    name: 'block-detail',
+    path: `/${nsPath(block.namespace)}/blocks/${itemPath(block)}`,
+  },
+  {
+    name: 'page-detail',
+    path: `/${nsPath(page.namespace)}/pages/${itemPath(page)}`,
   },
   { name: 'templates', path: '/templates', requireItems: true },
   {
@@ -304,7 +336,9 @@ const report = {
   tab,
   baseUrl,
   outputDir,
-  identities: { simple, nested, template, theme, icon, largeRegistry, comparisonRegistry },
+  identities: {
+    simple, nested, block, page, template, theme, icon, largeRegistry, comparisonRegistry,
+  },
   resultCount: results.length,
   failureCount: failures.length,
   failures,

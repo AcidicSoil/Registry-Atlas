@@ -1,5 +1,9 @@
-import { readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import {
+  openAtlasCoreDatabase,
+  readAtlasState,
+  replaceCuratedItemSummaries,
+} from './lib/atlas-storage.mjs';
 
 const ITEM_TYPES = new Set(['registry:block', 'registry:component', 'registry:ui', 'registry:page', 'registry:item', 'registry:style', 'registry:theme', 'registry:icon']);
 const FIELDS = ['title', 'description', 'author', 'type', 'category'];
@@ -82,8 +86,10 @@ async function main(args) {
   const targets = args.filter(arg => arg.startsWith('@'));
   const apply = args.includes('--apply');
   if (!targets.length || targets.length > 20) throw new Error('Pass 1-20 registry item tokens');
-  const registries = JSON.parse(await readFile('data/shadcn/registries.raw.json', 'utf8'));
-  const curated = JSON.parse(await readFile('data/shadcn/registry-items.json', 'utf8'));
+  const database = openAtlasCoreDatabase(process.cwd());
+  const state = readAtlasState(database);
+  const registries = state.rawRegistries;
+  const curated = structuredClone(state.curated);
   const results = [];
   for (const token of targets) {
     const index = token.indexOf('/');
@@ -99,8 +105,9 @@ async function main(args) {
     }
   }
   if (apply && results.some(result => result.status === 'verified')) {
-    await writeFile('data/shadcn/registry-items.json', `${JSON.stringify(curated, null, 2)}\n`);
+    replaceCuratedItemSummaries(database, curated);
   }
+  database.close();
   console.log(JSON.stringify({ mode: apply ? 'apply' : 'dry-run', results }, null, 2));
   if (results.some(result => result.status !== 'verified')) process.exitCode = 2;
 }

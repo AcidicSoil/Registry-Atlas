@@ -4,6 +4,7 @@ import {join,isAbsolute} from 'node:path';
 import {isIP} from 'node:net';
 import {pathToFileURL} from 'node:url';
 import {catalogFingerprint} from './lib/registry-discovery.mjs';
+import {openAtlasCoreDatabase,readAtlasState} from './lib/atlas-storage.mjs';
 const SCHEMA='registry-atlas-sitemap-survey/v1';
 const normalize=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
 const decodeXml=s=>s.replace(/&(amp|lt|gt|quot|apos);|&#(x[0-9a-f]+|[0-9]+);/gi,
@@ -154,11 +155,10 @@ export async function main(argv,cwd=process.cwd()){
     x.status==='running'&&x.url===options['--server']))
     throw Error('Managed source profile is not running on the provided server');
   const allowed=status.data.settings?.allowedDomains??[];
-  const [raw,catalog,curated]=await Promise.all([
-    readFile(join(cwd,'data/shadcn/registries.raw.json'),'utf8').then(JSON.parse),
-    readFile(join(cwd,'public/data/registry-catalog-items.json'),'utf8').then(JSON.parse),
-    readFile(join(cwd,'data/shadcn/registry-items.json'),'utf8').then(JSON.parse),
-  ]);
+  const database=openAtlasCoreDatabase(cwd,{readOnly:true});
+  const state=readAtlasState(database);
+  database.close();
+  const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const registries=raw.filter(reg=>{
     const host=new URL(reg.homepage).hostname;
     return allowed.some(p=>p==='*'||p===host);

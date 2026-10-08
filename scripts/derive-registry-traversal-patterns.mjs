@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join, isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { DiscoveryLedger, catalogFingerprint, DISCOVERY_REVISION } from './lib/registry-discovery.mjs';
+import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 const SCHEMA = 'registry-atlas-traversal-inventory/v1';
 const DISCOVERY_SCHEMA = 'registry-atlas-discovery/v1';
@@ -224,11 +225,10 @@ function parseArgs(args) {
 }
 export async function main(argv,cwd=process.cwd()) {
   const options=parseArgs(argv);
-  const [raw,catalog,curated]=await Promise.all([
-    readFile(join(cwd,'data/shadcn/registries.raw.json'),'utf8').then(JSON.parse),
-    readFile(join(cwd,'public/data/registry-catalog-items.json'),'utf8').then(JSON.parse),
-    readFile(join(cwd,'data/shadcn/registry-items.json'),'utf8').then(JSON.parse),
-  ]);
+  const database=openAtlasCoreDatabase(cwd,{readOnly:true});
+  const state=readAtlasState(database);
+  database.close();
+  const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const ledgers={};
   for (const registry of raw) {
     const path=join(options['--journal-dir'],registry.name.replace(/^@/,'')+'.jsonl');

@@ -10,6 +10,15 @@ import type {
   RegistryCatalogIndex,
   RegistryItemSummary,
 } from "../../src/registry-explorer/core/registry.schema";
+import {
+  configureDefaultCatalogTaxonomy,
+  parseCatalogTaxonomy,
+} from "../../src/registry-explorer/core/catalogTaxonomy";
+import { configureCatalogKindOverrides } from "../../src/registry-explorer/core/catalogCollections";
+import { readRepositoryDocument } from "./testAtlasDatabase";
+
+configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy")));
+configureCatalogKindOverrides(readRepositoryDocument("catalog-kind-overrides"));
 
 function registry(name: string, itemSummaries: RegistryItemSummary[] = []): Registry {
   return {
@@ -76,26 +85,14 @@ describe("queryCatalogComponents", () => {
     expect(facets.categories.find(entry => entry.value === "experimental")).toBeUndefined();
   });
 
-  it("visual browse excludes unpictured catalog records and uses exact verified visual identities", () => {
-    const idx = Object.assign(index({ "@alpha": [
-      { name: "button", type: "registry:ui" },
-      { name: "card", type: "registry:ui" },
-    ] }), { visualPreviews: { "@alpha/button": "/Registry-Atlas/data/previews/alpha/button.jpg" } });
-    const result = queryCatalogComponents([registry("@alpha")], idx, { visualOnly: true });
-    expect(result.total).toBe(1);
-    expect(result.items[0].previewUrl).toBe("/Registry-Atlas/data/previews/alpha/button.jpg");
-    expect(result.items[0].slug).toBe("button");
-  });
-
-  it("routes verified source SVG libraries into the icon gallery", () => {
-    const idx = Object.assign(index({ "@svgl": [
+  it("routes source-backed icon registries into the icon gallery without preview data", () => {
+    const idx = index({ "@svgl": [
       { name: "mastra", type: "registry:component" },
-    ] }), { visualPreviews: { "@svgl/mastra": "https://svgl.app/library/mastra-icon-light.svg" } });
-    const icons = queryCatalogComponents([registry("@svgl")], idx,
-      { assetKinds: ["icon"], visualOnly: true });
+    ] });
+    const icons = queryCatalogComponents([registry("@svgl")], idx, { assetKinds: ["icon"] });
     expect(icons.total).toBe(1);
-    const components = queryCatalogComponents([registry("@svgl")], idx,
-      { assetKinds: ["component"], visualOnly: true });
+    expect(icons.items[0]?.slug).toBe("mastra");
+    const components = queryCatalogComponents([registry("@svgl")], idx, { assetKinds: ["component"] });
     expect(components.total).toBe(0);
   });
   it("browses real compact-index items with no search term", () => {
@@ -229,11 +226,11 @@ describe("queryCatalogComponents", () => {
     ]);
 
     expect(queryCatalogComponents(registries, catalog, {
-      sort: "name-desc",
+      sort: "registry",
       pageSize: 10,
     }).items.map(item => item.id)).toEqual([
-      "@alpha:zebra",
       "@alpha:button",
+      "@alpha:zebra",
       "@beta:accordion",
     ]);
   });

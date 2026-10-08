@@ -13,6 +13,7 @@ export function renderRegistryCollection(
   options: {
     coverage?: RegistryCatalogCoverage;
     controls?: string;
+    layout?: 'grid' | 'list';
   } = {},
 ): void {
   const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
@@ -53,7 +54,7 @@ export function renderRegistryCollection(
         ${result.items.length
           ? `
             ${renderMeta(result)}
-            <div class="catalog-component-grid">${result.items.map(item => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
+            <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"}">${result.items.map(item => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
             ${renderPagination(result)}
           `
           : renderEmptyRegistryInventory(options.coverage)}
@@ -102,9 +103,12 @@ function renderPagination(result: CatalogQueryResult): string {
 
 function legacyCardRouteKind(
   item: CatalogQueryResult['items'][number],
-): 'component' | 'template' | 'theme' {
+): 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon' {
   const kind = assetKindForCatalogItem(item.item, item.namespace);
+  if (kind === 'block') return 'block';
+  if (kind === 'page') return 'page';
   if (kind === 'theme') return 'theme';
   if (kind === 'template') return 'template';
+  if (kind === 'icon') return 'icon';
   return 'component';
 }
