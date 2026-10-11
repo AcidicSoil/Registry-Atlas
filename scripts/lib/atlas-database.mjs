@@ -136,6 +136,7 @@ export function ensureAtlasCoreSchema(db) {
       ON atlas_classification_run_items(run_id, namespace, name);
   `);
   setMeta(db, 'atlas_core_schema', ATLAS_CORE_SCHEMA_VERSION);
+  ensureAtlasDetailSchema(db);
 }
 
 export function ensureAtlasDetailSchema(db) {
@@ -160,13 +161,17 @@ export function ensureAtlasDetailSchema(db) {
 }
 
 export function transaction(db, fn) {
-  db.exec('BEGIN IMMEDIATE');
+  const nested = db.isTransaction;
+  db.exec(nested ? 'SAVEPOINT atlas_operation' : 'BEGIN IMMEDIATE');
   try {
     const result = fn();
-    db.exec('COMMIT');
+    db.exec(nested ? 'RELEASE SAVEPOINT atlas_operation' : 'COMMIT');
     return result;
   } catch (error) {
-    try { db.exec('ROLLBACK'); } catch {}
+    try {
+      if (nested) db.exec('ROLLBACK TO SAVEPOINT atlas_operation; RELEASE SAVEPOINT atlas_operation');
+      else db.exec('ROLLBACK');
+    } catch {}
     throw error;
   }
 }

@@ -285,3 +285,9 @@ graph-infra/bin/
 
 # Local browser observations, screenshots, and generated audit inventories.
 /reports/
+
+# Canonical database is PostgreSQL. Local migration sources and build output are not versioned.
+/data/*.sqlite
+/data/*.sqlite-wal
+/data/*.sqlite-shm
+/public/data/*.json.gz

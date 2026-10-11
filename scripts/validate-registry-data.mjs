@@ -8,18 +8,15 @@ import ts from 'typescript';
 import { validateCatalogRuntimeContract } from './lib/catalog-runtime-contract.mjs';
 import {
   openAtlasCoreDatabase,
-  openAtlasDetailDatabase,
   readAtlasState,
 } from './lib/atlas-storage.mjs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, '..');
 const coreDatabasePath = resolve(projectRoot, 'data/registry-atlas.sqlite');
-const detailDatabasePath = resolve(projectRoot, 'data/registry-details.sqlite');
 const { validateRegistryMirror } = await loadRegistryMirrorValidator();
 
 const core = openAtlasCoreDatabase(projectRoot, { readOnly: true });
-const details = openAtlasDetailDatabase(projectRoot, { readOnly: true });
 
 try {
   const state = readAtlasState(core);
@@ -77,7 +74,7 @@ try {
     }
   }
 
-  for (const message of validateDatabaseInvariants(core, details, state)) {
+  for (const message of validateDatabaseInvariants(core, state)) {
     result.errors.push({
       code: 'atlas-database-invariant',
       message,
@@ -87,7 +84,6 @@ try {
   }
 
   console.log(`validated: ${coreDatabasePath}`);
-  console.log(`details: ${detailDatabasePath}`);
   console.log(`errors: ${result.errors.length}`);
   console.log(`warnings: ${result.warnings.length}`);
 
@@ -96,11 +92,10 @@ try {
 
   if (result.errors.length > 0) process.exitCode = 1;
 } finally {
-  details.close();
   core.close();
 }
 
-function validateDatabaseInvariants(core, details, state) {
+function validateDatabaseInvariants(core, state) {
   const issues = [];
   const catalogMeta = state.catalog?.meta ?? {};
   const catalogNamespaces = core.prepare(
@@ -117,7 +112,7 @@ function validateDatabaseInvariants(core, details, state) {
       HAVING c > 1
     )
   `).get().n;
-  const duplicateDetails = details.prepare(`
+  const duplicateDetails = core.prepare(`
     SELECT COUNT(*) AS n FROM (
       SELECT namespace,name,COUNT(*) AS c
       FROM atlas_item_details

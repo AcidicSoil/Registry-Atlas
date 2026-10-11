@@ -15,20 +15,21 @@
     "validate:data": "node scripts/validate-registry-data.mjs",
     "check:product-contract": "node scripts/check-product-contract.mjs",
     "browser:acceptance": "node scripts/check-browser-acceptance.mjs",
-    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:product-contract && pnpm validate:data && pnpm build",
+    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm build",
     "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",
-    "all": "pnpm sync:registries && pnpm verify",
+    "all": "pnpm verify",
     "sync:catalog-evidence": "node scripts/sync-registry-catalog-evidence.mjs",
-    "prepare:runtime-db": "node scripts/build-runtime-databases.mjs --output-dir public/data",
-    "predev": "pnpm prepare:runtime-db",
-    "prebuild": "pnpm prepare:runtime-db"
+    "predev": "pnpm prepare:runtime-data",
+    "prebuild": "pnpm prepare:runtime-data",
+    "check:postgres": "node scripts/check-postgres.mjs",
+    "prepare:runtime-data": "node scripts/build-runtime-data.mjs",
+    "pretest": "pnpm prepare:runtime-data"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
-    "@types/sql.js": "^1.4.11",
     "react-grab": "^0.1.47",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
@@ -36,8 +37,8 @@
   },
   "dependencies": {
     "@codesandbox/sandpack-react": "2.20.0",
+    "postgres": "^3.4.9",
     "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "sql.js": "^1.14.2"
+    "react-dom": "18.3.1"
   }
 }

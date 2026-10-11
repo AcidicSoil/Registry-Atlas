@@ -7,7 +7,7 @@ import {
 import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
 import {
   openAtlasCoreDatabase,
-  openAtlasDetailDatabase,
+  transaction,
   putDocument,
   readAtlasState,
   replaceCatalogEvidence,
@@ -460,7 +460,6 @@ function parseArgs(argv) {
 async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parseArgs(argv);
   const core = openAtlasCoreDatabase(cwd);
-  const details = openAtlasDetailDatabase(cwd);
   try {
     const state = readAtlasState(core);
     const registries = state.rawRegistries;
@@ -482,6 +481,7 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       projected = applyCatalogClassificationOverlay(stripped, overlay, state.accessRules ?? {});
     }
 
+    transaction(core, () => {
     replaceCatalogEvidence(core, result.evidence);
     replaceCatalogSnapshot(core, {
       meta: {
@@ -493,15 +493,15 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       registries: projected.itemsByNamespace,
     });
     for (const [namespace, rows] of Object.entries(result.freshDetailsByNamespace)) {
-      replaceItemDetails(details, namespace, rows);
+      replaceItemDetails(core, namespace, rows);
     }
     putDocument(core, 'catalog-evidence-report', 'sync-report', result.report);
     putDocument(core, 'catalog-classification-projection-report', 'sync-report', projected.report);
+    });
 
     console.log(`Fetched ${result.report.fetched_catalog_count}/${result.report.registry_count} registry catalogs (${result.report.fetched_item_count} items).`);
     console.log(`Comparable evidence retained for ${result.report.evidence_registry_count} registries; stale: ${result.report.stale_registry_count}; failures: ${result.report.failure_count}.`);
   } finally {
-    details.close();
     core.close();
   }
 }

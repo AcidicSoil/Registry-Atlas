@@ -3,7 +3,7 @@ import { applyCatalogClassificationOverlay, stripCatalogClassificationFields, va
 import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
 import {
   openAtlasCoreDatabase,
-  openAtlasDetailDatabase,
+  transaction,
   putDocument,
   readAtlasState,
   replaceCatalogEvidence,
@@ -196,7 +196,6 @@ function changedRegistries(previousRegistries, nextRegistries) {
 
 async function main() {
   const core = openAtlasCoreDatabase();
-  const details = openAtlasDetailDatabase();
   try {
     const state = readAtlasState(core);
 
@@ -280,6 +279,7 @@ async function main() {
       changed: changedRegistries(previousRegistries, registries),
     };
 
+    transaction(core, () => {
     replaceRawRegistries(core, upstream);
     replaceCatalogEvidence(core, catalogEvidenceByNamespace);
     putDocument(core, 'catalog-evidence-report', 'sync-report', catalogSync.report);
@@ -293,19 +293,18 @@ async function main() {
       registries: classificationProjection.itemsByNamespace,
     });
     for (const [namespace, rows] of Object.entries(catalogSync.freshDetailsByNamespace)) {
-      replaceItemDetails(details, namespace, rows);
+      replaceItemDetails(core, namespace, rows);
     }
     replaceRegistrySnapshot(core, runtimeData);
     putDocument(core, 'registry-sync-report', 'sync-report', report);
     putDocument(core, 'catalog-classification-projection-report', 'sync-report',
       classificationProjection.report);
+    });
 
     console.log(`Synced ${registries.length} registries from ${SOURCE_URL}`);
     console.log(`Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`);
     console.log('Canonical registry/catalog state: data/registry-atlas.sqlite');
-    console.log('Canonical item details: data/registry-details.sqlite');
   } finally {
-    details.close();
     core.close();
   }
 }

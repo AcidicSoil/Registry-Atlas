@@ -8,7 +8,7 @@ import {
   type RegistryItemDetailResult,
 } from '../core/registryItemDetail.ts';
 import type { Registry, RegistryCatalogIndex } from '../core/registry.schema.ts';
-import { loadDetailRuntimeDatabase, queryOneJson } from './runtimeDatabase.ts';
+import { loadDetailRuntimeData } from './runtimeJson.ts';
 
 export async function loadRegistryItemDetail(
   registries: readonly Registry[],
@@ -109,12 +109,8 @@ async function loadDatabaseDetail(
   if (!registryName) return null;
 
   try {
-    const database = await loadDetailRuntimeDatabase(fetchImpl);
-    const item = queryOneJson<unknown>(
-      database,
-      'SELECT payload_json FROM atlas_item_details WHERE namespace=? AND name=? LIMIT 1',
-      [registryName, summaryResult.detail.slug],
-    );
+    const details = await loadDetailRuntimeData(fetchImpl);
+    const item = details[registryName + '/' + summaryResult.detail.slug] ?? null;
     if (!item) return null;
 
     const normalized = normalizeRegistryItemDetailJson(item);

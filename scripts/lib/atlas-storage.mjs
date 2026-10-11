@@ -1,8 +1,8 @@
 import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import {
   ensureAtlasCoreSchema,
-  ensureAtlasDetailSchema,
   putClassificationBatch,
   putClassificationRun,
   putDocument,
@@ -27,21 +27,19 @@ import {
   replaceRegistrySnapshot,
   replaceSourcePages,
   resetClassificationRun,
+  transaction,
   upsertClassificationRunItems,
 } from './atlas-database.mjs';
 
 export const CORE_DATABASE_PATH = 'data/registry-atlas.sqlite';
-export const DETAIL_DATABASE_PATH = 'data/registry-details.sqlite';
 
 export function openAtlasCoreDatabase(cwd = process.cwd(), { readOnly = false } = {}) {
-  const database = new DatabaseSync(resolve(cwd, CORE_DATABASE_PATH), { readOnly });
+  const file = resolve(cwd, CORE_DATABASE_PATH);
+  if (!existsSync(file)) {
+    throw new Error('Legacy SQLite data is unavailable. PostgreSQL is authoritative; migrate this script before using it.');
+  }
+  const database = new DatabaseSync(file, { readOnly });
   if (!readOnly) ensureAtlasCoreSchema(database);
-  return database;
-}
-
-export function openAtlasDetailDatabase(cwd = process.cwd(), { readOnly = false } = {}) {
-  const database = new DatabaseSync(resolve(cwd, DETAIL_DATABASE_PATH), { readOnly });
-  if (!readOnly) ensureAtlasDetailSchema(database);
   return database;
 }
 
@@ -100,5 +98,6 @@ export {
   replaceRegistrySnapshot,
   replaceSourcePages,
   resetClassificationRun,
+  transaction,
   upsertClassificationRunItems,
 };

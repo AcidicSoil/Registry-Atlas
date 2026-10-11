@@ -1,3 +1,11 @@
+# PostgreSQL data migration
+
+Registry Atlas now publishes from PostgreSQL (Neon) rather than a committed SQLite database. The static GitHub Pages site loads compressed JSON generated from PostgreSQL at build time. Run `pnpm check:postgres`, `pnpm prepare:runtime-data`, and `pnpm verify`. Database credentials are read only during the build and must never be exposed in the browser. The SQLite file, LFS configuration, and SQLite browser runtime have been removed from the current tree.
+
+**Migration limitation:** Legacy sync, crawl, verification, and classification writers have not been converted to PostgreSQL. Older workflow instructions below apply to the previous SQLite implementation and must not be used until ported. See [current data documentation](docs/registry-explorer-data.md).
+
+---
+
 # Registry Atlas
 
 A component-first explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory) ecosystem.

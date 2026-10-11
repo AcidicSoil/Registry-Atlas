@@ -85,7 +85,7 @@ describe('registry item detail', () => {
       async (input) => {
         const url = String(input);
         seen.push(url);
-        if (url.includes('/data/registry-details.sqlite.gz')) {
+        if (url.includes('/data/registry-details.json.gz')) {
           return new Response('', { status: 404, statusText: 'Not Found' });
         }
         return jsonResponse({
@@ -100,7 +100,7 @@ describe('registry item detail', () => {
 
     expect(result.status).toBe('loaded');
     expect(result.detail?.title).toBe('Official raw detail');
-    expect(seen.some(url => url.includes('/data/registry-details.sqlite.gz'))).toBe(true);
+    expect(seen.some(url => url.includes('/data/registry-details.json.gz'))).toBe(true);
     expect(seen.some(url => url === 'https://delta.example/r/catalog-only.json')).toBe(true);
   });
 

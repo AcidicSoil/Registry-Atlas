@@ -3,7 +3,6 @@ import path from 'node:path';
 import { validateCatalogRuntimeContract } from './lib/catalog-runtime-contract.mjs';
 import {
   openAtlasCoreDatabase,
-  openAtlasDetailDatabase,
   readAtlasState,
 } from './lib/atlas-storage.mjs';
 
@@ -201,7 +200,6 @@ for (const token of [
 }
 
 const core = openAtlasCoreDatabase(root, { readOnly: true });
-const details = openAtlasDetailDatabase(root, { readOnly: true });
 let enrichmentCoverage = {
   total: 0,
   description: 0,
@@ -282,7 +280,7 @@ try {
       `Atlas database still persists retired inferred taxonomy key ${key}`);
   }
 
-  const detailRows = details.prepare(
+  const detailRows = core.prepare(
     'SELECT namespace,name,payload_json FROM atlas_item_details ORDER BY namespace,name',
   ).all();
   assert(detailRows.length > 0, 'Atlas detail database is empty');
@@ -309,7 +307,6 @@ try {
   assert(catalogItemCount === state.catalog.meta.item_count,
     'catalog item metadata must match persisted database identities');
 } finally {
-  details.close();
   core.close();
 }
 

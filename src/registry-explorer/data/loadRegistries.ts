@@ -19,14 +19,7 @@ import {
   type MirrorValidationIssue,
   validateRegistryMirror,
 } from '../core/registryMirror';
-import {
-  loadRuntimeDatabase,
-  queryDocument,
-  queryJsonRows,
-  queryOptionalDocument,
-  queryKeyedJson,
-  queryMetaJson,
-} from './runtimeDatabase';
+import { loadRuntimeJson } from './runtimeJson';
 
 export interface RegistryMirrorMeta {
   source_url: string;
@@ -120,114 +113,24 @@ interface RegistryIconDocument {
 type FetchLike = typeof fetch;
 
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
-  const database = await loadRuntimeDatabase('data/registry-atlas.sqlite.gz', fetchImpl);
-  let mirrorData: RegistryMirrorData;
-  let catalogData: unknown;
-  let taxonomyData: unknown;
-  let kindOverridesData: unknown;
-  let sourcePageManifest: unknown;
-  let registryIcons: RegistryIconDocument | null = null;
-  const itemRoutes: Record<string, { url: string; status: string }> = {};
-  const routePatterns: Record<string, Array<{
-    urlTemplate: string;
-    slugPrefix: string;
-    source: string;
-    checkedAt?: string;
-  }>> = {};
-  try {
-    mirrorData = {
-      meta: queryMetaJson<RegistryMirrorMeta>(database, 'registry_snapshot_meta'),
-      registries: queryJsonRows<RegistryMirrorRecord>(
-        database,
-        'SELECT payload_json FROM atlas_registries ORDER BY namespace',
-      ),
-    };
-    const catalogMeta = queryMetaJson<Record<string, unknown>>(database, 'catalog_snapshot_meta');
-    const namespaceRows = database.exec(
-      'SELECT namespace FROM atlas_catalog_namespaces ORDER BY namespace',
-    )[0];
-    const registries: Record<string, unknown[]> = {};
-    if (namespaceRows) {
-      const namespaceIndex = namespaceRows.columns.indexOf('namespace');
-      for (const row of namespaceRows.values) {
-        const namespace = String(row[namespaceIndex] ?? '');
-        if (namespace) registries[namespace] = [];
-      }
-    }
-    const catalogRows = database.exec(
-      'SELECT namespace,payload_json FROM atlas_catalog_items ORDER BY namespace,name',
-    )[0];
-    if (catalogRows) {
-      const namespaceIndex = catalogRows.columns.indexOf('namespace');
-      const payloadIndex = catalogRows.columns.indexOf('payload_json');
-      for (const row of catalogRows.values) {
-        const namespace = String(row[namespaceIndex] ?? '');
-        const payload = row[payloadIndex];
-        if (!namespace || typeof payload !== 'string') continue;
-        (registries[namespace] ??= []).push(JSON.parse(payload) as unknown);
-      }
-    }
-    catalogData = { meta: catalogMeta, registries };
-    taxonomyData = queryDocument(database, 'catalog-taxonomy');
-    kindOverridesData = queryDocument(database, 'catalog-kind-overrides');
-    registryIcons = queryOptionalDocument<RegistryIconDocument>(database, 'registry-icons');
-    const pages = queryKeyedJson<RegistrySourcePage>(
-      database,
-      'SELECT namespace,slug,payload_json FROM atlas_source_pages ORDER BY namespace,slug',
-      ['namespace', 'slug'],
-    );
-
-    const itemRouteRows = database.exec(
-      'SELECT namespace,slug,source_url,status FROM atlas_item_routes ORDER BY namespace,slug',
-    )[0];
-    if (itemRouteRows) {
-      const namespaceIndex = itemRouteRows.columns.indexOf('namespace');
-      const slugIndex = itemRouteRows.columns.indexOf('slug');
-      const urlIndex = itemRouteRows.columns.indexOf('source_url');
-      const statusIndex = itemRouteRows.columns.indexOf('status');
-      for (const row of itemRouteRows.values) {
-        const namespace = String(row[namespaceIndex] ?? '');
-        const slug = String(row[slugIndex] ?? '');
-        const url = String(row[urlIndex] ?? '');
-        const status = String(row[statusIndex] ?? '');
-        if (!namespace || !slug || !url) continue;
-        itemRoutes[`${namespace}/${slug}`] = { url, status };
-      }
-    }
-
-    const patternRows = database.exec(
-      'SELECT namespace,template,prefix,source,checked_at FROM atlas_route_patterns ORDER BY namespace,template,prefix',
-    )[0];
-    if (patternRows) {
-      const namespaceIndex = patternRows.columns.indexOf('namespace');
-      const templateIndex = patternRows.columns.indexOf('template');
-      const prefixIndex = patternRows.columns.indexOf('prefix');
-      const sourceIndex = patternRows.columns.indexOf('source');
-      const checkedIndex = patternRows.columns.indexOf('checked_at');
-      for (const row of patternRows.values) {
-        const namespace = String(row[namespaceIndex] ?? '');
-        const urlTemplate = String(row[templateIndex] ?? '');
-        const slugPrefix = String(row[prefixIndex] ?? '');
-        const source = String(row[sourceIndex] ?? '');
-        const checkedAt = row[checkedIndex] === null ? '' : String(row[checkedIndex] ?? '');
-        if (!namespace || !urlTemplate) continue;
-        (routePatterns[namespace] ??= []).push({
-          urlTemplate,
-          slugPrefix,
-          source,
-          ...(checkedAt ? { checkedAt } : {}),
-        });
-      }
-    }
-
-    const sourcePageMeta = queryDocument<Record<string, unknown>>(
-      database,
-      'source-page-index-meta',
-    );
-    sourcePageManifest = { ...sourcePageMeta, pages };
-  } finally {
-    database.close();
-  }
+  const data = await loadRuntimeJson<{
+    mirror: RegistryMirrorData;
+    catalog: unknown;
+    taxonomy: unknown;
+    kindOverrides: unknown;
+    registryIcons: RegistryIconDocument | null;
+    sourcePageManifest: unknown;
+    itemRoutes: Record<string,{url:string;status:string}>;
+    routePatterns: Record<string,Array<{urlTemplate:string;slugPrefix:string;source:string;checkedAt?:string}>>;
+  }>('data/registry-atlas.json.gz', fetchImpl);
+  const mirrorData = data.mirror;
+  const catalogData = data.catalog;
+  const taxonomyData = data.taxonomy;
+  const kindOverridesData = data.kindOverrides;
+  const registryIcons = data.registryIcons;
+  const sourcePageManifest = data.sourcePageManifest;
+  const itemRoutes = data.itemRoutes;
+  const routePatterns = data.routePatterns;
 
   const taxonomy = parseCatalogTaxonomy(taxonomyData);
   configureDefaultCatalogTaxonomy(taxonomy);
