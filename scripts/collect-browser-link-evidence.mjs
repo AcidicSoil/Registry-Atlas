@@ -236,8 +236,8 @@ async function main(argv) {
   const slugs = [...new Set(opt('--slugs').split(',').map(x => x.trim()).filter(Boolean))];
   if (slugs.length < 1 || slugs.length > 200) throw new Error('Pass 1 to 200 indexed slugs');
   const database = openAtlasCoreDatabase(process.cwd(), { readOnly: true });
-  const state = readAtlasState(database);
-  database.close();
+  const state = await readAtlasState(database);
+  await database.close();
   const registries = state.rawRegistries;
   const catalog = state.catalog;
   const curated = state.curated;

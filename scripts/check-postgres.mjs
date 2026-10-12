@@ -18,7 +18,23 @@ try {
   if(!meta.registry_snapshot_meta) throw new Error('Registry snapshot metadata is missing');
   const docs=await sql.unsafe("SELECT name FROM atlas.atlas_documents WHERE name IN ('catalog-taxonomy','catalog-kind-overrides','catalog-access-rules','catalog-gold-set','source-page-index-meta')");
   if(docs.length!==5) throw new Error('Missing required Atlas documents');
-  console.log(JSON.stringify({tables:tables.length,...count,...mismatch}));
+  const constraints=await sql.unsafe("SELECT c.conname,c.confdeltype FROM pg_constraint c JOIN pg_namespace n ON n.oid=c.connamespace WHERE n.nspname='atlas'");
+  const constraintRules=new Map(constraints.map(r=>[r.conname,r.confdeltype]));
+  for(const [name,rule] of Object.entries({
+    route_patterns_identity_unique:' ',
+    atlas_catalog_items_namespace_fk:'c',
+    examples_pattern_fk:'c',pattern_checks_pattern_fk:'c',
+    item_routes_pattern_fk:'n',component_url_checks_route_fk:'c'
+  })) {
+    if(!constraintRules.has(name) || (rule!==' ' && constraintRules.get(name)!==rule)) {
+      throw new Error('Missing or incorrect PostgreSQL writer constraint: '+name);
+    }
+  }
+  const identities=await sql.unsafe("SELECT table_name FROM information_schema.columns WHERE table_schema='atlas' AND column_name='id' AND is_identity='YES'");
+  for(const table of ['route_patterns','pattern_checks']) {
+    if(!identities.some(r=>r.table_name===table))throw new Error('PostgreSQL ID sequence missing: '+table);
+  }
+  console.log(JSON.stringify({tables:tables.length,...count,...mismatch,writerConstraints:true}));
 }catch(error){
   console.error('POSTGRES_CHECK_FAILED',error.code||'error',error.message);
   process.exitCode=1;

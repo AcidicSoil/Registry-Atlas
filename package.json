@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "TMPDIR=${TMPDIR:-/tmp} vitest run",
+    "test": "TMPDIR=${TMPDIR:-/tmp} vitest run --testTimeout 30000",
     "test:watch": "TMPDIR=${TMPDIR:-/tmp} vitest",
     "typecheck": "tsc --noEmit",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
@@ -15,7 +15,7 @@
     "validate:data": "node scripts/validate-registry-data.mjs",
     "check:product-contract": "node scripts/check-product-contract.mjs",
     "browser:acceptance": "node scripts/check-browser-acceptance.mjs",
-    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm build",
+    "verify": "pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build",
     "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",
     "all": "pnpm verify",
@@ -24,7 +24,8 @@
     "prebuild": "pnpm prepare:runtime-data",
     "check:postgres": "node scripts/check-postgres.mjs",
     "prepare:runtime-data": "node scripts/build-runtime-data.mjs",
-    "pretest": "pnpm prepare:runtime-data"
+    "pretest": "pnpm prepare:runtime-data",
+    "migrate:postgres-schema": "node scripts/migrate-postgres-schema.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",

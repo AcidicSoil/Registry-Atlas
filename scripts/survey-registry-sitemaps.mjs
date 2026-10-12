@@ -156,8 +156,8 @@ export async function main(argv,cwd=process.cwd()){
     throw Error('Managed source profile is not running on the provided server');
   const allowed=status.data.settings?.allowedDomains??[];
   const database=openAtlasCoreDatabase(cwd,{readOnly:true});
-  const state=readAtlasState(database);
-  database.close();
+  const state=await readAtlasState(database);
+  await database.close();
   const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const registries=raw.filter(reg=>{
     const host=new URL(reg.homepage).hostname;

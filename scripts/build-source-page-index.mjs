@@ -201,8 +201,8 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
 async function main() {
   const database = openAtlasCoreDatabase();
   try {
-    const state = readAtlasState(database);
-    const patternLinks = exportPatternLinkSnapshot(database);
+    const state = await readAtlasState(database);
+    const patternLinks = (await exportPatternLinkSnapshot(database));
     const result = buildSourcePageIndex({
       raw: state.rawRegistries,
       catalog: state.catalog,
@@ -210,13 +210,13 @@ async function main() {
       traversal: null,
       patternLinks,
     });
-    replaceSourcePages(database, result.pages);
-    putDocument(database, 'source-page-index-meta', 'runtime-meta', {
+    await replaceSourcePages(database, result.pages);
+    await putDocument(database, 'source-page-index-meta', 'runtime-meta', {
       schema: result.schema,
       sourceSnapshotAt: result.sourceSnapshotAt,
       coverage: result.coverage,
     });
-    putDocument(database, 'source-page-coverage', 'sync-report', {
+    await putDocument(database, 'source-page-coverage', 'sync-report', {
       schema: SOURCE_PAGE_SCHEMA,
       sourceSnapshotAt: result.sourceSnapshotAt,
       ...result.coverage,
@@ -224,7 +224,7 @@ async function main() {
     });
     console.log(JSON.stringify(result.coverage));
   } finally {
-    database.close();
+    await database.close();
   }
 }
 

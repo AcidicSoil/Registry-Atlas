@@ -1,4 +1,4 @@
-import { DatabaseSync } from 'node:sqlite';
+
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
@@ -25,7 +25,7 @@ function memoryLedger(namespace) {
   };
 }
 
-export async function discoverRegistryIntoSqlite({
+export async function discoverRegistryIntoPostgres({
   db,registry,indexedItems,catalog,curated={},browser,
   checkedAt=new Date().toISOString(),limit=20,maxPages=40,maxDepth=4,maxLinks=1500,
   delayMs=1000,samples=2,componentChecks=5,fetchPage=fetch,browserPage=null,
@@ -40,13 +40,13 @@ export async function discoverRegistryIntoSqlite({
     [registry],catalog,curated,{[registry.name]:ledger.rows},checkedAt,{},
   );
   const observed=traversal.registries[0];
-  const merged=mergeDiscoveredPatterns(db,{
+  const merged=(await mergeDiscoveredPatterns(db,{
     namespace:registry.name,homepage:registry.homepage,patterns:observed.patterns,
-  });
+  }));
   const patternVerification=await verifyRegistryPatterns(db,{
     registry:registry.name,samples,fetchPage,checkedAt,browserPage,
   });
-  const candidates=seedComponentCandidates(db,{catalog});
+  const candidates=(await seedComponentCandidates(db,{catalog}));
   const componentVerification=componentChecks>0
     ?await verifyComponentCandidates(db,{
       registry:registry.name,maxPages:componentChecks,maxPerRegistry:componentChecks,
@@ -71,7 +71,7 @@ export async function discoverRegistryIntoSqlite({
 }
 
 function parseArgs(argv) {
-  const valued=new Set(['--db','--registry','--profile','--server','--tab','--limit',
+  const valued=new Set(['--registry','--profile','--server','--tab','--limit',
     '--max-pages','--max-depth','--max-links','--delay-ms','--samples','--component-checks']);
   const opts={};
   for(let i=0;i<argv.length;i++){
@@ -89,7 +89,6 @@ function parseArgs(argv) {
     return value;
   };
   return {
-    db:opts['--db']??'data/registry-atlas.sqlite',
     registry:opts['--registry'],profile:opts['--profile'],server:opts['--server'],tab:opts['--tab'],
     limit:number('--limit',20,1,200),maxPages:number('--max-pages',40,1,250),
     maxDepth:number('--max-depth',4,0,10),maxLinks:number('--max-links',1500,1,10000),
@@ -101,8 +100,8 @@ function parseArgs(argv) {
 export async function main(argv,cwd=process.cwd()) {
   const options=parseArgs(argv);
   const core=openAtlasCoreDatabase(cwd,{readOnly:true});
-  const state=readAtlasState(core);
-  core.close();
+  const state=await readAtlasState(core);
+  await core.close();
   const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const registry=raw.find(row=>row.name===options.registry);
   if(!registry)throw Error('Unknown exact registry namespace');
@@ -110,22 +109,21 @@ export async function main(argv,cwd=process.cwd()) {
     ...(catalog.registries[registry.name]??[]).map(item=>item.name),
     ...(curated[registry.name]??[]).map(item=>item.slug),
   ])].filter(value=>typeof value==='string').sort();
-  const db=new DatabaseSync(options.db);
-  db.exec('PRAGMA foreign_keys=ON;PRAGMA busy_timeout=5000;');
+  const db=openAtlasCoreDatabase();
   try{
-    reconcileRegistryCatalog(db,{raw,catalog,curated});
+    (await reconcileRegistryCatalog(db,{raw,catalog,curated}));
     checkedSourceProfile(options,registry);
     const browser=configureManagedSourceBrowser(new PinchTabBrowser(options.server,options.tab));
     const browserPage=managedBrowserPatternProof({
       profile:options.profile,server:options.server,tab:options.tab,
     });
-    return await discoverRegistryIntoSqlite({
+    return await discoverRegistryIntoPostgres({
       db,registry,indexedItems,catalog,curated,browser,browserPage,
       limit:options.limit,maxPages:options.maxPages,maxDepth:options.maxDepth,
       maxLinks:options.maxLinks,delayMs:options.delayMs,samples:options.samples,
       componentChecks:options.componentChecks,
     });
-  } finally {db.close();}
+  } finally {await db.close();}
 }
 
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)

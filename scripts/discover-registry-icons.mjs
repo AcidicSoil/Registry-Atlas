@@ -375,9 +375,9 @@ export function mergeRegistryIconDocument(current, previous) {
 export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parseArgs(argv);
   const database = openAtlasCoreDatabase(cwd, { readOnly: true });
-  const state = readAtlasState(database);
-  const previousIcons = readDocument(database, 'registry-icons');
-  database.close();
+  const state = await readAtlasState(database);
+  const previousIcons = await readDocument(database, 'registry-icons');
+  await database.close();
 
   let registries = state.rawRegistries
     .map(registry => ({ name: registry.name, homepage: registry.homepage }))
@@ -396,9 +396,9 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   if (!options.dryRun) {
     const writeDatabase = openAtlasCoreDatabase(cwd);
     try {
-      putDocument(writeDatabase, 'registry-icons', 'registry-enrichment', document);
+      await putDocument(writeDatabase, 'registry-icons', 'registry-enrichment', document);
     } finally {
-      writeDatabase.close();
+      await writeDatabase.close();
     }
   }
 

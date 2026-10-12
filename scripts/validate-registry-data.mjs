@@ -13,13 +13,13 @@ import {
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptDir, '..');
-const coreDatabasePath = resolve(projectRoot, 'data/registry-atlas.sqlite');
+const coreDatabasePath = 'PostgreSQL: atlas schema';
 const { validateRegistryMirror } = await loadRegistryMirrorValidator();
 
 const core = openAtlasCoreDatabase(projectRoot, { readOnly: true });
 
 try {
-  const state = readAtlasState(core);
+  const state = (await readAtlasState(core));
   const rawData = state.rawRegistries;
   const runtimeData = state.runtime;
   const knownItemData = state.curated;
@@ -74,7 +74,7 @@ try {
     }
   }
 
-  for (const message of validateDatabaseInvariants(core, state)) {
+  for (const message of await validateDatabaseInvariants(core, state)) {
     result.errors.push({
       code: 'atlas-database-invariant',
       message,
@@ -92,34 +92,34 @@ try {
 
   if (result.errors.length > 0) process.exitCode = 1;
 } finally {
-  core.close();
+  (await core.close());
 }
 
-function validateDatabaseInvariants(core, state) {
+async function validateDatabaseInvariants(core, state) {
   const issues = [];
   const catalogMeta = state.catalog?.meta ?? {};
-  const catalogNamespaces = core.prepare(
+  const catalogNamespaces = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_namespaces',
-  ).get().n;
-  const catalogItems = core.prepare(
+  ).get()).n);
+  const catalogItems = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_items',
-  ).get().n;
-  const duplicateCatalogItems = core.prepare(`
+  ).get()).n);
+  const duplicateCatalogItems = Number((await core.prepare(`
     SELECT COUNT(*) AS n FROM (
       SELECT namespace,name,COUNT(*) AS c
       FROM atlas_catalog_items
       GROUP BY namespace,name
-      HAVING c > 1
+      HAVING COUNT(*) > 1
     )
-  `).get().n;
-  const duplicateDetails = core.prepare(`
+  `).get()).n);
+  const duplicateDetails = Number((await core.prepare(`
     SELECT COUNT(*) AS n FROM (
       SELECT namespace,name,COUNT(*) AS c
       FROM atlas_item_details
       GROUP BY namespace,name
-      HAVING c > 1
+      HAVING COUNT(*) > 1
     )
-  `).get().n;
+  `).get()).n);
 
   if (catalogNamespaces !== catalogMeta.registry_count) {
     issues.push(`catalog namespace count ${catalogNamespaces} does not match metadata ${catalogMeta.registry_count}`);
@@ -141,9 +141,9 @@ function validateDatabaseInvariants(core, state) {
     'catalog-gold-set',
     'source-page-index-meta',
   ];
-  const available = new Set(core.prepare(
+  const available = new Set((await core.prepare(
     'SELECT name FROM atlas_documents',
-  ).all().map(row => row.name));
+  ).all()).map(row => row.name));
   for (const name of requiredDocuments) {
     if (!available.has(name)) issues.push(`required database document is missing: ${name}`);
   }

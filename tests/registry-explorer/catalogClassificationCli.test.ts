@@ -1,7 +1,6 @@
-import { mkdir, mkdtemp } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { DatabaseSync } from 'node:sqlite';
+import { vi } from 'vitest';
+vi.setConfig({testTimeout: 30000});
+import { testRouteDatabase } from './postgresFixture';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script intentionally has no TypeScript declaration.
 import * as catalogClassificationCli from '../../scripts/classify-registry-catalog.mjs';
@@ -14,10 +13,9 @@ const {
 // @ts-ignore Standalone Node ESM module.
 import { validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs';
 // @ts-ignore Standalone Node ESM module.
-import * as atlasDatabase from '../../scripts/lib/atlas-database.mjs';
+import * as atlasDatabase from '../../scripts/lib/atlas-postgres.mjs';
 
 const {
-  ensureAtlasCoreSchema,
   putDocument,
   readClassificationRun,
   readClassificationRunItems,
@@ -47,12 +45,9 @@ const fixtureTaxonomy = validateCatalogTaxonomy({
 });
 
 async function fixtureDatabase() {
-  const dir = await mkdtemp(join(tmpdir(), 'catalog-classification-'));
-  await mkdir(join(dir, 'data'), { recursive: true });
-  const dbPath = join(dir, 'data', 'registry-atlas.sqlite');
-  const db = new DatabaseSync(dbPath);
-  ensureAtlasCoreSchema(db);
-  replaceCatalogSnapshot(db, {
+  const db = await testRouteDatabase();
+  const dir = process.cwd();
+  await replaceCatalogSnapshot(db, {
     meta: { registry_count: 2, item_count: 3 },
     registries: {
       '@alpha': [
@@ -62,10 +57,9 @@ async function fixtureDatabase() {
       '@beta': [{ name: 'button', title: 'Button', type: 'registry:ui' }],
     },
   });
-  putDocument(db, 'catalog-taxonomy', 'taxonomy', fixtureTaxonomy);
-  putDocument(db, 'catalog-kind-overrides', 'taxonomy-support', { registryDefaults: {} });
-  db.close();
-  return { dir, dbPath };
+  await putDocument(db, 'catalog-taxonomy', 'taxonomy', fixtureTaxonomy);
+  await putDocument(db, 'catalog-kind-overrides', 'taxonomy-support', { registryDefaults: {} });
+  return { dir, db };
 }
 
 describe('catalog classification CLI arguments', () => {
@@ -91,7 +85,7 @@ describe('catalog classification CLI arguments', () => {
 
   it('dry-plans the database catalog without browser arguments or a run id', async () => {
     const fixture = await fixtureDatabase();
-    const result = await main(['--dry-run', '--max-registries', '1'], fixture.dir);
+    const result = await main(['--dry-run', '--max-registries', '1'], fixture.dir, fixture.db);
     expect(result).toMatchObject({
       dryRun: true,
       totalRegistries: 2,
@@ -103,9 +97,8 @@ describe('catalog classification CLI arguments', () => {
 });
 
 describe('catalog classification batching', () => {
-  it('persists resumable state and fingerprints in SQLite', async () => {
-    const database = new DatabaseSync(':memory:');
-    ensureAtlasCoreSchema(database);
+  it('persists resumable state and fingerprints in PostgreSQL', async () => {
+    const database = await testRouteDatabase();
     const seen: Array<string | undefined> = [];
 
     await runCatalogClassificationBatches({
@@ -149,7 +142,7 @@ describe('catalog classification batching', () => {
     expect(result).toMatchObject({
       status: 'completed', batches: 2, completed: 2, failed: 0, nextCursor: null,
     });
-    expect(readClassificationRun(database, 'fixture-run')).toMatchObject({
+    expect(await readClassificationRun(database, 'fixture-run')).toMatchObject({
       taxonomyFingerprint: 'sha256:tax',
       catalogFingerprint: 'sha256:catalog',
     });
@@ -162,23 +155,22 @@ describe('catalog classification batching', () => {
       catalogFingerprint: 'sha256:catalog',
       executeBatch: async () => ({ completed: 0, failed: 0, nextCursor: null, results: [] }),
     })).rejects.toThrow(/fingerprint/i);
-    database.close();
+    await database.close();
   });
 });
 
 describe('catalog classification artifacts', () => {
-  it('stores every deterministic registry result in SQLite and marks model-required items pending', async () => {
+  it('stores every deterministic registry result in PostgreSQL and marks model-required items pending', async () => {
     const fixture = await fixtureDatabase();
     const result = await main([
       '--run-id', 'deterministic-run', '--max-registries', '1',
       '--all-batches', '--deterministic-only',
-    ], fixture.dir);
+    ], fixture.dir, fixture.db);
     expect(result).toMatchObject({ status: 'completed', completed: 2, failed: 0, batches: 2 });
 
-    const db = new DatabaseSync(fixture.dbPath, { readOnly: true });
-    const items = readClassificationRunItems(db, 'deterministic-run');
-    const state = readClassificationRun(db, 'deterministic-run');
-    db.close();
+    const items = await readClassificationRunItems(fixture.db, 'deterministic-run');
+    const state = await readClassificationRun(fixture.db, 'deterministic-run');
+    await fixture.db.close();
 
     expect(items).toHaveLength(3);
     expect(items.find((item: any) => item.namespace === '@alpha' && item.name === 'app-shell'))

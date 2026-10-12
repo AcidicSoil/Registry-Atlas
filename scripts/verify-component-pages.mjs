@@ -1,4 +1,4 @@
-import { DatabaseSync } from 'node:sqlite';
+import { openAtlasCoreDatabase } from './lib/atlas-storage.mjs';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -11,48 +11,15 @@ const normalize = text => String(text ?? '').replace(/<[^>]*>/g,' ').replace(/&(
   .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
 const key=(namespace,slug)=>namespace+'/'+slug;
 
-export function initializeComponentChecks(db) {
-  initializePatternDatabase(db);
-  const existing=db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='component_url_checks'").get()?.sql;
-  if(existing && !existing.includes("'hypothesis'")) {
-    db.exec('BEGIN IMMEDIATE');
-    try {
-      db.exec('ALTER TABLE component_url_checks RENAME TO component_url_checks_previous');
-      db.exec(`CREATE TABLE component_url_checks(
-        namespace TEXT NOT NULL REFERENCES sources(namespace),slug TEXT NOT NULL,url TEXT,
-        source TEXT NOT NULL CHECK(source IN('pattern','sitemap','hypothesis','none','conflict')),
-        title TEXT NOT NULL,status TEXT NOT NULL CHECK(status IN('pending','verified','missing','unresolved','transient')),
-        reason TEXT,http_status INTEGER,checked_at TEXT,attempts INTEGER NOT NULL DEFAULT 0,
-        PRIMARY KEY(namespace,slug),
-        FOREIGN KEY(namespace,slug) REFERENCES item_routes(namespace,slug) ON DELETE CASCADE
-      );
-      INSERT INTO component_url_checks SELECT * FROM component_url_checks_previous;
-      DROP TABLE component_url_checks_previous;`);
-      db.exec('COMMIT');
-    } catch(error) {db.exec('ROLLBACK');throw error;}
-  }
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS component_url_checks(
-      namespace TEXT NOT NULL REFERENCES sources(namespace),
-      slug TEXT NOT NULL,
-      url TEXT,
-      source TEXT NOT NULL CHECK(source IN('pattern','sitemap','hypothesis','none','conflict')),
-      title TEXT NOT NULL,
-      status TEXT NOT NULL CHECK(status IN('pending','verified','missing','unresolved','transient')),
-      reason TEXT,
-      http_status INTEGER,
-      checked_at TEXT,
-      attempts INTEGER NOT NULL DEFAULT 0,
-      PRIMARY KEY(namespace,slug),
-      FOREIGN KEY(namespace,slug) REFERENCES item_routes(namespace,slug) ON DELETE CASCADE
-    );
-    CREATE INDEX IF NOT EXISTS idx_component_url_status ON component_url_checks(status,namespace);
-  `);
+export async function initializeComponentChecks(db) {
+  await initializePatternDatabase(db);
+  const row=await db.prepare("SELECT 1 AS ok FROM information_schema.tables WHERE table_schema='atlas' AND table_name='component_url_checks'").get();
+  if(!row)throw Error('PostgreSQL Atlas schema missing component_url_checks');
 }
 
-export function seedComponentCandidates(db,{catalog}){
+export async function seedComponentCandidates(db,{catalog}){
   if(!catalog?.registries || typeof catalog.registries !== 'object')throw Error('Catalog required');
-  initializeComponentChecks(db);
+  (await initializeComponentChecks(db));
   const titles=new Map();
   for(const [namespace,items] of Object.entries(catalog.registries)){
     for(const item of items){
@@ -61,23 +28,23 @@ export function seedComponentCandidates(db,{catalog}){
     }
   }
   const sitemap=new Map();
-  for(const r of db.prepare('SELECT namespace,slug,url FROM sitemap_links ORDER BY namespace,slug,url').all()){
+  for(const r of (await db.prepare('SELECT namespace,slug,url FROM sitemap_links ORDER BY namespace,slug,url').all())){
     const k=key(r.namespace,r.slug);
     const arr=sitemap.get(k)??new Set();
     arr.add(r.url);
     sitemap.set(k,arr);
   }
   const patterns=new Map();
-  for(const p of db.prepare('SELECT namespace,template,prefix FROM route_patterns ORDER BY namespace,template').all()) {
+  for(const p of (await db.prepare('SELECT namespace,template,prefix FROM route_patterns ORDER BY namespace,template').all())) {
     const list=patterns.get(p.namespace)??[];
     list.push(p);patterns.set(p.namespace,list);
   }
-  const rows=db.prepare(`
+  const rows=(await db.prepare(`
     SELECT i.namespace,i.slug,i.source_url AS patternUrl,i.status AS patternStatus,
       s.homepage
     FROM item_routes i JOIN sources s USING(namespace)
     ORDER BY i.namespace,i.slug
-  `).all();
+  `).all());
   const upsert=db.prepare(`
     INSERT INTO component_url_checks(namespace,slug,url,source,title,status,reason)
       VALUES(?,?,?,?,?,?,?)
@@ -90,7 +57,7 @@ export function seedComponentCandidates(db,{catalog}){
       OR component_url_checks.title IS NOT excluded.title
   `);
   let candidates=0,missing=0,conflicts=0;
-  db.exec('BEGIN IMMEDIATE');
+  (await db.exec('BEGIN IMMEDIATE'));
   try{
     for(const row of rows){
       const matches=sitemap.get(key(row.namespace,row.slug))??new Set();
@@ -110,10 +77,10 @@ export function seedComponentCandidates(db,{catalog}){
         if(confirmed){url=confirmed;source=match?'sitemap':pattern?'pattern':'hypothesis';status='pending';reason=null;candidates++;}
         else {if(hypotheses.length>1)reason='multiple-possible-route-patterns';missing++;}
       }
-      upsert.run(row.namespace,row.slug,url,source,titles.get(key(row.namespace,row.slug))??row.slug,status,reason);
+      (await upsert.run(row.namespace,row.slug,url,source,titles.get(key(row.namespace,row.slug))??row.slug,status,reason));
     }
-    db.exec('COMMIT');
-  }catch(error){db.exec('ROLLBACK');throw error;}
+    (await db.exec('COMMIT'));
+  }catch(error){(await db.exec('ROLLBACK'));throw error;}
   return {indexed:rows.length,candidates,missing,conflicts};
 }
 const timeout = (milliseconds) => AbortSignal.timeout(milliseconds);
@@ -175,14 +142,14 @@ export async function verifyComponentCandidates(db,{registry=null,maxPages=20,de
     ||!Number.isSafeInteger(attemptLimit)||attemptLimit<1||attemptLimit>20
     ||!Number.isSafeInteger(delayMs)||delayMs<0||delayMs>60000)
     throw Error('Invalid verification batch limits');
-  initializeComponentChecks(db);
-  const rows=db.prepare(`
+  (await initializeComponentChecks(db));
+  const rows=(await db.prepare(`
     SELECT c.namespace,c.slug,c.url,c.source,c.title,c.status,c.reason,c.attempts,
       c.checked_at,s.homepage
     FROM component_url_checks c JOIN sources s USING(namespace)
     WHERE c.url IS NOT NULL
     ORDER BY CASE WHEN c.status='pending' THEN 0 ELSE 1 END,c.namespace,c.slug
-  `).all();
+  `).all());
   const set=db.prepare(`
     UPDATE component_url_checks SET status=?,reason=?,http_status=?,checked_at=?,attempts=attempts+1
     WHERE namespace=? AND slug=? AND url=?
@@ -213,7 +180,7 @@ export async function verifyComponentCandidates(db,{registry=null,maxPages=20,de
         result={status:'verified',reason:null,httpStatus:200};
       else result={status:'unresolved',reason:observed.reason??'browser-identity-mismatch',httpStatus:200};
     }
-    set.run(result.status,result.reason,result.httpStatus??null,now,row.namespace,row.slug,row.url);
+    (await set.run(result.status,result.reason,result.httpStatus??null,now,row.namespace,row.slug,row.url));
     checked++;
     if(result.status==='verified')verified++;
     else if(result.status==='missing')missing++;
@@ -227,27 +194,27 @@ export async function verifyComponentCandidates(db,{registry=null,maxPages=20,de
   return {checked,verified,missing,unresolved,transient,skipped};
 }
 
-export function exportComponentQueue(db){
-  initializeComponentChecks(db);
+export async function exportComponentQueue(db){
+  (await initializeComponentChecks(db));
   const groups=new Map();
-  const raw=db.prepare('SELECT namespace,homepage FROM sources ORDER BY namespace').all();
+  const raw=(await db.prepare('SELECT namespace,homepage FROM sources ORDER BY namespace').all());
   for(const row of raw)groups.set(row.namespace,{namespace:row.namespace,homepage:row.homepage,
     unverifiedItems:0,verifiedItems:0,patterns:[],slugs:[]});
   const patternSlugs=new Map();
-  for(const ex of db.prepare('SELECT pattern_id,slug FROM examples ORDER BY pattern_id,slug').all()){
+  for(const ex of (await db.prepare('SELECT pattern_id,slug FROM examples ORDER BY pattern_id,slug').all())){
     const arr=patternSlugs.get(ex.pattern_id)??[];
     arr.push(ex.slug);patternSlugs.set(ex.pattern_id,arr);
   }
-  for(const p of db.prepare('SELECT * FROM route_patterns ORDER BY namespace,template').all()){
+  for(const p of (await db.prepare('SELECT * FROM route_patterns ORDER BY namespace,template').all())){
     const group=groups.get(p.namespace);
     group.patterns.push({id:p.id,template:p.template,prefix:p.prefix,status:p.status,
       reason:p.failure,checkedAt:p.checked_at,observedSlugs:patternSlugs.get(p.id)??[]});
   }
   let pending=0,verified=0,missing=0;
-  for(const row of db.prepare(`SELECT c.namespace,c.slug,c.url,c.source,c.status,c.reason,
+  for(const row of (await db.prepare(`SELECT c.namespace,c.slug,c.url,c.source,c.status,c.reason,
     c.attempts,c.checked_at,i.pattern_id
     FROM component_url_checks c JOIN item_routes i USING(namespace,slug)
-    ORDER BY c.namespace,c.slug`).all()){
+    ORDER BY c.namespace,c.slug`).all())){
     const group=groups.get(row.namespace);
     if(row.status==='verified'){verified++;group.verifiedItems++;continue;}
     pending++;group.unverifiedItems++;
@@ -268,15 +235,13 @@ async function main(argv){
     return;
   }
   const get=flag=>argv.includes(flag)?argv[argv.indexOf(flag)+1]:null;
-  const dbFile=get('--db')??'data/registry-atlas.sqlite';
-  await mkdir(dirname(resolve(dbFile)),{recursive:true});
-  const db=new DatabaseSync(resolve(dbFile));
-  db.exec('PRAGMA journal_mode=WAL;PRAGMA foreign_keys=ON;PRAGMA busy_timeout=5000;');
+  if(get('--db'))throw Error('--db is obsolete; use PostgreSQL DATABASE_URL');
+  const db=openAtlasCoreDatabase();
   try{
-    const state=readAtlasState(db);
+    const state=(await readAtlasState(db));
     const catalog=state.catalog,raw=state.rawRegistries,curated=state.curated;
-    const reconciled=reconcileRegistryCatalog(db,{raw,catalog,curated});
-    const seeded=seedComponentCandidates(db,{catalog});
+    const reconciled=(await reconcileRegistryCatalog(db,{raw,catalog,curated}));
+    const seeded=(await seedComponentCandidates(db,{catalog}));
     const browserPage=get('--profile')&&get('--browser-server')&&get('--browser-tab')
       ?managedBrowserPatternProof({profile:get('--profile'),
         server:get('--browser-server'),tab:get('--browser-tab')}) : null;
@@ -288,10 +253,10 @@ async function main(argv){
       retryFailed:argv.includes('--retry-failed'),browserPage,
       onProgress:row=>{if(row.checked%25===0)console.error(JSON.stringify(row));},
     });
-    const queue=exportComponentQueue(db);
+    const queue=(await exportComponentQueue(db));
     if(get('--report'))await writeFile(get('--report'),JSON.stringify(queue,null,2)+'\n');
     console.log(JSON.stringify({reconciled,seeded,checked,coverage:queue.totals}));
-  }finally{db.close();}
+  }finally{(await db.close());}
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)
   main(process.argv.slice(2)).catch(error=>{console.error(error);process.exitCode=1;});

@@ -226,8 +226,8 @@ function parseArgs(args) {
 export async function main(argv,cwd=process.cwd()) {
   const options=parseArgs(argv);
   const database=openAtlasCoreDatabase(cwd,{readOnly:true});
-  const state=readAtlasState(database);
-  database.close();
+  const state=await readAtlasState(database);
+  await database.close();
   const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const ledgers={};
   for (const registry of raw) {

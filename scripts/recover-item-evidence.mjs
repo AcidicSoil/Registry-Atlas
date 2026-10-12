@@ -87,7 +87,7 @@ async function main(args) {
   const apply = args.includes('--apply');
   if (!targets.length || targets.length > 20) throw new Error('Pass 1-20 registry item tokens');
   const database = openAtlasCoreDatabase(process.cwd());
-  const state = readAtlasState(database);
+  const state = await readAtlasState(database);
   const registries = state.rawRegistries;
   const curated = structuredClone(state.curated);
   const results = [];
@@ -105,9 +105,9 @@ async function main(args) {
     }
   }
   if (apply && results.some(result => result.status === 'verified')) {
-    replaceCuratedItemSummaries(database, curated);
+    await replaceCuratedItemSummaries(database, curated);
   }
-  database.close();
+  await database.close();
   console.log(JSON.stringify({ mode: apply ? 'apply' : 'dry-run', results }, null, 2));
   if (results.some(result => result.status !== 'verified')) process.exitCode = 2;
 }

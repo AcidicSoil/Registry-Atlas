@@ -1,4 +1,4 @@
-import { DatabaseSync } from 'node:sqlite';
+import { openAtlasCoreDatabase } from './lib/atlas-storage.mjs';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { isIP } from 'node:net';
@@ -6,7 +6,7 @@ import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
 import { putDocument, readAtlasState } from './lib/atlas-storage.mjs';
-import { ensureAtlasCoreSchema } from './lib/atlas-database.mjs';
+
 
 const PATTERN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const identity = text => String(text).toLowerCase().replace(/[-_/]+/g,' ')
@@ -40,13 +40,14 @@ export function resolvePattern(pattern,slug,homepage) {
   const encoded=remainder.split('/').map(encodeURIComponent).join('/');
   return safePage(pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/,encoded),homepage);
 }
-export function initializePatternDatabase(db) {
-  ensureAtlasCoreSchema(db);
+export async function initializePatternDatabase(db) {
+  const result=await db.prepare("SELECT 1 AS ok FROM information_schema.tables WHERE table_schema='atlas' AND table_name='route_patterns'").get();
+  if(!result)throw Error('PostgreSQL Atlas schema is missing route_patterns');
 }
-export function importRegistryPatterns(db,{inventory,catalog,curated={},raw,now=new Date().toISOString()}) {
+export async function importRegistryPatterns(db,{inventory,catalog,curated={},raw,now=new Date().toISOString()}) {
   if(inventory?.schema!=='registry-atlas-traversal-inventory/v1' ||
     !Array.isArray(raw) || !catalog?.registries)throw Error('Invalid traversal inventory');
-  initializePatternDatabase(db);
+  (await initializePatternDatabase(db));
   const getSource=db.prepare('SELECT homepage,fingerprint FROM sources WHERE namespace=?');
   const sourceSql=db.prepare(`INSERT INTO sources(namespace,homepage,fingerprint) VALUES(?,?,?)
     ON CONFLICT(namespace) DO UPDATE SET homepage=excluded.homepage,fingerprint=excluded.fingerprint`);
@@ -57,32 +58,32 @@ export function importRegistryPatterns(db,{inventory,catalog,curated={},raw,now=
   const rowSql=db.prepare("INSERT OR IGNORE INTO item_routes(namespace,slug) VALUES(?,?)");
   const sitemapInsert=db.prepare('INSERT OR IGNORE INTO sitemap_links(namespace,slug,url,observed_at) VALUES(?,?,?,?)');
   const sitemapClear=db.prepare('DELETE FROM sitemap_links WHERE namespace=?');
-  db.exec('BEGIN IMMEDIATE');
+  (await db.exec('BEGIN IMMEDIATE'));
   let count=0;
   const changed=new Set();
-  if(typeof inventory.generatedAt==='string') db.prepare("INSERT INTO metadata(key,value) VALUES('sourceSnapshotAt',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(inventory.generatedAt);
+  if(typeof inventory.generatedAt==='string') (await db.prepare("INSERT INTO metadata(key,value) VALUES('sourceSnapshotAt',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(inventory.generatedAt));
   try {
     for(const reg of raw) {
       const names=[...new Set([...(catalog.registries[reg.name]??[]).map(x=>x.name),
         ...(curated[reg.name]??[]).map(x=>x.slug)].filter(validSlug))].sort();
       const fingerprint=catalogFingerprint(reg,names);
-      const prior=getSource.get(reg.name);
+      const prior=(await getSource.get(reg.name));
       if(!prior || prior.homepage!==reg.homepage || prior.fingerprint!==fingerprint)changed.add(reg.name);
       if(prior&&(prior.homepage!==reg.homepage || prior.fingerprint!==fingerprint)) {
-        db.prepare('DELETE FROM item_routes WHERE namespace=?').run(reg.name);
-        db.prepare('DELETE FROM route_patterns WHERE namespace=?').run(reg.name);
+        (await db.prepare('DELETE FROM item_routes WHERE namespace=?').run(reg.name));
+        (await db.prepare('DELETE FROM route_patterns WHERE namespace=?').run(reg.name));
       }
-      sourceSql.run(reg.name,reg.homepage,fingerprint);
-      for(const slug of names)rowSql.run(reg.name,slug);
+      (await sourceSql.run(reg.name,reg.homepage,fingerprint));
+      for(const slug of names)(await rowSql.run(reg.name,slug));
       if(!publicHome(reg.homepage)) { count++; continue; }
       const observed=inventory.registries.find(r=>r.namespace===reg.name && r.homepage===reg.homepage
         && (!r.catalogFingerprint || r.catalogFingerprint===fingerprint));
-      sitemapClear.run(reg.name);
+      (await sitemapClear.run(reg.name));
       const recordedAt=Date.parse(observed?.sitemapSurveyedAt??'');
       if(Number.isFinite(recordedAt)) for(const item of observed?.sitemapPages??[]) {
         if(!names.includes(item.slug)) continue;
         const url=safePage(item.url,reg.homepage);
-        if(url) sitemapInsert.run(reg.name,item.slug,url,observed.sitemapSurveyedAt);
+        if(url) (await sitemapInsert.run(reg.name,item.slug,url,observed.sitemapSurveyedAt));
       }
       const seen=new Set();
       for(const [source,patterns] of [
@@ -91,42 +92,42 @@ export function importRegistryPatterns(db,{inventory,catalog,curated={},raw,now=
         const key=JSON.stringify([pattern.urlTemplate,pattern.slugPrefix]);
         if(seen.has(key)||!resolvePattern(pattern,pattern.slugPrefix+'pattern-test',reg.homepage))continue;
         seen.add(key);
-        patternSql.run(reg.name,pattern.urlTemplate,pattern.slugPrefix,source);
-        const id=patternId.get(reg.name,pattern.urlTemplate,pattern.slugPrefix).id;
+        (await patternSql.run(reg.name,pattern.urlTemplate,pattern.slugPrefix,source));
+        const id=(await patternId.get(reg.name,pattern.urlTemplate,pattern.slugPrefix)).id;
         const next=new Map();
         for(const item of [...(pattern.examples??[]),...(observed?.sitemapPages??[])]) {
           if(!names.includes(item.slug))continue;
           const url=resolvePattern(pattern,item.slug,reg.homepage);
           if(url && url===safePage(item.url,reg.homepage))next.set(item.slug+'\\0'+url,{slug:item.slug,url});
         }
-        const previous=db.prepare('SELECT slug,url FROM examples WHERE pattern_id=?').all(id);
+        const previous=(await db.prepare('SELECT slug,url FROM examples WHERE pattern_id=?').all(id));
         const before=previous.map(item=>item.slug+'\\0'+item.url).sort();
         const after=[...next.keys()].sort();
         if(JSON.stringify(before)!==JSON.stringify(after)) {
           changed.add(reg.name);
-          db.prepare("UPDATE route_patterns SET status='unverified',checked_at=NULL,failure=NULL WHERE id=?").run(id);
-          db.prepare('DELETE FROM examples WHERE pattern_id=?').run(id);
+          (await db.prepare("UPDATE route_patterns SET status='unverified',checked_at=NULL,failure=NULL WHERE id=?").run(id));
+          (await db.prepare('DELETE FROM examples WHERE pattern_id=?').run(id));
         }
-        for(const item of next.values())exampleSql.run(id,item.slug,item.url);
+        for(const item of next.values())(await exampleSql.run(id,item.slug,item.url));
       }
       // Old patterns are removed when the inventory no longer describes them.
-      for(const previous of db.prepare('SELECT id,template,prefix FROM route_patterns WHERE namespace=?').all(reg.name))
+      for(const previous of (await db.prepare('SELECT id,template,prefix FROM route_patterns WHERE namespace=?').all(reg.name)))
         if(!seen.has(JSON.stringify([previous.template,previous.prefix]))) {
           changed.add(reg.name);
-          db.prepare('DELETE FROM route_patterns WHERE id=?').run(previous.id);
+          (await db.prepare('DELETE FROM route_patterns WHERE id=?').run(previous.id));
         }
       count++;
     }
-    db.exec('COMMIT');
-  }catch(error){db.exec('ROLLBACK');throw error;}
-  for(const namespace of changed)resolveInferredRoutes(db,namespace);
-  return {registries:count,patterns:db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n,
-    examples:db.prepare('SELECT COUNT(*) AS n FROM examples').get().n};
+    (await db.exec('COMMIT'));
+  }catch(error){(await db.exec('ROLLBACK'));throw error;}
+  for(const namespace of changed)(await resolveInferredRoutes(db,namespace));
+  return {registries:count,patterns:(await db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get()).n,
+    examples:(await db.prepare('SELECT COUNT(*) AS n FROM examples').get()).n};
 }
 /** Reconcile official identities after sync without re-importing the retired traversal JSON. */
-export function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
+export async function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
   if(!Array.isArray(raw)||!catalog?.registries)throw Error('Invalid current registry catalog');
-  initializePatternDatabase(db);
+  (await initializePatternDatabase(db));
   const saved=db.prepare('SELECT namespace,homepage,fingerprint FROM sources WHERE namespace=?');
   const upsert=db.prepare(`INSERT INTO sources(namespace,homepage,fingerprint) VALUES(?,?,?)
     ON CONFLICT(namespace) DO UPDATE SET homepage=excluded.homepage,
@@ -135,7 +136,7 @@ export function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
   const remove=db.prepare('DELETE FROM item_routes WHERE namespace=? AND slug=?');
   let registries=0,added=0,removed=0,changedHomepages=0;
   const affected=new Set();
-  db.exec('BEGIN IMMEDIATE');
+  (await db.exec('BEGIN IMMEDIATE'));
   try{
     for(const reg of raw){
       const name=reg.name;
@@ -146,42 +147,42 @@ export function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
       ].filter(validSlug))].sort();
       const expected=new Set(names);
       const fingerprint=catalogFingerprint(reg,names);
-      const prior=saved.get(name);
+      const prior=(await saved.get(name));
       if(prior&&prior.homepage!==reg.homepage){
-        db.prepare('DELETE FROM item_routes WHERE namespace=?').run(name);
-        db.prepare('DELETE FROM route_patterns WHERE namespace=?').run(name);
-        db.prepare('DELETE FROM sitemap_links WHERE namespace=?').run(name);
+        (await db.prepare('DELETE FROM item_routes WHERE namespace=?').run(name));
+        (await db.prepare('DELETE FROM route_patterns WHERE namespace=?').run(name));
+        (await db.prepare('DELETE FROM sitemap_links WHERE namespace=?').run(name));
         changedHomepages++;
         affected.add(name);
       }
-      upsert.run(name,reg.homepage,fingerprint);
-      const existing=db.prepare('SELECT slug FROM item_routes WHERE namespace=?').all(name);
+      (await upsert.run(name,reg.homepage,fingerprint));
+      const existing=(await db.prepare('SELECT slug FROM item_routes WHERE namespace=?').all(name));
       for(const row of existing){
         if(expected.has(row.slug))continue;
-        remove.run(name,row.slug);
+        (await remove.run(name,row.slug));
         removed++;
         affected.add(name);
       }
       for(const slug of names){
-        if(insert.run(name,slug).changes){
+        if((await insert.run(name,slug)).changes){
           added++;
           affected.add(name);
         }
       }
       registries++;
     }
-    db.exec('COMMIT');
-  }catch(error){db.exec('ROLLBACK');throw error;}
-  for(const namespace of affected)resolveInferredRoutes(db,namespace);
+    (await db.exec('COMMIT'));
+  }catch(error){(await db.exec('ROLLBACK'));throw error;}
+  for(const namespace of affected)(await resolveInferredRoutes(db,namespace));
   return {registries,added,removed,changedHomepages};
 }
 
 
-export function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,source='browser-observed'}={}) {
-  initializePatternDatabase(db);
+export async function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,source='browser-observed'}={}) {
+  (await initializePatternDatabase(db));
   if(typeof namespace!=='string'||typeof homepage!=='string'||!Array.isArray(patterns))
     throw Error('Invalid discovered pattern input');
-  const saved=db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace);
+  const saved=(await db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace));
   if(!saved||saved.homepage!==homepage)throw Error('Discovery source does not match current registry homepage');
   const insertPattern=db.prepare(`INSERT INTO route_patterns(namespace,template,prefix,source)
     VALUES(?,?,?,?) ON CONFLICT(namespace,template,prefix) DO UPDATE SET source=excluded.source`);
@@ -190,7 +191,7 @@ export function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,source='
   const insertExample=db.prepare('INSERT OR IGNORE INTO examples(pattern_id,slug,url) VALUES(?,?,?)');
   const reset=db.prepare("UPDATE route_patterns SET status='unverified',checked_at=NULL,failure=NULL WHERE id=? AND status<>'verified'");
   let accepted=0,newPatterns=0,newExamples=0;
-  db.exec('BEGIN IMMEDIATE');
+  (await db.exec('BEGIN IMMEDIATE'));
   try{
     for(const pattern of patterns){
       if(!pattern||typeof pattern.urlTemplate!=='string'||typeof pattern.slugPrefix!=='string'
@@ -198,28 +199,28 @@ export function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,source='
       const usable=[];
       for(const example of pattern.examples){
         if(!example||typeof example.slug!=='string'||typeof example.url!=='string'
-          ||!hasSlug.get(namespace,example.slug))continue;
+          ||!(await hasSlug.get(namespace,example.slug)))continue;
         const expected=resolvePattern({urlTemplate:pattern.urlTemplate,
           slugPrefix:pattern.slugPrefix},example.slug,homepage);
         if(expected&&expected===safePage(example.url,homepage))usable.push(example);
       }
       if(!usable.length)continue;
-      const before=getPattern.get(namespace,pattern.urlTemplate,pattern.slugPrefix);
-      insertPattern.run(namespace,pattern.urlTemplate,pattern.slugPrefix,source);
-      const row=getPattern.get(namespace,pattern.urlTemplate,pattern.slugPrefix);
+      const before=(await getPattern.get(namespace,pattern.urlTemplate,pattern.slugPrefix));
+      (await insertPattern.run(namespace,pattern.urlTemplate,pattern.slugPrefix,source));
+      const row=(await getPattern.get(namespace,pattern.urlTemplate,pattern.slugPrefix));
       if(!before)newPatterns++;
       let added=0;
       for(const example of usable){
-        const result=insertExample.run(row.id,example.slug,example.url);
+        const result=(await insertExample.run(row.id,example.slug,example.url));
         added+=Number(result.changes||0);
       }
-      if(added)reset.run(row.id);
+      if(added)(await reset.run(row.id));
       newExamples+=added;
       accepted++;
     }
-    db.exec('COMMIT');
-  }catch(error){db.exec('ROLLBACK');throw error;}
-  resolveInferredRoutes(db,namespace);
+    (await db.exec('COMMIT'));
+  }catch(error){(await db.exec('ROLLBACK'));throw error;}
+  (await resolveInferredRoutes(db,namespace));
   return {accepted,newPatterns,newExamples};
 }
 
@@ -246,27 +247,27 @@ export async function checkPatternExample(fetchPage,url,slug) {
     return {status:'verified',reason:null};
   } catch(error) {return {status:'failed',reason:'network-'+String(error.message).slice(0,75)};}
 }
-export function resolveInferredRoutes(db,namespace) {
-  const patterns=db.prepare("SELECT id,template,prefix FROM route_patterns WHERE namespace=? AND status='verified'").all(namespace);
-  const examples=db.prepare(`SELECT e.pattern_id,e.slug,e.url FROM examples e
-    JOIN route_patterns p ON p.id=e.pattern_id WHERE p.namespace=? AND p.status='verified'`).all(namespace);
-  const root=db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace).homepage;
+export async function resolveInferredRoutes(db,namespace) {
+  const patterns=(await db.prepare("SELECT id,template,prefix FROM route_patterns WHERE namespace=? AND status='verified'").all(namespace));
+  const examples=(await db.prepare(`SELECT e.pattern_id,e.slug,e.url FROM examples e
+    JOIN route_patterns p ON p.id=e.pattern_id WHERE p.namespace=? AND p.status='verified'`).all(namespace));
+  const root=(await db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace)).homepage;
   const update=db.prepare('UPDATE item_routes SET source_url=?,status=?,pattern_id=? WHERE namespace=? AND slug=?');
-  db.exec('BEGIN IMMEDIATE');
+  (await db.exec('BEGIN IMMEDIATE'));
   try {
-  for(const {slug} of db.prepare('SELECT slug FROM item_routes WHERE namespace=?').all(namespace)) {
+  for(const {slug} of (await db.prepare('SELECT slug FROM item_routes WHERE namespace=?').all(namespace))) {
     const direct=examples.filter(e=>e.slug===slug);
     if(direct.length && new Set(direct.map(e=>e.url)).size===1) {
-      update.run(direct[0].url,'pattern-observed',direct[0].pattern_id,namespace,slug);
+      (await update.run(direct[0].url,'pattern-observed',direct[0].pattern_id,namespace,slug));
       continue;
     }
     const possible=patterns.map(p=>({...p,url:resolvePattern({
       urlTemplate:p.template,slugPrefix:p.prefix},slug,root)})).filter(p=>p.url);
-    if(possible.length===1)update.run(possible[0].url,'pattern-inferred',possible[0].id,namespace,slug);
-    else update.run(null,'unverified',null,namespace,slug);
+    if(possible.length===1)(await update.run(possible[0].url,'pattern-inferred',possible[0].id,namespace,slug));
+    else (await update.run(null,'unverified',null,namespace,slug));
   }
-  db.exec('COMMIT');
-  } catch(error) { db.exec('ROLLBACK'); throw error; }
+  (await db.exec('COMMIT'));
+  } catch(error) { (await db.exec('ROLLBACK')); throw error; }
 }
 export function retryEligibleFailure(reason) {
   return reason==='identity-mismatch' || String(reason??'').startsWith('network-')
@@ -280,8 +281,8 @@ export async function verifyRegistryPatterns(db,{
 }={}) {
   if(!Number.isSafeInteger(samples)||samples<1||samples>12)throw Error('Invalid sample count');
   const registries=registry
-    ? db.prepare('SELECT namespace FROM sources WHERE namespace=?').all(registry)
-    : db.prepare('SELECT namespace FROM sources ORDER BY namespace').all();
+    ? (await db.prepare('SELECT namespace FROM sources WHERE namespace=?').all(registry))
+    : (await db.prepare('SELECT namespace FROM sources ORDER BY namespace').all());
   if(registry && !registries.length)throw Error('Unknown registry '+registry);
   const list=db.prepare('SELECT * FROM route_patterns WHERE namespace=? ORDER BY id');
   const examples=db.prepare('SELECT slug,url FROM examples WHERE pattern_id=? ORDER BY slug');
@@ -289,16 +290,16 @@ export async function verifyRegistryPatterns(db,{
   const save=db.prepare('UPDATE route_patterns SET status=?,checked_at=?,failure=? WHERE id=?');
   let checkedPatterns=0,verifiedPatterns=0,failedPatterns=0,missingSamples=0;
   for(const {namespace} of registries) {
-    for(const p of list.all(namespace)) {
+    for(const p of (await list.all(namespace))) {
       if(repairFailed && p.status==='failed' && (
-        !retryEligibleFailure(p.failure) || db.prepare(
+        !retryEligibleFailure(p.failure) || (await db.prepare(
           "SELECT COUNT(*) AS n FROM pattern_checks WHERE pattern_id=? AND status='failed'"
-        ).get(p.id).n>=maxAttempts))continue;
+        ).get(p.id)).n>=maxAttempts))continue;
       if(p.status==='verified' && p.checked_at &&
         Date.parse(checkedAt) >= Date.parse(p.checked_at) &&
         Date.parse(checkedAt)-Date.parse(p.checked_at)<PATTERN_MAX_AGE_MS)continue;
-      const all=examples.all(p.id);
-      if(all.length<samples) {missingSamples++;save.run('unverified',checkedAt,'insufficient-examples',p.id);continue;}
+      const all=(await examples.all(p.id));
+      if(all.length<samples) {missingSamples++;(await save.run('unverified',checkedAt,'insufficient-examples',p.id));continue;}
       // Spread representative tests across the known route family instead of crawling every item.
       const chosen=samples===1?[all[0]]:Array.from({length:samples},(_,i)=>
         all[Math.floor(i*(all.length-1)/(samples-1))]);
@@ -306,7 +307,7 @@ export async function verifyRegistryPatterns(db,{
       for(const item of chosen) {
         let response=await checkPatternExample(fetchPage,item.url,item.slug.slice(p.prefix.length));
         if(response.reason==='identity-mismatch' && typeof browserPage==='function') {
-          const root=db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace).homepage;
+          const root=(await db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace)).homepage;
           const observed=await browserPage(item.url,item.slug.slice(p.prefix.length),root)
             .catch(error=>({status:'failed',reason:'browser-error-'+String(error.message).slice(0,75)}));
           if(observed?.status==='verified' && observed.observedUrl===item.url &&
@@ -314,23 +315,23 @@ export async function verifyRegistryPatterns(db,{
             response={status:'verified',reason:null};
           else response={status:'failed',reason:observed?.reason??'browser-identity-mismatch'};
         }
-        log.run(p.id,item.slug,item.url,response.status,response.reason,checkedAt);
+        (await log.run(p.id,item.slug,item.url,response.status,response.reason,checkedAt));
         if(response.status!=='verified') {reason=response.reason;break;}
       }
-      save.run(reason?'failed':'verified',checkedAt,reason,p.id);
+      (await save.run(reason?'failed':'verified',checkedAt,reason,p.id));
       if(reason)failedPatterns++;else verifiedPatterns++;
     }
-    resolveInferredRoutes(db,namespace);
+    (await resolveInferredRoutes(db,namespace));
   }
   return {checkedPatterns,verifiedPatterns,failedPatterns,missingSamples};
 }
-export function exportPatternCoverage(db,raw=[]) {
-  const sources=db.prepare(`SELECT s.namespace,s.homepage,
+export async function exportPatternCoverage(db,raw=[]) {
+  const sources=(await db.prepare(`SELECT s.namespace,s.homepage,
     (SELECT COUNT(*) FROM route_patterns p WHERE p.namespace=s.namespace AND p.status='verified') AS verifiedPatterns,
     (SELECT COUNT(*) FROM route_patterns p WHERE p.namespace=s.namespace) AS patternCount,
     (SELECT COUNT(*) FROM item_routes i WHERE i.namespace=s.namespace AND i.status='unverified') AS unverifiedItems,
     (SELECT COUNT(*) FROM item_routes i WHERE i.namespace=s.namespace) AS itemCount
-    FROM sources s ORDER BY s.namespace`).all();
+    FROM sources s ORDER BY s.namespace`).all());
   const withReasons=sources.map(source=>!publicHome(source.homepage)
     ? {...source,reason:'non-public-https-homepage'} : source);
   const covered=new Set(sources.map(source=>source.namespace));
@@ -339,64 +340,64 @@ export function exportPatternCoverage(db,raw=[]) {
     unverifiedItems:null,itemCount:null,reason:'non-public-https-homepage',
   }));
   return {schema:'registry-atlas-pattern-coverage/v1',registries:sources.length+excluded.length,
-    totals:Object.fromEntries(db.prepare('SELECT status,COUNT(*) AS n FROM item_routes GROUP BY status')
-      .all().map(r=>[r.status,r.n])),
+    totals:Object.fromEntries((await db.prepare('SELECT status,COUNT(*) AS n FROM item_routes GROUP BY status')
+      .all()).map(r=>[r.status,r.n])),
     unverifiedRegistries:[...withReasons.filter(r=>r.unverifiedItems>0 || r.reason),...excluded]};
 }
-export function exportPatternLinkSnapshot(db) {
-  const fingerprints=Object.fromEntries(db.prepare('SELECT namespace,fingerprint FROM sources ORDER BY namespace')
-    .all().map(row=>[row.namespace,row.fingerprint]));
+export async function exportPatternLinkSnapshot(db) {
+  const fingerprints=Object.fromEntries((await db.prepare('SELECT namespace,fingerprint FROM sources ORDER BY namespace')
+    .all()).map(row=>[row.namespace,row.fingerprint]));
   return {
     schema:'registry-atlas-pattern-links/v1',
-    sourceSnapshotAt:db.prepare("SELECT value FROM metadata WHERE key='sourceSnapshotAt'").get()?.value??null,
+    sourceSnapshotAt:(await db.prepare("SELECT value FROM metadata WHERE key='sourceSnapshotAt'").get())?.value??null,
     fingerprints,
-    sitemapLinks:db.prepare('SELECT namespace,slug,url,observed_at AS observedAt FROM sitemap_links ORDER BY namespace,slug,url').all(),
-    links:db.prepare(`SELECT i.namespace,i.slug,i.source_url,i.status,p.checked_at AS checkedAt
+    sitemapLinks:(await db.prepare('SELECT namespace,slug,url,observed_at AS observedAt FROM sitemap_links ORDER BY namespace,slug,url').all()),
+    links:(await db.prepare(`SELECT i.namespace,i.slug,i.source_url,i.status,p.checked_at AS checkedAt
       FROM item_routes i JOIN route_patterns p ON p.id=i.pattern_id AND p.status='verified'
       WHERE i.source_url IS NOT NULL AND p.checked_at IS NOT NULL
-      ORDER BY i.namespace,i.slug`).all(),
-    verifiedPages:db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='component_url_checks'").get()
-      ?db.prepare(`SELECT namespace,slug,url,checked_at AS checkedAt FROM component_url_checks
-        WHERE status='verified' AND url IS NOT NULL ORDER BY namespace,slug`).all():[],
-    missingPages:db.prepare("SELECT 1 FROM sqlite_master WHERE type='table' AND name='component_url_checks'").get()
-      ?db.prepare(`SELECT namespace,slug,url FROM component_url_checks
-        WHERE status='missing' AND url IS NOT NULL ORDER BY namespace,slug`).all():[],
+      ORDER BY i.namespace,i.slug`).all()),
+    verifiedPages:(await db.prepare("SELECT 1 FROM information_schema.tables WHERE table_schema='atlas' AND table_name='component_url_checks'").get())
+      ?(await db.prepare(`SELECT namespace,slug,url,checked_at AS checkedAt FROM component_url_checks
+        WHERE status='verified' AND url IS NOT NULL ORDER BY namespace,slug`).all()):[],
+    missingPages:(await db.prepare("SELECT 1 FROM information_schema.tables WHERE table_schema='atlas' AND table_name='component_url_checks'").get())
+      ?(await db.prepare(`SELECT namespace,slug,url FROM component_url_checks
+        WHERE status='missing' AND url IS NOT NULL ORDER BY namespace,slug`).all()):[],
   };
 }
 
-export function pendingRegistryNames(db,minExamples=2,max=5,now=new Date().toISOString(),{retryFailed=false,maxAttempts=3}={}) {
+export async function pendingRegistryNames(db,minExamples=2,max=5,now=new Date().toISOString(),{retryFailed=false,maxAttempts=3}={}) {
   if(!Number.isSafeInteger(minExamples)||minExamples<1||minExamples>12 ||
     !Number.isSafeInteger(max)||max<1||max>408 ||
     !Number.isSafeInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)throw Error('Invalid batch limits');
   const at=Date.parse(now);
   if(!Number.isFinite(at))throw Error('Invalid verification time');
   const olderThan=new Date(at-PATTERN_MAX_AGE_MS).toISOString();
-  return db.prepare(`SELECT p.namespace FROM route_patterns p
+  return (await db.prepare(`SELECT p.namespace FROM route_patterns p
     WHERE (p.status='unverified'
       OR (p.status='verified' AND (p.checked_at IS NULL OR p.checked_at<=?))
       OR (?=1 AND p.status='failed'
         AND (p.failure='identity-mismatch' OR p.failure LIKE 'network-%'
            OR p.failure LIKE 'browser-error-%' OR p.failure='http-408'
-           OR p.failure='http-429' OR p.failure GLOB 'http-5[0-9][0-9]')
+           OR p.failure='http-429' OR p.failure ~ '^http-5[0-9][0-9]$')
         AND (SELECT COUNT(*) FROM pattern_checks c WHERE c.pattern_id=p.id
            AND c.status='failed')<?))
       AND (SELECT COUNT(*) FROM examples e WHERE e.pattern_id=p.id)>=?
     GROUP BY p.namespace ORDER BY p.namespace LIMIT ?`).all(
-      olderThan,retryFailed?1:0,maxAttempts,minExamples,max).map(x=>x.namespace);
+      olderThan,retryFailed?1:0,maxAttempts,minExamples,max)).map(x=>x.namespace);
 }
 
 
-export function exportPatternRepairQueue(db,{maxAttempts=3}={}) {
+export async function exportPatternRepairQueue(db,{maxAttempts=3}={}) {
   if(!Number.isSafeInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)
     throw Error('Invalid repair attempt limit');
-  const patterns=db.prepare(`
+  const patterns=await Promise.all((await db.prepare(`
     SELECT p.id,p.namespace,s.homepage,p.template,p.prefix,p.status,p.failure,
       (SELECT COUNT(*) FROM examples e WHERE e.pattern_id=p.id) AS examples,
       (SELECT COUNT(*) FROM pattern_checks c WHERE c.pattern_id=p.id
         AND c.status='failed') AS attempts
     FROM route_patterns p JOIN sources s ON s.namespace=p.namespace
       WHERE p.status<>'verified'
-    ORDER BY p.namespace,p.id`).all().map(row=>{
+    ORDER BY p.namespace,p.id`).all()).map(async row=>{
       const strategy=row.examples<2?'discover-more-examples'
         : row.failure==='identity-mismatch'?'browser-rendered-identity'
         : row.failure==='browser-url-mismatch'||row.failure==='browser-identity-mismatch'
@@ -406,10 +407,10 @@ export function exportPatternRepairQueue(db,{maxAttempts=3}={}) {
         : /^http-3\d\d$/.test(row.failure??'')?'inspect-redirect'
         : row.failure?.startsWith('http-')?'check-removed-or-moved'
         :'verify-representative-pages';
-      const examples=db.prepare('SELECT slug,url FROM examples WHERE pattern_id=? ORDER BY slug LIMIT 3')
-        .all(row.id);
+      const examples=(await db.prepare('SELECT slug,url FROM examples WHERE pattern_id=? ORDER BY slug LIMIT 3')
+        .all(row.id));
       return {...row,examples, strategy,exhausted:row.attempts>=maxAttempts};
-    });
+    }));
   const counts={};
   for(const row of patterns)counts[row.strategy]=(counts[row.strategy]??0)+1;
   return {schema:'registry-atlas-pattern-repair-queue/v1',maxAttempts,
@@ -479,24 +480,22 @@ async function main(args) {
     !Number.isSafeInteger(passes)||passes<1||passes>408 ||
     !Number.isSafeInteger(delayMs)||delayMs<0||delayMs>60000)
     throw Error('Invalid batch, pass, or delay limit');
-  const dbPath=resolve(get('--db')??'data/registry-atlas.sqlite');
-  await mkdir(dirname(dbPath),{recursive:true});
-  const db=new DatabaseSync(dbPath);
-  db.exec('PRAGMA journal_mode=WAL; PRAGMA busy_timeout=5000;');
+  if(get('--db'))throw Error('--db is obsolete; use PostgreSQL DATABASE_URL');
+  const db=openAtlasCoreDatabase();
   try {
-    const state=readAtlasState(db);
+    const state=(await readAtlasState(db));
     const inventory=get('--inventory')
       ?JSON.parse(await readFile(get('--inventory'),'utf8')):null;
-    if(verifyOnly && !db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='sources'").get())
+    if(verifyOnly && !(await db.prepare("SELECT table_name AS name FROM information_schema.tables WHERE table_schema='atlas' AND table_name='sources'").get()))
       throw Error('Pattern database not initialized; first run --import-only with the source inventory');
-    initializePatternDatabase(db);
+    (await initializePatternDatabase(db));
     const inputs=inventory
       ?{inventory,catalog:state.catalog,raw:state.rawRegistries,curated:state.curated}:null;
     const imported=inputs
-      ?importRegistryPatterns(db,inputs)
-      : {registries:db.prepare('SELECT COUNT(*) AS n FROM sources').get().n,
-         patterns:db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get().n,
-         examples:db.prepare('SELECT COUNT(*) AS n FROM examples').get().n};
+      ?(await importRegistryPatterns(db,inputs))
+      : {registries:(await db.prepare('SELECT COUNT(*) AS n FROM sources').get()).n,
+         patterns:(await db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get()).n,
+         examples:(await db.prepare('SELECT COUNT(*) AS n FROM examples').get()).n};
     const browserPage=repairFailed
       ? managedBrowserPatternProof({profile:get('--profile'),server:get('--browser-server'),
         tab:get('--browser-tab')}) : null;
@@ -504,8 +503,8 @@ async function main(args) {
     const noOp=args.includes('--import-only')||reportOnly;
     for(let pass=0;pass<(noOp?0:passes);pass++){
       const chosen=get('--registry')?(pass===0?[get('--registry')]:[]):
-        pendingRegistryNames(db,samples,max,new Date().toISOString(),
-          {retryFailed:repairFailed,maxAttempts});
+        (await pendingRegistryNames(db,samples,max,new Date().toISOString(),
+          {retryFailed:repairFailed,maxAttempts}));
       if(chosen.length===0)break;
       for(const registry of chosen){
         checked.push({namespace:registry,pass:pass+1,...await verifyRegistryPatterns(db,{
@@ -513,12 +512,12 @@ async function main(args) {
         if(delayMs)await new Promise(done=>setTimeout(done,delayMs));
       }
     }
-    const coverage=exportPatternCoverage(db,state.rawRegistries);
-    const repairQueue=exportPatternRepairQueue(db,{maxAttempts});
-    const links=exportPatternLinkSnapshot(db);
-    putDocument(db,'registry-pattern-coverage','verification-report',coverage);
-    putDocument(db,'registry-pattern-repair-queue','verification-report',repairQueue);
-    putDocument(db,'registry-pattern-links','verification-report',links);
+    const coverage=(await exportPatternCoverage(db,state.rawRegistries));
+    const repairQueue=(await exportPatternRepairQueue(db,{maxAttempts}));
+    const links=(await exportPatternLinkSnapshot(db));
+    (await putDocument(db,'registry-pattern-coverage','verification-report',coverage));
+    (await putDocument(db,'registry-pattern-repair-queue','verification-report',repairQueue));
+    (await putDocument(db,'registry-pattern-links','verification-report',links));
     if(get('--report'))await writeFile(get('--report'),JSON.stringify(coverage,null,2)+'\n');
     if(get('--repair-report'))await writeFile(get('--repair-report'),
       JSON.stringify(repairQueue,null,2)+'\n');
@@ -526,7 +525,7 @@ async function main(args) {
     console.log(JSON.stringify({imported,checked,coverage:{
       registries:coverage.registries,unverifiedRegistries:coverage.unverifiedRegistries.length,
       totals:coverage.totals}},null,2));
-  }finally{db.close();}
+  }finally{(await db.close());}
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href)
   main(process.argv.slice(2)).catch(e=>{console.error(e);process.exitCode=1;});

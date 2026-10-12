@@ -1,103 +1,51 @@
-import { resolve } from 'node:path';
-import { existsSync } from 'node:fs';
-import { DatabaseSync } from 'node:sqlite';
 import {
-  ensureAtlasCoreSchema,
-  putClassificationBatch,
-  putClassificationRun,
-  putDocument,
-  readCatalogEvidence,
-  readCatalogSnapshot,
-  readClassificationBatches,
-  readClassificationRun,
-  readClassificationRunItems,
-  readClassifications,
-  readCuratedItemSummaries,
-  readDocument,
-  readRawRegistries,
-  readRegistrySnapshot,
-  readSourcePages,
-  replaceCatalogEvidence,
-  replaceCatalogSnapshot,
-  replaceClassifications,
-  replaceCuratedAndRegistrySnapshot,
-  replaceCuratedItemSummaries,
-  replaceItemDetails,
-  replaceRawRegistries,
-  replaceRegistrySnapshot,
-  replaceSourcePages,
-  resetClassificationRun,
-  transaction,
-  upsertClassificationRunItems,
-} from './atlas-database.mjs';
+  openAtlasCoreDatabase, transaction, exec, one, bulkInsert,
+  putClassificationBatch, putClassificationRun, putDocument,
+  readCatalogEvidence, readCatalogSnapshot, readClassificationBatches,
+  readClassificationRun, readClassificationRunItems, readClassifications,
+  readCuratedItemSummaries, readDocument, readRawRegistries, readRegistrySnapshot,
+  readSourcePages, replaceCatalogEvidence, replaceCatalogSnapshot,
+  replaceClassifications, replaceCuratedAndRegistrySnapshot,
+  replaceCuratedItemSummaries, replaceItemDetails, replaceRawRegistries,
+  replaceRegistrySnapshot, replaceSourcePages, resetClassificationRun,
+  upsertClassificationRunItems
+} from './atlas-postgres.mjs';
 
-export const CORE_DATABASE_PATH = 'data/registry-atlas.sqlite';
-
-export function openAtlasCoreDatabase(cwd = process.cwd(), { readOnly = false } = {}) {
-  const file = resolve(cwd, CORE_DATABASE_PATH);
-  if (!existsSync(file)) {
-    throw new Error('Legacy SQLite data is unavailable. PostgreSQL is authoritative; migrate this script before using it.');
-  }
-  const database = new DatabaseSync(file, { readOnly });
-  if (!readOnly) ensureAtlasCoreSchema(database);
-  return database;
-}
-
-export function readAtlasState(database) {
-  return {
-    rawRegistries: readRawRegistries(database),
-    runtime: readRegistrySnapshot(database),
-    catalog: readCatalogSnapshot(database),
-    curated: readCuratedItemSummaries(database),
-    catalogEvidence: readCatalogEvidence(database),
-    sourcePages: readSourcePages(database),
-    taxonomy: readDocument(database, 'catalog-taxonomy'),
-    accessRules: readDocument(database, 'catalog-access-rules') ?? {},
-    kindOverrides: readDocument(database, 'catalog-kind-overrides') ?? {},
-    gold: readDocument(database, 'catalog-gold-set'),
-    classificationEvaluation: readDocument(database, 'catalog-classification-evaluation'),
-    promotionReview: readDocument(database, 'catalog-promotion-review'),
-    classificationOverlay: readClassificationOverlay(database),
-  };
-}
-
-export function readClassificationOverlay(database) {
-  const metadata = readDocument(database, 'catalog-classification-overlay');
-  if (!metadata) return null;
-  return { ...metadata, items: readClassifications(database) };
-}
-
-export function replaceClassificationOverlay(database, overlay) {
-  const { items = [], ...metadata } = overlay ?? {};
-  replaceClassifications(database, items);
-  putDocument(database, 'catalog-classification-overlay', 'taxonomy-classification', metadata);
-}
-
-export {
-  putClassificationBatch,
-  putClassificationRun,
-  putDocument,
-  readCatalogEvidence,
-  readCatalogSnapshot,
-  readClassificationBatches,
-  readClassificationRun,
-  readClassificationRunItems,
-  readClassifications,
-  readCuratedItemSummaries,
-  readDocument,
-  readRawRegistries,
-  readRegistrySnapshot,
-  readSourcePages,
-  replaceCatalogEvidence,
-  replaceCatalogSnapshot,
-  replaceClassifications,
-  replaceCuratedAndRegistrySnapshot,
-  replaceCuratedItemSummaries,
-  replaceItemDetails,
-  replaceRawRegistries,
-  replaceRegistrySnapshot,
-  replaceSourcePages,
-  resetClassificationRun,
-  transaction,
-  upsertClassificationRunItems,
+export { openAtlasCoreDatabase, transaction, exec, one, bulkInsert,
+  putClassificationBatch, putClassificationRun, putDocument,
+  readCatalogEvidence, readCatalogSnapshot, readClassificationBatches,
+  readClassificationRun, readClassificationRunItems, readClassifications,
+  readCuratedItemSummaries, readDocument, readRawRegistries, readRegistrySnapshot,
+  readSourcePages, replaceCatalogEvidence, replaceCatalogSnapshot,
+  replaceClassifications, replaceCuratedAndRegistrySnapshot,
+  replaceCuratedItemSummaries, replaceItemDetails, replaceRawRegistries,
+  replaceRegistrySnapshot, replaceSourcePages, resetClassificationRun,
+  upsertClassificationRunItems
 };
+
+export async function readAtlasState(db) {
+  const [rawRegistries,runtime,catalog,curated,catalogEvidence,sourcePages,taxonomy,
+    accessRules,kindOverrides,gold,classificationEvaluation,promotionReview,classificationOverlay]
+    = await Promise.all([
+      readRawRegistries(db),readRegistrySnapshot(db),readCatalogSnapshot(db),
+      readCuratedItemSummaries(db),readCatalogEvidence(db),readSourcePages(db),
+      readDocument(db,'catalog-taxonomy'),readDocument(db,'catalog-access-rules'),
+      readDocument(db,'catalog-kind-overrides'),readDocument(db,'catalog-gold-set'),
+      readDocument(db,'catalog-classification-evaluation'),
+      readDocument(db,'catalog-promotion-review'),readClassificationOverlay(db)
+    ]);
+  return {rawRegistries,runtime,catalog,curated,catalogEvidence,sourcePages,taxonomy,
+    accessRules:accessRules??{},kindOverrides:kindOverrides??{},gold,
+    classificationEvaluation,promotionReview,classificationOverlay};
+}
+export async function readClassificationOverlay(db) {
+  const meta=await readDocument(db,'catalog-classification-overlay');
+  return meta?{...meta,items:await readClassifications(db)}:null;
+}
+export async function replaceClassificationOverlay(db,overlay) {
+  const {items=[],...meta}=overlay??{};
+  await transaction(db,async tx=>{
+    await replaceClassifications(tx,items);
+    await putDocument(tx,'catalog-classification-overlay','taxonomy-classification',meta);
+  });
+}

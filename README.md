@@ -1,11 +1,3 @@
-# PostgreSQL data migration
-
-Registry Atlas now publishes from PostgreSQL (Neon) rather than a committed SQLite database. The static GitHub Pages site loads compressed JSON generated from PostgreSQL at build time. Run `pnpm check:postgres`, `pnpm prepare:runtime-data`, and `pnpm verify`. Database credentials are read only during the build and must never be exposed in the browser. The SQLite file, LFS configuration, and SQLite browser runtime have been removed from the current tree.
-
-**Migration limitation:** Legacy sync, crawl, verification, and classification writers have not been converted to PostgreSQL. Older workflow instructions below apply to the previous SQLite implementation and must not be used until ported. See [current data documentation](docs/registry-explorer-data.md).
-
----
-
 # Registry Atlas
 
 A component-first explorer for the [shadcn/ui community registry](https://ui.shadcn.com/docs/directory) ecosystem.
@@ -34,34 +26,21 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 - **Authors and unavailable routes**: Authors lists exact attribution names published in source item metadata, not inferred creator accounts. Featured and Newest remain retired because Atlas does not invent popularity or publication-time rankings. The theme editor explains why editing is not yet supported.
 - **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
-## Canonical databases and original-page evidence
+## PostgreSQL and original-page evidence
 
-Registry Atlas stores canonical application state in two versioned SQLite databases:
+Registry Atlas stores authoritative catalog, registry, classification, item-detail, source-page,
+and route verification records in PostgreSQL (Neon project `Registry Atlas`, schema `atlas`).
+No SQLite database or Git LFS file is committed. PostgreSQL transactions protect updates.
 
-- `data/registry-atlas.sqlite` — official registry directory data, runtime registry records, compact catalog items, taxonomy documents, reviewed classifications, source-page evidence, route-pattern verification, and operational reports.
-- `data/registry-details.sqlite` — normalized exact-item detail payloads used for lazy detail loading.
+GitHub Pages is a static website. During `pnpm dev` or `pnpm build`, the server-side
+`pnpm prepare:runtime-data` task exports disposable compressed assets:
+`public/data/registry-atlas.json.gz` (catalog and metadata) and
+`public/data/registry-details.json.gz` (lazy-loaded item details).
+Neither is authoritative, and database credentials never go to the browser.
 
-The browser does not load canonical JSON projections. `predev` and `prebuild` generate compressed runtime copies at `public/data/registry-atlas.sqlite.gz` and `public/data/registry-details.sqlite.gz`.
-
-Run `mise run source-pages` to reconcile exact source-page links from current verified route-pattern and sitemap evidence into `data/registry-atlas.sqlite`. The per-component verifier persists verified, missing, transient, and unresolved outcomes in the same database. A generic HTTP 200 response is never sufficient proof of component identity.
-
-```bash
-# Safe bounded execution (20 URLs; three per registry), then rebuild source-page rows:
-mise run verify:component-pages
-
-# All eligible URLs, rate-limited and restartable; this can run for many hours:
-node scripts/verify-component-pages.mjs \\
-  --all --delay-ms 1200 \\
-  --report .instance/component-verification-queue.json
-mise run source-pages
-
-# Export one registry-grouped unresolved queue without creating another data store:
-node scripts/verify-component-pages.mjs \\
-  --report-only \\
-  --report .instance/component-verification-queue.json
-```
-
-The SQLite databases are authoritative. JSON files under `.instance/` are optional operator reports only. For bounded pattern repair and optional browser-assisted verification, see [registry-pattern verification](docs/superpowers/specs/2026-10-04-registry-pattern-verification.md). A verified route pattern does **not** establish that every individual destination has been loaded.
+For reviewed, source-backed links, run `mise run verify:component-pages` and
+`mise run source-pages`. A generic HTTP 200 is not evidence of component identity.
+See [data operations](docs/registry-explorer-data.md).
 
 ## Getting Started
 
@@ -85,7 +64,7 @@ Start the Vite development server:
 mise run dev
 ```
 
-Visit `http://localhost:5173` in your browser.
+Visit `http://localhost:5173/Registry-Atlas/` in your browser.
 
 ### Verification
 
@@ -132,7 +111,9 @@ It exercises the canonical route family at desktop and 390px mobile widths and c
 
 ### Refreshing Registry Data
 
-Registry Atlas mirrors the official shadcn directory and its reachable registry catalogs into the canonical SQLite databases. Refresh them explicitly when you want to review upstream changes:
+Configure a writable PostgreSQL `DATABASE_URL` (or the ignored
+`.instance/neon-database-url`) for local maintenance. CI builds use a
+separate read-only role.
 
 ```bash
 mise run import:catalog
@@ -141,18 +122,11 @@ mise run validate:data
 mise run verify
 ```
 
-`mise run import:catalog` refreshes curated Atlas item-summary enrichment in `data/registry-atlas.sqlite` and records its import report as an `atlas_documents` row.
-
-`mise run sync:registries` refreshes:
-
-- the official directory mirror and runtime registry records in `data/registry-atlas.sqlite`;
-- catalog coverage evidence and compact real-item rows in `data/registry-atlas.sqlite`;
-- reviewed canonical classification projection and source metadata in `data/registry-atlas.sqlite`;
-- normalized exact-item details in `data/registry-details.sqlite`.
-
-`pnpm prepare:runtime-db` then builds the two compressed browser runtime databases under `public/data/`. The active runtime intentionally does **not** use the retired inferred component taxonomy. Asset classification is based on reviewed canonical data and explicit source facts; missing signals remain unavailable rather than being guessed.
-
-Use `mise run validate:data`, `mise run check:product-contract`, and the database-backed report documents before accepting regenerated state. Registry Atlas surfaces third-party metadata and copyable commands, but it does not audit or endorse community registry code.
+`sync:registries` updates the official directory, catalog evidence, classification
+projection, registry snapshots, and exact item details in PostgreSQL.
+`pnpm prepare:runtime-data` regenerates the two ignored browser assets from the
+database. Route patterns, component URL checks, and classification run state
+are also maintained in PostgreSQL.
 
 ### Building for Production
 
@@ -165,7 +139,7 @@ mise run preview
 
 ## Architecture
 
-Registry Atlas uses modular vanilla TypeScript with SQLite-backed runtime data and no heavy frontend framework.
+Registry Atlas uses modular vanilla TypeScript with PostgreSQL-backed static runtime data and no heavy frontend framework.
 
 The canonical browser surface is:
 
@@ -207,24 +181,21 @@ src/registry-explorer/
 - **Exact catalog identity**: every browse result maps to a real upstream `namespace + item name`.
 - **Canonical routes**: landing, components, collections, registries, typed assets, exact details, and Compare are represented by one route model rather than catch-all fallback behavior.
 - **Evidence-backed classification**: Components/Templates/Themes/Icons are derived only from explicit item type/category facts.
-- **Same-origin detail database**: safe normalized item metadata is generated during sync and loaded lazily from the compressed runtime detail database, so detail correctness does not depend on third-party browser CORS.
+- **Same-origin detail data**: safe normalized item metadata is generated during sync and loaded lazily from the compressed runtime detail JSON asset, so detail correctness does not depend on third-party browser CORS.
 - **Explicit coverage state**: registries distinguish current, stale, empty, and unavailable catalogs.
 - **No inferred inventory**: the retired component taxonomy/discovery/matrix stack is not part of the active runtime contract.
 
 ## Maintenance
 
-### Maintaining Registry Data
+Use `pnpm migrate:postgres-schema` to apply the idempotent PostgreSQL route
+constraints and sequences to a newly imported database. The initial SQLite import
+utility is retained only to read legacy snapshots; it is not an active data writer.
 
-The official shadcn directory is the source for registry membership. Use the database workflow instead of manually editing runtime projections:
+Changes to crawled data are made in PostgreSQL, not edited into runtime files.
+After imports or synchronization, run `pnpm verify` and managed browser acceptance
+before deployment.
 
-1. Run `mise run import:catalog` to refresh curated Atlas item-summary enrichment.
-2. Run `mise run sync:registries` to refresh directory/catalog evidence, compact items, exact-item details, and the runtime registry records.
-3. Run `pnpm prepare:runtime-db` to regenerate the compressed browser databases.
-4. Run `mise run validate:data`.
-5. Run `mise run verify`.
-6. Run the managed browser acceptance matrix before release/deployment changes.
-
-For more details, see [docs/registry-explorer-data.md](https://github.com/acidicsoil/registry-atlas/blob/HEAD/docs/registry-explorer-data.md).
+See [PostgreSQL data and maintenance](docs/registry-explorer-data.md).
 
 ---
 

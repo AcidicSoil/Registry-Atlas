@@ -255,15 +255,15 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parseEvaluationArgs(argv);
   const database = openAtlasCoreDatabase(cwd);
   try {
-    const gold = readDocument(database, 'catalog-gold-set');
+    const gold = await readDocument(database, 'catalog-gold-set');
     if (!gold) throw new Error('Catalog gold set is missing from the Atlas database');
-    const beamRun = readClassificationRun(database, options.beamRun);
+    const beamRun = await readClassificationRun(database, options.beamRun);
     if (!beamRun) throw new Error(`Unknown beam classification run: ${options.beamRun}`);
-    const beamItems = readClassificationRunItems(database, options.beamRun);
+    const beamItems = await readClassificationRunItems(database, options.beamRun);
     const greedyItems = options.greedyRun
-      ? readClassificationRunItems(database, options.greedyRun)
+      ? await readClassificationRunItems(database, options.greedyRun)
       : null;
-    if (options.greedyRun && !readClassificationRun(database, options.greedyRun)) {
+    if (options.greedyRun && !await readClassificationRun(database, options.greedyRun)) {
       throw new Error(`Unknown greedy classification run: ${options.greedyRun}`);
     }
     const report = {
@@ -271,10 +271,10 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       beamRunId: options.beamRun,
       ...(options.greedyRun ? { greedyRunId: options.greedyRun } : {}),
     };
-    putDocument(database, options.document, 'taxonomy-evaluation', report);
+    await putDocument(database, options.document, 'taxonomy-evaluation', report);
     return report;
   } finally {
-    database.close();
+    await database.close();
   }
 }
 

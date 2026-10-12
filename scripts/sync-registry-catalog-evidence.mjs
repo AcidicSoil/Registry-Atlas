@@ -461,7 +461,7 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parseArgs(argv);
   const core = openAtlasCoreDatabase(cwd);
   try {
-    const state = readAtlasState(core);
+    const state = await readAtlasState(core);
     const registries = state.rawRegistries;
     if (!Array.isArray(registries) || registries.length === 0) {
       throw new Error('The Atlas database does not contain the official registry directory');
@@ -481,9 +481,9 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       projected = applyCatalogClassificationOverlay(stripped, overlay, state.accessRules ?? {});
     }
 
-    transaction(core, () => {
-    replaceCatalogEvidence(core, result.evidence);
-    replaceCatalogSnapshot(core, {
+    await transaction(core, async tx => {
+    await replaceCatalogEvidence(tx, result.evidence);
+    await replaceCatalogSnapshot(tx, {
       meta: {
         source_url: state.runtime?.meta?.source_url ?? 'database:raw-registries',
         generated_at: result.report.generated_at,
@@ -493,16 +493,16 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       registries: projected.itemsByNamespace,
     });
     for (const [namespace, rows] of Object.entries(result.freshDetailsByNamespace)) {
-      replaceItemDetails(core, namespace, rows);
+      await replaceItemDetails(tx, namespace, rows);
     }
-    putDocument(core, 'catalog-evidence-report', 'sync-report', result.report);
-    putDocument(core, 'catalog-classification-projection-report', 'sync-report', projected.report);
+    await putDocument(tx, 'catalog-evidence-report', 'sync-report', result.report);
+    await putDocument(tx, 'catalog-classification-projection-report', 'sync-report', projected.report);
     });
 
     console.log(`Fetched ${result.report.fetched_catalog_count}/${result.report.registry_count} registry catalogs (${result.report.fetched_item_count} items).`);
     console.log(`Comparable evidence retained for ${result.report.evidence_registry_count} registries; stale: ${result.report.stale_registry_count}; failures: ${result.report.failure_count}.`);
   } finally {
-    core.close();
+    await core.close();
   }
 }
 

@@ -197,12 +197,12 @@ function changedRegistries(previousRegistries, nextRegistries) {
 async function main() {
   const core = openAtlasCoreDatabase();
   try {
-    const state = readAtlasState(core);
+    const state = await readAtlasState(core);
 
     if (process.argv.includes('--local-curated-only')) {
       const projected = projectCuratedSummaries(state.runtime, state.curated);
-      replaceRegistrySnapshot(core, projected);
-      console.log('Projected curated item summaries directly into data/registry-atlas.sqlite');
+      await replaceRegistrySnapshot(core, projected);
+      console.log('Projected curated item summaries directly into PostgreSQL atlas schema');
       return;
     }
 
@@ -226,7 +226,7 @@ async function main() {
       previousItems: state.catalog?.registries ?? {},
     });
 
-    if (!state.taxonomy) throw new Error('Missing catalog-taxonomy document in data/registry-atlas.sqlite');
+    if (!state.taxonomy) throw new Error('Missing catalog-taxonomy document in PostgreSQL atlas schema');
     const taxonomy = validateCatalogTaxonomy(state.taxonomy);
     const classificationProjection = projectReviewedCatalogClassifications(
       catalogSync.itemsByNamespace,
@@ -279,11 +279,11 @@ async function main() {
       changed: changedRegistries(previousRegistries, registries),
     };
 
-    transaction(core, () => {
-    replaceRawRegistries(core, upstream);
-    replaceCatalogEvidence(core, catalogEvidenceByNamespace);
-    putDocument(core, 'catalog-evidence-report', 'sync-report', catalogSync.report);
-    replaceCatalogSnapshot(core, {
+    await transaction(core, async tx => {
+    await replaceRawRegistries(tx, upstream);
+    await replaceCatalogEvidence(tx, catalogEvidenceByNamespace);
+    await putDocument(tx, 'catalog-evidence-report', 'sync-report', catalogSync.report);
+    await replaceCatalogSnapshot(tx, {
       meta: {
         source_url: SOURCE_URL,
         synced_at: syncedAt,
@@ -293,19 +293,19 @@ async function main() {
       registries: classificationProjection.itemsByNamespace,
     });
     for (const [namespace, rows] of Object.entries(catalogSync.freshDetailsByNamespace)) {
-      replaceItemDetails(core, namespace, rows);
+      await replaceItemDetails(tx, namespace, rows);
     }
-    replaceRegistrySnapshot(core, runtimeData);
-    putDocument(core, 'registry-sync-report', 'sync-report', report);
-    putDocument(core, 'catalog-classification-projection-report', 'sync-report',
+    await replaceRegistrySnapshot(tx, runtimeData);
+    await putDocument(tx, 'registry-sync-report', 'sync-report', report);
+    await putDocument(tx, 'catalog-classification-projection-report', 'sync-report',
       classificationProjection.report);
     });
 
     console.log(`Synced ${registries.length} registries from ${SOURCE_URL}`);
     console.log(`Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`);
-    console.log('Canonical registry/catalog state: data/registry-atlas.sqlite');
+    console.log('Canonical registry/catalog state: PostgreSQL atlas schema');
   } finally {
-    core.close();
+    await core.close();
   }
 }
 

@@ -1,6 +1,8 @@
+import { vi } from 'vitest';
+vi.setConfig({testTimeout: 30000});
 import { describe, it, expect } from 'vitest';
 // @ts-ignore Node ESM utility tested in Vitest.
-import { DatabaseSync } from 'node:sqlite';
+import { testRouteDatabase } from './postgresFixture';
 // @ts-ignore standalone Node script
 import { importRegistryPatterns, verifyRegistryPatterns, exportPatternCoverage, exportPatternLinkSnapshot, pendingRegistryNames, exportPatternRepairQueue, managedBrowserPatternProof, reconcileRegistryCatalog } from '../../scripts/verify-registry-patterns.mjs';
 
@@ -33,55 +35,55 @@ function getHtml(url:string) {
  return new Response('<!doctype html><html><head><title>'+title+' | Library</title></head><body><h1>'+title+'</h1></body></html>',
    {status:200,headers:{'content-type':'text/html'}});
 }
-describe('bounded SQLite registry route-pattern verification', () => {
+describe('bounded PostgreSQL registry route-pattern verification', () => {
   it('imports matching patterns once, checks representative real pages, and infers missing only when unambiguous',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'}));
     const hits:string[]=[];
     const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async(url:string)=>{hits.push(url);return getHtml(url);}});
     expect(result).toMatchObject({checkedPatterns:1,verifiedPatterns:1});
     expect(hits).toEqual(['https://one.example/docs/button','https://one.example/docs/card']);
-    const entries=db.prepare("SELECT slug, source_url, status FROM item_routes WHERE namespace='@one' ORDER BY slug").all();
+    const entries=(await db.prepare("SELECT slug, source_url, status FROM item_routes WHERE namespace='@one' ORDER BY slug").all());
     expect(entries).toEqual(expect.arrayContaining([
       expect.objectContaining({slug:'forms/input',source_url:'https://one.example/docs/forms/input',status:'pattern-inferred'}),
       expect.objectContaining({slug:'button',status:'pattern-observed'}),
     ]));
-    expect(exportPatternCoverage(db).unverifiedRegistries).toContainEqual(expect.objectContaining({namespace:'@multi'}));
-    db.close();
+    expect((await exportPatternCoverage(db)).unverifiedRegistries).toContainEqual(expect.objectContaining({namespace:'@multi'}));
+    (await db.close());
   });
   it('moves past patterns with too few examples instead of retrying them forever',async()=> {
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'});
-    expect(pendingRegistryNames(db,2,10)).toEqual(['@one']);
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'}));
+    expect((await pendingRegistryNames(db,2,10))).toEqual(['@one']);
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async (url:string)=>getHtml(url)});
-    expect(pendingRegistryNames(db,2,10)).toEqual([]);
-    db.close();
+    expect((await pendingRegistryNames(db,2,10))).toEqual([]);
+    (await db.close());
   });
 
   it('does not fabricate route assignments for multi-pattern registries',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'}));
     await verifyRegistryPatterns(db,{registry:'@multi',samples:1,fetchPage:async (url:string)=>getHtml(url)});
-    expect(db.prepare("SELECT status FROM item_routes WHERE namespace='@multi' AND slug='unknown'").get())
+    expect((await db.prepare("SELECT status FROM item_routes WHERE namespace='@multi' AND slug='unknown'").get()))
       .toEqual({status:'unverified'});
-    expect(db.prepare("SELECT status FROM item_routes WHERE namespace='@multi' AND slug='button'").get())
+    expect((await db.prepare("SELECT status FROM item_routes WHERE namespace='@multi' AND slug='button'").get()))
       .toEqual({status:'pattern-observed'});
-    db.close();
+    (await db.close());
   });
   it('refuses HTML identity mismatches, redirects, and off-origin candidate evidence',async()=>{
-    const db=new DatabaseSync(':memory:');
+    const db=await testRouteDatabase();
     const modified=structuredClone(inventory);
     modified.registries[0].patterns[0].examples.push({slug:'evil',url:'https://evil.example/evil'});
-    importRegistryPatterns(db,{inventory:modified,catalog,raw,now:'2026-10-04T20:00:00.000Z'});
+    (await importRegistryPatterns(db,{inventory:modified,catalog,raw,now:'2026-10-04T20:00:00.000Z'}));
     const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async()=>new Response('<h1>Not Found</h1>',{status:200,headers:{'content-type':'text/html'}})});
     expect(result.verifiedPatterns).toBe(0);
-    expect(db.prepare("SELECT status FROM item_routes WHERE namespace='@one' AND slug='forms/input'").get())
+    expect((await db.prepare("SELECT status FROM item_routes WHERE namespace='@one' AND slug='forms/input'").get()))
       .toEqual({status:'unverified'});
-    expect((db.prepare("SELECT COUNT(*) AS n FROM pattern_checks").get() as { n: number }).n).toBeGreaterThan(0);
-    db.close();
+    expect(((await db.prepare("SELECT COUNT(*) AS n FROM pattern_checks").get()) as { n: number }).n).toBeGreaterThan(0);
+    (await db.close());
   });
   it('resolves a prefixed catalog identity from a verified leaf route pattern', async()=>{
-    const db=new DatabaseSync(':memory:');
+    const db=await testRouteDatabase();
     const source={name:'@leaf',homepage:'https://leaf.example'};
     const input={raw:[source],catalog:{registries:{'@leaf':[
       {name:'components-animate-code'},{name:'components-animate-tabs'},
@@ -95,58 +97,58 @@ describe('bounded SQLite registry route-pattern verification', () => {
           ]}],sitemapPatterns:[],sitemapPages:[],
       }]
     },now:'2026-10-04T20:00:00.000Z'};
-    expect(importRegistryPatterns(db,input).patterns).toBe(1);
+    expect((await importRegistryPatterns(db,input)).patterns).toBe(1);
     const output=await verifyRegistryPatterns(db,{registry:'@leaf',samples:2,
       fetchPage:async (url:string)=>getHtml(url)});
     expect(output.verifiedPatterns).toBe(1);
-    expect(db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@leaf' AND slug='components-animate-dialog'").get())
+    expect((await db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@leaf' AND slug='components-animate-dialog'").get()))
       .toEqual({source_url:'https://leaf.example/docs/animate/dialog',status:'pattern-inferred'});
-    db.close();
+    (await db.close());
   });
 
   it('invalidates a formerly verified route when its source example changes', async()=>{
-    const db=new DatabaseSync(':memory:');
+    const db=await testRouteDatabase();
     const opts={inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'};
-    importRegistryPatterns(db,opts);
+    (await importRegistryPatterns(db,opts));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async (url:string)=>getHtml(url)});
     const changed=structuredClone(inventory);
     changed.registries[0].patterns[0].examples[0].url='https://one.example/docs/button-v2';
-    importRegistryPatterns(db,{...opts,inventory:changed});
-    expect(db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get())
+    (await importRegistryPatterns(db,{...opts,inventory:changed}));
+    expect((await db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get()))
       .toEqual({status:'unverified'});
-    expect(db.prepare("SELECT status,source_url FROM item_routes WHERE namespace='@one' AND slug='forms/input'").get())
+    expect((await db.prepare("SELECT status,source_url FROM item_routes WHERE namespace='@one' AND slug='forms/input'").get()))
       .toEqual({status:'unverified',source_url:null});
-    db.close();
+    (await db.close());
   });
 
   it('rechecks old verified patterns instead of letting their links expire forever',async()=> {
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'}));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       checkedAt:'2025-01-01T00:00:00Z',fetchPage:async (url:string)=>getHtml(url)});
-    expect(pendingRegistryNames(db,2,10,'2026-10-04T20:00:00Z')).toContain('@one');
+    expect((await pendingRegistryNames(db,2,10,'2026-10-04T20:00:00Z'))).toContain('@one');
     const refreshed=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       checkedAt:'2026-10-04T20:00:00Z',fetchPage:async (url:string)=>getHtml(url)});
     expect(refreshed.verifiedPatterns).toBe(1);
-    expect(pendingRegistryNames(db,2,10,'2026-10-04T20:00:00Z')).toEqual([]);
-    db.close();
+    expect((await pendingRegistryNames(db,2,10,'2026-10-04T20:00:00Z'))).toEqual([]);
+    (await db.close());
   });
 
-  it('keeps unsupported HTTP-only registries visible in the unresolved report',()=> {
-    const db=new DatabaseSync(':memory:');
+  it('keeps unsupported HTTP-only registries visible in the unresolved report',async ()=> {
+    const db=await testRouteDatabase();
     const withHttp=[...raw,{name:'@http-only',homepage:'http://insecure.example/'}];
-    importRegistryPatterns(db,{inventory,catalog,raw:withHttp});
-    const coverage=exportPatternCoverage(db);
+    (await importRegistryPatterns(db,{inventory,catalog,raw:withHttp}));
+    const coverage=(await exportPatternCoverage(db));
     expect(coverage.registries).toBe(3);
-    expect(db.prepare("SELECT homepage FROM sources WHERE namespace='@http-only'").get())
+    expect((await db.prepare("SELECT homepage FROM sources WHERE namespace='@http-only'").get()))
       .toEqual({homepage:'http://insecure.example/'});
     expect(coverage.unverifiedRegistries).toContainEqual(
       expect.objectContaining({namespace:'@http-only',reason:'non-public-https-homepage'}));
-    db.close();
+    (await db.close());
   });
 
-  it('persists original sitemap candidates in SQLite and exports them without another traversal',async()=>{
-    const db=new DatabaseSync(':memory:');
+  it('persists original sitemap candidates in PostgreSQL and exports them without another traversal',async()=>{
+    const db=await testRouteDatabase();
     const sitemap={
       ...structuredClone(inventory),
       generatedAt:'2026-10-03T20:00:00.000Z',
@@ -160,8 +162,8 @@ describe('bounded SQLite registry route-pattern verification', () => {
         ] : [],
       })),
     };
-    importRegistryPatterns(db,{inventory:sitemap,catalog,raw});
-    const published=exportPatternLinkSnapshot(db);
+    (await importRegistryPatterns(db,{inventory:sitemap,catalog,raw}));
+    const published=(await exportPatternLinkSnapshot(db));
     expect(published.sourceSnapshotAt).toBe(sitemap.generatedAt);
     expect(published.sitemapLinks).toEqual(expect.arrayContaining([
       {namespace:'@one',slug:'forms/input',url:'https://one.example/docs/forms/input',
@@ -169,35 +171,35 @@ describe('bounded SQLite registry route-pattern verification', () => {
     ]));
     expect(published.sitemapLinks.some((row:{slug:string})=>row.slug==='outside')).toBe(false);
     expect(published.fingerprints['@one']).toBeTruthy();
-    db.close();
+    (await db.close());
   });
 
 
   it('requeues failed identities by repair strategy with a persistent retry cap',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw}));
     const fails=async()=>new Response('<h1>Unavailable</h1>',{status:200,
       headers:{'content-type':'text/html'}});
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:fails});
-    expect(pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2}))
+    expect((await pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2})))
       .toEqual(['@one']);
-    let queue=exportPatternRepairQueue(db,{maxAttempts:2});
+    let queue=(await exportPatternRepairQueue(db,{maxAttempts:2}));
     expect(queue.patterns).toEqual(expect.arrayContaining([
       expect.objectContaining({namespace:'@one',strategy:'browser-rendered-identity',attempts:1}),
     ]));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:fails});
-    expect(pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2}))
+    expect((await pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2})))
       .toEqual([]);
-    queue=exportPatternRepairQueue(db,{maxAttempts:2});
+    queue=(await exportPatternRepairQueue(db,{maxAttempts:2}));
     expect(queue.patterns.find((p:any)=>p.namespace==='@one')).toMatchObject({
       strategy:'browser-rendered-identity',attempts:2,exhausted:true,
     });
-    db.close();
+    (await db.close());
   });
 
   it('promotes a failed static HTML check only after a matching rendered-browser proof',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw}));
     const visits:string[]=[];
     const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       fetchPage:async()=>new Response('<html><div id="root"></div></html>',{status:200,
@@ -210,8 +212,8 @@ describe('bounded SQLite registry route-pattern verification', () => {
     });
     expect(result.verifiedPatterns).toBe(1);
     expect(visits).toHaveLength(2);
-    expect((db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get() as { n: number }).n).toBe(2);
-    db.close();
+    expect(((await db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get()) as { n: number }).n).toBe(2);
+    (await db.close());
   });
 
   it('checks actual managed browser page URL and heading, without treating a matching URL alone as proof',async()=>{
@@ -238,79 +240,79 @@ describe('bounded SQLite registry route-pattern verification', () => {
 
 
   it('does not repeatedly retry an unchanged browser-identity mismatch',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw}));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       fetchPage:async()=>new Response('<html><main>Loading</main></html>',{
         status:200,headers:{'content-type':'text/html'}}),
       browserPage:async()=>({status:'failed',reason:'browser-identity-mismatch'}),
     });
-    expect(pendingRegistryNames(db,2,10,new Date().toISOString(),
-      {retryFailed:true,maxAttempts:5})).toEqual([]);
-    expect(exportPatternRepairQueue(db).patterns.find((x:any)=>x.namespace==='@one'))
+    expect((await pendingRegistryNames(db,2,10,new Date().toISOString(),
+      {retryFailed:true,maxAttempts:5}))).toEqual([]);
+    expect((await exportPatternRepairQueue(db)).patterns.find((x:any)=>x.namespace==='@one'))
       .toMatchObject({strategy:'rediscover-route-family'});
-    db.close();
+    (await db.close());
   });
 
   it('never treats a browser redirect to a different page as verification',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw}));
     const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       fetchPage:async()=>new Response('<html><div id="root"></div></html>',{status:200,
         headers:{'content-type':'text/html'}}),
       browserPage:async()=>({status:'failed',reason:'browser-url-mismatch'}),
     });
     expect(result.verifiedPatterns).toBe(0);
-    expect(db.prepare("SELECT failure FROM route_patterns WHERE namespace='@one'").get()).toEqual({
+    expect((await db.prepare("SELECT failure FROM route_patterns WHERE namespace='@one'").get())).toEqual({
       failure:'browser-url-mismatch',
     });
-    db.close();
+    (await db.close());
   });
 
   it('reconciles newly synced slugs without requiring or reviving the removed traversal JSON',async()=>{
-    const db=new DatabaseSync(':memory:');
+    const db=await testRouteDatabase();
     const initial={inventory,catalog,raw};
-    importRegistryPatterns(db,initial);
+    (await importRegistryPatterns(db,initial));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       fetchPage:async(url:string)=>getHtml(url)});
     const updated=structuredClone(catalog);
     updated.registries['@one'].push({name:'new-component'});
-    const result=reconcileRegistryCatalog(db,{raw,catalog:updated});
+    const result=(await reconcileRegistryCatalog(db,{raw,catalog:updated}));
     expect(result).toMatchObject({added:1,removed:0,changedHomepages:0});
-    expect(db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get())
+    expect((await db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get()))
       .toEqual({status:'verified'});
-    expect(db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='new-component'").get())
+    expect((await db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='new-component'").get()))
       .toEqual({source_url:'https://one.example/docs/new-component',status:'pattern-inferred'});
-    expect(reconcileRegistryCatalog(db,{raw,catalog:updated}).added).toBe(0);
+    expect((await reconcileRegistryCatalog(db,{raw,catalog:updated})).added).toBe(0);
     const removed=structuredClone(updated);
     removed.registries['@one']=removed.registries['@one'].filter((item:any)=>item.name!=='new-component');
-    expect(reconcileRegistryCatalog(db,{raw,catalog:removed}).removed).toBe(1);
-    expect(db.prepare("SELECT slug FROM item_routes WHERE namespace='@one' AND slug='new-component'").get()).toBeUndefined();
-    db.close();
+    expect((await reconcileRegistryCatalog(db,{raw,catalog:removed})).removed).toBe(1);
+    expect((await db.prepare("SELECT slug FROM item_routes WHERE namespace='@one' AND slug='new-component'").get())).toBeUndefined();
+    (await db.close());
   });
   it('invalidates previously verified paths when an official registry changes its homepage',async()=>{
-    const db=new DatabaseSync(':memory:');
-    importRegistryPatterns(db,{inventory,catalog,raw});
+    const db=await testRouteDatabase();
+    (await importRegistryPatterns(db,{inventory,catalog,raw}));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async(url:string)=>getHtml(url)});
     const replaced=raw.map(row=>row.name==='@one'
       ?{...row,homepage:'https://updated-one.example'}:row);
-    expect(reconcileRegistryCatalog(db,{raw:replaced,catalog}).changedHomepages).toBe(1);
-    expect(db.prepare("SELECT COUNT(*) AS n FROM route_patterns WHERE namespace='@one'").get()).toEqual({n:0});
-    expect(db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='button'").get())
+    expect((await reconcileRegistryCatalog(db,{raw:replaced,catalog})).changedHomepages).toBe(1);
+    expect((await db.prepare("SELECT COUNT(*) AS n FROM route_patterns WHERE namespace='@one'").get())).toEqual({n:0});
+    expect((await db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='button'").get()))
       .toEqual({source_url:null,status:'unverified'});
-    db.close();
+    (await db.close());
   });
 
   it('preserves persisted status across a second import without duplicating patterns',async()=>{
-    const db=new DatabaseSync(':memory:');
+    const db=await testRouteDatabase();
     const opts={inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'};
-    importRegistryPatterns(db,opts);
+    (await importRegistryPatterns(db,opts));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async (url:string)=>getHtml(url)});
-    const n=(db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get() as { n: number }).n;
-    importRegistryPatterns(db,opts);
-    expect((db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get() as { n: number }).n).toBe(n);
-    expect(db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get())
+    const n=((await db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get()) as { n: number }).n;
+    (await importRegistryPatterns(db,opts));
+    expect(((await db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get()) as { n: number }).n).toBe(n);
+    expect((await db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get()))
       .toEqual({status:'verified'});
-    db.close();
+    (await db.close());
   });
 });

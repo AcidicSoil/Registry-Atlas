@@ -78,8 +78,8 @@ export async function main(argv, cwd = process.cwd()) {
   const opts = parseRegistryScheduleArgs(argv);
   const allowedDomains = verifiedProfile(opts);
   const database = openAtlasCoreDatabase(cwd, { readOnly: true });
-  const state = readAtlasState(database);
-  database.close();
+  const state = await readAtlasState(database);
+  await database.close();
   const raw = state.rawRegistries;
   const catalog = state.catalog;
   const curated = state.curated;

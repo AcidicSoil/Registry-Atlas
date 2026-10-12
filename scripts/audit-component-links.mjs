@@ -225,7 +225,7 @@ async function main(argv) {
   if ((indexOf('--evidence') >= 0 && !evidenceFile) || (indexOf('--report') >= 0 && !reportPath))
     throw new Error('Missing path for --evidence or --report');
   const database = openAtlasCoreDatabase(process.cwd());
-  const state = readAtlasState(database);
+  const state = await readAtlasState(database);
   const raw = state.rawRegistries;
   const catalog = state.catalog;
   const curated = state.curated;
@@ -252,10 +252,10 @@ async function main(argv) {
         const file = record?.browser?.capturePath;
         if (!file || !(await stat(file).catch(() => null))?.isFile()) throw new Error(`Missing PinchTab capture: ${file}`);
       }
-      if (checksum(readCuratedItemSummaries(database)) !== metadata.curatedSha256) {
+      if (checksum(await readCuratedItemSummaries(database)) !== metadata.curatedSha256) {
         throw new Error('Curated records changed during audit');
       }
-      if (evaluation.repaired.length) replaceCuratedItemSummaries(database, evaluation.curated);
+      if (evaluation.repaired.length) await replaceCuratedItemSummaries(database, evaluation.curated);
     }
   }
   const coverage = summarizeAuditCoverage(inventory, evaluation,
@@ -272,8 +272,8 @@ async function main(argv) {
     },
     apply,
   };
-  putDocument(database, 'component-link-audit-report', 'audit-report', report);
-  database.close();
+  await putDocument(database, 'component-link-audit-report', 'audit-report', report);
+  await database.close();
   if (reportPath) await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
   console.log(JSON.stringify({
     mode: apply ? 'apply' : 'dry-run',

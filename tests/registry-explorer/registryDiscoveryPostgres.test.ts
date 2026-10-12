@@ -1,7 +1,9 @@
+import { vi } from 'vitest';
+vi.setConfig({testTimeout: 30000});
 import {describe,expect,it} from 'vitest';
-import {DatabaseSync} from 'node:sqlite';
+import { testRouteDatabase } from './postgresFixture';
 // @ts-expect-error Standalone Node ESM helper.
-import {discoverRegistryIntoSqlite} from '../../scripts/discover-registry-routes-to-sqlite.mjs';
+import {discoverRegistryIntoPostgres} from '../../scripts/discover-registry-routes.mjs';
 // @ts-expect-error Standalone Node ESM helper.
 import {reconcileRegistryCatalog} from '../../scripts/verify-registry-patterns.mjs';
 
@@ -41,11 +43,11 @@ const fetchPage=async(url:string)=>{
   });
 };
 
-describe('browser discovery -> SQLite route verification',()=>{
+describe('browser discovery -> PostgreSQL route verification',()=>{
   it('discovers one route family, verifies it, infers the remaining slug, and verifies generated pages',async()=>{
-    const db=new DatabaseSync(':memory:');
-    reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}});
-    const result=await discoverRegistryIntoSqlite({
+    const db=await testRouteDatabase();
+    (await reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}}));
+    const result=await discoverRegistryIntoPostgres({
       db,registry,indexedItems:['button','card','dialog'],catalog,curated:{},
       browser:fakeBrowser(pages,'https://discover.example/'),
       checkedAt:'2026-10-05T03:00:00.000Z',limit:2,maxPages:4,maxDepth:3,maxLinks:50,
@@ -54,19 +56,19 @@ describe('browser discovery -> SQLite route verification',()=>{
     expect(result.derived).toMatchObject({patterns:1,matchedItems:2,verifiedObservedPages:2});
     expect(result.merged).toMatchObject({newPatterns:1,newExamples:2});
     expect(result.patternVerification).toMatchObject({verifiedPatterns:1});
-    expect(db.prepare("SELECT template,status FROM route_patterns WHERE namespace='@discover'").get())
+    expect((await db.prepare("SELECT template,status FROM route_patterns WHERE namespace='@discover'").get()))
       .toEqual({template:'https://discover.example/docs/components/{slug}',status:'verified'});
-    expect(db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@discover' AND slug='dialog'").get())
+    expect((await db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@discover' AND slug='dialog'").get()))
       .toEqual({source_url:'https://discover.example/docs/components/dialog',status:'pattern-inferred'});
-    expect(db.prepare("SELECT status FROM component_url_checks WHERE namespace='@discover' AND slug='dialog'").get())
+    expect((await db.prepare("SELECT status FROM component_url_checks WHERE namespace='@discover' AND slug='dialog'").get()))
       .toEqual({status:'verified'});
-    db.close();
+    (await db.close());
   });
 
   it('follows an observed generic entry link when its URL enters a docs/components section',async()=>{
-    const db=new DatabaseSync(':memory:');
-    reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}});
-    const result=await discoverRegistryIntoSqlite({
+    const db=await testRouteDatabase();
+    (await reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}}));
+    const result=await discoverRegistryIntoPostgres({
       db,registry,indexedItems:['button','card','dialog'],catalog,curated:{},
       browser:fakeBrowser({
         'https://discover.example/':{links:[['Get Started','/docs/components/dialog']]},
@@ -81,15 +83,15 @@ describe('browser discovery -> SQLite route verification',()=>{
     });
     expect(result.derived.patterns).toBe(1);
     expect(result.merged.newPatterns).toBe(1);
-    expect(db.prepare("SELECT template,status FROM route_patterns WHERE namespace='@discover'").get())
+    expect((await db.prepare("SELECT template,status FROM route_patterns WHERE namespace='@discover'").get()))
       .toEqual({template:'https://discover.example/docs/components/{slug}',status:'verified'});
-    db.close();
+    (await db.close());
   });
 
   it('does not add a route family from only unrelated navigation',async()=>{
-    const db=new DatabaseSync(':memory:');
-    reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}});
-    const result=await discoverRegistryIntoSqlite({
+    const db=await testRouteDatabase();
+    (await reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}}));
+    const result=await discoverRegistryIntoPostgres({
       db,registry,indexedItems:['button','card','dialog'],catalog,curated:{},
       browser:fakeBrowser({
         'https://discover.example/':{links:[['About','/about']]},
@@ -100,8 +102,8 @@ describe('browser discovery -> SQLite route verification',()=>{
     });
     expect(result.derived.patterns).toBe(0);
     expect(result.merged.newPatterns).toBe(0);
-    expect(db.prepare("SELECT COUNT(*) n FROM route_patterns WHERE namespace='@discover'").get())
+    expect((await db.prepare("SELECT COUNT(*) n FROM route_patterns WHERE namespace='@discover'").get()))
       .toEqual({n:0});
-    db.close();
+    (await db.close());
   });
 });

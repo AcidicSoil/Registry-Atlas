@@ -25,13 +25,30 @@ Store the Postgres URL in `DATABASE_URL` or the ignored, mode-600 `.instance/neo
 
 The builder also generates `.instance/atlas-test-documents.json` for deterministic test fixtures. This is a disposable test output, not a second database.
 
-## Important: legacy maintenance commands
+## PostgreSQL maintenance
 
-The existing crawler, route verifier, catalog classification, and synchronization writers still use the old SQLite API. **Do not use those writers against an empty local SQLite cache**. They have not been ported to PostgreSQL; their output will not update the authoritative Neon database.
+Maintenance commands use the PostgreSQL data layer `scripts/lib/atlas-postgres.mjs`
+with normal PostgreSQL transactions. CLI scripts update the canonical database for:
 
-The old SQLite schema and migration utilities are retained only as reference and import tooling. They do not run in normal development, website builds, or deployment. A local SQLite recovery source remains in the ignored `.instance/` directory, and previous Git commits contain original snapshots.
+- registry directory and catalog synchronization, catalog imports, and icon discovery
+- registry route patterns, crawler observations, and component URL verification
+- classification batches, decision outcomes, evaluated overlays, and promotion
+- exact source-page evidence and linked operational reports
 
-Migrating every legacy writer and restoring the deeper SQLite-specific validations is outstanding work. Do not classify that maintenance workflow as complete.
+Run `pnpm migrate:postgres-schema` to apply route uniqueness, foreign keys,
+ID sequences, and defaults after an initial import. Run
+`pnpm check:postgres`, `pnpm check:product-contract`, and `pnpm validate:data`
+to check authoritative data before building the site.
+
+Use writable database credentials only in the maintenance environment.
+GitHub Actions uses a read-only `REGISTRY_ATLAS_DATABASE_URL` secret for site
+generation and a separate, isolated writable test database
+(`REGISTRY_ATLAS_TEST_DATABASE_URL`) for database integration tests.
+Tests create and remove disposable PostgreSQL schemas; they must not modify
+production catalog records.
+
+The SQLite import utility remains for one-time import of historical snapshots.
+It does not participate in current updates or website builds.
 
 ## Storage and recovery
 

@@ -102,8 +102,8 @@ export function configureManagedSourceBrowser(browser) {
 export async function main(argv, cwd = process.cwd()) {
   const options = args(argv);
   const database = openAtlasCoreDatabase(cwd, { readOnly: true });
-  const state = readAtlasState(database);
-  database.close();
+  const state = await readAtlasState(database);
+  await database.close();
   const raw = state.rawRegistries;
   const catalog = state.catalog;
   const curated = state.curated;

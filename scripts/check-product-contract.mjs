@@ -209,7 +209,7 @@ let enrichmentCoverage = {
 };
 
 try {
-  const state = readAtlasState(core);
+  const state = (await readAtlasState(core));
   assert(Boolean(state.taxonomy), 'catalog taxonomy is missing from the Atlas database');
   assert(Boolean(state.classificationOverlay),
     'reviewed canonical classification overlay is missing from the Atlas database');
@@ -280,9 +280,9 @@ try {
       `Atlas database still persists retired inferred taxonomy key ${key}`);
   }
 
-  const detailRows = core.prepare(
+  const detailRows = (await core.prepare(
     'SELECT namespace,name,payload_json FROM atlas_item_details ORDER BY namespace,name',
-  ).all();
+  ).all());
   assert(detailRows.length > 0, 'Atlas detail database is empty');
   for (const row of detailRows) {
     let payload;
@@ -296,18 +296,18 @@ try {
       `detail database must not persist source-code content: ${row.namespace}/${row.name}`);
   }
 
-  const catalogNamespaceCount = core.prepare(
+  const catalogNamespaceCount = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_namespaces',
-  ).get().n;
-  const catalogItemCount = core.prepare(
+  ).get()).n);
+  const catalogItemCount = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_items',
-  ).get().n;
+  ).get()).n);
   assert(catalogNamespaceCount === state.catalog.meta.registry_count,
     'catalog namespace metadata must match persisted database namespaces');
   assert(catalogItemCount === state.catalog.meta.item_count,
     'catalog item metadata must match persisted database identities');
 } finally {
-  core.close();
+  (await core.close());
 }
 
 if (failures.length > 0) {

@@ -97,15 +97,15 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parsePromotionArgs(argv);
   const database = openAtlasCoreDatabase(cwd);
   try {
-    const taxonomyValue = readDocument(database, 'catalog-taxonomy');
+    const taxonomyValue = await readDocument(database, 'catalog-taxonomy');
     if (!taxonomyValue) throw new Error('Catalog taxonomy is missing from the Atlas database');
-    const run = readClassificationRun(database, options.runId);
+    const run = await readClassificationRun(database, options.runId);
     if (!run || run.status !== 'completed') {
       throw new Error(`Classification run is not complete: ${options.runId}`);
     }
-    const classifications = readClassificationRunItems(database, options.runId);
-    const evaluation = readDocument(database, options.evaluationDocument);
-    const review = readDocument(database, options.reviewDocument);
+    const classifications = await readClassificationRunItems(database, options.runId);
+    const evaluation = await readDocument(database, options.evaluationDocument);
+    const review = await readDocument(database, options.reviewDocument);
     if (!evaluation) throw new Error(`Evaluation document is missing: ${options.evaluationDocument}`);
     if (!review) throw new Error(`Promotion review document is missing: ${options.reviewDocument}`);
     if (evaluation.beamRunId && evaluation.beamRunId !== options.runId) {
@@ -117,10 +117,10 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       evaluation,
       review,
     });
-    replaceClassificationOverlay(database, overlay);
+    await replaceClassificationOverlay(database, overlay);
     return overlay;
   } finally {
-    database.close();
+    await database.close();
   }
 }
 

@@ -334,7 +334,7 @@ async function cli(argv) {
   const siteAllowed = managedSitePolicy(profile, server);
   const database = openAtlasCoreDatabase();
   try {
-  const state = readAtlasState(database);
+  const state = await readAtlasState(database);
   const registries = state.rawRegistries;
   const catalog = state.catalog;
   const curated = state.curated;
@@ -355,7 +355,7 @@ async function cli(argv) {
     JSON.stringify({
       digest,
       registry: registryName,
-      database: 'data/registry-atlas.sqlite',
+      database: 'PostgreSQL atlas schema',
       createdAt: new Date().toISOString(),
     }) + '\n',
     { flag: 'wx' });
@@ -399,7 +399,7 @@ async function cli(argv) {
     complete: !registryName && !selectedSlug && summary.complete }));
   if (summary.unresolved) process.exitCode = 2;
   } finally {
-    database.close();
+    await database.close();
   }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -475,10 +475,10 @@ function structuredDocsPath(fact) {
 }
 async function persistVerifiedChanges(database, sourceDigest, proposed) {
   if (!proposed.changes.length) return 0;
-  const current = readAtlasState(database);
+  const current = await readAtlasState(database);
   if (atlasStateDigest(current) !== sourceDigest) {
     throw new Error('Atlas database changed during browser audit; apply cancelled');
   }
-  replaceCuratedAndRegistrySnapshot(database, proposed.curated, proposed.runtime);
+  await replaceCuratedAndRegistrySnapshot(database, proposed.curated, proposed.runtime);
   return proposed.changes.length;
 }

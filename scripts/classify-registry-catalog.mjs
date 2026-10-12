@@ -237,13 +237,13 @@ export async function runCatalogClassificationBatches({
   if (typeof executeBatch !== 'function') throw new Error('executeBatch is required');
   if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
 
-  const previous = resume ? readClassificationRun(database, runId) : null;
+  const previous = resume ? await readClassificationRun(database, runId) : null;
   if (resume && !previous) throw new Error('No resumable classification state found');
   if (previous && (previous.taxonomyFingerprint !== taxonomyFingerprint
     || previous.catalogFingerprint !== catalogFingerprint)) {
     throw new Error('Classification resume fingerprint mismatch');
   }
-  if (!resume) resetClassificationRun(database, runId);
+  if (!resume) await resetClassificationRun(database, runId);
   if (previous?.status === 'completed') return previous;
 
   let cursor = resume ? previous.nextCursor ?? initialCursor : initialCursor;
@@ -269,7 +269,7 @@ export async function runCatalogClassificationBatches({
       taxonomyFingerprint,
       catalogFingerprint,
     };
-    putClassificationBatch(database, runId, batches, batchRecord);
+    await putClassificationBatch(database, runId, batches, batchRecord);
     const status = nextCursor === null
       ? 'completed'
       : executed >= stopAfterBatches ? 'paused' : 'running';
@@ -288,18 +288,18 @@ export async function runCatalogClassificationBatches({
       nextCursor,
       updatedAt: new Date().toISOString(),
     };
-    putClassificationRun(database, runId, state, state.updatedAt);
+    await putClassificationRun(database, runId, state, state.updatedAt);
     if (nextCursor === null || executed >= stopAfterBatches) return state;
     cursor = nextCursor;
   }
   throw new Error('Classification batch runner stopped unexpectedly');
 }
 
-export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
+export async function main(argv = process.argv.slice(2), cwd = process.cwd(), providedDatabase = null) {
   const options = parseCatalogClassificationArgs(argv);
-  const database = openAtlasCoreDatabase(cwd);
+  const database = providedDatabase ?? openAtlasCoreDatabase(cwd);
   try {
-    const state = readAtlasState(database);
+    const state = await readAtlasState(database);
     if (!state.taxonomy) throw new Error('Catalog taxonomy is missing from the Atlas database');
     const taxonomy = validateCatalogTaxonomy(state.taxonomy);
     const catalog = validateCatalog(state.catalog);
@@ -347,7 +347,7 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
             choose,
             kindOverrides,
           });
-          upsertClassificationRunItems(database, options.runId, artifact.items);
+          await upsertClassificationRunItems(database, options.runId, artifact.items);
           results.push({
             namespace,
             outcome: 'completed',
@@ -383,7 +383,7 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       stopAfterBatches: options.allBatches ? Number.POSITIVE_INFINITY : 1,
     });
   } finally {
-    database.close();
+    if (!providedDatabase) await database.close();
   }
 }
 

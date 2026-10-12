@@ -182,13 +182,13 @@ async function main(argv = process.argv.slice(2)) {
   const catalog = await readJson(options.source);
   const database = openAtlasCoreDatabase();
   try {
-    const existing = readCuratedItemSummaries(database);
+    const existing = await readCuratedItemSummaries(database);
     const importResult = buildRegistryItemsByNamespace(catalog, existing);
     const report = buildImportReport(catalog, importResult);
 
     if (!options.dryRun) {
-      replaceCuratedItemSummaries(database, importResult.itemsByNamespace);
-      putDocument(database, 'catalog-import-report', 'sync-report', report);
+      await replaceCuratedItemSummaries(database, importResult.itemsByNamespace);
+      await putDocument(database, 'catalog-import-report', 'sync-report', report);
     }
 
     console.log(`Imported ${report.item_count} item summaries across ${report.registry_count} registries`);
@@ -196,7 +196,7 @@ async function main(argv = process.argv.slice(2)) {
     if (report.warnings.length > 0) console.log(`Warnings: ${report.warnings.length}`);
     if (report.skipped.length > 0) console.log(`Skipped: ${report.skipped.length}`);
   } finally {
-    database.close();
+    await database.close();
   }
 }
 

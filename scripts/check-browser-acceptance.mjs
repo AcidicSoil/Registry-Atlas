@@ -15,8 +15,8 @@ if (!server || !tab) {
 }
 
 const database = openAtlasCoreDatabase(process.cwd(), { readOnly: true });
-const atlasState = readAtlasState(database);
-database.close();
+const atlasState = await readAtlasState(database);
+await database.close();
 const catalog = atlasState.catalog;
 const kindDefaults = atlasState.kindOverrides?.registryDefaults ?? {};
 const entries = Object.entries(catalog.registries);

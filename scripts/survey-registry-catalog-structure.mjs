@@ -105,23 +105,23 @@ function validateManagedBrowser({ profile, server, tab }) {
     throw new Error('Supplied tab does not belong to the managed source server');
 }
 
-function evidenceFromDatabase(db) {
+async function evidenceFromDatabase(db) {
   const evidence = {};
   const row = namespace => evidence[namespace] ??= {
     routePatterns: [], examples: [], itemRoutes: [], sitemapLinks: [],
   };
-  for (const pattern of db.prepare(
+  for (const pattern of (await db.prepare(
     'SELECT id, namespace, template, prefix, source, status, checked_at, failure FROM route_patterns'
-  ).all()) row(pattern.namespace).routePatterns.push(pattern);
-  for (const example of db.prepare(
+  ).all())) row(pattern.namespace).routePatterns.push(pattern);
+  for (const example of (await db.prepare(
     'SELECT p.namespace, e.slug, e.url, p.status AS pattern_status FROM examples e JOIN route_patterns p ON p.id=e.pattern_id'
-  ).all()) row(example.namespace).examples.push(example);
-  for (const route of db.prepare(
+  ).all())) row(example.namespace).examples.push(example);
+  for (const route of (await db.prepare(
     'SELECT i.namespace, i.slug, i.source_url, i.status, i.pattern_id, p.status AS pattern_status FROM item_routes i LEFT JOIN route_patterns p ON p.id=i.pattern_id'
-  ).all()) row(route.namespace).itemRoutes.push(route);
-  for (const link of db.prepare(
+  ).all())) row(route.namespace).itemRoutes.push(route);
+  for (const link of (await db.prepare(
     'SELECT namespace, slug, url, observed_at FROM sitemap_links'
-  ).all()) row(link.namespace).sitemapLinks.push(link);
+  ).all())) row(link.namespace).sitemapLinks.push(link);
   return evidence;
 }
 
@@ -226,7 +226,7 @@ function createPinchTabObserver({ server, tab, delayMs }) {
 async function loadInputs(cwd) {
   const database = openAtlasCoreDatabase(cwd, { readOnly: true });
   try {
-    const state = readAtlasState(database);
+    const state = await readAtlasState(database);
     return {
       raw: state.rawRegistries,
       catalog: state.catalog,
@@ -234,7 +234,7 @@ async function loadInputs(cwd) {
       evidence: evidenceFromDatabase(database),
     };
   } finally {
-    database.close();
+    await database.close();
   }
 }
 
