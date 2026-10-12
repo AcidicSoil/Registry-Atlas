@@ -35,6 +35,17 @@ const input = (opts: Record<string,unknown> = {}) => ({
 });
 
 describe('published original-page source index', () => {
+  it('accepts fresh sitemap fingerprints without altering the older pattern authority', () => {
+    const output=buildSourcePageIndex(input({curated:{},traversal:null,patternLinks:{
+      schema:'registry-atlas-pattern-links/v1',sourceSnapshotAt:surveyedAt,
+      fingerprints:{'@alpha':'old-pattern-check'},
+      sitemapFingerprints:{'@alpha':catalogFingerprint(raw[0],['button','card','forms/button'])},
+      sitemapLinks:[{namespace:'@alpha',slug:'button',
+        url:'https://alpha.example/docs/button',observedAt:surveyedAt}],
+      links:[],verifiedPages:[],
+    }}));
+    expect(output.pages['@alpha/button']?.level).toBe('sitemap');
+  });
   it('keeps exact nested identities and distinct same-slug registry pages', () => {
     const output=buildSourcePageIndex(input());
     expect(output.pages['@alpha/forms/button']).toMatchObject({

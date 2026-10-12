@@ -1,8 +1,32 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Node ESM source script without TS declarations.
-import { sitemapUrlCandidates, sitemapXmlLinks, parseRobotsSitemaps } from '../../scripts/survey-registry-sitemaps.mjs';
+import { sitemapUrlCandidates, sitemapXmlLinks, parseRobotsSitemaps, canonicalWwwRedirect, sourceDeclaredIconAliases } from '../../scripts/survey-registry-sitemaps.mjs';
 
 describe('official registry sitemap route inventory', () => {
+  it('accepts only exact-path permanent redirect to its own www host', () => {
+    expect(canonicalWwwRedirect('https://shadcnblocks.com/sitemap.xml',308,
+      'https://www.shadcnblocks.com/sitemap.xml'))
+      .toBe('https://www.shadcnblocks.com/sitemap.xml');
+    for (const url of ['https://other.example/sitemap.xml',
+      'https://www.shadcnblocks.com/different.xml',
+      'http://www.shadcnblocks.com/sitemap.xml'])
+      expect(canonicalWwwRedirect('https://shadcnblocks.com/sitemap.xml',308,url)).toBeNull();
+    expect(canonicalWwwRedirect('https://shadcnblocks.com/sitemap.xml',302,
+      'https://www.shadcnblocks.com/sitemap.xml')).toBeNull();
+  });
+  it('uses only sitemap-listed icon family URLs from the original registry',()=>{
+    const entries=sourceDeclaredIconAliases({name:'@animateicons',homepage:'https://animateicons.in'},
+      ['hu-activity','lu-accessibility','hu-not-listed','fake-activity'],[
+        'https://animateicons.in/icons/huge/activity',
+        'https://animateicons.in/icons/lucide/accessibility',
+      ]);
+    expect(entries).toEqual([
+      {slug:'hu-activity',url:'https://animateicons.in/icons/huge/activity'},
+      {slug:'lu-accessibility',url:'https://animateicons.in/icons/lucide/accessibility'},
+    ]);
+    expect(sourceDeclaredIconAliases({name:'@other',homepage:'https://animateicons.in'},
+      ['hu-activity'],['https://animateicons.in/icons/huge/activity'])).toEqual([]);
+  });
   it('discovers nested sitemap indexes and decodes source-declared URLs', () => {
     expect(parseRobotsSitemaps('Sitemap: https://alpha.example/sitemap-main.xml\n#comment\n'))
       .toEqual(['https://alpha.example/sitemap-main.xml']);

@@ -5,7 +5,7 @@ import { catalogFingerprint } from './lib/registry-discovery.mjs';
 import {
   openAtlasCoreDatabase,
   putDocument,
-  readAtlasState,
+  readRawRegistries, readCatalogSnapshot, readCuratedItemSummaries,
   replaceSourcePages,
 } from './lib/atlas-storage.mjs';
 
@@ -61,7 +61,8 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
     if (!databaseGroups.has(key)) databaseGroups.set(key,{
       namespace:page.namespace,
       homepage:known.get(page.namespace)?.homepage,
-      catalogFingerprint:patternLinks.fingerprints?.[page.namespace],
+      catalogFingerprint:patternLinks.sitemapFingerprints?.[page.namespace]
+        ?? patternLinks.fingerprints?.[page.namespace],
       sitemapSurveyedAt:page.observedAt,
       sitemapPages:[],
     });
@@ -201,12 +202,15 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
 async function main() {
   const database = openAtlasCoreDatabase();
   try {
-    const state = await readAtlasState(database);
+    const [rawRegistries,catalog,curated] = await Promise.all([
+      readRawRegistries(database),readCatalogSnapshot(database),
+      readCuratedItemSummaries(database),
+    ]);
     const patternLinks = (await exportPatternLinkSnapshot(database));
     const result = buildSourcePageIndex({
-      raw: state.rawRegistries,
-      catalog: state.catalog,
-      curated: state.curated,
+      raw: rawRegistries,
+      catalog,
+      curated,
       traversal: null,
       patternLinks,
     });

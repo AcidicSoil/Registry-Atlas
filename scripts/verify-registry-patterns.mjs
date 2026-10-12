@@ -5,7 +5,7 @@ import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { catalogFingerprint } from './lib/registry-discovery.mjs';
-import { putDocument, readAtlasState } from './lib/atlas-storage.mjs';
+import { putDocument, readAtlasState, readDocument } from './lib/atlas-storage.mjs';
 
 
 const PATTERN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
@@ -351,6 +351,7 @@ export async function exportPatternLinkSnapshot(db) {
     schema:'registry-atlas-pattern-links/v1',
     sourceSnapshotAt:(await db.prepare("SELECT value FROM metadata WHERE key='sourceSnapshotAt'").get())?.value??null,
     fingerprints,
+    sitemapFingerprints:await readDocument(db,'official-sitemap-fingerprints')??{},
     sitemapLinks:(await db.prepare('SELECT namespace,slug,url,observed_at AS observedAt FROM sitemap_links ORDER BY namespace,slug,url').all()),
     links:(await db.prepare(`SELECT i.namespace,i.slug,i.source_url,i.status,p.checked_at AS checkedAt
       FROM item_routes i JOIN route_patterns p ON p.id=i.pattern_id AND p.status='verified'

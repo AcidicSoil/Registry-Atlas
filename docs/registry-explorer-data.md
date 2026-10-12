@@ -47,6 +47,15 @@ generation and a separate, isolated writable test database
 Tests create and remove disposable PostgreSQL schemas; they must not modify
 production catalog records.
 
+### Fresh original-page discovery
+
+1. Start the approved `registry-atlas-source-audit` profile and inspect its **current** instance URL. Do not reuse an old port or tab ID.
+2. Run `node scripts/survey-registry-sitemaps.mjs --profile registry-atlas-source-audit --server <current-instance-url> --output-dir "$PWD/.instance/source-sitemaps" --max-registries 408`. Continue from its reported `nextCursor` until every currently eligible official registry has been surveyed. Use `--registry @namespace` to refresh one source.
+3. Review survey errors and results. Run `node scripts/import-official-sitemap-surveys.mjs "$PWD/.instance/source-sitemaps" --dry-run`, then omit `--dry-run` to atomically import only eligible official URLs. Conflicting older URLs are held for investigation. It **never** erases route patterns, redoes the SQLite migration, or promotes a sitemap candidate to individually verified status.
+4. Run `node scripts/build-source-page-index.mjs`, then `pnpm prepare:runtime-data` to rebuild the disposable static assets.
+
+The importer stores a separate current sitemap catalog fingerprint in PostgreSQL so newer sitemap evidence does not incorrectly revalidate historic route-pattern observations. Official `https://www.` canonical redirects may be followed only when the origin responds with a permanent 308 to the identical sitemap path; the published same-origin link remains a provisional sitemap link. If a source does not publish an item-level page, keep it unresolved. Its installable registry JSON is **not** a human-readable source page.
+
 The SQLite import utility remains for one-time import of historical snapshots.
 It does not participate in current updates or website builds.
 
