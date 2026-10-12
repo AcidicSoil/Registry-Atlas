@@ -13,6 +13,9 @@ describe("renderCatalogCompare", () => {
     expect(body.innerHTML).toContain('href="https://example.test/docs/button"');
     expect(body.innerHTML).toContain('View sitemap-listed page');
     expect(body.innerHTML).toContain('data-view-item-slug="button"');
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@a/components/button"');
+    expect(body.innerHTML).toContain('data-source-level="sitemap"');
+    expect(body.innerHTML).toContain('<a class="compare-presence-link"');
   });
   it("renders exact catalog presence with links to real component routes", () => {
     const body = root();

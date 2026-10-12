@@ -102,9 +102,11 @@ function renderTable(result: CatalogCompareResult): string {
           docsUrl: cell.docsUrl,
           sourcePage: cell.sourcePage,
         });
-        return `<td><button class="compare-presence-link" type="button"
-          data-view-item-registry="${escapeHtml(cell.namespace)}" data-view-item-slug="${escapeHtml(row.slug)}">Present</button>
+        return `<td>${cell.routePath ? `<a class="compare-presence-link" href="${escapeHtml(cell.routePath)}"
+          data-view-item-registry="${escapeHtml(cell.namespace)}" data-view-item-slug="${escapeHtml(row.slug)}"
+          data-view-item-kind="${escapeHtml(cell.routeKind ?? 'component')}">Present</a>` : '<span>Present</span>'}
           ${original ? `<a class="compare-source-link" href="${escapeHtml(original.url)}"
+            data-source-level="${escapeHtml(original.level)}"
             target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>` : ''}
           </td>`;
       }).join("")}

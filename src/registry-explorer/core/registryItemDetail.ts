@@ -1,4 +1,5 @@
 import { getInstallActionState } from './installActions.ts';
+import { resolveCatalogSourcePage } from './catalogSourcePage.ts';
 import { compactCatalogItemToSummary, findRegistryCatalogItem } from './registryCatalogIndex.ts';
 import { resolveRegistryItemRoute, type ResolvedItemRoute } from './itemRoutes.ts';
 import type {
@@ -163,19 +164,21 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   const registry = registries.find(item => item.name === registryName);
   if (!registry) return notFound('Registry not found.', 'missing-registry');
 
+  const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
   if (registry.itemSummaries?.some(item => item.slug === slug)) {
     return withSourcePage(
       resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson),
-      catalogIndex.sourcePages?.[`${registryName}/${slug}`],
+      compactItem
+        ? resolveCatalogSourcePage(catalogIndex, registry, compactItem)
+        : catalogIndex.sourcePages?.[`${registryName}/${slug}`],
     );
   }
 
-  const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
   if (!compactItem) return notFound('Item not found in registry catalog.', 'missing-item');
 
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
-  base.sourcePage = catalogIndex.sourcePages?.[`${registryName}/${slug}`];
+  base.sourcePage = resolveCatalogSourcePage(catalogIndex, registry, compactItem);
   if (base.route.status !== 'available') {
     return { status: 'route-unavailable', detail: base, message: 'Item route unavailable.', reason: base.route.status };
   }

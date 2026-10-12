@@ -6,7 +6,7 @@ import {
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
 import { defaultCatalogTaxonomySearchValues } from "./catalogTaxonomy";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
-import { resolveSourceItemRoute, type SourceItemKind } from "./sourceItemRoute";
+import { resolveCatalogSourcePage } from './catalogSourcePage';
 import type {
   Registry,
   RegistryCatalogIndex,
@@ -156,9 +156,7 @@ export function queryCatalogComponents(
       match.item,
       match.reviewed,
       options.basePath,
-      index.sourcePages?.[`${match.registry.name}/${match.item.name}`],
-      index.itemRoutes?.[`${match.registry.name}/${match.item.name}`],
-      index.routePatterns?.[match.registry.name],
+      resolveCatalogSourcePage(index, match.registry, match.item),
     ));
 
   return {
@@ -245,25 +243,7 @@ function toCatalogComponent(
   reviewed: RegistryItemSummary | undefined,
   basePath = "/Registry-Atlas/",
   sourcePage?: RegistrySourcePage,
-  directRoute?: { url: string; status: string },
-  routePatterns?: NonNullable<RegistryCatalogIndex['routePatterns']>[string],
 ): CatalogComponent {
-  const assetKind = assetKindForCatalogItem(item, registry.name);
-  const sourceKind: SourceItemKind = assetKind === 'other' ? 'component' : assetKind;
-  const resolvedUrl = sourcePage ? null : resolveSourceItemRoute({
-    homepage: registry.url,
-    slug: item.name,
-    kind: sourceKind,
-    categories: item.categories ?? [],
-    directRoute,
-    patterns: routePatterns,
-  });
-  const resolvedSourcePage = sourcePage ?? (resolvedUrl ? {
-    url: resolvedUrl,
-    level: 'pattern' as const,
-    source: 'verified-route-pattern' as const,
-  } : undefined);
-
   return {
     id: `${registry.name}:${item.name}`,
     namespace: registry.name,
@@ -284,7 +264,7 @@ function toCatalogComponent(
       { kind: "component", namespace: registry.name, slug: item.name },
       basePath,
     ),
-    ...(resolvedSourcePage ? { sourcePage: resolvedSourcePage } : {}),
+    ...(sourcePage ? { sourcePage } : {}),
     ...(reviewed?.docsUrl ? { docsUrl: reviewed.docsUrl } : {}),
   };
 }

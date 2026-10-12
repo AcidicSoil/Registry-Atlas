@@ -2012,8 +2012,10 @@ aside {
 }
 
 .compare-presence-link {
+  display: inline-block;
   color: var(--primary);
   font-size: 11px;
+  text-decoration: none;
 }
 .compare-source-link {
   display: inline-block;

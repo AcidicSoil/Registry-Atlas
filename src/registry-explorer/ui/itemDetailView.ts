@@ -137,6 +137,7 @@ export function renderRelatedComponentLinks(
           </a>
           <div class="item-related-source-actions">
             ${original ? `<a class="item-related-original" href="${escapeHtml(original.url)}"
+              data-source-level="${escapeHtml(original.level)}"
               target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>` : ''}
             ${itemJson && itemJson !== original?.url ? `<a class="item-related-original"
               href="${escapeHtml(itemJson)}" target="_blank" rel="noreferrer noopener">Item JSON ↗</a>` : ''}
@@ -277,7 +278,7 @@ function renderSourceCard(detail: RegistryItemDetail): string {
     <section class="item-detail-card">
       <h2>Source</h2>
       <div class="item-source-links">
-        ${original ? `<a href="${escapeHtml(original.url)}" target="_blank"
+        ${original ? `<a href="${escapeHtml(original.url)}" data-source-level="${escapeHtml(original.level)}" target="_blank"
           rel="noreferrer noopener">${escapeHtml(
             original.level === 'reviewed' ? 'View original component' : original.label,
           )} ↗</a>` : ''}

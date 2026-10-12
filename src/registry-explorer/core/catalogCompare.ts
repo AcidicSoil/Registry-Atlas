@@ -1,4 +1,6 @@
 import { catalogRoutePath } from "./catalogRoutes";
+import { resolveCatalogSourcePage } from './catalogSourcePage';
+import { assetKindForCatalogItem } from './catalogCollections';
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import type { Registry, RegistryCatalogIndex, RegistryCatalogItem, RegistrySourcePage } from "./registry.schema";
 
@@ -6,6 +8,7 @@ export interface CatalogCompareCell {
   namespace: string;
   present: boolean;
   routePath?: string;
+  routeKind?: 'component' | 'block' | 'page' | 'template' | 'theme';
   sourcePage?: RegistrySourcePage;
   registryHomepage?: string;
   docsUrl?: string;
@@ -99,12 +102,13 @@ export function buildCatalogComparison(
           ? {
               namespace,
               present: true,
+              routeKind: comparisonRouteKind(item, namespace),
               routePath: catalogRoutePath(
-                { kind: "component", namespace, slug: item.name },
+                { kind: comparisonRouteKind(item, namespace), namespace, slug: item.name },
                 options.basePath ?? "/Registry-Atlas/",
               ),
               registryHomepage: registryByName.get(namespace)?.url,
-              sourcePage: index.sourcePages?.[`${namespace}/${item.name}`],
+              sourcePage: resolveCatalogSourcePage(index, registryByName.get(namespace)!, item),
               docsUrl: registryByName.get(namespace)?.itemSummaries?.find(summary => summary.slug === item.name)?.docsUrl,
             }
           : { namespace, present: false };
@@ -122,6 +126,14 @@ export function buildCatalogComparison(
     pageSize,
     pageCount,
   };
+}
+
+function comparisonRouteKind(
+  item: RegistryCatalogItem, namespace: string,
+): 'component' | 'block' | 'page' | 'template' | 'theme' {
+  const kind = assetKindForCatalogItem(item, namespace);
+  return kind === 'block' || kind === 'page' || kind === 'template' || kind === 'theme'
+    ? kind : 'component';
 }
 
 function normalize(value: string): string {
