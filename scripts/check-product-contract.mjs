@@ -280,20 +280,30 @@ try {
       `Atlas database still persists retired inferred taxonomy key ${key}`);
   }
 
-  const detailRows = (await core.prepare(
-    'SELECT namespace,name,payload_json FROM atlas_item_details ORDER BY namespace,name',
-  ).all());
-  assert(detailRows.length > 0, 'Atlas detail database is empty');
-  for (const row of detailRows) {
-    let payload;
-    try {
-      payload = JSON.parse(row.payload_json);
-    } catch {
-      assert(false, `invalid detail JSON payload: ${row.namespace}/${row.name}`);
-      continue;
+  // Validate every JSON document inside PostgreSQL. Transferring the full
+  // detail table solely to inspect one prohibited key wastes bandwidth.
+  const detailSummary = await core.prepare(`
+    SELECT COUNT(*)::integer AS n,
+      COUNT(*) FILTER (
+        WHERE jsonb_exists(payload_json::jsonb, 'content')
+      )::integer AS source_code_items
+    FROM atlas_item_details
+  `).get();
+  assert(detailSummary.n > 0, 'Atlas detail database is empty');
+  if (detailSummary.source_code_items > 0) {
+    const examples = await core.prepare(`
+      SELECT namespace,name FROM atlas_item_details
+      WHERE jsonb_exists(payload_json::jsonb, 'content')
+      ORDER BY namespace,name LIMIT 20
+    `).all();
+    for (const row of examples) {
+      assert(false,
+        `detail database must not persist source-code content: ${row.namespace}/${row.name}`);
     }
-    assert(!Object.hasOwn(payload, 'content'),
-      `detail database must not persist source-code content: ${row.namespace}/${row.name}`);
+    if (detailSummary.source_code_items > examples.length) {
+      assert(false,
+        `${detailSummary.source_code_items - examples.length} additional detail records contain source-code content`);
+    }
   }
 
   const catalogNamespaceCount = Number((await core.prepare(
