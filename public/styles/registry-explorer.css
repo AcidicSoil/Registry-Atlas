@@ -20,6 +20,25 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
+/* Visible only during keyboard navigation, ahead of the sidebar links. */
+.skip-link {
+  position: fixed;
+  z-index: 1001;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-button);
+  background: var(--popover);
+  color: var(--foreground);
+  transform: translateY(-180%);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 *,
 *::before,
 *::after {

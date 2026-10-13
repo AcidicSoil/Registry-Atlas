@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { catalogRoutePath, parseCatalogRoute } from '../../src/registry-explorer/core/catalogRoutes';
 import type { CatalogComponent } from '../../src/registry-explorer/core/catalogQuery';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
@@ -9,6 +10,31 @@ import { renderCatalogComponentCard } from '../../src/registry-explorer/ui/catal
 const BASE = '/Registry-Atlas/';
 
 describe('frontend completion contract', () => {
+  it('globally limits CSS motion when reduced motion is requested', () => {
+    const css = readFileSync(new URL('../../public/styles/registry-explorer.css', import.meta.url), 'utf8');
+    const media = css.match(/@media \(prefers-reduced-motion: reduce\) \{\s*\*,\s*\*::before,\s*\*::after \{([^}]+)\}/);
+    expect(media).not.toBeNull();
+    const rule = media?.[1] ?? '';
+    expect(rule).toMatch(/transition-duration:\s*0\.01ms\s*!important/);
+    expect(rule).toMatch(/animation-duration:\s*0\.01ms\s*!important/);
+    expect(rule).toMatch(/animation-iteration-count:\s*1\s*!important/);
+    expect(rule).toMatch(/scroll-behavior:\s*auto\s*!important/);
+  });
+
+  it('runs the dependency security audit as part of normal verification', () => {
+    const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
+    expect(pkg.scripts['audit:dependencies']).toBe('pnpm audit --audit-level moderate');
+    expect(pkg.scripts.verify).toContain('pnpm audit:dependencies &&');
+  });
+
+  it('provides a keyboard skip link to the focusable main content header', () => {
+    const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+    const css = readFileSync(new URL('../../public/styles/registry-explorer.css', import.meta.url), 'utf8');
+    expect(html).toContain('<a class="skip-link" href="#contentHeader">Skip to main content</a>');
+    expect(html).toContain('id="contentHeader" tabindex="-1"');
+    expect(css).toContain('.skip-link:focus-visible');
+  });
+
   it('provides first-class block and page collection/detail routes', () => {
     expect(parseCatalogRoute(BASE + 'blocks', BASE)).toEqual({ kind: 'blocks' });
     expect(parseCatalogRoute(BASE + 'pages', BASE)).toEqual({ kind: 'pages' });
