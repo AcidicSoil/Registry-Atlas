@@ -81,3 +81,21 @@ run = "node scripts/verify-component-pages.mjs --max-pages 20 --max-per-registry
 [tasks.all]
 description = "Refresh registry data and run the full verification gate"
 run = "pnpm all"
+
+[tasks."check:postgres"]
+run = "pnpm run check:postgres"
+
+[tasks."migrate:postgres-schema"]
+run = "pnpm run migrate:postgres-schema"
+
+[tasks.prebuild]
+run = "pnpm run prebuild"
+
+[tasks.predev]
+run = "pnpm run predev"
+
+[tasks."prepare:runtime-data"]
+run = "pnpm run prepare:runtime-data"
+
+[tasks.pretest]
+run = "pnpm run pretest"

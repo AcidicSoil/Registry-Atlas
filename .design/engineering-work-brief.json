@@ -1,0 +1,222 @@
+{
+  "schemaVersion": "ppm-engineering-work-brief/v1",
+  "revision": 3,
+  "artifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+  "objective": "Review the current PPM/OrchestKit project-wide standards baseline, record applicability for all rules, audit frontend conventions, and remediate verified defects without inventing compliance or approvals.",
+  "projectContext": {
+    "projectRoot": ".",
+    "baseCommit": "64d4753",
+    "currentOrchestKitCheckout": "~/tools/orchestkit",
+    "upstreamFetch": "blocked-before-execution",
+    "paoCorrelation": "incomplete_identity",
+    "authoritativeStandards": ".design/standards.json",
+    "reviewEvidence": "Focused PPM browser acceptance: 1 mobile route passed. Full pnpm verify in progress."
+  },
+  "taskKinds": [
+    "project-standards-audit",
+    "frontend-quality-remediation",
+    "toolchain-bootstrap"
+  ],
+  "capabilities": [
+    {
+      "id": "standards-applicability",
+      "domain": "orchestration",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "pinchtab-profile-manager-engineering"
+      ],
+      "selectionReason": "Review source text and record applicability/evidence for all live catalog rules.",
+      "status": "completed",
+      "requiredAtClose": true,
+      "dependencies": [],
+      "evidenceRefs": [
+        ".design/standards.json",
+        "DESIGN.md"
+      ]
+    },
+    {
+      "id": "frontend-focus-remediation",
+      "domain": "frontend",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "pinchtab-profile-manager-frontend",
+        "accessibility"
+      ],
+      "selectionReason": "Resolve confirmed keyboard focus leakage in responsive navigation, prove keyboard/focus behavior.",
+      "status": "completed",
+      "requiredAtClose": true,
+      "dependencies": [],
+      "evidenceRefs": [
+        "src/registry-explorer/ui/mobileSidebarFocus.ts",
+        "tests/registry-explorer/mobileSidebarFocus.test.ts",
+        "scripts/check-browser-acceptance.mjs"
+      ]
+    },
+    {
+      "id": "tooling-remediation",
+      "domain": "testing",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "quality-gates"
+      ],
+      "selectionReason": "Resolve pending proposals for anti-slop TypeScript, dependency-cruiser, cccc and React Doctor tooling.",
+      "status": "blocked",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        ".design/standards.json",
+        "mise.toml"
+      ]
+    },
+    {
+      "id": "standards-closing-conformance",
+      "domain": "orchestration",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "pinchtab-profile-manager-engineering"
+      ],
+      "selectionReason": "Close applicable OrchestKit compliance statuses with domain-specific evidence.",
+      "status": "blocked",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability",
+        "tooling-remediation"
+      ],
+      "evidenceRefs": [
+        ".design/standards.json"
+      ]
+    }
+  ],
+  "domains": {
+    "orchestration": {
+      "status": "blocked",
+      "briefRef": null,
+      "evidenceRefs": [
+        ".design/standards.json"
+      ],
+      "reason": "Entire catalog applicability completed; full compliance remains blocked."
+    },
+    "frontend": {
+      "status": "completed",
+      "briefRef": null,
+      "evidenceRefs": [
+        "DESIGN.md",
+        "tests/registry-explorer/mobileSidebarFocus.test.ts"
+      ]
+    },
+    "testing": {
+      "status": "blocked",
+      "briefRef": null,
+      "evidenceRefs": [
+        ".design/standards.json"
+      ],
+      "reason": "Three quality tools are not installed/approved."
+    }
+  },
+  "acceptance": [
+    "All catalog rule applicability decisions have traceable source fingerprints and reasons.",
+    "Project design system is recorded without creating a second theme.",
+    "Mobile modal navigation preserves keyboard focus and restores focus on close.",
+    "Full global compliance remains honestly blocked until verified."
+  ],
+  "preserve": [
+    "Existing registry catalogue data, canonical PostgreSQL schema and user-managed PPM profiles.",
+    "Project Node LTS and pnpm latest choices; prior mise task definitions.",
+    "Existing CI and quality gates, without unapproved tooling replacement."
+  ],
+  "risks": [
+    "Installed OrchestKit checkout could not be updated because remote fetch execution was blocked.",
+    "Wide rule applicability does not establish full rule-by-rule compliance.",
+    "Formal PAO correlation unavailable without unique initiating conversation evidence.",
+    "React dependencies are present even though the current first-party app shell does not mount React; React Doctor and React Grab require compatibility/utility review."
+  ],
+  "verificationTargets": [
+    "pnpm verify",
+    "mise tasks validate --errors-only",
+    "project_standards.py check",
+    "browser-backed mobile drawer keydown wrapping and Escape/focus return",
+    "REGISTRY_ATLAS_ACCEPTANCE_ROUTE=components REGISTRY_ATLAS_ACCEPTANCE_VIEWPORT=mobile node scripts/check-browser-acceptance.mjs"
+  ],
+  "coverageGaps": [
+    {
+      "capability": "standards-closing-conformance",
+      "reason": "307 applicable standards remain unevaluated plus 4 pending tooling proposals; no global compliance assertion.",
+      "blocking": true
+    },
+    {
+      "capability": "pao-tracking",
+      "reason": "No current verified native ChatGPT conversation identity or initiating token exposed; tracking not claimed.",
+      "blocking": false
+    },
+    {
+      "capability": "upstream-rule-freshness",
+      "reason": "Remote OrchestKit fetch was blocked by the execution layer; installed checkout fingerprints remain the available authority.",
+      "blocking": false
+    }
+  ],
+  "handoffs": [],
+  "conformance": [
+    {
+      "capability": "standards-applicability",
+      "domain": "orchestration",
+      "reviewAuthority": "PPM engineering standards process and verified local project evidence",
+      "status": "pass",
+      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "evidenceRefs": [
+        ".design/standards.json",
+        "DESIGN.md"
+      ],
+      "findings": [],
+      "checkedBriefRevision": 3,
+      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+    },
+    {
+      "capability": "frontend-focus-remediation",
+      "domain": "frontend",
+      "reviewAuthority": "PPM engineering standards process and verified local project evidence",
+      "status": "pass",
+      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "evidenceRefs": [
+        "src/registry-explorer/ui/mobileSidebarFocus.ts",
+        "tests/registry-explorer/mobileSidebarFocus.test.ts",
+        "scripts/check-browser-acceptance.mjs"
+      ],
+      "findings": [],
+      "checkedBriefRevision": 3,
+      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+    },
+    {
+      "capability": "tooling-remediation",
+      "domain": "testing",
+      "reviewAuthority": "PPM engineering standards process and verified local project evidence",
+      "status": "blocked",
+      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "evidenceRefs": [
+        ".design/standards.json",
+        "mise.toml"
+      ],
+      "findings": [
+        "Four tooling proposals are pending approval"
+      ],
+      "checkedBriefRevision": 3,
+      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+    },
+    {
+      "capability": "standards-closing-conformance",
+      "domain": "orchestration",
+      "reviewAuthority": "PPM engineering standards process and verified local project evidence",
+      "status": "blocked",
+      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "evidenceRefs": [
+        ".design/standards.json"
+      ],
+      "findings": [
+        "311 outstanding project-wide compliance issues"
+      ],
+      "checkedBriefRevision": 3,
+      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+    }
+  ]
+}
