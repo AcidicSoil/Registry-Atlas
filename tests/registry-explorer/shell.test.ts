@@ -73,12 +73,19 @@ describe('registry explorer shell interactions', () => {
     expect(harness.aside.innerHTML).toContain('data-browse-layout="grid"');
     expect(harness.aside.innerHTML).toContain('data-browse-layout="list"');
     expect(harness.aside.innerHTML).toContain('data-catalog-sort-value="name"');
-    expect(harness.aside.innerHTML).toContain('shadcn directory');
+    expect(harness.aside.innerHTML).not.toContain('shadcn directory');
     expect(harness.aside.innerHTML).not.toContain('data-catalog-registry-select');
     expect(harness.aside.innerHTML).not.toContain('<details');
     expect(harness.contentBody.innerHTML).not.toContain('data-catalog-search');
     expect(harness.contentBody.innerHTML).not.toContain('data-catalog-sort');
     expect(harness.aside.innerHTML).not.toContain('catalog-sidebar-summary');
+  });
+
+  it('marks Authors instead of Components as active on the Authors route', () => {
+    const authors = setup('', '/Registry-Atlas/authors', undefined, 'Source Author');
+
+    expect(authors.activeNav.authors).toBe('page');
+    expect(authors.activeNav.discover).toBeNull();
   });
 
   it('routes top-level category rows into shareable first-class block filters', () => {
@@ -181,7 +188,7 @@ describe('registry explorer shell interactions', () => {
     expect(harness.aside.innerHTML).toContain('data-browse-layout="list"');
     expect(harness.aside.innerHTML).toContain('data-registry-sort-value="item-count-desc"');
     expect(harness.aside.innerHTML).toContain('data-registry-asset-value');
-    expect(harness.aside.innerHTML).toContain('shadcn directory');
+    expect(harness.aside.innerHTML).not.toContain('shadcn directory');
     expect(harness.aside.innerHTML).not.toContain('Canonical category');
     expect(harness.contentBody.innerHTML).not.toContain('registry-directory-controls');
 
@@ -626,7 +633,7 @@ function setup(
   const aside = root();
   const contentHeader = root();
   const contentBody = root();
-  const tabs = [tab('discover'), tab('registries'), tab('compare')];
+  const tabs = [tab('discover'), tab('registries'), tab('compare'), tab('authors')];
   const searchInput = input();
   // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
   // SAFETY: This is a test-only DOM adapter. Object(stub) preserves the
@@ -660,7 +667,9 @@ function setup(
     },
   });
 
-  return { aside, contentHeader, contentBody, tabs, searchInput, location, history, windowListeners };
+  const activeNav = Object.fromEntries(tabs.map(tab => [tab.getAttribute('data-view'), tab.getAttribute('aria-current')]));
+
+  return { aside, contentHeader, contentBody, tabs, searchInput, location, history, windowListeners, activeNav };
 }
 
 function asTestDomStub<T>(stub: FakeRoot | readonly FakeRoot[]): T {

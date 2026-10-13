@@ -78,26 +78,20 @@ export function renderRegistryDirectorySidebar(
 
   return `
     <nav class="registry-library-sidebar sidebar-browse-navigation" aria-label="Registry directory controls">
-      <div class="sidebar-nav-row sidebar-nav-row-active sidebar-source-row" aria-current="page">
-        <span class="sidebar-nav-row-icon sidebar-source-icon" aria-hidden="true"></span>
-        <span class="sidebar-nav-row-label">shadcn directory</span>
-        <span class="sidebar-nav-row-count">${options.registryCount.toLocaleString()}</span>
-      </div>
-
-      <section class="sidebar-nav-section" aria-labelledby="registry-sort-heading">
-        <p class="sidebar-nav-section-label" id="registry-sort-heading">Sort</p>
-        ${sortRow("item-count-desc", "Most items", options.sort)}
-        ${sortRow("name", "Name", options.sort)}
-      </section>
-
       <section class="sidebar-nav-section" aria-labelledby="registry-categories-heading">
-        <p class="sidebar-nav-section-label" id="registry-categories-heading">Categories</p>
+        <p class="sidebar-nav-section-label" id="registry-categories-heading">Asset types</p>
         ${assetKinds.map(kind => assetRow(
           kind,
           ASSET_LABELS[kind],
           options.assetCounts[kind],
           selectedKind === kind,
         )).join("")}
+      </section>
+
+      <section class="sidebar-nav-section" aria-labelledby="registry-sort-heading">
+        <p class="sidebar-nav-section-label" id="registry-sort-heading">Sort</p>
+        ${sortRow("item-count-desc", "Most items", options.sort)}
+        ${sortRow("name", "Name", options.sort)}
       </section>
     </nav>
   `;

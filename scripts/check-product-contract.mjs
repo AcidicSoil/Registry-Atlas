@@ -145,17 +145,20 @@ assert(promptSource.includes('Do the work:')
     && !promptSource.includes('Security, provenance, maintenance'),
   'copy-agent prompts must be concise operational prompts rather than defensive review gates');
 
-for (const nav of [
-  ['discover', 'Components'],
-  ['blocks', 'Blocks'],
-  ['pages', 'Pages'],
-  ['templates', 'Templates'],
-  ['themes', 'Themes'],
-  ['icons', 'Icons'],
-  ['registries', 'Registries'],
+for (const [view, path, label] of [
+  ['home', '/Registry-Atlas/', 'Featured'],
+  ['authors', '/Registry-Atlas/authors', 'Authors'],
+  ['registries', '/Registry-Atlas/registries', 'Libraries'],
+  ['discover', '/Registry-Atlas/components', 'Components'],
+  ['blocks', '/Registry-Atlas/blocks', 'Blocks'],
+  ['pages', '/Registry-Atlas/pages', 'Pages'],
+  ['templates', '/Registry-Atlas/templates', 'Templates'],
+  ['themes', '/Registry-Atlas/themes', 'Themes'],
+  ['icons', '/Registry-Atlas/icons', 'Icons'],
+  ['compare', '/Registry-Atlas/compare', 'Compare'],
 ]) {
-  assert(indexSource.includes(`data-view="${nav[0]}">${nav[1]}</button>`),
-    `primary navigation is missing ${nav[1]}`);
+  assert(indexSource.includes(`data-view="${view}" href="${path}">${label}</a>`),
+    `primary navigation is missing its ${label} route link`);
 }
 
 assert(!componentViewSource.includes('data-catalog-type-select')

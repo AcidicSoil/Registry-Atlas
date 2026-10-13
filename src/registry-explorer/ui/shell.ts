@@ -366,10 +366,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const fixedNamespace = fixedSidebarNamespace(route);
     const fixedRegistry = fixedNamespace !== null;
 
-    const sourceCount = fixedNamespace
-      ? (globalFacets.registries.find(item => item.value === fixedNamespace)?.count ?? 0)
-      : globalFacets.registries.length;
-
     return renderCatalogSidebarNavigation({
       ...contextFacets,
       registries: globalFacets.registries,
@@ -382,8 +378,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
       assetKinds: state.catalogAssetKinds,
     }, taxonomy, {
       showRegistrySort: !fixedRegistry,
-      sourceLabel: fixedNamespace ?? 'shadcn directory',
-      sourceCount,
       assetCounts: route.kind === 'registry' || route.kind === 'registry-assets'
         ? registryAssetCounts.get(route.namespace) : undefined,
     });
@@ -972,7 +966,12 @@ export function initRegistryExplorer(options: ShellOptions): void {
     );
   }
 
-  roots.tabs.forEach(tab => tab.addEventListener('click', () => {
+  roots.tabs.forEach(tab => tab.addEventListener('click', event => {
+    // SAFETY: Navigation click events originate from DOM click listeners attached to anchor controls.
+    const click = event as MouseEvent;
+
+    if (click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey) return;
+    event.preventDefault();
     const view = tab.getAttribute('data-view');
 
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
@@ -988,15 +987,20 @@ export function initRegistryExplorer(options: ShellOptions): void {
       registrySort: 'name' as RegistryDirectorySort,
     };
 
-    if (view === 'home') navigate({ kind: 'home' }, 'push', resetBrowse);
-    else if (view === 'discover') navigate({ kind: 'components' }, 'push', resetBrowse);
-    else if (view === 'blocks') navigate({ kind: 'blocks' }, 'push', resetBrowse);
-    else if (view === 'pages') navigate({ kind: 'pages' }, 'push', resetBrowse);
-    else if (view === 'templates') navigate({ kind: 'templates' }, 'push', resetBrowse);
-    else if (view === 'themes') navigate({ kind: 'themes' }, 'push', resetBrowse);
-    else if (view === 'icons') navigate({ kind: 'icons' }, 'push', resetBrowse);
-    else if (view === 'registries') navigate({ kind: 'registries' }, 'push', resetBrowse);
-    else if (view === 'compare') navigate({ kind: 'compare' }, 'push', resetBrowse);
+    const route = new Map<string, CatalogRoute>([
+      ['home', { kind: 'home' }],
+      ['discover', { kind: 'components' }],
+      ['blocks', { kind: 'blocks' }],
+      ['pages', { kind: 'pages' }],
+      ['templates', { kind: 'templates' }],
+      ['themes', { kind: 'themes' }],
+      ['icons', { kind: 'icons' }],
+      ['registries', { kind: 'registries' }],
+      ['authors', { kind: 'authors' }],
+      ['compare', { kind: 'compare' }],
+    ]).get(view ?? '');
+
+    if (route) navigate(route, 'push', resetBrowse);
   }));
 
   function routeForGlobalSearch(route: CatalogRoute): CatalogRoute {
@@ -1725,7 +1729,7 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
 }
 
 const ROUTE_PRIMARY_VIEWS = {
-  home: 'home', authors: 'discover', components: 'discover', component: 'discover',
+  home: 'home', authors: 'authors', components: 'discover', component: 'discover',
   explore: 'discover', registries: 'registries', registry: 'registries',
   'registry-assets': 'registries', blocks: 'blocks', block: 'blocks',
   pages: 'pages', page: 'pages', templates: 'templates', template: 'templates',

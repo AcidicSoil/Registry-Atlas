@@ -35,7 +35,7 @@ const facets: CatalogFacetSummary = {
 };
 
 describe('catalog browse sidebar', () => {
-  it('uses the exemplar source → sort → categories → access row order', () => {
+  it('uses the 21st.dev exemplar category-first rail with sorting and access below', () => {
     const html=renderCatalogSidebarNavigation(facets, {
       canonicalIds:['application/app-shell'],
       registryNames:['@beta'],
@@ -44,15 +44,14 @@ describe('catalog browse sidebar', () => {
       access:['free'],
     }, taxonomy);
 
-    const sourcePosition=html.indexOf('shadcn directory');
-    const sortPosition=html.indexOf('>Sort<');
-    const categoryPosition=html.indexOf('>Categories<');
-    const accessPosition=html.indexOf('>Access<');
+    const categoryPosition = html.indexOf('>Categories<');
+    const sortPosition = html.indexOf('>Sort<');
+    const accessPosition = html.indexOf('>Access<');
 
-    expect(sourcePosition).toBeGreaterThanOrEqual(0);
-    expect(sortPosition).toBeGreaterThan(sourcePosition);
-    expect(categoryPosition).toBeGreaterThan(sortPosition);
-    expect(accessPosition).toBeGreaterThan(categoryPosition);
+    expect(categoryPosition).toBeGreaterThanOrEqual(0);
+    expect(sortPosition).toBeGreaterThan(categoryPosition);
+    expect(accessPosition).toBeGreaterThan(sortPosition);
+    expect(html).not.toContain('shadcn directory');
 
     expect(html).toContain('data-catalog-sort-value="registry"');
     expect(html).toMatch(/data-catalog-sort-value="registry"[\s\S]*?aria-pressed="true"/);
@@ -75,7 +74,7 @@ describe('catalog browse sidebar', () => {
       access:[],
     }, taxonomy);
 
-    expect(html).toContain('shadcn directory');
+    expect(html).not.toContain('shadcn directory');
     expect(html).toContain('data-catalog-sort-value="name"');
     expect(html).not.toContain('data-catalog-registry-select');
     expect(html).not.toContain('data-sidebar-registry-search');

@@ -26,7 +26,7 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).not.toContain("registry-directory-controls");
   });
 
-  it("renders the exemplar-style registry source, sort, and category rows", () => {
+  it("renders category navigation before sort without duplicate directory source row", () => {
     const html = renderRegistryDirectorySidebar({
       layout: "list",
       sort: "item-count-desc",
@@ -43,7 +43,8 @@ describe("renderRegistryDirectory", () => {
       selectedAssetKinds: ["block"],
     });
 
-    expect(html).toContain("shadcn directory");
+    expect(html).not.toContain("shadcn directory");
+    expect(html.indexOf("Categories")).toBeLessThan(html.indexOf(">Sort<"));
     expect(html).toContain('data-registry-sort-value="item-count-desc"');
     expect(html).toMatch(/data-registry-sort-value="item-count-desc"[^>]*aria-pressed="true"/);
     expect(html).toContain('data-registry-asset-value="block"');
