@@ -15,6 +15,7 @@ export interface InstallQueueItemInput {
   label: string;
   registry: string;
   item: string;
+  path?: string;
 }
 
 export function addToInstallQueue(
@@ -29,6 +30,8 @@ export function addToInstallQueue(
     registry: item.registry,
     item: item.item,
   };
+
+  if (item.path) entry.path = item.path;
 
   if (!isValidInstallToken(entry.token) || queue.some(existing => existing.token === entry.token)) {
     return [...queue];

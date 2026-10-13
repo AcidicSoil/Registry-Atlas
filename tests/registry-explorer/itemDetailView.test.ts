@@ -115,23 +115,19 @@ describe('renderItemDetailView', () => {
     expect(body.innerHTML).not.toContain('Preview not published');
   });
 
-  it('renders concise install and inspection copy actions without defensive review boilerplate', () => {
+  it('shows a direct install command and setup action without badges, links, or old prompts', () => {
     const body = root();
-    renderItemDetailView(
-      root(),
-      body,
+    renderItemDetailView(root(), body,
       resolveRegistryItemDetailFromSummary([registryFixture()], '@delta', 'code-block'),
-      new Set(),
-    );
-
-    expect(body.innerHTML).toContain('Copy install-agent prompt');
-    expect(body.innerHTML).toContain('Copy inspection prompt');
-    expect(body.innerHTML).toContain('Copy link');
-    expect(body.innerHTML).toContain('Do the work:');
-    expect(body.innerHTML).toContain('Do not modify the repository.');
-    expect(body.innerHTML).not.toContain('possible adoption');
-    expect(body.innerHTML).not.toContain('Security, provenance, maintenance');
-    expect(body.innerHTML).not.toContain('Copy review prompt');
+      new Set());
+    expect(body.innerHTML).toContain('+ Add to setup');
+    expect(body.innerHTML).toContain('View setup');
+    expect(body.innerHTML).toContain('npx shadcn@latest add @delta/code-block');
+    expect(body.innerHTML).toContain('Install directly');
+    expect(body.innerHTML).not.toContain('Copy link');
+    expect(body.innerHTML).not.toContain('Copy inspection prompt');
+    expect(body.innerHTML).not.toContain('Copy install-agent prompt');
+    expect(body.innerHTML).not.toContain('discovery-item-meta');
   });
 
   it('renders grounded dependencies and files while omitting empty technical groups', () => {
@@ -180,7 +176,7 @@ describe('renderItemDetailView', () => {
     renderItemDetailView(header, body, result, new Set());
 
     expect(header.innerHTML).toContain('&lt;img src=x onerror=alert(1)&gt;');
-    expect(body.innerHTML).toContain('A&amp;B &lt;script&gt;alert(1)&lt;/script&gt;');
+    expect(header.innerHTML).toContain('A&amp;B &lt;script&gt;alert(1)&lt;/script&gt;');
     expect(body.innerHTML).toContain('registry/&lt;bad&gt;.tsx');
     expect(body.innerHTML).not.toContain('<script>alert(1)</script>');
   });

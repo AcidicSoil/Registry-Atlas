@@ -36,7 +36,6 @@ export function renderCatalogCollection(
       <h1>${escapeHtml(options.title)}</h1>
       <p>${escapeHtml(options.description)}</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url>Copy link</button>
   `;
 
   if (!result.items.length) {
@@ -76,7 +75,6 @@ export function renderEvidenceUnavailable(
       <h1>${escapeHtml(title)}</h1>
       <p>${escapeHtml(description)}</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url>Copy link</button>
   `;
   bodyRoot.innerHTML = `
     <div class="evidence-unavailable">

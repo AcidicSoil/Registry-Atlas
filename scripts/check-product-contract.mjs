@@ -140,10 +140,10 @@ assert(componentViewSource.includes('renderRegistryIcon')
     && detailViewSource.includes('renderRegistryIcon'),
   'catalog and item detail surfaces must render registry identity icons');
 
-assert(promptSource.includes('Do the work:')
-    && !promptSource.includes('possible adoption')
-    && !promptSource.includes('Security, provenance, maintenance'),
-  'copy-agent prompts must be concise operational prompts rather than defensive review gates');
+assert(promptSource.includes('buildSetupPrompt')
+    && promptSource.includes('Install command:')
+    && !promptSource.includes('buildInspectionPrompt'),
+  'setup instructions must be generated from selected install commands, without inspection prompts');
 
 for (const [view, path, label] of [
   ['home', '/Registry-Atlas/', 'Featured'],

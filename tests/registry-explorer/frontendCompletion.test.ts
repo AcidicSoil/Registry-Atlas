@@ -3,8 +3,7 @@ import { readFileSync } from 'node:fs';
 import { catalogRoutePath, parseCatalogRoute } from '../../src/registry-explorer/core/catalogRoutes';
 import type { CatalogComponent } from '../../src/registry-explorer/core/catalogQuery';
 import type { Registry } from '../../src/registry-explorer/core/registry.schema';
-import { buildInstallAgentPrompt, buildInspectionPrompt } from '../../src/registry-explorer/core/itemPrompts';
-import { buildBaseDetail } from '../../src/registry-explorer/core/registryItemDetail';
+import { buildSetupPrompt } from '../../src/registry-explorer/core/itemPrompts';
 import { renderCatalogComponentCard } from '../../src/registry-explorer/ui/catalogComponentsView';
 
 const BASE = '/Registry-Atlas/';
@@ -60,36 +59,35 @@ describe('frontend completion contract', () => {
     expect(html).not.toContain('Reference image');
   });
 
-  it('copies concise operational prompts without defensive review gates', () => {
-    const registry = component().registry;
+  it('has no inert Copy link action across any catalog route header', () => {
+    const views = [
+      'catalogAuthorsView', 'catalogCollectionView', 'catalogCompareView',
+      'catalogComponentsView', 'registryCollectionView', 'registryDirectoryView',
+      'itemDetailView',
+    ];
 
-    const detail = buildBaseDetail(registry, {
-      name: 'dashboard',
-      slug: 'dashboard',
-      title: 'Dashboard',
-      description: 'Dashboard block.',
-      source: 'fixture',
-      provenance: 'fixture',
-      catalogStatus: 'available',
-      routeEligible: true,
-      rawItemUrl: 'https://delta.example/r/dashboard.json',
-      dependencies: ['react'],
-      files: [{ path: 'registry/dashboard.tsx', type: 'registry:block' }],
-    });
+    for (const name of views) {
+      const source = readFileSync(new URL(`../../src/registry-explorer/ui/${name}.ts`, import.meta.url), 'utf8');
 
-    const install = buildInstallAgentPrompt(detail) ?? '';
-    const inspect = buildInspectionPrompt(detail) ?? '';
+      expect(source).not.toContain('data-copy-current-url');
+      expect(source).not.toContain('Copy link');
+    }
 
-    expect(install).toContain('Install Dashboard from @delta');
-    expect(install).toContain('npx shadcn@latest add @delta/dashboard');
-    expect(install).not.toContain('If the item is unsafe');
-    expect(install).not.toContain('do not install it');
-    expect(install).not.toContain('approval');
-    expect(inspect).toContain('Inspect Dashboard from @delta');
-    expect(inspect).toContain('Do not modify the repository.');
-    expect(inspect).not.toContain('possible adoption');
-    expect(inspect).not.toContain('Security, provenance, maintenance');
+    const shell = readFileSync(new URL('../../src/registry-explorer/ui/shell.ts', import.meta.url), 'utf8');
+
+    expect(shell).not.toContain('data-copy-current-url');
   });
+
+  it('builds a setup brief for selected components without an inspection prompt', () => {
+    const text = buildSetupPrompt([
+      { token: '@delta/dashboard', label: 'Dashboard', registry: '@delta', item: 'dashboard' },
+    ]);
+
+    expect(text).toContain('npx shadcn@latest add @delta/dashboard');
+    expect(text).toContain('wait for my approval');
+    expect(text).not.toContain('npx shadcn@latest view');
+  });
+
 });
 
 function component(): CatalogComponent {

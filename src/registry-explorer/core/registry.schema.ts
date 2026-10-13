@@ -178,6 +178,7 @@ export type InstallActionState = EnabledInstallActionState | DisabledInstallActi
 
 export interface InstallQueueEntry {
   token: string;
+  path?: string;
   label: string;
   registry: string;
   item: string;

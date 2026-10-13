@@ -11,6 +11,7 @@ const ROUTE_LABELS = {
   templates: 'Templates', themes: 'Themes', icons: 'Icons',
   registries: 'Registries', authors: 'Authors', compare: 'Compare',
   explore: 'Explore', 'theme-editor': 'Theme editor',
+  setup: 'Setup', 'setup-review': 'Review setup',
   'icon-category': 'Category', 'icon-family': 'Family',
 } satisfies ROUTELABELSLookupContract;
 
@@ -61,6 +62,7 @@ function otherBreadcrumbs(route: Exclude<CatalogRoute, RegistryRoute>): Crumb[] 
       return [{ label: 'Icons', route: { kind: 'icons' } }, { label: route.family }];
     case 'icon-category':
       return [{ label: 'Icons', route: { kind: 'icons' } }, { label: route.category }];
+    case 'setup-review': return [{ label: 'Setup', route: { kind: 'setup' } }, { label: 'Review' }];
     case 'theme-editor':
       return [{ label: 'Themes', route: { kind: 'themes' } }, { label: 'Editor' }];
     case 'explore':

@@ -23,10 +23,11 @@ import { loadRegistryItemDetailFromCatalogIndex } from '../data/loadRegistryItem
 import {
   addToInstallQueue,
   buildInstallQueueBatchState,
-  clearInstallQueue,
   removeFromInstallQueue,
 } from '../core/installQueue';
 import { renderItemDetailView } from './itemDetailView';
+import { renderSetupView } from './setupView';
+import { SETUP_DRAFT_STORAGE_KEY, parseSetupDraft, serializeSetupDraft } from '../core/setupDraft';
 import { escapeHtml, renderRegistryHomepageLink } from './renderSafety';
 import { buildCatalogFacetSummary, catalogDistinctItemCount, queryCatalogComponents } from '../core/catalogQuery';
 import {
@@ -85,6 +86,7 @@ export interface ShellOptions {
     sidebarContext?: HTMLElement;
     sidebarLayout?: HTMLElement;
     sidebarCollectionCurrent?: HTMLElement;
+    setupCount?: HTMLElement;
   };
 }
 
@@ -101,6 +103,7 @@ interface AppState {
   compareRegistryNames: string[];
   searchTerm: string;
   installQueue: InstallQueueEntry[];
+  setupInstructions: string;
   copyFeedback: CopyFeedback | null;
   facetSearchTerms: Record<string, string>;
   discoveryPage: number;
@@ -168,10 +171,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
   const itemDetailCache = new Map<string, RegistryItemDetailResult>();
   const itemDetailLoading = new Set<string>();
 
+  const setupDraft = readSavedSetup();
+  let replacementToken = readPendingReplacement(setupDraft.items);
+
   let state: AppState = {
     ...hydrateStateFromUrl(registries),
     returnRoute: null,
-    installQueue: [],
+    installQueue: setupDraft.items,
+    setupInstructions: setupDraft.instructions,
     copyFeedback: null,
     facetSearchTerms: {},
   };
@@ -188,12 +195,54 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     state = { ...state, ...partial };
 
+    if (partial.installQueue !== undefined || partial.setupInstructions !== undefined) saveSetupDraft();
+
     if (routeChanged && partial.copyFeedback === undefined) state.copyFeedback = null;
     syncUrlState(state, historyMode);
     render();
 
     if (focusIdentity) restoreControlFocus(focusIdentity);
   };
+
+  const replacementStorageKey = 'registry-atlas.setup.pending-replacement.v1';
+
+  function readPendingReplacement(items: readonly InstallQueueEntry[]): string | null {
+    try {
+      const token = window.sessionStorage?.getItem('registry-atlas.setup.pending-replacement.v1');
+
+      return items.some(item => item.token === token) ? token : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function setPendingReplacement(token: string | null): void {
+    replacementToken = token;
+
+    try {
+      if (token) window.sessionStorage?.setItem(replacementStorageKey, token);
+      else window.sessionStorage?.removeItem(replacementStorageKey);
+    } catch {
+      // Navigation within this page still retains the replacement selection.
+    }
+  }
+
+  function saveSetupDraft(): void {
+    try {
+      window.localStorage?.setItem(SETUP_DRAFT_STORAGE_KEY,
+        serializeSetupDraft({ items: state.installQueue, instructions: state.setupInstructions }));
+    } catch {
+      // Persistence may be blocked; the current session remains usable.
+    }
+  }
+
+  function readSavedSetup() {
+    try {
+      return parseSetupDraft(window.localStorage?.getItem(SETUP_DRAFT_STORAGE_KEY) ?? null);
+    } catch {
+      return parseSetupDraft(null);
+    }
+  }
 
   function navigate(
     route: CatalogRoute,
@@ -412,18 +461,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
     return filteredSidebarNavigation(contextFacets, globalFacets);
   }
 
-  function renderSidebar(queued: ReadonlySet<string>, batchCommand: string | null): void {
+  function renderSidebar(queued: ReadonlySet<string>, _batchCommand: string | null): void {
     renderSidebarContext();
 
-    const queueMarkup = queued.size > 0
-      ? '<section class="catalog-sidebar-queue">' +
-          '<div class="queue-heading"><span>Install queue</span><strong>' + queued.size + '</strong></div>' +
-          '<button class="install-button install-button-primary" type="button" data-copy-text="' +
-            escapeHtml(batchCommand ?? '') + '" data-copy-label="Batch command copied"' +
-            (batchCommand ? '' : ' disabled') + '>Copy batch</button>' +
-          '<button class="install-button" type="button" data-queue-clear>Clear</button>' +
-        '</section>'
-      : '';
+    if (roots.setupCount) roots.setupCount.textContent = String(queued.size);
 
     const navigation = sidebarNavigation();
 
@@ -438,7 +479,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (roots.sidebarLayout) roots.sidebarLayout.innerHTML = layoutMarkup;
     roots.aside.innerHTML = (roots.sidebarLayout ? '' : layoutMarkup) +
       '<div class="sidebar-scroll-pane"><div class="desktop-browse-rail">' +
-      navigation + queueMarkup +
+      navigation +
       '</div></div>';
   }
 
@@ -539,6 +580,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderRouteContent(queued: ReadonlySet<string>): void {
+    if (state.route.kind === 'setup' || state.route.kind === 'setup-review') {
+      renderSetupView(roots.contentHeader, roots.contentBody,
+        state.installQueue, state.setupInstructions, state.route.kind === 'setup-review');
+
+      return;
+    }
+
     if (renderLandingRoute()) return;
 
     if (renderDetailsAndThemes(queued)) return;
@@ -571,6 +619,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
       }
 
       roots.contentHeader.insertAdjacentHTML('beforeend', renderCopyFeedback(state.copyFeedback));
+
+      renderReplacementNotice();
+  }
+
+  function renderReplacementNotice(): void {
+    if (!replacementToken) return;
+
+    roots.contentHeader.insertAdjacentHTML('beforeend',
+      '<div class="setup-replacement-notice" role="status">Choose a replacement component.' +
+      '<button class="install-button" type="button" data-setup-cancel-replace>Cancel</button></div>');
   }
 
   function render(): void {
@@ -1046,7 +1104,17 @@ export function initRegistryExplorer(options: ShellOptions): void {
   });
 
   roots.contentBody.addEventListener('input', event => {
+    // SAFETY: The current target belongs to the app-owned content surface.
+    const edited = event.target as HTMLInputElement;
+
+    if (edited.hasAttribute?.('data-setup-instructions')) {
+      state.setupInstructions = edited.value.slice(0, 2000);
+      saveSetupDraft();
+
+      return;
+    }
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
+
     const target = event.target as HTMLInputElement;
     const control = target.closest('[data-compare-search]');
     const dimension = control?.getAttribute('data-compare-search');
@@ -1457,17 +1525,51 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (handleCatalogItemClick(target)) return;
   }
 
+  function handleSetupNavigation(target: HTMLElement): boolean {
+    if (target.closest('[data-setup-review]')) {
+      if (state.installQueue.length) navigate({ kind: 'setup-review' });
+
+      return true;
+    }
+
+    if (target.closest('[data-setup-edit]')) {
+      navigate({ kind: 'setup' });
+
+      return true;
+    }
+
+    const replace = target.closest('[data-setup-replace]');
+
+    if (replace) {
+      const token = replace.getAttribute('data-setup-replace');
+
+      if (!state.installQueue.some(item => item.token === token)) return true;
+
+      setPendingReplacement(token);
+      navigate({ kind: 'components' });
+
+      return true;
+    }
+
+    if (target.closest('[data-setup-cancel-replace]')) {
+      setPendingReplacement(null);
+      render();
+
+      return true;
+    }
+
+    return false;
+  }
+
   function handleInstall(target: HTMLElement): boolean {
-    return handleInstallCopy(target) || handleInstallQueue(target);
+    return handleSetupNavigation(target) || handleInstallCopy(target) || handleInstallQueue(target);
   }
 
   function handleInstallCopy(target: HTMLElement): boolean {
-    const copy = target.closest('[data-copy-text], [data-copy-current-url], [data-copy-command]');
+    const copy = target.closest('[data-copy-text], [data-copy-command]');
 
     if (copy) {
-      const text = copy.hasAttribute('data-copy-current-url')
-        ? window.location.href
-        : (copy.getAttribute('data-copy-text') ?? copy.getAttribute('data-copy-command') ?? '');
+      const text = copy.getAttribute('data-copy-text') ?? copy.getAttribute('data-copy-command') ?? '';
 
       if (text) void copyText(text, copy.getAttribute('data-copy-label') ?? 'Copied.');
 
@@ -1485,8 +1587,12 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const add = target.closest('[data-queue-add]');
 
     if (add) {
+      const remaining = replacementToken
+        ? removeFromInstallQueue(state.installQueue, replacementToken) : state.installQueue;
+
+      setPendingReplacement(null);
       setState({
-        installQueue: addToInstallQueue(state.installQueue, {
+        installQueue: addToInstallQueue(remaining, {
           action: {
             status: 'enabled',
             token: add.getAttribute('data-queue-add') ?? '',
@@ -1498,6 +1604,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           label: add.getAttribute('data-queue-label') ?? '',
           registry: add.getAttribute('data-queue-registry') ?? '',
           item: add.getAttribute('data-queue-item') ?? '',
+          path: window.location.pathname,
         }),
       });
 
@@ -1516,11 +1623,6 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return true;
     }
 
-    if (target.closest('[data-queue-clear]')) {
-      setState({ installQueue: clearInstallQueue() });
-
-      return true;
-    }
 
     return false;
   }
@@ -1583,7 +1685,7 @@ function sortRegistriesFromLocation(params: URLSearchParams): RegistryDirectoryS
 
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<AppState, 'installQueue' | 'copyFeedback' | 'returnRoute' | 'facetSearchTerms'> {
+): Omit<AppState, 'installQueue' | 'setupInstructions' | 'copyFeedback' | 'returnRoute' | 'facetSearchTerms'> {
   const params = new URLSearchParams(window.location.search);
   const browse = parseCatalogBrowseQuery(params);
   const route = routeFromLocation(params);

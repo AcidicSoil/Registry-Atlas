@@ -3928,3 +3928,236 @@ main {
     padding-top: 18px;
   }
 }
+
+/* Setup workflow: keep direct installation available without the former prompt/button cluster. */
+.item-title-description {
+  margin: 8px 0 0;
+  max-width: 70ch;
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+
+.setup-detail-controls {
+  display: grid;
+  width: min(100%, 700px);
+  gap: 16px;
+}
+
+.setup-detail-main-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.setup-detail-main-actions > .install-button {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.setup-detail-cart-link {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.setup-manual-command {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--secondary) 20%, transparent);
+}
+
+.setup-command-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted-foreground);
+}
+
+.setup-command-line,
+.setup-review-command {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.setup-command-line code,
+.setup-review-command code,
+.setup-review-prompt {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--secondary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--foreground);
+  overflow-wrap: anywhere;
+}
+
+.setup-command-more {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.setup-command-more summary {
+  width: max-content;
+  cursor: pointer;
+}
+
+.setup-command-more p { margin: 8px 0 0; }
+.setup-command-more code { color: var(--foreground); }
+.setup-detail-unavailable p { margin: 0 0 8px; }
+
+.setup-header-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--foreground);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.setup-header-link:hover,
+.setup-header-link:focus-visible { background: var(--secondary); }
+.setup-header-count { color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+
+.setup-page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.setup-page-heading h1 { margin: 0 0 8px; }
+.setup-page-heading p { margin: 0; color: var(--muted-foreground); }
+.setup-page-heading > a { text-decoration: none; }
+
+.setup-page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(245px, 310px);
+  gap: 28px;
+  max-width: 1120px;
+  align-items: start;
+}
+
+.setup-page-content { min-width: 0; }
+.setup-selection-list { border-top: 1px solid var(--border); }
+
+.setup-selection {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.setup-selection-description {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.setup-selection-description a,
+.setup-selection-description strong {
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.setup-selection-description a:hover { text-decoration: underline; }
+.setup-selection-description span { color: var(--muted-foreground); font-size: 12px; }
+.setup-selection-description code { font-size: 12px; color: var(--muted-foreground); overflow-wrap: anywhere; }
+
+.setup-selection-actions { display: flex; gap: 8px; flex: 0 0 auto; }
+.setup-selection-actions button { white-space: nowrap; }
+
+.setup-instructions-label {
+  display: block;
+  margin: 24px 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+[data-setup-instructions] {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  min-height: 104px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.setup-instructions-help { color: var(--muted-foreground); font-size: 12px; }
+
+.setup-summary {
+  display: grid;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.setup-summary h2,
+.setup-review-section h2 { margin: 0; font-size: 16px; }
+
+.setup-summary-count {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-block: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.setup-summary > p,
+.setup-review-section > p { color: var(--muted-foreground); font-size: 13px; margin: 0; }
+
+.setup-empty { display: grid; justify-items: start; gap: 14px; padding: 24px 0; }
+.setup-empty h2, .setup-empty p { margin: 0; }
+.setup-empty p { color: var(--muted-foreground); }
+.setup-empty a { text-decoration: none; }
+
+.setup-review-content { display: grid; gap: 28px; }
+.setup-review-section { display: grid; gap: 14px; min-width: 0; }
+.setup-review-section > button { justify-self: start; }
+.setup-review-prompt { white-space: pre-wrap; line-height: 1.65; max-height: 370px; overflow: auto; }
+
+.setup-replacement-notice {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+@media (max-width: 800px) {
+  .setup-page-layout { grid-template-columns: minmax(0, 1fr); }
+  .setup-summary { grid-row: 1; }
+}
+@media (max-width: 520px) {
+  .setup-selection { align-items: flex-start; flex-direction: column; }
+  .setup-command-line, .setup-review-command { align-items: stretch; flex-direction: column; }
+  .setup-command-line button, .setup-review-command button { align-self: flex-start; }
+}

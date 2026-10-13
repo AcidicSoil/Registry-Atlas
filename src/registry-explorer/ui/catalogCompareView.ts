@@ -17,7 +17,6 @@ export function renderCatalogCompare(
       <h1>Compare</h1>
       <p>Compare component availability across registries.</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url data-copy-label="Comparison link copied">Copy link</button>
   `;
 
   bodyRoot.innerHTML = `

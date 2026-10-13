@@ -1,61 +1,38 @@
-import type { RegistryItemDetail } from './registryItemDetail.ts';
+import { buildInstallQueueBatchState } from './installQueue.ts';
+import type { InstallQueueEntry } from './registry.schema.ts';
 
-export function buildInstallAgentPrompt(detail: RegistryItemDetail): string | null {
-  if (detail.installAction.status !== 'enabled') return null;
+/** One installation brief for the user's selected components. No inspection prompt or agent execution. */
+export function buildSetupPrompt(
+  items: readonly InstallQueueEntry[],
+  instructions = '',
+): string | null {
+  const batch = buildInstallQueueBatchState(items);
 
-  return [
-    `Install ${detail.title} from ${detail.namespace} into this repository.`,
+  if (!batch.command) return null;
+
+  const acceptedTokens = new Set(batch.tokens);
+  const selected = items.filter(item => acceptedTokens.has(item.token));
+
+  const lines = [
+    'Set up these registry components in my current project.',
     '',
-    `Inspect: ${detail.installAction.inspectCommand}`,
-    `Install: ${detail.installAction.installCommand}`,
-    ...groundedMetadata(detail),
+    'Components:',
+    ...selected.map(item => `- ${item.label} (${item.token}), from ${item.registry}`),
     '',
-    'Do the work:',
-    '1. Inspect the item and the local files it will touch.',
-    '2. Run the install command.',
-    '3. Resolve only direct integration conflicts and keep unrelated code unchanged.',
-    '4. Run the relevant repository verification commands.',
+    'Install command:',
+    batch.command,
     '',
-    'Return the files changed, dependency changes, and verification results.',
-  ].join('\n');
-}
+    'Check the project framework, package manager, component paths, and existing dependencies.',
+    'Explain any compatibility issue or file replacement before changing the project.',
+    'Show the proposed installation changes and wait for my approval.',
+    'After approval, install the selected components and integrate them with existing code.',
+    'Keep unrelated files unchanged. Run the relevant project checks.',
+    'Report the actual file changes, dependency changes, and test results.',
+  ];
 
-export function buildInspectionPrompt(detail: RegistryItemDetail): string | null {
-  const metadata = groundedMetadata(detail);
+  const notes = instructions.trim();
 
-  const inspectCommand = detail.installAction.status === 'enabled'
-    ? `Inspect: ${detail.installAction.inspectCommand}`
-    : null;
+  if (notes) lines.push('', 'My requirements:', notes);
 
-  if (!metadata.length && !inspectCommand) return null;
-
-  return [
-    `Inspect ${detail.title} from ${detail.namespace}.`,
-    'Do not modify the repository.',
-    inspectCommand,
-    ...metadata,
-    '',
-    'Return what the item provides, the files and dependencies it would add or change,',
-    'the direct integration points in this repository, and any unresolved source facts.',
-  ].filter((line): line is string => line !== null).join('\n');
-}
-
-function groundedMetadata(detail: RegistryItemDetail): string[] {
-  const lines: string[] = [];
-
-  if (detail.dependencies.length) lines.push(`Dependencies: ${detail.dependencies.join(', ')}`);
-
-  if (detail.devDependencies.length) lines.push(`Dev dependencies: ${detail.devDependencies.join(', ')}`);
-
-  if (detail.registryDependencies.length) {
-    lines.push(`Registry dependencies: ${detail.registryDependencies.join(', ')}`);
-  }
-
-  if (detail.files.length) lines.push(`Files: ${detail.files.map(file => file.path).join(', ')}`);
-
-  if (detail.warnings.length) lines.push(`Warnings: ${detail.warnings.join(', ')}`);
-
-  if (detail.evidenceUrl) lines.push(`Evidence: ${detail.evidenceUrl}`);
-
-  return lines;
+  return lines.join('\n');
 }

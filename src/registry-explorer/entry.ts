@@ -76,6 +76,7 @@ async function bootstrap() {
     const sidebarLayout = document.getElementById('sidebarLayout') as HTMLElement;
     // SAFETY: This collection label is a required element in the HTML shell.
     const sidebarCollectionCurrent = document.getElementById('sidebarCollectionCurrent') as HTMLElement;
+    const setupCount = document.getElementById('setupCount');
     const tabs = document.querySelectorAll('.primary-nav [data-view]');
     setupMobileSidebarControls();
 
@@ -104,6 +105,7 @@ async function bootstrap() {
           ...Object.fromEntries(sidebarContext ? [['sidebarContext', sidebarContext]] : []),
           sidebarLayout,
           sidebarCollectionCurrent,
+          ...Object.fromEntries(setupCount ? [['setupCount', setupCount]] : []),
         },
       });
     } else {

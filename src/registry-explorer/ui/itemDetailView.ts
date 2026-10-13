@@ -1,4 +1,3 @@
-import { buildInstallAgentPrompt, buildInspectionPrompt } from '../core/itemPrompts.ts';
 import type { RegistryItemDetailResult, RegistryItemDetail } from '../core/registryItemDetail.ts';
 import type { InstallActionState, RegistryItemSummaryFile } from '../core/registry.schema.ts';
 import type { CatalogComponent } from '../core/catalogQuery.ts';
@@ -67,6 +66,7 @@ function renderHeader(
                 aria-label="Open upstream component page for ${escapeHtml(detail.slug)}">${escapeHtml(detail.slug)} ↗</a>`
               : `<span title="Upstream component page unavailable">${escapeHtml(detail.slug)}</span>`}
           </p>
+          ${detail.description ? `<p class="item-title-description">${escapeHtml(detail.description)}</p>` : ''}
         </div>
       </div>
     </div>
@@ -86,14 +86,7 @@ function renderDetailBody(
     <article class="item-detail-page">
       <section class="item-detail-hero">
         <div class="item-detail-summary">
-          ${detail.description
-            ? `<p>${escapeHtml(detail.description)}</p>`
-            : '<p class="muted">No description is available.</p>'}
-          <div class="item-action-row">
-            ${renderInstallActions(detail.installAction, detail, queuedTokens)}
-          </div>
-          ${renderPromptActions(detail)}
-          ${renderEvaluationLabels(detail)}
+          ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           ${fallback}
         </div>
       </section>
@@ -199,67 +192,46 @@ function renderInstallActions(
   queuedTokens: ReadonlySet<string>,
 ): string {
   if (action.status === 'disabled') {
-    return `
-      <div class="install-actions install-actions-disabled" aria-label="Install actions unavailable">
-        <button class="install-button" type="button" disabled>Copy install</button>
-        <button class="install-button" type="button" disabled>Inspect first</button>
-        <span class="install-disabled-reason">${escapeHtml(action.disabledReason)}</span>
-      </div>
-    `;
+    return `<div class="setup-detail-unavailable">
+      <p>Setup unavailable for this item.</p>
+      <p class="muted">${escapeHtml(action.disabledReason)}</p>
+    </div>`;
   }
 
   const queued = queuedTokens.has(action.token);
 
-  const queueButton = queued
-    ? `<button class="install-button" type="button" data-queue-remove="${escapeHtml(action.token)}">Remove from queue</button>`
-    : `<button class="install-button" type="button" data-queue-add="${escapeHtml(action.token)}"
+  const addButton = queued
+    ? `<button class="install-button" type="button"
+        data-queue-remove="${escapeHtml(action.token)}">Remove from setup</button>`
+    : `<button class="install-button install-button-primary" type="button"
+        data-queue-add="${escapeHtml(action.token)}"
         data-queue-label="${escapeHtml(detail.title)}"
         data-queue-registry="${escapeHtml(detail.namespace)}"
         data-queue-item="${escapeHtml(detail.slug)}"
         data-queue-install="${escapeHtml(action.installCommand)}"
         data-queue-inspect="${escapeHtml(action.inspectCommand)}"
-        data-queue-route="${escapeHtml(action.route)}">Add to queue</button>`;
+        data-queue-route="${escapeHtml(action.route)}">+ Add to setup</button>`;
 
-  return `
-    <div class="install-actions" aria-label="Install actions for ${escapeHtml(detail.title)}">
-      <code class="install-token">${escapeHtml(action.token)}</code>
-      <button class="install-button" type="button"
-        data-copy-text="${escapeHtml(action.inspectCommand)}"
-        data-copy-label="Inspect command copied">Inspect first</button>
-      <button class="install-button install-button-primary" type="button"
-        data-copy-text="${escapeHtml(action.installCommand)}"
-        data-copy-label="Install command copied">Copy install</button>
-      ${queueButton}
+  return `<div class="setup-detail-controls">
+    <div class="setup-detail-main-actions">
+      ${addButton}
+      <a class="install-button setup-detail-cart-link" href="/Registry-Atlas/setup"
+        data-catalog-route="/Registry-Atlas/setup">View setup</a>
     </div>
-  `;
-}
-
-function renderPromptActions(detail: RegistryItemDetail): string {
-  const agentPrompt = buildInstallAgentPrompt(detail);
-  const inspectionPrompt = buildInspectionPrompt(detail);
-
-  return `
-    <div class="item-prompt-actions" aria-label="Copy item context">
-      ${agentPrompt ? `<button class="install-button" type="button"
-        data-copy-text="${escapeHtml(agentPrompt)}"
-        data-copy-label="Agent prompt copied">Copy install-agent prompt</button>` : ''}
-      ${inspectionPrompt ? `<button class="install-button" type="button"
-        data-copy-text="${escapeHtml(inspectionPrompt)}"
-        data-copy-label="Inspection prompt copied">Copy inspection prompt</button>` : ''}
-      <button class="install-button" type="button" data-copy-current-url>Copy link</button>
+    <div class="setup-manual-command">
+      <div class="setup-command-title">Install directly</div>
+      <div class="setup-command-line">
+        <code>${escapeHtml(action.installCommand)}</code>
+        <button class="install-button" type="button"
+          data-copy-text="${escapeHtml(action.installCommand)}"
+          data-copy-label="Install command copied">Copy</button>
+      </div>
+      <details class="setup-command-more">
+        <summary>View component details</summary>
+        <p>Registry token: <code>${escapeHtml(action.token)}</code></p>
+        <p>View command: <code>${escapeHtml(action.inspectCommand)}</code></p>
+      </details>
     </div>
-  `;
-}
-
-function renderEvaluationLabels(detail: RegistryItemDetail): string {
-  const labels = [
-    `${detail.dependencies.length} dependencies`,
-    `${detail.registryDependencies.length} registry dependencies`,
-    `${detail.files.length} files`,
-  ];
-
-  return `<div class="discovery-item-meta" aria-label="Item summary">
-    ${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}
   </div>`;
 }
 

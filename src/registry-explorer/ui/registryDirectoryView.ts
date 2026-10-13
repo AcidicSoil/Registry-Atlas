@@ -53,7 +53,6 @@ export function renderRegistryDirectory(
       <h1>Registries</h1>
       <p>${result.total.toLocaleString()} registries.</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry directory link copied">Copy link</button>
   `;
 
   const layout = options.layout ?? "grid";

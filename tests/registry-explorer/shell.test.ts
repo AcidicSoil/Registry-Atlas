@@ -269,19 +269,18 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).toContain('@delta');
   });
 
-  it('routes header copy actions and announces successful feedback', async () => {
+  it('copies install commands and announces feedback', async () => {
     const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
-    const harness = setup('?view=compare');
+    const harness = setup('?view=item&registry=%40delta&item=code-block');
     vi.stubGlobal('navigator', { clipboard });
-
-    harness.contentHeader.dispatch('click', target({ 'data-copy-current-url': '' }));
+    harness.contentBody.dispatch('click', target({
+      'data-copy-text': 'npx shadcn@latest add @delta/code-block',
+      'data-copy-label': 'Install command copied',
+    }));
     await Promise.resolve();
     await Promise.resolve();
-
-    expect(clipboard.writeText).toHaveBeenCalledWith(harness.location.href);
+    expect(clipboard.writeText).toHaveBeenCalledWith('npx shadcn@latest add @delta/code-block');
     expect(harness.contentHeader.innerHTML).toContain('role="status"');
-    expect(harness.contentHeader.innerHTML).toContain('aria-live="polite"');
-    expect(harness.contentHeader.innerHTML).not.toContain(`<code>${harness.location.href}</code>`);
   });
 
   it('announces clipboard denial on the item surface', async () => {
@@ -289,7 +288,7 @@ describe('registry explorer shell interactions', () => {
     const harness = setup('?view=item&registry=%40delta&item=code-block');
     vi.stubGlobal('navigator', { clipboard });
 
-    harness.contentBody.dispatch('click', target({ 'data-copy-current-url': '' }));
+    harness.contentBody.dispatch('click', target({ 'data-copy-text': 'npx shadcn@latest add @delta/code-block' }));
     await Promise.resolve();
     await Promise.resolve();
 
@@ -545,11 +544,11 @@ describe('registry explorer shell interactions', () => {
       fetchImpl as typeof fetch,
     );
 
-    expect(harness.contentBody.innerHTML).toContain('No description is available.');
+    expect(harness.contentHeader.innerHTML).not.toContain('Loaded from the upstream registry item JSON.');
 
     await vi.waitFor(() => {
       expect(harness.contentHeader.innerHTML).toContain('Catalog Only Loaded');
-      expect(harness.contentBody.innerHTML).toContain('Loaded from the upstream registry item JSON.');
+      expect(harness.contentHeader.innerHTML).toContain('Loaded from the upstream registry item JSON.');
       expect(harness.contentBody.innerHTML).toContain('<code>react</code>');
     });
     expect(fetchImpl).toHaveBeenCalledTimes(2);

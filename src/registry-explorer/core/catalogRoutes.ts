@@ -29,7 +29,9 @@ export type CatalogRoute =
   | { kind: "icons" }
   | { kind: "icon-family"; family: string }
   | { kind: "icon-category"; category: string }
-  | { kind: "compare" };
+  | { kind: "compare" }
+  | { kind: "setup" }
+  | { kind: "setup-review" };
 
 export type CatalogSort = "name" | "registry";
 
@@ -84,6 +86,8 @@ function routeForOneSegment(segment: string): CatalogRoute | null {
 
 function routeForTwoSegments(first: string, second: string): CatalogRoute | null {
   if (first === 'themes' && second === 'editor') return { kind: 'theme-editor' };
+
+  if (first === 'setup' && second === 'review') return { kind: 'setup-review' };
 
   if (first === 'icons') return { kind: 'icon-family', family: second };
 
@@ -141,7 +145,7 @@ export function parseCatalogRoute(pathname: string, basePath = '/'): CatalogRout
 
   if (decoded.length === 0) return { kind: 'home' };
 
-  if (decoded.length === 1) return routeForOneSegment(decoded[0]!);
+  if (decoded.length === 1) return decoded[0] === 'setup' ? { kind: 'setup' } : routeForOneSegment(decoded[0]!);
 
   if (decoded.length === 2) return routeForTwoSegments(decoded[0]!, decoded[1]!);
 
@@ -211,8 +215,16 @@ function relativeSimplePath(route: CatalogRoute): string | null {
     case 'theme-editor': return 'themes/editor';
     case 'icon-family': return `icons/${encodeSegment(route.family)}`;
     case 'icon-category': return `icons/c/${encodeSegment(route.category)}`;
-    default: return null;
+    default: return relativeSetupPath(route);
   }
+}
+
+function relativeSetupPath(route: CatalogRoute): string | null {
+  if (route.kind === 'setup') return 'setup';
+
+  if (route.kind === 'setup-review') return 'setup/review';
+
+  return null;
 }
 
 function relativeRegistryPath(route: CatalogRoute): string {

@@ -17,6 +17,14 @@ configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("cat
 const BASE = "/Registry-Atlas/";
 
 describe("catalogRoutes", () => {
+  it('round-trips the local setup and review routes', () => {
+    for (const kind of ['setup', 'setup-review'] as const) {
+      const path = catalogRoutePath({ kind }, BASE);
+
+      expect(parseCatalogRoute(path, BASE)).toEqual({ kind });
+    }
+  });
+
   it("keeps the project root distinct from /components", () => {
     expect(parseCatalogRoute("/Registry-Atlas/", BASE)).toEqual({ kind: "home" });
     expect(parseCatalogRoute("/Registry-Atlas/components", BASE)).toEqual({ kind: "components" });

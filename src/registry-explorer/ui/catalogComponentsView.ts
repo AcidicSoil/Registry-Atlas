@@ -40,7 +40,6 @@ export function renderCatalogComponents(
       <h1>Components</h1>
       <p>${escapeHtml(countLabel)} across published registries.</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url data-copy-label="Catalog link copied">Copy link</button>
   `;
 
   const emptyCopy = options.searchTerm.trim()

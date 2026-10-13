@@ -18,7 +18,6 @@ export function renderCatalogAuthors(
       <p>${authors.length.toLocaleString()} distinct names attributed by registry item metadata.
         Not 21st.dev account profiles or popularity rankings.</p>
     </div>
-    <button class="link-button" type="button" data-copy-current-url>Copy link</button>
   `;
   bodyRoot.innerHTML = visible.length ? `
     <div class="catalog-result-meta">Showing ${(currentPage - 1) * 24 + 1}–${Math.min(currentPage * 24,found.length)} of ${found.length} attributed names</div>

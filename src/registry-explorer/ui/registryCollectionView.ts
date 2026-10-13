@@ -38,7 +38,6 @@ export function renderRegistryCollection(
         ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
       </div>
     </div>
-    <button class="link-button" type="button" data-copy-current-url data-copy-label="Registry link copied">Copy link</button>
   `;
 
   bodyRoot.innerHTML = `
