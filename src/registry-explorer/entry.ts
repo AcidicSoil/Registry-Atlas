@@ -72,6 +72,10 @@ async function bootstrap() {
     // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     const sidebarContext = document.getElementById('sidebarContext');
+    // SAFETY: This layout host is a required element in the HTML shell.
+    const sidebarLayout = document.getElementById('sidebarLayout') as HTMLElement;
+    // SAFETY: This collection label is a required element in the HTML shell.
+    const sidebarCollectionCurrent = document.getElementById('sidebarCollectionCurrent') as HTMLElement;
     const tabs = document.querySelectorAll('.primary-nav [data-view]');
     setupMobileSidebarControls();
 
@@ -98,6 +102,8 @@ async function bootstrap() {
           tabs,
           searchInput,
           ...Object.fromEntries(sidebarContext ? [['sidebarContext', sidebarContext]] : []),
+          sidebarLayout,
+          sidebarCollectionCurrent,
         },
       });
     } else {

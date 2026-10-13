@@ -83,6 +83,8 @@ export interface ShellOptions {
     tabs: NodeListOf<Element>;
     searchInput: HTMLInputElement;
     sidebarContext?: HTMLElement;
+    sidebarLayout?: HTMLElement;
+    sidebarCollectionCurrent?: HTMLElement;
   };
 }
 
@@ -433,7 +435,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
       ? renderBrowseLayoutToggle(layout)
       : '';
 
-    roots.aside.innerHTML = layoutMarkup +
+    if (roots.sidebarLayout) roots.sidebarLayout.innerHTML = layoutMarkup;
+    roots.aside.innerHTML = (roots.sidebarLayout ? '' : layoutMarkup) +
       '<div class="sidebar-scroll-pane"><div class="desktop-browse-rail">' +
       navigation + queueMarkup +
       '</div></div>';
@@ -588,6 +591,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function renderTabs(): void {
     const active = primaryViewForRoute(state.route);
+
+    const collectionNames = new Map([
+      ['discover', 'Components'], ['blocks', 'Blocks'], ['pages', 'Pages'],
+      ['templates', 'Templates'], ['themes', 'Themes'], ['icons', 'Icons'],
+    ]);
+
+    if (roots.sidebarCollectionCurrent) {
+      roots.sidebarCollectionCurrent.textContent = collectionNames.get(active ?? '') ?? '';
+    }
+
     roots.tabs.forEach(tab => {
       const tabView = tab.getAttribute('data-view');
       tab.classList.toggle('nav-item-active', tabView === active);
@@ -1000,7 +1013,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       ['compare', { kind: 'compare' }],
     ]).get(view ?? '');
 
-    if (route) navigate(route, 'push', resetBrowse);
+    if (route) {
+      tab.closest?.('details')?.removeAttribute('open');
+      navigate(route, 'push', resetBrowse);
+    }
   }));
 
   function routeForGlobalSearch(route: CatalogRoute): CatalogRoute {
@@ -1078,6 +1094,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
   roots.aside.addEventListener('click', event => handleClick(event.target as HTMLElement));
+  // SAFETY: The controlled layout host contains the same trusted browse controls as the sidebar.
+  roots.sidebarLayout?.addEventListener('click', event => handleClick(event.target as HTMLElement));
   roots.contentHeader.addEventListener('click', event => {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;

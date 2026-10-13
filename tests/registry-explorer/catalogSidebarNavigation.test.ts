@@ -35,7 +35,7 @@ const facets: CatalogFacetSummary = {
 };
 
 describe('catalog browse sidebar', () => {
-  it('uses the 21st.dev exemplar category-first rail with sorting and access below', () => {
+  it('places sorting before categories and access in the exemplar rail', () => {
     const html=renderCatalogSidebarNavigation(facets, {
       canonicalIds:['application/app-shell'],
       registryNames:['@beta'],
@@ -49,8 +49,9 @@ describe('catalog browse sidebar', () => {
     const accessPosition = html.indexOf('>Access<');
 
     expect(categoryPosition).toBeGreaterThanOrEqual(0);
-    expect(sortPosition).toBeGreaterThan(categoryPosition);
-    expect(accessPosition).toBeGreaterThan(sortPosition);
+    expect(sortPosition).toBeGreaterThanOrEqual(0);
+    expect(categoryPosition).toBeGreaterThan(sortPosition);
+    expect(accessPosition).toBeGreaterThan(categoryPosition);
     expect(html).not.toContain('shadcn directory');
 
     expect(html).toContain('data-catalog-sort-value="registry"');

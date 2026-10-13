@@ -17,8 +17,24 @@ describe('21st.dev-inspired sidebar shell', () => {
       expect(html).toContain(`data-view="${view}" href="${href}"`);
     }
 
-    expect(css).toMatch(/\.app-sidebar > \.primary-nav \{[^}]*position:\s*static/s);
-    expect(css).toMatch(/\.app-sidebar > \.primary-nav \{[^}]*flex-direction:\s*column/s);
+    const search = html.indexOf('id="searchInput"');
+    const layout = html.indexOf('id="sidebarLayout"');
+    const navigation = html.indexOf('class="primary-nav"');
+    const filters = html.indexOf('id="aside"');
+
+    expect(search).toBeLessThan(layout);
+    expect(layout).toBeLessThan(navigation);
+    expect(navigation).toBeLessThan(filters);
+    expect(html).toContain('class="sidebar-body-scroll"');
+    expect(css).toMatch(/\.sidebar-body-scroll\s*\{[^}]*overflow-y:\s*auto/s);
     expect(html).not.toContain('shadcn directory');
+    expect(html).toContain('<details class="sidebar-collections"');
+    expect(html).toContain('id="sidebarCollectionCurrent"');
+    const nav = html.slice(navigation, filters);
+    expect(nav).toContain('data-view="home"');
+    expect(nav).toContain('data-view="authors"');
+    expect(nav).toContain('data-view="registries"');
+    expect(nav).toContain('data-view="icons"');
+    expect(nav).toContain('data-view="compare"');
   });
 });

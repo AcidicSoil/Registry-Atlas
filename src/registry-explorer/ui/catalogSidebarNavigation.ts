@@ -195,9 +195,9 @@ export function renderCatalogSidebarNavigation(
   const showRegistrySort = options.showRegistrySort !== false;
 
   return `<nav class="sidebar-browse-navigation" aria-label="Browse catalog">
+    ${renderSort(state, showRegistrySort)}
     ${showCanonical ? renderCanonical(facets, state, taxonomy) : ''}
     ${renderAssetKinds(options.assetCounts, state)}
-    ${renderSort(state, showRegistrySort)}
     ${showAccess ? renderAccess(facets, state) : ''}
   </nav>`;
 }

@@ -58,22 +58,28 @@
             <kbd class="search-shortcut" aria-hidden="true">/</kbd>
           </div>
 
-          <nav class="primary-nav" aria-label="Catalog navigation">
-            <a class="nav-item" data-view="home" href="/Registry-Atlas/">Featured</a>
-            <a class="nav-item" data-view="authors" href="/Registry-Atlas/authors">Authors</a>
-            <a class="nav-item" data-view="registries" href="/Registry-Atlas/registries">Libraries</a>
-            <p class="nav-section-label">Collections</p>
-            <a class="nav-item" data-view="discover" href="/Registry-Atlas/components">Components</a>
-            <a class="nav-item" data-view="blocks" href="/Registry-Atlas/blocks">Blocks</a>
-            <a class="nav-item" data-view="pages" href="/Registry-Atlas/pages">Pages</a>
-            <a class="nav-item" data-view="templates" href="/Registry-Atlas/templates">Templates</a>
-            <a class="nav-item" data-view="themes" href="/Registry-Atlas/themes">Themes</a>
-            <a class="nav-item" data-view="icons" href="/Registry-Atlas/icons">Icons</a>
-            <p class="nav-section-label">Tools</p>
-            <a class="nav-item" data-view="compare" href="/Registry-Atlas/compare">Compare</a>
-          </nav>
+          <div class="sidebar-layout-slot" id="sidebarLayout"></div>
+          <div class="sidebar-body-scroll">
+            <nav class="primary-nav" aria-label="Catalog navigation">
+              <a class="nav-item" data-view="home" href="/Registry-Atlas/">Featured</a>
+              <a class="nav-item" data-view="authors" href="/Registry-Atlas/authors">Authors</a>
+              <a class="nav-item" data-view="registries" href="/Registry-Atlas/registries">Libraries</a>
+              <details class="sidebar-collections">
+                <summary>Collections <span class="sidebar-collection-current" id="sidebarCollectionCurrent"></span></summary>
+                <div class="sidebar-collection-links">
+                  <a class="nav-item" data-view="discover" href="/Registry-Atlas/components">Components</a>
+                  <a class="nav-item" data-view="blocks" href="/Registry-Atlas/blocks">Blocks</a>
+                  <a class="nav-item" data-view="pages" href="/Registry-Atlas/pages">Pages</a>
+                  <a class="nav-item" data-view="templates" href="/Registry-Atlas/templates">Templates</a>
+                  <a class="nav-item" data-view="themes" href="/Registry-Atlas/themes">Themes</a>
+                  <a class="nav-item" data-view="icons" href="/Registry-Atlas/icons">Icons</a>
+                </div>
+              </details>
+              <a class="nav-item" data-view="compare" href="/Registry-Atlas/compare">Compare</a>
+            </nav>
 
-          <div class="aside-inner" id="aside"></div>
+            <div class="aside-inner" id="aside"></div>
+          </div>
         </aside>
 
         <section class="content">

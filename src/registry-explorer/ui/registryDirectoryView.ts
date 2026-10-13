@@ -78,6 +78,12 @@ export function renderRegistryDirectorySidebar(
 
   return `
     <nav class="registry-library-sidebar sidebar-browse-navigation" aria-label="Registry directory controls">
+      <section class="sidebar-nav-section" aria-labelledby="registry-sort-heading">
+        <p class="sidebar-nav-section-label" id="registry-sort-heading">Sort</p>
+        ${sortRow("item-count-desc", "Most items", options.sort)}
+        ${sortRow("name", "Name", options.sort)}
+      </section>
+
       <section class="sidebar-nav-section" aria-labelledby="registry-categories-heading">
         <p class="sidebar-nav-section-label" id="registry-categories-heading">Asset types</p>
         ${assetKinds.map(kind => assetRow(
@@ -88,11 +94,7 @@ export function renderRegistryDirectorySidebar(
         )).join("")}
       </section>
 
-      <section class="sidebar-nav-section" aria-labelledby="registry-sort-heading">
-        <p class="sidebar-nav-section-label" id="registry-sort-heading">Sort</p>
-        ${sortRow("item-count-desc", "Most items", options.sort)}
-        ${sortRow("name", "Name", options.sort)}
-      </section>
+
     </nav>
   `;
 }
