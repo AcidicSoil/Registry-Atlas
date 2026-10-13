@@ -15261,19 +15261,23 @@
       "kind": "policy",
       "sourceDigest": "b4499dac6e4c6878846d4bc3ee98aef8f39a12ad9710a04684a1888f5ce977a7",
       "applicability": "applicable",
-      "compliance": "remediation-required",
-      "reason": "Pinned official prebuilt cccc 1.8.0 in mise and enforced cognitive ≤15/cyclomatic ≤10 in cccc.toml; 44 owned source functions exceed the limits after initial refactors. This correctly blocks pnpm verify.",
+      "compliance": "pending-approval",
+      "reason": "cccc 1.8.0 uses official TOML keys; cognitive <=15 and cyclomatic <=10, no exceptions. Scan clean across 41 files/609 functions (max 12/10); deliberate failure and cleanup proof passed; pnpm verify passed. Formal PAO receipt remains unresolved.",
       "evidence": [
         "mise.toml",
         "cccc.toml",
         "tests/registry-explorer/qualityToolingContract.test.ts",
-        ".design/quality-tooling-progress.md"
+        ".design/quality-tooling-progress.md",
+        "scripts/verify-complexity-gate.mjs",
+        ".design/cccc-remediation-queue.json"
       ],
       "evidenceDigests": {
         "mise.toml": "2f1a603dfa16f5d00991a281a37fae0fb8d840dafb4caa2b7dc8df7892d5f8dd",
-        "cccc.toml": "f74f20a3d5b30413e97037f9c9db332e203658f5df4aacaa681a0a9def07468b",
-        "tests/registry-explorer/qualityToolingContract.test.ts": "e1f0cb5a4a337b4319bc4d128aae8571f866acdf8514e5f1b87bd163f01aa708",
-        ".design/quality-tooling-progress.md": "be2cb87a6e53b90954dc78d8b15b836178fe4c2af5d9099b458d00288de7c5c2"
+        "cccc.toml": "2ab3cc35e11108d2808752a1ebf8ad9ec50fc74a3b78c0590986c27e81365614",
+        "tests/registry-explorer/qualityToolingContract.test.ts": "c7a0229c928c8d3a3056dba374136aff66023b40fab4506a35aded8b9c045842",
+        ".design/quality-tooling-progress.md": "d422774738b9e42379177cbff876168b6e329398f7cf84494e4b4562a05f9bef",
+        "scripts/verify-complexity-gate.mjs": "40faf6c951e36efd92f2efcaf3f34a3a25d59aff813e889e12124bae4745b75e",
+        ".design/cccc-remediation-queue.json": "13ec86d0625b344383bd40056c36f222640e56e036a54976b9fa54e169e97b99"
       },
       "stackFingerprint": "5fba0e568a2849ed61cdec75300e888ade5e2aa333f721e5aa55bc5543d5f9b5",
       "reviewedSourceDigest": "b4499dac6e4c6878846d4bc3ee98aef8f39a12ad9710a04684a1888f5ce977a7",
@@ -15286,22 +15290,28 @@
       "sourceDigest": "ae876e535a88d93abab51c52ab1cad4677b45c83f6aac169ac70d8333be2ef30",
       "applicability": "applicable",
       "compliance": "pending-approval",
-      "reason": "Pinned dependency-cruiser 18.6.0, existing architectural boundaries enforced; clean → deliberate core-to-UI error → clean proof passed. The global verification gate still fails on independent complexity violations and formal PAO receipt is unavailable.",
+      "reason": "Pinned dependency-cruiser enforces public-entrypoint and deep-module privacy boundaries for src and tests, cycle prevention, and core/data/UI layering. Five clean → violation → clean proofs and pnpm verify passed. Formal PAO receipt remains unresolved.",
       "evidence": [
         "package.json",
         "pnpm-lock.yaml",
         ".dependency-cruiser.cjs",
         "src/registry-explorer/core/sourcePageValidation.ts",
         "tests/registry-explorer/qualityToolingContract.test.ts",
-        ".design/quality-tooling-progress.md"
+        ".design/quality-tooling-progress.md",
+        "scripts/verify-deep-module-boundaries.mjs",
+        "src/registry-explorer/README.md",
+        "src/registry-explorer/core/lib/sourcePageOrigin.ts"
       ],
       "evidenceDigests": {
-        "package.json": "a70c89cdbca28e3b9c4105f984b3cab46ed48f2ad78217c9a02b2092dd5e3bbb",
+        "package.json": "4fb496024a48de13822051dd353498ddffc6865c1fd1242ae3a8968d68cba95a",
         "pnpm-lock.yaml": "f461b1558c1ace19890df08d2fc08ca922654fe88d4ed5d63f74edfdb70906e2",
-        ".dependency-cruiser.cjs": "e47808a97343ab5b5c82033df11a0e8a3a811ba8bf1a995fc6362b95aba6e8a8",
-        "src/registry-explorer/core/sourcePageValidation.ts": "a12392782abbab124565d54fe8509f009fa236e72e8372ab627172b14be56c78",
-        "tests/registry-explorer/qualityToolingContract.test.ts": "e1f0cb5a4a337b4319bc4d128aae8571f866acdf8514e5f1b87bd163f01aa708",
-        ".design/quality-tooling-progress.md": "be2cb87a6e53b90954dc78d8b15b836178fe4c2af5d9099b458d00288de7c5c2"
+        ".dependency-cruiser.cjs": "73273d8916437af0e5052392c3d958ddab1770ec939eb10260a2f60b24ce3040",
+        "src/registry-explorer/core/sourcePageValidation.ts": "3cbbdaf5464ad7f5ca9e6041b759eca0207a0533719693c7d0e14e7694dc7b56",
+        "tests/registry-explorer/qualityToolingContract.test.ts": "c7a0229c928c8d3a3056dba374136aff66023b40fab4506a35aded8b9c045842",
+        ".design/quality-tooling-progress.md": "d422774738b9e42379177cbff876168b6e329398f7cf84494e4b4562a05f9bef",
+        "scripts/verify-deep-module-boundaries.mjs": "8307900c733ad86ccdccf132d5d4338ad905eb0d76d2fe8744a378784dc45605",
+        "src/registry-explorer/README.md": "0cfc93ff44a10a1ad07f4b94ca272c734c7024c668abd358925100157dbe744b",
+        "src/registry-explorer/core/lib/sourcePageOrigin.ts": "3232b691e9ab62c65a86559d83005f817ba3775ec9154964a8f375bac18ce262"
       },
       "stackFingerprint": "5fba0e568a2849ed61cdec75300e888ade5e2aa333f721e5aa55bc5543d5f9b5",
       "reviewedSourceDigest": "ae876e535a88d93abab51c52ab1cad4677b45c83f6aac169ac70d8333be2ef30",
@@ -15336,7 +15346,7 @@
       "sourceDigest": "5c417c73e6b02713fb37cee680f026796242dd3851d1e2f19dcee856dd322ba3",
       "applicability": "applicable",
       "compliance": "pending-approval",
-      "reason": "Pinned React Doctor 0.9.18 scoped to authored frontend src; blocking-warning clean → await-in-loop error → clean proof passed. The global verification gate still fails on independent complexity violations and formal PAO receipt is unavailable.",
+      "reason": "Pinned React Doctor scans owned src with blocking warnings and no telemetry. Earlier pass → deliberate failure → pass proof and latest pnpm verify passed. Formal PAO receipt remains unresolved.",
       "evidence": [
         "package.json",
         "pnpm-lock.yaml",
@@ -15344,10 +15354,10 @@
         ".design/quality-tooling-progress.md"
       ],
       "evidenceDigests": {
-        "package.json": "a70c89cdbca28e3b9c4105f984b3cab46ed48f2ad78217c9a02b2092dd5e3bbb",
+        "package.json": "4fb496024a48de13822051dd353498ddffc6865c1fd1242ae3a8968d68cba95a",
         "pnpm-lock.yaml": "f461b1558c1ace19890df08d2fc08ca922654fe88d4ed5d63f74edfdb70906e2",
-        "tests/registry-explorer/qualityToolingContract.test.ts": "e1f0cb5a4a337b4319bc4d128aae8571f866acdf8514e5f1b87bd163f01aa708",
-        ".design/quality-tooling-progress.md": "be2cb87a6e53b90954dc78d8b15b836178fe4c2af5d9099b458d00288de7c5c2"
+        "tests/registry-explorer/qualityToolingContract.test.ts": "c7a0229c928c8d3a3056dba374136aff66023b40fab4506a35aded8b9c045842",
+        ".design/quality-tooling-progress.md": "d422774738b9e42379177cbff876168b6e329398f7cf84494e4b4562a05f9bef"
       },
       "stackFingerprint": "5fba0e568a2849ed61cdec75300e888ade5e2aa333f721e5aa55bc5543d5f9b5",
       "reviewedSourceDigest": "5c417c73e6b02713fb37cee680f026796242dd3851d1e2f19dcee856dd322ba3",

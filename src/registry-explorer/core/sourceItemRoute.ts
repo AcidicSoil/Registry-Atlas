@@ -74,39 +74,38 @@ export function resolveSourcePattern(
   );
 }
 
+function hasPublicSourcePath(page: URL, homepage: URL): boolean {
+  if (page.hash) return false;
+  if (/%2f|%5c|%00/i.test(page.pathname)) return false;
+  if (/\.(?:json|js|css|svg|png|jpe?g|webp|pdf|woff2?|map)\/?$/i.test(page.pathname)) return false;
+  return page.pathname.replace(/\/+$/, '') !== homepage.pathname.replace(/\/+$/, '');
+}
+
 export function safeSourcePage(raw: string | undefined, root: string): string | null {
   if (!raw || !root || raw.startsWith('//')) return null;
   try {
     const home = new URL(root);
     const page = new URL(raw);
-    if (!publicHttps(home) || !publicHttps(page)
-      || page.origin !== home.origin
-      || page.hash
-      || /%2f|%5c|%00/i.test(page.pathname)
-      || /\.(?:json|js|css|svg|png|jpe?g|webp|pdf|woff2?|map)\/?$/i.test(page.pathname)
-      || page.pathname.replace(/\/+$/, '') === home.pathname.replace(/\/+$/, '')) {
-      return null;
-    }
+    if (!publicHttps(home) || !publicHttps(page)) return null;
+    if (page.origin !== home.origin || !hasPublicSourcePath(page, home)) return null;
     return page.href;
   } catch {
     return null;
   }
 }
 
+function publicHostname(host: string): boolean {
+  if (!host.includes('.') || host.includes(':')) return false;
+  if (host === 'localhost') return false;
+  if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+  return !/^\d+(?:\.\d+){3}$/.test(host);
+}
+
 function publicHttps(url: URL): boolean {
+  if (url.protocol !== 'https:') return false;
+  if (url.username || url.password || url.port) return false;
   const host = url.hostname.toLowerCase().replace(/\.$/, '');
-  return url.protocol === 'https:'
-    && !url.username
-    && !url.password
-    && !url.port
-    && Boolean(host)
-    && host.includes('.')
-    && host !== 'localhost'
-    && !host.endsWith('.localhost')
-    && !host.endsWith('.local')
-    && !host.endsWith('.internal')
-    && !/^\d+(?:\.\d+){3}$/.test(host)
-    && !host.includes(':');
+  return publicHostname(host);
 }
 
 function validSlug(value: string): boolean {

@@ -39,6 +39,17 @@ export function isTemplateCatalogItem(item: RegistryCatalogItem): boolean {
   return (item.categories ?? []).some(category => TEMPLATE_CATEGORIES.has(normalize(category)));
 }
 
+function assetKindForItemType(type: string): CatalogCanonicalKind {
+  const classes = [
+    [BLOCK_TYPES, 'block'], [PAGE_TYPES, 'page'],
+    [THEME_TYPES, 'theme'], [COMPONENT_TYPES, 'component'],
+  ] as const;
+  for (const [types, kind] of classes) {
+    if (types.has(type)) return kind;
+  }
+  return 'other';
+}
+
 export function assetKindForCatalogItem(
   item: RegistryCatalogItem,
   namespace?: string,
@@ -53,11 +64,7 @@ export function assetKindForCatalogItem(
     || (item.categories ?? []).some(category => ICON_CATEGORIES.has(normalize(category)))) {
     return "icon";
   }
-  if (BLOCK_TYPES.has(item.type)) return "block";
-  if (PAGE_TYPES.has(item.type)) return "page";
-  if (THEME_TYPES.has(item.type)) return "theme";
-  if (COMPONENT_TYPES.has(item.type)) return "component";
-  return "other";
+  return assetKindForItemType(item.type);
 }
 
 export function filterCatalogItemsByAssetKind(

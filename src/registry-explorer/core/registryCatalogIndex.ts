@@ -48,6 +48,18 @@ export interface RegistryCatalogComponentOption {
   count: number;
 }
 
+function parsedCatalogBuckets(raw: Record<string, unknown>): Record<string, RegistryCatalogItem[]> {
+  const registries: Record<string, RegistryCatalogItem[]> = {};
+  for (const [namespace, rawItems] of Object.entries(raw)) {
+    if (!namespace.startsWith('@') || !Array.isArray(rawItems)) {
+      throw new Error('Registry catalog index validation failed: invalid registry bucket');
+    }
+    registries[namespace] = rawItems.map(parseCatalogItem)
+      .filter((item): item is RegistryCatalogItem => item !== null);
+  }
+  return registries;
+}
+
 export function parseRegistryCatalogIndex(value: unknown): RegistryCatalogIndex {
   if (!isRecord(value) || !isRecord(value.meta) || !isRecord(value.registries)) {
     throw new Error('Registry catalog index validation failed: expected meta and registries objects');
@@ -59,19 +71,8 @@ export function parseRegistryCatalogIndex(value: unknown): RegistryCatalogIndex 
     throw new Error('Registry catalog index validation failed: invalid counts');
   }
 
-  const registries: Record<string, RegistryCatalogItem[]> = {};
-  let parsedItemCount = 0;
-  for (const [namespace, rawItems] of Object.entries(value.registries)) {
-    if (!namespace.startsWith('@') || !Array.isArray(rawItems)) {
-      throw new Error('Registry catalog index validation failed: invalid registry bucket');
-    }
-
-    const items = rawItems
-      .map(rawItem => parseCatalogItem(rawItem))
-      .filter((item): item is RegistryCatalogItem => item !== null);
-    registries[namespace] = items;
-    parsedItemCount += items.length;
-  }
+  const registries = parsedCatalogBuckets(value.registries);
+  const parsedItemCount = Object.values(registries).reduce((sum, items) => sum + items.length, 0);
 
   if (
     Object.keys(registries).length !== registryCount
@@ -93,6 +94,17 @@ export function parseRegistryCatalogIndex(value: unknown): RegistryCatalogIndex 
   };
 }
 
+function matchesRegistryCatalogItem(
+  namespace: string, item: RegistryCatalogItem, query: string,
+  selected: ReadonlySet<string>, excludedKeys: ReadonlySet<string>,
+): boolean {
+  const identity = registryCatalogItemIdentity(item.name);
+  if (selected.size && !selected.has(identity)) return false;
+  if (excludedKeys.has(namespace + ':' + identity)) return false;
+  const values = [item.name, item.title].filter(Boolean).map(value => normalize(String(value)));
+  return !query || values.some(value => matchesSearch(value, query));
+}
+
 export function searchRegistryCatalog(
   index: RegistryCatalogIndex,
   search: string,
@@ -111,12 +123,7 @@ export function searchRegistryCatalog(
 
   for (const [namespace, items] of Object.entries(index.registries)) {
     for (const item of items) {
-      const values = [item.name, item.title].filter(Boolean).map(value => normalize(String(value)));
-      const matchesQuery = !query || values.some(value => matchesSearch(value, query));
-      const matchesSelection = selected.size === 0 || selected.has(registryCatalogItemIdentity(item.name));
-      const key = `${namespace}:${registryCatalogItemIdentity(item.name)}`;
-      if (!matchesQuery || !matchesSelection || excludedKeys.has(key)) continue;
-
+      if (!matchesRegistryCatalogItem(namespace, item, query, selected, excludedKeys)) continue;
       totalMatches += 1;
       if (matches.length < limit) matches.push({ namespace, item });
     }
@@ -203,6 +210,81 @@ export function compactCatalogItemToSummary(
   };
 }
 
+function parseStringArray(value: unknown, field: 'categories' | 'sourceGroups'): string[] | undefined {
+  if (value === undefined) return undefined;
+  const nonempty = field === 'sourceGroups';
+  if (!Array.isArray(value) || value.some(item =>
+    typeof item !== 'string' || (nonempty && !item.trim()))) {
+    throw new Error(field === 'categories'
+      ? 'Registry catalog index validation failed: item categories must be strings'
+      : 'Registry catalog index validation failed: item sourceGroups must be non-empty strings');
+  }
+  return value.map((item: string) => item.trim()).filter(value => nonempty || !!value);
+}
+
+function parseItemFileCount(value: unknown): number | null {
+  if (value === undefined) return null;
+  const count = numberValue(value);
+  if (count === null || !Number.isInteger(count)) {
+    throw new Error('Registry catalog index validation failed: item fileCount must be a non-negative integer');
+  }
+  return count;
+}
+
+function optionalCatalogTextFields(value: Record<string, unknown>) {
+  const title = optionalString(value.title);
+  const rawItemUrl = optionalString(value.rawItemUrl);
+  const description = optionalString(value.description);
+  const author = optionalString(value.author);
+  return {
+    ...(rawItemUrl ? { rawItemUrl } : {}),
+    ...(title ? { title } : {}),
+    ...(description ? { description } : {}),
+    ...(author ? { author } : {}),
+  };
+}
+
+function optionalTaxonomyFields(value: Record<string, unknown>) {
+  const categories = parseStringArray(value.categories, 'categories');
+  const kind = value.kind === undefined ? undefined : parseCanonicalKind(value.kind);
+  const canonical = value.canonical === undefined ? undefined : parseCanonical(value.canonical);
+  return {
+    ...(categories?.length ? { categories } : {}),
+    ...(kind ? { kind } : {}),
+    ...(canonical ? { canonical } : {}),
+  };
+}
+
+function optionalSourceFields(value: Record<string, unknown>) {
+  const sourceGroups = parseStringArray(value.sourceGroups, 'sourceGroups');
+  const access = value.access === undefined ? undefined : parseAccess(value.access);
+  return {
+    ...(sourceGroups?.length ? { sourceGroups } : {}),
+    ...(access ? { access } : {}),
+  };
+}
+
+function optionalClassificationFields(value: Record<string, unknown>) {
+  return { ...optionalTaxonomyFields(value), ...optionalSourceFields(value) };
+}
+
+function optionalPreviewFields(value: Record<string, unknown>) {
+  const fileCount = parseItemFileCount(value.fileCount);
+  const themePreview = value.themePreview === undefined ? undefined : parseThemePreview(value.themePreview);
+  return {
+    ...(fileCount !== null ? { fileCount } : {}),
+    ...(themePreview ? { themePreview } : {}),
+  };
+}
+
+function optionalCatalogMetadataFields(value: Record<string, unknown>) {
+  return { ...optionalClassificationFields(value), ...optionalPreviewFields(value) };
+}
+
+function optionalCatalogItemFields(value: Record<string, unknown>) {
+  return { ...optionalCatalogTextFields(value), ...optionalCatalogMetadataFields(value) };
+}
+
 function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
   if (!isRecord(value)) {
     throw new Error('Registry catalog index validation failed: item is not an object');
@@ -219,49 +301,7 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
     throw new Error('Registry catalog index validation failed: discoverable item requires a name');
   }
 
-  const title = optionalString(value.title);
-  const rawItemUrl = optionalString(value.rawItemUrl);
-  const description = optionalString(value.description);
-  const author = optionalString(value.author);
-  const fileCount = value.fileCount === undefined ? null : numberValue(value.fileCount);
-  if (value.fileCount !== undefined && (fileCount === null || !Number.isInteger(fileCount))) {
-    throw new Error('Registry catalog index validation failed: item fileCount must be a non-negative integer');
-  }
-  const themePreview = value.themePreview === undefined ? undefined : parseThemePreview(value.themePreview);
-  let categories: string[] | undefined;
-  if (value.categories !== undefined) {
-    if (!Array.isArray(value.categories) || !value.categories.every(item => typeof item === 'string')) {
-      throw new Error('Registry catalog index validation failed: item categories must be strings');
-    }
-    categories = value.categories.map(item => item.trim()).filter(Boolean);
-  }
-  const kind = value.kind === undefined ? undefined : parseCanonicalKind(value.kind);
-  const canonical = value.canonical === undefined ? undefined : parseCanonical(value.canonical);
-  let sourceGroups: string[] | undefined;
-  if (value.sourceGroups !== undefined) {
-    if (!Array.isArray(value.sourceGroups)
-      || value.sourceGroups.some(group => typeof group !== 'string' || !group.trim())) {
-      throw new Error('Registry catalog index validation failed: item sourceGroups must be non-empty strings');
-    }
-    sourceGroups = value.sourceGroups.map(group => group.trim());
-  }
-  const access = value.access === undefined ? undefined : parseAccess(value.access);
-
-  return {
-    name,
-    type,
-    ...(rawItemUrl ? { rawItemUrl } : {}),
-    ...(title ? { title } : {}),
-    ...(description ? { description } : {}),
-    ...(author ? { author } : {}),
-    ...(categories?.length ? { categories } : {}),
-    ...(kind ? { kind } : {}),
-    ...(canonical ? { canonical } : {}),
-    ...(sourceGroups?.length ? { sourceGroups } : {}),
-    ...(access ? { access } : {}),
-    ...(fileCount !== null ? { fileCount } : {}),
-    ...(themePreview ? { themePreview } : {}),
-  };
+  return { name, type, ...optionalCatalogItemFields(value) };
 }
 
 function parseCanonicalKind(value: unknown): CatalogCanonicalKind {
@@ -269,6 +309,59 @@ function parseCanonicalKind(value: unknown): CatalogCanonicalKind {
     throw new Error('Registry catalog index validation failed: item kind is invalid');
   }
   return value as CatalogCanonicalKind;
+}
+
+function validatedCanonicalPrimary(value: unknown): string | null {
+  if (value === null) return null;
+  const primary = optionalString(value);
+  if (!primary) throw new Error('Registry catalog index validation failed: item canonical primary is invalid');
+  return primary;
+}
+
+function validatedCanonicalPath(value: unknown): string[] {
+  if (!Array.isArray(value) || value.some(id => typeof id !== 'string' || !CANONICAL_ID_PATTERN.test(id))) {
+    throw new Error('Registry catalog index validation failed: item canonical path is invalid');
+  }
+  return [...value] as string[];
+}
+
+function verifyCanonicalAncestors(path: string[]): void {
+  for (let index = 0; index < path.length; index += 1) {
+    const id = path[index]!;
+    const segments = id.split('/');
+    if (index === 0) {
+      if (segments.length !== 1) {
+        throw new Error('Registry catalog index validation failed: item canonical path must start at a root');
+      }
+    } else {
+      const parent = path[index - 1]!;
+      if (!id.startsWith(parent + '/') || segments.length !== parent.split('/').length + 1) {
+        throw new Error('Registry catalog index validation failed: item canonical path must be hierarchical');
+      }
+    }
+  }
+}
+
+function verifyCanonicalHierarchy(path: string[], primary: string | null): void {
+  if (primary === null) {
+    if (path.length) throw new Error('Registry catalog index validation failed: item canonical path must be empty when primary is null');
+    return;
+  }
+  if (!CANONICAL_ID_PATTERN.test(primary) || !path.length || path.at(-1) !== primary) {
+    throw new Error('Registry catalog index validation failed: item canonical path must end at primary');
+  }
+  verifyCanonicalAncestors(path);
+}
+
+function verifyApprovedCanonicalPath(path: string[], primary: string | null): void {
+  const taxonomy = getDefaultCatalogTaxonomy();
+  if (!taxonomy || primary === null) return;
+  const approved = catalogTaxonomyNodeMap(taxonomy).get(primary);
+  if (!approved) throw new Error('Registry catalog index validation failed: unknown canonical taxonomy node');
+  const approvedPath = primary.split('/').map((_, index, parts) => parts.slice(0, index + 1).join('/'));
+  if (approvedPath.length !== path.length || approvedPath.some((id, index) => id !== path[index])) {
+    throw new Error('Registry catalog index validation failed: item canonical path does not match approved taxonomy');
+  }
 }
 
 function parseCanonical(value: unknown): RegistryCatalogCanonical {
@@ -283,53 +376,10 @@ function parseCanonical(value: unknown): RegistryCatalogCanonical {
   if (configuredTaxonomy && taxonomyVersion !== configuredTaxonomy.version) {
     throw new Error('Registry catalog index validation failed: item canonical taxonomy version is not the approved runtime taxonomy');
   }
-  let primary: string | null;
-  if (value.primary === null) {
-    primary = null;
-  } else {
-    const parsedPrimary = optionalString(value.primary);
-    if (!parsedPrimary) {
-      throw new Error('Registry catalog index validation failed: item canonical primary is invalid');
-    }
-    primary = parsedPrimary;
-  }
-  if (!Array.isArray(value.path) || value.path.some(id => typeof id !== 'string' || !CANONICAL_ID_PATTERN.test(id))) {
-    throw new Error('Registry catalog index validation failed: item canonical path is invalid');
-  }
-  const path = [...value.path] as string[];
-  if (primary === null) {
-    if (path.length !== 0) {
-      throw new Error('Registry catalog index validation failed: item canonical path must be empty when primary is null');
-    }
-  } else {
-    if (!CANONICAL_ID_PATTERN.test(primary) || path.length === 0 || path.at(-1) !== primary) {
-      throw new Error('Registry catalog index validation failed: item canonical path must end at primary');
-    }
-    for (let index = 0; index < path.length; index += 1) {
-      const id = path[index]!;
-      const segments = id.split('/');
-      if (index === 0) {
-        if (segments.length !== 1) {
-          throw new Error('Registry catalog index validation failed: item canonical path must start at a root');
-        }
-      } else {
-        const parent = path[index - 1]!;
-        if (!id.startsWith(`${parent}/`) || segments.length !== parent.split('/').length + 1) {
-          throw new Error('Registry catalog index validation failed: item canonical path must be hierarchical');
-        }
-      }
-    }
-    if (configuredTaxonomy) {
-      const approved = catalogTaxonomyNodeMap(configuredTaxonomy).get(primary);
-      if (!approved) {
-        throw new Error('Registry catalog index validation failed: unknown canonical taxonomy node');
-      }
-      const approvedPath = primary.split('/').map((_, index, parts) => parts.slice(0, index + 1).join('/'));
-      if (approvedPath.length !== path.length || approvedPath.some((id, index) => id !== path[index])) {
-        throw new Error('Registry catalog index validation failed: item canonical path does not match approved taxonomy');
-      }
-    }
-  }
+  const primary = validatedCanonicalPrimary(value.primary);
+  const path = validatedCanonicalPath(value.path);
+  verifyCanonicalHierarchy(path, primary);
+  verifyApprovedCanonicalPath(path, primary);
   return { taxonomyVersion, primary, path };
 }
 
@@ -344,29 +394,31 @@ function parseAccess(value: unknown): RegistryCatalogAccess {
   return { normalized: value.normalized, sourceLabel };
 }
 
+function parseThemeSwatches(value: unknown, mode: 'light' | 'dark'):
+  Partial<Record<RegistryThemeSwatch, string>> | undefined {
+  if (value === undefined) return undefined;
+  if (!isRecord(value)) {
+    throw new Error(`Registry catalog index validation failed: themePreview.${mode} must be an object`);
+  }
+  const swatches: Partial<Record<RegistryThemeSwatch, string>> = {};
+  for (const [key, raw] of Object.entries(value)) {
+    if (!isThemeSwatch(key)) {
+      throw new Error(`Registry catalog index validation failed: unsupported theme swatch ${key}`);
+    }
+    const swatch = optionalString(raw);
+    if (!swatch) throw new Error(`Registry catalog index validation failed: theme swatch ${key} must be a string`);
+    swatches[key] = swatch;
+  }
+  return Object.keys(swatches).length ? swatches : undefined;
+}
+
 function parseThemePreview(value: unknown): RegistryThemePreview | undefined {
   if (!isRecord(value)) {
     throw new Error('Registry catalog index validation failed: item themePreview must be an object');
   }
-  const output: { light?: Partial<Record<RegistryThemeSwatch, string>>; dark?: Partial<Record<RegistryThemeSwatch, string>> } = {};
-  for (const mode of ['light', 'dark'] as const) {
-    const source = value[mode];
-    if (source === undefined) continue;
-    if (!isRecord(source)) {
-      throw new Error(`Registry catalog index validation failed: themePreview.${mode} must be an object`);
-    }
-    const swatches: Partial<Record<RegistryThemeSwatch, string>> = {};
-    for (const [key, raw] of Object.entries(source)) {
-      if (!isThemeSwatch(key)) {
-        throw new Error(`Registry catalog index validation failed: unsupported theme swatch ${key}`);
-      }
-      const swatch = optionalString(raw);
-      if (!swatch) throw new Error(`Registry catalog index validation failed: theme swatch ${key} must be a string`);
-      swatches[key] = swatch;
-    }
-    if (Object.keys(swatches).length) output[mode] = swatches;
-  }
-  return output.light || output.dark ? output : undefined;
+  const light = parseThemeSwatches(value.light, 'light');
+  const dark = parseThemeSwatches(value.dark, 'dark');
+  return light || dark ? { ...(light ? { light } : {}), ...(dark ? { dark } : {}) } : undefined;
 }
 
 export function registryCatalogItemIdentity(value: string): string {

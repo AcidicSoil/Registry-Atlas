@@ -34,28 +34,36 @@ export function buildInspectCommand(token: string): string | null {
   return `npx shadcn@latest view ${token}`;
 }
 
-export function getInstallActionState(input: InstallActionInput): InstallActionState {
+function invalidInstallIdentity(namespace: string, slug: string): string | null {
+  if (!namespace) return 'Missing registry namespace.';
+  if (!normalizeNamespace(namespace)) return 'Invalid registry namespace.';
+  if (!slug) return 'Missing item slug.';
+  if (!isSafeRegistryItemName(slug)) return 'Invalid item slug.';
+  return null;
+}
+
+function missingRegistryRouteReason(input: InstallActionInput): string | null {
+  if (!input.routeEligible) return 'Item is not route eligible in the validated registry catalog.';
+  if (!input.registryUrlTemplate?.trim() && !input.rawItemUrl?.trim()) {
+    return 'Registry mirror/template is unavailable.';
+  }
+  return null;
+}
+
+function unavailableInstallReason(input: InstallActionInput): string | null {
   if (input.isFallbackCandidate) {
-    return disabled(input.fallbackReason ?? 'Inferred/fallback candidate; install command unavailable.');
+    return input.fallbackReason ?? 'Inferred/fallback candidate; install command unavailable.';
   }
+  return invalidInstallIdentity(input.namespace?.trim() ?? '', input.itemSlug?.trim() ?? '')
+    ?? missingRegistryRouteReason(input);
+}
 
-  const namespace = input.namespace?.trim() ?? '';
-  if (!namespace) return disabled('Missing registry namespace.');
-  if (!normalizeNamespace(namespace)) return disabled('Invalid registry namespace.');
-
-  const slug = input.itemSlug?.trim() ?? '';
-  if (!slug) return disabled('Missing item slug.');
-  if (!isSafeRegistryItemName(slug)) return disabled('Invalid item slug.');
-
-  if (!input.routeEligible) {
-    return disabled('Item is not route eligible in the validated registry catalog.');
-  }
-
+export function getInstallActionState(input: InstallActionInput): InstallActionState {
+  const unavailable = unavailableInstallReason(input);
+  if (unavailable) return disabled(unavailable);
+  const namespace = input.namespace!.trim();
+  const slug = input.itemSlug!.trim();
   const template = input.registryUrlTemplate?.trim() ?? '';
-  const rawItemUrl = input.rawItemUrl?.trim() ?? '';
-  if (!template && !rawItemUrl) {
-    return disabled('Registry mirror/template is unavailable.');
-  }
 
   const token = buildInstallToken(namespace, slug);
   if (!token) return disabled('Invalid install token.');

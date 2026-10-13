@@ -13,6 +13,16 @@ export interface CatalogCollectionViewOptions {
   emptyBody?: string;
 }
 
+function renderCollectionPagination(result: CatalogQueryResult, title: string): string {
+  if (result.pageCount <= 1) return '';
+  return '<nav class="catalog-pagination" aria-label="' + escapeHtml(title) + ' pages">' +
+    '<button type="button" data-discovery-page="' + (result.page - 1) + '" ' +
+    (result.hasPreviousPage ? '' : 'disabled') + '>Previous</button>' +
+    '<span>Page ' + result.page.toLocaleString() + ' of ' + result.pageCount.toLocaleString() + '</span>' +
+    '<button type="button" data-discovery-page="' + (result.page + 1) + '" ' +
+    (result.hasNextPage ? '' : 'disabled') + '>Next</button></nav>';
+}
+
 export function renderCatalogCollection(
   headerRoot: HTMLElement,
   bodyRoot: HTMLElement,
@@ -47,13 +57,7 @@ export function renderCatalogCollection(
     <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-${options.routeKind ?? "component"}">
       ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
     </div>
-    ${result.pageCount > 1 ? `
-      <nav class="catalog-pagination" aria-label="${escapeHtml(options.title)} pages">
-        <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>
-        <span>Page ${result.page.toLocaleString()} of ${result.pageCount.toLocaleString()}</span>
-        <button type="button" data-discovery-page="${result.page + 1}" ${result.hasNextPage ? "" : "disabled"}>Next</button>
-      </nav>
-    ` : ""}
+    ${renderCollectionPagination(result, options.title)}
   `;
 }
 

@@ -50,16 +50,21 @@ export function renderRegistryIcon(
   </span>`;
 }
 
+function isSafeIconHostname(host: string): boolean {
+  if (!host.includes('.')) return false;
+  if (['localhost', ''].includes(host)) return false;
+  if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+  return !/^\d+(?:\.\d+){3}$/.test(host);
+}
+
 function verifiedRegistryIconUrl(candidate?: string): string | null {
   if (!candidate || candidate.trim().startsWith('//')) return null;
   try {
     const url = new URL(candidate);
     const host = url.hostname.toLowerCase().replace(/\.$/, '');
-    if (url.protocol !== 'https:' || url.username || url.password || url.port
-      || !host || !host.includes('.') || host === 'localhost'
-      || host.endsWith('.localhost') || host.endsWith('.local')
-      || host.endsWith('.internal') || /^\d+(?:\.\d+){3}$/.test(host)) return null;
-    return url.href;
+    if (url.protocol !== 'https:') return null;
+    if (url.username || url.password || url.port) return null;
+    return isSafeIconHostname(host) ? url.href : null;
   } catch {
     return null;
   }

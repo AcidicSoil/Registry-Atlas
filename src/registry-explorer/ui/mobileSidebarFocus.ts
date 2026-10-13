@@ -7,11 +7,12 @@ export function drawerWrapTarget<T>(
   active: T | null,
   backwards: boolean,
 ): T | null {
-  const first = focusable[0] ?? null;
-  const last = focusable[focusable.length - 1] ?? null;
-  if (!first || !last) return null;
-  if (!active || !focusable.includes(active)) return backwards ? last : first;
-  if (backwards && active === first) return last;
-  if (!backwards && active === last) return first;
-  return null;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (first === undefined || last === undefined) return null;
+  if (active === null || !focusable.includes(active)) {
+    return backwards ? last : first;
+  }
+  if (backwards) return active === first ? last : null;
+  return active === last ? first : null;
 }

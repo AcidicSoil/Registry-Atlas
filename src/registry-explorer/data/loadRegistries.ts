@@ -112,6 +112,70 @@ interface RegistryIconDocument {
 
 type FetchLike = typeof fetch;
 
+function registryReviewMetadata(record: RegistryMirrorRecord) {
+  return {
+    coverageStatus: record.atlas?.coverage_status ?? 'unverified',
+    confidence: record.atlas?.confidence ?? 'unknown',
+  };
+}
+
+function registryCatalogMetadata(record: RegistryMirrorRecord) {
+  return {
+    catalogStatus: record.atlas?.catalog_status ?? 'unverified',
+    comparisonEvidence: record.atlas?.comparison_evidence ?? 'none',
+    catalogItemCount: record.atlas?.catalog_item_count ?? 0,
+  };
+}
+
+function registryCoverageMetadata(record: RegistryMirrorRecord) {
+  return { ...registryReviewMetadata(record), ...registryCatalogMetadata(record) };
+}
+
+function registryAtlasMetadata(record: RegistryMirrorRecord) {
+  return {
+    aliases: record.atlas?.aliases ?? [],
+    notes: record.atlas?.notes ?? '',
+    catalogEvidenceUrl: record.atlas?.catalog_evidence_url || undefined,
+    ...registryCoverageMetadata(record),
+  };
+}
+
+function registryMirrorMetadata(
+  record: RegistryMirrorRecord,
+  meta: RegistryMirrorMeta,
+  warnings: ReadonlyMap<string, string[]>,
+) {
+  return {
+    officialName: record.official.name,
+    registryUrlTemplate: record.official.registry_url_template,
+    sourceUrl: meta.source_url,
+    syncedAt: meta.synced_at,
+    upstreamCount: meta.upstream_count,
+    localCount: meta.local_count,
+    warnings: [
+      ...(record.status?.warnings ?? []),
+      ...(warnings.get(record.official.name) ?? []),
+    ],
+  };
+}
+
+function mapMirrorRegistry(
+  record: RegistryMirrorRecord,
+  meta: RegistryMirrorMeta,
+  icons: RegistryIconDocument | null,
+  warnings: ReadonlyMap<string, string[]>,
+): Registry {
+  return {
+    name: record.official.name,
+    url: record.official.homepage,
+    description: record.official.description,
+    iconUrl: icons?.icons?.[record.official.name]?.url || undefined,
+    atlas: registryAtlasMetadata(record),
+    itemSummaries: mapItemSummaries(record.atlas?.item_summaries ?? []),
+    mirror: registryMirrorMetadata(record, meta, warnings),
+  };
+}
+
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
   const data = await loadRuntimeJson<{
     mirror: RegistryMirrorData;
@@ -154,56 +218,40 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
     catalogIndex: Object.assign(catalogIndex, { sourcePages, itemRoutes, routePatterns }),
     taxonomy,
     warnings: validation.warnings,
-    registries: typedMirror.registries.map(record => ({
-      name: record.official.name,
-      url: record.official.homepage,
-      description: record.official.description,
-      iconUrl: registryIcons?.icons?.[record.official.name]?.url || undefined,
-      atlas: {
-        aliases: record.atlas?.aliases ?? [],
-        coverageStatus: record.atlas?.coverage_status ?? 'unverified',
-        confidence: record.atlas?.confidence ?? 'unknown',
-        notes: record.atlas?.notes ?? '',
-        catalogStatus: record.atlas?.catalog_status ?? 'unverified',
-        comparisonEvidence: record.atlas?.comparison_evidence ?? 'none',
-        catalogItemCount: record.atlas?.catalog_item_count ?? 0,
-        catalogEvidenceUrl: record.atlas?.catalog_evidence_url || undefined,
-      },
-      itemSummaries: mapItemSummaries(record.atlas?.item_summaries ?? []),
-      mirror: {
-        officialName: record.official.name,
-        registryUrlTemplate: record.official.registry_url_template,
-        sourceUrl: typedMirror.meta.source_url,
-        syncedAt: typedMirror.meta.synced_at,
-        upstreamCount: typedMirror.meta.upstream_count,
-        localCount: typedMirror.meta.local_count,
-        warnings: [
-          ...(record.status?.warnings ?? []),
-          ...(warningsByNamespace.get(record.official.name) ?? []),
-        ],
-      },
-    })),
+    registries: typedMirror.registries.map(record =>
+      mapMirrorRegistry(record, typedMirror.meta, registryIcons, warningsByNamespace)),
+
   };
 }
 
-function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['item_summaries']): RegistryItemSummary[] {
-  return (items ?? []).map(item => ({
-    name: item.name,
-    slug: item.slug,
-    title: item.title,
-    description: item.description,
-    type: item.type,
-    category: item.category,
-    source: item.source,
-    provenance: item.provenance,
+type RawSummary = NonNullable<RegistryMirrorRecord['atlas']>['item_summaries'];
+type SummaryRecord = NonNullable<RawSummary>[number];
+
+function mappedSummaryIdentity(item: SummaryRecord) {
+  return {
+    name: item.name, slug: item.slug, title: item.title,
+    description: item.description, type: item.type, category: item.category,
+    source: item.source, provenance: item.provenance,
     catalogStatus: item.catalog_status ?? item.catalogStatus ?? 'unverified',
     confidence: item.confidence,
+  };
+}
+
+function mappedSummaryActions(item: SummaryRecord) {
+  return {
     routeEligible: item.route_eligible ?? item.routeEligible ?? false,
     installToken: item.install_token ?? item.installToken,
     viewCommand: item.view_command ?? item.viewCommand,
     installCommand: item.install_command ?? item.installCommand,
     rawItemUrl: item.raw_item_url ?? item.rawItemUrl,
     docsUrl: item.docs_url ?? item.docsUrl,
+  };
+}
+
+function mapItemSummary(item: SummaryRecord): RegistryItemSummary {
+  return {
+    ...mappedSummaryIdentity(item),
+    ...mappedSummaryActions(item),
     evidenceUrl: item.evidence_url ?? item.evidenceUrl,
     evidenceNote: item.evidence_note ?? item.evidenceNote,
     dependencies: item.dependencies,
@@ -211,7 +259,11 @@ function mapItemSummaries(items: NonNullable<RegistryMirrorRecord['atlas']>['ite
     registryDependencies: item.registryDependencies,
     files: item.files,
     warnings: item.warnings,
-  }));
+  };
+}
+
+function mapItemSummaries(items: RawSummary): RegistryItemSummary[] {
+  return (items ?? []).map(mapItemSummary);
 }
 
 function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): Map<string, string[]> {
@@ -231,6 +283,60 @@ function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): M
 }
 
 /** Optional evidence artifact. Unknown identities, hosts and tiers fail closed. */
+function isKnownSourceProvenance(record: Record<string, unknown>): boolean {
+  const reviewed = record.level === 'reviewed'
+    && ['reviewed-summary', 'component-page-verified'].includes(String(record.source));
+  const sitemap = record.level === 'sitemap' && record.source === 'official-sitemap';
+  const pattern = record.level === 'pattern' && record.source === 'verified-route-pattern';
+  return reviewed || sitemap || pattern;
+}
+
+function sourceProvenanceIsFresh(record: Record<string, unknown>): boolean {
+  if (record.level === 'reviewed' && record.source !== 'component-page-verified') return true;
+  const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
+  const age = Date.now() - observed;
+  return Number.isFinite(age) && age >= 0 && age <= 30 * 24 * 60 * 60 * 1000;
+}
+
+function sourceManifestIdentity(
+  token: string, knownNames: ReadonlyMap<string, ReadonlySet<string>>,
+): string | null {
+  const split = token.indexOf('/');
+  if (split < 1) return null;
+  const namespace = token.slice(0, split);
+  return knownNames.get(namespace)?.has(token.slice(split + 1)) ? namespace : null;
+}
+
+function sourceManifestRecord(
+  value: unknown,
+): (Record<string, unknown> & { url: string }) | null {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  if (!isKnownSourceProvenance(record) || typeof record.url !== 'string') return null;
+  return sourceProvenanceIsFresh(record) ? record as Record<string, unknown> & { url: string } : null;
+}
+
+function recognizedSourcePage(
+  token: string,
+  value: unknown,
+  knownNames: ReadonlyMap<string, ReadonlySet<string>>,
+  roots: ReadonlyMap<string, string>,
+): RegistrySourcePage | null {
+  const namespace = sourceManifestIdentity(token, knownNames);
+  if (!namespace) return null;
+  const record = sourceManifestRecord(value);
+  if (!record) return null;
+  const url = verifiedSourcePageUrl(record.url, roots.get(namespace) ?? '');
+  if (!url || url !== record.url) return null;
+  return {
+    url,
+    level: record.level as RegistrySourcePage['level'],
+    source: record.source as RegistrySourcePage['source'],
+    ...(record.level === 'sitemap' || record.level === 'pattern'
+      ? { observedAt: record.observedAt as string } : {}),
+  };
+}
+
 export function readSourcePageManifest(
   input: unknown,
   catalog: RegistryCatalogIndex,
@@ -241,31 +347,12 @@ export function readSourcePageManifest(
   if (manifest.schema !== 'registry-atlas-source-page-index/v1'
     || !manifest.pages || typeof manifest.pages !== 'object' || Array.isArray(manifest.pages)) return {};
   const roots = new Map(registries.map(registry => [registry.name, registry.url]));
-  const names = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
+  const knownNames = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
     [namespace, new Set(items.map(item => item.name))]));
   const pages: Record<string, RegistrySourcePage> = {};
   for (const [token, value] of Object.entries(manifest.pages)) {
-    const split = token.indexOf('/');
-    if (split < 1 || !value || typeof value !== 'object' || Array.isArray(value)) continue;
-    const namespace = token.slice(0, split), slug = token.slice(split + 1);
-    if (!names.get(namespace)?.has(slug)) continue;
-    const record = value as Record<string, unknown>;
-    const validLevel = (record.level === 'reviewed'
-        && ['reviewed-summary', 'component-page-verified'].includes(String(record.source)))
-      || (record.level === 'sitemap' && record.source === 'official-sitemap')
-      || (record.level === 'pattern' && record.source === 'verified-route-pattern');
-    if (!validLevel || typeof record.url !== 'string') continue;
-    if (record.level === 'sitemap' || record.level === 'pattern' || record.source === 'component-page-verified') {
-      const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
-      const age = Date.now() - observed;
-      if (!Number.isFinite(age) || age < 0 || age > 30 * 24 * 60 * 60 * 1000) continue;
-    }
-    const url = verifiedSourcePageUrl(record.url, roots.get(namespace) ?? '');
-    if (!url || url !== record.url) continue;
-    pages[token] = { url, level: record.level as RegistrySourcePage['level'],
-      source: record.source as RegistrySourcePage['source'],
-      ...(record.level === 'sitemap' || record.level === 'pattern'
-        ? { observedAt: record.observedAt as string } : {}) };
+    const page = recognizedSourcePage(token, value, knownNames, roots);
+    if (page) pages[token] = page;
   }
   return pages;
 }

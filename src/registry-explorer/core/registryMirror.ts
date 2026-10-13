@@ -416,23 +416,17 @@ function validateItemSummaries(
     return;
   }
 
-  value.forEach((item, index) => {
-    const field = `atlas.item_summaries[${index}]`;
-    if (!isObject(item)) {
-      addIssue(result, {
-        code: 'atlas-invalid-item-summary',
-        message: `${field} must be an object.`,
-        severity: 'error',
-        namespace,
-        field,
-      });
-      return;
-    }
 
-    const record = item as Record<string, unknown>;
+  value.forEach((item, index) => validateItemSummary(item, index, namespace, registryUrlTemplate, result));
+}
+
+function validateItemSummaryIdentity(
+  record: Record<string, unknown>,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
     const slug = record.slug;
-    const catalogStatus = record.catalog_status ?? record.catalogStatus;
-    const routeEligible = record.route_eligible ?? record.routeEligible;
 
     if (typeof record.name !== 'string' || record.name.trim() === '') {
       addIssue(result, {
@@ -464,7 +458,16 @@ function validateItemSummaries(
         value: typeof slug === 'string' ? slug : String(slug),
       });
     }
+}
 
+function validateItemSummaryStatus(
+  record: Record<string, unknown>,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  const catalogStatus = record.catalog_status ?? record.catalogStatus;
+  const routeEligible = record.route_eligible ?? record.routeEligible;
     if (typeof catalogStatus !== 'string' || !ITEM_CATALOG_STATUS_SET.has(catalogStatus as ItemCatalogStatus)) {
       addIssue(result, {
         code: 'atlas-invalid-catalog-status',
@@ -486,7 +489,17 @@ function validateItemSummaries(
         value: String(routeEligible),
       });
     }
+}
 
+function validateItemSummaryRoute(
+  record: Record<string, unknown>,
+  field: string,
+  namespace: string,
+  registryUrlTemplate: unknown,
+  result: MirrorValidationResult,
+): void {
+  const slug = record.slug;
+  const routeEligible = record.route_eligible ?? record.routeEligible;
     const rawItemUrl = record.raw_item_url ?? record.rawItemUrl;
     if (routeEligible === true && (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug) || !hasRouteSource(registryUrlTemplate, rawItemUrl))) {
       addIssue(result, {
@@ -497,7 +510,15 @@ function validateItemSummaries(
         field: `${field}.route_eligible`,
       });
     }
+}
 
+function validateItemSummaryOptionalFields(
+  record: Record<string, unknown>,
+  field: string,
+  namespace: string,
+  result: MirrorValidationResult,
+): void {
+  const rawItemUrl = record.raw_item_url ?? record.rawItemUrl;
     validateOptionalUrlField(rawItemUrl, `${field}.raw_item_url`, namespace, result);
     validateOptionalUrlField(record.docs_url ?? record.docsUrl, `${field}.docs_url`, namespace, result);
     validateOptionalUrlField(record.preview_url ?? record.previewUrl, `${field}.preview_url`, namespace, result);
@@ -511,7 +532,30 @@ function validateItemSummaries(
     validateOptionalStringArray(record.registryDependencies, `${field}.registryDependencies`, namespace, result);
     validateOptionalStringArray(record.warnings, `${field}.warnings`, namespace, result);
     validateOptionalFiles(record.files, `${field}.files`, namespace, result);
-  });
+}
+
+function validateItemSummary(
+  item: unknown,
+  index: number,
+  namespace: string,
+  registryUrlTemplate: unknown,
+  result: MirrorValidationResult,
+): void {
+  const field = 'atlas.item_summaries[' + index + ']';
+  if (!isObject(item)) {
+    addIssue(result, {
+      code: 'atlas-invalid-item-summary',
+      message: field + ' must be an object.',
+      severity: 'error',
+      namespace,
+      field,
+    });
+    return;
+  }
+  validateItemSummaryIdentity(item, field, namespace, result);
+  validateItemSummaryStatus(item, field, namespace, result);
+  validateItemSummaryRoute(item, field, namespace, registryUrlTemplate, result);
+  validateItemSummaryOptionalFields(item, field, namespace, result);
 }
 
 function hasRouteSource(registryUrlTemplate: unknown, rawItemUrl: unknown): boolean {

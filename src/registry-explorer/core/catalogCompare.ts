@@ -48,6 +48,65 @@ interface UnionRecord {
 
 const DEFAULT_PAGE_SIZE = 40;
 
+function mergeRegistryItems(index: RegistryCatalogIndex, namespaces: readonly string[]): Map<string, UnionRecord> {
+  const union = new Map<string, UnionRecord>();
+  for (const namespace of namespaces) {
+    for (const item of index.registries[namespace] ?? []) {
+      const identity = registryCatalogItemIdentity(item.name);
+      const record = union.get(identity) ?? {
+        slug: item.name,
+        displayName: item.title ?? item.name,
+        itemsByNamespace: new Map<string, RegistryCatalogItem>(),
+      };
+      record.itemsByNamespace.set(namespace, item);
+      if (!record.displayName && item.title) record.displayName = item.title;
+      union.set(identity, record);
+    }
+  }
+  return union;
+}
+
+function buildComparisonCell(
+  namespace: string,
+  item: RegistryCatalogItem | undefined,
+  registry: Registry | undefined,
+  index: RegistryCatalogIndex,
+  basePath: string,
+): CatalogCompareCell {
+  if (!item) return { namespace, present: false };
+  const routeKind = comparisonRouteKind(item, namespace);
+  return {
+    namespace,
+    present: true,
+    routeKind,
+    routePath: catalogRoutePath(
+      { kind: routeKind, namespace, slug: item.name }, basePath,
+    ),
+    registryHomepage: registry?.url,
+    sourcePage: registry ? resolveCatalogSourcePage(index, registry, item) : undefined,
+    docsUrl: registry?.itemSummaries?.find(summary => summary.slug === item.name)?.docsUrl,
+  };
+}
+
+function buildComparisonRow(
+  identity: string,
+  record: UnionRecord,
+  namespaces: readonly string[],
+  byName: ReadonlyMap<string, Registry>,
+  index: RegistryCatalogIndex,
+  basePath: string,
+): CatalogCompareRow {
+  return {
+    identity,
+    slug: record.slug,
+    displayName: record.displayName,
+    presentIn: namespaces.filter(namespace => record.itemsByNamespace.has(namespace)),
+    cells: namespaces.map(namespace => buildComparisonCell(
+      namespace, record.itemsByNamespace.get(namespace), byName.get(namespace), index, basePath,
+    )),
+  };
+}
+
 export function buildCatalogComparison(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
@@ -59,21 +118,7 @@ export function buildCatalogComparison(
   const selectedRegistryNames = [...new Set(registryNames)]
     .filter(name => available.has(name))
     .slice(0, 4);
-  const union = new Map<string, UnionRecord>();
-
-  for (const namespace of selectedRegistryNames) {
-    for (const item of index.registries[namespace] ?? []) {
-      const identity = registryCatalogItemIdentity(item.name);
-      const existing = union.get(identity) ?? {
-        slug: item.name,
-        displayName: item.title ?? item.name,
-        itemsByNamespace: new Map<string, RegistryCatalogItem>(),
-      };
-      existing.itemsByNamespace.set(namespace, item);
-      if (!existing.displayName && item.title) existing.displayName = item.title;
-      union.set(identity, existing);
-    }
-  }
+  const union = mergeRegistryItems(index, selectedRegistryNames);
 
   const unionCount = union.size;
   const intersectionCount = selectedRegistryNames.length === 0
@@ -89,32 +134,11 @@ export function buildCatalogComparison(
   const total = matching.length;
   const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
   const start = (page - 1) * pageSize;
-  const rows = matching.slice(start, start + pageSize).map(([identity, record]) => {
-    const presentIn = selectedRegistryNames.filter(namespace => record.itemsByNamespace.has(namespace));
-    return {
-      identity,
-      slug: record.slug,
-      displayName: record.displayName,
-      presentIn,
-      cells: selectedRegistryNames.map(namespace => {
-        const item = record.itemsByNamespace.get(namespace);
-        return item
-          ? {
-              namespace,
-              present: true,
-              routeKind: comparisonRouteKind(item, namespace),
-              routePath: catalogRoutePath(
-                { kind: comparisonRouteKind(item, namespace), namespace, slug: item.name },
-                options.basePath ?? "/Registry-Atlas/",
-              ),
-              registryHomepage: registryByName.get(namespace)?.url,
-              sourcePage: resolveCatalogSourcePage(index, registryByName.get(namespace)!, item),
-              docsUrl: registryByName.get(namespace)?.itemSummaries?.find(summary => summary.slug === item.name)?.docsUrl,
-            }
-          : { namespace, present: false };
-      }),
-    };
-  });
+  const rows = matching.slice(start, start + pageSize).map(([identity, record]) =>
+    buildComparisonRow(identity, record, selectedRegistryNames, registryByName, index,
+      options.basePath ?? '/Registry-Atlas/'));
+
+
 
   return {
     selectedRegistryNames,

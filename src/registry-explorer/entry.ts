@@ -2,14 +2,7 @@ import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
 import { drawerWrapTarget } from './ui/mobileSidebarFocus';
 
-async function bootstrap() {
-  try {
-    const aside = document.getElementById('aside');
-    const contentHeader = document.getElementById('contentHeader');
-    const contentBody = document.getElementById('contentBody');
-    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
-    const sidebarContext = document.getElementById('sidebarContext');
-    const tabs = document.querySelectorAll('.primary-nav [data-view]');
+function setupMobileSidebarControls(): void {
     const appSidebar = document.getElementById('appSidebar');
     const sidebarToggle = document.getElementById('sidebarToggle') as HTMLButtonElement | null;
     const sidebarClose = document.getElementById('sidebarClose') as HTMLButtonElement | null;
@@ -56,6 +49,18 @@ async function bootstrap() {
         }
       }
     });
+
+}
+
+async function bootstrap() {
+  try {
+    const aside = document.getElementById('aside');
+    const contentHeader = document.getElementById('contentHeader');
+    const contentBody = document.getElementById('contentBody');
+    const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+    const sidebarContext = document.getElementById('sidebarContext');
+    const tabs = document.querySelectorAll('.primary-nav [data-view]');
+    setupMobileSidebarControls();
 
     if (aside && contentHeader && contentBody && searchInput && tabs.length) {
       contentBody.innerHTML = `

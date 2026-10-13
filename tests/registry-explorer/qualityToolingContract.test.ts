@@ -8,9 +8,11 @@ describe('quality-tooling integration contract', () => {
     const pkg = JSON.parse(read('package.json'));
     expect(pkg.devDependencies['dependency-cruiser']).toBe('18.6.0');
     expect(pkg.devDependencies['react-doctor']).toBe('0.9.18');
-    expect(pkg.scripts['lint:deps']).toContain('depcruise src/registry-explorer');
+    expect(pkg.scripts['lint:deps']).toBe('pnpm lint:boundaries');
+    expect(pkg.scripts['lint:boundaries']).toBe('depcruise src tests --config .dependency-cruiser.cjs');
     expect(pkg.scripts['lint:react-doctor']).toContain('--blocking warning --no-telemetry');
     expect(pkg.scripts['lint:complexity']).toBe('cccc src/registry-explorer');
+    expect(pkg.scripts['test:complexity-gate']).toBe('node scripts/verify-complexity-gate.mjs');
     for (const gate of ['pnpm lint:deps', 'pnpm lint:react-doctor', 'pnpm lint:complexity']) {
       expect(pkg.scripts.verify).toContain(gate);
     }
@@ -30,5 +32,9 @@ describe('quality-tooling integration contract', () => {
     expect(config).toContain('no-core-to-adapters');
     expect(config).toContain('no-data-to-ui');
     expect(config).toContain('no-production-to-tests');
+    expect(config).toContain('entrypoint-boundary-from-app');
+    expect(config).toContain('entrypoint-boundary-across-packages');
+    expect(config).toContain('tests-through-entrypoints');
+    expect(config).toContain('tests-folder-is-private');
   });
 });

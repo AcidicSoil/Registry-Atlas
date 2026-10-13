@@ -40,6 +40,28 @@ function aliasKey(value: string): string {
   return value.trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
 }
 
+function validateChildTaxonomyId(id: string, parentId: string | null, ids: Set<string>): void {
+  if (!ID_PATTERN.test(id)) throw new Error(`Catalog taxonomy id is invalid: ${id}`);
+  if (ids.has(id)) throw new Error(`Catalog taxonomy duplicate id: ${id}`);
+  ids.add(id);
+  if (parentId === null) {
+    if (id.includes('/')) throw new Error(`Catalog taxonomy root id must have one segment: ${id}`);
+    return;
+  }
+  const direct = id.startsWith(`${parentId}/`)
+    && id.split('/').length === parentId.split('/').length + 1;
+  if (!direct) throw new Error(`Catalog taxonomy child ${id} is not a direct child of ${parentId}`);
+}
+
+function registerTaxonomyAliases(aliases: Map<string, string>, names: string[], id: string): void {
+  for (const alias of names) {
+    const key = aliasKey(alias);
+    const owner = aliases.get(key);
+    if (owner && owner !== id) throw new Error(`Catalog taxonomy alias collision: ${alias}`);
+    aliases.set(key, id);
+  }
+}
+
 export function parseCatalogTaxonomy(value: unknown): CatalogTaxonomy {
   if (!isRecord(value)) throw new Error('Catalog taxonomy must be an object');
   const version = nonEmptyString(value.version, 'version');
@@ -58,15 +80,7 @@ export function parseCatalogTaxonomy(value: unknown): CatalogTaxonomy {
     ancestors.add(raw);
 
     const id = nonEmptyString(raw.id, 'id');
-    if (!ID_PATTERN.test(id)) throw new Error(`Catalog taxonomy id is invalid: ${id}`);
-    if (ids.has(id)) throw new Error(`Catalog taxonomy duplicate id: ${id}`);
-    ids.add(id);
-    if (parentId === null) {
-      if (id.includes('/')) throw new Error(`Catalog taxonomy root id must have one segment: ${id}`);
-    } else {
-      const direct = id.startsWith(`${parentId}/`) && id.split('/').length === parentId.split('/').length + 1;
-      if (!direct) throw new Error(`Catalog taxonomy child ${id} is not a direct child of ${parentId}`);
-    }
+    validateChildTaxonomyId(id, parentId, ids);
 
     const label = nonEmptyString(raw.label, `${id} label`);
     const what = nonEmptyString(raw.what, `${id} what`);
@@ -75,12 +89,7 @@ export function parseCatalogTaxonomy(value: unknown): CatalogTaxonomy {
     const examples = stringArray(raw.examples, 'examples', id);
     if (!Array.isArray(raw.children)) throw new Error(`Catalog taxonomy ${id} children must be an array`);
 
-    for (const alias of nodeAliases) {
-      const key = aliasKey(alias);
-      const owner = aliases.get(key);
-      if (owner && owner !== id) throw new Error(`Catalog taxonomy alias collision: ${alias}`);
-      aliases.set(key, id);
-    }
+    registerTaxonomyAliases(aliases, nodeAliases, id);
 
     const children = raw.children.map(child => visit(child, id));
     ancestors.delete(raw);

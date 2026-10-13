@@ -27,9 +27,13 @@
     "pretest": "pnpm prepare:runtime-data",
     "migrate:postgres-schema": "node scripts/migrate-postgres-schema.mjs",
     "audit:dependencies": "pnpm audit --audit-level moderate",
-    "lint:deps": "depcruise src/registry-explorer --config .dependency-cruiser.cjs",
+    "lint:deps": "pnpm lint:boundaries",
     "lint:react-doctor": "react-doctor src --blocking warning --no-telemetry",
-    "lint:complexity": "cccc src/registry-explorer"
+    "lint:complexity": "cccc src/registry-explorer",
+    "doctor": "npx react-doctor@latest",
+    "lint:boundaries": "depcruise src tests --config .dependency-cruiser.cjs",
+    "test:boundaries": "node scripts/verify-deep-module-boundaries.mjs",
+    "test:complexity-gate": "node scripts/verify-complexity-gate.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",

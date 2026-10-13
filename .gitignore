@@ -292,3 +292,6 @@ graph-infra/bin/
 /data/*.sqlite-wal
 /data/*.sqlite-shm
 /public/data/*.json.gz
+
+# cccc reusable content cache
+.cccc.cache

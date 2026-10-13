@@ -37,6 +37,12 @@ export function renderExternalLink(
   return `<a href="${escapeHtml(safeUrl.href)}" class="${escapeHtml(className)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
 }
 
+function isPublicHomepageHost(host: string): boolean {
+  if (!host || host === 'localhost' || host.includes(':')) return false;
+  if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+  return !/^\d+(?:\.\d+){3}$/.test(host);
+}
+
 /** Homepage links are navigation only: never render raw registry endpoints as replacements. */
 export function renderRegistryHomepageLink(
   homepage: string,
@@ -45,10 +51,7 @@ export function renderRegistryHomepageLink(
 ): string {
   const url = toSafeExternalUrl(homepage);
   if (!url || url.username || url.password) return '';
-  const host = url.hostname.toLowerCase().replace(/\.$/, '');
-  if (!host || host === 'localhost' || host.endsWith('.localhost')
-    || host.endsWith('.local') || host.endsWith('.internal')
-    || host.includes(':') || /^\d+(?:\.\d+){3}$/.test(host)) return '';
+  if (!isPublicHomepageHost(url.hostname.toLowerCase().replace(/\.$/, ''))) return '';
   return renderExternalLink(url.href, label, className);
 }
 

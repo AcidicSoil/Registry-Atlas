@@ -1,3 +1,11 @@
-# PPM-recommended complexity budget. Do not increase to grandfather violations.
+# cccc official config: https://github.com/moznion/cccc#configuration-file
+# These are strict per-function limits. Never grandfather exceptions.
+languages = ["es"]
 max-cognitive = 15
 max-cyclomatic = 10
+min = 1
+table = true
+pretty = false
+jobs = 4
+cache = true
+cache-file = ".cccc.cache"

@@ -1,31 +1,5 @@
-/** Validation shared by canonical data imports and UI link rendering. */
-const trimTrailingSlashes = (path: string): string => path.replace(/\/+$/, '');
-
-function isPublicHostname(hostname: string): boolean {
-  return hostname.includes('.')
-    && hostname !== 'localhost'
-    && !hostname.endsWith('.local')
-    && !hostname.endsWith('.internal')
-    && !/^\d+(?:\.\d+){3}$/.test(hostname);
-}
-
-function hasNoCredentialsOrPort(url: URL): boolean {
-  return !url.username && !url.password && !url.port;
-}
-
-function hasAcceptableSourceOrigin(page: URL, homepage: URL): boolean {
-  return page.protocol === 'https:'
-    && ['http:', 'https:'].includes(homepage.protocol)
-    && hasNoCredentialsOrPort(page)
-    && page.hostname === homepage.hostname
-    && isPublicHostname(page.hostname);
-}
-
-function isDisplayableSourcePath(page: URL, homepage: URL): boolean {
-  const path = trimTrailingSlashes(page.pathname);
-  if (path.toLowerCase().endsWith('.json')) return false;
-  return path !== trimTrailingSlashes(homepage.pathname) || !!page.search;
-}
+/** Validated human-facing source links exported at the core module boundary. */
+import { hasAcceptableSourceOrigin, hasNoCredentialsOrPort, isPublicHostname, isDisplayableSourcePath } from './lib/sourcePageOrigin';
 
 export function verifiedSourcePageUrl(
   candidate: string | null | undefined,

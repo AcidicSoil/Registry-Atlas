@@ -87,19 +87,18 @@ function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
   `;
 }
 
-export function renderCatalogBrowseControls(
+function appliedCatalogFilters(
   state: CatalogBrowseQueryState,
   options: {
     taxonomy?: CatalogTaxonomy;
     selectedAssetKinds?: readonly AssetKindToken[];
-    searchTerm?: string;
-  } = {},
-): string {
+  },
+): Array<{ attribute: string; value: string; label: string }> {
   const canonicalIds = state.canonicalIds ?? [];
   const access = state.access ?? [];
   const selectedAssetKinds = options.selectedAssetKinds ?? state.assetKinds ?? [];
   const taxonomyMap = options.taxonomy ? catalogTaxonomyNodeMap(options.taxonomy) : null;
-  const activeFilters = [
+  return [
     ...state.registryNames.map(value => ({
       attribute:'data-catalog-registry-value',value,label:'Registry: '+value,
     })),
@@ -123,6 +122,17 @@ export function renderCatalogBrowseControls(
       label:'Access: '+value[0]!.toUpperCase()+value.slice(1),
     })),
   ];
+}
+
+export function renderCatalogBrowseControls(
+  state: CatalogBrowseQueryState,
+  options: {
+    taxonomy?: CatalogTaxonomy;
+    selectedAssetKinds?: readonly AssetKindToken[];
+    searchTerm?: string;
+  } = {},
+): string {
+  const activeFilters = appliedCatalogFilters(state, options);
   const query = options.searchTerm?.trim() ?? '';
   const active = Boolean(query) || activeFilters.length > 0;
   if (!active) return '';
@@ -149,6 +159,18 @@ const ASSET_KIND_LABELS: Readonly<Record<AssetKindToken, string>> = {
   other: "Other",
 };
 
+function catalogCardRoutePath(
+  component: CatalogComponent,
+  routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon',
+): string {
+  if (routeKind === 'component') return component.routePath;
+  const base = component.routePath.slice(0, component.routePath.indexOf(component.namespace));
+  const kind = routeKind === 'icon' ? 'component' : routeKind;
+  return catalogRoutePath(
+    { kind, namespace: component.namespace, slug: component.slug }, base,
+  );
+}
+
 export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon' = 'component',
@@ -158,17 +180,7 @@ export function renderCatalogComponentCard(
     docsUrl: component.docsUrl,
     sourcePage: component.sourcePage,
   });
-  const routePath = routeKind === 'component'
-    ? component.routePath
-    : routeKind === 'icon'
-      ? catalogRoutePath(
-          { kind: 'component', namespace: component.namespace, slug: component.slug },
-          component.routePath.slice(0, component.routePath.indexOf(component.namespace)),
-        )
-      : catalogRoutePath(
-        { kind: routeKind, namespace: component.namespace, slug: component.slug },
-        component.routePath.slice(0, component.routePath.indexOf(component.namespace)),
-      );
+  const routePath = catalogCardRoutePath(component, routeKind);
   const kindLabel = routeKind === 'component' ? component.type.replace(/^registry:/, '')
     : routeKind;
   const supportingCopy = component.description?.trim()
