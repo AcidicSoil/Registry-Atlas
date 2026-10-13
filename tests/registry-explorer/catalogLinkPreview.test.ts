@@ -28,6 +28,34 @@ describe('upstream source previews', () => {
     )).toBeNull();
   });
 
+  it('uses only item-specific upstream visuals for tested source families', () => {
+    expect(sourceLinkPreview('https://keylineicons.com/icons/a-arrow-down')).toEqual({
+      src: 'https://keylineicons.com/icons/a-arrow-down/opengraph-image/card',
+      hostname: 'keylineicons.com',
+    });
+
+    expect(sourceLinkPreview('https://animateicons.in/icons/huge/activity')).toEqual({
+      src: 'https://animateicons.in/icons/huge/activity/opengraph-image',
+      hostname: 'animateicons.in',
+    });
+
+    expect(sourceLinkPreview('https://animateicons.in/icons/lucide/a-arrow-down')?.src)
+      .toBe('https://animateicons.in/icons/lucide/a-arrow-down/opengraph-image');
+
+    expect(sourceLinkPreview('https://shadcnblocks.com/block/about1')).toEqual({
+      src: 'https://cdn.shadcnblocks.com/shadcnblocks/screenshots/block/about1-4x3.webp',
+      hostname: 'shadcnblocks.com',
+    });
+  });
+
+  it('rejects generic marketing cards and unverified route families', () => {
+    expect(sourceLinkPreview('https://keylineicons.com/icons/sharp/accessibility')).toBeNull();
+    expect(sourceLinkPreview('https://shadcnblocks.com/component/button/button1')).toBeNull();
+    expect(sourceLinkPreview('https://uiable.com/components/button')).toBeNull();
+    expect(sourceLinkPreview('https://reui.io/docs/components/button')).toBeNull();
+    expect(sourceLinkPreview('https://animateicons.in/icons/unknown/activity')).toBeNull();
+  });
+
   it('renders a verified direct image link without routing through Atlas', () => {
     expect(sourceLinkPreview('https://assets.example.com/components/button.webp')).toEqual({
       src: 'https://assets.example.com/components/button.webp',
