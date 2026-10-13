@@ -4,17 +4,6 @@ A component-first explorer for the [shadcn/ui community registry](https://ui.sha
 
 Registry Atlas mirrors real upstream registry catalogs into a local, evidence-backed index so you can browse exact component identities, inspect registry libraries, open canonical item routes, compare coverage, and distinguish missing evidence from unavailable data without synthesized fallback components.
 
-<p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-0.png" alt="Registry Atlas landing page showing the full-width catalog dashboard" />
-</p>
-
-<p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-1.png" alt="Registry Atlas component catalog with registry filtering and deterministic sorting" />
-</p>
-
-<p>
-<img src="https://github.com/acidicsoil/registry-atlas/raw/HEAD/public/screenshots/ss-2.png" alt="Registry Atlas registry directory with catalog coverage and indexed item counts" />
-</p>
 
 ## Features
 

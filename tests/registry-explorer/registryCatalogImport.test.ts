@@ -1,7 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import catalog from '../../registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json';
 // @ts-expect-error The importer is an executable Node .mjs script with runtime exports tested here.
-import { buildImportReport, buildRegistryItemsByNamespace, normalizeImportedItem, normalizeNamespace } from '../../scripts/import-registry-catalog.mjs';
+import { buildImportReport, buildRegistryItemsByNamespace, normalizeImportedItem, normalizeNamespace, parseArgs } from '../../scripts/import-registry-catalog.mjs';
+
+const catalog = {
+  registries: [
+    { name: 'delego', items: [{ name: 'delego-theme', type: 'registry:theme' }] },
+    { name: 'delta', items: [{
+      name: 'input-otp',
+      type: 'registry:ui',
+      route_eligible: true,
+      raw_item_url: 'https://deltacomponents.dev/r/input-otp.json',
+      evidence_url: 'https://deltacomponents.dev/r/registry.json',
+      dependencies: ['lucide-react'],
+      files: [{
+        path: 'registry/delta-ui/delta/input-otp.tsx',
+        type: 'registry:ui',
+        target: 'components/input-otp.tsx',
+      }],
+    }] },
+    { name: 'diceui', items: [{
+      name: 'action-bar',
+      registryDependencies: ['button', '@diceui/use-as-ref'],
+    }] },
+  ],
+};
 
 type ImportedItem = {
   slug: string;
@@ -15,7 +37,15 @@ describe('registry catalog import', () => {
     expect(normalizeNamespace('@Delta')).toBe('@delta');
   });
 
-  it('imports the researched sample registries by namespace', () => {
+  it('requires an explicit import file instead of a deleted default artifact', () => {
+    expect(() => parseArgs([])).toThrow('Provide --source');
+    expect(() => parseArgs(['--dry-run'])).toThrow('Provide --source');
+    expect(() => parseArgs(['--source', '--dry-run'])).toThrow('Missing value');
+    expect(parseArgs(['--source', 'fixtures/registry-sample.json', '--dry-run']))
+      .toEqual({ source: 'fixtures/registry-sample.json', dryRun: true });
+  });
+
+  it('imports a focused catalog fixture by namespace', () => {
     const result = buildRegistryItemsByNamespace(catalog);
 
     expect(Object.keys(result.itemsByNamespace)).toEqual(['@delego', '@delta', '@diceui']);
@@ -69,15 +99,17 @@ describe('registry catalog import', () => {
 
   it('builds a reviewable import report', () => {
     const result = buildRegistryItemsByNamespace(catalog);
-    const report = buildImportReport(catalog, result);
+    const report = buildImportReport(catalog, result, 'fixtures/registry-sample.json');
+
+    expect(report.source_path).toBe('fixtures/registry-sample.json');
 
     expect(report.registry_count).toBe(3);
-    expect(report.item_count).toBe(28);
+    expect(report.item_count).toBe(3);
     expect(report.namespaces).toEqual(['@delego', '@delta', '@diceui']);
     expect(report.item_counts).toEqual(expect.objectContaining({
-      '@delego': 6,
-      '@delta': 10,
-      '@diceui': 12,
+      '@delego': 1,
+      '@delta': 1,
+      '@diceui': 1,
     }));
     expect(report.warnings).toEqual([]);
     expect(report.skipped).toEqual([]);

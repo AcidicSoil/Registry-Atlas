@@ -8,8 +8,6 @@ import {
   replaceCuratedItemSummaries,
 } from './lib/atlas-storage.mjs';
 
-const DEFAULT_SOURCE_PATH = 'registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json';
-
 const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -152,7 +150,7 @@ export function buildRegistryItemsByNamespace(catalog, existingItems = {}) {
   };
 }
 
-export function buildImportReport(catalog, importResult) {
+export function buildImportReport(catalog, importResult, sourcePath) {
   const registries = Array.isArray(catalog?.registries) ? catalog.registries : [];
 
   const importedNamespaces = registries
@@ -166,7 +164,7 @@ export function buildImportReport(catalog, importResult) {
   ]));
 
   return {
-    source_path: DEFAULT_SOURCE_PATH,
+    source_path: sourcePath,
     generated_at: new Date().toISOString(),
     registry_count: importedNamespaces.length,
     item_count: Object.values(itemCounts).reduce((sum, count) => sum + count, 0),
@@ -177,19 +175,27 @@ export function buildImportReport(catalog, importResult) {
   };
 }
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   const options = {
-    source: DEFAULT_SOURCE_PATH,
+    source: null,
     dryRun: false,
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
 
-    if (arg === '--source') options.source = argv[++index] ?? options.source;
+    if (arg === '--source') {
+      const value = argv[++index];
+
+      if (!value || value.startsWith('--')) throw new Error('Missing value for --source');
+
+      options.source = value;
+    }
     else if (arg === '--dry-run') options.dryRun = true;
     else throw new Error(`Unknown argument: ${arg}`);
   }
+
+  if (!options.source) throw new Error('Provide --source <catalog.json> to import a catalog');
 
   return options;
 }
@@ -202,7 +208,7 @@ async function main(argv = process.argv.slice(2)) {
   try {
     const existing = await readCuratedItemSummaries(database);
     const importResult = buildRegistryItemsByNamespace(catalog, existing);
-    const report = buildImportReport(catalog, importResult);
+    const report = buildImportReport(catalog, importResult, options.source);
 
     if (!options.dryRun) {
       await replaceCuratedItemSummaries(database, importResult.itemsByNamespace);
