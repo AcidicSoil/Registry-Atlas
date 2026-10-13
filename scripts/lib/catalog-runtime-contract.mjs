@@ -1,3 +1,4 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
 import {
   applyCatalogClassificationOverlay,
   validateCatalogClassificationOverlay,
@@ -102,8 +103,8 @@ export function validateCatalogRuntimeContract({
     errors.push('reviewed classification overlay taxonomy fingerprint does not match the source taxonomy');
   }
 
-  if (!runtimeCatalog || typeof runtimeCatalog !== 'object' || Array.isArray(runtimeCatalog)
-    || !runtimeCatalog.registries || typeof runtimeCatalog.registries !== 'object'
+  if (!runtimeCatalog || !isInputObject(runtimeCatalog) || Array.isArray(runtimeCatalog)
+    || !runtimeCatalog.registries || !isInputObject(runtimeCatalog.registries)
     || Array.isArray(runtimeCatalog.registries)) {
     errors.push('runtime catalog must contain a registries object');
 
@@ -121,7 +122,7 @@ export function validateCatalogRuntimeContract({
     }
 
     for (const item of items) {
-      if (!item || typeof item !== 'object' || typeof item.name !== 'string') continue;
+      if (!item || !isInputObject(item) || !isInputString(item.name)) continue;
       const key = identity(namespace, item.name);
       runtimeKeys.add(key);
 
@@ -136,7 +137,7 @@ export function validateCatalogRuntimeContract({
         summary.runtimeCanonicalItems += 1;
         const canonical = item.canonical;
 
-        if (!canonical || typeof canonical !== 'object' || Array.isArray(canonical)
+        if (!canonical || !isInputObject(canonical) || Array.isArray(canonical)
           || canonical.taxonomyVersion !== source.version || !Array.isArray(canonical.path)) {
           errors.push(`runtime canonical value is malformed: ${namespace}/${item.name}`);
           continue;
@@ -171,7 +172,7 @@ export function validateCatalogRuntimeContract({
 
     for (const [namespace, items] of Object.entries(projected.itemsByNamespace)) {
       for (const item of items) {
-        if (!item || typeof item !== 'object' || typeof item.name !== 'string') continue;
+        if (!item || !isInputObject(item) || !isInputString(item.name)) continue;
 
         const hasManaged = ['kind', 'canonical', 'sourceGroups', 'access']
           .some(field => item[field] !== undefined);

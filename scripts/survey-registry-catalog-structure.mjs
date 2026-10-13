@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { isInputCallable, isInputString } from './lib/input-guards.mjs';
 import { execFileSync } from 'node:child_process';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
@@ -59,22 +59,32 @@ export function parseCatalogStructureSurveyArgs(argv) {
 
   const dryRun = booleans.has('--dry-run');
 
-  const result = {
-    ...(values['--profile'] ? { profile: values['--profile'] } : {}),
-    ...(values['--server'] ? { server: values['--server'] } : {}),
-    ...(values['--tab'] ? { tab: values['--tab'] } : {}),
-    ...(values['--output-dir'] ? { outputDir: values['--output-dir'] } : {}),
-    ...(values['--cursor'] ? { cursor: values['--cursor'] } : {}),
-    maxRegistries: boundedInteger(values['--max-registries'], '--max-registries', 20, 1, 10000),
-    maxSurfaces: boundedInteger(values['--max-surfaces'], '--max-surfaces', 4, 1, 20),
-    maxLinks: boundedInteger(values['--max-links'], '--max-links', 1500, 1, 10000),
-    delayMs: boundedInteger(values['--delay-ms'], '--delay-ms', 1000, 0, 60000),
-    decisionUrl: values['--decision-url'] ?? DEFAULT_DECISION_URL,
-    dryRun,
-    useClef: !booleans.has('--no-clef'),
-    ...(booleans.has('--all-batches') ? { allBatches: true } : {}),
-    ...(booleans.has('--resume') ? { resume: true } : {}),
-  };
+  const result = (() => {
+  const result = {};
+
+  if (values['--profile']) Object.assign(result, { profile: values['--profile'] });
+
+  if (values['--server']) Object.assign(result, { server: values['--server'] });
+
+  if (values['--tab']) Object.assign(result, { tab: values['--tab'] });
+
+  if (values['--output-dir']) Object.assign(result, { outputDir: values['--output-dir'] });
+
+  if (values['--cursor']) Object.assign(result, { cursor: values['--cursor'] });
+  result.maxRegistries = boundedInteger(values['--max-registries'], '--max-registries', 20, 1, 10000);
+  result.maxSurfaces = boundedInteger(values['--max-surfaces'], '--max-surfaces', 4, 1, 20);
+  result.maxLinks = boundedInteger(values['--max-links'], '--max-links', 1500, 1, 10000);
+  result.delayMs = boundedInteger(values['--delay-ms'], '--delay-ms', 1000, 0, 60000);
+  result.decisionUrl = values['--decision-url'] ?? DEFAULT_DECISION_URL;
+  result.dryRun = dryRun;
+  result.useClef = !booleans.has('--no-clef');
+
+  if (booleans.has('--all-batches')) Object.assign(result, { allBatches: true });
+
+  if (booleans.has('--resume')) Object.assign(result, { resume: true });
+
+  return result;
+})();
 
   if (result.resume && !result.allBatches)
     throw new Error('--resume requires --all-batches');
@@ -152,14 +162,14 @@ function mergeItems(catalogItems = [], curatedItems = []) {
   const byName = new Map();
 
   for (const item of catalogItems) {
-    if (!item || typeof item.name !== 'string' || !item.name.trim()) continue;
+    if (!item || !isInputString(item.name) || !item.name.trim()) continue;
 
     if (!byName.has(item.name))
       byName.set(item.name, { name: item.name, type: item.type ?? 'registry:item' });
   }
 
   for (const item of curatedItems) {
-    if (!item || typeof item.slug !== 'string' || !item.slug.trim() || byName.has(item.slug))
+    if (!item || !isInputString(item.slug) || !item.slug.trim() || byName.has(item.slug))
       continue;
     byName.set(item.slug, { name: item.slug, type: item.type ?? 'registry:item' });
   }
@@ -249,7 +259,7 @@ function createPinchTabObserver({ server, tab, delayMs }) {
       '--server', server, 'eval', domExpression(maxLinks), '--tab', tab, '--json',
     ], 30000);
 
-    if (typeof result?.result !== 'string')
+    if (!isInputString(result?.result))
       throw new Error('PinchTab DOM evaluation returned no result');
 
     return JSON.parse(result.result);
@@ -298,7 +308,7 @@ export async function runCatalogStructureSurveyBatches({
 } = {}) {
   if (!isAbsolute(outputDir ?? '')) throw new Error('Batch output directory must be absolute');
 
-  if (typeof executeBatch !== 'function') throw new Error('executeBatch is required');
+  if (!isInputCallable(executeBatch)) throw new Error('executeBatch is required');
 
   if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
 

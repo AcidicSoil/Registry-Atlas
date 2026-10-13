@@ -1,3 +1,6 @@
+/** Named map contract for dynamic keys in this module. */
+type LedgersLookupContract = Record<string, Map<string, any>>;
+
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Node ESM source script has no TS declarations.
 import { deriveTraversalInventory } from '../../scripts/derive-registry-traversal-patterns.mjs';
@@ -21,6 +24,7 @@ const index = { registries: {
 const now = '2026-10-03T01:00:00.000Z';
 
 function observed(registry: typeof alpha, slug: string, url: string) {
+  // SAFETY: The fixture namespace is a key of the locally constructed catalog index.
   return { schema:'registry-atlas-discovery/v1', discoveryRevision:DISCOVERY_REVISION,
     namespace:registry.name, token:registry.name+'/'+slug, slug,
     status:'page-observed', checkedAt:now,
@@ -29,6 +33,7 @@ function observed(registry: typeof alpha, slug: string, url: string) {
 }
 
 function snapshot(registry: typeof alpha, links: Array<{slug:string; url:string; listingUrl:string}>) {
+  // SAFETY: The fixture namespace is a key of the locally constructed catalog index.
   return {schema:'registry-atlas-discovery/v1',discoveryRevision:DISCOVERY_REVISION,
     namespace:registry.name, token:'registry:'+registry.name,
     checkedAt:now,catalogFingerprint:catalogFingerprint(registry,index.registries[registry.name as keyof typeof index.registries].map(x=>x.name)),
@@ -42,7 +47,7 @@ const alphaListing='https://alpha.example/docs/components';
 
 const betaListing='https://beta.example/docs';
 
-const ledgers: Record<string, Map<string, any>> = {
+const ledgers = {
   '@alpha': new Map<string, any>([
     ['registry:@alpha', snapshot(alpha,[
       {slug:'button',url:'https://alpha.example/docs/components/button',listingUrl:alphaListing},
@@ -60,7 +65,7 @@ const ledgers: Record<string, Map<string, any>> = {
     ['@beta/components-animate-code',observed(beta,'components-animate-code','https://beta.example/docs/components/animate/code')],
   ]),
   '@gamma':new Map<string, any>(), '@http':new Map<string, any>(),
-};
+} satisfies LedgersLookupContract;
 
 describe('actual registry traversal route inventory', () => {
   it('retains the correct official listing and per-registry path shape from observed anchors', () => {
@@ -102,6 +107,7 @@ describe('actual registry traversal route inventory', () => {
       url:'https://alpha.example/docs/components/missing',listingUrl:alphaListing}]);
 
     const journal=new Map<string, any>([['registry:@alpha',last]]);
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     (journal as any).history=[former,last];
     const report=deriveTraversalInventory([alpha],index,{}, {'@alpha':journal},now);
     expect(report.registries[0].matchedAnchorCount).toBe(3);

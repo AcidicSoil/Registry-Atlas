@@ -1,3 +1,4 @@
+import { isInputCallable, isInputObject, isInputString } from './input-guards.mjs';
 import { createHash } from 'node:crypto';
 import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from './catalog-taxonomy.mjs';
 import { chooseTaxonomyOption } from './systemone-taxonomy.mjs';
@@ -24,7 +25,7 @@ function evidenceStrings(state) {
     state?.item?.title,
     ...(state?.sourceHints?.categories ?? []),
     ...(state?.sourceHints?.verifiedGroups ?? []),
-  ].filter(value => typeof value === 'string' && value.trim());
+  ].filter(value => isInputString(value) && value.trim());
 }
 
 function pathFor(recordsById, id) {
@@ -149,11 +150,11 @@ export async function classifyCatalogItem({
 } = {}) {
   const validated = validateCatalogTaxonomy(taxonomy);
 
-  if (!state || typeof state !== 'object' || Array.isArray(state)) {
+  if (!state || !isInputObject(state) || Array.isArray(state)) {
     throw new Error('Catalog classification requires semantic state');
   }
 
-  if (typeof choose !== 'function') throw new Error('Catalog classification requires a Choice function');
+  if (!isInputCallable(choose)) throw new Error('Catalog classification requires a Choice function');
 
   if (!Number.isSafeInteger(beamWidth) || beamWidth < 1 || beamWidth > 8) {
     throw new Error('Catalog classification beamWidth must be an integer from 1 to 8');
@@ -250,14 +251,19 @@ export async function classifyCatalogItem({
     path: primary === null ? [] : best.ids,
     method,
     inputFingerprint: fingerprintState(state),
-    systemOne: {
-      model: model ?? 'unknown',
-      beamWidth,
-      decisions,
-      finalPathScore: best.score,
-      ...(runnerUp ? { runnerUpPathScore: runnerUp.score } : {}),
-      ...(runnerUp && runnerUp.score > 0 ? { separation: best.score / runnerUp.score } : {}),
-    },
+    systemOne: (() => {
+  const result = {};
+  result.model = model ?? 'unknown';
+  result.beamWidth = beamWidth;
+  result.decisions = decisions;
+  result.finalPathScore = best.score;
+
+  if (runnerUp) Object.assign(result, { runnerUpPathScore: runnerUp.score });
+
+  if (runnerUp && runnerUp.score > 0) Object.assign(result, { separation: best.score / runnerUp.score });
+
+  return result;
+})(),
   };
 
   return result;

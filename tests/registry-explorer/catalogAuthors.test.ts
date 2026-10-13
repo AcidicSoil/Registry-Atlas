@@ -29,6 +29,7 @@ describe('catalog author attribution',()=>{
   ]);
  });
  it('filters real author metadata, escapes names and paginates without inferred profiles',()=>{
+  // SAFETY: This test creates an in-memory DOM stub with the methods exercised by the renderer, not a browser-owned element.
   const body={innerHTML:''} as HTMLElement,header={innerHTML:''} as HTMLElement;
   renderCatalogAuthors(header,body,buildAuthorDirectory(index),{search:'script',page:99});
   expect(header.innerHTML).toContain('Not 21st.dev account profiles or popularity rankings');

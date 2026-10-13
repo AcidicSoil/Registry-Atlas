@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { isInputObject, isInputString } from './lib/input-guards.mjs';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import {
@@ -14,11 +14,11 @@ const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon'
 const FINGERPRINT = /^sha256:[a-f0-9]{64}$/;
 
 function isRecord(value) {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }
 
 function requiredString(value, field) {
-  if (typeof value !== 'string' || !value.trim()) throw new Error(`${field} is required`);
+  if (!isInputString(value) || !value.trim()) throw new Error(`${field} is required`);
 
   return value.trim();
 }
@@ -26,7 +26,7 @@ function requiredString(value, field) {
 function validateExpected(expected) {
   if (!isRecord(expected) || !KINDS.has(expected.kind)) throw new Error('Gold expected kind is invalid');
 
-  if (!Array.isArray(expected.path) || expected.path.some(id => typeof id !== 'string' || !id)) {
+  if (!Array.isArray(expected.path) || expected.path.some(id => !isInputString(id) || !id)) {
     throw new Error('Gold expected path is invalid');
   }
 
@@ -323,11 +323,15 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       throw new Error(`Unknown greedy classification run: ${options.greedyRun}`);
     }
 
-    const report = {
-      ...evaluateCatalogClassifications({ gold, beamItems, greedyItems }),
-      beamRunId: options.beamRun,
-      ...(options.greedyRun ? { greedyRunId: options.greedyRun } : {}),
-    };
+    const report = (() => {
+  const result = {};
+  Object.assign(result, evaluateCatalogClassifications({ gold, beamItems, greedyItems }));
+  result.beamRunId = options.beamRun;
+
+  if (options.greedyRun) Object.assign(result, { greedyRunId: options.greedyRun });
+
+  return result;
+})();
 
     await putDocument(database, options.document, 'taxonomy-evaluation', report);
 

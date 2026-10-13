@@ -1,3 +1,4 @@
+import { isInputCallable, isInputString } from './input-guards.mjs';
 import { createHash } from 'node:crypto';
 import { readFile, appendFile } from 'node:fs/promises';
 import { isAbsolute } from 'node:path';
@@ -19,7 +20,7 @@ const hash = input => createHash('sha256').update(input).digest('hex');
 
 const isFresh = (row, fingerprint, checkedAt, maxAgeMs) =>
   row?.discoveryRevision === DISCOVERY_REVISION
-  && row?.catalogFingerprint === fingerprint && typeof row.checkedAt === 'string'
+  && row?.catalogFingerprint === fingerprint && isInputString(row.checkedAt)
   && Date.parse(checkedAt) >= Date.parse(row.checkedAt)
   && Date.parse(checkedAt) - Date.parse(row.checkedAt) < maxAgeMs;
 
@@ -40,7 +41,7 @@ function officialRoot(homepage) {
 
 function sameOrigin(raw, from, root) {
   try {
-    if (typeof raw !== 'string' || !raw.trim() || raw.startsWith('#') || raw.length > 1200)
+    if (!isInputString(raw) || !raw.trim() || raw.startsWith('#') || raw.length > 1200)
       return null;
     const u = new URL(raw, from);
 
@@ -91,7 +92,7 @@ function candidatesFromOfficialIndex(index, link, identities, root) {
   let identityCount = 0;
 
   for (const entry of index.items) {
-    if (!entry || typeof entry.name !== 'string' || !names.has(entry.name)) continue;
+    if (!entry || !isInputString(entry.name) || !names.has(entry.name)) continue;
     identityCount++;
     // Index-provided source JSON paths are not documentation URLs.
     const declared = entry.docsUrl ?? entry.docs_url ?? entry.documentationUrl;
@@ -99,7 +100,7 @@ function candidatesFromOfficialIndex(index, link, identities, root) {
 
     if (!url || new URL(url).pathname.toLowerCase().endsWith('.json')) continue;
 
-    const heading = typeof entry.title === 'string' && entry.title.trim().length <= 180
+    const heading = isInputString(entry.title) && entry.title.trim().length <= 180
       ? entry.title : entry.name;
 
     candidates.push({
@@ -133,7 +134,7 @@ async function observedLinks(browser, current, root, remaining) {
     };
 
     const semantics = (snap.nodes ?? []).filter(x => x.role === 'link'
-      && typeof x.ref === 'string' && typeof x.name === 'string').slice(0, remaining);
+      && isInputString(x.ref) && isInputString(x.name)).slice(0, remaining);
 
     for (const node of semantics) {
       try {
@@ -147,7 +148,7 @@ async function observedLinks(browser, current, root, remaining) {
       }
     }
 
-    if (typeof browser.domLinks === 'function') {
+    if (isInputCallable(browser.domLinks)) {
       for (const node of (await browser.domLinks()).slice(0, remaining)) {
         add(node.name, node.href, 'observed-dom-anchor');
       }
@@ -158,7 +159,7 @@ async function observedLinks(browser, current, root, remaining) {
 
   let result = await observe();
 
-  if (!result.links.length && typeof browser.waitForLinks === 'function') {
+  if (!result.links.length && isInputCallable(browser.waitForLinks)) {
     // Wait for an actual browser condition, not a site-specific sleep.
     try { await browser.waitForLinks(4000); } catch { /* bounded retry below */ }
 
@@ -254,7 +255,7 @@ async function inspectNavigation({registry: _registry, identities, browser, root
       listings.push({ url: next.url, depth: next.depth, observedLinks: links.length });
 
       for (const link of links) {
-        if (typeof browser.structuredIndex === 'function'
+        if (isInputCallable(browser.structuredIndex)
           && structuredIndexes.length < 4 && isObservedStructuredIndex(link)) {
           try {
             if (delayMs) await new Promise(done => setTimeout(done, delayMs));
@@ -279,8 +280,16 @@ async function inspectNavigation({registry: _registry, identities, browser, root
 
         for (const match of matched) {
           if (match.kind === 'ambiguous-leaf') ambiguous.add(match.slug);
-          else candidates.push({ ...link, slug: match.slug, matching: match.kind,
-            ...(match.renderedName ? {renderedName: match.renderedName} : {}) });
+          else candidates.push((() => {
+  const result = {};
+  Object.assign(result, link);
+  result.slug = match.slug;
+  result.matching = match.kind;
+
+  if (match.renderedName) Object.assign(result, {renderedName: match.renderedName});
+
+  return result;
+})());
         }
 
         if (next.depth < maxDepth && matched.length === 0
@@ -309,7 +318,7 @@ export class DiscoveryLedger {
   constructor(path, rows) { this.path = path; this.rows = rows; }
   get(token) { return this.rows.get(token); }
   async append(row) {
-    if (row.schema !== SCHEMA || typeof row.token !== 'string' || !row.token)
+    if (row.schema !== SCHEMA || !isInputString(row.token) || !row.token)
       throw new Error('Invalid discovery ledger record');
     await appendFile(this.path, JSON.stringify(row) + '\n', {flag: 'a'});
     this.rows.set(row.token, row);
@@ -326,7 +335,7 @@ export class DiscoveryLedger {
     for (const line of data.split('\n').filter(Boolean)) {
       const row = JSON.parse(line);
 
-      if (row.schema !== SCHEMA || typeof row.token !== 'string' || !row.token)
+      if (row.schema !== SCHEMA || !isInputString(row.token) || !row.token)
         throw new Error('Invalid discovery journal line');
       rows.set(row.token, row);
     }
@@ -345,7 +354,7 @@ export async function discoverRegistry({
 
   if (!/^[a-z0-9@_-]+$/i.test(registry.name)) throw new Error('Invalid registry namespace');
 
-  if (!Array.isArray(indexedItems) || indexedItems.some(x => typeof x !== 'string' || !x.trim()))
+  if (!Array.isArray(indexedItems) || indexedItems.some(x => !isInputString(x) || !x.trim()))
     throw new Error('Invalid indexed component names');
 
   for (const [name, value, maximum] of [
@@ -466,18 +475,27 @@ export async function discoverRegistry({
             row = {...base, status: 'unresolved', reason: 'rendered-identity-mismatch'};
           } else {
             row = {...base, status: 'page-observed', docsUrl: landed,
-              evidence: { strategy: source.sitemapUrl
+              evidence: (() => {
+  const result = {};
+  result.strategy = source.sitemapUrl
                 ? 'official-sitemap-then-browser-verified'
-                : source.indexUrl ? 'observed-structured-index' : 'rendered-navigation',
-                ...(source.indexUrl ? {indexUrl: source.indexUrl} : {}),
-                ...(source.sitemapUrl ? {sitemapUrl:source.sitemapUrl} : {}),
-                listingUrl: source.listingUrl,
-                observedLink: source.url, linkName: source.name,
-                matching: source.matching, navigationSource: source.navigationSource,
-                renderedHeading: (snap.nodes ?? []).find(x =>
-                  x.role === 'heading' && normalize(x.name) === expected)?.name,
-                observedUrl: landed,
-                alternateCandidatesDiscarded: candidates.length - considered.length },
+                : source.indexUrl ? 'observed-structured-index' : 'rendered-navigation';
+
+  if (source.indexUrl) Object.assign(result, {indexUrl: source.indexUrl});
+
+  if (source.sitemapUrl) Object.assign(result, {sitemapUrl:source.sitemapUrl});
+  result.listingUrl = source.listingUrl;
+  result.observedLink = source.url;
+  result.linkName = source.name;
+  result.matching = source.matching;
+  result.navigationSource = source.navigationSource;
+  result.renderedHeading = (snap.nodes ?? []).find(x =>
+                  x.role === 'heading' && normalize(x.name) === expected)?.name;
+  result.observedUrl = landed;
+  result.alternateCandidatesDiscarded = candidates.length - considered.length;
+
+  return result;
+})(),
             };
           }
         } catch {

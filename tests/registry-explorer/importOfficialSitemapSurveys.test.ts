@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Node script outside browser TS project
 import { prepareSitemapSurveys } from '../../scripts/import-official-sitemap-surveys.mjs';
@@ -10,7 +11,7 @@ const catalog = {registries:{'@alpha':[{name:'nested/button'},{name:'card'}]}};
 
 const surveyedAt='2026-10-12T08:00:00.000Z';
 
-const survey=(options: Record<string,unknown>={})=>({
+const survey=(options: Record<string, RawJsonInput>={})=>({
   schema:'registry-atlas-sitemap-survey/v1',namespace:'@alpha',
   officialHomepage:'https://alpha.example/',surveyedAt,
   catalogFingerprint:catalogFingerprint(raw[0],['card','nested/button']),

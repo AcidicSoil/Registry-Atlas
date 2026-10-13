@@ -68,6 +68,7 @@ describe('registryMirror validation', () => {
   });
 
   it('ignores retired taxonomy enrichment fields from older mirror records', () => {
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const mirror = createMirror([createRecord()]) as any;
     mirror.registries[0].atlas.primary_focus = ['unknown-focus'];
     mirror.registries[0].atlas.component_tags = ['unknown-tag'];

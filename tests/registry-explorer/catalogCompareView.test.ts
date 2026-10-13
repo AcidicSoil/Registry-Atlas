@@ -48,6 +48,7 @@ describe("renderCatalogCompare", () => {
 });
 
 function root(): HTMLElement {
+  // SAFETY: This test creates an in-memory DOM stub with the methods exercised by the renderer, not a browser-owned element.
   return { innerHTML: "" } as HTMLElement;
 }
 

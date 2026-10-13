@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../core/jsonInput';
 import {
   buildBaseDetail,
   fetchErrorResult,
@@ -56,7 +57,7 @@ export async function loadRegistryItemDetailFromCatalogIndex(
 
 async function loadResolvedRegistryItemDetail(
   summaryResult: RegistryItemDetailResult,
-  resolveWithPayload: (payload: unknown) => RegistryItemDetailResult,
+  resolveWithPayload: (payload: RawJsonInput) => RegistryItemDetailResult,
   namespace: string | null | undefined,
   fetchImpl: typeof fetch,
 ): Promise<RegistryItemDetailResult> {
@@ -107,7 +108,7 @@ async function loadResolvedRegistryItemDetail(
 
 async function loadDatabaseDetail(
   summaryResult: Extract<RegistryItemDetailResult, { status: 'summary-only' }>,
-  resolveWithPayload: (payload: unknown) => RegistryItemDetailResult,
+  resolveWithPayload: (payload: RawJsonInput) => RegistryItemDetailResult,
   namespace: string | null | undefined,
   fetchImpl: typeof fetch,
 ): Promise<RegistryItemDetailResult | null> {

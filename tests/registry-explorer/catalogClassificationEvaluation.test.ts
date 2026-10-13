@@ -4,12 +4,13 @@ import { evaluateCatalogClassifications, validateGoldSet, validatePromotionRevie
 import { readRepositoryDocument } from './testAtlasDatabase';
 
 function item(namespace: string, name: string, kind: string, primary: string | null, path: string[], systemOne?: any) {
-  return {
+  const base = {
     namespace, name, kind, taxonomyVersion: 'v1', canonical: { primary, path },
     method: primary === null ? 'unclassified' : systemOne ? 'system-one' : 'deterministic-alias',
     inputFingerprint: `sha256:${'1'.repeat(64)}`,
-    ...(systemOne ? { systemOne } : {}),
   };
+
+  return systemOne ? { ...base, systemOne } : base;
 }
 
 const gold = validateGoldSet({

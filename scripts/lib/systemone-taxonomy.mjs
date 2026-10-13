@@ -1,3 +1,5 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
+
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:18080/v1/systemone';
 
 const ROOT_SPECIAL = 'UNCLASSIFIED';
@@ -18,7 +20,7 @@ function validateEndpoint(raw) {
 }
 
 function stringArray(value, field, id) {
-  if (!Array.isArray(value) || value.some(entry => typeof entry !== 'string')) {
+  if (!Array.isArray(value) || value.some(entry => !isInputString(entry))) {
     throw new Error(`Taxonomy option ${id} has invalid ${field}`);
   }
 
@@ -26,12 +28,12 @@ function stringArray(value, field, id) {
 }
 
 function normalizeOption(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+  if (!value || !isInputObject(value) || Array.isArray(value)) {
     throw new Error('Taxonomy options must be objects');
   }
 
-  const id = typeof value.id === 'string' ? value.id.trim() : '';
-  const what = typeof value.what === 'string' ? value.what.trim() : '';
+  const id = isInputString(value.id) ? value.id.trim() : '';
+  const what = isInputString(value.what) ? value.what.trim() : '';
 
   if (!id || !what) throw new Error('Taxonomy options require id and what');
 
@@ -81,7 +83,7 @@ function criterion(option) {
 function validateAnswer(body, allowed) {
   const answer = body?.answers?.taxonomy;
 
-  if (answer?.type !== 'choice' || typeof answer.choice !== 'string') {
+  if (answer?.type !== 'choice' || !isInputString(answer.choice)) {
     throw new Error('Invalid System One taxonomy response');
   }
 
@@ -89,7 +91,7 @@ function validateAnswer(body, allowed) {
     throw new Error('System One taxonomy choice is outside the allowed options');
   }
 
-  if (!answer.probabilities || typeof answer.probabilities !== 'object' || Array.isArray(answer.probabilities)) {
+  if (!answer.probabilities || !isInputObject(answer.probabilities) || Array.isArray(answer.probabilities)) {
     throw new Error('System One taxonomy response is missing probabilities');
   }
 
@@ -134,11 +136,11 @@ export async function chooseTaxonomyOption({
   timeoutMs = 15000,
   fetchImpl = fetch,
 } = {}) {
-  if (!state || typeof state !== 'object' || Array.isArray(state)) {
+  if (!state || !isInputObject(state) || Array.isArray(state)) {
     throw new Error('System One taxonomy state must be an object');
   }
 
-  if (node !== null && (!node || typeof node !== 'object' || typeof node.id !== 'string')) {
+  if (node !== null && (!node || !isInputObject(node) || !isInputString(node.id))) {
     throw new Error('System One taxonomy node must be null or a taxonomy node');
   }
 

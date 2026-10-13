@@ -3,7 +3,8 @@
     "@codesandbox/sandpack-react": "2.20.0",
     "postgres": "^3.4.9",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@oxlint/plugins": "1.87.0",
@@ -51,7 +52,8 @@
     "typecheck": "tsc --noEmit",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
     "validate:data": "node scripts/validate-registry-data.mjs",
-    "verify": "pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build"
+    "verify": "pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build",
+    "test:anti-slop-gate": "node scripts/verify-anti-slop-gate.mjs"
   },
   "type": "module",
   "version": "0.0.0"

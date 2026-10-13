@@ -107,6 +107,7 @@ describe('canonical catalog taxonomy', () => {
   });
 
   it('requires complete node metadata arrays and non-empty definitions', () => {
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const missing = leaf('application') as any;
     delete missing.notFor;
     expect(() => validateCatalogTaxonomy(taxonomyWithRoots([missing]))).toThrow(/notFor/i);

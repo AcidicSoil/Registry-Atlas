@@ -1,3 +1,4 @@
+import { isInputCallable, isInputObject, isInputString } from './lib/input-guards.mjs';
 import { openAtlasCoreDatabase } from './lib/atlas-storage.mjs';
 import { writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -20,7 +21,7 @@ export async function initializeComponentChecks(db) {
 }
 
 export async function seedComponentCandidates(db,{catalog}){
-  if(!catalog?.registries || typeof catalog.registries !== 'object')throw Error('Catalog required');
+  if(!catalog?.registries || !isInputObject(catalog.registries))throw Error('Catalog required');
   (await initializeComponentChecks(db));
   const titles=new Map();
 
@@ -28,7 +29,7 @@ export async function seedComponentCandidates(db,{catalog}){
     for(const item of items){
       const k=key(namespace,item.name);
 
-      if(!titles.has(k))titles.set(k,typeof item.title==='string'?item.title:item.name);
+      if(!titles.has(k))titles.set(k,isInputString(item.title)?item.title:item.name);
     }
   }
 
@@ -160,7 +161,10 @@ export async function inspectComponentPage({url,slug,title,homepage,fetchPage=fe
 
     const h1=normalize(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i.exec(content)?.[1]);
     const pageTitle=normalize(/<title\b[^>]*>([\s\S]*?)<\/title>/i.exec(content)?.[1]);
-    const names=[slug.split('/').at(-1),title].map(normalize).filter(Boolean);
+
+    const names=[slug.split('/').at(-1),title].flatMap(value => { const name=normalize(value);
+
+ return name ? [name] : []; });
 
     const match=names.some(name=>h1===name || pageTitle===name
       || pageTitle.startsWith(name+' '));
@@ -223,7 +227,7 @@ export async function verifyComponentCandidates(db,{registry=null,maxPages=20,de
     let result=await inspectComponentPage({url:row.url,slug:row.slug,
       title:row.title,homepage:row.homepage,fetchPage});
 
-    if(result.reason==='component-identity-mismatch' && typeof browserPage==='function'){
+    if(result.reason==='component-identity-mismatch' && isInputCallable(browserPage)){
       const observed=await browserPage(row.url,row.slug,row.homepage,row.title)
         .catch(()=>({status:'failed',reason:'browser-error'}));
 
@@ -245,7 +249,7 @@ export async function verifyComponentCandidates(db,{registry=null,maxPages=20,de
     else if(result.status==='transient')transient++;
     else unresolved++;
 
-    if(typeof onProgress==='function')onProgress({checked,verified,missing,unresolved,transient,
+    if(isInputCallable(onProgress))onProgress({checked,verified,missing,unresolved,transient,
       namespace:row.namespace,slug:row.slug,status:result.status});
 
     if(delayMs && checked<maxPages)

@@ -15243,8 +15243,8 @@
       "kind": "policy",
       "sourceDigest": "013e5ccc451204864f99e81ff9e9a1b39ee912d230597b642d72727601979c90",
       "applicability": "applicable",
-      "compliance": "remediation-required",
-      "reason": "Stackforge anti-slop/typescript setup applied at project root, pinned Oxlint/plugin version 1.87.0, and added full-scope lint:anti-slop to pnpm verify. Safe autofix reduced 4,173 original errors to 593 semantic findings; strict gate intentionally fails. No pass-fail-pass clean proof or PAO decision reference exists.",
+      "compliance": "pending-approval",
+      "reason": "The official Stackforge TypeScript anti-slop policy remains pinned and enforced across the repository root: 173 scanned files, 117 active rules, 0 errors and 0 warnings. Deliberate failure-detection proof passes clean-fail-clean without rule suppression. The formal PAO tooling decision remains pending; do not claim project certification.",
       "evidence": [
         "package.json",
         "pnpm-lock.yaml",
@@ -15253,17 +15253,29 @@
         "tools/oxlint/anti-slop/index.ts",
         ".design/anti-slop-remediation.json",
         ".design/quality-tooling-progress.md",
-        "tests/registry-explorer/qualityToolingContract.test.ts"
+        "tests/registry-explorer/qualityToolingContract.test.ts",
+        "scripts/verify-anti-slop-gate.mjs",
+        "src/registry-explorer/core/inputChecks.ts",
+        "src/registry-explorer/core/jsonInput.ts",
+        "scripts/lib/input-guards.mjs",
+        "scripts/validate-registry-data.mjs",
+        "DESIGN.md"
       ],
       "evidenceDigests": {
-        "package.json": "45096a27b3412cf899b1cb151c9c8375ea7eee12fcb387c475a6601ccf271253",
-        "pnpm-lock.yaml": "24c24af5f4a44cce21662a16530c8ee3a672106118e4b44f46398287ec6ac3a7",
+        "package.json": "b75a3543b75deece0c058021153ef5caf433c2235b252661fdd3dfc9fa4f89f6",
+        "pnpm-lock.yaml": "9104241fc4d3780d2eab9790c8ce39a8fa09bfe18ee6f885446cdb9f47d5112a",
         "mise.toml": "9b3bf506ee8c29dfd1120886e9ecc72109010357e9fb3b176369cefcadb996d8",
         "oxlint.config.ts": "0b65d02c95fe009d3f42276f8bc5717ae1aea665c750002570298a1596e0bca7",
         "tools/oxlint/anti-slop/index.ts": "9deed4cb455b9a6251001dc3a525d5b5e2c6ef989dd1c01e804c2edf0a697415",
-        ".design/anti-slop-remediation.json": "05a7beb17c023930ffe8bde1d9db9bdb192e564559e003741007d285d97af554",
-        ".design/quality-tooling-progress.md": "fb4cd9a128d6bf97739348ed7ef4193db278dfcb95e1f4d29f9d1103e4186bec",
-        "tests/registry-explorer/qualityToolingContract.test.ts": "27dea622b79d2524fd92f1d06a1beef49215c5d18f79849ea5322abc647983aa"
+        ".design/anti-slop-remediation.json": "d66abd98a0a0bc1219367095948529aa221ab8e46b76b3a808a3fae0bccba818",
+        ".design/quality-tooling-progress.md": "46941022a62517ed88939c996820c966f356385cc75e8ff8a39fcb508dc210cf",
+        "tests/registry-explorer/qualityToolingContract.test.ts": "dbdab72131e70d952fb60ca0f6109e696b38a3b8e6b540c4f92dcbf7547f0cac",
+        "scripts/verify-anti-slop-gate.mjs": "7f6a4e3480c9f6e2a0c82de35f5a7ecc50f831a3b1a4c39aea6a68a13dd8d848",
+        "src/registry-explorer/core/inputChecks.ts": "b36534309178fd9c1268b449ad7bcde1a000d93383cf88a7635e52d92ae0cddb",
+        "src/registry-explorer/core/jsonInput.ts": "4ff95d1dbe9ce4c7de9c5dcf042248803e42ddf6c2b5254b84c865f629850afd",
+        "scripts/lib/input-guards.mjs": "b246c8db89ee446ae5d2f83de5da9bd8e43bfbe91d14a4d4ea18b401772e9c89",
+        "scripts/validate-registry-data.mjs": "6b2441a0a2ecceb573b6d603749ef4426b00a6a73688c826bb3a51c6295dd688",
+        "DESIGN.md": "ebeb6bb86c1c8b9f28e9c63f0b4d17a56129692f9a0ccbe929f2ab7fa769d532"
       },
       "stackFingerprint": "5bd9bd39eedfd45dc0fa9e3bd680d887eb8d7a6ea456beb407aad49fd74d5f9d",
       "reviewedSourceDigest": "013e5ccc451204864f99e81ff9e9a1b39ee912d230597b642d72727601979c90",
@@ -15289,7 +15301,7 @@
         "mise.toml": "9b3bf506ee8c29dfd1120886e9ecc72109010357e9fb3b176369cefcadb996d8",
         "cccc.toml": "2ab3cc35e11108d2808752a1ebf8ad9ec50fc74a3b78c0590986c27e81365614",
         "tests/registry-explorer/qualityToolingContract.test.ts": "27dea622b79d2524fd92f1d06a1beef49215c5d18f79849ea5322abc647983aa",
-        ".design/quality-tooling-progress.md": "fb4cd9a128d6bf97739348ed7ef4193db278dfcb95e1f4d29f9d1103e4186bec",
+        ".design/quality-tooling-progress.md": "6ce598b2220c59fd3d28261bf923b358d446e369e693bfbb2fc5790cced6e4b1",
         "scripts/verify-complexity-gate.mjs": "891bbe908b7c9ce581843a48f7b28c3ee542977eb8bcb0899b6b396a40f02a1b",
         ".design/cccc-remediation-queue.json": "13ec86d0625b344383bd40056c36f222640e56e036a54976b9fa54e169e97b99"
       },
@@ -15322,7 +15334,7 @@
         ".dependency-cruiser.cjs": "2ee23080669fcbc8550428a7af0a973839c4318e7ceed2c6ef8936d51ae0ed56",
         "src/registry-explorer/core/sourcePageValidation.ts": "e53ddc9823ac77d49da4123c1f907986beb6391337492af82c982fce2407c02b",
         "tests/registry-explorer/qualityToolingContract.test.ts": "27dea622b79d2524fd92f1d06a1beef49215c5d18f79849ea5322abc647983aa",
-        ".design/quality-tooling-progress.md": "fb4cd9a128d6bf97739348ed7ef4193db278dfcb95e1f4d29f9d1103e4186bec",
+        ".design/quality-tooling-progress.md": "6ce598b2220c59fd3d28261bf923b358d446e369e693bfbb2fc5790cced6e4b1",
         "scripts/verify-deep-module-boundaries.mjs": "39d6d94f801bc17bd3e746080acc937c6b98ca61cbff3f368f02b738994fe263",
         "src/registry-explorer/README.md": "0cfc93ff44a10a1ad07f4b94ca272c734c7024c668abd358925100157dbe744b",
         "src/registry-explorer/core/lib/sourcePageOrigin.ts": "3665ce39b500af5bf71bdef8219e513285b5d787836ab9683b2f27edad2cb1b9"
@@ -15372,7 +15384,7 @@
         "package.json": "45096a27b3412cf899b1cb151c9c8375ea7eee12fcb387c475a6601ccf271253",
         "pnpm-lock.yaml": "24c24af5f4a44cce21662a16530c8ee3a672106118e4b44f46398287ec6ac3a7",
         "tests/registry-explorer/qualityToolingContract.test.ts": "27dea622b79d2524fd92f1d06a1beef49215c5d18f79849ea5322abc647983aa",
-        ".design/quality-tooling-progress.md": "fb4cd9a128d6bf97739348ed7ef4193db278dfcb95e1f4d29f9d1103e4186bec",
+        ".design/quality-tooling-progress.md": "6ce598b2220c59fd3d28261bf923b358d446e369e693bfbb2fc5790cced6e4b1",
         ".github/workflows/react-doctor.yml": "0b70140e1085e29c6a10e785de9be41a31481bc8a3d35ba3ef6938dedc92ab1e"
       },
       "stackFingerprint": "5bd9bd39eedfd45dc0fa9e3bd680d887eb8d7a6ea456beb407aad49fd74d5f9d",
@@ -15632,5 +15644,5 @@
       "paoDecisionRef": ""
     }
   ],
-  "updatedAt": "2026-10-13T06:08:15+00:00"
+  "updatedAt": "2026-10-13T09:51:01+00:00"
 }

@@ -1,12 +1,16 @@
 {
   "schema": "registry-atlas-anti-slop-remediation/v1",
   "date": "2026-10-13",
-  "status": "remediation-required",
-  "total": 593,
+  "status": "resolved",
+  "total": 0,
   "scope": "oxlint . (the full root, including first-party src, scripts and tests)",
   "setupSource": "anti-slop/typescript",
   "rootGate": "pnpm lint:anti-slop",
-  "rules": {
+  "note": "Full policy remains enabled and blocking. Counts are not exceptions or a permitted error baseline. Do not mark compliant until 0 errors and clean-fail-clean proof.",
+  "warnings": 0,
+  "resolvedAt": "2026-10-13",
+  "originalViolations": 593,
+  "originalRules": {
     "anti-slop(no-array-filter-map)": 15,
     "anti-slop(no-chained-type-assertions)": 6,
     "anti-slop(no-conditional-empty-object-spread)": 80,
@@ -17,7 +21,7 @@
     "anti-slop(require-safety-comment-for-type-assertion)": 103,
     "eslint(no-control-regex)": 2
   },
-  "files": {
+  "originalFiles": {
     "scripts/audit-21st-interactions.mjs": 1,
     "scripts/audit-21st-reference.mjs": 10,
     "scripts/audit-component-links.mjs": 6,
@@ -106,5 +110,15 @@
     "tests/registry-explorer/testAtlasDatabase.ts": 4,
     "tests/registry-explorer/verifyRegistryPatterns.test.ts": 4
   },
-  "note": "Full policy remains enabled and blocking. Counts are not exceptions or a permitted error baseline. Do not mark compliant until 0 errors and clean-fail-clean proof."
+  "rules": {},
+  "files": {},
+  "verifiedScan": {
+    "command": "pnpm lint:anti-slop",
+    "scope": "oxlint .",
+    "files": 173,
+    "rules": 117,
+    "errors": 0,
+    "warnings": 0
+  },
+  "failureDetectionProof": "pnpm test:anti-slop-gate (clean -> injected violation -> clean)"
 }

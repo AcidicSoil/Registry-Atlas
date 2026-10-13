@@ -298,3 +298,6 @@ graph-infra/bin/
 
 # Stackforge setup observations contain developer-specific absolute checkout paths.
 .stackforge/
+
+# Local Atlas Scout index (not source code).
+.atlas/

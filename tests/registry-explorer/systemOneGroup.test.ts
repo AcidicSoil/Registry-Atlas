@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script.
 import { chooseObservedGroup } from '../../scripts/lib/systemone-group.mjs';
@@ -13,7 +14,7 @@ const stateFor = (...labels: string[]) => ({
   })),
 });
 
-function response(body: unknown, ok = true, status = 200) {
+function response(body: RawJsonInput, ok = true, status = 200) {
   return {
     ok,
     status,

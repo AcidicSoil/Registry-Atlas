@@ -1,3 +1,4 @@
+import { isInputObject, isInputString } from './lib/input-guards.mjs';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import {
@@ -18,7 +19,7 @@ async function readJson(filePath) {
 }
 
 export function normalizeNamespace(value) {
-  if (typeof value !== 'string') return '';
+  if (!isInputString(value)) return '';
   const trimmed = value.trim().toLowerCase();
 
   if (!trimmed) return '';
@@ -27,20 +28,20 @@ export function normalizeNamespace(value) {
 }
 
 function normalizeOptionalString(value) {
-  return typeof value === 'string' ? value.trim() : '';
+  return isInputString(value) ? value.trim() : '';
 }
 
 function normalizeStringArray(value) {
   if (!Array.isArray(value)) return [];
 
-  return value.filter(item => typeof item === 'string').map(item => item.trim()).filter(Boolean);
+  return value.filter(item => isInputString(item)).map(item => item.trim()).filter(Boolean);
 }
 
 function normalizeFiles(value) {
   if (!Array.isArray(value)) return [];
 
   return value
-    .filter(file => file && typeof file === 'object')
+    .filter(file => file && isInputObject(file))
     .map(file => ({
       path: normalizeOptionalString(file.path),
       type: normalizeOptionalString(file.type),

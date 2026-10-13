@@ -1,3 +1,6 @@
+/** Named map contract for dynamic keys in this module. */
+type PagesLookupContract = Record<string, {heading?: string; links?: Array<[string,string]>}>;
+
 import { describe, expect, it } from 'vitest';
 // @ts-ignore standalone Node ESM.
 import { planRegistryCrawl, runRegistryCrawl, summarizeRegistryCrawl, proposeVerifiedLinkUpdates, collectDiscoveryLinkEvidence } from '../../scripts/crawl-component-links.mjs';
@@ -61,14 +64,14 @@ describe('autonomous full-catalog URL crawler', () => {
       expect(reg.name).toBe('@a');
 
       return { homepageUrl: 'https://a.example/', listingUrl: 'https://a.example/components',
-        records: targets.filter(x => x.slug === 'button').map(x => ({
+        records: targets.flatMap(x => x.slug === 'button' ? [{
           namespace: reg.name, slug: x.slug, verifiedUrl: 'https://a.example/components/button',
           browser: { renderedHeading: 'Button', observedSlug: 'button',
             observedUrl: 'https://a.example/components/button', capturePath: '/fake/screenshot.jpg' },
-        })),
-        unresolved: targets.filter(x => x.slug !== 'button').map(x => ({
+        }] : []),
+        unresolved: targets.flatMap(x => x.slug !== 'button' ? [{
           slug: x.slug, reason: 'missing-unique-component-link',
-        })),
+        }] : []),
       };
     };
 
@@ -227,7 +230,7 @@ describe('shared discovery to source-verified crawler bridge', () => {
   function site() {
     let current = home;
 
-    const pages: Record<string, {heading?: string; links?: Array<[string,string]>}> = {
+    const pages = {
       [home]: {links:[['Components','/docs/components']]},
       [docs]: {heading:'Components',links:[['Button','/docs/components/button'],
         ['Radix','/docs/components/radix'], ['Base','/docs/components/base']]},
@@ -238,10 +241,10 @@ describe('shared discovery to source-verified crawler bridge', () => {
         links:[['Accordion','/docs/components/radix/accordion']]},
       [button]: {heading:'Button'},
       [nested]: {heading:'Accordion'},
-    };
+    } satisfies PagesLookupContract;
 
     const visited: string[] = [];
-    const page = () => pages[current] ?? {};
+    const page = () => new Map<string, PagesLookupContract[string]>(Object.entries(pages)).get(current) ?? {};
 
     return {visited, url: async () => current,
       nav: async (dest: string) => {current=dest;visited.push(dest);},
@@ -287,6 +290,7 @@ describe('shared discovery to source-verified crawler bridge', () => {
       docs_url:null};
 
     const facts = new Map(source);
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     facts.set(extra.token, {status:'verified',summary:{title:'Accordion',
       files:[{path:'registry/components/base/accordion/index.tsx'}]}} as any);
 

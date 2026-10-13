@@ -1,3 +1,4 @@
+import { isInputObject, isInputString } from './lib/input-guards.mjs';
 import { pathToFileURL } from 'node:url';
 import {
   openAtlasCoreDatabase,
@@ -27,7 +28,7 @@ export function officialItemUrl(registry, slug) {
   if (!/^@[a-z0-9][a-z0-9_-]*$/.test(registry?.name ?? '') || !/^[a-z0-9][a-z0-9_-]*$/.test(slug)) return null;
   const template = registry?.url;
 
-  if (typeof template !== 'string' || !template.includes('{name}')) return null;
+  if (!isInputString(template) || !template.includes('{name}')) return null;
 
   return publicUrl(template.replaceAll('{name}', slug));
 }
@@ -37,23 +38,23 @@ export function verifyOfficialItem(registry, slug, fetchedUrl, item) {
 
   if (!expected || fetchedUrl !== expected) return { status: 'unresolved', reason: 'source-url-mismatch' };
 
-  if (!item || typeof item !== 'object' || Array.isArray(item) || item.name !== slug || !ITEM_TYPES.has(item.type)) {
+  if (!item || !isInputObject(item) || Array.isArray(item) || item.name !== slug || !ITEM_TYPES.has(item.type)) {
     return { status: 'unresolved', reason: 'item-identity-or-type-mismatch' };
   }
 
   for (const field of FIELDS) {
-    if (item[field] !== undefined && (typeof item[field] !== 'string' || !item[field].trim())) {
+    if (item[field] !== undefined && (!isInputString(item[field]) || !item[field].trim())) {
       return { status: 'unresolved', reason: `invalid-${field}` };
     }
   }
 
   for (const field of ARRAYS) {
-    if (item[field] !== undefined && (!Array.isArray(item[field]) || !item[field].every(value => typeof value === 'string' && value.trim()))) {
+    if (item[field] !== undefined && (!Array.isArray(item[field]) || !item[field].every(value => isInputString(value) && value.trim()))) {
       return { status: 'unresolved', reason: `invalid-${field}` };
     }
   }
 
-  if (item.files !== undefined && (!Array.isArray(item.files) || !item.files.every(file => file && typeof file.path === 'string' && file.path.trim() && typeof file.type === 'string' && file.type.trim()))) {
+  if (item.files !== undefined && (!Array.isArray(item.files) || !item.files.every(file => file && isInputString(file.path) && file.path.trim() && isInputString(file.type) && file.type.trim()))) {
     return { status: 'unresolved', reason: 'invalid-files' };
   }
 
@@ -68,10 +69,15 @@ export function verifyOfficialItem(registry, slug, fetchedUrl, item) {
 
   for (const field of ARRAYS) if (item[field]) summary[field] = [...item[field]];
 
-  if (item.files) summary.files = item.files.map(file => ({
-    path: file.path.trim(), type: file.type.trim(),
-    ...(typeof file.target === 'string' && file.target.trim() ? { target: file.target.trim() } : {}),
-  }));
+  if (item.files) summary.files = item.files.map(file => ((() => {
+  const result = {};
+  result.path = file.path.trim();
+  result.type = file.type.trim();
+
+  if (isInputString(file.target) && file.target.trim()) Object.assign(result, { target: file.target.trim() });
+
+  return result;
+})()));
   const unresolved = ['docsUrl', 'previewUrl', 'importStatements', 'requiredProps', 'runtimeRender'];
 
   return { status: 'verified', summary, unresolved, sourceUrl: expected };

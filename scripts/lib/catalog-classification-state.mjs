@@ -1,3 +1,5 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
+
 const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
 
 const SOURCE_HINT_KEYS = new Set(['categories', 'verifiedGroups', 'breadcrumbs', 'pathHints']);
@@ -11,7 +13,7 @@ const MAX_DESCRIPTION = 600;
 const MAX_HINT = 200;
 
 function cleanText(value, maxLength) {
-  if (typeof value !== 'string') return undefined;
+  if (!isInputString(value)) return undefined;
   const normalized = value.trim().replace(/\s+/g, ' ');
 
   if (!normalized) return undefined;
@@ -22,7 +24,7 @@ function cleanText(value, maxLength) {
 function cleanHints(values) {
   if (values === undefined) return undefined;
 
-  if (!Array.isArray(values) || values.some(value => typeof value !== 'string')) {
+  if (!Array.isArray(values) || values.some(value => !isInputString(value))) {
     throw new Error('Catalog classification source hints must be arrays of strings');
   }
 
@@ -41,11 +43,11 @@ function cleanHints(values) {
 }
 
 export function buildCatalogClassificationState({ namespace, item, sourceHints } = {}) {
-  if (typeof namespace !== 'string' || !namespace.trim()) {
+  if (!isInputString(namespace) || !namespace.trim()) {
     throw new Error('Catalog classification requires a registry namespace');
   }
 
-  if (!item || typeof item !== 'object' || Array.isArray(item)) {
+  if (!item || !isInputObject(item) || Array.isArray(item)) {
     throw new Error('Catalog classification requires an item object');
   }
 
@@ -56,17 +58,21 @@ export function buildCatalogClassificationState({ namespace, item, sourceHints }
   if (!KINDS.has(item.kind)) throw new Error('Catalog classification item requires a canonical kind');
 
   const state = {
-    item: {
-      name,
-      ...(cleanText(item.title, MAX_TITLE) ? { title: cleanText(item.title, MAX_TITLE) } : {}),
-      ...(cleanText(item.description, MAX_DESCRIPTION)
-        ? { description: cleanText(item.description, MAX_DESCRIPTION) } : {}),
-      kind: item.kind,
-    },
+    item: (() => {
+  const result = {};
+  result.name = name;
+
+  if (cleanText(item.title, MAX_TITLE)) Object.assign(result, { title: cleanText(item.title, MAX_TITLE) });
+
+  if (cleanText(item.description, MAX_DESCRIPTION)) Object.assign(result, { description: cleanText(item.description, MAX_DESCRIPTION) });
+  result.kind = item.kind;
+
+  return result;
+})(),
   };
 
   if (sourceHints !== undefined) {
-    if (!sourceHints || typeof sourceHints !== 'object' || Array.isArray(sourceHints)) {
+    if (!sourceHints || !isInputObject(sourceHints) || Array.isArray(sourceHints)) {
       throw new Error('Catalog classification source hints must be an object');
     }
 
@@ -76,13 +82,19 @@ export function buildCatalogClassificationState({ namespace, item, sourceHints }
       }
     }
 
-    const hints = {
-      ...(cleanHints(sourceHints.categories) ? { categories: cleanHints(sourceHints.categories) } : {}),
-      ...(cleanHints(sourceHints.verifiedGroups)
-        ? { verifiedGroups: cleanHints(sourceHints.verifiedGroups) } : {}),
-      ...(cleanHints(sourceHints.breadcrumbs) ? { breadcrumbs: cleanHints(sourceHints.breadcrumbs) } : {}),
-      ...(cleanHints(sourceHints.pathHints) ? { pathHints: cleanHints(sourceHints.pathHints) } : {}),
-    };
+    const hints = (() => {
+  const result = {};
+
+  if (cleanHints(sourceHints.categories)) Object.assign(result, { categories: cleanHints(sourceHints.categories) });
+
+  if (cleanHints(sourceHints.verifiedGroups)) Object.assign(result, { verifiedGroups: cleanHints(sourceHints.verifiedGroups) });
+
+  if (cleanHints(sourceHints.breadcrumbs)) Object.assign(result, { breadcrumbs: cleanHints(sourceHints.breadcrumbs) });
+
+  if (cleanHints(sourceHints.pathHints)) Object.assign(result, { pathHints: cleanHints(sourceHints.pathHints) });
+
+  return result;
+})();
 
     if (Object.keys(hints).length) state.sourceHints = hints;
   }

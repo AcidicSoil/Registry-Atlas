@@ -1,3 +1,6 @@
+/** Named map contract for dynamic keys in this module. */
+type PagesLookupContract = Record<string,Page>;
+
 import { vi } from 'vitest';
 
 vi.setConfig({testTimeout: 30000});
@@ -33,7 +36,7 @@ const catalog={registries:{'@discover':[
   {name:'button',title:'Button'},{name:'card',title:'Card'},{name:'dialog',title:'Dialog'},
 ]}};
 
-const pages:Record<string,Page>={
+const pages={
   'https://discover.example/':{links:[['Docs','/docs']]},
   'https://discover.example/docs':{heading:'Docs',links:[['Components','/docs/components']]},
   'https://discover.example/docs/components':{heading:'Components',links:[
@@ -41,7 +44,7 @@ const pages:Record<string,Page>={
   ]},
   'https://discover.example/docs/components/button':{heading:'Button'},
   'https://discover.example/docs/components/card':{heading:'Card'},
-};
+} satisfies PagesLookupContract;
 
 const fetchPage=async(url:string)=>{
   const slug=new URL(url).pathname.split('/').filter(Boolean).at(-1)??'';

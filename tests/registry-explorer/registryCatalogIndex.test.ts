@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 import { parseRegistryCatalogIndex } from '../../src/registry-explorer/core/registryCatalogIndex';
 import {
@@ -8,7 +9,7 @@ import { readRepositoryDocument } from './testAtlasDatabase';
 
 configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument('catalog-taxonomy')));
 
-function rawIndex(item: Record<string, unknown>) {
+function rawIndex(item: Record<string, RawJsonInput>) {
   return {
     meta: { registry_count: 1, item_count: 1 },
     registries: { '@demo': [item] },

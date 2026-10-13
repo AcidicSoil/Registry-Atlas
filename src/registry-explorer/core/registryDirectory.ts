@@ -59,24 +59,28 @@ export function buildRegistryDirectory(
   const assetFilter = new Set(options.assetKinds ?? []);
   const sort = options.sort ?? "name";
 
-  const entries = registries
-    .filter(registry => !query || [
-      registry.name,
-      registry.description,
-      registry.url,
+  const entries = registries.flatMap(registry => {
+    if (query && ![
+      registry.name, registry.description, registry.url,
       ...(registry.atlas?.aliases ?? []),
-    ].some(value => value.toLocaleLowerCase().includes(query)))
-    .map(registry => ({
+    ].some(value => value.toLocaleLowerCase().includes(query))) return [];
+
+    const entry = {
       registry,
       itemCount: catalogItemCountForRegistry(index, registry.name),
       coverage: registryCatalogCoverage(registry, index),
-    }))
-    .filter(entry => coverageFilter.size === 0 || coverageFilter.has(entry.coverage))
-    .filter(entry => assetFilter.size === 0 || (index.registries[entry.registry.name] ?? []).some(item => {
+    };
+
+    if (coverageFilter.size && !coverageFilter.has(entry.coverage)) return [];
+
+    if (assetFilter.size && !(index.registries[registry.name] ?? []).some(item => {
       const kind = assetKindForCatalogItem(item);
 
       return kind !== null && assetFilter.has(kind);
-    }))
+    })) return [];
+
+    return [entry];
+  })
     .sort((a, b) => compareEntries(a, b, sort));
 
   const coverageCounts: Record<RegistryCatalogCoverage, number> = {

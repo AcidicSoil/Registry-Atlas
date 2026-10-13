@@ -31,6 +31,7 @@ describe('catalog classification state', () => {
   });
 
   it('does not treat legacy survey groups as canonical evidence without explicit reviewed conversion', () => {
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const legacySurveyRecord = buildCatalogClassificationState({
       namespace: '@legacy',
       item: { name: 'mystery-shell', title: 'Mystery Surface', kind: 'block' },

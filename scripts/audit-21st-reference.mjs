@@ -1,3 +1,5 @@
+import { isInputBoolean } from './lib/input-guards.mjs';
+import { isInputString } from './lib/input-guards.mjs';
 import { execFileSync } from 'node:child_process';
 import { homedir } from 'node:os';
 import { open, readFile, mkdir, rename, writeFile, unlink } from 'node:fs/promises';
@@ -18,7 +20,7 @@ const compact = value => String(value ?? '').replace(/\s+/g,' ').trim().slice(0,
 
 export function normalized21stUrl(raw, from = SITE) {
   try {
-    if (typeof raw !== 'string' || !raw.trim() || raw.includes('\\')) return null;
+    if (!isInputString(raw) || !raw.trim() || raw.includes('\\')) return null;
     const base = new URL(from);
 
     if (base.origin !== 'https://21st.dev') return null;
@@ -92,9 +94,17 @@ export function summarizeReferencePage(raw,expectedUrl,observedAt=new Date().toI
 
       if(!target || seen.has(target))continue;
       seen.add(target);
-      result.push({label:compact(link?.label??link?.text),url:target,
-        ...(Number.isSafeInteger(link?.count)&&link.count>=0?{count:link.count}:{}),
-        ...(typeof link?.active==='boolean'?{active:link.active}:{})});
+      result.push((() => {
+  const result = {};
+  result.label = compact(link?.label??link?.text);
+  result.url = target;
+
+  if (Number.isSafeInteger(link?.count)&&link.count>=0) Object.assign(result, {count:link.count});
+
+  if (isInputBoolean(link?.active)) Object.assign(result, {active:link.active});
+
+  return result;
+})());
     }
 
     return result;
@@ -105,11 +115,19 @@ export function summarizeReferencePage(raw,expectedUrl,observedAt=new Date().toI
     headings:(raw?.headings??[]).slice(0,100).map(compact).filter(Boolean),
     sidebarGroups:(raw?.sidebarGroups??[]).slice(0,60).map(group=>({
       heading:compact(group?.heading),links:uniqueLinks((group?.links??[]).slice(0,1500))})),
-    controls:(raw?.controls??[]).slice(0,800).map(control=>({
-      kind:compact(control?.kind),label:compact(control?.label),
-      ...(typeof control?.expanded==='boolean'?{expanded:control.expanded}:{}),
-      ...(typeof control?.selected==='boolean'?{selected:control.selected}:{}),
-      ...(typeof control?.disabled==='boolean'?{disabled:control.disabled}:{})}))
+    controls:(raw?.controls??[]).slice(0,800).map(control=>((() => {
+  const result = {};
+  result.kind = compact(control?.kind);
+  result.label = compact(control?.label);
+
+  if (isInputBoolean(control?.expanded)) Object.assign(result, {expanded:control.expanded});
+
+  if (isInputBoolean(control?.selected)) Object.assign(result, {selected:control.selected});
+
+  if (isInputBoolean(control?.disabled)) Object.assign(result, {disabled:control.disabled});
+
+  return result;
+})()))
       .filter(control=>control.kind&&control.label),
     links:uniqueLinks((raw?.links??[]).slice(0,3000))};
 }

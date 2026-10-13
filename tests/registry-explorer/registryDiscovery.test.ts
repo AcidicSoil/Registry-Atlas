@@ -1,3 +1,6 @@
+/** Named map contract for dynamic keys in this module. */
+type PagesLookupContract = Record<string, Page>;
+
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Node ESM runtime test (Node type declarations are not in the browser TS config).
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -48,7 +51,7 @@ const registry = { name: '@sample', homepage: 'https://sample.example' };
 
 const HOME = 'https://sample.example/';
 
-const pages: Record<string, Page> = {
+const pages = {
   [HOME]: { links: [['Docs', '/docs'], ['Other site', 'https://other.example/catalog']] },
   'https://sample.example/docs': { heading: 'Documentation',
     links: [['Primitives', '/docs/primitives'], ['Components', '/docs/components']] },
@@ -59,18 +62,19 @@ const pages: Record<string, Page> = {
       ['Card', '/other/ui-content'], ['Off-site Card', 'https://evil.example/card']] },
   'https://sample.example/docs/bright-actions': { heading: 'Gradient Button' },
   'https://sample.example/other/ui-content': { heading: 'Card' },
-};
+} satisfies PagesLookupContract;
 
 const at = '2026-10-01T20:00:00.000Z';
 
 describe('evidence-based registry discovery', () => {
   it('continues from observed DOM links when a semantic ref is stale', async () => {
-    const source: Record<string, Page> = {
+    const source = {
       [HOME]: { links: [['Button','/docs/components/button']] },
       'https://sample.example/docs/components/button': { heading: 'Button' },
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(source, HOME);
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     (browser as any).attr = async () => { throw new Error('No node with given id found'); };
 
     const result = await discoverRegistry({
@@ -83,15 +87,16 @@ describe('evidence-based registry discovery', () => {
     });
   });
   it('uses an observed official JSON index with exact names and explicit docs URLs, then verifies the rendered page', async () => {
-    const sample: Record<string, Page> = {
+    const sample = {
       [HOME]: { links: [['Registry index', '/r/registry.json'], ['Docs', '/docs']] },
       'https://sample.example/docs': { heading: 'Docs', links: [['About', '/about']] },
       'https://sample.example/about': { heading: 'About' },
       'https://sample.example/docs/button': { heading: 'Button' },
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(sample, HOME);
     const consulted: string[] = [];
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     (browser as any).structuredIndex = async (url: string) => {
       consulted.push(url);
 
@@ -120,12 +125,13 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('does not infer docs pages from index entries with no explicit docs URL', async () => {
-    const sample: Record<string, Page> = {
+    const sample = {
       [HOME]: { links: [['Catalog JSON', '/catalog/index.json'], ['Docs', '/docs']] },
       'https://sample.example/docs': { heading: 'Docs', links: [['About', '/about']] },
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(sample, HOME);
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     (browser as any).structuredIndex = async () => ({
       items: [{ name: 'button', type: 'registry:ui', title: 'Button',
         files: [{ path: 'components/ui/button.tsx' }] }],
@@ -181,13 +187,13 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('does not conflate two distinct nested items with the same leaf or accept guessed paths', async () => {
-    const nestedPages: Record<string, Page> = {
+    const nestedPages = {
       [HOME]: { links: [['Components', '/components']] },
       'https://sample.example/components': { heading: 'Components',
         links: [['Select', '/docs/forms/select'], ['Async', '/docs/forms/select/async']] },
       'https://sample.example/docs/forms/select': { heading: 'Select' },
       'https://sample.example/docs/forms/select/async': { heading: 'Async' },
-    };
+    } satisfies PagesLookupContract;
 
     const result = await discoverRegistry({
       registry, indexedItems: ['forms/select', 'lists/select', 'forms/select/async'],
@@ -204,7 +210,7 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('does not misattribute a longer component name to its shorter prefix', async () => {
-    const sample: Record<string, Page> = {
+    const sample = {
       [HOME]: { links: [['Components', '/components']] },
       'https://sample.example/components': { heading: 'Components',
         links: [
@@ -217,7 +223,7 @@ describe('evidence-based registry discovery', () => {
       'https://sample.example/docs/components/button': { heading: 'Button' },
       'https://sample.example/docs/components/alert-dialog': { heading: 'Alert Dialog' },
       'https://sample.example/docs/components/alert': { heading: 'Alert' },
-    };
+    } satisfies PagesLookupContract;
 
     const results = await discoverRegistry({
       registry, indexedItems: ['button', 'button-group', 'alert', 'alert-dialog'],
@@ -232,7 +238,7 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('maps flattened catalog identity to observed nested documentation paths without guessing URLs', async () => {
-    const source: Record<string, Page> = {
+    const source = {
       [HOME]: {links: [['Components', '/docs/components']]},
       'https://sample.example/docs/components': {heading: 'Components',
         links: [['Animate', '/docs/components/animate'], ['Base', '/docs/components/base']]},
@@ -244,7 +250,7 @@ describe('evidence-based registry discovery', () => {
       'https://sample.example/docs/components/animate/avatar-group': {heading: 'Avatar Group'},
       'https://sample.example/docs/components/animate/code-tabs': {heading: 'Code Tabs'},
       'https://sample.example/docs/components/base/accordion': {heading: 'Accordion'},
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(source, HOME);
 
@@ -266,7 +272,7 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('distinguishes the official component link from block cards reusing the same label', async () => {
-    const source: Record<string, Page> = {
+    const source = {
       [HOME]: {links: [['Components', '/components']]},
       'https://sample.example/components': {heading: 'Components',
         links: [['Accordion', '/docs/components/accordion'],
@@ -277,7 +283,7 @@ describe('evidence-based registry discovery', () => {
       'https://sample.example/docs/blocks/faq/faq1': {heading: 'Accordion'},
       'https://sample.example/docs/components/carousel': {heading: 'Carousel'},
       'https://sample.example/docs/blocks/features/feature3': {heading: 'Carousel'},
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(source, HOME);
 
@@ -297,12 +303,12 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('refuses ambiguous leaf names without a disambiguating observed path', async () => {
-    const sample: Record<string, Page> = {
+    const sample = {
       [HOME]: { links: [['Components', '/components']] },
       'https://sample.example/components': { heading: 'Components',
         links: [['Select', '/docs/not-revealing-family']] },
       'https://sample.example/docs/not-revealing-family': { heading: 'Select' },
-    };
+    } satisfies PagesLookupContract;
 
     const result = await discoverRegistry({
       registry, indexedItems: ['forms/select', 'lists/select'],
@@ -337,13 +343,13 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('rechecks old discovery revisions rather than trusting previous ambiguous matches', async () => {
-    const source: Record<string, Page> = {
+    const source = {
       [HOME]: { links: [['Components', '/components']] },
       'https://sample.example/components': { heading: 'Components',
         links: [['Alert Dialog', '/docs/alert-dialog'], ['Alert', '/docs/alert']] },
       'https://sample.example/docs/alert-dialog': { heading: 'Alert Dialog' },
       'https://sample.example/docs/alert': { heading: 'Alert' },
-    };
+    } satisfies PagesLookupContract;
 
     const fp = catalogFingerprint(registry, ['alert', 'alert-dialog']);
     const ledger = fakeLedger();
@@ -378,7 +384,8 @@ describe('evidence-based registry discovery', () => {
   it('uses an official sitemap candidate only after the rendered component heading matches', async () => {
     const homepage = HOME;
     const url = 'https://sample.example/docs/card';
-    const base = {[homepage]: {links:[]}, [url]:{heading:'Card'}} as Record<string, Page>;
+    // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
+    const base = {[homepage]: {links:[]}, [url]:{heading:'Card'}} satisfies Record<string, Page>;
 
     const matched = await discoverRegistry({
       registry, indexedItems:['card'],browser:fakeBrowser(base,homepage),
@@ -429,13 +436,13 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('does not choose between two distinct observed destinations for one title', async () => {
-    const alternate: Record<string, Page> = {
+    const alternate = {
       [HOME]: { links: [['Components', '/components']] },
       'https://sample.example/components': { heading: 'Components',
         links: [['Button', '/a'], ['Button', '/b']] },
       'https://sample.example/a': { heading: 'Button' },
       'https://sample.example/b': { heading: 'Button' },
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(alternate, HOME);
 
@@ -531,18 +538,19 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('waits for browser hydration when a rendered page initially has no observed links', async () => {
-    const source: Record<string, Page> = {
+    const source = {
       [HOME]: {links: [['Components', '/components']]},
       'https://sample.example/components': {heading: 'Components',
         links: [['Button', '/docs/button']]},
       'https://sample.example/docs/button': {heading: 'Button'},
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(source, HOME);
     const snapshot = browser.snap, dom = browser.domLinks;
     let hydrated = false, waited = 0;
     browser.snap = async () => hydrated ? snapshot() : {url: await browser.url(), nodes: []};
     browser.domLinks = async () => hydrated ? dom() : [];
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     (browser as any).waitForLinks = async () => {hydrated = true; waited++;};
 
     const result = await discoverRegistry({
@@ -598,12 +606,12 @@ describe('evidence-based registry discovery', () => {
   });
 
   it('can discover a DOM-only component link omitted from the semantic snapshot', async () => {
-    const source: Record<string, Page> = {
+    const source = {
       [HOME]: { links: [['Components', '/components']] },
       'https://sample.example/components': { heading: 'Components',
         links: [['Button', '/docs/actions']] },
       'https://sample.example/docs/actions': { heading: 'Button' },
-    };
+    } satisfies PagesLookupContract;
 
     const browser = fakeBrowser(source, HOME);
     const originalSnap = browser.snap;

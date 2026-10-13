@@ -118,12 +118,23 @@ async function main(argv){
   try{browser('click',action.ref);}catch(error){clickToolError=String(error.message).slice(0,250);}
 
   const after=JSON.parse(browser('eval',STATE_READ).result);
-  const result=assessReferenceTransition(options.scenario,before,after);
+  const transition=assessReferenceTransition(options.scenario,before,after);
 
-  const item={scenario:options.scenario,url:normalized21stUrl(options.url),
-    action:{label:action.label,role:action.role}, before,after,
-    status:result.status,evidence:result.evidence,
-    ...(clickToolError?{clickToolError}:{}), recordedAt:new Date().toISOString()};
+  const item=(() => {
+  const result = {};
+  result.scenario = options.scenario;
+  result.url = normalized21stUrl(options.url);
+  result.action = {label:action.label,role:action.role};
+  result.before = before;
+  result.after = after;
+  result.status = transition.status;
+  result.evidence = transition.evidence;
+
+  if (clickToolError) Object.assign(result, {clickToolError});
+  result.recordedAt = new Date().toISOString();
+
+  return result;
+})();
 
   let output={schema,events:[]};
 

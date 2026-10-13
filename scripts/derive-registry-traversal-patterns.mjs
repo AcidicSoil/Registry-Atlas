@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join, isAbsolute } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -13,7 +14,7 @@ const validNamespace = /^@[a-z0-9][a-z0-9-]*$/;
 const slugNames = (registry, catalog, curated) => [...new Set([
   ...(catalog.registries?.[registry.name] ?? []).map(item => item.name),
   ...(curated[registry.name] ?? []).map(item => item.slug),
-].filter(slug => typeof slug === 'string' && slug.trim()))].sort();
+].filter(slug => isInputString(slug) && slug.trim()))].sort();
 
 function safeUrl(raw, homepage, {allowSourceJson = false} = {}) {
   try {
@@ -63,7 +64,7 @@ function pageVerified(row, registry, slug, fingerprint, observedLink) {
     && row.namespace === registry.name && row.slug === slug
     && row.catalogFingerprint === fingerprint && row.status === 'page-observed'
     && row.docsUrl === observedLink && row.evidence?.observedUrl === observedLink
-    && typeof row.evidence.renderedHeading === 'string'
+    && isInputString(row.evidence.renderedHeading)
     && row.evidence.renderedHeading.trim() !== '';
 }
 
@@ -222,23 +223,33 @@ export function deriveTraversalInventory(
       :!fresh?'not-inspected'
       :snapshot.error?'navigation-error':'no-matching-links';
 
-    registries.push({
-      namespace:registry.name,homepage:registry.homepage,
-      // Source item JSON is not a documentation route.
-      sourceItemJsonTemplate:registry.url??null,
-      status,itemCount:slugs.length,matchedAnchorCount:matchedItems,
-      verifiedPageCount:verifiedPages,unverifiedItemCount:slugs.length-verifiedPages,
-      observedNavigationPages,observationError:fresh?snapshot.error??null:null,
-      crawlExhausted:fresh?Boolean(snapshot.exhausted):false,
-      inspectedAt:fresh?evidenceSnapshots.at(-1).checkedAt:null,
-      sitemapSurveyedAt:officialSurvey?survey.surveyedAt:null,
-      sitemapUrlCount:officialSurvey?survey.sitemapUrlCount:0,
-      sitemapMatchedCount:sitemapPages.size,
-      sitemapSources:officialSurvey?survey.sitemaps:[],
-      sitemapPages:[...sitemapPages].map(([slug,url])=>({slug,url})),
-      ...(fresh||officialSurvey ? {catalogFingerprint:fingerprint} : {}),
-      listings,patterns,sitemapPatterns,
-    });
+    registries.push((() => {
+  const result = {};
+  result.namespace = registry.name;
+  result.homepage = registry.homepage;
+  result.sourceItemJsonTemplate = registry.url??null;
+  result.status = status;
+  result.itemCount = slugs.length;
+  result.matchedAnchorCount = matchedItems;
+  result.verifiedPageCount = verifiedPages;
+  result.unverifiedItemCount = slugs.length-verifiedPages;
+  result.observedNavigationPages = observedNavigationPages;
+  result.observationError = fresh?snapshot.error??null:null;
+  result.crawlExhausted = fresh?Boolean(snapshot.exhausted):false;
+  result.inspectedAt = fresh?evidenceSnapshots.at(-1).checkedAt:null;
+  result.sitemapSurveyedAt = officialSurvey?survey.surveyedAt:null;
+  result.sitemapUrlCount = officialSurvey?survey.sitemapUrlCount:0;
+  result.sitemapMatchedCount = sitemapPages.size;
+  result.sitemapSources = officialSurvey?survey.sitemaps:[];
+  result.sitemapPages = [...sitemapPages].map(([slug,url])=>({slug,url}));
+
+  if (fresh||officialSurvey) Object.assign(result, {catalogFingerprint:fingerprint});
+  result.listings = listings;
+  result.patterns = patterns;
+  result.sitemapPatterns = sitemapPatterns;
+
+  return result;
+})());
   }
 
   return {schema:SCHEMA,generatedAt,source:'official browser-observed discovery journals',

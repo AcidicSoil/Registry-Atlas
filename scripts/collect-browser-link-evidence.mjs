@@ -1,3 +1,5 @@
+import { isInputCallable } from './lib/input-guards.mjs';
+import { isInputString } from './lib/input-guards.mjs';
 import { writeFile, mkdir, stat } from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
@@ -7,7 +9,7 @@ import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 const SCHEMA = 'registry-atlas-component-link-evidence/v1';
 
 function safeSameOrigin(raw, base) {
-  if (typeof raw !== 'string' || !raw.trim() || raw.trim().startsWith('#')) return null;
+  if (!isInputString(raw) || !raw.trim() || raw.trim().startsWith('#')) return null;
 
   try {
     const origin = new URL(base);
@@ -22,10 +24,10 @@ function safeSameOrigin(raw, base) {
 
 const slugFromPath = url => decodeURIComponent(new URL(url).pathname.split('/').filter(Boolean).at(-1) ?? '');
 
-const headings = snap => (snap.nodes ?? []).filter(n => n.role === 'heading' && typeof n.name === 'string').map(n => n.name.trim());
+const headings = snap => (snap.nodes ?? []).filter(n => n.role === 'heading' && isInputString(n.name)).map(n => n.name.trim());
 
 const links = snap => (snap.nodes ?? []).filter(n => n.role === 'link'
-  && /^e\d+$/.test(n.ref ?? '') && typeof n.name === 'string' && n.name.trim());
+  && /^e\d+$/.test(n.ref ?? '') && isInputString(n.name) && n.name.trim());
 
 const normalize = name => name.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -37,7 +39,14 @@ async function safeLink(browser, node, currentUrl, homepage) {
 }
 
 function refuse(result, slug, reason) {
-  result.unresolved.push({ ...(slug ? { slug } : {}), reason });
+  result.unresolved.push((() => {
+  const result = {};
+
+  if (slug) Object.assign(result, { slug });
+  result.reason = reason;
+
+  return result;
+})());
 }
 
 export async function collectBrowserLinkEvidence(browser, registry, targets, captureDir, checkedAt = new Date().toISOString()) {
@@ -139,13 +148,13 @@ export async function collectBrowserLinkEvidence(browser, registry, targets, cap
       const distinctDestinations = new Set(matches.map(match => match.url));
 
       if (distinctDestinations.size === 1) observed = matches[0];
-    } else if (typeof browser.domLinks === 'function') {
+    } else if (isInputCallable(browser.domLinks)) {
       // Some site links exist in the DOM but are omitted from the compact
       // accessibility snapshot. Inspect only actual anchors, never build a URL.
       const anchors = await browser.domLinks();
 
       const anchorsWithUrls = anchors
-        .filter(link => typeof link.name === 'string'
+        .filter(link => isInputString(link.name)
           && (normalize(link.name) === wanted || normalize(link.name).startsWith(wanted + ' ')))
         .map(link => ({ ...link, url: safeSameOrigin(link.href, listing.url) }))
         .filter(link => link.url && normalize(slugFromPath(link.url)) === wanted
@@ -208,16 +217,25 @@ export async function collectBrowserLinkEvidence(browser, registry, targets, cap
       continue;
     }
 
-    const pageEvidence = typeof browser.extract === 'function' ? await browser.extract() : null;
+    const pageEvidence = isInputCallable(browser.extract) ? await browser.extract() : null;
     result.records.push({
       namespace: registry.name, slug, previousUrl: target.docs_url ?? target.docsUrl ?? null,
       verifiedUrl: observed.url,
-      browser: {
-        homepageUrl: homepage, listingUrl: listing.url, observedUrl: finalPage.url,
-        observedSlug: slugFromPath(finalPage.url), renderedHeading, checkedAt,
-        capturePath: screenshot, navigationSource,
-        ...(pageEvidence ? { pageEvidence } : {}),
-      },
+      browser: (() => {
+  const result = {};
+  result.homepageUrl = homepage;
+  result.listingUrl = listing.url;
+  result.observedUrl = finalPage.url;
+  result.observedSlug = slugFromPath(finalPage.url);
+  result.renderedHeading = renderedHeading;
+  result.checkedAt = checkedAt;
+  result.capturePath = screenshot;
+  result.navigationSource = navigationSource;
+
+  if (pageEvidence) Object.assign(result, { pageEvidence });
+
+  return result;
+})(),
     });
   }
 

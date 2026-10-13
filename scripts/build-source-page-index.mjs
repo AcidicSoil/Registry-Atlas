@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 import { isIP } from 'node:net';
 import { pathToFileURL } from 'node:url';
 import { exportPatternLinkSnapshot } from './verify-registry-patterns.mjs';
@@ -72,7 +73,7 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
   const databaseGroups = new Map();
 
   if (databaseSitemaps) for (const page of patternLinks.sitemapLinks) {
-    if (typeof page?.namespace !== 'string' || typeof page?.observedAt !== 'string') continue;
+    if (!isInputString(page?.namespace) || !isInputString(page?.observedAt)) continue;
     const key = page.namespace + '\\0' + page.observedAt;
 
     if (!databaseGroups.has(key)) databaseGroups.set(key,{

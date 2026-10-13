@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 import {execFileSync} from 'node:child_process';
 import {writeFile,mkdir,rename} from 'node:fs/promises';
 import {join,isAbsolute} from 'node:path';
@@ -217,8 +218,16 @@ export async function surveyRegistry(registry,slugs,{timeoutMs=6000,maxSitemaps=
     if(!response.text){base.errors.push({url,error:response.error});continue;}
 
     const parsed=sitemapXmlLinks(response.text);
-    base.sitemaps.push({url,kind:parsed.kind,locCount:parsed.urls.length,
-      ...(canonicalUrl?{canonicalRedirect:canonicalUrl}: {})});
+    base.sitemaps.push((() => {
+  const result = {};
+  result.url = url;
+  result.kind = parsed.kind;
+  result.locCount = parsed.urls.length;
+
+  if (canonicalUrl) Object.assign(result, {canonicalRedirect:canonicalUrl});
+
+  return result;
+})());
 
     const urls=canonicalUrl?parsed.urls.map(raw=>{
       try{const candidate=new URL(raw);
@@ -250,8 +259,8 @@ return candidate.href;
     else if(!previous.includes(row.url))previous.push(row.url);
   }
 
-  const links=[...bySlug].filter(([,urls])=>urls.length===1)
-    .map(([slug,urls])=>({slug,url:urls[0]}));
+  const links=[...bySlug].flatMap(([slug,urls]) =>
+    urls.length === 1 ? [{ slug, url: urls[0] }] : []);
 
   return {...base,status:links.length?'sitemap-observed':base.sitemaps.length?'no-matching-sitemap-pages':'no-readable-sitemap',
     sitemapUrlCount:sitemapUrls.length,matchedPages:links};
@@ -323,7 +332,7 @@ export async function main(argv,cwd=process.cwd()){
       const slugs=[...new Set([
         ...(catalog.registries?.[registry.name]??[]).map(x=>x.name),
         ...(curated[registry.name]??[]).map(x=>x.slug),
-      ])].filter(x=>typeof x==='string');
+      ])].filter(x=>isInputString(x));
 
       const result=await surveyRegistry(registry,slugs,{timeoutMs:options.timeoutMs});
       const path=join(options['--output-dir'],registry.name.slice(1)+'.json');

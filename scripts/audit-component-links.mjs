@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 import { readFile, writeFile, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
@@ -13,7 +14,7 @@ import {
 const SCHEMA = 'registry-atlas-component-link-evidence/v1';
 
 function publicHttps(input) {
-  if (typeof input !== 'string') return null;
+  if (!isInputString(input)) return null;
 
   try {
     const u = new URL(input);
@@ -34,7 +35,7 @@ function uniqueRows(items) {
   const result = new Map();
 
   for (const item of items) {
-    if (typeof item?.slug !== 'string' || result.has(item.slug)) continue;
+    if (!isInputString(item?.slug) || result.has(item.slug)) continue;
     result.set(item.slug, item);
   }
 
@@ -172,7 +173,7 @@ export async function recheckLivePages(inventory, evidence, browser) {
       const expected = record.slug.replace(/[-_]+/g, ' ').toLowerCase();
 
       const actualHeading = (snapshot.nodes ?? []).some(node =>
-        node.role === 'heading' && typeof node.name === 'string'
+        node.role === 'heading' && isInputString(node.name)
           && node.name.trim().toLowerCase().replace(/\s+/g, ' ') === expected);
 
       if (!actualHeading) unresolved.push({ token, reason: 'live-heading-mismatch' });
@@ -234,9 +235,17 @@ export function summarizeAuditCoverage(inventory, evaluation, independentlyRevie
       : repaired.has(item.token) ? 'repaired'
       : confirmed.has(item.token) ? 'confirmed-unchanged' : 'not-checked';
 
-    return { ...item, status,
-      ...(unresolved.has(item.token) ? { reason: unresolved.get(item.token) } : {}),
-      ...(verified.has(item.token) ? { verifiedUrl: verified.get(item.token).url } : {}) };
+    return (() => {
+  const result = {};
+  Object.assign(result, item);
+  result.status = status;
+
+  if (unresolved.has(item.token)) Object.assign(result, { reason: unresolved.get(item.token) });
+
+  if (verified.has(item.token)) Object.assign(result, { verifiedUrl: verified.get(item.token).url });
+
+  return result;
+})();
   });
 
   const perRegistry = inventory.perRegistry.map(registry => {
@@ -267,7 +276,7 @@ export function summarizeAuditCoverage(inventory, evaluation, independentlyRevie
 async function loadJson(file) { return JSON.parse(await readFile(file, 'utf8')); }
 
 const checksum = value => createHash('sha256').update(
-  typeof value === 'string' ? value : JSON.stringify(value),
+  isInputString(value) ? value : JSON.stringify(value),
 ).digest('hex');
 
 async function main(argv) {

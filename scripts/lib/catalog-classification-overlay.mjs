@@ -1,3 +1,4 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
 import { buildCatalogClassificationState } from './catalog-classification-state.mjs';
 import { catalogClassificationInputFingerprint } from './catalog-classifier.mjs';
 import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from './catalog-taxonomy.mjs';
@@ -9,7 +10,7 @@ const FINGERPRINT = /^sha256:[a-f0-9]{64}$/;
 const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
 
 function isRecord(value) {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }
 
 function identity(namespace, name) {
@@ -47,9 +48,9 @@ export function validateCatalogClassificationOverlay(value, taxonomy) {
     if (!FINGERPRINT.test(value[field] ?? '')) throw new Error(`Classification overlay ${field} is invalid`);
   }
 
-  if (typeof value.approvedBy !== 'string' || !value.approvedBy.trim()) throw new Error('Classification overlay approvedBy is required');
+  if (!isInputString(value.approvedBy) || !value.approvedBy.trim()) throw new Error('Classification overlay approvedBy is required');
 
-  if (typeof value.approvedAt !== 'string' || Number.isNaN(Date.parse(value.approvedAt))) throw new Error('Classification overlay approvedAt is invalid');
+  if (!isInputString(value.approvedAt) || Number.isNaN(Date.parse(value.approvedAt))) throw new Error('Classification overlay approvedAt is invalid');
 
   if (!Array.isArray(value.items)) throw new Error('Classification overlay items must be an array');
 
@@ -57,8 +58,8 @@ export function validateCatalogClassificationOverlay(value, taxonomy) {
   const seen = new Set();
 
   for (const item of value.items) {
-    if (!isRecord(item) || typeof item.namespace !== 'string' || !item.namespace.startsWith('@')
-      || typeof item.name !== 'string' || !item.name.trim()) {
+    if (!isRecord(item) || !isInputString(item.namespace) || !item.namespace.startsWith('@')
+      || !isInputString(item.name) || !item.name.trim()) {
       throw new Error('Classification overlay item identity is invalid');
     }
 
@@ -85,7 +86,7 @@ export function validateCatalogClassificationOverlay(value, taxonomy) {
 
     if (item.sourceGroups !== undefined
       && (!Array.isArray(item.sourceGroups)
-        || item.sourceGroups.some(group => typeof group !== 'string' || !group.trim()))) {
+        || item.sourceGroups.some(group => !isInputString(group) || !group.trim()))) {
       throw new Error('Classification overlay sourceGroups must be non-empty strings');
     }
   }
@@ -100,16 +101,25 @@ function currentInputFingerprint(namespace, rawItem, overlayItem) {
 
   if (Array.isArray(rawItem.sourceGroups) && rawItem.sourceGroups.length) sourceHints.verifiedGroups = rawItem.sourceGroups;
 
-  const state = buildCatalogClassificationState({
-    namespace,
-    item: {
-      name: rawItem.name,
-      ...(rawItem.title ? { title: rawItem.title } : {}),
-      ...(rawItem.description ? { description: rawItem.description } : {}),
-      kind: overlayItem.kind,
-    },
-    ...(Object.keys(sourceHints).length ? { sourceHints } : {}),
-  });
+  const state = buildCatalogClassificationState((() => {
+  const result = {};
+  result.namespace = namespace;
+  result.item = (() => {
+  const result = {};
+  result.name = rawItem.name;
+
+  if (rawItem.title) Object.assign(result, { title: rawItem.title });
+
+  if (rawItem.description) Object.assign(result, { description: rawItem.description });
+  result.kind = overlayItem.kind;
+
+  return result;
+})();
+
+  if (Object.keys(sourceHints).length) Object.assign(result, { sourceHints });
+
+  return result;
+})());
 
   return catalogClassificationInputFingerprint(state);
 }
@@ -117,14 +127,14 @@ function currentInputFingerprint(namespace, rawItem, overlayItem) {
 function explicitAccess(namespace, labels, accessRules) {
   const registryRules = accessRules?.registries?.[namespace];
 
-  const normalizedRules = registryRules && typeof registryRules === 'object' && !Array.isArray(registryRules)
+  const normalizedRules = registryRules && isInputObject(registryRules) && !Array.isArray(registryRules)
     ? new Map(Object.entries(registryRules).map(([label, normalized]) => [label.trim().toLowerCase(), normalized]))
     : new Map();
 
   const matches = [];
 
   for (const label of labels) {
-    if (typeof label !== 'string' || !label.trim()) continue;
+    if (!isInputString(label) || !label.trim()) continue;
     const normalized = normalizedRules.get(label.trim().toLowerCase());
 
     if (normalized === 'free' || normalized === 'paid') matches.push({ normalized, sourceLabel: label.trim() });
@@ -138,10 +148,10 @@ function explicitAccess(namespace, labels, accessRules) {
 
   const fallback = accessRules?.registryDefaults?.[namespace];
 
-  if (!fallback || typeof fallback !== 'object' || Array.isArray(fallback)) return undefined;
+  if (!fallback || !isInputObject(fallback) || Array.isArray(fallback)) return undefined;
 
   if ((fallback.normalized !== 'free' && fallback.normalized !== 'paid')
-    || typeof fallback.sourceLabel !== 'string' || !fallback.sourceLabel.trim()) {
+    || !isInputString(fallback.sourceLabel) || !fallback.sourceLabel.trim()) {
     throw new Error(`Invalid registry-level access rule for ${namespace}`);
   }
 
@@ -152,7 +162,7 @@ function explicitAccess(namespace, labels, accessRules) {
 }
 
 export function stripCatalogClassificationFields(itemsByNamespace) {
-  if (!itemsByNamespace || typeof itemsByNamespace !== 'object' || Array.isArray(itemsByNamespace)) {
+  if (!itemsByNamespace || !isInputObject(itemsByNamespace) || Array.isArray(itemsByNamespace)) {
     throw new Error('Catalog overlay input must be registry item buckets');
   }
 
@@ -160,7 +170,7 @@ export function stripCatalogClassificationFields(itemsByNamespace) {
     if (!Array.isArray(items)) throw new Error(`Catalog overlay registry bucket ${namespace} must be an array`);
 
     return [namespace, items.map(item => {
-      if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+      if (!item || !isInputObject(item) || Array.isArray(item)) return item;
       const { kind: _kind, canonical: _canonical, sourceGroups: _sourceGroups, access: _access, ...raw } = item;
 
       return raw;
@@ -169,7 +179,7 @@ export function stripCatalogClassificationFields(itemsByNamespace) {
 }
 
 export function applyCatalogClassificationOverlay(itemsByNamespace, overlay, accessRules = {}) {
-  if (!itemsByNamespace || typeof itemsByNamespace !== 'object' || Array.isArray(itemsByNamespace)) {
+  if (!itemsByNamespace || !isInputObject(itemsByNamespace) || Array.isArray(itemsByNamespace)) {
     throw new Error('Catalog overlay input must be registry item buckets');
   }
 
@@ -183,7 +193,7 @@ export function applyCatalogClassificationOverlay(itemsByNamespace, overlay, acc
   for (const [namespace, items] of Object.entries(stripped)) {
     if (!Array.isArray(items)) throw new Error(`Catalog overlay registry bucket ${namespace} must be an array`);
     output[namespace] = items.map(rawItem => {
-      if (!rawItem || typeof rawItem.name !== 'string') return rawItem;
+      if (!rawItem || !isInputString(rawItem.name)) return rawItem;
       const key = identity(namespace, rawItem.name);
       const reviewed = overlayByIdentity.get(key);
 
@@ -204,17 +214,22 @@ export function applyCatalogClassificationOverlay(itemsByNamespace, overlay, acc
       const access = explicitAccess(namespace, labels, accessRules);
       applied += 1;
 
-      return {
-        ...rawItem,
-        kind: reviewed.kind,
-        canonical: {
+      return (() => {
+  const result = {};
+  Object.assign(result, rawItem);
+  result.kind = reviewed.kind;
+  result.canonical = {
           taxonomyVersion: overlay.taxonomyVersion,
           primary: reviewed.canonical.primary,
           path: [...reviewed.canonical.path],
-        },
-        ...(reviewed.sourceGroups?.length ? { sourceGroups: [...reviewed.sourceGroups] } : {}),
-        ...(access ? { access } : {}),
-      };
+        };
+
+  if (reviewed.sourceGroups?.length) Object.assign(result, { sourceGroups: [...reviewed.sourceGroups] });
+
+  if (access) Object.assign(result, { access });
+
+  return result;
+})();
     });
   }
 

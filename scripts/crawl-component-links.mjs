@@ -305,10 +305,16 @@ export async function runRegistryCrawl({
       }
 
       if (!targets.length) {
-        await journal.append({ token: 'registry:' + registry.name, registry: registry.name,
-          status: collected.unresolved?.length ? 'unresolved' : 'checked-empty',
-          ...(collected.unresolved?.length
-            ? { reason: collected.unresolved[0].reason } : {}) });
+        await journal.append((() => {
+  const result = {};
+  result.token = 'registry:' + registry.name;
+  result.registry = registry.name;
+  result.status = collected.unresolved?.length ? 'unresolved' : 'checked-empty';
+
+  if (collected.unresolved?.length) Object.assign(result, { reason: collected.unresolved[0].reason });
+
+  return result;
+})());
         processed++;
       }
 

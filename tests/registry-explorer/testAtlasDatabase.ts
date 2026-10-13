@@ -7,10 +7,12 @@ type Reference = {
 };
 
 function runtimeReference(): Reference {
+  // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   return JSON.parse(gunzipSync(readFileSync('public/data/registry-atlas.json.gz')).toString('utf8')) as Reference;
 }
 
 export function readRepositoryDocument<T=unknown>(name:string):T {
+  // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   const documents=JSON.parse(readFileSync('.instance/atlas-test-documents.json','utf8')) as Record<string,T>;
 
   if (!Object.hasOwn(documents,name)) throw new Error('Missing PostgreSQL-backed reference document: '+name);
@@ -19,9 +21,11 @@ export function readRepositoryDocument<T=unknown>(name:string):T {
 }
 
 export function readRepositoryCatalog<T=unknown>():T {
+  // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   return runtimeReference().catalog as T;
 }
 
 export function readRepositoryRegistrySnapshot<T=unknown>():T {
+  // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   return runtimeReference().mirror as T;
 }

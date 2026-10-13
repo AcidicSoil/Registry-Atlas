@@ -1,20 +1,23 @@
+/** Named map contract for dynamic keys in this module. */
+type ROUTELABELSLookupContract = Readonly<Record<string, string>>;
+
 import type { CatalogRoute } from '../core/catalogRoutes';
 import type { CatalogAssetKind } from '../core/catalogCollections';
 import { catalogRoutePath, REGISTRY_ASSET_SEGMENTS } from '../core/catalogRoutes';
 import { escapeHtml } from './renderSafety';
 
-const ROUTE_LABELS: Readonly<Record<string, string>> = {
+const ROUTE_LABELS = {
   home: 'Home', components: 'Components', blocks: 'Blocks', pages: 'Pages',
   templates: 'Templates', themes: 'Themes', icons: 'Icons',
   registries: 'Registries', authors: 'Authors', compare: 'Compare',
   explore: 'Explore', 'theme-editor': 'Theme editor',
   'icon-category': 'Category', 'icon-family': 'Family',
-};
+} satisfies ROUTELABELSLookupContract;
 
-const ASSET_SEGMENT_LABELS: Readonly<Record<string, string>> = {
+const ASSET_SEGMENT_LABELS = {
   components: 'Components', blocks: 'Blocks', pages: 'Pages',
   templates: 'Templates', themes: 'Themes', icons: 'Icons', other: 'Other',
-};
+} satisfies ROUTELABELSLookupContract;
 
 type Crumb = { label: string; route?: CatalogRoute };
 
@@ -36,12 +39,13 @@ function registryBreadcrumbs(route: RegistryRoute, itemTitle?: string): Crumb[] 
   const segment = Object.entries(REGISTRY_ASSET_SEGMENTS).find(([, kind]) => kind === assetKind)?.[0];
 
   if (segment) {
-    crumbs.push({
-      label: ASSET_SEGMENT_LABELS[segment] ?? segment,
-      ...(route.kind === 'registry-assets' ? {} : {
-        route: { kind: 'registry-assets', namespace: route.namespace, assetKind } as CatalogRoute,
-      }),
-    });
+    const crumb: Crumb = { label: new Map(Object.entries(ASSET_SEGMENT_LABELS)).get(segment) ?? segment };
+
+    if (route.kind !== 'registry-assets') {
+      crumb.route = { kind: 'registry-assets', namespace: route.namespace, assetKind };
+    }
+
+    crumbs.push(crumb);
   }
 
   if (route.kind !== 'registry-assets') {
@@ -62,7 +66,7 @@ function otherBreadcrumbs(route: Exclude<CatalogRoute, RegistryRoute>): Crumb[] 
     case 'explore':
       return [{ label: 'Components', route: { kind: 'components' } }, { label: route.collection }];
     default:
-      return [{ label: ROUTE_LABELS[route.kind] ?? route.kind }];
+      return [{ label: new Map(Object.entries(ROUTE_LABELS)).get(route.kind) ?? route.kind }];
   }
 }
 

@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error This browser-focused tsconfig omits Node ESM type declarations.
 import { buildSourcePageIndex } from '../../scripts/build-source-page-index.mjs';
@@ -34,7 +35,7 @@ const traversal = {
   ],
 };
 
-const input = (opts: Record<string,unknown> = {}) => ({
+const input = (opts: Record<string, RawJsonInput> = {}) => ({
   raw, catalog, curated:{'@alpha':[{
     slug:'button',docs_url:'https://alpha.example/components/button',
   }]}, traversal, now,...opts,

@@ -17,10 +17,12 @@ const BUTTON = 'https://eight.example/docs/components/button';
 
 const CARD = 'https://eight.example/docs/components/card';
 
-const pages: Record<string, {
+type BrowserFixturePage = {
   nodes: Array<{ role: string; ref: string; name: string }>;
   links: Record<string, string>;
-}> = {
+};
+
+const pages = {
   [HOME]: {
     nodes: [{ role: 'link', ref: 'e2', name: 'Components' }, { role: 'link', ref: 'e3', name: 'Pricing' }],
     links: { e2: '/docs/components', e3: '/pricing' },
@@ -33,14 +35,14 @@ const pages: Record<string, {
   },
   [BUTTON]: { nodes: [{ role: 'heading', ref: 'h1', name: 'Button' }], links: {} },
   [CARD]: { nodes: [{ role: 'heading', ref: 'h1', name: 'Card' }], links: {} },
-};
+} satisfies Record<string, BrowserFixturePage>;
 
 class FakeBrowser {
   current: string;
-  pages: typeof pages;
+  pages: Record<string, BrowserFixturePage>;
   log: Array<[string, string]>;
 
-  constructor(start = HOME, source = pages) {
+  constructor(start = HOME, source: Record<string, BrowserFixturePage> = pages) {
     this.current = start;
     this.pages = structuredClone(source);
     this.log = [];
@@ -105,7 +107,7 @@ describe('source-browser link collection', () => {
   });
 
   it('does not promote a listing link that navigates to the wrong page', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[INDEX].links.e98 = '/docs/components/card';
     const browser = new FakeBrowser(HOME, source);
     const result = await collectBrowserLinkEvidence(browser, registry, [records[0]], '/tmp/source-captures');
@@ -114,7 +116,7 @@ describe('source-browser link collection', () => {
   });
 
   it('rejects a cross-origin catalog link without clicking it', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[HOME].links.e2 = 'https://another.example/docs/components';
     const browser = new FakeBrowser(HOME, source);
     const result = await collectBrowserLinkEvidence(browser, registry, records, '/tmp/source-captures');
@@ -124,7 +126,7 @@ describe('source-browser link collection', () => {
   });
 
   it('requires observed final headings and capture URL to agree with discovered component URL', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[BUTTON].nodes = [{ role: 'heading', ref: 'h1', name: 'Unrelated' }];
     const browser = new FakeBrowser(HOME, source);
     const result = await collectBrowserLinkEvidence(browser, registry, [records[0]], '/tmp/source-captures');
@@ -133,7 +135,7 @@ describe('source-browser link collection', () => {
   });
 
   it('accepts duplicate observed links only when their verified hrefs identify the same component page', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[INDEX].nodes.push({ role: 'link', ref: 'e201', name: 'Button' });
     source[INDEX].links.e201 = '/docs/components/button';
     const browser = new FakeBrowser(HOME, source);
@@ -145,7 +147,7 @@ describe('source-browser link collection', () => {
   });
 
   it('refuses competing same-name links pointing to different destinations', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[INDEX].nodes.push({ role: 'link', ref: 'e201', name: 'Button' });
     source[INDEX].links.e201 = '/docs/other/button';
     const browser = new FakeBrowser(HOME, source);
@@ -156,9 +158,10 @@ describe('source-browser link collection', () => {
   });
 
   it('falls back to an observed DOM anchor when the semantic snapshot omits a component link', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[INDEX].nodes = source[INDEX].nodes.filter((n: { name: string }) => n.name !== 'Button Clickable pixel buttons');
     const browser = new FakeBrowser(HOME, source);
+    // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
     (browser as FakeBrowser & { domLinks: () => Promise<{name: string; href: string}[]> }).domLinks =
       async () => [{ name: 'Button', href: '/docs/components/button' }];
     const result = await collectBrowserLinkEvidence(browser, registry, [records[0]], '/tmp/source-captures');
@@ -170,7 +173,7 @@ describe('source-browser link collection', () => {
   });
 
   it('refuses cross-origin or conflicting DOM-anchor fallbacks', async () => {
-    const source = structuredClone(pages);
+    const source: Record<string, BrowserFixturePage> = structuredClone(pages);
     source[INDEX].nodes = source[INDEX].nodes.filter((n: { name: string }) => n.name !== 'Button Clickable pixel buttons');
 
     for (const domLinks of [
@@ -178,6 +181,7 @@ describe('source-browser link collection', () => {
       [{ name: 'Button', href: '/docs/components/button' }, { name: 'Button', href: '/docs/other/button' }],
     ]) {
       const browser = new FakeBrowser(HOME, source);
+      // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
       (browser as FakeBrowser & { domLinks: () => Promise<{name: string; href: string}[]> }).domLinks = async () => domLinks;
       const result = await collectBrowserLinkEvidence(browser, registry, [records[0]], '/tmp/source-captures');
       expect(result.records).toEqual([]);

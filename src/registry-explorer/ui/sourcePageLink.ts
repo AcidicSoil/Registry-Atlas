@@ -1,3 +1,6 @@
+/** Named map contract for dynamic keys in this module. */
+type SPACEUIASPECTRATIOANCHORSLookupContract = Readonly<Record<string, string>>;
+
 import { verifiedSourcePageUrl, verifiedRegistryHomepage } from '../core/sourcePageValidation';
 
 export { verifiedSourcePageUrl, verifiedRegistryHomepage } from '../core/sourcePageValidation';
@@ -36,7 +39,7 @@ export function sourcePageNavigation(
  * page. Recorded from public HTML at www.spaceui.one/primitives/aspect-ratio,
  * 2026-10-12. Do not extrapolate to unobserved slugs.
  */
-const SPACEUI_ASPECT_RATIO_ANCHORS: Readonly<Record<string, string>> = {
+const SPACEUI_ASPECT_RATIO_ANCHORS = {
   'demo-p-aspect-ratio-02': 'example-43-standard-aspect-ratio',
   'demo-p-aspect-ratio-03': 'example-11-square-aspect-ratio',
   'demo-p-aspect-ratio-04': 'example-219-ultrawide-aspect-ratio',
@@ -44,7 +47,7 @@ const SPACEUI_ASPECT_RATIO_ANCHORS: Readonly<Record<string, string>> = {
   'demo-p-aspect-ratio-06': 'example-32-classic-photography-aspect-ratio',
   'demo-p-aspect-ratio-07': 'example-45-social-media-portrait-aspect-ratio',
   'demo-p-aspect-ratio-08': 'example-1610-computer-monitor-aspect-ratio',
-};
+} satisfies SPACEUIASPECTRATIOANCHORSLookupContract;
 
 /** Shared source resolver. Never substitute an Atlas route or install JSON. */
 export function sourcePageNavigationForItem(
@@ -58,7 +61,7 @@ export function sourcePageNavigationForItem(
   if (indexed) return indexed;
 
   if (namespace !== '@spaceui') return null;
-  const anchor = SPACEUI_ASPECT_RATIO_ANCHORS[slug];
+  const anchor = new Map(Object.entries(SPACEUI_ASPECT_RATIO_ANCHORS)).get(slug);
 
   if (!anchor) return null;
   const verifiedHomepage = verifiedRegistryHomepage(homepage);

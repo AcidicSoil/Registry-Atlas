@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
-import { tmpdir } from 'node:os';
-import ts from 'typescript';
+import { dirname, resolve } from 'node:path';
 import { validateCatalogRuntimeContract } from './lib/catalog-runtime-contract.mjs';
 import {
   openAtlasCoreDatabase,
@@ -225,28 +222,8 @@ function formatIssue(issue) {
 }
 
 async function loadRegistryMirrorValidator() {
-  const sourceDir = resolve(projectRoot, 'src/registry-explorer/core');
-  const compiledDir = await mkdtemp(join(tmpdir(), 'registry-atlas-validator-'));
-
-  const modules = [
-    'registry.schema.ts',
-    'coverageStatus.ts',
-    'registryMirror.ts',
-  ];
-
-  await Promise.all(modules.map(async moduleName => {
-    const source = await readFile(resolve(sourceDir, moduleName), 'utf8');
-
-    const transpiled = ts.transpileModule(source, {
-      compilerOptions: {
-        target: ts.ScriptTarget.ES2022,
-        module: ts.ModuleKind.ES2022,
-        verbatimModuleSyntax: true,
-      },
-    }).outputText.replaceAll(".ts';", ".mjs';");
-
-    await writeFile(resolve(compiledDir, moduleName.replace(/\.ts$/, '.mjs')), transpiled);
-  }));
-
-  return import(resolve(compiledDir, 'registryMirror.mjs'));
+  // Node 24 strips erasable TypeScript syntax. Importing from the project
+  // preserves sibling schema dependencies instead of transplanting modules
+  // into a temporary directory with broken module resolution.
+  return import(resolve(projectRoot, 'src/registry-explorer/core/registryMirror.ts'));
 }

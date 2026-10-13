@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM module.
 import { chooseTaxonomyOption } from '../../scripts/lib/systemone-taxonomy.mjs';
@@ -26,6 +27,7 @@ const options = [
 ];
 
 function response(answer: any, ok = true, status = 200) {
+  // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
   return {
     ok,
     status,
@@ -77,7 +79,7 @@ describe('System One taxonomy adapter', () => {
   });
 
   it('uses child options plus THIS_CATEGORY below a taxonomy node', async () => {
-    let criteria: Record<string, unknown> = {};
+    let criteria: Record<string, RawJsonInput> = {};
     await chooseTaxonomyOption({
       state,
       node: options[0],

@@ -1,3 +1,5 @@
+import type { RawJsonInput } from './jsonInput';
+import { isInputNumber, isInputObject, isInputString } from './inputChecks';
 import { resolveRegistryItemRoute } from './itemRoutes';
 import { catalogTaxonomyNodeMap, getDefaultCatalogTaxonomy } from './catalogTaxonomy';
 import type {
@@ -50,22 +52,24 @@ export interface RegistryCatalogComponentOption {
   count: number;
 }
 
-function parsedCatalogBuckets(raw: Record<string, unknown>): Record<string, RegistryCatalogItem[]> {
-  const registries: Record<string, RegistryCatalogItem[]> = {};
+type ParsedCatalogBuckets = Record<string, RegistryCatalogItem[]>;
+
+function parsedCatalogBuckets(raw: Record<string, RawJsonInput>): ParsedCatalogBuckets {
+  const registries = new Map<string, RegistryCatalogItem[]>();
 
   for (const [namespace, rawItems] of Object.entries(raw)) {
     if (!namespace.startsWith('@') || !Array.isArray(rawItems)) {
       throw new Error('Registry catalog index validation failed: invalid registry bucket');
     }
 
-    registries[namespace] = rawItems.map(parseCatalogItem)
-      .filter((item): item is RegistryCatalogItem => item !== null);
+    registries.set(namespace, rawItems.map(parseCatalogItem)
+      .filter((item): item is RegistryCatalogItem => item !== null));
   }
 
-  return registries;
+  return Object.fromEntries(registries);
 }
 
-export function parseRegistryCatalogIndex(value: unknown): RegistryCatalogIndex {
+export function parseRegistryCatalogIndex(value: RawJsonInput): RegistryCatalogIndex {
   if (!isRecord(value) || !isRecord(value.meta) || !isRecord(value.registries)) {
     throw new Error('Registry catalog index validation failed: expected meta and registries objects');
   }
@@ -109,7 +113,7 @@ function matchesRegistryCatalogItem(
   if (selected.size && !selected.has(identity)) return false;
 
   if (excludedKeys.has(namespace + ':' + identity)) return false;
-  const values = [item.name, item.title].filter(Boolean).map(value => normalize(String(value)));
+  const values = [item.name, item.title].flatMap(value => value ? [normalize(String(value))] : []);
 
   return !query || values.some(value => matchesSearch(value, query));
 }
@@ -122,7 +126,10 @@ export function searchRegistryCatalog(
   excludedKeys: ReadonlySet<string> = new Set(),
 ): RegistryCatalogSearchResult {
   const query = normalize(search);
-  const selected = new Set(selectedComponentValues.map(registryCatalogItemIdentity).filter(Boolean));
+
+  const selected = new Set(selectedComponentValues.flatMap(value => { const id=registryCatalogItemIdentity(value);
+
+ return id ? [id] : []; }));
 
   if (!query && selected.size === 0) {
     return { matches: [], totalMatches: 0, truncated: false };
@@ -160,7 +167,7 @@ export function searchRegistryCatalogComponentOptions(
 
   for (const items of Object.values(index.registries)) {
     for (const item of items) {
-      const values = [item.name, item.title].filter(Boolean).map(value => normalize(String(value)));
+      const values = [item.name, item.title].flatMap(value => value ? [normalize(String(value))] : []);
 
       if (!values.some(value => matchesSearch(value, query))) continue;
 
@@ -228,12 +235,12 @@ export function compactCatalogItemToSummary(
   };
 }
 
-function parseStringArray(value: unknown, field: 'categories' | 'sourceGroups'): string[] | undefined {
+function parseStringArray(value: RawJsonInput, field: 'categories' | 'sourceGroups'): string[] | undefined {
   if (value === undefined) return undefined;
   const nonempty = field === 'sourceGroups';
 
   if (!Array.isArray(value) || value.some(item =>
-    typeof item !== 'string' || (nonempty && !item.trim()))) {
+    !isInputString(item) || (nonempty && !item.trim()))) {
     throw new Error(field === 'categories'
       ? 'Registry catalog index validation failed: item categories must be strings'
       : 'Registry catalog index validation failed: item sourceGroups must be non-empty strings');
@@ -242,7 +249,7 @@ function parseStringArray(value: unknown, field: 'categories' | 'sourceGroups'):
   return value.map((item: string) => item.trim()).filter(value => nonempty || !!value);
 }
 
-function parseItemFileCount(value: unknown): number | null {
+function parseItemFileCount(value: RawJsonInput): number | null {
   if (value === undefined) return null;
   const count = numberValue(value);
 
@@ -253,65 +260,80 @@ function parseItemFileCount(value: unknown): number | null {
   return count;
 }
 
-function optionalCatalogTextFields(value: Record<string, unknown>) {
+function optionalCatalogTextFields(value: Record<string, RawJsonInput>): Pick<RegistryCatalogItem, 'rawItemUrl' | 'title' | 'description' | 'author'> {
   const title = optionalString(value.title);
   const rawItemUrl = optionalString(value.rawItemUrl);
   const description = optionalString(value.description);
   const author = optionalString(value.author);
 
-  return {
-    ...(rawItemUrl ? { rawItemUrl } : {}),
-    ...(title ? { title } : {}),
-    ...(description ? { description } : {}),
-    ...(author ? { author } : {}),
-  };
+  const fields: Pick<RegistryCatalogItem, 'rawItemUrl' | 'title' | 'description' | 'author'> = {};
+
+  if (rawItemUrl) fields.rawItemUrl = rawItemUrl;
+
+  if (title) fields.title = title;
+
+  if (description) fields.description = description;
+
+  if (author) fields.author = author;
+
+  return fields;
 }
 
-function optionalTaxonomyFields(value: Record<string, unknown>) {
+function optionalTaxonomyFields(value: Record<string, RawJsonInput>): Pick<RegistryCatalogItem, 'categories' | 'kind' | 'canonical'> {
   const categories = parseStringArray(value.categories, 'categories');
   const kind = value.kind === undefined ? undefined : parseCanonicalKind(value.kind);
   const canonical = value.canonical === undefined ? undefined : parseCanonical(value.canonical);
 
-  return {
-    ...(categories?.length ? { categories } : {}),
-    ...(kind ? { kind } : {}),
-    ...(canonical ? { canonical } : {}),
-  };
+  const fields: Pick<RegistryCatalogItem, 'categories' | 'kind' | 'canonical'> = {};
+
+  if (categories?.length) fields.categories = categories;
+
+  if (kind) fields.kind = kind;
+
+  if (canonical) fields.canonical = canonical;
+
+  return fields;
 }
 
-function optionalSourceFields(value: Record<string, unknown>) {
+function optionalSourceFields(value: Record<string, RawJsonInput>): Pick<RegistryCatalogItem, 'sourceGroups' | 'access'> {
   const sourceGroups = parseStringArray(value.sourceGroups, 'sourceGroups');
   const access = value.access === undefined ? undefined : parseAccess(value.access);
 
-  return {
-    ...(sourceGroups?.length ? { sourceGroups } : {}),
-    ...(access ? { access } : {}),
-  };
+  const fields: Pick<RegistryCatalogItem, 'sourceGroups' | 'access'> = {};
+
+  if (sourceGroups?.length) fields.sourceGroups = sourceGroups;
+
+  if (access) fields.access = access;
+
+  return fields;
 }
 
-function optionalClassificationFields(value: Record<string, unknown>) {
+function optionalClassificationFields(value: Record<string, RawJsonInput>) {
   return { ...optionalTaxonomyFields(value), ...optionalSourceFields(value) };
 }
 
-function optionalPreviewFields(value: Record<string, unknown>) {
+function optionalPreviewFields(value: Record<string, RawJsonInput>): Pick<RegistryCatalogItem, 'fileCount' | 'themePreview'> {
   const fileCount = parseItemFileCount(value.fileCount);
   const themePreview = value.themePreview === undefined ? undefined : parseThemePreview(value.themePreview);
 
-  return {
-    ...(fileCount !== null ? { fileCount } : {}),
-    ...(themePreview ? { themePreview } : {}),
-  };
+  const fields: Pick<RegistryCatalogItem, 'fileCount' | 'themePreview'> = {};
+
+  if (fileCount !== null) fields.fileCount = fileCount;
+
+  if (themePreview) fields.themePreview = themePreview;
+
+  return fields;
 }
 
-function optionalCatalogMetadataFields(value: Record<string, unknown>) {
+function optionalCatalogMetadataFields(value: Record<string, RawJsonInput>) {
   return { ...optionalClassificationFields(value), ...optionalPreviewFields(value) };
 }
 
-function optionalCatalogItemFields(value: Record<string, unknown>) {
+function optionalCatalogItemFields(value: Record<string, RawJsonInput>) {
   return { ...optionalCatalogTextFields(value), ...optionalCatalogMetadataFields(value) };
 }
 
-function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
+function parseCatalogItem(value: RawJsonInput): RegistryCatalogItem | null {
   if (!isRecord(value)) {
     throw new Error('Registry catalog index validation failed: item is not an object');
   }
@@ -333,15 +355,19 @@ function parseCatalogItem(value: unknown): RegistryCatalogItem | null {
   return { name, type, ...optionalCatalogItemFields(value) };
 }
 
-function parseCanonicalKind(value: unknown): CatalogCanonicalKind {
-  if (typeof value !== 'string' || !CATALOG_CANONICAL_KINDS.has(value as CatalogCanonicalKind)) {
+function isApprovedCanonicalKind(value: string): value is CatalogCanonicalKind {
+  return [...CATALOG_CANONICAL_KINDS].some(kind => kind === value);
+}
+
+function parseCanonicalKind(value: RawJsonInput): CatalogCanonicalKind {
+  if (!isInputString(value) || !isApprovedCanonicalKind(value)) {
     throw new Error('Registry catalog index validation failed: item kind is invalid');
   }
 
-  return value as CatalogCanonicalKind;
+  return value;
 }
 
-function validatedCanonicalPrimary(value: unknown): string | null {
+function validatedCanonicalPrimary(value: RawJsonInput): string | null {
   if (value === null) return null;
   const primary = optionalString(value);
 
@@ -350,11 +376,12 @@ function validatedCanonicalPrimary(value: unknown): string | null {
   return primary;
 }
 
-function validatedCanonicalPath(value: unknown): string[] {
-  if (!Array.isArray(value) || value.some(id => typeof id !== 'string' || !CANONICAL_ID_PATTERN.test(id))) {
+function validatedCanonicalPath(value: RawJsonInput): string[] {
+  if (!Array.isArray(value) || value.some(id => !isInputString(id) || !CANONICAL_ID_PATTERN.test(id))) {
     throw new Error('Registry catalog index validation failed: item canonical path is invalid');
   }
 
+  // SAFETY: The value is checked against the matching supported schema or finite enum before this narrow type is used.
   return [...value] as string[];
 }
 
@@ -405,7 +432,7 @@ function verifyApprovedCanonicalPath(path: string[], primary: string | null): vo
   }
 }
 
-function parseCanonical(value: unknown): RegistryCatalogCanonical {
+function parseCanonical(value: RawJsonInput): RegistryCatalogCanonical {
   if (!isRecord(value)) {
     throw new Error('Registry catalog index validation failed: item canonical must be an object');
   }
@@ -430,7 +457,7 @@ function parseCanonical(value: unknown): RegistryCatalogCanonical {
   return { taxonomyVersion, primary, path };
 }
 
-function parseAccess(value: unknown): RegistryCatalogAccess {
+function parseAccess(value: RawJsonInput): RegistryCatalogAccess {
   if (!isRecord(value) || (value.normalized !== 'free' && value.normalized !== 'paid')) {
     throw new Error('Registry catalog index validation failed: item access normalized value is invalid');
   }
@@ -444,7 +471,7 @@ function parseAccess(value: unknown): RegistryCatalogAccess {
   return { normalized: value.normalized, sourceLabel };
 }
 
-function parseThemeSwatches(value: unknown, mode: 'light' | 'dark'):
+function parseThemeSwatches(value: RawJsonInput, mode: 'light' | 'dark'):
   Partial<Record<RegistryThemeSwatch, string>> | undefined {
   if (value === undefined) return undefined;
 
@@ -468,7 +495,7 @@ function parseThemeSwatches(value: unknown, mode: 'light' | 'dark'):
   return Object.keys(swatches).length ? swatches : undefined;
 }
 
-function parseThemePreview(value: unknown): RegistryThemePreview | undefined {
+function parseThemePreview(value: RawJsonInput): RegistryThemePreview | undefined {
   if (!isRecord(value)) {
     throw new Error('Registry catalog index validation failed: item themePreview must be an object');
   }
@@ -476,7 +503,14 @@ function parseThemePreview(value: unknown): RegistryThemePreview | undefined {
   const light = parseThemeSwatches(value.light, 'light');
   const dark = parseThemeSwatches(value.dark, 'dark');
 
-  return light || dark ? { ...(light ? { light } : {}), ...(dark ? { dark } : {}) } : undefined;
+  if (!light && !dark) return undefined;
+  const preview: RegistryThemePreview = {};
+
+  if (light) preview.light = light;
+
+  if (dark) preview.dark = dark;
+
+  return preview;
 }
 
 export function registryCatalogItemIdentity(value: string): string {
@@ -498,18 +532,18 @@ function titleCase(value: string): string {
   return value.replace(/[-_]+/g, ' ').replace(/\b\w/g, character => character.toUpperCase());
 }
 
-function optionalString(value: unknown): string | undefined {
-  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+function optionalString(value: RawJsonInput): string | undefined {
+  return isInputString(value) && value.trim() ? value.trim() : undefined;
 }
 
 function isThemeSwatch(value: string): value is RegistryThemeSwatch {
   return THEME_SWATCH_KEYS.some(key => key === value);
 }
 
-function numberValue(value: unknown): number | null {
-  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null;
+function numberValue(value: RawJsonInput): number | null {
+  return isInputNumber(value) && Number.isFinite(value) && value >= 0 ? value : null;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }

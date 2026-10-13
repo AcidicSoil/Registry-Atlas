@@ -130,6 +130,7 @@ describe("queryCatalogComponents", () => {
       {name:'no-owner',type:'registry:ui',title:'Alice Option'},
     ]});
 
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     expect(queryCatalogComponents(registries,idx,{author:'Alice',pageSize:10} as any)
       .items.map(x=>x.slug)).toEqual(['owned-item']);
   });

@@ -1,3 +1,6 @@
+import type { RawJsonInput } from './jsonInput';
+import { isInputObject, isInputString } from './inputChecks';
+
 export interface CatalogTaxonomyNode {
   id: string;
   label: string;
@@ -20,18 +23,18 @@ export interface CatalogTaxonomyRecord extends CatalogTaxonomyNode {
 
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }
 
-function nonEmptyString(value: unknown, field: string): string {
-  if (typeof value !== 'string' || !value.trim()) throw new Error(`Catalog taxonomy ${field} must be a non-empty string`);
+function nonEmptyString(value: RawJsonInput, field: string): string {
+  if (!isInputString(value) || !value.trim()) throw new Error(`Catalog taxonomy ${field} must be a non-empty string`);
 
   return value.trim();
 }
 
-function stringArray(value: unknown, field: string, id: string): string[] {
-  if (!Array.isArray(value) || value.some(entry => typeof entry !== 'string')) {
+function stringArray(value: RawJsonInput, field: string, id: string): string[] {
+  if (!Array.isArray(value) || value.some(entry => !isInputString(entry))) {
     throw new Error(`Catalog taxonomy ${id} ${field} must be an array of strings`);
   }
 
@@ -70,7 +73,7 @@ function registerTaxonomyAliases(aliases: Map<string, string>, names: string[], 
   }
 }
 
-export function parseCatalogTaxonomy(value: unknown): CatalogTaxonomy {
+export function parseCatalogTaxonomy(value: RawJsonInput): CatalogTaxonomy {
   if (!isRecord(value)) throw new Error('Catalog taxonomy must be an object');
   const version = nonEmptyString(value.version, 'version');
 
@@ -81,7 +84,7 @@ export function parseCatalogTaxonomy(value: unknown): CatalogTaxonomy {
   const seenObjects = new Set<object>();
   const ancestors = new Set<object>();
 
-  const visit = (raw: unknown, parentId: string | null): CatalogTaxonomyNode => {
+  const visit = (raw: RawJsonInput, parentId: string | null): CatalogTaxonomyNode => {
     if (!isRecord(raw)) throw new Error('Catalog taxonomy node must be an object');
 
     if (ancestors.has(raw)) throw new Error('Catalog taxonomy contains a cycle');

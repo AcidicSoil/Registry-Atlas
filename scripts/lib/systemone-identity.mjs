@@ -1,3 +1,5 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
+
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:8080/v1/systemone';
 
 const NONE = 'NONE';
@@ -20,7 +22,7 @@ function validateCandidates(candidates) {
   const ids = new Set();
 
   for (const candidate of candidates) {
-    if (!candidate || typeof candidate.id !== 'string' || !candidate.id.trim()
+    if (!candidate || !isInputString(candidate.id) || !candidate.id.trim()
       || candidate.id === NONE || ids.has(candidate.id))
       throw new Error('Invalid identity candidate set');
     ids.add(candidate.id);
@@ -32,14 +34,14 @@ function validateCandidates(candidates) {
 function validateAnswer(body, ids) {
   const answer = body?.answers?.identity;
 
-  if (answer?.type !== 'choice' || typeof answer.choice !== 'string')
+  if (answer?.type !== 'choice' || !isInputString(answer.choice))
     throw new Error('Invalid System One identity response');
   const allowed = new Set([...ids, NONE]);
 
   if (!allowed.has(answer.choice))
     throw new Error('System One choice is outside candidate set');
 
-  if (!answer.probabilities || typeof answer.probabilities !== 'object')
+  if (!answer.probabilities || !isInputObject(answer.probabilities))
     throw new Error('System One response is missing probabilities');
 
   for (const id of allowed) {
@@ -65,11 +67,11 @@ export async function chooseRegistryIdentity({
 } = {}) {
   const target = validEndpoint(endpoint);
 
-  if (typeof registry !== 'string' || !registry.trim())
+  if (!isInputString(registry) || !registry.trim())
     throw new Error('Registry namespace is required');
 
-  if (!observedLink || typeof observedLink.text !== 'string'
-    || typeof observedLink.url !== 'string')
+  if (!observedLink || !isInputString(observedLink.text)
+    || !isInputString(observedLink.url))
     throw new Error('Observed link evidence is required');
 
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 120000)

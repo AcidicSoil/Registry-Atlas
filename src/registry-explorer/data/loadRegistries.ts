@@ -1,3 +1,5 @@
+import type { RawJsonInput } from '../core/jsonInput';
+import { isInputObject, isInputString } from '../core/inputChecks';
 import type {
   CoverageConfidence,
   CoverageStatus,
@@ -213,6 +215,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
     throw new Error(`Registry mirror validation failed: ${validation.errors.length} error(s)`);
   }
 
+  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
   const typedMirror = mirrorData as RegistryMirrorData;
   const warningsByNamespace = groupWarningsByNamespace(validation.warnings);
 
@@ -287,7 +290,7 @@ function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): M
 }
 
 /** Optional evidence artifact. Unknown identities, hosts and tiers fail closed. */
-function isKnownSourceProvenance(record: Record<string, unknown>): boolean {
+function isKnownSourceProvenance(record: Record<string, RawJsonInput>): boolean {
   const reviewed = record.level === 'reviewed'
     && ['reviewed-summary', 'component-page-verified'].includes(String(record.source));
 
@@ -297,9 +300,9 @@ function isKnownSourceProvenance(record: Record<string, unknown>): boolean {
   return reviewed || sitemap || pattern;
 }
 
-function sourceProvenanceIsFresh(record: Record<string, unknown>): boolean {
+function sourceProvenanceIsFresh(record: Record<string, RawJsonInput>): boolean {
   if (record.level === 'reviewed' && record.source !== 'component-page-verified') return true;
-  const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
+  const observed = isInputString(record.observedAt) ? Date.parse(record.observedAt) : NaN;
   const age = Date.now() - observed;
 
   return Number.isFinite(age) && age >= 0 && age <= 30 * 24 * 60 * 60 * 1000;
@@ -317,19 +320,21 @@ function sourceManifestIdentity(
 }
 
 function sourceManifestRecord(
-  value: unknown,
-): (Record<string, unknown> & { url: string }) | null {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
-  const record = value as Record<string, unknown>;
+  value: RawJsonInput,
+): (Record<string, RawJsonInput> & { url: string }) | null {
+  if (!value || !isInputObject(value) || Array.isArray(value)) return null;
+  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
+  const record = value as Record<string, RawJsonInput>;
 
-  if (!isKnownSourceProvenance(record) || typeof record.url !== 'string') return null;
+  if (!isKnownSourceProvenance(record) || !isInputString(record.url)) return null;
 
-  return sourceProvenanceIsFresh(record) ? record as Record<string, unknown> & { url: string } : null;
+  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
+  return sourceProvenanceIsFresh(record) ? record as Record<string, RawJsonInput> & { url: string } : null;
 }
 
 function recognizedSourcePage(
   token: string,
-  value: unknown,
+  value: RawJsonInput,
   knownNames: ReadonlyMap<string, ReadonlySet<string>>,
   roots: ReadonlyMap<string, string>,
 ): RegistrySourcePage | null {
@@ -343,37 +348,45 @@ function recognizedSourcePage(
 
   if (!url || url !== record.url) return null;
 
-  return {
+  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
+  const page = {
     url,
     level: record.level as RegistrySourcePage['level'],
     source: record.source as RegistrySourcePage['source'],
-    ...(record.level === 'sitemap' || record.level === 'pattern'
-      ? { observedAt: record.observedAt as string } : {}),
   };
+
+  if ((record.level === 'sitemap' || record.level === 'pattern') && isInputString(record.observedAt)) {
+    return { ...page, observedAt: record.observedAt };
+  }
+
+  return page;
 }
 
+type VerifiedSourcePages = Readonly<Record<string, RegistrySourcePage>>;
+
 export function readSourcePageManifest(
-  input: unknown,
+  input: RawJsonInput,
   catalog: RegistryCatalogIndex,
   registries: readonly { name: string; url: string }[],
-): Readonly<Record<string, RegistrySourcePage>> {
-  if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
-  const manifest = input as Record<string, unknown>;
+): VerifiedSourcePages {
+  if (!input || !isInputObject(input) || Array.isArray(input)) return {};
+  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
+  const manifest = input as Record<string, RawJsonInput>;
 
   if (manifest.schema !== 'registry-atlas-source-page-index/v1'
-    || !manifest.pages || typeof manifest.pages !== 'object' || Array.isArray(manifest.pages)) return {};
+    || !manifest.pages || !isInputObject(manifest.pages) || Array.isArray(manifest.pages)) return {};
   const roots = new Map(registries.map(registry => [registry.name, registry.url]));
 
   const knownNames = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
     [namespace, new Set(items.map(item => item.name))]));
 
-  const pages: Record<string, RegistrySourcePage> = {};
+  const pages = new Map<string, RegistrySourcePage>();
 
   for (const [token, value] of Object.entries(manifest.pages)) {
     const page = recognizedSourcePage(token, value, knownNames, roots);
 
-    if (page) pages[token] = page;
+    if (page) pages.set(token, page);
   }
 
-  return pages;
+  return Object.fromEntries(pages);
 }

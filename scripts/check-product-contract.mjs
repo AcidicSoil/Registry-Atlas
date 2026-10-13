@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { validateCatalogRuntimeContract } from './lib/catalog-runtime-contract.mjs';
@@ -281,13 +282,13 @@ try {
     for (const item of items) {
       enrichmentCoverage.total += 1;
 
-      if (typeof item.description === 'string') {
+      if (isInputString(item.description)) {
         enrichmentCoverage.description += 1;
         assert(Array.from(item.description).length <= 280,
           `compact description exceeds 280 code points: ${namespace}/${item.name}`);
       }
 
-      if (typeof item.author === 'string') {
+      if (isInputString(item.author)) {
         enrichmentCoverage.author += 1;
         assert(Array.from(item.author).length <= 120,
           `compact author exceeds 120 code points: ${namespace}/${item.name}`);

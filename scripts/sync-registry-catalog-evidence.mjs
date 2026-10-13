@@ -1,3 +1,4 @@
+import { isInputObject, isInputString } from './lib/input-guards.mjs';
 import { pathToFileURL } from 'node:url';
 import {
   applyCatalogClassificationOverlay,
@@ -41,7 +42,7 @@ const THEME_SWATCH_KEYS = Object.freeze([
 ]);
 
 function deriveCatalogCandidates(template) {
-  if (typeof template !== 'string' || !template.includes('{name}')) return [];
+  if (!isInputString(template) || !template.includes('{name}')) return [];
 
   const itemTemplates = [];
 
@@ -73,7 +74,7 @@ export function deriveCatalogUrls(template) {
 }
 
 function resolveItemUrlFromTemplate(template, itemName) {
-  if (typeof template !== 'string' || typeof itemName !== 'string') return null;
+  if (!isInputString(template) || !isInputString(itemName)) return null;
   const trimmedName = itemName.trim();
 
   if (!/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(trimmedName)) return null;
@@ -116,7 +117,7 @@ export function buildCatalogEvidence(
 }
 
 export function rawItemUrlFromCatalogUrl(catalogUrl, itemName) {
-  if (typeof catalogUrl !== 'string' || typeof itemName !== 'string') return null;
+  if (!isInputString(catalogUrl) || !isInputString(itemName)) return null;
   const trimmedName = itemName.trim();
 
   if (!/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(trimmedName)) return null;
@@ -145,9 +146,9 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
   const items = [];
 
   for (const item of Array.isArray(catalog?.items) ? catalog.items : []) {
-    if (!item || typeof item !== 'object') continue;
-    const name = typeof item.name === 'string' ? item.name.trim() : '';
-    const type = typeof item.type === 'string' ? item.type.trim() : '';
+    if (!item || !isInputObject(item)) continue;
+    const name = isInputString(item.name) ? item.name.trim() : '';
+    const type = isInputString(item.type) ? item.type.trim() : '';
 
     if (!name || !allowedTypes.has(type)) continue;
 
@@ -156,7 +157,7 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
 
     if (rawItemUrl) compact.rawItemUrl = rawItemUrl;
 
-    if (typeof item.title === 'string' && item.title.trim()) compact.title = item.title.trim();
+    if (isInputString(item.title) && item.title.trim()) compact.title = item.title.trim();
     const description = boundedText(item.description, COMPACT_DESCRIPTION_MAX);
 
     if (description) compact.description = description;
@@ -171,8 +172,8 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
 
     const categories = [
       ...(Array.isArray(item.categories) ? item.categories : []),
-      ...(typeof item.category === 'string' ? [item.category] : []),
-    ].filter(value => typeof value === 'string' && value.trim()).map(value => value.trim());
+      ...(isInputString(item.category) ? [item.category] : []),
+    ].flatMap(value => isInputString(value) && value.trim() ? [value.trim()] : []);
 
     if (categories.length) compact.categories = [...new Set(categories)];
 
@@ -183,7 +184,7 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
 }
 
 function boundedText(value, maxCodePoints) {
-  if (typeof value !== 'string') return '';
+  if (!isInputString(value)) return '';
   const trimmed = value.trim();
 
   if (!trimmed) return '';
@@ -194,13 +195,13 @@ function boundedText(value, maxCodePoints) {
 function buildThemePreview(type, cssVars) {
   if (type !== 'registry:theme' && type !== 'registry:style') return null;
 
-  if (!cssVars || typeof cssVars !== 'object' || Array.isArray(cssVars)) return null;
+  if (!cssVars || !isInputObject(cssVars) || Array.isArray(cssVars)) return null;
   const preview = {};
 
   for (const mode of ['light', 'dark']) {
     const source = cssVars[mode];
 
-    if (!source || typeof source !== 'object' || Array.isArray(source)) continue;
+    if (!source || !isInputObject(source) || Array.isArray(source)) continue;
     const swatches = {};
 
     for (const key of THEME_SWATCH_KEYS) {
@@ -216,16 +217,16 @@ function buildThemePreview(type, cssVars) {
 }
 
 function sanitizeCssVars(cssVars) {
-  if (!cssVars || typeof cssVars !== 'object' || Array.isArray(cssVars)) return null;
+  if (!cssVars || !isInputObject(cssVars) || Array.isArray(cssVars)) return null;
   const output = {};
 
   for (const mode of ['theme', 'light', 'dark']) {
     const source = cssVars[mode];
 
-    if (!source || typeof source !== 'object' || Array.isArray(source)) continue;
+    if (!source || !isInputObject(source) || Array.isArray(source)) continue;
 
     const entries = Object.entries(source)
-      .filter(([key, value]) => key && typeof value === 'string' && value.trim())
+      .filter(([key, value]) => key && isInputString(value) && value.trim())
       .map(([key, value]) => [key, value.trim()]);
 
     if (entries.length) output[mode] = Object.fromEntries(entries);
@@ -239,33 +240,33 @@ export function buildRegistryItemDetailBundle(catalog) {
   const details = [];
 
   for (const item of Array.isArray(catalog?.items) ? catalog.items : []) {
-    if (!item || typeof item !== 'object') continue;
-    const name = typeof item.name === 'string' ? item.name.trim() : '';
-    const type = typeof item.type === 'string' ? item.type.trim() : '';
+    if (!item || !isInputObject(item)) continue;
+    const name = isInputString(item.name) ? item.name.trim() : '';
+    const type = isInputString(item.type) ? item.type.trim() : '';
 
     if (!name || !allowedTypes.has(type)) continue;
 
     const detail = { name, type };
 
-    if (typeof item.title === 'string' && item.title.trim()) detail.title = item.title.trim();
+    if (isInputString(item.title) && item.title.trim()) detail.title = item.title.trim();
 
-    if (typeof item.description === 'string' && item.description.trim()) detail.description = item.description.trim();
+    if (isInputString(item.description) && item.description.trim()) detail.description = item.description.trim();
 
-    if (typeof item.author === 'string' && item.author.trim()) detail.author = item.author.trim();
+    if (isInputString(item.author) && item.author.trim()) detail.author = item.author.trim();
     const cssVars = sanitizeCssVars(item.cssVars);
 
     if (cssVars) detail.cssVars = cssVars;
 
     const categories = [
       ...(Array.isArray(item.categories) ? item.categories : []),
-      ...(typeof item.category === 'string' ? [item.category] : []),
-    ].filter(value => typeof value === 'string' && value.trim()).map(value => value.trim());
+      ...(isInputString(item.category) ? [item.category] : []),
+    ].flatMap(value => isInputString(value) && value.trim() ? [value.trim()] : []);
 
     if (categories.length) detail.categories = [...new Set(categories)];
 
     for (const field of ['dependencies', 'devDependencies', 'registryDependencies']) {
       const values = Array.isArray(item[field])
-        ? item[field].filter(value => typeof value === 'string' && value.trim()).map(value => value.trim())
+        ? item[field].filter(value => isInputString(value) && value.trim()).map(value => value.trim())
         : [];
 
       if (values.length) detail[field] = values;
@@ -273,11 +274,11 @@ export function buildRegistryItemDetailBundle(catalog) {
 
     const files = Array.isArray(item.files)
       ? item.files
-          .filter(file => file && typeof file === 'object')
+          .filter(file => file && isInputObject(file))
           .map(file => {
-            const pathValue = typeof file.path === 'string' ? file.path.trim() : '';
-            const typeValue = typeof file.type === 'string' ? file.type.trim() : '';
-            const target = typeof file.target === 'string' && file.target.trim() ? file.target.trim() : null;
+            const pathValue = isInputString(file.path) ? file.path.trim() : '';
+            const typeValue = isInputString(file.type) ? file.type.trim() : '';
+            const target = isInputString(file.target) && file.target.trim() ? file.target.trim() : null;
 
             if (!pathValue || !typeValue) return null;
 
@@ -315,11 +316,11 @@ export function buildCatalogCoverageFacts(atlas = {}, itemSummaries = [], eviden
 
   const coverageStatus = hasReviewedItems || hasCatalogEvidence
     ? 'verified'
-    : (typeof atlas.coverage_status === 'string' ? atlas.coverage_status : 'unverified');
+    : (isInputString(atlas.coverage_status) ? atlas.coverage_status : 'unverified');
 
   const confidence = hasReviewedItems || hasCatalogEvidence
     ? 'high'
-    : (typeof atlas.confidence === 'string' ? atlas.confidence : 'unknown');
+    : (isInputString(atlas.confidence) ? atlas.confidence : 'unknown');
 
   const evidenceStatus = evidence?.status === 'available'
     ? 'catalog'
@@ -332,7 +333,7 @@ export function buildCatalogCoverageFacts(atlas = {}, itemSummaries = [], eviden
     confidence,
     comparison_evidence: evidenceStatus,
     catalog_item_count: Number.isFinite(evidence?.item_count) ? evidence.item_count : 0,
-    catalog_evidence_url: typeof evidence?.catalog_url === 'string' ? evidence.catalog_url : '',
+    catalog_evidence_url: isInputString(evidence?.catalog_url) ? evidence.catalog_url : '',
   };
 }
 
@@ -340,13 +341,13 @@ export function mergeCatalogEvidence(previous = {}, fresh = {}, failures = []) {
   const output = {};
 
   for (const [namespace, entry] of Object.entries(previous)) {
-    if (!entry || typeof entry !== 'object') continue;
+    if (!entry || !isInputObject(entry)) continue;
     const { component_tags: _retired, ...safe } = entry;
     output[namespace] = safe;
   }
 
   for (const [namespace, entry] of Object.entries(fresh)) {
-    if (!entry || typeof entry !== 'object') continue;
+    if (!entry || !isInputObject(entry)) continue;
     const { component_tags: _retired, ...safe } = entry;
     output[namespace] = safe;
   }
@@ -362,7 +363,7 @@ export function mergeCatalogEvidence(previous = {}, fresh = {}, failures = []) {
 }
 
 function normalizeNamespace(value) {
-  if (typeof value !== 'string' || !value.trim()) return '';
+  if (!isInputString(value) || !value.trim()) return '';
   const valueLower = value.trim().toLowerCase();
 
   return valueLower.startsWith('@') ? valueLower : `@${valueLower}`;

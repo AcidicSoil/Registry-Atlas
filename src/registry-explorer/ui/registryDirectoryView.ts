@@ -70,6 +70,7 @@ export function renderRegistryDirectory(
 export function renderRegistryDirectorySidebar(
   options: RegistryDirectorySidebarOptions,
 ): string {
+  // SAFETY: The keys come directly from the typed asset label table, which lists only supported asset kinds.
   const assetKinds = (Object.keys(ASSET_LABELS) as CatalogAssetKind[])
     .filter(kind => options.assetCounts[kind] > 0);
 

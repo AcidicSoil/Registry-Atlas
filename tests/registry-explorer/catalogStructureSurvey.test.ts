@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Node ESM runtime test.
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
@@ -14,7 +15,7 @@ const registry = (name: string, homepage = `https://${name.slice(1)}.example/`) 
 
 const item = (name: string, type = 'registry:component') => ({ name, type });
 
-function page(url: string, values: Record<string, unknown> = {}) {
+function page(url: string, values: Record<string, RawJsonInput> = {}) {
   return {
     title: 'Fixture',
     url,

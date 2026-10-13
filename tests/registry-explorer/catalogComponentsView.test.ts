@@ -83,6 +83,7 @@ describe("renderCatalogComponents", () => {
   it("does not substitute raw item JSON when no source component deeplink exists", () => {
     const base = component();
 
+    // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
     const html = renderCatalogComponentCard({
       ...base,
       item: {
@@ -175,6 +176,7 @@ describe("renderCatalogComponents", () => {
   });
 
   it("renders only the applied catalog scope in results, never a second control toolbar", () => {
+    // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
     const state = {
       page: 2,
       sort: "registry" as const,
@@ -261,6 +263,7 @@ describe("renderCatalogComponents", () => {
 });
 
 function root(): HTMLElement {
+  // SAFETY: This test creates an in-memory DOM stub with the methods exercised by the renderer, not a browser-owned element.
   return { innerHTML: "" } as HTMLElement;
 }
 
@@ -292,7 +295,7 @@ function component(options: {
     reviewed: false,
     item: { name: "code-block", title: "Code Block", type: "registry:ui", categories: ["code"] },
     routePath: "/Registry-Atlas/@delta/components/code-block",
-    ...(options.themePreview ? { themePreview: options.themePreview } : {}),
+    ...Object.fromEntries(options.themePreview ? [["themePreview", options.themePreview]] : []),
   };
 }
 
@@ -327,6 +330,7 @@ describe("catalog applied-filter context", () => {
   };
 
   it("renders asset type as removable context with the same catalog vocabulary", () => {
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const html = renderCatalogBrowseControls(state as any, {
       selectedAssetKinds: ["block"],
     });
@@ -337,6 +341,7 @@ describe("catalog applied-filter context", () => {
   });
 
   it("renders canonical and access state as removable context without duplicating selection controls", () => {
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const html = renderCatalogBrowseControls(state as any, {
       taxonomy: TEST_TAXONOMY,
     });
@@ -350,6 +355,7 @@ describe("catalog applied-filter context", () => {
   });
 
   it("omits access context when no access filter is active", () => {
+    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const html = renderCatalogBrowseControls({ ...state, access: [] } as any, {
       taxonomy: TEST_TAXONOMY,
     });

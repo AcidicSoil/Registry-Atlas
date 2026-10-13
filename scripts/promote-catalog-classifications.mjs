@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { isInputObject } from './lib/input-guards.mjs';
 import { pathToFileURL } from 'node:url';
 import { validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
 import {
@@ -45,7 +45,7 @@ export function buildReviewedClassificationOverlay({ taxonomy, classifications, 
   }
 
   const items = classifications.map(item => {
-    if (!item || typeof item !== 'object' || item.pendingDecision) {
+    if (!item || !isInputObject(item) || item.pendingDecision) {
       throw new Error('Promotion cannot include pending or invalid classification items');
     }
 
@@ -53,18 +53,21 @@ export function buildReviewedClassificationOverlay({ taxonomy, classifications, 
       throw new Error(`Promotion item taxonomy mismatch for ${item?.namespace}/${item?.name}`);
     }
 
-    return {
-      namespace: item.namespace,
-      name: item.name,
-      kind: item.kind,
-      canonical: {
+    return (() => {
+  const result = {};
+  result.namespace = item.namespace;
+  result.name = item.name;
+  result.kind = item.kind;
+  result.canonical = {
         primary: item.canonical?.primary ?? null,
         path: [...(item.canonical?.path ?? [])],
-      },
-      inputFingerprint: item.inputFingerprint,
-      ...(Array.isArray(item.sourceGroups) && item.sourceGroups.length
-        ? { sourceGroups: [...item.sourceGroups] } : {}),
-    };
+      };
+  result.inputFingerprint = item.inputFingerprint;
+
+  if (Array.isArray(item.sourceGroups) && item.sourceGroups.length) Object.assign(result, { sourceGroups: [...item.sourceGroups] });
+
+  return result;
+})();
   }).sort((a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name));
 
   const overlay = {

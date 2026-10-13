@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 import { execFileSync } from 'node:child_process';
 import { readFile, open, unlink } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
@@ -132,7 +133,7 @@ export async function main(argv, cwd = process.cwd()) {
   const indexedItems = [...new Set([
     ...(catalog.registries?.[options.registry] ?? []).map(x => x.name),
     ...(curated[options.registry] ?? []).map(x => x.slug),
-  ])].filter(x => typeof x === 'string');
+  ])].filter(x => isInputString(x));
 
   // A journal has one writer at a time; an interrupted worker leaves an explicit
   // lock for operator recovery rather than silently racing another worker.
@@ -153,7 +154,7 @@ export async function main(argv, cwd = process.cwd()) {
       && candidate.catalogFingerprint===expectedFingerprint
       && Date.parse(candidate.surveyedAt)>=Date.now()-30*24*60*60*1000
       && Array.isArray(candidate.matchedPages)
-      && candidate.sitemaps?.some(index=>typeof index.url==='string')) {
+      && candidate.sitemaps?.some(index=>isInputString(index.url))) {
       const sourceUrl=candidate.sitemaps.find(index=>index.kind==='urls')?.url;
 
       if(sourceUrl) sitemapCandidates=candidate.matchedPages.map(row=>({

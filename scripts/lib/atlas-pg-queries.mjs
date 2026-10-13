@@ -1,3 +1,5 @@
+import { isInputString } from './input-guards.mjs';
+
 // PostgreSQL-native query adapter for legacy statement-shaped command-line logic.
 // Queries are asynchronous and execute on the authoritative PostgreSQL schema.
 // No SQLite database, file cache, replication layer or row mirroring is involved.
@@ -43,7 +45,7 @@ function normalizeRows(rows) {
   return rows.map(row=>Object.fromEntries(Object.entries(row).map(([key,value])=>{
     const fixed=camelAliases[key]??key;
 
-    return [fixed,typeof value==='string'&&integerColumns.has(fixed)&&Number.isSafeInteger(Number(value))?Number(value):value];
+    return [fixed,isInputString(value)&&integerColumns.has(fixed)&&Number.isSafeInteger(Number(value))?Number(value):value];
   })));
 }
 

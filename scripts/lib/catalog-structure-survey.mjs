@@ -1,3 +1,5 @@
+import { isInputCallable } from './input-guards.mjs';
+import { isInputObject, isInputString } from './input-guards.mjs';
 import { mkdir, rename, writeFile } from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import {
@@ -17,7 +19,7 @@ function uniqueItems(catalogItems = [], curatedItems = []) {
   const byName = new Map();
 
   for (const item of catalogItems) {
-    if (!item || typeof item.name !== 'string' || !item.name.trim()) continue;
+    if (!item || !isInputString(item.name) || !item.name.trim()) continue;
 
     if (!byName.has(item.name)) byName.set(item.name, { name: item.name, type: item.type ?? 'registry:item' });
   }
@@ -25,7 +27,7 @@ function uniqueItems(catalogItems = [], curatedItems = []) {
   for (const item of curatedItems) {
     const name = item?.slug;
 
-    if (typeof name !== 'string' || !name.trim() || byName.has(name)) continue;
+    if (!isInputString(name) || !name.trim() || byName.has(name)) continue;
     byName.set(name, { name, type: item.type ?? 'registry:item' });
   }
 
@@ -39,7 +41,7 @@ export function planCatalogStructureSurvey(
   evidenceByRegistry = {},
   { cursor, maxRegistries = 20 } = {},
 ) {
-  if (!Array.isArray(raw) || !catalog?.registries || typeof catalog.registries !== 'object')
+  if (!Array.isArray(raw) || !catalog?.registries || !isInputObject(catalog.registries))
     throw new Error('Invalid registry inventory or compact catalog');
 
   if (!Number.isSafeInteger(maxRegistries) || maxRegistries < 1 || maxRegistries > 10000)
@@ -136,10 +138,14 @@ function decisionPathAffinity(assetHref, group) {
 
 function compactDecisionState(asset, groups, labels) {
   return {
-    asset: {
-      id: String(asset?.id ?? '').slice(0, 120),
-      ...(asset?.text ? { text: String(asset.text).slice(0, 120) } : {}),
-    },
+    asset: (() => {
+  const result = {};
+  result.id = String(asset?.id ?? '').slice(0, 120);
+
+  if (asset?.text) Object.assign(result, { text: String(asset.text).slice(0, 120) });
+
+  return result;
+})(),
     candidates: labels.map(label => {
       const group = groups.find(candidate => candidate.label === label);
 
@@ -256,7 +262,7 @@ export async function surveyRegistryCatalogStructure({
 
   if (!Array.isArray(surfaces)) throw new Error('Catalog surfaces are required');
 
-  if (typeof observePage !== 'function') throw new Error('observePage is required');
+  if (!isInputCallable(observePage)) throw new Error('observePage is required');
 
   if (!Number.isSafeInteger(maxSurfaces) || maxSurfaces < 1 || maxSurfaces > 20)
     throw new Error('Invalid maxSurfaces');
@@ -362,7 +368,7 @@ export async function surveyRegistryCatalogStructure({
       row = { ...row, reason: 'not-observed-on-surveyed-surface' };
     } else if (!candidateLabels.length) {
       row = { ...row, groups: [], access: 'unknown', assignment: 'flat' };
-    } else if (typeof chooseGroup !== 'function') {
+    } else if (!isInputCallable(chooseGroup)) {
       row = { ...row, reason: 'ambiguous-no-decision-model' };
     } else {
       const decisionLabels = shortlistObservedGroupLabels(observed, candidateGroups);

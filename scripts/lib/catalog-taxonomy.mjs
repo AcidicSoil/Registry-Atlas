@@ -1,11 +1,13 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
+
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*(?:\/[a-z0-9]+(?:-[a-z0-9]+)*)*$/;
 
 function isRecord(value) {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }
 
 function requireString(value, field, id = 'taxonomy') {
-  if (typeof value !== 'string' || !value.trim()) {
+  if (!isInputString(value) || !value.trim()) {
     throw new Error(`${id}: ${field} must be a non-empty string`);
   }
 
@@ -13,7 +15,7 @@ function requireString(value, field, id = 'taxonomy') {
 }
 
 function requireStringArray(value, field, id) {
-  if (!Array.isArray(value) || value.some(entry => typeof entry !== 'string')) {
+  if (!Array.isArray(value) || value.some(entry => !isInputString(entry))) {
     throw new Error(`${id}: ${field} must be an array of strings`);
   }
 

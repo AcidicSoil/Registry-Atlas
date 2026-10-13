@@ -1,3 +1,5 @@
+import { isInputObject, isInputString } from './input-guards.mjs';
+
 const DEFAULT_ENDPOINT = 'http://127.0.0.1:18080/v1/systemone';
 
 const NONE = 'NONE';
@@ -20,7 +22,7 @@ function validateGroups(groups) {
   const labels = new Set();
 
   for (const label of groups) {
-    if (typeof label !== 'string' || !label || label !== label.trim() || label === NONE)
+    if (!isInputString(label) || !label || label !== label.trim() || label === NONE)
       throw new Error('Observed group labels must be non-empty exact labels and may not use NONE');
 
     if (labels.has(label)) throw new Error('Observed group labels must be unique');
@@ -33,11 +35,11 @@ function validateGroups(groups) {
 const DECISION_PATTERNS = new Set(['link', 'card', 'range', 'container', 'other']);
 
 function normalizeDecisionState(state, labels) {
-  if (!state || typeof state !== 'object' || Array.isArray(state))
+  if (!state || !isInputObject(state) || Array.isArray(state))
     throw new Error('System One group state must be an object');
   const asset = state.asset;
 
-  if (!asset || typeof asset.id !== 'string' || !asset.id.trim())
+  if (!asset || !isInputString(asset.id) || !asset.id.trim())
     throw new Error('System One group state must include an asset id');
   const candidates = state.candidates;
 
@@ -48,7 +50,7 @@ function normalizeDecisionState(state, labels) {
   const normalized = [];
 
   for (const candidate of candidates) {
-    if (!candidate || typeof candidate.label !== 'string' || !labels.has(candidate.label)
+    if (!candidate || !isInputString(candidate.label) || !labels.has(candidate.label)
       || seen.has(candidate.label))
       throw new Error('System One group candidates must match the exact observed labels');
 
@@ -56,7 +58,7 @@ function normalizeDecisionState(state, labels) {
       || ![0, 1].includes(candidate.path)
       || !Number.isSafeInteger(candidate.overlap) || candidate.overlap < 0 || candidate.overlap > 99
       || !Array.isArray(candidate.samples) || candidate.samples.length > 2
-      || candidate.samples.some(sample => typeof sample !== 'string' || !sample || sample.length > 80))
+      || candidate.samples.some(sample => !isInputString(sample) || !sample || sample.length > 80))
       throw new Error('System One group candidates must use compact normalized facts');
     seen.add(candidate.label);
     normalized.push({
@@ -69,10 +71,14 @@ function normalizeDecisionState(state, labels) {
   }
 
   return {
-    asset: {
-      id: asset.id.slice(0, 120),
-      ...(typeof asset.text === 'string' && asset.text ? { text: asset.text.slice(0, 120) } : {}),
-    },
+    asset: (() => {
+  const result = {};
+  result.id = asset.id.slice(0, 120);
+
+  if (isInputString(asset.text) && asset.text) Object.assign(result, { text: asset.text.slice(0, 120) });
+
+  return result;
+})(),
     candidates: normalized,
   };
 }
@@ -80,14 +86,14 @@ function normalizeDecisionState(state, labels) {
 function validateAnswer(body, labels) {
   const answer = body?.answers?.group;
 
-  if (answer?.type !== 'choice' || typeof answer.choice !== 'string')
+  if (answer?.type !== 'choice' || !isInputString(answer.choice))
     throw new Error('Invalid System One group response');
   const allowed = new Set([...labels, NONE]);
 
   if (!allowed.has(answer.choice))
     throw new Error('System One group choice is outside the allowed observed labels');
 
-  if (!answer.probabilities || typeof answer.probabilities !== 'object')
+  if (!answer.probabilities || !isInputObject(answer.probabilities))
     throw new Error('System One group response is missing probabilities');
 
   for (const label of allowed) {

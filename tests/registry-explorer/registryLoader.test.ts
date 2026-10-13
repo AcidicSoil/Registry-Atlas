@@ -141,7 +141,7 @@ async function runtimeFixture(options: {
       },
       registries: {
         '@example': [{name:'button',type:'registry:ui',categories:['controls']}],
-        ...(options.includeEmptyNamespace ? {'@empty': []} : {}),
+        ...Object.fromEntries(options.includeEmptyNamespace ? [['@empty', []]] : []),
       },
     },
     taxonomy: taxonomyFixture(),

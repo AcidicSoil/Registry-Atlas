@@ -1,3 +1,4 @@
+import { isInputObject, isInputString } from './lib/input-guards.mjs';
 import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries } from './sync-registry-catalog-evidence.mjs';
 import { applyCatalogClassificationOverlay, stripCatalogClassificationFields, validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
 import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
@@ -26,7 +27,7 @@ const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
 });
 
 function normalizeNamespace(value) {
-  if (typeof value !== 'string') return '';
+  if (!isInputString(value)) return '';
 
   return value.startsWith('@') ? value : `@${value}`;
 }
@@ -41,7 +42,7 @@ function readPreviousEnrichment(previousRuntimeData) {
   for (const registry of previousRuntimeData.registries) {
     const name = registry?.official?.name;
 
-    if (typeof name === 'string' && registry.atlas && typeof registry.atlas === 'object') {
+    if (isInputString(name) && registry.atlas && isInputObject(registry.atlas)) {
       enrichment.set(name, registry.atlas);
     }
   }
@@ -50,24 +51,24 @@ function readPreviousEnrichment(previousRuntimeData) {
 }
 
 function normalizeStringArray(value) {
-  return Array.isArray(value) ? value.filter(item => typeof item === 'string') : [];
+  return Array.isArray(value) ? value.filter(item => isInputString(item)) : [];
 }
 
 function normalizeFiles(value) {
   if (!Array.isArray(value)) return [];
 
   return value
-    .filter(file => file && typeof file === 'object')
+    .filter(file => file && isInputObject(file))
     .map(file => ({
-      path: typeof file.path === 'string' ? file.path : '',
-      type: typeof file.type === 'string' ? file.type : '',
-      target: typeof file.target === 'string' ? file.target : undefined,
+      path: isInputString(file.path) ? file.path : '',
+      type: isInputString(file.type) ? file.type : '',
+      target: isInputString(file.target) ? file.target : undefined,
     }))
     .filter(file => file.path && file.type);
 }
 
 function optionalString(value) {
-  return typeof value === 'string' && value.trim() ? value.trim() : undefined;
+  return isInputString(value) && value.trim() ? value.trim() : undefined;
 }
 
 function normalizeItemSummary(item) {
@@ -118,9 +119,9 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummarie
   return {
     official: {
       name,
-      homepage: typeof registry.homepage === 'string' ? registry.homepage : '',
-      registry_url_template: typeof registry.url === 'string' ? registry.url : '',
-      description: typeof registry.description === 'string' ? registry.description : '',
+      homepage: isInputString(registry.homepage) ? registry.homepage : '',
+      registry_url_template: isInputString(registry.url) ? registry.url : '',
+      description: isInputString(registry.description) ? registry.description : '',
     },
     atlas: {
       aliases: Array.isArray(atlas.aliases) ? atlas.aliases : [],
@@ -131,7 +132,7 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummarie
       catalog_item_count: catalogFacts.catalog_item_count,
       catalog_evidence_url: catalogFacts.catalog_evidence_url,
       item_summaries: itemSummaries,
-      notes: typeof atlas.notes === 'string' ? atlas.notes : '',
+      notes: isInputString(atlas.notes) ? atlas.notes : '',
     },
     status: { warnings: [] },
   };
@@ -189,7 +190,7 @@ export function projectCuratedSummaries(runtime, curated) {
 function sortedNames(registries) {
   return registries
     .map(registry => registry?.official?.name)
-    .filter(name => typeof name === 'string')
+    .filter(name => isInputString(name))
     .sort((a, b) => a.localeCompare(b));
 }
 

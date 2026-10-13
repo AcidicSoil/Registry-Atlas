@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { isInputCallable, isInputObject, isInputString } from './lib/input-guards.mjs';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { buildCatalogClassificationState } from './lib/catalog-classification-state.mjs';
@@ -63,16 +63,21 @@ export function parseCatalogClassificationArgs(argv) {
     values[flag] = value;
   }
 
-  const result = {
-    ...(values['--run-id'] ? { runId: values['--run-id'] } : {}),
-    ...(values['--cursor'] ? { cursor: values['--cursor'] } : {}),
-    maxRegistries: boundedInteger(values['--max-registries'], '--max-registries', 20, 1, 10000),
-    decisionUrl: values['--decision-url'] ?? DEFAULT_DECISION_URL,
-    dryRun: booleans.has('--dry-run'),
-    deterministicOnly: booleans.has('--deterministic-only'),
-    allBatches: booleans.has('--all-batches'),
-    resume: booleans.has('--resume'),
-  };
+  const result = (() => {
+  const result = {};
+
+  if (values['--run-id']) Object.assign(result, { runId: values['--run-id'] });
+
+  if (values['--cursor']) Object.assign(result, { cursor: values['--cursor'] });
+  result.maxRegistries = boundedInteger(values['--max-registries'], '--max-registries', 20, 1, 10000);
+  result.decisionUrl = values['--decision-url'] ?? DEFAULT_DECISION_URL;
+  result.dryRun = booleans.has('--dry-run');
+  result.deterministicOnly = booleans.has('--deterministic-only');
+  result.allBatches = booleans.has('--all-batches');
+  result.resume = booleans.has('--resume');
+
+  return result;
+})();
 
   if (result.resume && !result.allBatches) throw new Error('--resume requires --all-batches');
 
@@ -88,7 +93,7 @@ export function parseCatalogClassificationArgs(argv) {
 function stable(value) {
   if (Array.isArray(value)) return value.map(stable);
 
-  if (value && typeof value === 'object') {
+  if (value && isInputObject(value)) {
     return Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])]));
   }
 
@@ -100,8 +105,8 @@ function sha256(value) {
 }
 
 function validateCatalog(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)
-    || !value.registries || typeof value.registries !== 'object' || Array.isArray(value.registries)) {
+  if (!value || !isInputObject(value) || Array.isArray(value)
+    || !value.registries || !isInputObject(value.registries) || Array.isArray(value.registries)) {
     throw new Error('Catalog classification input requires a registries object');
   }
 
@@ -176,7 +181,7 @@ export async function classifyRegistryCatalog({
   choose,
   kindOverrides = {},
 } = {}) {
-  if (typeof namespace !== 'string' || !namespace.startsWith('@')) {
+  if (!isInputString(namespace) || !namespace.startsWith('@')) {
     throw new Error('Classification namespace is invalid');
   }
 
@@ -185,19 +190,28 @@ export async function classifyRegistryCatalog({
   const outputItems = [];
 
   for (const item of items) {
-    if (!item || typeof item.name !== 'string' || !item.name.trim()) continue;
+    if (!item || !isInputString(item.name) || !item.name.trim()) continue;
     const kind = normalizeKind(item, namespace, kindOverrides);
 
-    const state = buildCatalogClassificationState({
-      namespace,
-      item: {
-        name: item.name,
-        ...(item.title ? { title: item.title } : {}),
-        ...(item.description ? { description: item.description } : {}),
-        kind,
-      },
-      ...(sourceHintsFor(item) ? { sourceHints: sourceHintsFor(item) } : {}),
-    });
+    const state = buildCatalogClassificationState((() => {
+  const result = {};
+  result.namespace = namespace;
+  result.item = (() => {
+  const result = {};
+  result.name = item.name;
+
+  if (item.title) Object.assign(result, { title: item.title });
+
+  if (item.description) Object.assign(result, { description: item.description });
+  result.kind = kind;
+
+  return result;
+})();
+
+  if (sourceHintsFor(item)) Object.assign(result, { sourceHints: sourceHintsFor(item) });
+
+  return result;
+})());
 
     let classification = findDeterministicKindClassification(state, taxonomy)
       ?? findDeterministicAliasClassification(state, taxonomy);
@@ -210,18 +224,23 @@ export async function classifyRegistryCatalog({
       }
     }
 
-    outputItems.push({
-      namespace,
-      name: item.name,
-      kind,
-      taxonomyVersion: classification.taxonomyVersion,
-      canonical: { primary: classification.primary, path: classification.path },
-      method: classification.method,
-      inputFingerprint: classification.inputFingerprint,
-      ...(classification.pendingDecision ? { pendingDecision: true } : {}),
-      ...(classification.systemOne ? { systemOne: classification.systemOne } : {}),
-      generatedAt,
-    });
+    outputItems.push((() => {
+  const result = {};
+  result.namespace = namespace;
+  result.name = item.name;
+  result.kind = kind;
+  result.taxonomyVersion = classification.taxonomyVersion;
+  result.canonical = { primary: classification.primary, path: classification.path };
+  result.method = classification.method;
+  result.inputFingerprint = classification.inputFingerprint;
+
+  if (classification.pendingDecision) Object.assign(result, { pendingDecision: true });
+
+  if (classification.systemOne) Object.assign(result, { systemOne: classification.systemOne });
+  result.generatedAt = generatedAt;
+
+  return result;
+})());
   }
 
   return {
@@ -279,7 +298,7 @@ export async function runCatalogClassificationBatches({
 
   if (!runId) throw new Error('Classification run id is required');
 
-  if (typeof executeBatch !== 'function') throw new Error('executeBatch is required');
+  if (!isInputCallable(executeBatch)) throw new Error('executeBatch is required');
 
   if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
 

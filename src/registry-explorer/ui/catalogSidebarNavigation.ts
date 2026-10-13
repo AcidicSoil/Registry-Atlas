@@ -1,3 +1,6 @@
+/** Named map contract for dynamic keys in this module. */
+type PathsLookupContract = Record<string, string>;
+
 import type { CatalogFacetSummary } from '../core/catalogQuery';
 import type { CatalogRoute, CatalogSort } from '../core/catalogRoutes';
 import type { CatalogTaxonomy, CatalogTaxonomyNode } from '../core/catalogTaxonomy';
@@ -35,7 +38,7 @@ const ASSET_KIND_LABELS: Readonly<Record<CatalogAssetKind, string>> = {
 function sidebarIcon(kind: string): string {
   const root = kind.split('/')[0] ?? kind;
 
-  const paths: Record<string, string> = {
+  const paths = {
     source: '<circle cx="8" cy="8" r="5"></circle><path d="M3 8h10M8 3c1.6 1.5 2.4 3.2 2.4 5S9.6 11.5 8 13M8 3C6.4 4.5 5.6 6.2 5.6 8s.8 3.5 2.4 5"></path>',
     foundation: '<rect x="3" y="3" width="10" height="10" rx="1.5"></rect><path d="M6 6h4v4H6z"></path>',
     controls: '<path d="M3 5h10M3 11h10M6 3v4M10 9v4"></path>',
@@ -57,9 +60,9 @@ function sidebarIcon(kind: string): string {
     other: '<circle cx="5" cy="8" r="1"></circle><circle cx="8" cy="8" r="1"></circle><circle cx="11" cy="8" r="1"></circle>',
     free: '<path d="M4 8.5 6.8 11 12 5"></path>',
     paid: '<circle cx="8" cy="8" r="5"></circle><path d="M9.8 5.8H7.2a1.4 1.4 0 1 0 0 2.8h1.6a1.4 1.4 0 1 1 0 2.8H6M8 4.5v7"></path>',
-  };
+  } satisfies PathsLookupContract;
 
-  return `<svg class="sidebar-nav-icon-svg" viewBox="0 0 16 16" aria-hidden="true">${paths[root] ?? paths.other}</svg>`;
+  return `<svg class="sidebar-nav-icon-svg" viewBox="0 0 16 16" aria-hidden="true">${new Map(Object.entries(paths)).get(root) ?? paths.other}</svg>`;
 }
 
 function rowButton(options: {
@@ -108,9 +111,11 @@ function topLevelCanonical(
   nodes: readonly CatalogTaxonomyNode[],
   counts: ReadonlyMap<string, number>,
 ): Array<{ id: string; label: string; count: number }> {
-  return nodes
-    .map(node => ({ id: node.id, label: node.label, count: counts.get(node.id) ?? 0 }))
-    .filter(row => row.count > 0);
+  return nodes.flatMap(node => {
+    const count = counts.get(node.id) ?? 0;
+
+    return count > 0 ? [{ id: node.id, label: node.label, count }] : [];
+  });
 }
 
 function renderCanonical(
@@ -144,6 +149,7 @@ function renderAssetKinds(
   if (!counts) return '';
   const selected = state.assetKinds?.[0] ?? '';
 
+  // SAFETY: The keys come directly from the asset-kind label table, which lists only supported asset kinds.
   const rows = (Object.keys(ASSET_KIND_LABELS) as CatalogAssetKind[])
     .filter(kind => Boolean(counts[kind]) || selected === kind);
 

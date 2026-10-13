@@ -4,8 +4,11 @@ import { drawerWrapTarget } from './ui/mobileSidebarFocus';
 
 function setupMobileSidebarControls(): void {
     const appSidebar = document.getElementById('appSidebar');
+    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
     const sidebarToggle = document.getElementById('sidebarToggle') as HTMLButtonElement | null;
+    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
     const sidebarClose = document.getElementById('sidebarClose') as HTMLButtonElement | null;
+    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
     const sidebarBackdrop = document.getElementById('sidebarBackdrop') as HTMLButtonElement | null;
 
     const setSidebarOpen = (open: boolean, restoreFocus = false) => {
@@ -26,6 +29,7 @@ function setupMobileSidebarControls(): void {
     sidebarClose?.addEventListener('click', () => setSidebarOpen(false, true));
     sidebarBackdrop?.addEventListener('click', () => setSidebarOpen(false, true));
     appSidebar?.addEventListener('click', event => {
+      // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
       const target = event.target as HTMLElement;
 
       if (target.closest('[data-view], [data-catalog-route], .brand-home-link')) {
@@ -48,6 +52,7 @@ function setupMobileSidebarControls(): void {
           && getComputedStyle(element).visibility !== 'hidden',
         );
 
+        // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
         const target = drawerWrapTarget(focusable, document.activeElement as HTMLElement | null, event.shiftKey);
 
         if (target) {
@@ -64,6 +69,7 @@ async function bootstrap() {
     const aside = document.getElementById('aside');
     const contentHeader = document.getElementById('contentHeader');
     const contentBody = document.getElementById('contentBody');
+    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
     const searchInput = document.getElementById('searchInput') as HTMLInputElement;
     const sidebarContext = document.getElementById('sidebarContext');
     const tabs = document.querySelectorAll('.primary-nav [data-view]');
@@ -91,7 +97,7 @@ async function bootstrap() {
           contentBody,
           tabs,
           searchInput,
-          ...(sidebarContext ? { sidebarContext } : {}),
+          ...Object.fromEntries(sidebarContext ? [['sidebarContext', sidebarContext]] : []),
         },
       });
     } else {

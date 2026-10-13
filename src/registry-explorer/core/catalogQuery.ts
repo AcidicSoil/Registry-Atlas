@@ -142,7 +142,10 @@ function registryCatalogMatches(
     const overlay = reviewed.get(registryCatalogItemIdentity(item.name));
 
     if (!matchesFilters(item, registry.name, filters, Boolean(overlay))) continue;
-    matches.push({ registry, item, ...(overlay ? { reviewed: overlay } : {}) });
+    const match: CatalogMatch = { registry, item };
+
+    if (overlay) match.reviewed = overlay;
+    matches.push(match);
   }
 
   return matches;
@@ -257,15 +260,18 @@ function includeCatalogFacet(
 }
 
 function facetSummaryFromCounts(counts: FacetCounts): CatalogFacetSummary {
-  return {
+  const summary: CatalogFacetSummary = {
     registries: facetOptions(counts.registries),
     itemTypes: facetOptions(counts.types),
     categories: facetOptions(counts.categories),
     canonical: facetOptions(counts.canonical),
-    ...(counts.access.size ? { access: facetOptions(counts.access) } : {}),
     reviewedCount: counts.reviewed,
     unreviewedCount: counts.unreviewed,
   };
+
+  if (counts.access.size) summary.access = facetOptions(counts.access);
+
+  return summary;
 }
 
 export function buildCatalogFacetSummary(
@@ -307,21 +313,31 @@ export function catalogItemCountForRegistry(
   return [...distinctCatalogItems(index.registries[namespace] ?? [])].length;
 }
 
-function catalogDisplayFields(item: RegistryCatalogItem, reviewed?: RegistryItemSummary) {
-  return {
-    ...(item.title ? { title: item.title } : {}),
-    ...(item.description ?? reviewed?.description
-      ? { description: item.description ?? reviewed?.description } : {}),
-    ...(item.author ? { author: item.author } : {}),
-  };
+function catalogDisplayFields(item: RegistryCatalogItem, reviewed?: RegistryItemSummary):
+  Pick<CatalogComponent, 'title' | 'description' | 'author'> {
+  const fields: Pick<CatalogComponent, 'title' | 'description' | 'author'> = {};
+  const description = item.description ?? reviewed?.description;
+
+  if (item.title) fields.title = item.title;
+
+  if (description) fields.description = description;
+
+  if (item.author) fields.author = item.author;
+
+  return fields;
 }
 
-function catalogSupplementaryFields(item: RegistryCatalogItem, reviewed?: RegistryItemSummary) {
-  return {
-    ...(item.fileCount !== undefined ? { fileCount: item.fileCount } : {}),
-    ...(item.themePreview ? { themePreview: item.themePreview } : {}),
-    ...(reviewed?.docsUrl ? { docsUrl: reviewed.docsUrl } : {}),
-  };
+function catalogSupplementaryFields(item: RegistryCatalogItem, reviewed?: RegistryItemSummary):
+  Pick<CatalogComponent, 'fileCount' | 'themePreview' | 'docsUrl'> {
+  const fields: Pick<CatalogComponent, 'fileCount' | 'themePreview' | 'docsUrl'> = {};
+
+  if (item.fileCount !== undefined) fields.fileCount = item.fileCount;
+
+  if (item.themePreview) fields.themePreview = item.themePreview;
+
+  if (reviewed?.docsUrl) fields.docsUrl = reviewed.docsUrl;
+
+  return fields;
 }
 
 function toCatalogComponent(
@@ -331,7 +347,7 @@ function toCatalogComponent(
   basePath = "/Registry-Atlas/",
   sourcePage?: RegistrySourcePage,
 ): CatalogComponent {
-  return {
+  const component: CatalogComponent = {
     id: `${registry.name}:${item.name}`,
     namespace: registry.name,
     registry,
@@ -342,14 +358,18 @@ function toCatalogComponent(
     type: item.type,
     categories: item.categories ?? [],
     reviewed: Boolean(reviewed),
-    ...(reviewed ? { reviewedSummary: reviewed } : {}),
     item,
     routePath: catalogRoutePath(
       { kind: "component", namespace: registry.name, slug: item.name },
       basePath,
     ),
-    ...(sourcePage ? { sourcePage } : {}),
   };
+
+  if (reviewed) component.reviewedSummary = reviewed;
+
+  if (sourcePage) component.sourcePage = sourcePage;
+
+  return component;
 }
 
 function reviewedSummaryMap(registry: Registry): Map<string, RegistryItemSummary> {

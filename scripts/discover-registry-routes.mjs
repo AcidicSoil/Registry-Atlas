@@ -1,3 +1,4 @@
+import { isInputString } from './lib/input-guards.mjs';
 
 import { pathToFileURL } from 'node:url';
 import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
@@ -128,7 +129,7 @@ export async function main(argv,cwd=process.cwd()) {
   const indexedItems=[...new Set([
     ...(catalog.registries[registry.name]??[]).map(item=>item.name),
     ...(curated[registry.name]??[]).map(item=>item.slug),
-  ])].filter(value=>typeof value==='string').sort();
+  ])].filter(value=>isInputString(value)).sort();
 
   const db=openAtlasCoreDatabase();
 

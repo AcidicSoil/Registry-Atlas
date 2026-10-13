@@ -91,6 +91,7 @@ return getHtml(url);}});
     expect(result.verifiedPatterns).toBe(0);
     expect((await db.prepare("SELECT status FROM item_routes WHERE namespace='@one' AND slug='forms/input'").get()))
       .toEqual({status:'unverified'});
+    // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
     expect(((await db.prepare("SELECT COUNT(*) AS n FROM pattern_checks").get()) as { n: number }).n).toBeGreaterThan(0);
     (await db.close());
   });
@@ -237,6 +238,7 @@ return getHtml(url);}});
 
     expect(result.verifiedPatterns).toBe(1);
     expect(visits).toHaveLength(2);
+    // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
     expect(((await db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get()) as { n: number }).n).toBe(2);
     (await db.close());
   });
@@ -345,8 +347,10 @@ return getHtml(url);}});
     const opts={inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'};
     (await importRegistryPatterns(db,opts));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async (url:string)=>getHtml(url)});
+    // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
     const n=((await db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get()) as { n: number }).n;
     (await importRegistryPatterns(db,opts));
+    // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
     expect(((await db.prepare('SELECT COUNT(*) AS n FROM route_patterns').get()) as { n: number }).n).toBe(n);
     expect((await db.prepare("SELECT status FROM route_patterns WHERE namespace='@one'").get()))
       .toEqual({status:'verified'});

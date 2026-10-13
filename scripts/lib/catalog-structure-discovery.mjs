@@ -1,3 +1,5 @@
+import { isInputString } from './input-guards.mjs';
+
 const clean = value => String(value ?? '').trim().replace(/\s+/g, ' ');
 
 const slug = value => clean(value).toLowerCase()
@@ -25,8 +27,8 @@ function normalizePath(href, baseUrl) {
 
 function knownIndex(knownItems = []) {
   const ids = knownItems
-    .map(item => typeof item === 'string' ? item : item?.name)
-    .filter(value => typeof value === 'string' && value.trim())
+    .map(item => isInputString(item) ? item : item?.name)
+    .filter(value => isInputString(value) && value.trim())
     .map(value => value.trim());
 
   const exact = new Map();
@@ -106,11 +108,15 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
       sourcePattern,
       sourceUrl: observation.url,
       memberIds,
-      links: records.slice(0, 12).map(record => ({
-        text: record.text,
-        href: record.href,
-        ...(record.knownId ? { knownId: record.knownId } : {}),
-      })),
+      links: records.slice(0, 12).map(record => ((() => {
+  const result = {};
+  result.text = record.text;
+  result.href = record.href;
+
+  if (record.knownId) Object.assign(result, { knownId: record.knownId });
+
+  return result;
+})())),
       ...metadata,
     });
   };
@@ -210,7 +216,7 @@ export function discoverCatalogGroups(observation, { knownItems = [] } = {}) {
 }
 
 export function resolveDirectMembership(assetId, groups = []) {
-  if (typeof assetId !== 'string' || !assetId) return [];
+  if (!isInputString(assetId) || !assetId) return [];
 
   return groups
     .filter(group => Array.isArray(group?.memberIds) && group.memberIds.includes(assetId))
@@ -266,19 +272,18 @@ function groupPathAffinity(assetHref, group) {
 
 export function shortlistObservedGroupLabels(asset, groups = []) {
   const labels = [...new Set(groups
-    .map(group => clean(typeof group === 'string' ? group : group?.label))
+    .map(group => clean(isInputString(group) ? group : group?.label))
     .filter(Boolean))];
 
   if (labels.length <= MAX_DECISION_GROUPS) return labels;
 
   return labels
-    .map((label, index) => {
-      const group = groups.find(candidate => clean(typeof candidate === 'string' ? candidate : candidate?.label) === label);
+    .flatMap((label, index) => {
+      const group = groups.find(candidate => clean(isInputString(candidate) ? candidate : candidate?.label) === label);
       const score = decisionOverlapScore(asset, label) + groupPathAffinity(asset?.href, group);
 
-      return { label, index, score };
+      return score > 0 ? [{ label, index, score }] : [];
     })
-    .filter(row => row.score > 0)
     .sort((a, b) => b.score - a.score || a.index - b.index)
     .slice(0, MAX_DECISION_GROUPS)
     .map(row => row.label);
@@ -382,7 +387,7 @@ function catalogCollectionAncestor(rawUrl, homepage) {
 }
 
 function parentFromObservedItem(rawUrl, itemSlug, homepage) {
-  if (typeof itemSlug !== 'string' || !itemSlug.trim()) return null;
+  if (!isInputString(itemSlug) || !itemSlug.trim()) return null;
   const safe = canonicalSurfaceUrl(rawUrl, homepage);
 
   if (!safe) return null;
@@ -438,7 +443,7 @@ export function deriveCatalogSurfaceCandidates({
       || ['browser-observed', 'official-sitemap', 'observed-navigation']
         .includes(pattern?.source);
 
-    if (!observed || typeof pattern?.template !== 'string'
+    if (!observed || !isInputString(pattern?.template)
       || !pattern.template.includes('{slug}')) continue;
     const prefix = pattern.template.slice(0, pattern.template.indexOf('{slug}'));
     const collection = catalogCollectionAncestor(prefix, homepage);
@@ -473,4 +478,3 @@ export function deriveCatalogSurfaceCandidates({
 
   return [...candidates.values()];
 }
-

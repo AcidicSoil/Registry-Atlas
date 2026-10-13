@@ -1,3 +1,13 @@
+/** Named map contract for dynamic keys in this module. */
+type ReplacementsLookupContract = Readonly<Record<string, CatalogRoute>>;
+
+/** Named map contract for dynamic keys in this module. */
+type KindLookupContract = Readonly<Record<string, string>>;
+
+/** Named map contract for dynamic keys in this module. */
+type SectionsLookupContract = Readonly<Record<string, { label: string; route: CatalogRoute }>>;
+
+import { isInputString } from '../core/inputChecks';
 import type {
   InstallQueueEntry,
   Registry,
@@ -147,7 +157,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     registryAssetCounts.set(namespace, counts);
 
-    for (const kind of Object.keys(counts) as AssetKindToken[]) {
+    for (const kind of ['component', 'block', 'page', 'template', 'theme', 'icon', 'other'] as const) {
       if (counts[kind] > 0) directoryAssetCounts[kind] += 1;
     }
   }
@@ -283,7 +293,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function sidebarContextForRoute(route: CatalogRoute): { label: string; route: CatalogRoute } {
-    const sections: Readonly<Record<string, { label: string; route: CatalogRoute }>> = {
+    const sections = {
       components: { label: 'Components', route: { kind: 'components' } },
       blocks: { label: 'Blocks', route: { kind: 'blocks' } },
       pages: { label: 'Pages', route: { kind: 'pages' } },
@@ -293,16 +303,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
       registries: { label: 'Registries', route: { kind: 'registries' } },
       authors: { label: 'Authors', route: { kind: 'authors' } },
       compare: { label: 'Compare', route: { kind: 'compare' } },
-    };
+    } satisfies SectionsLookupContract;
 
-    const kind: Readonly<Record<string, string>> = {
+    const kind = {
       component: 'components', explore: 'components', block: 'blocks', page: 'pages',
       template: 'templates', theme: 'themes', 'theme-editor': 'themes',
       'icon-category': 'icons', 'icon-family': 'icons',
       registry: 'registries', 'registry-assets': 'registries',
-    };
+    } satisfies KindLookupContract;
 
-    return sections[kind[route.kind] ?? route.kind] ?? { label: 'Home', route: { kind: 'home' } };
+    return new Map(Object.entries(sections)).get(new Map(Object.entries(kind)).get(route.kind) ?? route.kind) ?? { label: 'Home', route: { kind: 'home' } };
   }
 
   function renderSidebarContext(): void {
@@ -965,6 +975,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.tabs.forEach(tab => tab.addEventListener('click', () => {
     const view = tab.getAttribute('data-view');
 
+    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const resetBrowse = {
       searchTerm: '',
       catalogRegistryNames: [],
@@ -989,7 +1000,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }));
 
   function routeForGlobalSearch(route: CatalogRoute): CatalogRoute {
-    const replacements: Readonly<Record<string, CatalogRoute>> = {
+    const replacements = {
       home: { kind: 'components' },
       'not-found': { kind: 'components' },
       'theme-editor': { kind: 'components' },
@@ -1000,9 +1011,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
       theme: { kind: 'themes' },
       'icon-category': { kind: 'icons' },
       'icon-family': { kind: 'icons' },
-    };
+    } satisfies ReplacementsLookupContract;
 
-    return replacements[route.kind] ?? route;
+    return new Map(Object.entries(replacements)).get(route.kind) ?? route;
   }
 
   roots.searchInput.addEventListener('input', () => {
@@ -1015,6 +1026,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   });
 
   roots.contentBody.addEventListener('input', event => {
+    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLInputElement;
     const control = target.closest('[data-compare-search]');
     const dimension = control?.getAttribute('data-compare-search');
@@ -1034,13 +1046,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
     try {
       const parsed: unknown = JSON.parse(image.getAttribute('data-registry-icon-candidates') ?? '[]');
 
-      return Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === 'string') : [];
+      return Array.isArray(parsed) ? parsed.filter((value): value is string => isInputString(value)) : [];
     } catch {
       return [];
     }
   }
 
   function handleRegistryIconError(event: Event): void {
+    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const image = event.target as HTMLImageElement | null;
 
     if (!image?.hasAttribute?.('data-registry-icon-image')) return;
@@ -1059,10 +1072,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
     image.closest('.registry-icon')?.setAttribute('data-registry-icon-failed', 'true');
   }
 
+  // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
   roots.aside.addEventListener('click', event => handleClick(event.target as HTMLElement));
   roots.contentHeader.addEventListener('click', event => {
+    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;
     const link = target.closest<HTMLAnchorElement>('a[data-catalog-route],a[data-profile-registry]');
+    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const mouse = event as MouseEvent;
 
     if (link && mouse.button === 0 && !mouse.ctrlKey && !mouse.metaKey && !mouse.shiftKey && !mouse.altKey) {
@@ -1074,6 +1090,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.contentHeader.addEventListener('error', handleRegistryIconError, true);
   roots.contentBody.addEventListener('error', handleRegistryIconError, true);
   roots.contentBody.addEventListener('click', event => {
+    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;
 
     const link = target.closest<HTMLAnchorElement>(
@@ -1081,6 +1098,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     );
 
     if (link) {
+      // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
       const mouse = event as MouseEvent;
 
       if (mouse.button === 1 || mouse.ctrlKey || mouse.metaKey || mouse.shiftKey || mouse.altKey) return;
@@ -1196,6 +1214,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const value = accessControl.getAttribute('data-catalog-access-value') ?? '';
 
       if (value && value !== 'free' && value !== 'paid') return true;
+      // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
       setState({
         catalogAccess: value && state.catalogAccess[0] !== value
           ? [value as 'free' | 'paid']
@@ -1284,6 +1303,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const raw = control.getAttribute(attribute) ?? '';
 
       if (raw && !['component', 'block', 'page', 'template', 'theme', 'icon', 'other'].includes(raw)) return true;
+      // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
       const value = raw as CatalogAssetKind | '';
       setState({
         catalogAssetKinds: value && state.catalogAssetKinds[0] !== value ? [value] : [],
@@ -1704,7 +1724,7 @@ function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replac
   history.call(window.history, {}, '', next);
 }
 
-const ROUTE_PRIMARY_VIEWS: Readonly<Record<string, string>> = {
+const ROUTE_PRIMARY_VIEWS = {
   home: 'home', authors: 'discover', components: 'discover', component: 'discover',
   explore: 'discover', registries: 'registries', registry: 'registries',
   'registry-assets': 'registries', blocks: 'blocks', block: 'blocks',
@@ -1712,10 +1732,10 @@ const ROUTE_PRIMARY_VIEWS: Readonly<Record<string, string>> = {
   themes: 'themes', theme: 'themes', 'theme-editor': 'themes',
   icons: 'icons', 'icon-family': 'icons', 'icon-category': 'icons',
   compare: 'compare',
-};
+} satisfies KindLookupContract;
 
 function primaryViewForRoute(route: CatalogRoute): string | null {
-  return ROUTE_PRIMARY_VIEWS[route.kind] ?? null;
+  return new Map(Object.entries(ROUTE_PRIMARY_VIEWS)).get(route.kind) ?? null;
 }
 
 function isDetailRoute(

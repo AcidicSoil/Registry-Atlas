@@ -1,3 +1,4 @@
+import { isInputCallable, isInputString } from './lib/input-guards.mjs';
 import { openAtlasCoreDatabase } from './lib/atlas-storage.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { isIP } from 'node:net';
@@ -12,7 +13,7 @@ const PATTERN_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 const identity = text => String(text).toLowerCase().replace(/[-_/]+/g,' ')
   .replace(/[^a-z0-9 ]/g,'').replace(/\s+/g,' ').trim();
 
-const validSlug = value => typeof value==='string' && value.split('/')
+const validSlug = value => isInputString(value) && value.split('/')
   .every(part=>/^[a-z0-9][a-z0-9._-]*$/i.test(part));
 
 function publicHome(raw) {
@@ -39,9 +40,9 @@ export function safePage(raw,root) {
 }
 
 export function resolvePattern(pattern,slug,homepage) {
-  if(!validSlug(slug)||typeof pattern.slugPrefix!=='string'||
+  if(!validSlug(slug)||!isInputString(pattern.slugPrefix)||
     !slug.startsWith(pattern.slugPrefix) ||
-    typeof pattern.urlTemplate!=='string'||
+    !isInputString(pattern.urlTemplate)||
     !/^(?:[^{}])*(?:\{slug\}|\{leaf\})(?:[^{}])*$/.test(pattern.urlTemplate))return null;
   const remainder=slug.slice(pattern.slugPrefix.length);
 
@@ -78,7 +79,7 @@ export async function importRegistryPatterns(db,{inventory,catalog,curated={},ra
   let count=0;
   const changed=new Set();
 
-  if(typeof inventory.generatedAt==='string') (await db.prepare("INSERT INTO metadata(key,value) VALUES('sourceSnapshotAt',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(inventory.generatedAt));
+  if(isInputString(inventory.generatedAt)) (await db.prepare("INSERT INTO metadata(key,value) VALUES('sourceSnapshotAt',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value").run(inventory.generatedAt));
 
   try {
     for(const reg of raw) {
@@ -186,7 +187,7 @@ export async function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
     for(const reg of raw){
       const name=reg.name;
 
-      if(typeof name!=='string'||typeof reg.homepage!=='string')continue;
+      if(!isInputString(name)||!isInputString(reg.homepage))continue;
 
       const names=[...new Set([
         ...(catalog.registries[name]??[]).map(x=>x.name),
@@ -237,7 +238,7 @@ export async function reconcileRegistryCatalog(db,{raw,catalog,curated={}}) {
 export async function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,source='browser-observed'}={}) {
   (await initializePatternDatabase(db));
 
-  if(typeof namespace!=='string'||typeof homepage!=='string'||!Array.isArray(patterns))
+  if(!isInputString(namespace)||!isInputString(homepage)||!Array.isArray(patterns))
     throw Error('Invalid discovered pattern input');
   const saved=(await db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace));
 
@@ -255,12 +256,12 @@ export async function mergeDiscoveredPatterns(db,{namespace,homepage,patterns,so
 
   try{
     for(const pattern of patterns){
-      if(!pattern||typeof pattern.urlTemplate!=='string'||typeof pattern.slugPrefix!=='string'
+      if(!pattern||!isInputString(pattern.urlTemplate)||!isInputString(pattern.slugPrefix)
         ||!Array.isArray(pattern.examples)||!pattern.examples.length)continue;
       const usable=[];
 
       for(const example of pattern.examples){
-        if(!example||typeof example.slug!=='string'||typeof example.url!=='string'
+        if(!example||!isInputString(example.slug)||!isInputString(example.url)
           ||!(await hasSlug.get(namespace,example.slug)))continue;
 
         const expected=resolvePattern({urlTemplate:pattern.urlTemplate,
@@ -405,7 +406,7 @@ export async function verifyRegistryPatterns(db,{
       for(const item of chosen) {
         let response=await checkPatternExample(fetchPage,item.url,item.slug.slice(p.prefix.length));
 
-        if(response.reason==='identity-mismatch' && typeof browserPage==='function') {
+        if(response.reason==='identity-mismatch' && isInputCallable(browserPage)) {
           const root=(await db.prepare('SELECT homepage FROM sources WHERE namespace=?').get(namespace)).homepage;
 
           const observed=await browserPage(item.url,item.slug.slice(p.prefix.length),root)
@@ -573,7 +574,9 @@ export function managedBrowserPatternProof({profile,server,tab,exec=execFileSync
       let headings=(snap.nodes??[]).filter(n=>n.role==='heading')
         .map(n=>identity(n.name));
 
-      const wanted=[slug.split('/').at(-1),expectedTitle].map(identity).filter(Boolean);
+      const wanted=[slug.split('/').at(-1),expectedTitle].flatMap(value => { const name=identity(value);
+
+ return name ? [name] : []; });
 
       if(!headings.some(heading=>wanted.includes(heading))) {
         // A bounded retry allows common client-rendered docs to hydrate.

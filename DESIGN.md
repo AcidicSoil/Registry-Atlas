@@ -33,5 +33,5 @@
 ## Quality gates under certification
 
 - Pinned React Doctor 0.9.18 and dependency-cruiser 18.6.0 run from the root verification command. Their isolated pass–fail–pass proofs are recorded in `.design/quality-tooling-progress.md`.
-- cccc 1.8.0 is pinned through mise’s official GitHub release backend; complexity limits are cognitive 15 / cyclomatic 10. The root `pnpm verify` gate remains intentionally **failing** while 44 existing source functions exceed these thresholds. Do not disable the gate or raise the limits to report certification.
-- Stackforge anti-slop TypeScript is installed and wired into the root verification command. Its strict root scan still finds 593 violations, so the gate correctly blocks full verification and the policy is not yet compliant. Full PPM/OrchestKit certification is not complete.
+- cccc 1.8.0 is pinned through mise’s official GitHub release backend; complexity limits are cognitive 15 / cyclomatic 10. The previous 44 threshold violations were resolved without changing the limits. The full `pnpm verify` suite now passes; formal PPM/PAO certification remains separate.
+- Stackforge anti-slop TypeScript is installed at the root with all 117 rules active. The scan passes at zero errors and warnings, and its deliberate failure-detection proof passes. Formal PPM/PAO certification remains pending. Full PPM/OrchestKit certification is not complete.

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { gunzipSync } from 'node:zlib';
 
 describe('PostgreSQL source-page projection', () => {
+  // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   it('publishes verified exact source page identities from the generated static data', () => {
     const data = JSON.parse(gunzipSync(readFileSync('public/data/registry-atlas.json.gz')).toString('utf8'));
     const manifest = data.sourcePageManifest;

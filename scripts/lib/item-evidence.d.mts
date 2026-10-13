@@ -1,3 +1,5 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
+
 export interface ItemEvidenceArgs {
   raw: Array<{name: string;homepage: string}>;
   catalog: {registries: Record<string, Array<{name:string;type?:string}>>};
@@ -5,8 +7,8 @@ export interface ItemEvidenceArgs {
   visual: {schemaVersion:number;previews:Record<string,{
     imageUrl:string;officialPage:string;verification?:string;
   }>};
-  manifest: {schema:string;items: Array<Record<string,unknown>>};
-  ledgers?: Record<string,{get(token:string):Record<string,unknown>|undefined}>;
+  manifest: {schema:string;items: Array<Record<string, RawJsonInput>>};
+  ledgers?: Record<string,{get(token:string):Record<string, RawJsonInput>|undefined}>;
   asOf?:string;
   maxAgeMs?:number;
   assetExists?: (path:string)=>boolean;
@@ -39,5 +41,5 @@ export interface ItemEvidenceSummary {
 export function compileItemEvidence(input:ItemEvidenceArgs): {
   schema:string;asOf:string;summary:ItemEvidenceSummary;items:ItemEvidenceRecord[];
   errors:Array<{token:string;reason:string;count?:number}>;
-  registries:Array<Record<string,unknown>>;note:string;
+  registries:Array<Record<string, RawJsonInput>>;note:string;
 };

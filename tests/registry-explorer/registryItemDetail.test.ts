@@ -1,3 +1,4 @@
+import type { RawJsonInput } from '../../src/registry-explorer/core/jsonInput';
 import { describe, expect, it } from 'vitest';
 import {
   resolveRegistryItemDetailFromCatalogIndex,
@@ -209,12 +210,10 @@ describe('registry item detail', () => {
   });
 
   it('returns invalid-json when response JSON parsing fails', async () => {
-    const result = await loadRegistryItemDetail([registryFixture()], '@delta', 'code-block', async () => ({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      json: async () => { throw new SyntaxError('bad json'); },
-    } as unknown as Response));
+    const result = await loadRegistryItemDetail(
+      [registryFixture()], '@delta', 'code-block',
+      async () => new Response('{', { status: 200 }),
+    );
 
     expect(result).toEqual(expect.objectContaining({ status: 'invalid-json' }));
   });
@@ -232,7 +231,8 @@ describe('registry item detail', () => {
   });
 });
 
-function jsonResponse(data: unknown): Response {
+function jsonResponse(data: RawJsonInput): Response {
+  // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
   return {
     ok: true,
     status: 200,

@@ -1,3 +1,5 @@
+import type { RawJsonInput } from './jsonInput';
+import { isInputObject } from './inputChecks';
 import type { CatalogCanonicalKind, RegistryCatalogItem } from "./registry.schema";
 
 export type CatalogAssetKind = CatalogCanonicalKind;
@@ -33,7 +35,7 @@ const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
   { slug: "charts", label: "Charts", categories: ["charts"] },
 ];
 
-export function configureCatalogKindOverrides(value: unknown): void {
+export function configureCatalogKindOverrides(value: RawJsonInput): void {
   const record = isRecord(value) && isRecord(value.registryDefaults)
     ? value.registryDefaults : {};
 
@@ -103,13 +105,13 @@ export function exploreCollectionBySlug(slug: string): ExploreCollectionOption |
   return EXPLORE_COLLECTIONS.find(option => option.slug === normalize(slug)) ?? null;
 }
 
-function isCatalogCanonicalKind(value: unknown): value is CatalogCanonicalKind {
+function isCatalogCanonicalKind(value: RawJsonInput): value is CatalogCanonicalKind {
   return value === "component" || value === "block" || value === "page"
     || value === "template" || value === "theme" || value === "icon" || value === "other";
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }
 
 function normalize(value: string): string {

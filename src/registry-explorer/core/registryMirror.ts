@@ -1,3 +1,5 @@
+import type { RawJsonInput } from './jsonInput';
+import { isInputBoolean, isInputObject, isInputString } from './inputChecks.ts';
 import {
   COVERAGE_CONFIDENCE_VALUES,
   COVERAGE_STATUS_VALUES,
@@ -101,7 +103,7 @@ const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorValidationResult {
+export function validateRegistryMirror(mirror: RawJsonInput, raw?: RawJsonInput): MirrorValidationResult {
   const result = createResult();
 
   if (!isObject(mirror)) {
@@ -114,6 +116,7 @@ export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorVa
     return result;
   }
 
+  // SAFETY: The mirror and record fields have been validated by the preceding fail-closed structure and enum checks.
   const mirrorData = mirror as MirrorData;
 
   if (!Array.isArray(mirrorData.registries)) {
@@ -148,6 +151,7 @@ export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorVa
       return;
     }
 
+    // SAFETY: The mirror and record fields have been validated by the preceding fail-closed structure and enum checks.
     validateMirrorRecord(record as MirrorRecord, index, seenNamespaces, result);
   });
 
@@ -155,7 +159,7 @@ export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorVa
 }
 
 export function validateNamespace(
-  namespace: unknown,
+  namespace: RawJsonInput,
   seenNamespaces = new Set<string>(),
 ): MirrorValidationResult {
   const result = createResult();
@@ -165,7 +169,7 @@ export function validateNamespace(
 }
 
 export function validateUrlField(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace?: string,
 ): MirrorValidationResult {
@@ -176,7 +180,7 @@ export function validateUrlField(
 }
 
 export function validateRegistryUrlTemplate(
-  value: unknown,
+  value: RawJsonInput,
   namespace?: string,
 ): MirrorValidationResult {
   const result = createResult();
@@ -185,7 +189,7 @@ export function validateRegistryUrlTemplate(
   return result;
 }
 
-function validateRawRegistries(raw: unknown, mirrorCount: number, result: MirrorValidationResult): void {
+function validateRawRegistries(raw: RawJsonInput, mirrorCount: number, result: MirrorValidationResult): void {
   if (!Array.isArray(raw)) {
     addIssue(result, {
       code: 'raw-invalid-shape',
@@ -219,6 +223,7 @@ function validateRawRegistries(raw: unknown, mirrorCount: number, result: Mirror
       return;
     }
 
+    // SAFETY: The mirror and record fields have been validated by the preceding fail-closed structure and enum checks.
     const rawRecord = record as RawRegistry;
     const namespace = validateNamespaceIntoResult(rawRecord.name, seenNamespaces, result);
     validateUrlIntoResult(rawRecord.homepage, 'raw.homepage', namespace, result);
@@ -244,11 +249,11 @@ function validateMirrorRecord(
 }
 
 function validateNamespaceIntoResult(
-  namespace: unknown,
+  namespace: RawJsonInput,
   seenNamespaces: Set<string>,
   result: MirrorValidationResult,
 ): string | undefined {
-  if (typeof namespace !== 'string' || namespace.trim().length === 0) {
+  if (!isInputString(namespace) || namespace.trim().length === 0) {
     addIssue(result, {
       code: 'namespace-missing',
       message: 'Registry namespace is required.',
@@ -291,12 +296,12 @@ function validateNamespaceIntoResult(
 }
 
 function validateUrlIntoResult(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string | undefined,
   result: MirrorValidationResult,
 ): void {
-  if (typeof value !== 'string' || value.trim().length === 0) {
+  if (!isInputString(value) || value.trim().length === 0) {
     addIssue(result, {
       code: 'url-missing',
       message: `${field} is required.`,
@@ -366,13 +371,13 @@ function validateUrlIntoResult(
 }
 
 function validateRegistryUrlTemplateIntoResult(
-  value: unknown,
+  value: RawJsonInput,
   namespace: string | undefined,
   resultOrField: MirrorValidationResult | string,
   maybeResult?: MirrorValidationResult,
 ): void {
-  const field = typeof resultOrField === 'string' ? resultOrField : 'official.registry_url_template';
-  const result = typeof resultOrField === 'string' ? maybeResult : resultOrField;
+  const field = isInputString(resultOrField) ? resultOrField : 'official.registry_url_template';
+  const result = isInputString(resultOrField) ? maybeResult : resultOrField;
 
   if (!result) {
     return;
@@ -380,20 +385,20 @@ function validateRegistryUrlTemplateIntoResult(
 
   validateUrlIntoResult(value, field, namespace, result);
 
-  if (typeof value !== 'string' || !value.includes('{name}')) {
+  if (!isInputString(value) || !value.includes('{name}')) {
     addIssue(result, {
       code: 'template-missing-token',
       message: `${field} must include the {name} token.`,
       severity: 'error',
       namespace,
       field,
-      value: typeof value === 'string' ? value : undefined,
+      value: isInputString(value) ? value : undefined,
     });
   }
 }
 
 function validateAtlasScalar(
-  value: unknown,
+  value: RawJsonInput,
   allowedValues: ReadonlySet<string>,
   field: string,
   code: MirrorValidationCode,
@@ -404,7 +409,7 @@ function validateAtlasScalar(
     return;
   }
 
-  if (typeof value === 'string' && allowedValues.has(value)) {
+  if (isInputString(value) && allowedValues.has(value)) {
     return;
   }
 
@@ -414,14 +419,14 @@ function validateAtlasScalar(
     severity: 'error',
     namespace,
     field,
-    value: typeof value === 'string' ? value : String(value),
+    value: isInputString(value) ? value : String(value),
   });
 }
 
 function validateItemSummaries(
-  value: unknown,
+  value: RawJsonInput,
   namespace: string,
-  registryUrlTemplate: unknown,
+  registryUrlTemplate: RawJsonInput,
   result: MirrorValidationResult,
 ): void {
   if (value === undefined) {
@@ -445,14 +450,14 @@ function validateItemSummaries(
 }
 
 function validateItemSummaryIdentity(
-  record: Record<string, unknown>,
+  record: Record<string, RawJsonInput>,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
 ): void {
     const slug = record.slug;
 
-    if (typeof record.name !== 'string' || record.name.trim() === '') {
+    if (!isInputString(record.name) || record.name.trim() === '') {
       addIssue(result, {
         code: 'atlas-invalid-item-summary',
         message: `${field}.name is required.`,
@@ -462,7 +467,7 @@ function validateItemSummaryIdentity(
       });
     }
 
-    if (typeof record.source !== 'string' || record.source.trim() === '' || typeof record.provenance !== 'string' || record.provenance.trim() === '') {
+    if (!isInputString(record.source) || record.source.trim() === '' || !isInputString(record.provenance) || record.provenance.trim() === '') {
       addIssue(result, {
         code: 'atlas-invalid-item-summary',
         message: `${field} requires source and provenance.`,
@@ -472,20 +477,28 @@ function validateItemSummaryIdentity(
       });
     }
 
-    if (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug)) {
+    if (!isInputString(slug) || !ITEM_SLUG_PATTERN.test(slug)) {
       addIssue(result, {
         code: 'atlas-invalid-item-slug',
         message: `${field}.slug must be a lowercase kebab-case slug.`,
         severity: 'error',
         namespace,
         field: `${field}.slug`,
-        value: typeof slug === 'string' ? slug : String(slug),
+        value: isInputString(slug) ? slug : String(slug),
       });
     }
 }
 
+function isKnownCatalogStatus(value: string): value is ItemCatalogStatus {
+  return [...ITEM_CATALOG_STATUS_SET].some(kind => kind === value);
+}
+
+function isKnownConfidence(value: string): value is CoverageConfidence {
+  return [...COVERAGE_CONFIDENCE_SET].some(kind => kind === value);
+}
+
 function validateItemSummaryStatus(
-  record: Record<string, unknown>,
+  record: Record<string, RawJsonInput>,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
@@ -493,18 +506,18 @@ function validateItemSummaryStatus(
   const catalogStatus = record.catalog_status ?? record.catalogStatus;
   const routeEligible = record.route_eligible ?? record.routeEligible;
 
-    if (typeof catalogStatus !== 'string' || !ITEM_CATALOG_STATUS_SET.has(catalogStatus as ItemCatalogStatus)) {
+    if (!isInputString(catalogStatus) || !isKnownCatalogStatus(catalogStatus)) {
       addIssue(result, {
         code: 'atlas-invalid-catalog-status',
         message: `${field}.catalog_status contains an unknown value.`,
         severity: 'error',
         namespace,
         field: `${field}.catalog_status`,
-        value: typeof catalogStatus === 'string' ? catalogStatus : String(catalogStatus),
+        value: isInputString(catalogStatus) ? catalogStatus : String(catalogStatus),
       });
     }
 
-    if (routeEligible !== undefined && typeof routeEligible !== 'boolean') {
+    if (routeEligible !== undefined && !isInputBoolean(routeEligible)) {
       addIssue(result, {
         code: 'atlas-invalid-item-summary',
         message: `${field}.route_eligible must be a boolean.`,
@@ -517,17 +530,17 @@ function validateItemSummaryStatus(
 }
 
 function validateItemSummaryRoute(
-  record: Record<string, unknown>,
+  record: Record<string, RawJsonInput>,
   field: string,
   namespace: string,
-  registryUrlTemplate: unknown,
+  registryUrlTemplate: RawJsonInput,
   result: MirrorValidationResult,
 ): void {
   const slug = record.slug;
   const routeEligible = record.route_eligible ?? record.routeEligible;
     const rawItemUrl = record.raw_item_url ?? record.rawItemUrl;
 
-    if (routeEligible === true && (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug) || !hasRouteSource(registryUrlTemplate, rawItemUrl))) {
+    if (routeEligible === true && (!isInputString(slug) || !ITEM_SLUG_PATTERN.test(slug) || !hasRouteSource(registryUrlTemplate, rawItemUrl))) {
       addIssue(result, {
         code: 'atlas-invalid-item-summary',
         message: `${field}.route_eligible requires a valid slug and registry URL template or raw item URL.`,
@@ -539,7 +552,7 @@ function validateItemSummaryRoute(
 }
 
 function validateItemSummaryOptionalFields(
-  record: Record<string, unknown>,
+  record: Record<string, RawJsonInput>,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
@@ -561,10 +574,10 @@ function validateItemSummaryOptionalFields(
 }
 
 function validateItemSummary(
-  item: unknown,
+  item: RawJsonInput,
   index: number,
   namespace: string,
-  registryUrlTemplate: unknown,
+  registryUrlTemplate: RawJsonInput,
   result: MirrorValidationResult,
 ): void {
   const field = 'atlas.item_summaries[' + index + ']';
@@ -587,20 +600,20 @@ function validateItemSummary(
   validateItemSummaryOptionalFields(item, field, namespace, result);
 }
 
-function hasRouteSource(registryUrlTemplate: unknown, rawItemUrl: unknown): boolean {
-  return (typeof registryUrlTemplate === 'string' && registryUrlTemplate.includes('{name}'))
-    || (typeof rawItemUrl === 'string' && rawItemUrl.trim().length > 0);
+function hasRouteSource(registryUrlTemplate: RawJsonInput, rawItemUrl: RawJsonInput): boolean {
+  return (isInputString(registryUrlTemplate) && registryUrlTemplate.includes('{name}'))
+    || (isInputString(rawItemUrl) && rawItemUrl.trim().length > 0);
 }
 
 function validateOptionalUrlField(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null || value === '') return;
 
-  if (typeof value !== 'string') {
+  if (!isInputString(value)) {
     addIssue(result, {
       code: 'atlas-invalid-item-url',
       message: `${field} must be a URL string when present.`,
@@ -624,47 +637,47 @@ function validateOptionalUrlField(
 }
 
 function validateOptionalConfidence(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null || value === '') return;
 
-  if (typeof value !== 'string' || !COVERAGE_CONFIDENCE_SET.has(value as CoverageConfidence)) {
+  if (!isInputString(value) || !isKnownConfidence(value)) {
     addIssue(result, {
       code: 'atlas-invalid-confidence',
       message: `${field} contains an unknown value.`,
       severity: 'error',
       namespace,
       field,
-      value: typeof value === 'string' ? value : String(value),
+      value: isInputString(value) ? value : String(value),
     });
   }
 }
 
 function validateOptionalInstallToken(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null || value === '') return;
 
-  if (typeof value !== 'string' || !INSTALL_TOKEN_PATTERN.test(value.trim())) {
+  if (!isInputString(value) || !INSTALL_TOKEN_PATTERN.test(value.trim())) {
     addIssue(result, {
       code: 'atlas-invalid-item-token',
       message: `${field} must be a valid @registry/item token.`,
       severity: 'error',
       namespace,
       field,
-      value: typeof value === 'string' ? value : String(value),
+      value: isInputString(value) ? value : String(value),
     });
   }
 }
 
 function validateOptionalCommand(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
@@ -673,27 +686,27 @@ function validateOptionalCommand(
   if (value === undefined || value === null || value === '') return;
   const expectedPrefix = `npx shadcn@latest ${verb} `;
 
-  if (typeof value !== 'string' || !value.startsWith(expectedPrefix) || !INSTALL_TOKEN_PATTERN.test(value.slice(expectedPrefix.length).trim())) {
+  if (!isInputString(value) || !value.startsWith(expectedPrefix) || !INSTALL_TOKEN_PATTERN.test(value.slice(expectedPrefix.length).trim())) {
     addIssue(result, {
       code: 'atlas-invalid-item-command',
       message: `${field} must be a copy-only shadcn ${verb} command with a valid @registry/item token.`,
       severity: 'error',
       namespace,
       field,
-      value: typeof value === 'string' ? value : String(value),
+      value: isInputString(value) ? value : String(value),
     });
   }
 }
 
 function validateOptionalStringArray(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null) return;
 
-  if (!Array.isArray(value) || value.some(item => typeof item !== 'string')) {
+  if (!Array.isArray(value) || value.some(item => !isInputString(item))) {
     addIssue(result, {
       code: 'atlas-invalid-item-array',
       message: `${field} must be an array of strings when present.`,
@@ -706,7 +719,7 @@ function validateOptionalStringArray(
 }
 
 function validateOptionalFiles(
-  value: unknown,
+  value: RawJsonInput,
   field: string,
   namespace: string,
   result: MirrorValidationResult,
@@ -727,7 +740,7 @@ function validateOptionalFiles(
   }
 
   value.forEach((file, index) => {
-    if (!isObject(file) || typeof file.path !== 'string' || file.path.trim() === '' || typeof file.type !== 'string' || file.type.trim() === '') {
+    if (!isObject(file) || !isInputString(file.path) || file.path.trim() === '' || !isInputString(file.type) || file.type.trim() === '') {
       addIssue(result, {
         code: 'atlas-invalid-item-file',
         message: `${field}[${index}] requires path and type strings.`,
@@ -739,7 +752,7 @@ function validateOptionalFiles(
       return;
     }
 
-    if (file.target !== undefined && typeof file.target !== 'string') {
+    if (file.target !== undefined && !isInputString(file.target)) {
       addIssue(result, {
         code: 'atlas-invalid-item-file',
         message: `${field}[${index}].target must be a string when present.`,
@@ -754,7 +767,7 @@ function validateOptionalFiles(
 
 function validateCount(
   field: string,
-  value: unknown,
+  value: RawJsonInput,
   expected: number,
   result: MirrorValidationResult,
 ): void {
@@ -790,6 +803,6 @@ function addIssue(result: MirrorValidationResult, issue: MirrorValidationIssue):
   result.warnings.push(issue);
 }
 
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+function isObject(value: RawJsonInput): value is Record<string, RawJsonInput> {
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }

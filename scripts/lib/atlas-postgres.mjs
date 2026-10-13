@@ -1,3 +1,4 @@
+import { isInputCallable, isInputString } from './input-guards.mjs';
 import postgres from 'postgres';
 import { readFileSync } from 'node:fs';
 import { attachLegacyQueries } from './atlas-pg-queries.mjs';
@@ -30,14 +31,14 @@ export async function transaction(db,fn){
 
 return fn(tx);};
 
-  if(typeof db.savepoint==='function')return db.savepoint(run);
+  if(isInputCallable(db.savepoint))return db.savepoint(run);
 
   return db.begin(run);
 }
 
 export const json=value=>JSON.stringify(value);
 
-export const parseJson=value=>typeof value==='string'?JSON.parse(value):value;
+export const parseJson=value=>isInputString(value)?JSON.parse(value):value;
 
 export const exec=(db,sql,params=[])=>db.unsafe(db.__atlasSchema?sql.replace(/\batlas\./g,db.__atlasSchema+'.'):sql,params);
 

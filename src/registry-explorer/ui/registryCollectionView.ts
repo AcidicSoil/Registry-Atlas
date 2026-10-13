@@ -63,12 +63,13 @@ export function renderRegistryCollection(
           <a class="registry-asset-link${!options.selectedKind ? ' is-active' : ''}"
             href="${escapeHtml(rootRoute)}" data-catalog-route="${escapeHtml(rootRoute)}"
             ${!options.selectedKind ? 'aria-current="page"' : ''}>All items</a>
-          ${assetLabels.filter(([kind]) => (options.assetCounts?.[kind] ?? 0) > 0).map(([kind, label]) => {
+          ${assetLabels.flatMap(([kind, label]) => {
+            if ((options.assetCounts?.[kind] ?? 0) <= 0) return [];
             const path = catalogRoutePath({ kind: 'registry-assets', namespace: registry.name, assetKind: kind }, basePath);
 
-            return `<a class="registry-asset-link${options.selectedKind === kind ? ' is-active' : ''}"
+            return [`<a class="registry-asset-link${options.selectedKind === kind ? ' is-active' : ''}"
               href="${escapeHtml(path)}" data-catalog-route="${escapeHtml(path)}"
-              ${options.selectedKind === kind ? 'aria-current="page"' : ''}>${label} <span>${options.assetCounts?.[kind]?.toLocaleString()}</span></a>`;
+              ${options.selectedKind === kind ? 'aria-current="page"' : ''}>${label} <span>${options.assetCounts?.[kind]?.toLocaleString()}</span></a>`];
           }).join('')}
         </nav>
 

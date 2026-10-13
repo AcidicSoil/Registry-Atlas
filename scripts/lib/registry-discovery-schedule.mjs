@@ -1,3 +1,4 @@
+import { isInputObject } from './input-guards.mjs';
 import { catalogFingerprint, DISCOVERY_REVISION } from './registry-discovery.mjs';
 
 const NAMESPACE = /^@[a-z0-9][a-z0-9-]*$/;
@@ -50,7 +51,7 @@ function rowStatus(row, fingerprint, now, maxAgeMs) {
 
 export function planRegistryDiscovery(raw, catalog, curated = {}, ledgers = {}, options = {}) {
   if (!Array.isArray(raw) || !catalog?.registries
-    || typeof catalog.registries !== 'object' || Array.isArray(catalog.registries))
+    || !isInputObject(catalog.registries) || Array.isArray(catalog.registries))
     throw new Error('Invalid raw registry list or compact index');
   const maxRegistries = options.maxRegistries ?? 2;
   const maxAgeMs = options.maxAgeMs ?? 24 * 3600 * 1000;

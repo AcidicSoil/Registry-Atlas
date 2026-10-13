@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { isInputObject, isInputString } from './lib/input-guards.mjs';
 
 import { pathToFileURL } from 'node:url';
 import {
@@ -49,7 +50,7 @@ export function extractManifestIconCandidates(manifest, baseUrl) {
   const candidates = [];
 
   for (const icon of manifest.icons) {
-    if (!icon || typeof icon.src !== 'string') continue;
+    if (!icon || !isInputString(icon.src)) continue;
     const url = safeIconUrl(icon.src, baseUrl);
 
     if (!url) continue;
@@ -59,8 +60,8 @@ export function extractManifestIconCandidates(manifest, baseUrl) {
       score: iconScore({
         url,
         rel: 'manifest-icon',
-        sizes: typeof icon.sizes === 'string' ? icon.sizes : undefined,
-        type: typeof icon.type === 'string' ? icon.type : undefined,
+        sizes: isInputString(icon.sizes) ? icon.sizes : undefined,
+        type: isInputString(icon.type) ? icon.type : undefined,
       }),
     });
   }
@@ -295,7 +296,7 @@ function uniqueRanked(candidates) {
 }
 
 function safePageUrl(value, base) {
-  if (typeof value !== 'string' || !value.trim() || value.trim().startsWith('//')) return null;
+  if (!isInputString(value) || !value.trim() || value.trim().startsWith('//')) return null;
 
   try {
     const url = base ? new URL(value, base) : new URL(value);
@@ -385,7 +386,7 @@ function parseArgs(argv) {
 }
 
 export function mergeRegistryIconDocument(current, previous) {
-  if (!previous?.icons || typeof previous.icons !== 'object') return current;
+  if (!previous?.icons || !isInputObject(previous.icons)) return current;
 
   const icons = { ...current.icons };
   const missing = [];

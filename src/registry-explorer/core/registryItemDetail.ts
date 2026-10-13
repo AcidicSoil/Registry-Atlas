@@ -1,3 +1,9 @@
+import type { RawJsonInput } from './jsonInput';
+
+/** Named map contract for dynamic keys in this module. */
+type OutputLookupContract = { theme?: Record<string, string>; light?: Record<string, string>; dark?: Record<string, string> };
+
+import { isInputObject, isInputString } from './inputChecks';
 import { getInstallActionState } from './installActions.ts';
 import { resolveCatalogSourcePage } from './catalogSourcePage.ts';
 import { compactCatalogItemToSummary, findRegistryCatalogItem } from './registryCatalogIndex.ts';
@@ -98,7 +104,7 @@ interface NormalizedRegistryItemDetailJson {
   files: readonly RegistryItemSummaryFile[];
 }
 
-function resolvedDetailPayload(base: RegistryItemDetail, sourceJson?: unknown): RegistryItemDetailResult {
+function resolvedDetailPayload(base: RegistryItemDetail, sourceJson?: RawJsonInput): RegistryItemDetailResult {
   if (base.route.status !== 'available') {
     return {
       status: 'route-unavailable', detail: base,
@@ -125,7 +131,7 @@ export function resolveRegistryItemDetailFromSummary(
   registries: readonly Registry[],
   namespace: string | null | undefined,
   itemSlug: string | null | undefined,
-  sourceJson?: unknown,
+  sourceJson?: RawJsonInput,
 ): RegistryItemDetailResult {
   const registryName = namespace?.trim() ?? '';
   const slug = itemSlug?.trim() ?? '';
@@ -162,7 +168,7 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   catalogIndex: RegistryCatalogIndex,
   namespace: string | null | undefined,
   itemSlug: string | null | undefined,
-  sourceJson?: unknown,
+  sourceJson?: RawJsonInput,
 ): RegistryItemDetailResult {
   const registryName = namespace?.trim() ?? '';
   const slug = itemSlug?.trim() ?? '';
@@ -270,7 +276,7 @@ export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary
   };
 }
 
-export function normalizeRegistryItemDetailJson(value: unknown):
+export function normalizeRegistryItemDetailJson(value: RawJsonInput):
   | { valid: true; item: NormalizedRegistryItemDetailJson }
   | { valid: false; reason: string } {
   if (!isRecord(value)) {
@@ -333,7 +339,7 @@ export function fetchErrorResult(detail: RegistryItemDetail | null, reason = 'fe
   };
 }
 
-function mergeDetailJson(detail: RegistryItemDetail, item: NormalizedRegistryItemDetailJson, rawSource: unknown): RegistryItemDetail {
+function mergeDetailJson(detail: RegistryItemDetail, item: NormalizedRegistryItemDetailJson, rawSource: RawJsonInput): RegistryItemDetail {
   return {
     ...detail,
     name: item.name ?? detail.name,
@@ -361,18 +367,18 @@ function notFound(message: string, reason: string): RegistryItemDetailResult {
   };
 }
 
-function normalizeStringArray(value: unknown, field: string): { valid: true; items: readonly string[] } | { valid: false; reason: string } {
+function normalizeStringArray(value: RawJsonInput, field: string): { valid: true; items: readonly string[] } | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, items: [] };
 
   if (!Array.isArray(value)) return { valid: false, reason: `${field}-not-array` };
 
-  if (!value.every(item => typeof item === 'string')) return { valid: false, reason: `${field}-contains-non-string` };
+  if (!value.every(item => isInputString(item))) return { valid: false, reason: `${field}-contains-non-string` };
 
   return { valid: true, items: value };
 }
 
 function normalizedCssVarMode(
-  source: unknown,
+  source: RawJsonInput,
   mode: 'theme' | 'light' | 'dark',
 ): { valid: true; swatches: Record<string, string> | undefined } | { valid: false; reason: string } {
   if (source === undefined) return { valid: true, swatches: undefined };
@@ -381,7 +387,7 @@ function normalizedCssVarMode(
   const swatches: Record<string, string> = {};
 
   for (const [key, item] of Object.entries(source)) {
-    if (!key.trim() || typeof item !== 'string' || !item.trim()) {
+    if (!key.trim() || !isInputString(item) || !item.trim()) {
       return { valid: false, reason: 'css-vars-' + mode + '-contains-invalid-value' };
     }
 
@@ -391,14 +397,14 @@ function normalizedCssVarMode(
   return { valid: true, swatches: Object.keys(swatches).length ? swatches : undefined };
 }
 
-function normalizeCssVars(value: unknown):
+function normalizeCssVars(value: RawJsonInput):
   | { valid: true; value: RegistryCssVars | undefined }
   | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, value: undefined };
 
   if (!isRecord(value)) return { valid: false, reason: 'css-vars-not-object' };
 
-  const output: { theme?: Record<string, string>; light?: Record<string, string>; dark?: Record<string, string> } = {};
+  const output: OutputLookupContract = {};
 
   for (const mode of ['theme', 'light', 'dark'] as const) {
     const parsed = normalizedCssVarMode(value[mode], mode);
@@ -411,7 +417,7 @@ function normalizeCssVars(value: unknown):
   return { valid: true, value: Object.keys(output).length ? output : undefined };
 }
 
-function normalizeFiles(value: unknown): { valid: true; items: readonly RegistryItemSummaryFile[] } | { valid: false; reason: string } {
+function normalizeFiles(value: RawJsonInput): { valid: true; items: readonly RegistryItemSummaryFile[] } | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, items: [] };
 
   if (!Array.isArray(value)) return { valid: false, reason: 'files-not-array' };
@@ -431,10 +437,10 @@ function normalizeFiles(value: unknown): { valid: true; items: readonly Registry
   return { valid: true, items: files };
 }
 
-function optionalString(value: unknown): string | undefined {
-  return typeof value === 'string' && value.trim().length > 0 ? value : undefined;
+function optionalString(value: RawJsonInput): string | undefined {
+  return isInputString(value) && value.trim().length > 0 ? value : undefined;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
+function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
+  return isInputObject(value) && value !== null && !Array.isArray(value);
 }

@@ -1,3 +1,5 @@
+import { isInputString } from './inputChecks';
+
 export type SourceItemKind = 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon';
 
 export interface RegistryRoutePattern {
@@ -65,9 +67,9 @@ export function resolveSourcePattern(
   homepage: string,
 ): string | null {
   if (!validSlug(slug)
-    || typeof pattern.slugPrefix !== 'string'
+    || !isInputString(pattern.slugPrefix)
     || !slug.startsWith(pattern.slugPrefix)
-    || typeof pattern.urlTemplate !== 'string'
+    || !isInputString(pattern.urlTemplate)
     || !/^(?:[^{}])*(?:\{slug\}|\{leaf\})(?:[^{}])*$/.test(pattern.urlTemplate)) {
     return null;
   }

@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-// Static GitHub Pages assets built from PostgreSQL. Neither output is a database.
 import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 import { join, resolve } from 'node:path';
@@ -30,10 +28,16 @@ export function projectRuntimePayloads({
   const routePatterns = Object.create(null);
 
   for (const r of patterns) {
-    (routePatterns[r.namespace] ??= []).push({
-      urlTemplate:r.template,slugPrefix:r.prefix,source:r.source,
-      ...(r.checked_at?{checkedAt:r.checked_at}:{})
-    });
+    (routePatterns[r.namespace] ??= []).push((() => {
+  const result = {};
+  result.urlTemplate = r.template;
+  result.slugPrefix = r.prefix;
+  result.source = r.source;
+
+  if (r.checked_at) Object.assign(result, {checkedAt:r.checked_at});
+
+  return result;
+})());
   }
 
   const detailItems = Object.fromEntries(details.map(({namespace,name,payload_json})=>[
