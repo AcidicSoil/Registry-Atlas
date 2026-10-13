@@ -1,0 +1,28 @@
+# Enforce the SAME pinned, blocking React Doctor gate as pnpm verify.
+# Avoid the optional floating react-doctor GitHub action (advisory by default).
+name: React Doctor
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-doctor-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  react-doctor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v4
+      - name: Install pinned dependencies
+        run: mise run install
+      - name: Block React Doctor warnings
+        run: mise run lint:react-doctor
