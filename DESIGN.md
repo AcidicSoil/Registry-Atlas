@@ -19,13 +19,13 @@
 
 ## Interaction and responsive behavior
 
-- Use semantic anchors for navigation, buttons for actions, structured headings and breadcrumb `nav`; preserve keyboard reachability and `:focus-visible` outlines defined in CSS. **These implementation choices do not establish WCAG conformance.**
+- Use semantic anchors for navigation, buttons for actions, structured headings and breadcrumb `nav`; preserve keyboard reachability and `:focus-visible` outlines defined in CSS. Provide a first-focus **Skip to main content** link to a focusable content-header target. **These implementation choices do not establish WCAG conformance.**
 - The mobile menu is `position: fixed` under 860px and must not consume document space when closed. The menu supports close button, backdrop click, Escape, and focus restoration. The desktop sidebar remains sticky.
 - Validate at mobile width around 390px and desktop width around 1440px, including no horizontal overflow, correct destination URLs, and usable focus/interaction states.
 - Preference motion handling is present in CSS; motion behavior and contrast still require rule-by-rule inspection and browser tests.
 
 ## Verification and unresolved decisions
 
-- Existing gates: `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, chained by `pnpm verify`. Browser interactions are independently verified in PPM `registry-atlas`.
+- Existing gates: `pnpm audit:dependencies` (rejects moderate or higher dependency advisories), `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, chained by `pnpm verify`. Browser interactions are independently verified in PPM `registry-atlas`.
 - Existing automated checks are not proof of every accessibility, security or UX standard. Scope, test evidence and exceptions for individual OrchestKit rules live in `.design/standards.json`. A standard with insufficient evidence stays unverified.
 - No general exception, third-party tooling replacement, or novel design language is approved by this document. Any required migration must be proposed and separately approved through the project workflow.

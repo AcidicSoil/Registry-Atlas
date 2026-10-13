@@ -1,21 +1,26 @@
 {
   "schemaVersion": "ppm-engineering-work-brief/v1",
-  "revision": 3,
-  "artifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
-  "objective": "Review the current PPM/OrchestKit project-wide standards baseline, record applicability for all rules, audit frontend conventions, and remediate verified defects without inventing compliance or approvals.",
+  "revision": 4,
+  "artifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543",
+  "objective": "Advance Registry Atlas toward full PPM/OrchestKit conformance: fix verified frontend defects, repair supply-chain vulnerabilities, reconcile true standard applicability, and preserve outstanding approvals/violations without false certification.",
   "projectContext": {
     "projectRoot": ".",
-    "baseCommit": "64d4753",
+    "baseCommit": "88fd01d",
     "currentOrchestKitCheckout": "~/tools/orchestkit",
     "upstreamFetch": "blocked-before-execution",
     "paoCorrelation": "incomplete_identity",
     "authoritativeStandards": ".design/standards.json",
-    "reviewEvidence": "Focused PPM browser acceptance: 1 mobile route passed. Full pnpm verify in progress."
+    "reviewEvidence": "pnpm verify passed after patch-level Vite/Vitest updates; 546 tests; PG schema integrity; PPM browser proof at 320, 390, 768, 1440px; 1 low Windows-only advisory remains; source audit tool incompatible with active managed browser.",
+    "standardsReviewed": 667,
+    "certificationBlockers": 285,
+    "applicationVerification": "pass",
+    "globalCertification": "blocked"
   },
   "taskKinds": [
-    "project-standards-audit",
-    "frontend-quality-remediation",
-    "toolchain-bootstrap"
+    "project-standards-conformance",
+    "frontend-accessibility-remediation",
+    "supply-chain-hardening",
+    "toolchain-evaluation"
   ],
   "capabilities": [
     {
@@ -87,6 +92,49 @@
       "evidenceRefs": [
         ".design/standards.json"
       ]
+    },
+    {
+      "id": "supply-chain-remediation",
+      "domain": "testing",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "security-patterns",
+        "quality-gates"
+      ],
+      "selectionReason": "Patch Vite/Vitest and transitive dependencies, add moderate+ audit to main verification path, preserve low advisory as open finding.",
+      "status": "completed",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        "package.json",
+        "pnpm-lock.yaml",
+        "mise.toml",
+        "tests/registry-explorer/frontendCompletion.test.ts"
+      ]
+    },
+    {
+      "id": "frontend-certification-review",
+      "domain": "frontend",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "pinchtab-profile-manager-frontend",
+        "accessibility",
+        "interaction-patterns"
+      ],
+      "selectionReason": "Run responsive and keyboard browser checks, remediate skip-link and identify unresolved native-dialog and scrolling findings.",
+      "status": "blocked",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        "index.html",
+        "public/styles/registry-explorer.css",
+        "src/registry-explorer/ui/registryCollectionView.ts",
+        ".design/standards.json"
+      ]
     }
   ],
   "domains": {
@@ -99,12 +147,14 @@
       "reason": "Entire catalog applicability completed; full compliance remains blocked."
     },
     "frontend": {
-      "status": "completed",
+      "status": "blocked",
       "briefRef": null,
       "evidenceRefs": [
-        "DESIGN.md",
-        "tests/registry-explorer/mobileSidebarFocus.test.ts"
-      ]
+        "index.html",
+        "public/styles/registry-explorer.css",
+        "tests/registry-explorer/frontendCompletion.test.ts"
+      ],
+      "reason": "Keyboard skip link and responsiveness verified; custom modal and six-route numbered pagination remain noncompliant."
     },
     "testing": {
       "status": "blocked",
@@ -112,7 +162,7 @@
       "evidenceRefs": [
         ".design/standards.json"
       ],
-      "reason": "Three quality tools are not installed/approved."
+      "reason": "Four proposed mandatory quality tools lack approval and fail-proof integration."
     }
   },
   "acceptance": [
@@ -127,22 +177,24 @@
     "Existing CI and quality gates, without unapproved tooling replacement."
   ],
   "risks": [
-    "Installed OrchestKit checkout could not be updated because remote fetch execution was blocked.",
-    "Wide rule applicability does not establish full rule-by-rule compliance.",
-    "Formal PAO correlation unavailable without unique initiating conversation evidence.",
-    "React dependencies are present even though the current first-party app shell does not mount React; React Doctor and React Grab require compatibility/utility review."
+    "Upstream OrchestKit fetch was previously blocked; checkout fingerprints are the available source authority.",
+    "Native HTML dialog requirement and remaining pagination are unremediated on owned frontend routes.",
+    "The low-severity esbuild Windows advisory remains open; no untested out-of-range override applied.",
+    "A separate PinchTab automated audit cannot connect to active profile due missing GET /instances support; direct browser verification remains possible.",
+    "Formal PAO correlation remains incomplete without verified initiating conversation identity."
   ],
   "verificationTargets": [
     "pnpm verify",
+    "pnpm audit:dependencies",
     "mise tasks validate --errors-only",
-    "project_standards.py check",
-    "browser-backed mobile drawer keydown wrapping and Escape/focus return",
-    "REGISTRY_ATLAS_ACCEPTANCE_ROUTE=components REGISTRY_ATLAS_ACCEPTANCE_VIEWPORT=mobile node scripts/check-browser-acceptance.mjs"
+    "project_standards.py check --project .",
+    "verify_conformance.py --brief .design/engineering-work-brief.json",
+    "PPM browser check at 320x568, 390x844, 768x1024, 1440x900 and keyboard skip link"
   ],
   "coverageGaps": [
     {
       "capability": "standards-closing-conformance",
-      "reason": "307 applicable standards remain unevaluated plus 4 pending tooling proposals; no global compliance assertion.",
+      "reason": "277 applicable rules unevaluated, 4 remediation-required, 4 tooling proposals pending approval; global certification blocked.",
       "blocking": true
     },
     {
@@ -154,6 +206,11 @@
       "capability": "upstream-rule-freshness",
       "reason": "Remote OrchestKit fetch was blocked by the execution layer; installed checkout fingerprints remain the available authority.",
       "blocking": false
+    },
+    {
+      "capability": "browser-audit",
+      "reason": "PinchTab audit CLI requires GET /instances missing from currently running PPM server; targeted browser actions and source tests verified instead.",
+      "blocking": false
     }
   ],
   "handoffs": [],
@@ -163,60 +220,95 @@
       "domain": "orchestration",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "pass",
-      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
       "evidenceRefs": [
         ".design/standards.json",
         "DESIGN.md"
       ],
       "findings": [],
-      "checkedBriefRevision": 3,
-      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+      "checkedBriefRevision": 4,
+      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
     },
     {
       "capability": "frontend-focus-remediation",
       "domain": "frontend",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "pass",
-      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
       "evidenceRefs": [
         "src/registry-explorer/ui/mobileSidebarFocus.ts",
         "tests/registry-explorer/mobileSidebarFocus.test.ts",
         "scripts/check-browser-acceptance.mjs"
       ],
       "findings": [],
-      "checkedBriefRevision": 3,
-      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+      "checkedBriefRevision": 4,
+      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
     },
     {
       "capability": "tooling-remediation",
       "domain": "testing",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "blocked",
-      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
       "evidenceRefs": [
         ".design/standards.json",
         "mise.toml"
       ],
       "findings": [
-        "Four tooling proposals are pending approval"
+        "Four mandatory tooling proposals are pending explicit approval."
       ],
-      "checkedBriefRevision": 3,
-      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+      "checkedBriefRevision": 4,
+      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
     },
     {
       "capability": "standards-closing-conformance",
       "domain": "orchestration",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "blocked",
-      "checkedArtifact": "registry-atlas-standards-review:9b010085a09d0aec1a65c472",
+      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
       "evidenceRefs": [
         ".design/standards.json"
       ],
       "findings": [
-        "311 outstanding project-wide compliance issues"
+        "285 project-wide compliance blockers"
       ],
-      "checkedBriefRevision": 3,
-      "checkedArtifactRevision": "registry-atlas-standards-review:9b010085a09d0aec1a65c472"
+      "checkedBriefRevision": 4,
+      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+    },
+    {
+      "capability": "supply-chain-remediation",
+      "domain": "testing",
+      "reviewAuthority": "Current pnpm dependency audit report and full pnpm verify command",
+      "status": "pass",
+      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "evidenceRefs": [
+        "package.json",
+        "pnpm-lock.yaml",
+        "tests/registry-explorer/frontendCompletion.test.ts"
+      ],
+      "findings": [
+        "A low-severity Windows esbuild advisory remains; global supply-chain rule is not compliant."
+      ],
+      "checkedBriefRevision": 4,
+      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+    },
+    {
+      "capability": "frontend-certification-review",
+      "domain": "frontend",
+      "reviewAuthority": "PPM managed browser viewport/focus checks and current OrchestKit UI criteria",
+      "status": "blocked",
+      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "evidenceRefs": [
+        "index.html",
+        "public/styles/registry-explorer.css",
+        ".design/standards.json"
+      ],
+      "findings": [
+        "Native mobile dialog requirement not met.",
+        "Six catalog views still render numbered pagination."
+      ],
+      "checkedBriefRevision": 4,
+      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
     }
   ]
 }
