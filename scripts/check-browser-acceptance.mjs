@@ -208,6 +208,26 @@ function mobileSidebarFocusState() {
     expanded: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'true',
     focusMovedInside: document.activeElement?.id === 'sidebarClose'
   })`]).stdout);
+  const focusLoop = JSON.parse(run(['eval', '--tab', tab, `(() => {
+    const drawer = document.querySelector('#appSidebar');
+    const focusable = [...drawer.querySelectorAll(
+      'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
+    )].filter(element => element.getClientRects().length > 0
+      && getComputedStyle(element).visibility !== 'hidden');
+    const first = focusable[0], last = focusable.at(-1);
+    if (!first || !last) return JSON.stringify({ backwardsWrapped: false, forwardsWrapped: false });
+    first.focus();
+    const backward = new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true });
+    window.dispatchEvent(backward);
+    const backwardsWrapped = backward.defaultPrevented && document.activeElement === last;
+    const forward = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    window.dispatchEvent(forward);
+    const forwardsWrapped = forward.defaultPrevented && document.activeElement === first;
+    return JSON.stringify({
+      backwardsWrapped, forwardsWrapped,
+      modalSemantics: drawer.getAttribute('role') === 'dialog' && drawer.getAttribute('aria-modal') === 'true',
+    });
+  })()`]).stdout);
   run(['eval', '--tab', tab, `document.querySelector('#sidebarClose')?.click(); 'clicked'`]);
   const closed = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
     closed: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'false',
@@ -219,6 +239,9 @@ function mobileSidebarFocusState() {
     available: true,
     opened: opened.open && opened.expanded,
     focusMovedInside: opened.focusMovedInside,
+    backwardsWrapped: focusLoop.backwardsWrapped,
+    forwardsWrapped: focusLoop.forwardsWrapped,
+    modalSemantics: focusLoop.modalSemantics,
     closed: closed.closed && closed.collapsed,
     focusReturned: closed.focusReturned,
   };
@@ -254,12 +277,14 @@ function capturePairedScreenshot(screenshot, expectedUrl) {
   throw new Error('Could not obtain a stable paired screenshot after 3 attempts');
 }
 
-for (const viewport of viewports) {
+const selectedRoute = process.env.REGISTRY_ATLAS_ACCEPTANCE_ROUTE;
+const selectedViewport = process.env.REGISTRY_ATLAS_ACCEPTANCE_VIEWPORT;
+for (const viewport of viewports.filter(item => !selectedViewport || item.name === selectedViewport)) {
   const viewportArgs = ['set', 'viewport', String(viewport.width), String(viewport.height), '--tab', tab];
   if (viewport.mobile) viewportArgs.push('--mobile');
   run(viewportArgs);
 
-  for (const route of routes) {
+  for (const route of routes.filter(item => !selectedRoute || item.name === selectedRoute)) {
     run(['errors', '--tab', tab, '--clear']);
     run(['console', '--tab', tab, '--clear']);
     const networkBefore = new Set(readNetwork5xx().map(networkEntryKey));
@@ -308,6 +333,9 @@ for (const viewport of viewports) {
       if (!sidebarFocus.available) routeFailures.push('mobile sidebar is unavailable');
       if (sidebarFocus.available && !sidebarFocus.opened) routeFailures.push('mobile sidebar did not open');
       if (sidebarFocus.available && !sidebarFocus.focusMovedInside) routeFailures.push('mobile sidebar did not move focus to Close');
+      if (sidebarFocus.available && !sidebarFocus.modalSemantics) routeFailures.push('mobile sidebar did not declare modal dialog semantics');
+      if (sidebarFocus.available && !sidebarFocus.backwardsWrapped) routeFailures.push('Shift+Tab escaped the first sidebar control');
+      if (sidebarFocus.available && !sidebarFocus.forwardsWrapped) routeFailures.push('Tab escaped the final sidebar control');
       if (sidebarFocus.available && !sidebarFocus.closed) routeFailures.push('mobile sidebar did not close');
       if (sidebarFocus.available && !sidebarFocus.focusReturned) routeFailures.push('mobile sidebar did not return focus to the menu button');
     }

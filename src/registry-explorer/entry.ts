@@ -1,5 +1,6 @@
 import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
+import { drawerWrapTarget } from './ui/mobileSidebarFocus';
 
 async function bootstrap() {
   try {
@@ -17,6 +18,9 @@ async function bootstrap() {
     const setSidebarOpen = (open: boolean, restoreFocus = false) => {
       if (!appSidebar || !sidebarToggle || !sidebarBackdrop) return;
       appSidebar.dataset.open = String(open);
+      appSidebar.setAttribute('role', open ? 'dialog' : 'complementary');
+      if (open) appSidebar.setAttribute('aria-modal', 'true');
+      else appSidebar.removeAttribute('aria-modal');
       sidebarToggle.setAttribute('aria-expanded', String(open));
       sidebarBackdrop.hidden = !open;
       if (open) sidebarClose?.focus();
@@ -33,8 +37,23 @@ async function bootstrap() {
       }
     });
     window.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && appSidebar?.dataset.open === 'true') {
+      if (appSidebar?.dataset.open !== 'true') return;
+      if (event.key === 'Escape') {
         setSidebarOpen(false, true);
+      } else if (event.key === 'Tab') {
+        const candidates = appSidebar.querySelectorAll<HTMLElement>(
+          'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), ' +
+          'textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
+        );
+        const focusable = Array.from(candidates).filter(element =>
+          element.getClientRects().length > 0
+          && getComputedStyle(element).visibility !== 'hidden',
+        );
+        const target = drawerWrapTarget(focusable, document.activeElement as HTMLElement | null, event.shiftKey);
+        if (target) {
+          event.preventDefault();
+          target.focus();
+        }
       }
     });
 
