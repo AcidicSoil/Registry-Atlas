@@ -14,7 +14,7 @@ import {
   type CatalogTaxonomy,
 } from '../core/catalogTaxonomy';
 import { configureCatalogKindOverrides } from '../core/catalogCollections';
-import { verifiedSourcePageUrl } from '../ui/sourcePageLink';
+import { verifiedSourcePageUrl } from '../core/sourcePageValidation';
 import {
   type MirrorValidationIssue,
   validateRegistryMirror,

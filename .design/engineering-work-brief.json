@@ -1,11 +1,11 @@
 {
   "schemaVersion": "ppm-engineering-work-brief/v1",
-  "revision": 4,
-  "artifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543",
-  "objective": "Advance Registry Atlas toward full PPM/OrchestKit conformance: fix verified frontend defects, repair supply-chain vulnerabilities, reconcile true standard applicability, and preserve outstanding approvals/violations without false certification.",
+  "revision": 5,
+  "artifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
+  "objective": "Continue mandatory Registry Atlas quality tooling integration following the fully pushed System One worktree merge; verify pass-fail-pass proofs and genuinely remediate remaining complexity without weakening limits.",
   "projectContext": {
     "projectRoot": ".",
-    "baseCommit": "88fd01d",
+    "baseCommit": "fff36ca",
     "currentOrchestKitCheckout": "~/tools/orchestkit",
     "upstreamFetch": "blocked-before-execution",
     "paoCorrelation": "incomplete_identity",
@@ -14,7 +14,9 @@
     "standardsReviewed": 667,
     "certificationBlockers": 285,
     "applicationVerification": "pass",
-    "globalCertification": "blocked"
+    "globalCertification": "blocked",
+    "systemOneMerge": "Pushed origin/main commit fff36ca; 549 tests passed, eight opt-in live tests skipped, production build passed.",
+    "qualityToolingStatus": "WIP local checkpoint. Dependency-cruiser and React Doctor clean-pass and deliberate-failure proofs complete. cccc pinned and intentionally fails with 44 owned functions above strict 15/10. Stackforge anti-slop setup apply blocked before execution."
   },
   "taskKinds": [
     "project-standards-conformance",
@@ -135,6 +137,80 @@
         "src/registry-explorer/ui/registryCollectionView.ts",
         ".design/standards.json"
       ]
+    },
+    {
+      "id": "dependency-cruiser-gate",
+      "domain": "testing",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "quality-gates"
+      ],
+      "selectionReason": "Root dependency-cruiser gate and pass-fail-pass architecture proof",
+      "status": "completed",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        "package.json",
+        ".dependency-cruiser.cjs",
+        ".design/quality-tooling-progress.md"
+      ]
+    },
+    {
+      "id": "react-doctor-gate",
+      "domain": "testing",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "quality-gates"
+      ],
+      "selectionReason": "Pinned, root-integrated frontend React Doctor and deliberate-warning proof",
+      "status": "completed",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        "package.json",
+        "pnpm-lock.yaml",
+        ".design/quality-tooling-progress.md"
+      ]
+    },
+    {
+      "id": "cccc-remediation",
+      "domain": "testing",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "quality-gates"
+      ],
+      "selectionReason": "Refactor 44 violating functions without raising thresholds",
+      "status": "blocked",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        "cccc.toml",
+        "mise.toml",
+        ".design/quality-tooling-progress.md"
+      ]
+    },
+    {
+      "id": "anti-slop-bootstrap",
+      "domain": "testing",
+      "ownerAgentArchetypes": [],
+      "ownerSkills": [
+        "quality-gates"
+      ],
+      "selectionReason": "Apply approved Stackforge setup when execution policy permits",
+      "status": "blocked",
+      "requiredAtClose": true,
+      "dependencies": [
+        "standards-applicability"
+      ],
+      "evidenceRefs": [
+        ".design/quality-tooling-progress.md"
+      ]
     }
   ],
   "domains": {
@@ -162,7 +238,7 @@
       "evidenceRefs": [
         ".design/standards.json"
       ],
-      "reason": "Four proposed mandatory quality tools lack approval and fail-proof integration."
+      "reason": "React Doctor and dependency-cruiser integrated and pass. cccc blocks root verify on 44 existing violations. Anti-slop setup blocked by execution safety."
     }
   },
   "acceptance": [
@@ -181,7 +257,9 @@
     "Native HTML dialog requirement and remaining pagination are unremediated on owned frontend routes.",
     "The low-severity esbuild Windows advisory remains open; no untested out-of-range override applied.",
     "A separate PinchTab automated audit cannot connect to active profile due missing GET /instances support; direct browser verification remains possible.",
-    "Formal PAO correlation remains incomplete without verified initiating conversation identity."
+    "Formal PAO correlation remains incomplete without verified initiating conversation identity.",
+    "Full pnpm verify intentionally returns nonzero until 44 existing complexity violations are refactored; do not merge this incomplete feature checkpoint into main.",
+    "Anti-slop setup apply was blocked by execution safety checks despite source availability and user approval."
   ],
   "verificationTargets": [
     "pnpm verify",
@@ -189,12 +267,16 @@
     "mise tasks validate --errors-only",
     "project_standards.py check --project .",
     "verify_conformance.py --brief .design/engineering-work-brief.json",
-    "PPM browser check at 320x568, 390x844, 768x1024, 1440x900 and keyboard skip link"
+    "PPM browser check at 320x568, 390x844, 768x1024, 1440x900 and keyboard skip link",
+    "pnpm lint:deps",
+    "pnpm lint:react-doctor",
+    "pnpm lint:complexity",
+    "pnpm exec vitest run tests/registry-explorer/qualityToolingContract.test.ts"
   ],
   "coverageGaps": [
     {
       "capability": "standards-closing-conformance",
-      "reason": "277 applicable rules unevaluated, 4 remediation-required, 4 tooling proposals pending approval; global certification blocked.",
+      "reason": "277 applicable standards unevaluated, 5 remediation-required, 2 formally pending approval, and 1 blocked; full compliance certification remains blocked.",
       "blocking": true
     },
     {
@@ -211,6 +293,16 @@
       "capability": "browser-audit",
       "reason": "PinchTab audit CLI requires GET /instances missing from currently running PPM server; targeted browser actions and source tests verified instead.",
       "blocking": false
+    },
+    {
+      "capability": "complexity-remediation",
+      "reason": "44 authored source functions exceed cognitive 15 or cyclomatic 10; cccc normal gate correctly fails.",
+      "blocking": true
+    },
+    {
+      "capability": "anti-slop-bootstrap",
+      "reason": "Stackforge setup apply/dry-run blocked by execution safety layer; no Oxlint root setup present.",
+      "blocking": true
     }
   ],
   "handoffs": [],
@@ -220,67 +312,68 @@
       "domain": "orchestration",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "pass",
-      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
       "evidenceRefs": [
         ".design/standards.json",
         "DESIGN.md"
       ],
       "findings": [],
-      "checkedBriefRevision": 4,
-      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
     },
     {
       "capability": "frontend-focus-remediation",
       "domain": "frontend",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "pass",
-      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
       "evidenceRefs": [
         "src/registry-explorer/ui/mobileSidebarFocus.ts",
         "tests/registry-explorer/mobileSidebarFocus.test.ts",
         "scripts/check-browser-acceptance.mjs"
       ],
       "findings": [],
-      "checkedBriefRevision": 4,
-      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
     },
     {
       "capability": "tooling-remediation",
       "domain": "testing",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "blocked",
-      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
       "evidenceRefs": [
         ".design/standards.json",
         "mise.toml"
       ],
       "findings": [
-        "Four mandatory tooling proposals are pending explicit approval."
+        "React Doctor and dependency-cruiser proofs pass; cccc and anti-slop remain blocking.",
+        "Formal PAO references not available; no fabricated approval receipts."
       ],
-      "checkedBriefRevision": 4,
-      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
     },
     {
       "capability": "standards-closing-conformance",
       "domain": "orchestration",
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "blocked",
-      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
       "evidenceRefs": [
         ".design/standards.json"
       ],
       "findings": [
-        "285 project-wide compliance blockers"
+        "285 current PPM standard blockers, including 5 remediation items and 1 setup blocker."
       ],
-      "checkedBriefRevision": 4,
-      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
     },
     {
       "capability": "supply-chain-remediation",
       "domain": "testing",
       "reviewAuthority": "Current pnpm dependency audit report and full pnpm verify command",
       "status": "pass",
-      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
       "evidenceRefs": [
         "package.json",
         "pnpm-lock.yaml",
@@ -289,15 +382,15 @@
       "findings": [
         "A low-severity Windows esbuild advisory remains; global supply-chain rule is not compliant."
       ],
-      "checkedBriefRevision": 4,
-      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
     },
     {
       "capability": "frontend-certification-review",
       "domain": "frontend",
       "reviewAuthority": "PPM managed browser viewport/focus checks and current OrchestKit UI criteria",
       "status": "blocked",
-      "checkedArtifact": "registry-atlas-certification:060ec23d0bde77487b73c543",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
       "evidenceRefs": [
         "index.html",
         "public/styles/registry-explorer.css",
@@ -307,8 +400,70 @@
         "Native mobile dialog requirement not met.",
         "Six catalog views still render numbered pagination."
       ],
-      "checkedBriefRevision": 4,
-      "checkedArtifactRevision": "registry-atlas-certification:060ec23d0bde77487b73c543"
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
+    },
+    {
+      "capability": "dependency-cruiser-gate",
+      "domain": "testing",
+      "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
+      "status": "pass",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
+      "evidenceRefs": [
+        "package.json",
+        ".dependency-cruiser.cjs",
+        ".design/quality-tooling-progress.md"
+      ],
+      "findings": [],
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
+    },
+    {
+      "capability": "react-doctor-gate",
+      "domain": "testing",
+      "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
+      "status": "pass",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
+      "evidenceRefs": [
+        "package.json",
+        "pnpm-lock.yaml",
+        ".design/quality-tooling-progress.md"
+      ],
+      "findings": [],
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
+    },
+    {
+      "capability": "cccc-remediation",
+      "domain": "testing",
+      "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
+      "status": "blocked",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
+      "evidenceRefs": [
+        "cccc.toml",
+        "mise.toml",
+        ".design/quality-tooling-progress.md"
+      ],
+      "findings": [
+        "Refactor 44 violating functions without raising thresholds"
+      ],
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
+    },
+    {
+      "capability": "anti-slop-bootstrap",
+      "domain": "testing",
+      "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
+      "status": "blocked",
+      "checkedArtifact": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3",
+      "evidenceRefs": [
+        ".design/quality-tooling-progress.md"
+      ],
+      "findings": [
+        "Apply approved Stackforge setup when execution policy permits"
+      ],
+      "checkedBriefRevision": 5,
+      "checkedArtifactRevision": "registry-atlas-quality-tooling:6d7aebfcbabcb277bff4edd3"
     }
   ]
 }

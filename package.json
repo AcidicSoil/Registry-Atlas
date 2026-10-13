@@ -15,7 +15,7 @@
     "validate:data": "node scripts/validate-registry-data.mjs",
     "check:product-contract": "node scripts/check-product-contract.mjs",
     "browser:acceptance": "node scripts/check-browser-acceptance.mjs",
-    "verify": "pnpm audit:dependencies && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build",
+    "verify": "pnpm audit:dependencies && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build",
     "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
     "preview": "vite preview",
     "all": "pnpm verify",
@@ -26,12 +26,17 @@
     "prepare:runtime-data": "node scripts/build-runtime-data.mjs",
     "pretest": "pnpm prepare:runtime-data",
     "migrate:postgres-schema": "node scripts/migrate-postgres-schema.mjs",
-    "audit:dependencies": "pnpm audit --audit-level moderate"
+    "audit:dependencies": "pnpm audit --audit-level moderate",
+    "lint:deps": "depcruise src/registry-explorer --config .dependency-cruiser.cjs",
+    "lint:react-doctor": "react-doctor src --blocking warning --no-telemetry",
+    "lint:complexity": "cccc src/registry-explorer"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
+    "dependency-cruiser": "18.6.0",
+    "react-doctor": "0.9.18",
     "react-grab": "^0.1.47",
     "typescript": "~5.9.3",
     "vite": "^7.3.5",

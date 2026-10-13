@@ -1,0 +1,3 @@
+# PPM-recommended complexity budget. Do not increase to grandfather violations.
+max-cognitive = 15
+max-cyclomatic = 10

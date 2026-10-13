@@ -4,3 +4,7 @@ packages:
 allowBuilds:
   es5-ext: false
   esbuild: true
+
+minimumReleaseAgeExclude:
+  - oxlint-plugin-react-doctor@0.9.18
+  - react-doctor@0.9.18

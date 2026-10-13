@@ -1,6 +1,7 @@
 [tools]
 node = "lts"
 pnpm = "latest"
+"github:moznion/cccc" = "1.8.0"
 
 [tasks.install]
 description = "Install dependencies from the pnpm lockfile"
@@ -103,3 +104,12 @@ run = "pnpm run pretest"
 [tasks."audit:dependencies"]
 description = "Reject moderate and higher dependency advisories"
 run = "pnpm audit:dependencies"
+
+[tasks."lint:deps"]
+run = "pnpm lint:deps"
+
+[tasks."lint:react-doctor"]
+run = "pnpm lint:react-doctor"
+
+[tasks."lint:complexity"]
+run = "pnpm lint:complexity"
