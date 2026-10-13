@@ -1,0 +1,473 @@
+{
+  "schema": "registry-atlas-cccc-remediation-queue/v1",
+  "source": "local cccc 1.8.0 scan",
+  "createdAt": "2026-10-12",
+  "limits": {
+    "cognitive": 15,
+    "cyclomatic": 10
+  },
+  "totalViolations": 44,
+  "totalFiles": 18,
+  "violations": [
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "handleClick",
+      "line": 973,
+      "cognitive": 88,
+      "cyclomatic": 68,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogRoutes.ts",
+      "function": "parseCatalogRoute",
+      "line": 54,
+      "cognitive": 50,
+      "cyclomatic": 49,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "syncUrlState",
+      "line": 1354,
+      "cognitive": 41,
+      "cyclomatic": 38,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/data/loadRegistries.ts",
+      "function": "readSourcePageManifest",
+      "line": 234,
+      "cognitive": 34,
+      "cyclomatic": 34,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "render",
+      "line": 391,
+      "cognitive": 11,
+      "cyclomatic": 33,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogQuery.ts",
+      "function": "buildCatalogFacetSummary",
+      "line": 173,
+      "cognitive": 48,
+      "cyclomatic": 32,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryCatalogIndex.ts",
+      "function": "parseCatalogItem",
+      "line": 206,
+      "cognitive": 31,
+      "cyclomatic": 32,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryMirror.ts",
+      "function": "<anonymous>",
+      "line": 419,
+      "cognitive": 27,
+      "cyclomatic": 29,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogQuery.ts",
+      "function": "queryCatalogComponents",
+      "line": 99,
+      "cognitive": 32,
+      "cyclomatic": 28,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogRoutes.ts",
+      "function": "catalogRoutePath",
+      "line": 151,
+      "cognitive": 34,
+      "cyclomatic": 28,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryCatalogIndex.ts",
+      "function": "parseCanonical",
+      "line": 274,
+      "cognitive": 41,
+      "cyclomatic": 23,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/data/loadRegistries.ts",
+      "function": "<anonymous>",
+      "line": 157,
+      "cognitive": 12,
+      "cyclomatic": 26,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "renderDetail",
+      "line": 762,
+      "cognitive": 39,
+      "cyclomatic": 22,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/installActions.ts",
+      "function": "getInstallActionState",
+      "line": 37,
+      "cognitive": 18,
+      "cyclomatic": 23,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "primaryViewForRoute",
+      "line": 1439,
+      "cognitive": 17,
+      "cyclomatic": 22,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "sidebarContextForRoute",
+      "line": 260,
+      "cognitive": 16,
+      "cyclomatic": 21,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "renderSidebar",
+      "line": 316,
+      "cognitive": 25,
+      "cyclomatic": 21,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogQuery.ts",
+      "function": "matchesFilters",
+      "line": 309,
+      "cognitive": 18,
+      "cyclomatic": 20,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryItemDetail.ts",
+      "function": "buildBaseDetail",
+      "line": 203,
+      "cognitive": 15,
+      "cyclomatic": 20,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "hydrateStateFromUrl",
+      "line": 1281,
+      "cognitive": 13,
+      "cyclomatic": 19,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "handleInstall",
+      "line": 1210,
+      "cognitive": 18,
+      "cyclomatic": 18,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "routeAssetKinds",
+      "line": 237,
+      "cognitive": 13,
+      "cyclomatic": 16,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogQuery.ts",
+      "function": "toCatalogComponent",
+      "line": 240,
+      "cognitive": 11,
+      "cyclomatic": 15,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/registryIdentity.ts",
+      "function": "verifiedRegistryIconUrl",
+      "line": 53,
+      "cognitive": 5,
+      "cyclomatic": 15,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogTaxonomy.ts",
+      "function": "visit",
+      "line": 53,
+      "cognitive": 17,
+      "cyclomatic": 14,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryItemDetail.ts",
+      "function": "resolveRegistryItemDetailFromCatalogIndex",
+      "line": 155,
+      "cognitive": 10,
+      "cyclomatic": 14,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/entry.ts",
+      "function": "bootstrap",
+      "line": 5,
+      "cognitive": 8,
+      "cyclomatic": 13,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogCollections.ts",
+      "function": "assetKindForCatalogItem",
+      "line": 42,
+      "cognitive": 12,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryCatalogIndex.ts",
+      "function": "parseThemePreview",
+      "line": 347,
+      "cognitive": 18,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryItemDetail.ts",
+      "function": "normalizeCssVars",
+      "line": 348,
+      "cognitive": 16,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cognitive",
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/sourceItemRoute.ts",
+      "function": "safeSourcePage",
+      "line": 77,
+      "cognitive": 5,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/sourceItemRoute.ts",
+      "function": "publicHttps",
+      "line": 96,
+      "cognitive": 1,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/data/loadRegistries.ts",
+      "function": "<anonymous>",
+      "line": 190,
+      "cognitive": 9,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/catalogComponentsView.ts",
+      "function": "renderCatalogBrowseControls",
+      "line": 90,
+      "cognitive": 9,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/catalogComponentsView.ts",
+      "function": "renderCatalogComponentCard",
+      "line": 152,
+      "cognitive": 10,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/mobileSidebarFocus.ts",
+      "function": "drawerWrapTarget",
+      "line": 5,
+      "cognitive": 12,
+      "cyclomatic": 12,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/catalogCompare.ts",
+      "function": "buildCatalogComparison",
+      "line": 51,
+      "cognitive": 13,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryCatalogIndex.ts",
+      "function": "parseRegistryCatalogIndex",
+      "line": 51,
+      "cognitive": 10,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryCatalogIndex.ts",
+      "function": "searchRegistryCatalog",
+      "line": 96,
+      "cognitive": 14,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/core/registryItemDetail.ts",
+      "function": "resolveRegistryItemDetailFromSummary",
+      "line": 101,
+      "cognitive": 7,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/catalogCollectionView.ts",
+      "function": "renderCatalogCollection",
+      "line": 16,
+      "cognitive": 12,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/renderSafety.ts",
+      "function": "renderRegistryHomepageLink",
+      "line": 41,
+      "cognitive": 4,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "routeForGlobalSearch",
+      "line": 878,
+      "cognitive": 1,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    },
+    {
+      "file": "src/registry-explorer/ui/shell.ts",
+      "function": "handleRegistryIconError",
+      "line": 926,
+      "cognitive": 7,
+      "cyclomatic": 11,
+      "exceeds": [
+        "cyclomatic"
+      ]
+    }
+  ]
+}
