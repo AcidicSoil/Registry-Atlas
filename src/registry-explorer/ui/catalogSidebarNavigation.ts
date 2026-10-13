@@ -21,8 +21,6 @@ export interface CatalogSidebarNavigationOptions {
   showAccess?: boolean;
   showRegistrySort?: boolean;
   assetCounts?: Readonly<Partial<Record<CatalogAssetKind, number>>>;
-  sourceLabel?: string;
-  sourceCount?: number;
 }
 
 const ASSET_KIND_LABELS: Readonly<Record<CatalogAssetKind, string>> = {
@@ -80,14 +78,6 @@ function rowButton(options: {
     <span class="sidebar-nav-row-label">${escapeHtml(options.label)}</span>
     ${options.count === undefined ? '' : `<span class="sidebar-nav-row-count">${options.count.toLocaleString()}</span>`}
   </button>`;
-}
-
-function sourceRow(label: string, count: number): string {
-  return `<div class="sidebar-nav-row sidebar-nav-row-active sidebar-source-row" aria-current="page">
-    <span class="sidebar-nav-row-icon sidebar-source-icon" aria-hidden="true">${sidebarIcon('source')}</span>
-    <span class="sidebar-nav-row-label">${escapeHtml(label)}</span>
-    <span class="sidebar-nav-row-count">${count.toLocaleString()}</span>
-  </div>`;
 }
 
 function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): string {
@@ -156,7 +146,7 @@ function renderAssetKinds(
   if (!rows.length) return '';
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-types-heading">
-    <p class="sidebar-nav-section-label" id="catalog-types-heading">Categories</p>
+    <p class="sidebar-nav-section-label" id="catalog-types-heading">Asset types</p>
     ${rows.map(kind => rowButton({
       attribute: 'data-asset-kind-value',
       value: kind,
@@ -203,14 +193,11 @@ export function renderCatalogSidebarNavigation(
   const showCanonical = options.showCanonical !== false;
   const showAccess = options.showAccess !== false;
   const showRegistrySort = options.showRegistrySort !== false;
-  const sourceLabel = options.sourceLabel ?? 'shadcn directory';
-  const sourceCount = options.sourceCount ?? facets.registries.length;
 
   return `<nav class="sidebar-browse-navigation" aria-label="Browse catalog">
-    ${sourceRow(sourceLabel, sourceCount)}
-    ${renderSort(state, showRegistrySort)}
     ${showCanonical ? renderCanonical(facets, state, taxonomy) : ''}
     ${renderAssetKinds(options.assetCounts, state)}
+    ${renderSort(state, showRegistrySort)}
     ${showAccess ? renderAccess(facets, state) : ''}
   </nav>`;
 }

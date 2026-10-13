@@ -3765,3 +3765,54 @@ main {
   .catalog-breadcrumb { flex: 0 0 100%; }
   .registry-asset-navigation { gap: 4px 12px; }
 }
+
+
+/* 21st.dev collection-rail composition: keep navigation in the left rail. */
+.app-sidebar > .primary-nav {
+  position: static;
+  display: flex;
+  height: auto;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 2px;
+  overflow: visible;
+  margin: 0 0 12px;
+  padding: 0 0 10px;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 42%, transparent);
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.app-sidebar > .primary-nav .nav-item {
+  display: flex;
+  width: 100%;
+  min-height: 32px;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 5px 10px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.app-sidebar .nav-section-label {
+  display: block;
+  padding: 12px 10px 6px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.app-sidebar > .primary-nav .nav-item-active,
+.app-sidebar > .primary-nav .nav-item[aria-current="page"] {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+@media (min-width: 861px) {
+  .content {
+    padding-top: 18px;
+  }
+}
