@@ -10,7 +10,7 @@ import type { CatalogAssetKind } from "../core/catalogCollections";
 import { catalogTaxonomyNodeMap, type CatalogTaxonomy } from "../core/catalogTaxonomy";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
 import { escapeHtml } from "./renderSafety";
-import { sourcePageNavigation } from './sourcePageLink';
+import { sourcePageNavigationForItem } from './sourcePageLink';
 import { renderRegistryIcon } from './registryIdentity';
 
 export interface CatalogDiscoveryBand {
@@ -154,7 +154,7 @@ export function renderCatalogComponentCard(
   routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon' = 'component',
 ): string {
   const homepage = component.registry?.url ?? '';
-  const original = sourcePageNavigation(homepage, {
+  const original = sourcePageNavigationForItem(component.namespace, component.slug, homepage, {
     docsUrl: component.docsUrl,
     sourcePage: component.sourcePage,
   });

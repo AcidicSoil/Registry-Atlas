@@ -1,6 +1,6 @@
 import type { CatalogCompareResult } from "../core/catalogCompare";
 import { escapeHtml } from "./renderSafety";
-import { sourcePageNavigation } from "./sourcePageLink";
+import { sourcePageNavigationForItem } from "./sourcePageLink";
 
 const REGISTRY_PICKER_LIMIT = 10;
 
@@ -98,7 +98,7 @@ function renderTable(result: CatalogCompareResult): string {
       <th scope="row"><code>${escapeHtml(row.slug)}</code></th>
       ${row.cells.map(cell => {
         if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
-        const original = sourcePageNavigation(cell.registryHomepage ?? '', {
+        const original = sourcePageNavigationForItem(cell.namespace, row.slug, cell.registryHomepage ?? '', {
           docsUrl: cell.docsUrl,
           sourcePage: cell.sourcePage,
         });

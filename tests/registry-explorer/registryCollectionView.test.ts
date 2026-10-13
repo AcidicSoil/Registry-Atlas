@@ -26,6 +26,20 @@ describe("renderRegistryCollection", () => {
     expect(header.innerHTML).not.toContain('>Visit registry homepage</a>');
   });
 
+  it('shows grounded library type links and no fabricated zero-count category', () => {
+    const header = root();
+    const body = root();
+    renderRegistryCollection(header, body, registry(), result(), {
+      assetCounts: { component: 12, block: 3, template: 0 },
+      selectedKind: 'block',
+    });
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory"');
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/blocks"');
+    expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/components"');
+    expect(body.innerHTML).not.toContain('href="/Registry-Atlas/@registrydirectory/templates"');
+    expect(body.innerHTML).toContain('aria-current="page">Blocks');
+  });
+
   it("routes a promoted block to its first-class block detail route", () => {
     const header = root();
     const body = root();

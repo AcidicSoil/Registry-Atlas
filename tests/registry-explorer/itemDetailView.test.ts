@@ -11,23 +11,51 @@ import {
 } from '../../src/registry-explorer/ui/itemDetailView';
 
 describe('renderItemDetailView', () => {
-  it('renders the reviewed original page, item JSON, and registry as separate source actions', () => {
+  it('renders first-class library and original component links without exposing item JSON', () => {
     const result = resolveRegistryItemDetailFromSummary(
       [registryFixture()],
       '@delta',
       'code-block',
     );
+    const header = root();
     const body = root();
 
-    renderItemDetailView(root(), body, result, new Set());
+    renderItemDetailView(header, body, result, new Set());
 
-    expect(body.innerHTML).toContain('href="https://delta.example/components/code-block"');
-    expect(body.innerHTML).toContain('View original component');
-    expect(body.innerHTML).toContain('href="https://delta.example/r/code-block.json"');
-    expect(body.innerHTML).toContain('View item JSON');
-    expect(body.innerHTML).toContain('href="https://delta.example/"');
-    expect(body.innerHTML).toContain('View registry');
+    expect(header.innerHTML).toContain('href="https://delta.example/components/code-block"');
+    expect(header.innerHTML).toContain('Original component');
+    expect(header.innerHTML).toContain('href="/Registry-Atlas/@delta"');
+    expect(header.innerHTML).toContain('data-profile-registry="@delta"');
+    expect(header.innerHTML).toContain('aria-label="Visit upstream registry homepage for @delta"');
+    expect(header.innerHTML).toContain('aria-label="Open upstream component page for code-block"');
+    expect(header.innerHTML).not.toContain('aria-label="View all components in @delta"');
+    expect(header.innerHTML).not.toContain('aria-label="Component permalink for code-block"');
+    expect(header.innerHTML).toContain('Registry homepage');
+    expect(header.innerHTML + body.innerHTML).not.toContain('Item JSON');
+    expect(header.innerHTML + body.innerHTML).not.toContain('href="https://delta.example/r/code-block.json"');
   });
+
+  it.each(['registry:ui', 'registry:block', 'registry:page', 'registry:theme', 'registry:style'])(
+    'uses external registry and original component destinations in the identity row for %s',
+    type => {
+      const registry = registryFixture();
+      const summary = registry.itemSummaries?.[0];
+      expect(summary).toBeDefined();
+      const fixture = {
+        ...registry,
+        itemSummaries: [{ ...summary!, type }],
+      };
+      const result = resolveRegistryItemDetailFromSummary([fixture], '@delta', 'code-block');
+      const header = root();
+      renderItemDetailView(header, root(), result, new Set());
+      const identity = header.innerHTML.match(/<p class="item-origin-line">([\s\S]*?)<\/p>/)?.[1];
+      expect(identity).toBeDefined();
+      expect(identity).toContain('href="https://delta.example/"');
+      expect(identity).toContain('href="https://delta.example/components/code-block"');
+      expect(identity).not.toContain('href="/Registry-Atlas/');
+      expect(identity).not.toContain('data-profile-registry');
+    },
+  );
 
   it('uses provisional sitemap source links when no reviewed item page is available', () => {
     const result = resolveRegistryItemDetailFromCatalogIndex(
@@ -46,12 +74,23 @@ describe('renderItemDetailView', () => {
       '@delta',
       'source-only',
     );
-    const body = root();
+    const header = root();
+    renderItemDetailView(header, root(), result, new Set());
+    expect(header.innerHTML).toContain('href="https://delta.example/docs/source-only"');
+    expect(header.innerHTML).toContain('View sitemap-listed page');
+  });
 
-    renderItemDetailView(root(), body, result, new Set());
-
-    expect(body.innerHTML).toContain('href="https://delta.example/docs/source-only"');
-    expect(body.innerHTML).toContain('View sitemap-listed page');
+  it('keeps missing original component pages as plain text, not self-referential internal links', () => {
+    const result = resolveRegistryItemDetailFromCatalogIndex([registryFixture()], {
+      meta: { registry_count: 1, item_count: 1 },
+      registries: { '@delta': [{ name: 'unknown-original', type: 'registry:ui' }] },
+    }, '@delta', 'unknown-original');
+    const header = root();
+    renderItemDetailView(header, root(), result, new Set());
+    expect(header.innerHTML).toContain('aria-label="Visit upstream registry homepage for @delta"');
+    expect(header.innerHTML).toContain('<span title="Upstream component page unavailable">unknown-original</span>');
+    expect(header.innerHTML).not.toContain('Component permalink for unknown-original');
+    expect(header.innerHTML).not.toContain('href="/Registry-Atlas/@delta/components/unknown-original"');
   });
 
   it('does not expose fake preview or local-build surfaces', () => {
@@ -116,7 +155,7 @@ describe('renderItemDetailView', () => {
     );
     expect(empty.innerHTML).not.toContain('<h2>Dependencies</h2>');
     expect(empty.innerHTML).not.toContain('<h2>Files</h2>');
-    expect(empty.innerHTML).toContain('<h2>Source</h2>');
+    expect(empty.innerHTML).toContain('<h3>Provenance</h3>');
   });
 
   it('escapes imported item text and file fields', () => {
@@ -192,7 +231,8 @@ describe('renderRelatedComponentLinks', () => {
 
     expect(html).toContain('href="/Registry-Atlas/@delta/blocks/app-shell"');
     expect(html).toContain('data-view-item-kind="block"');
-    expect(html).toContain('Item JSON');
+    expect(html).not.toContain('Item JSON');
+    expect(html).toContain('href="/Registry-Atlas/@delta"');
     expect(html).toContain('registry-icon-related');
   });
 

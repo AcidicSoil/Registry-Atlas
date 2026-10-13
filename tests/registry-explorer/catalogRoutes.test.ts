@@ -31,6 +31,14 @@ describe("catalogRoutes", () => {
     });
   });
 
+  it("round-trips per-library asset routes", () => {
+    const route: CatalogRoute = { kind: 'registry-assets', namespace: '@spaceui', assetKind: 'block' };
+    const path = catalogRoutePath(route, BASE);
+    expect(path).toBe('/Registry-Atlas/@spaceui/blocks');
+    expect(parseCatalogRoute(path, BASE)).toEqual(route);
+    expect(parseCatalogRoute('/Registry-Atlas/@spaceui/unsupported', BASE)).toBeNull();
+  });
+
   it("round-trips a registry profile route without encoding the @ namespace marker", () => {
     const route: CatalogRoute = { kind: "registry", namespace: "@registrydirectory" };
     const path = catalogRoutePath(route, BASE);

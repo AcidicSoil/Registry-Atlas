@@ -1,5 +1,6 @@
 import type { CatalogQueryResult } from "../core/catalogQuery";
-import { assetKindForCatalogItem } from "../core/catalogCollections";
+import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
+import { catalogRoutePath } from "../core/catalogRoutes";
 import type { RegistryCatalogCoverage } from "../core/registryDirectory";
 import type { Registry } from "../core/registry.schema";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
@@ -14,9 +15,16 @@ export function renderRegistryCollection(
     coverage?: RegistryCatalogCoverage;
     controls?: string;
     layout?: 'grid' | 'list';
+    assetCounts?: Partial<Record<CatalogAssetKind, number>>;
+    selectedKind?: CatalogAssetKind;
+    basePath?: string;
   } = {},
 ): void {
   const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
+  const basePath = options.basePath ?? '/Registry-Atlas/';
+  const rootRoute = catalogRoutePath({ kind: 'registry', namespace: registry.name }, basePath);
+  const assetLabels: Array<[CatalogAssetKind, string]> = [['component', 'Components'], ['block','Blocks'],
+    ['page','Pages'], ['template','Templates'], ['theme','Themes'], ['icon','Icons'], ['other','Other']];
   headerRoot.innerHTML = `
     <div class="registry-collection-heading">
       <button class="link-button" type="button" data-back-to-results>← Registries</button>
@@ -46,9 +54,20 @@ export function renderRegistryCollection(
         <div class="section-heading-row">
           <div>
             <h2>Items</h2>
-            <p>Items published by this registry.</p>
+            <p>Browse all items in this library or filter by type.</p>
           </div>
         </div>
+        <nav class="registry-asset-navigation" aria-label="Browse library by type">
+          <a class="registry-asset-link${!options.selectedKind ? ' is-active' : ''}"
+            href="${escapeHtml(rootRoute)}" data-catalog-route="${escapeHtml(rootRoute)}"
+            ${!options.selectedKind ? 'aria-current="page"' : ''}>All items</a>
+          ${assetLabels.filter(([kind]) => (options.assetCounts?.[kind] ?? 0) > 0).map(([kind, label]) => {
+            const path = catalogRoutePath({ kind: 'registry-assets', namespace: registry.name, assetKind: kind }, basePath);
+            return `<a class="registry-asset-link${options.selectedKind === kind ? ' is-active' : ''}"
+              href="${escapeHtml(path)}" data-catalog-route="${escapeHtml(path)}"
+              ${options.selectedKind === kind ? 'aria-current="page"' : ''}>${label} <span>${options.assetCounts?.[kind]?.toLocaleString()}</span></a>`;
+          }).join('')}
+        </nav>
 
         ${options.controls ?? ""}
         ${result.items.length

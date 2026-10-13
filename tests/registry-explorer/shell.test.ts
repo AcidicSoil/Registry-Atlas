@@ -420,9 +420,14 @@ describe('registry explorer shell interactions', () => {
       const harness = setup('', path);
       const header = harness.contentHeader.innerHTML;
       expect(header, path).toContain('href="https://delta.example/"');
-      expect(header, path).toContain('>Visit registry homepage</a>');
-      expect(header, path).toContain('target="_blank" rel="noreferrer"');
-      expect(header.match(/>Visit registry homepage<\/a>/g), path).toHaveLength(1);
+      if (header.includes('item-quick-links')) {
+        expect(header, path).toContain('>Registry homepage ↗</a>');
+        expect(header, path).toContain('aria-label="Visit upstream registry homepage for @delta"');
+        expect(header, path).not.toContain('Component permalink for ');
+      } else {
+        expect(header, path).toContain('>Visit registry homepage</a>');
+        expect(header, path).toContain('target="_blank" rel="noreferrer"');
+      }
     }
     for (const path of [
       '/Registry-Atlas/',

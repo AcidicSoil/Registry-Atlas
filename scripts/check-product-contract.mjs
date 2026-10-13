@@ -102,8 +102,17 @@ assert(componentViewSource.includes('sourcePageNavigation')
     && componentViewSource.includes('Source ↗')
     && !componentViewSource.includes('View item JSON'),
   'catalog cards must expose an internal item deeplink, keep upstream pages as separate Source links, and never expose raw item JSON actions');
-assert(detailViewSource.includes('View item JSON'),
-  'item details may expose direct item JSON links for inspection');
+assert(detailViewSource.includes('sourcePageNavigationForItem')
+    && detailViewSource.includes('verifiedRegistryHomepage')
+    && detailViewSource.includes('item-origin-line')
+    && !detailViewSource.includes('View item JSON')
+    && !detailViewSource.includes('Item JSON')
+    && !detailViewSource.includes('registryItemSourceUrl'),
+  'item detail identity links must open official registry and source pages, without exposing item JSON links');
+assert(read('src/registry-explorer/ui/catalogBreadcrumbs.ts').includes('aria-label="Breadcrumb"')
+    && routeSource.includes('"registry-assets"')
+    && shellSource.includes('renderCatalogBreadcrumbs'),
+  'registry and component routes must preserve parent-library breadcrumb navigation');
 assert(componentViewSource.includes('renderRegistryIcon')
     && detailViewSource.includes('renderRegistryIcon'),
   'catalog and item detail surfaces must render registry identity icons');

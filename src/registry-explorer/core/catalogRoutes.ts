@@ -11,6 +11,7 @@ export type CatalogRoute =
   | { kind: "authors" }
   | { kind: "registries" }
   | { kind: "registry"; namespace: string }
+  | { kind: "registry-assets"; namespace: string; assetKind: CatalogAssetKind }
   | { kind: "component"; namespace: string; slug: string }
   | { kind: "block"; namespace: string; slug: string }
   | { kind: "page"; namespace: string; slug: string }
@@ -38,6 +39,11 @@ export interface CatalogBrowseQueryState {
   access: Array<'free' | 'paid'>;
   reviewed: CatalogReviewedFilter;
 }
+
+export const REGISTRY_ASSET_SEGMENTS: Readonly<Record<string, CatalogAssetKind>> = {
+  components: 'component', blocks: 'block', pages: 'page',
+  templates: 'template', themes: 'theme', icons: 'icon', other: 'other',
+};
 
 const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry"]);
 const CATALOG_ASSET_KINDS = new Set<CatalogAssetKind>([
@@ -84,6 +90,10 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
   const namespace = decoded[0];
   if (!namespace || !isSafeNamespace(namespace)) return null;
   if (decoded.length === 1) return { kind: "registry", namespace };
+  if (decoded.length === 2) {
+    const assetKind = REGISTRY_ASSET_SEGMENTS[decoded[1] ?? ''];
+    if (assetKind) return { kind: 'registry-assets', namespace, assetKind };
+  }
 
   if (decoded.length >= 3 && ["components", "blocks", "pages", "templates", "themes"].includes(decoded[1])) {
     const slugSegments = decoded.slice(2);
@@ -165,6 +175,11 @@ export function catalogRoutePath(route: CatalogRoute, basePath = "/"): string {
   }
   const namespace = encodeNamespace(route.namespace);
   if (route.kind === "registry") return joinBase(base, namespace);
+  if (route.kind === 'registry-assets') {
+    const segment = Object.entries(REGISTRY_ASSET_SEGMENTS).find(([, kind]) => kind === route.assetKind)?.[0];
+    if (!segment) throw new Error(`Invalid registry asset kind: ${route.assetKind}`);
+    return joinBase(base, `${namespace}/${segment}`);
+  }
 
   const slugSegments = route.slug.split("/");
   if (slugSegments.length === 0 || !slugSegments.every(isSafeItemSegment)) {

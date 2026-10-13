@@ -5,8 +5,8 @@ import type { CatalogComponent } from '../core/catalogQuery.ts';
 import { assetKindForCatalogItem } from '../core/catalogCollections.ts';
 import { catalogRoutePath } from '../core/catalogRoutes.ts';
 import { escapeHtml } from './renderSafety.ts';
-import { sourcePageNavigation, verifiedRegistryHomepage } from './sourcePageLink.ts';
-import { registryItemSourceUrl, renderRegistryIcon } from './registryIdentity.ts';
+import { sourcePageNavigationForItem, verifiedRegistryHomepage } from './sourcePageLink.ts';
+import { renderRegistryIcon } from './registryIdentity.ts';
 
 export function renderItemDetailView(
   headerRoot: HTMLElement,
@@ -16,7 +16,7 @@ export function renderItemDetailView(
   relatedItems: readonly CatalogComponent[] = [],
 ): void {
   const detail = result.detail;
-  headerRoot.innerHTML = renderHeader(detail, result.status);
+  headerRoot.innerHTML = renderHeader(detail);
   bodyRoot.innerHTML = detail
     ? renderDetailBody(detail, result, queuedTokens, relatedItems)
     : renderMissingBody(result);
@@ -24,7 +24,6 @@ export function renderItemDetailView(
 
 function renderHeader(
   detail: RegistryItemDetail | null,
-  status: RegistryItemDetailResult['status'],
 ): string {
   if (!detail) {
     return `
@@ -36,20 +35,37 @@ function renderHeader(
     `;
   }
 
+  const libraryUrl = catalogRoutePath({ kind: 'registry', namespace: detail.namespace }, '/Registry-Atlas/');
+  const registryHomepage = verifiedRegistryHomepage(detail.registry.url);
+  const source = sourcePageNavigationForItem(detail.namespace, detail.slug, detail.registry.url, {
+    docsUrl: detail.componentPageUrl, sourcePage: detail.sourcePage,
+  });
   return `
     <div class="item-detail-header">
+      <nav class="item-quick-links" aria-label="Component links">
+        <a href="${escapeHtml(libraryUrl)}" data-profile-registry="${escapeHtml(detail.namespace)}">Browse library</a>
+        ${registryHomepage ? `<a href="${escapeHtml(registryHomepage)}" target="_blank" rel="noreferrer noopener">Registry homepage ↗</a>` : ''}
+        ${source ? `<a href="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
+          target="_blank" rel="noreferrer noopener">${escapeHtml(source.level === 'reviewed' ? 'Original component' : source.label)} ↗</a>` : ''}
+      </nav>
       <button class="link-button" type="button" data-back-from-item>← Back to results</button>
       <div class="item-detail-title-row">
         ${renderRegistryIcon(detail.registry, 'registry-icon registry-icon-detail')}
         <div>
           <h1>${escapeHtml(detail.title)}</h1>
-          <p>${escapeHtml(detail.namespace)} · ${escapeHtml(detail.slug)}</p>
+          <p class="item-origin-line">
+            ${registryHomepage
+              ? `<a href="${escapeHtml(registryHomepage)}" target="_blank" rel="noreferrer noopener"
+                 aria-label="Visit upstream registry homepage for ${escapeHtml(detail.namespace)}">${escapeHtml(detail.namespace)} ↗</a>`
+              : `<span title="Official registry homepage unavailable">${escapeHtml(detail.namespace)}</span>`}
+            <span aria-hidden="true">·</span>
+            ${source
+              ? `<a href="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
+                target="_blank" rel="noreferrer noopener"
+                aria-label="Open upstream component page for ${escapeHtml(detail.slug)}">${escapeHtml(detail.slug)} ↗</a>`
+              : `<span title="Upstream component page unavailable">${escapeHtml(detail.slug)}</span>`}
+          </p>
         </div>
-      </div>
-      <div class="profile-chips">
-        <span class="status-chip status-${escapeHtml(detail.catalogStatus)}">${escapeHtml(statusLabel(detail, status))}</span>
-        ${detail.type ? `<span>${escapeHtml(detail.type.replace(/^registry:/, ''))}</span>` : ''}
-        ${detail.category ? `<span>${escapeHtml(detail.category)}</span>` : ''}
       </div>
     </div>
   `;
@@ -79,14 +95,17 @@ function renderDetailBody(
           ${fallback}
         </div>
       </section>
-      <section class="item-detail-cards" aria-label="Item details">
-        ${renderListCard('Dependencies', detail.dependencies)}
-        ${renderListCard('Dev dependencies', detail.devDependencies)}
-        ${renderListCard('Registry dependencies', detail.registryDependencies)}
-        ${renderFilesCard(detail.files)}
-        ${renderSourceCard(detail)}
-      </section>
       ${renderRelatedComponentLinks(relatedItems, detail.namespace, detail.slug)}
+      <details class="item-technical-disclosure">
+        <summary>Technical details and provenance</summary>
+        <div class="item-technical-content">
+          ${renderListCard('Dependencies', detail.dependencies)}
+          ${renderListCard('Dev dependencies', detail.devDependencies)}
+          ${renderListCard('Registry dependencies', detail.registryDependencies)}
+          ${renderFilesCard(detail.files)}
+          ${renderSourceCard(detail)}
+        </div>
+      </details>
     </article>
   `;
 }
@@ -103,7 +122,8 @@ export function renderRelatedComponentLinks(
 
   return `<section class="item-related-section" aria-label="More from the same registry">
     <div class="item-related-heading">
-      <h2>More from ${escapeHtml(namespace)}</h2>
+      <h2>More from <a class="item-library-link" href="${escapeHtml(catalogRoutePath({ kind: 'registry', namespace }, '/Registry-Atlas/'))}"
+        data-profile-registry="${escapeHtml(namespace)}">${escapeHtml(namespace)}</a></h2>
       <span>${related.length} items</span>
     </div>
     <div class="item-related-list">
@@ -116,15 +136,10 @@ export function renderRelatedComponentLinks(
               { kind: routeKind, namespace: item.namespace, slug: item.slug },
               basePath,
             );
-        const original = sourcePageNavigation(item.registry.url, {
+        const original = sourcePageNavigationForItem(item.namespace, item.slug, item.registry.url, {
           docsUrl: item.docsUrl,
           sourcePage: item.sourcePage,
         });
-        const itemJson = registryItemSourceUrl(
-          item.registry,
-          item.slug,
-          item.reviewedSummary?.rawItemUrl,
-        );
         return `<div class="item-related-entry">
           <a class="item-related-link" href="${escapeHtml(routePath)}"
             data-view-item-registry="${escapeHtml(item.namespace)}"
@@ -139,8 +154,6 @@ export function renderRelatedComponentLinks(
             ${original ? `<a class="item-related-original" href="${escapeHtml(original.url)}"
               data-source-level="${escapeHtml(original.level)}"
               target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>` : ''}
-            ${itemJson && itemJson !== original?.url ? `<a class="item-related-original"
-              href="${escapeHtml(itemJson)}" target="_blank" rel="noreferrer noopener">Item JSON ↗</a>` : ''}
           </div>
         </div>`;
       }).join('')}
@@ -264,29 +277,9 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
 }
 
 function renderSourceCard(detail: RegistryItemDetail): string {
-  const homepage = verifiedRegistryHomepage(detail.registry.url);
-  const original = sourcePageNavigation(detail.registry.url, {
-    docsUrl: detail.componentPageUrl,
-    sourcePage: detail.sourcePage,
-  });
-  const itemJson = registryItemSourceUrl(
-    detail.registry,
-    detail.slug,
-    detail.summary.rawItemUrl,
-  );
   return `
-    <section class="item-detail-card">
-      <h2>Source</h2>
-      <div class="item-source-links">
-        ${original ? `<a href="${escapeHtml(original.url)}" data-source-level="${escapeHtml(original.level)}" target="_blank"
-          rel="noreferrer noopener">${escapeHtml(
-            original.level === 'reviewed' ? 'View original component' : original.label,
-          )} ↗</a>` : ''}
-        ${itemJson && itemJson !== original?.url ? `<a href="${escapeHtml(itemJson)}"
-          target="_blank" rel="noreferrer noopener">View item JSON ↗</a>` : ''}
-        ${homepage ? `<a href="${escapeHtml(homepage)}" target="_blank"
-          rel="noreferrer noopener">View registry ↗</a>` : ''}
-      </div>
+    <section class="item-technical-group">
+      <h3>Provenance</h3>
       <dl class="profile-facts">
         <div class="profile-fact"><dt>Source</dt><dd>${escapeHtml(detail.source)}</dd></div>
         <div class="profile-fact"><dt>Imported from</dt><dd>${escapeHtml(detail.provenance)}</dd></div>
@@ -306,20 +299,4 @@ function renderFallback(result: RegistryItemDetailResult): string {
     return '<div class="partial-data-note">Atlas could not read this registry item safely. Showing the saved summary.</div>';
   }
   return `<div class="partial-data-note">${escapeHtml(result.message ?? 'Item details unavailable.')}</div>`;
-}
-
-function statusLabel(
-  detail: RegistryItemDetail,
-  status: RegistryItemDetailResult['status'],
-): string {
-  if (status === 'loaded') return 'Full details';
-  if (
-    status === 'summary-only'
-    || status === 'fetch-error'
-    || status === 'invalid-json'
-    || status === 'invalid-schema'
-  ) {
-    return detail.catalogStatus === 'available' ? 'Summary' : detail.catalogStatus;
-  }
-  return 'Details unavailable';
 }
