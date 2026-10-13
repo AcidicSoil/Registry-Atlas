@@ -100,6 +100,7 @@ function registry(): Registry {
 
 function result(): CatalogQueryResult {
   const registryValue = registry();
+
   return {
     items: [{
       id: "@registrydirectory:tree/menu-navigation-tree",

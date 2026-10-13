@@ -53,6 +53,7 @@ describe("catalogRoutes", () => {
       namespace: "@agentcn",
       slug: "eve/browser-agent",
     };
+
     const path = catalogRoutePath(route, BASE);
 
     expect(path).toBe("/Registry-Atlas/@agentcn/components/eve/browser-agent");
@@ -65,6 +66,7 @@ describe("catalogRoutes", () => {
       namespace: "@demo",
       slug: "menus/context menu",
     };
+
     const path = catalogRoutePath(route, BASE);
 
     expect(path).toBe("/Registry-Atlas/@demo/components/menus/context%20menu");
@@ -144,6 +146,7 @@ describe('canonical catalog browse URL state', () => {
     const state = parseCatalogBrowseQuery(new URLSearchParams(
       'registry=%40alpha&asset=block&asset=component&canonical=application%2Fapp-shell&canonical=ai%2Fchat&access=free&access=paid',
     ));
+
     expect(state).toMatchObject({
       registryNames: ['@alpha'],
       assetKinds: ['block', 'component'],
@@ -159,6 +162,7 @@ describe('canonical catalog browse URL state', () => {
     const state = parseCatalogBrowseQuery(new URLSearchParams(
       'asset=widget&asset=block&canonical=application%2Fnot-real&canonical=application&access=unknown&access=free&canonical=%00bad',
     ));
+
     expect(state.assetKinds).toEqual(['block']);
     expect(state.canonicalIds).toEqual(['application']);
     expect(state.access).toEqual(['free']);

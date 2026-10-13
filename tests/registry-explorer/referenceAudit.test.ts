@@ -9,6 +9,7 @@ describe('21st.dev route evidence and replay', () => {
       .toBe('https://21st.dev/community/components/s/button');
     expect(normalized21stUrl('https://21st.dev/@user/components/accordion/', origin))
       .toBe('https://21st.dev/@user/components/accordion');
+
     for (const candidate of [
       'http://21st.dev/community/components', 'https://21st.dev.evil.test/x',
       '//evil.test/x', 'javascript:alert(1)', 'https://a:b@21st.dev/x',
@@ -18,12 +19,14 @@ describe('21st.dev route evidence and replay', () => {
 
   it('discovers observed links, deduplicates them, and resumes without replaying visited pages', () => {
     const queue = [origin, 'https://21st.dev/community/components'];
+
     const observations = {
       [origin]: { links: [
         { url: '/community/templates' }, { url: '/community/components' },
         { url: 'https://external.test/copy' }, { url: '/community/templates#top' },
       ] },
     };
+
     const plan = planReferenceRoutes({ queue, observations, maxRoutes: 2 });
     expect(plan.queue).toEqual([...queue, 'https://21st.dev/community/templates']);
     expect(plan.selected).toEqual([queue[1], 'https://21st.dev/community/templates']);
@@ -41,12 +44,14 @@ describe('21st.dev route evidence and replay', () => {
     const failed = 'https://21st.dev/design-bug-bot';
     const next = 'https://21st.dev/community/icons';
     const nowMs = Date.parse('2026-10-03T10:00:00.000Z');
+
     const input = {
       queue: [origin, failed, next],
       observations: { [origin]: { links: [] } },
       errors: { [failed]: { checkedAt: '2026-10-03T09:50:00.000Z', message: 'Unexpected final route' } },
       maxRoutes: 2, nowMs, retryDelayMs: 3_600_000,
     };
+
     const plan = planReferenceRoutes(input);
     expect(plan.selected).toEqual([next]);
     expect(plan.deferred).toEqual([failed]);
@@ -70,6 +75,7 @@ describe('21st.dev route evidence and replay', () => {
       links: [{ text: 'Buttons', href: '/community/components/s/button' },
         { text: 'Outside', href: 'https://outsider.test' }],
     };
+
     const result = summarizeReferencePage(raw, raw.url, '2026-10-03T12:00:00.000Z');
     expect(result.url).toBe(raw.url);
     expect(result.sidebarGroups[0].heading).toBe('Marketing Blocks');

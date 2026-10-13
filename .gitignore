@@ -295,3 +295,6 @@ graph-infra/bin/
 
 # cccc reusable content cache
 .cccc.cache
+
+# Stackforge setup observations contain developer-specific absolute checkout paths.
+.stackforge/

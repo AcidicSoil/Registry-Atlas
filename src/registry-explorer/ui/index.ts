@@ -1,9 +1,17 @@
 export * from './shell';
+
 export * from './catalogComponentsView';
+
 export * from './catalogCollectionView';
+
 export * from './catalogLandingView';
+
 export * from './registryDirectoryView';
+
 export * from './registryCollectionView';
+
 export * from './catalogCompareView';
+
 export * from './itemDetailView';
+
 export * from './renderSafety';

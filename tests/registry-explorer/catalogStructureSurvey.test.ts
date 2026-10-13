@@ -11,6 +11,7 @@ import { planCatalogStructureSurvey, surveyRegistryCatalogStructure, writeRegist
 const registry = (name: string, homepage = `https://${name.slice(1)}.example/`) => ({
   name, homepage,
 });
+
 const item = (name: string, type = 'registry:component') => ({ name, type });
 
 function page(url: string, values: Record<string, unknown> = {}) {
@@ -28,11 +29,13 @@ function page(url: string, values: Record<string, unknown> = {}) {
 describe('catalog structure survey planning', () => {
   it('addresses the full authoritative registry inventory and applies an exclusive cursor', () => {
     const raw = [registry('@a'), registry('@b'), registry('@c')];
+
     const catalog = { registries: {
       '@a': [item('button')],
       '@b': [item('hero', 'registry:block')],
       '@c': [],
     } };
+
     const evidence = {
       '@a': { routePatterns: [{ template: 'https://a.example/docs/{slug}', source: 'browser-observed', status: 'verified' }] },
       '@b': { routePatterns: [] },
@@ -62,6 +65,7 @@ describe('catalog structure survey planning', () => {
 describe('per-registry catalog structure survey', () => {
   it('follows an observed catalog link from the homepage within the surface budget', async () => {
     const visited: string[] = [];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('hero-01', 'registry:block'), item('hero-02', 'registry:block')],
@@ -69,6 +73,7 @@ describe('per-registry catalog structure survey', () => {
       maxSurfaces: 2,
       observePage: async (url: string) => {
         visited.push(url);
+
         if (url === 'https://sample.example/') {
           return page(url, {
             links: [
@@ -77,6 +82,7 @@ describe('per-registry catalog structure survey', () => {
             ],
           });
         }
+
         return page('https://sample.example/blocks', {
           ranges: [{
             text: 'Hero',
@@ -101,6 +107,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('does not follow a dynamically observed catalog surface for the wrong asset kind', async () => {
     const visited: string[] = [];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('hero-01', 'registry:block')],
@@ -108,6 +115,7 @@ describe('per-registry catalog structure survey', () => {
       maxSurfaces: 3,
       observePage: async (url: string) => {
         visited.push(url);
+
         return page(url, {
           links: [
             { text: 'Blocks', href: '/blocks' },
@@ -123,6 +131,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('assigns directly observed group membership without calling Clef', async () => {
     let decisions = 0;
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@kobra', 'https://kobra.example/'),
       items: [item('input-otp'), item('navigation-menu'), item('reasoning-steps'), item('file-diff')],
@@ -160,6 +169,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('never offers Clef groups discovered on unrelated surfaces', async () => {
     let decisions = 0;
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('button-01'), item('card-01'), item('card-02')],
@@ -173,6 +183,7 @@ describe('per-registry catalog structure survey', () => {
             links: [{ text: 'Button 01', href: '/components/button/button-01' }],
           });
         }
+
         return page(url, {
           ranges: [{
             text: 'All Card Blocks',
@@ -187,6 +198,7 @@ describe('per-registry catalog structure survey', () => {
       },
       chooseGroup: async () => {
         decisions++;
+
         return { choice: 'All Card Blocks', probability: 0.99, confidence: 0.99 };
       },
     });
@@ -202,6 +214,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('uses Clef only for an observed item whose membership is ambiguous', async () => {
     const calls: any[] = [];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('select')],
@@ -215,6 +228,7 @@ describe('per-registry catalog structure survey', () => {
       }),
       chooseGroup: async (request: any) => {
         calls.push(request);
+
         return {
           choice: 'Forms', probability: 0.8,
           probabilities: { Forms: 0.8, Navigation: 0.1, NONE: 0.1 },
@@ -265,6 +279,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('narrows a large same-surface group set before calling Clef', async () => {
     const calls: any[] = [];
+
     const categoryLinks = [
       ...Array.from({ length: 20 }, (_, index) => ({
         text: `Category ${index}`, href: `/components/category-${index}`,
@@ -273,6 +288,7 @@ describe('per-registry catalog structure survey', () => {
       { text: 'Button Group', href: '/components/button-group' },
       { text: 'Border Button', href: '/components/border-button' },
     ];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('border-button')],
@@ -282,6 +298,7 @@ describe('per-registry catalog structure survey', () => {
       }),
       chooseGroup: async (request: any) => {
         calls.push(request);
+
         return {
           choice: 'Button', probability: 0.7,
           probabilities: { Button: 0.7, 'Button Group': 0.2, NONE: 0.1 },
@@ -307,6 +324,7 @@ describe('per-registry catalog structure survey', () => {
       { text: 'Avatar', href: '/components/avatar' },
       { text: 'Border Button', href: '/components/border-button' },
     ];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('border-button')],
@@ -328,6 +346,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('keeps merged group evidence scoped to every source surface where it was observed', async () => {
     const calls: any[] = [];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('select')],
@@ -348,6 +367,7 @@ describe('per-registry catalog structure survey', () => {
         ] }),
       chooseGroup: async (request: any) => {
         calls.push(request);
+
         return {
           choice: 'Forms', probability: 0.8,
           probabilities: { Forms: 0.8, Navigation: 0.1, NONE: 0.1 }, confidence: 0.7,
@@ -362,18 +382,22 @@ describe('per-registry catalog structure survey', () => {
 
   it('leaves a large ambiguous group set unresolved when no evidence-based shortlist exists', async () => {
     let decisions = 0;
+
     const links = [
       ...Array.from({ length: 20 }, (_, index) => ({
         text: `Category ${index}`, href: `/components/category-${index}`,
       })),
       { text: 'Sparkline', href: '/components/sparkline' },
     ];
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@sample'),
       items: [item('sparkline')],
       surfaces: [{ url: 'https://sample.example/components', source: 'fixture' }],
       observePage: async () => page('https://sample.example/components', { links }),
-      chooseGroup: async () => { decisions++; return { choice: 'NONE' }; },
+      chooseGroup: async () => { decisions++;
+
+ return { choice: 'NONE' }; },
     });
 
     expect(decisions).toBe(0);
@@ -385,6 +409,7 @@ describe('per-registry catalog structure survey', () => {
 
   it('treats an observed flat catalog as group-less without calling Clef', async () => {
     let decisions = 0;
+
     const result = await surveyRegistryCatalogStructure({
       registry: registry('@flat'),
       items: [item('magic-card'), item('globe')],
@@ -395,7 +420,9 @@ describe('per-registry catalog structure survey', () => {
           { text: 'Globe', href: '/components/globe' },
         ],
       }),
-      chooseGroup: async () => { decisions++; return { choice: 'NONE' }; },
+      chooseGroup: async () => { decisions++;
+
+ return { choice: 'NONE' }; },
     });
 
     expect(decisions).toBe(0);
@@ -415,6 +442,7 @@ describe('per-registry catalog structure survey', () => {
         links: [{ text: 'Button', href: '/components/button' }],
       }),
     });
+
     expect(accepted.status).toBe('surveyed');
     expect(accepted.items[0]).toMatchObject({ id: 'button', assignment: 'flat' });
 
@@ -426,6 +454,7 @@ describe('per-registry catalog structure survey', () => {
         links: [{ text: 'Button', href: '/components/button' }],
       }),
     });
+
     expect(rejected.status).toBe('navigation-failed');
     expect(rejected.errors[0].message).toMatch(/official registry origin/i);
   });
@@ -479,12 +508,14 @@ describe('per-registry catalog structure survey', () => {
 describe('survey artifact writer', () => {
   it('writes one versioned registry artifact atomically', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'atlas-catalog-structure-'));
+
     try {
       const artifact = {
         schema: 'registry-atlas-catalog-structure-survey/v1',
         namespace: '@sample',
         summary: { items: 1 },
       };
+
       const path = await writeRegistrySurveyArtifact(dir, artifact);
       expect(path).toBe(join(dir, 'sample.json'));
       expect(JSON.parse(await readFile(path, 'utf8'))).toEqual(artifact);

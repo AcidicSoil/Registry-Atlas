@@ -54,6 +54,7 @@ export function dedupeInstallTokens(tokens: readonly string[]): string[] {
 
   tokens.forEach(token => {
     const normalized = token.trim();
+
     if (!isValidInstallToken(normalized) || seen.has(normalized)) return;
     seen.add(normalized);
     result.push(normalized);

@@ -8,6 +8,7 @@ describe('catalog breadcrumbs', () => {
     const markup = renderCatalogBreadcrumbs({
       kind: 'block', namespace: '@spaceui', slug: 'demo-p-aspect-ratio-08',
     }, BASE);
+
     expect(markup).toContain('aria-label="Breadcrumb"');
     expect(markup).toContain('href="/Registry-Atlas/registries"');
     expect(markup).toContain('href="/Registry-Atlas/@spaceui"');

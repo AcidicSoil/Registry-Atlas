@@ -8,9 +8,12 @@ import { sourcePageNavigation } from '../../src/registry-explorer/ui/sourcePageL
 
 const hirael: Registry = { name: '@hirael', url: 'https://hirael.com/',
   description: 'Hirael', itemSummaries: [] };
+
 const other: Registry = { name: '@other', url: 'https://other.example/',
   description: 'Other', itemSummaries: [] };
+
 const akor = { name: 'akor', type: 'registry:block', kind: 'template' as const };
+
 const catalog: RegistryCatalogIndex = {
   meta: { registry_count: 2, item_count: 2 },
   registries: { '@hirael': [akor], '@other': [akor] },
@@ -35,10 +38,13 @@ describe('source links across catalog surfaces', () => {
 
   it('never borrows a different item or registry source URL', () => {
     expect(resolveCatalogSourcePage(catalog, other, akor)).toBeUndefined();
+
     const spaceui: Registry = { name: '@spaceui', url: 'https://www.spaceui.one/',
       description: 'SpaceUI', itemSummaries: [] };
+
     const demo = { name: 'demo-p-aspect-ratio-03', type: 'registry:ui',
       categories: ['aspect-ratio'] };
+
     const index: RegistryCatalogIndex = { ...catalog, sourcePages: {
       ...catalog.sourcePages,
       '@spaceui/primitives-aspect-ratio': {
@@ -46,6 +52,7 @@ describe('source links across catalog surfaces', () => {
         level: 'sitemap', source: 'official-sitemap',
       },
     } };
+
     expect(resolveCatalogSourcePage(index, spaceui, demo)).toBeUndefined();
   });
 
@@ -54,6 +61,7 @@ describe('source links across catalog surfaces', () => {
       '@hirael': [{ urlTemplate: 'https://hirael.com/blocks/{slug}',
         slugPrefix: '', source: 'official-sitemap' }],
     } };
+
     expect(resolveCatalogSourcePage(index, hirael, akor)?.url)
       .toBe('https://hirael.com/templates/akor');
   });
@@ -62,11 +70,14 @@ describe('source links across catalog surfaces', () => {
     const components = queryCatalogComponents([hirael, other], catalog, {
       registryNames: ['@hirael'],
     }).items;
+
     const detail = resolveRegistryItemDetailFromCatalogIndex(
       [hirael, other], catalog, '@hirael', 'akor',
     ).detail;
+
     const cell = buildCatalogComparison([hirael, other], catalog,
       ['@hirael', '@other']).rows[0]?.cells[0];
+
     expect(components[0]?.sourcePage?.url).toBe('https://hirael.com/templates/akor');
     expect(detail?.sourcePage?.url).toBe(components[0]?.sourcePage?.url);
     expect(cell?.sourcePage?.url).toBe(components[0]?.sourcePage?.url);
@@ -79,22 +90,27 @@ describe('source links across catalog surfaces', () => {
       itemRoutes: { '@other/akor': {
         url: 'https://other.example/templates/akor', status: 'pattern-observed',
       } } };
+
     expect(resolveCatalogSourcePage(index, other, akor)).toMatchObject({
       url: 'https://other.example/templates/akor', level: 'pattern',
     });
+
     const invalid: RegistryCatalogIndex = { ...index, itemRoutes: {
       '@other/akor': { url: 'https://other.example/r/akor.json',
         status: 'pattern-observed' },
     } };
+
     expect(resolveCatalogSourcePage(invalid, other, akor)).toBeUndefined();
   });
 
   it('does not claim individual pages when only a source collection is known', () => {
     const seven: Registry = { name: '@7ovr', url: 'https://7ovr.com/',
       description: '7ovr', itemSummaries: [] };
+
     const index: RegistryCatalogIndex = { meta: { registry_count: 1, item_count: 1 },
       registries: { '@7ovr': [{ name: 'stats-4', type: 'registry:block',
         categories: ['stats'], rawItemUrl: 'https://7ovr.com/r/stats-4.json' }] } };
+
     expect(resolveCatalogSourcePage(index, seven, index.registries['@7ovr']![0]!))
       .toBeUndefined();
   });

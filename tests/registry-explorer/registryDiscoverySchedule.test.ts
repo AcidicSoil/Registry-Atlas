@@ -9,25 +9,30 @@ const raw = [
   {name: '@beta', homepage: 'https://beta.example/'},
   {name: '@empty', homepage: 'https://empty.example/'},
 ];
+
 const catalog = {registries: {
   '@alpha': [{name: 'button'}, {name: 'card'}, {name: 'button'}],
   '@beta': [{name: 'button'}],
   '@empty': [],
 }};
+
 const at = '2026-10-02T08:00:00.000Z';
 
 describe('bounded registry discovery scheduler', () => {
   it('counts all registries and distinct item states without equating documentation with built previews', () => {
     const fp = catalogFingerprint(raw[0], ['button', 'card']);
+
     const evidence = {
       '@alpha': new Map([
         ['@alpha/button', {status: 'page-observed', discoveryRevision: DISCOVERY_REVISION,
           catalogFingerprint: fp, checkedAt: at}],
       ]),
     };
+
     const result = planRegistryDiscovery(raw, catalog, {}, evidence, {
       asOf: at, allowedDomains: ['alpha.example'], maxRegistries: 1,
     });
+
     expect(result.summary).toMatchObject({
       rawRegistries: 3, distinctItems: 3, pageObserved: 1,
       notVisited: 2, blockedByProfile: 2,
@@ -41,11 +46,14 @@ describe('bounded registry discovery scheduler', () => {
 
   it('separates ambiguous, blocked, stale and unresolved records and resumes after the exact cursor', () => {
     const fp = catalogFingerprint(raw[0], ['button', 'card']);
+
     const first = planRegistryDiscovery(raw, catalog, {}, {}, {
       asOf: at, allowedDomains: ['alpha.example', 'beta.example'], maxRegistries: 1,
     });
+
     expect(first.batch.map((row: any) => row.namespace)).toEqual(['@alpha']);
     expect(first.nextCursor).toBe('@alpha');
+
     const result = planRegistryDiscovery(raw, catalog, {}, {
       '@alpha': new Map([
         ['@alpha/button', {status: 'unresolved', reason: 'multiple-observed-destinations',
@@ -59,6 +67,7 @@ describe('bounded registry discovery scheduler', () => {
         discoveryRevision: DISCOVERY_REVISION, checkedAt: at}]]),
     }, {asOf: at, allowedDomains: ['alpha.example', 'beta.example'],
       maxRegistries: 1, cursor: '@alpha'});
+
     expect(result.summary).toMatchObject({
       ambiguous: 1, stale: 1, blocked: 1, notVisited: 0,
     });
@@ -69,11 +78,15 @@ describe('bounded registry discovery scheduler', () => {
   it('runs bounded jobs serially and keeps failures visible without blocking later registries', async () => {
     const order: string[] = [];
     const jobs = [{namespace: '@alpha'}, {namespace: '@beta'}];
+
     const results = await executeDiscoveryBatch(jobs, async (job: any) => {
       order.push(job.namespace);
+
       if (job.namespace === '@alpha') throw new Error('Source unavailable');
+
       return {processedThisRun: 1};
     });
+
     expect(order).toEqual(['@alpha', '@beta']);
     expect(results).toEqual([
       {namespace: '@alpha', outcome: 'failed', reason: 'Source unavailable'},

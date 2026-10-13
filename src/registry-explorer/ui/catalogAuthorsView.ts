@@ -7,6 +7,7 @@ export function renderCatalogAuthors(
 ): void {
   const found = authors.filter(row => row.name.toLocaleLowerCase()
     .includes(search.trim().toLocaleLowerCase()));
+
   const pageCount = Math.max(1, Math.ceil(found.length / 24));
   const currentPage = Math.max(1, Math.min(page, pageCount));
   const visible = found.slice((currentPage - 1) * 24, currentPage * 24);

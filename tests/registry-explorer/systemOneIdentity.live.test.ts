@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { chooseRegistryIdentity } from '../../scripts/lib/systemone-identity.mjs';
 
 const endpoint = (globalThis as any).process?.env?.REGISTRY_ATLAS_SYSTEMONE_URL;
+
 const live = endpoint ? describe : describe.skip;
 
 live('Clef registry identity evaluation', () => {
@@ -82,6 +83,7 @@ live('Clef registry identity evaluation', () => {
         candidates: [...sample.candidates],
         timeoutMs: 30000,
       });
+
       expect(result.choice, JSON.stringify(result)).toBe(sample.expected);
     }, 35000);
   }

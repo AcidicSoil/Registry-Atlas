@@ -19,6 +19,7 @@ const index={
   ],
  },
 } satisfies RegistryCatalogIndex;
+
 describe('catalog author attribution',()=>{
  it('deduplicates exact catalog identities without inventing author popularity',()=>{
   expect(buildAuthorDirectory(index)).toEqual([

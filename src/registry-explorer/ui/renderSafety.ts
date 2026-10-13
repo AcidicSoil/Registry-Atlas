@@ -39,7 +39,9 @@ export function renderExternalLink(
 
 function isPublicHomepageHost(host: string): boolean {
   if (!host || host === 'localhost' || host.includes(':')) return false;
+
   if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+
   return !/^\d+(?:\.\d+){3}$/.test(host);
 }
 
@@ -50,8 +52,11 @@ export function renderRegistryHomepageLink(
   label = 'Visit registry homepage',
 ): string {
   const url = toSafeExternalUrl(homepage);
+
   if (!url || url.username || url.password) return '';
+
   if (!isPublicHomepageHost(url.hostname.toLowerCase().replace(/\.$/, ''))) return '';
+
   return renderExternalLink(url.href, label, className);
 }
 
@@ -61,6 +66,8 @@ export function renderSafeExternalImage(
   className = 'external-image',
 ): string {
   const safeUrl = toSafeExternalUrl(url);
+
   if (!safeUrl) return '';
+
   return `<img src="${escapeHtml(safeUrl.href)}" alt="${escapeHtml(alt)}" class="${escapeHtml(className)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`;
 }

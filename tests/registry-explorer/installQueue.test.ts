@@ -70,6 +70,7 @@ describe('install queue', () => {
 
 function queueInput(token: string) {
   const [, registry, item] = token.match(/^(@[^/]+)\/(.+)$/) ?? [];
+
   return {
     action: enabledAction(token),
     label: item ?? token,

@@ -74,6 +74,7 @@ describe('registry item detail', () => {
 
   it('falls back to the official raw route when the runtime detail database is unavailable', async () => {
     const seen: string[] = [];
+
     const result = await loadRegistryItemDetailFromCatalogIndex(
       [registryFixture()],
       {
@@ -85,9 +86,11 @@ describe('registry item detail', () => {
       async (input) => {
         const url = String(input);
         seen.push(url);
+
         if (url.includes('/data/registry-details.json.gz')) {
           return new Response('', { status: 404, statusText: 'Not Found' });
         }
+
         return jsonResponse({
           name: 'catalog-only',
           title: 'Official raw detail',
@@ -141,6 +144,7 @@ describe('registry item detail', () => {
 
   it('does not mislabel registry JSON as a component page when docs are absent', () => {
     const registry = registryFixture();
+
     const routeOnlyRegistry: Registry = {
       ...registry,
       itemSummaries: registry.itemSummaries?.map(item => item.slug === 'code-block'

@@ -61,11 +61,13 @@ describe('classification evaluation', () => {
       }),
       item('@c', 'mystery', 'component', null, []),
     ];
+
     const greedy = [
       item('@a', 'shell', 'block', 'application/dashboard', ['application', 'application/dashboard']),
       item('@b', 'chat', 'block', 'ai/chat', ['ai', 'ai/chat']),
       item('@c', 'mystery', 'component', 'content-media/card', ['content-media', 'content-media/card']),
     ];
+
     const report = evaluateCatalogClassifications({ gold, beamItems: beam, greedyItems: greedy });
 
     expect(report.metrics.exactPrimary).toEqual({ correct: 2, total: 3, accuracy: 2 / 3 });
@@ -85,6 +87,7 @@ describe('classification evaluation', () => {
       gold: validateGoldSet({ version: 'g', taxonomyVersion: 'v1', records: [gold.records[0]] }),
       beamItems: [item('@a', 'shell', 'block', 'application/dashboard', ['application', 'application/dashboard'])],
     });
+
     expect(report.metrics.exactPrimary.accuracy).toBe(0);
     expect(report.metrics.topFamily.accuracy).toBe(1);
     expect(report.metrics.ancestorPath.accuracy).toBe(0.5);
@@ -100,6 +103,7 @@ describe('promotion review gate', () => {
       evaluationReportFingerprint: `sha256:${'b'.repeat(64)}`,
       reviewer: 'catalog-reviewer', approvedAt: '2026-10-06T20:00:00.000Z',
     };
+
     expect(validatePromotionReview(valid)).toEqual(valid);
     expect(() => validatePromotionReview({ ...valid, approved: false })).toThrow(/approved/i);
     expect(() => validatePromotionReview({ ...valid, classificationRunFingerprint: 'sha256:wrong' })).toThrow(/fingerprint/i);

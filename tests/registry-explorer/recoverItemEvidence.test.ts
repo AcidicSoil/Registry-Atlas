@@ -16,6 +16,7 @@ describe('official item recovery', () => {
     const result = verifyOfficialItem(registry, 'button', source, item);
     expect(verifyOfficialItem(registry, 'button', 'https://other.example/r/button.json', item).status).toBe('unresolved');
     expect(result.status).toBe('verified');
+
     if (result.status !== 'verified') return;
     expect(result.summary.files).toEqual([{ path: 'button.tsx', type: 'registry:ui' }]);
     expect(JSON.stringify(result.summary)).not.toContain('private source');
@@ -24,10 +25,13 @@ describe('official item recovery', () => {
   });
   it('fails closed on an upstream redirect without following it', async () => {
     const requests: Array<{ url: string; redirect: RequestRedirect | undefined }> = [];
+
     const redirected = async (url: string, init: RequestInit) => {
       requests.push({ url, redirect: init.redirect });
+
       return new Response(null, { status: 308, headers: { location: 'https://www.shadcnblocks.com/' } });
     };
+
     const result = await recoverOfficialItem(registry, 'button', redirected);
     expect(result).toEqual({ status: 'unresolved', reason: 'http-or-redirect-308' });
     expect(requests).toEqual([{ url: source, redirect: 'manual' }]);

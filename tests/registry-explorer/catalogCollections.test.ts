@@ -56,6 +56,7 @@ describe("catalogCollections", () => {
       { name: "icon-button", type: "registry:component" },
       { name: "glyphs", type: "registry:component", categories: ["icons"] },
     ];
+
     expect(filterCatalogItemsByAssetKind(items, "page").map(item => item.name)).toEqual(["landing"]);
     expect(filterCatalogItemsByAssetKind(items, "template").map(item => item.name)).toEqual(["landing-template"]);
     expect(filterCatalogItemsByAssetKind(items, "icon").map(item => item.name)).toEqual(["glyphs"]);

@@ -21,6 +21,7 @@ describe('System One registry identity decisions', () => {
           NONE: expect.any(String),
         },
       });
+
       return new Response(JSON.stringify({
         model: 'clef',
         answers: {

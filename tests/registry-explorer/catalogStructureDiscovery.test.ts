@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { classifyObservedAccess, deriveCatalogSurfaceCandidates, discoverCatalogGroups, normalizeCatalogKind, resolveDirectMembership, shortlistObservedGroupLabels } from '../../scripts/lib/catalog-structure-discovery.mjs';
 
 type Link = { text: string; href: string; heading?: string };
+
 type Range = { text: string; tag?: string; ownerTag?: string; links: Link[] };
+
 type Container = { tag: string; heads: Array<{ text: string; tag?: string }>; links: Link[] };
 
 function observation({
@@ -301,6 +303,7 @@ describe('catalog structure discovery', () => {
       { label: 'Button Group' },
       { label: 'Avatar' },
     ];
+
     expect(shortlistObservedGroupLabels({ id: 'border-button', text: 'Border Button' }, groups)).toEqual([
       'Button', 'Button Group',
     ]);

@@ -38,6 +38,7 @@ describe("buildCatalogComparison", () => {
        sourcePages:{'@a/button':{url:'https://example.test/docs/a-button',level:'sitemap',source:'official-sitemap'},
                     '@b/button':{url:'https://example.test/docs/b-button',level:'reviewed',source:'reviewed-summary'}}},
       ['@a','@b']);
+
     expect(r.rows[0].cells[0].sourcePage?.url).toBe('https://example.test/docs/a-button');
     expect(r.rows[0].cells[1].sourcePage?.url).toBe('https://example.test/docs/b-button');
     expect(r.rows[0].cells[0].registryHomepage).toBe('https://example.test');
@@ -105,6 +106,7 @@ describe("buildCatalogComparison", () => {
       name: `item-${String(i).padStart(2, "0")}`,
       type: "registry:component",
     }));
+
     const catalog = index({ "@a": items, "@b": items.slice(20) });
     const registries = [registry("@a"), registry("@b")];
 

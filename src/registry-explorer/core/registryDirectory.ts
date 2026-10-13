@@ -3,6 +3,7 @@ import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollect
 import { catalogItemCountForRegistry } from "./catalogQuery";
 
 export type RegistryCatalogCoverage = "current" | "stale" | "empty" | "failed";
+
 export type RegistryDirectorySort = "name" | "item-count-desc";
 
 export interface RegistryDirectoryEntry {
@@ -32,6 +33,7 @@ export interface RegistryDirectoryResult {
 }
 
 const DEFAULT_PAGE_SIZE = 32;
+
 const MAX_PAGE_SIZE = 100;
 
 export function registryCatalogCoverage(
@@ -39,7 +41,9 @@ export function registryCatalogCoverage(
   index: RegistryCatalogIndex,
 ): RegistryCatalogCoverage {
   if (!Object.prototype.hasOwnProperty.call(index.registries, registry.name)) return "failed";
+
   if (registry.atlas?.comparisonEvidence === "stale-catalog") return "stale";
+
   return (index.registries[registry.name]?.length ?? 0) > 0 ? "current" : "empty";
 }
 
@@ -70,6 +74,7 @@ export function buildRegistryDirectory(
     .filter(entry => coverageFilter.size === 0 || coverageFilter.has(entry.coverage))
     .filter(entry => assetFilter.size === 0 || (index.registries[entry.registry.name] ?? []).some(item => {
       const kind = assetKindForCatalogItem(item);
+
       return kind !== null && assetFilter.has(kind);
     }))
     .sort((a, b) => compareEntries(a, b, sort));
@@ -80,6 +85,7 @@ export function buildRegistryDirectory(
     empty: 0,
     failed: 0,
   };
+
   entries.forEach(entry => {
     coverageCounts[entry.coverage] += 1;
   });
@@ -109,6 +115,7 @@ function compareEntries(
   if (sort === "item-count-desc") {
     return b.itemCount - a.itemCount || a.registry.name.localeCompare(b.registry.name);
   }
+
   return a.registry.name.localeCompare(b.registry.name);
 }
 

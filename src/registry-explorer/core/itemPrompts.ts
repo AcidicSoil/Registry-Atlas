@@ -2,6 +2,7 @@ import type { RegistryItemDetail } from './registryItemDetail.ts';
 
 export function buildInstallAgentPrompt(detail: RegistryItemDetail): string | null {
   if (detail.installAction.status !== 'enabled') return null;
+
   return [
     `Install ${detail.title} from ${detail.namespace} into this repository.`,
     '',
@@ -21,9 +22,11 @@ export function buildInstallAgentPrompt(detail: RegistryItemDetail): string | nu
 
 export function buildInspectionPrompt(detail: RegistryItemDetail): string | null {
   const metadata = groundedMetadata(detail);
+
   const inspectCommand = detail.installAction.status === 'enabled'
     ? `Inspect: ${detail.installAction.inspectCommand}`
     : null;
+
   if (!metadata.length && !inspectCommand) return null;
 
   return [
@@ -39,13 +42,20 @@ export function buildInspectionPrompt(detail: RegistryItemDetail): string | null
 
 function groundedMetadata(detail: RegistryItemDetail): string[] {
   const lines: string[] = [];
+
   if (detail.dependencies.length) lines.push(`Dependencies: ${detail.dependencies.join(', ')}`);
+
   if (detail.devDependencies.length) lines.push(`Dev dependencies: ${detail.devDependencies.join(', ')}`);
+
   if (detail.registryDependencies.length) {
     lines.push(`Registry dependencies: ${detail.registryDependencies.join(', ')}`);
   }
+
   if (detail.files.length) lines.push(`Files: ${detail.files.map(file => file.path).join(', ')}`);
+
   if (detail.warnings.length) lines.push(`Warnings: ${detail.warnings.join(', ')}`);
+
   if (detail.evidenceUrl) lines.push(`Evidence: ${detail.evidenceUrl}`);
+
   return lines;
 }

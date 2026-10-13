@@ -15,40 +15,50 @@ import { chooseObservedGroup } from './lib/systemone-group.mjs';
 import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 const DEFAULT_DECISION_URL = 'http://127.0.0.1:18080/v1/systemone';
+
 const VALUE_FLAGS = new Set([
   '--profile', '--server', '--tab', '--output-dir', '--cursor',
   '--max-registries', '--max-surfaces', '--max-links', '--delay-ms', '--decision-url',
 ]);
+
 const BOOLEAN_FLAGS = new Set(['--dry-run', '--no-clef', '--all-batches', '--resume']);
 
 function boundedInteger(raw, flag, fallback, min, max) {
   if (raw === undefined) return fallback;
   const value = Number(raw);
+
   if (!Number.isSafeInteger(value) || value < min || value > max)
     throw new Error('Invalid ' + flag);
+
   return value;
 }
 
 export function parseCatalogStructureSurveyArgs(argv) {
   const values = {};
   const booleans = new Set();
+
   for (let i = 0; i < argv.length; i++) {
     const flag = argv[i];
+
     if (BOOLEAN_FLAGS.has(flag)) {
       if (booleans.has(flag) || Object.hasOwn(values, flag))
         throw new Error('Repeated argument: ' + flag);
       booleans.add(flag);
       continue;
     }
+
     if (!VALUE_FLAGS.has(flag)) throw new Error('Unknown argument: ' + flag);
+
     if (Object.hasOwn(values, flag) || booleans.has(flag))
       throw new Error('Repeated argument: ' + flag);
     const value = argv[++i];
+
     if (!value || value.startsWith('--')) throw new Error('Missing value for ' + flag);
     values[flag] = value;
   }
 
   const dryRun = booleans.has('--dry-run');
+
   const result = {
     ...(values['--profile'] ? { profile: values['--profile'] } : {}),
     ...(values['--server'] ? { server: values['--server'] } : {}),
@@ -65,6 +75,7 @@ export function parseCatalogStructureSurveyArgs(argv) {
     ...(booleans.has('--all-batches') ? { allBatches: true } : {}),
     ...(booleans.has('--resume') ? { resume: true } : {}),
   };
+
   if (result.resume && !result.allBatches)
     throw new Error('--resume requires --all-batches');
 
@@ -76,13 +87,16 @@ export function parseCatalogStructureSurveyArgs(argv) {
         '--tab': 'tab',
         '--output-dir': 'outputDir',
       }[flag];
+
       if (!result[key]) throw new Error('Missing required ' + flag);
     }
+
     if (!isAbsolute(result.outputDir))
       throw new Error('Survey output directory must be absolute');
   } else if (result.outputDir && !isAbsolute(result.outputDir)) {
     throw new Error('Survey output directory must be absolute');
   }
+
   return result;
 }
 
@@ -92,51 +106,64 @@ function runJson(command, args, timeout = 30000) {
     timeout,
     maxBuffer: 32 * 1024 * 1024,
   });
+
   return JSON.parse(raw);
 }
 
 function validateManagedBrowser({ profile, server, tab }) {
   const status = runJson('pinchtab-profile-manager', [profile, 'status', '--json'], 15000);
+
   if (!status?.ok || !status.data?.instances?.some(instance =>
     instance.status === 'running' && instance.url === server))
     throw new Error('Managed source profile is not running on the supplied server');
   const tabs = runJson('pinchtab', ['--server', server, 'tab', '--json'], 15000);
+
   if (!tabs?.tabs?.some(candidate => candidate.id === tab))
     throw new Error('Supplied tab does not belong to the managed source server');
 }
 
 async function evidenceFromDatabase(db) {
   const evidence = {};
+
   const row = namespace => evidence[namespace] ??= {
     routePatterns: [], examples: [], itemRoutes: [], sitemapLinks: [],
   };
+
   for (const pattern of (await db.prepare(
     'SELECT id, namespace, template, prefix, source, status, checked_at, failure FROM route_patterns'
   ).all())) row(pattern.namespace).routePatterns.push(pattern);
+
   for (const example of (await db.prepare(
     'SELECT p.namespace, e.slug, e.url, p.status AS pattern_status FROM examples e JOIN route_patterns p ON p.id=e.pattern_id'
   ).all())) row(example.namespace).examples.push(example);
+
   for (const route of (await db.prepare(
     'SELECT i.namespace, i.slug, i.source_url, i.status, i.pattern_id, p.status AS pattern_status FROM item_routes i LEFT JOIN route_patterns p ON p.id=i.pattern_id'
   ).all())) row(route.namespace).itemRoutes.push(route);
+
   for (const link of (await db.prepare(
     'SELECT namespace, slug, url, observed_at FROM sitemap_links'
   ).all())) row(link.namespace).sitemapLinks.push(link);
+
   return evidence;
 }
 
 function mergeItems(catalogItems = [], curatedItems = []) {
   const byName = new Map();
+
   for (const item of catalogItems) {
     if (!item || typeof item.name !== 'string' || !item.name.trim()) continue;
+
     if (!byName.has(item.name))
       byName.set(item.name, { name: item.name, type: item.type ?? 'registry:item' });
   }
+
   for (const item of curatedItems) {
     if (!item || typeof item.slug !== 'string' || !item.slug.trim() || byName.has(item.slug))
       continue;
     byName.set(item.slug, { name: item.slug, type: item.type ?? 'registry:item' });
   }
+
   return [...byName.values()];
 }
 
@@ -201,11 +228,14 @@ JSON.stringify((() => {
 
 function createPinchTabObserver({ server, tab, delayMs }) {
   let lastNavigationAt = 0;
+
   return async function observePage(url, { maxLinks = 1500 } = {}) {
     const elapsed = Date.now() - lastNavigationAt;
+
     if (lastNavigationAt && elapsed < delayMs) await sleep(delayMs - elapsed);
     runJson('pinchtab', ['--server', server, 'nav', url, '--tab', tab, '--json'], 45000);
     lastNavigationAt = Date.now();
+
     try {
       runJson('pinchtab', [
         '--server', server, 'wait', '--tab', tab, '--load', 'networkidle',
@@ -214,19 +244,24 @@ function createPinchTabObserver({ server, tab, delayMs }) {
     } catch {
       // Some sites keep background connections alive. DOM observation below is authoritative.
     }
+
     const result = runJson('pinchtab', [
       '--server', server, 'eval', domExpression(maxLinks), '--tab', tab, '--json',
     ], 30000);
+
     if (typeof result?.result !== 'string')
       throw new Error('PinchTab DOM evaluation returned no result');
+
     return JSON.parse(result.result);
   };
 }
 
 async function loadInputs(cwd) {
   const database = openAtlasCoreDatabase(cwd, { readOnly: true });
+
   try {
     const state = await readAtlasState(database);
+
     return {
       raw: state.rawRegistries,
       catalog: state.catalog,
@@ -262,14 +297,18 @@ export async function runCatalogStructureSurveyBatches({
   stopAfterBatches = Number.POSITIVE_INFINITY,
 } = {}) {
   if (!isAbsolute(outputDir ?? '')) throw new Error('Batch output directory must be absolute');
+
   if (typeof executeBatch !== 'function') throw new Error('executeBatch is required');
+
   if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
 
   const batchesDir = join(outputDir, '_batches');
   await mkdir(batchesDir, { recursive: true });
 
   const previous = resume ? await readBatchState(outputDir) : null;
+
   if (resume && !previous) throw new Error('No resumable survey state found');
+
   if (previous?.status === 'completed') return previous;
 
   let cursor = resume ? previous.nextCursor ?? initialCursor : initialCursor;
@@ -287,16 +326,19 @@ export async function runCatalogStructureSurveyBatches({
     failed += batch.failed ?? 0;
     totalRegistries = batch.totalRegistries ?? totalRegistries;
     const nextCursor = batch.nextCursor ?? null;
+
     const batchRecord = {
       ...batch,
       batch: batches,
       cursor: cursor ?? null,
       nextCursor,
     };
+
     await writeJsonAtomic(join(batchesDir, 'batch-' + String(batches).padStart(4, '0') + '.json'), batchRecord);
 
     const status = nextCursor === null ? 'completed'
       : executed >= stopAfterBatches ? 'paused' : 'running';
+
     const state = {
       schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
       status,
@@ -308,6 +350,7 @@ export async function runCatalogStructureSurveyBatches({
       nextCursor,
       updatedAt: new Date().toISOString(),
     };
+
     await writeJsonAtomic(join(outputDir, '_state.json'), state);
     console.error('[catalog-structure] batch ' + batches
       + ': completed=' + (batch.completed ?? 0)
@@ -330,6 +373,7 @@ export async function main(argv, cwd = process.cwd()) {
       cursor: options.cursor,
       maxRegistries: options.maxRegistries,
     });
+
     return {
       schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
       dryRun: true,
@@ -352,11 +396,15 @@ export async function main(argv, cwd = process.cwd()) {
       cursor,
       maxRegistries: options.maxRegistries,
     });
+
     const results = [];
+
     for (const job of plan.batch) {
       const registry = raw.find(candidate => candidate.name === job.namespace);
+
       if (!registry) continue;
       const items = mergeItems(catalog.registries[job.namespace] ?? [], curated[job.namespace] ?? []);
+
       try {
         const artifact = await surveyRegistryCatalogStructure({
           registry,
@@ -373,6 +421,7 @@ export async function main(argv, cwd = process.cwd()) {
             : undefined,
           catalogFingerprint: catalogFingerprint(registry, items.map(item => item.name)),
         });
+
         const output = await writeRegistrySurveyArtifact(options.outputDir, artifact);
         results.push({
           namespace: job.namespace,

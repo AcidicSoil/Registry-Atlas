@@ -19,6 +19,7 @@ describe('PostgreSQL static runtime projection', () => {
       patterns:[{namespace:'@demo',template:'https://demo.test/{name}',prefix:'',source:'verified',checked_at:null}],
       details:[{namespace:'@demo',name:'button',payload_json:JSON.stringify({name:'button',dependencies:['react']})}],
     });
+
     expect(out.core.catalog.registries['@demo']).toEqual([{name:'button',type:'registry:ui'}]);
     expect(out.core.catalog.registries['@empty']).toEqual([]);
     expect(out.core.sourcePageManifest.pages['@demo/button'].url).toBe('https://demo.test/components/button');

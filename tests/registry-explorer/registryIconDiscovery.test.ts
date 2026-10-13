@@ -45,17 +45,20 @@ describe('registry icon discovery', () => {
   it('uses homepage links first, then a linked manifest, with no screenshot/browser requirement', async () => {
     const fetchImpl = vi.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
+
       if (url === 'https://example.com/') {
         return new Response(
           '<html><head><link rel="manifest" href="/site.webmanifest"></head></html>',
           { status: 200, headers: { 'content-type': 'text/html' } },
         );
       }
+
       if (url === 'https://example.com/site.webmanifest') {
         return new Response(JSON.stringify({
           icons: [{ src: '/brand-512.png', sizes: '512x512', type: 'image/png' }],
         }), { status: 200, headers: { 'content-type': 'application/manifest+json' } });
       }
+
       throw new Error(`unexpected fetch: ${url}`);
     });
 

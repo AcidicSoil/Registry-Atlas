@@ -11,6 +11,7 @@ export type ResolvedItemRoute =
     };
 
 const MAX_ITEM_NAME_LENGTH = 128;
+
 const ITEM_NAME_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
 
 export function resolveRegistryItemRoute(
@@ -24,6 +25,7 @@ export function resolveRegistryItemRoute(
   }
 
   const slug = itemSlug.trim();
+
   if (!isSafeRegistryItemName(slug)) {
     return unavailable('invalid-item-slug');
   }
@@ -42,6 +44,7 @@ export function resolveRegistryItemRoute(
 
   const encodedName = slug.split('/').map(segment => encodeURIComponent(segment)).join('/');
   const resolved = registryUrlTemplate.replace('{name}', encodedName);
+
   if (/\{[^}]+\}/.test(resolved)) {
     return unavailable('unresolved-template');
   }
@@ -67,6 +70,7 @@ function resolveAbsoluteRoute(value: string): ResolvedItemRoute {
   }
 
   let url: URL;
+
   try {
     url = new URL(value);
   } catch {

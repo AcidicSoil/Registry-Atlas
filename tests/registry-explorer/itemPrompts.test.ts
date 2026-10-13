@@ -43,6 +43,7 @@ describe('item prompts', () => {
   });
   it('returns null when inspection metadata has no grounding', () => {
     const detail = enabledDetail();
+
     const empty = {
       ...detail,
       dependencies: [],
@@ -53,6 +54,7 @@ describe('item prompts', () => {
       evidenceUrl: null,
       installAction: { status: 'disabled' as const, token: null, installCommand: null, inspectCommand: null, route: null, disabledReason: 'Unavailable' },
     };
+
     expect(buildInspectionPrompt(empty)).toBeNull();
   });
 });
@@ -76,7 +78,9 @@ function registry(withRoute: boolean): Registry {
       warnings: [],
     } : undefined,
   };
-}function summary(routeEligible: boolean): RegistryItemSummary {
+}
+
+function summary(routeEligible: boolean): RegistryItemSummary {
   return {
     name: 'Code Block',
     slug: 'code-block',

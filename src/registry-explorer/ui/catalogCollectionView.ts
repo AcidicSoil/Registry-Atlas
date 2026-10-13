@@ -15,6 +15,7 @@ export interface CatalogCollectionViewOptions {
 
 function renderCollectionPagination(result: CatalogQueryResult, title: string): string {
   if (result.pageCount <= 1) return '';
+
   return '<nav class="catalog-pagination" aria-label="' + escapeHtml(title) + ' pages">' +
     '<button type="button" data-discovery-page="' + (result.page - 1) + '" ' +
     (result.hasPreviousPage ? '' : 'disabled') + '>Previous</button>' +
@@ -46,6 +47,7 @@ export function renderCatalogCollection(
         <p>${escapeHtml(options.emptyBody ?? "Try a different search or filter.")}</p>
       </div>
     `;
+
     return;
   }
 

@@ -7,6 +7,7 @@ import {
 } from './lib/atlas-storage.mjs';
 
 const root = process.cwd();
+
 const failures = [];
 
 function read(relative) {
@@ -18,12 +19,19 @@ function assert(condition, message) {
 }
 
 const routeSource = read('src/registry-explorer/core/catalogRoutes.ts');
+
 const shellSource = read('src/registry-explorer/ui/shell.ts');
+
 const componentViewSource = read('src/registry-explorer/ui/catalogComponentsView.ts');
+
 const sidebarNavigationSource = read('src/registry-explorer/ui/catalogSidebarNavigation.ts');
+
 const registryDirectorySource = read('src/registry-explorer/ui/registryDirectoryView.ts');
+
 const detailViewSource = read('src/registry-explorer/ui/itemDetailView.ts');
+
 const promptSource = read('src/registry-explorer/core/itemPrompts.ts');
+
 const indexSource = read('index.html');
 
 for (const token of [
@@ -52,16 +60,20 @@ for (const token of [
 
 assert(shellSource.includes("kind: 'not-found'"),
   'shell must preserve unsupported paths as not-found state');
+
 assert(!/parseCatalogRoute[\s\S]{0,500}\?\?\s*\{\s*kind:\s*['"]components['"]/.test(shellSource),
   'unsupported canonical paths must not default to Components');
+
 assert(indexSource.includes('id="searchInput"')
     && indexSource.includes('placeholder="Search catalog"'),
   'Catalog browse must expose one persistent global search input');
+
 assert(sidebarNavigationSource.includes('data-catalog-sort-value')
     && sidebarNavigationSource.includes('data-catalog-canonical-value')
     && sidebarNavigationSource.includes('sidebar-nav-row')
     && sidebarNavigationSource.includes('sidebar-nav-section-label'),
   'Catalog browse controls must use the exemplar-style persistent navigation-row rail');
+
 assert(!sidebarNavigationSource.includes('data-catalog-registry-checkbox')
     && !sidebarNavigationSource.includes('data-sidebar-registry-search')
     && !sidebarNavigationSource.includes('data-sidebar-search-root')
@@ -69,15 +81,18 @@ assert(!sidebarNavigationSource.includes('data-catalog-registry-checkbox')
     && !sidebarNavigationSource.includes('type="radio"')
     && !sidebarNavigationSource.includes('<select'),
   'Catalog browse must not reintroduce checkbox/radio/select walls or a second sidebar search input');
+
 assert(registryDirectorySource.includes('data-registry-sort-value')
     && registryDirectorySource.includes('data-registry-asset-value')
     && registryDirectorySource.includes('sidebar-nav-row')
     && !registryDirectorySource.includes('type="checkbox"')
     && !registryDirectorySource.includes('type="radio"'),
   'Registry directory controls must use the same exemplar-style navigation-row rail');
+
 assert(componentViewSource.includes('catalog-results-context')
     && componentViewSource.includes('catalog-applied-filter'),
   'Results may expose applied-filter context without duplicating selection controls');
+
 assert(!componentViewSource.includes('data-catalog-search')
     && !componentViewSource.includes('data-catalog-registry-select')
     && !componentViewSource.includes('data-catalog-access-select')
@@ -86,22 +101,27 @@ assert(!componentViewSource.includes('data-catalog-search')
     && !componentViewSource.includes('catalog-filter-menu')
     && !componentViewSource.includes('<summary>Filters'),
   'Catalog result panes must not duplicate search/filter/sort controls or custom disclosures');
+
 assert(!componentViewSource.includes('Preview not published'),
   'browse cards must not expose preview placeholders');
+
 assert(!componentViewSource.includes('catalog-component-preview')
     && !componentViewSource.includes('data-component-demo')
     && !componentViewSource.includes('<iframe'),
   'browse cards must not render fake/local component preview surfaces');
+
 assert(!detailViewSource.includes('data-source-sandbox')
     && !detailViewSource.includes('data-local-build-preview')
     && !detailViewSource.includes('<iframe'),
   'item detail must not expose fake/local component previews');
+
 assert(componentViewSource.includes('sourcePageNavigation')
     && componentViewSource.includes('itemActionLabel')
     && componentViewSource.includes('catalog-component-deeplink')
     && componentViewSource.includes('Source ↗')
     && !componentViewSource.includes('View item JSON'),
   'catalog cards must expose an internal item deeplink, keep upstream pages as separate Source links, and never expose raw item JSON actions');
+
 assert(detailViewSource.includes('sourcePageNavigationForItem')
     && detailViewSource.includes('verifiedRegistryHomepage')
     && detailViewSource.includes('item-origin-line')
@@ -109,13 +129,16 @@ assert(detailViewSource.includes('sourcePageNavigationForItem')
     && !detailViewSource.includes('Item JSON')
     && !detailViewSource.includes('registryItemSourceUrl'),
   'item detail identity links must open official registry and source pages, without exposing item JSON links');
+
 assert(read('src/registry-explorer/ui/catalogBreadcrumbs.ts').includes('aria-label="Breadcrumb"')
     && routeSource.includes('"registry-assets"')
     && shellSource.includes('renderCatalogBreadcrumbs'),
   'registry and component routes must preserve parent-library breadcrumb navigation');
+
 assert(componentViewSource.includes('renderRegistryIcon')
     && detailViewSource.includes('renderRegistryIcon'),
   'catalog and item detail surfaces must render registry identity icons');
+
 assert(promptSource.includes('Do the work:')
     && !promptSource.includes('possible adoption')
     && !promptSource.includes('Security, provenance, maintenance'),
@@ -175,19 +198,26 @@ for (const file of retiredFiles) {
 }
 
 const sourceFiles = [];
+
 function walk(relative) {
   const absolute = path.join(root, relative);
+
   if (!existsSync(absolute)) return;
+
   for (const entry of readdirSync(absolute, { withFileTypes: true })) {
     const child = path.join(relative, entry.name);
+
     if (entry.isDirectory()) walk(child);
     else if (/\.(?:ts|mjs)$/.test(entry.name)) sourceFiles.push(child);
   }
 }
+
 walk('src');
+
 walk('scripts');
 
 const retiredModulePattern = /(?:componentTaxonomy|componentEvidence|componentFilters|componentPeek|catalogFacets|matrixColumns|registryBrowse|registryProfile|componentPreview|liveRegistryPreview|sourcePreviewStatus|visualReference|\/discovery|\/grouping|\/urlState)(?:['".]|$)/;
+
 for (const file of sourceFiles) {
   if (file === 'scripts/check-product-contract.mjs') continue;
   const text = read(file);
@@ -196,6 +226,7 @@ for (const file of sourceFiles) {
 }
 
 const schema = read('src/registry-explorer/core/registry.schema.ts');
+
 for (const token of [
   'component_tags',
   'primary_focus',
@@ -209,6 +240,7 @@ for (const token of [
 }
 
 const core = openAtlasCoreDatabase(root, { readOnly: true });
+
 let enrichmentCoverage = {
   total: 0,
   description: 0,
@@ -231,6 +263,7 @@ try {
       runtimeCatalog: state.catalog,
       accessRules: state.accessRules,
     });
+
     for (const error of canonicalContract.errors) {
       failures.push(`canonical runtime contract: ${error}`);
     }
@@ -239,31 +272,40 @@ try {
   const allowedThemeSwatches = new Set([
     'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
   ]);
+
   for (const [namespace, items] of Object.entries(state.catalog?.registries ?? {})) {
     assert(Array.isArray(items), `catalog namespace must be an array: ${namespace}`);
+
     if (!Array.isArray(items)) continue;
+
     for (const item of items) {
       enrichmentCoverage.total += 1;
+
       if (typeof item.description === 'string') {
         enrichmentCoverage.description += 1;
         assert(Array.from(item.description).length <= 280,
           `compact description exceeds 280 code points: ${namespace}/${item.name}`);
       }
+
       if (typeof item.author === 'string') {
         enrichmentCoverage.author += 1;
         assert(Array.from(item.author).length <= 120,
           `compact author exceeds 120 code points: ${namespace}/${item.name}`);
       }
+
       if (item.fileCount !== undefined) {
         enrichmentCoverage.fileCount += 1;
         assert(Number.isInteger(item.fileCount) && item.fileCount >= 0,
           `compact fileCount is invalid: ${namespace}/${item.name}`);
       }
+
       if (item.themePreview !== undefined) {
         enrichmentCoverage.themePreview += 1;
+
         for (const mode of Object.keys(item.themePreview)) {
           assert(mode === 'light' || mode === 'dark',
             `compact themePreview mode is unsupported: ${namespace}/${item.name}/${mode}`);
+
           for (const swatch of Object.keys(item.themePreview[mode] ?? {})) {
             assert(allowedThemeSwatches.has(swatch),
               `compact themePreview swatch is unsupported: ${namespace}/${item.name}/${swatch}`);
@@ -279,6 +321,7 @@ try {
     evidence: state.catalogEvidence,
     catalog: state.catalog,
   });
+
   for (const key of [
     '"component_tags"',
     '"primary_focus"',
@@ -298,17 +341,21 @@ try {
       )::integer AS source_code_items
     FROM atlas_item_details
   `).get();
+
   assert(detailSummary.n > 0, 'Atlas detail database is empty');
+
   if (detailSummary.source_code_items > 0) {
     const examples = await core.prepare(`
       SELECT namespace,name FROM atlas_item_details
       WHERE jsonb_exists(payload_json::jsonb, 'content')
       ORDER BY namespace,name LIMIT 20
     `).all();
+
     for (const row of examples) {
       assert(false,
         `detail database must not persist source-code content: ${row.namespace}/${row.name}`);
     }
+
     if (detailSummary.source_code_items > examples.length) {
       assert(false,
         `${detailSummary.source_code_items - examples.length} additional detail records contain source-code content`);
@@ -318,9 +365,11 @@ try {
   const catalogNamespaceCount = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_namespaces',
   ).get()).n);
+
   const catalogItemCount = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_items',
   ).get()).n);
+
   assert(catalogNamespaceCount === state.catalog.meta.registry_count,
     'catalog namespace metadata must match persisted database namespaces');
   assert(catalogItemCount === state.catalog.meta.item_count,
@@ -331,11 +380,13 @@ try {
 
 if (failures.length > 0) {
   console.error('Registry Atlas product contract failed:');
+
   for (const failure of failures) console.error(`- ${failure}`);
   process.exit(1);
 }
 
 console.log('Registry Atlas product contract passed.');
+
 console.log(
   `Catalog enrichment coverage: ${enrichmentCoverage.description}/${enrichmentCoverage.total} descriptions, `
   + `${enrichmentCoverage.author}/${enrichmentCoverage.total} authors, `

@@ -50,19 +50,24 @@ const DEFAULT_PAGE_SIZE = 40;
 
 function mergeRegistryItems(index: RegistryCatalogIndex, namespaces: readonly string[]): Map<string, UnionRecord> {
   const union = new Map<string, UnionRecord>();
+
   for (const namespace of namespaces) {
     for (const item of index.registries[namespace] ?? []) {
       const identity = registryCatalogItemIdentity(item.name);
+
       const record = union.get(identity) ?? {
         slug: item.name,
         displayName: item.title ?? item.name,
         itemsByNamespace: new Map<string, RegistryCatalogItem>(),
       };
+
       record.itemsByNamespace.set(namespace, item);
+
       if (!record.displayName && item.title) record.displayName = item.title;
       union.set(identity, record);
     }
   }
+
   return union;
 }
 
@@ -75,6 +80,7 @@ function buildComparisonCell(
 ): CatalogCompareCell {
   if (!item) return { namespace, present: false };
   const routeKind = comparisonRouteKind(item, namespace);
+
   return {
     namespace,
     present: true,
@@ -115,16 +121,21 @@ export function buildCatalogComparison(
 ): CatalogCompareResult {
   const available = new Set(registries.map(registry => registry.name));
   const registryByName = new Map(registries.map(registry => [registry.name, registry]));
+
   const selectedRegistryNames = [...new Set(registryNames)]
     .filter(name => available.has(name))
     .slice(0, 4);
+
   const union = mergeRegistryItems(index, selectedRegistryNames);
 
   const unionCount = union.size;
+
   const intersectionCount = selectedRegistryNames.length === 0
     ? 0
     : [...union.values()].filter(record => record.itemsByNamespace.size === selectedRegistryNames.length).length;
+
   const query = normalize(options.search ?? "");
+
   const matching = [...union.entries()]
     .filter(([, record]) => !query || normalize(record.slug).includes(query) || normalize(record.displayName).includes(query))
     .sort((a, b) => a[1].slug.localeCompare(b[1].slug));
@@ -134,6 +145,7 @@ export function buildCatalogComparison(
   const total = matching.length;
   const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
   const start = (page - 1) * pageSize;
+
   const rows = matching.slice(start, start + pageSize).map(([identity, record]) =>
     buildComparisonRow(identity, record, selectedRegistryNames, registryByName, index,
       options.basePath ?? '/Registry-Atlas/'));
@@ -156,6 +168,7 @@ function comparisonRouteKind(
   item: RegistryCatalogItem, namespace: string,
 ): 'component' | 'block' | 'page' | 'template' | 'theme' {
   const kind = assetKindForCatalogItem(item, namespace);
+
   return kind === 'block' || kind === 'page' || kind === 'template' || kind === 'theme'
     ? kind : 'component';
 }

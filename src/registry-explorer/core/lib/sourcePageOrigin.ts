@@ -23,6 +23,8 @@ export function hasAcceptableSourceOrigin(page: URL, homepage: URL): boolean {
 
 export function isDisplayableSourcePath(page: URL, homepage: URL): boolean {
   const path = trimTrailingSlashes(page.pathname);
+
   if (path.toLowerCase().endsWith('.json')) return false;
+
   return path !== trimTrailingSlashes(homepage.pathname) || !!page.search;
 }

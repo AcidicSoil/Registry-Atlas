@@ -10,6 +10,7 @@ import {
 const DEFAULT_SOURCE_PATH = 'registry-altas-improvement-phase/gpt-agent-outputs/registry-catalog.normalized.json';
 
 const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 async function readJson(filePath) {
@@ -19,7 +20,9 @@ async function readJson(filePath) {
 export function normalizeNamespace(value) {
   if (typeof value !== 'string') return '';
   const trimmed = value.trim().toLowerCase();
+
   if (!trimmed) return '';
+
   return trimmed.startsWith('@') ? trimmed : `@${trimmed}`;
 }
 
@@ -29,11 +32,13 @@ function normalizeOptionalString(value) {
 
 function normalizeStringArray(value) {
   if (!Array.isArray(value)) return [];
+
   return value.filter(item => typeof item === 'string').map(item => item.trim()).filter(Boolean);
 }
 
 function normalizeFiles(value) {
   if (!Array.isArray(value)) return [];
+
   return value
     .filter(file => file && typeof file === 'object')
     .map(file => ({
@@ -55,12 +60,15 @@ function titleFromName(name) {
 
 function validateImportedItem(namespace, item, warnings) {
   const slug = normalizeOptionalString(item.slug || item.name).toLowerCase();
+
   if (!ITEM_SLUG_PATTERN.test(slug)) {
     warnings.push(`${namespace}: skipped invalid item slug ${JSON.stringify(item.slug || item.name)}`);
+
     return null;
   }
 
   const installToken = normalizeOptionalString(item.install_token || `${namespace}/${slug}`);
+
   if (installToken && !INSTALL_TOKEN_PATTERN.test(installToken)) {
     warnings.push(`${namespace}/${slug}: invalid install token ${installToken}`);
   }
@@ -70,6 +78,7 @@ function validateImportedItem(namespace, item, warnings) {
 
 export function normalizeImportedItem(namespace, item, warnings = []) {
   const slug = validateImportedItem(namespace, item, warnings);
+
   if (!slug) return null;
 
   const name = normalizeOptionalString(item.name) || slug;
@@ -113,8 +122,10 @@ export function buildRegistryItemsByNamespace(catalog, existingItems = {}) {
   const output = { ...existingItems };
 
   const registries = Array.isArray(catalog?.registries) ? catalog.registries : [];
+
   for (const registry of registries) {
     const namespace = normalizeNamespace(registry?.name);
+
     if (!namespace) {
       skipped.push({ registry: registry?.name ?? null, reason: 'missing namespace' });
       continue;
@@ -122,8 +133,10 @@ export function buildRegistryItemsByNamespace(catalog, existingItems = {}) {
 
     const items = Array.isArray(registry.items) ? registry.items : [];
     const normalized = [];
+
     for (const item of items) {
       const normalizedItem = normalizeImportedItem(namespace, item, warnings);
+
       if (normalizedItem) normalized.push(normalizedItem);
       else skipped.push({ registry: namespace, item: item?.name ?? item?.slug ?? null, reason: 'invalid item' });
     }
@@ -140,10 +153,12 @@ export function buildRegistryItemsByNamespace(catalog, existingItems = {}) {
 
 export function buildImportReport(catalog, importResult) {
   const registries = Array.isArray(catalog?.registries) ? catalog.registries : [];
+
   const importedNamespaces = registries
     .map(registry => normalizeNamespace(registry?.name))
     .filter(Boolean)
     .sort((a, b) => a.localeCompare(b));
+
   const itemCounts = Object.fromEntries(importedNamespaces.map(namespace => [
     namespace,
     importResult.itemsByNamespace[namespace]?.length ?? 0,
@@ -169,6 +184,7 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
+
     if (arg === '--source') options.source = argv[++index] ?? options.source;
     else if (arg === '--dry-run') options.dryRun = true;
     else throw new Error(`Unknown argument: ${arg}`);
@@ -181,6 +197,7 @@ async function main(argv = process.argv.slice(2)) {
   const options = parseArgs(argv);
   const catalog = await readJson(options.source);
   const database = openAtlasCoreDatabase();
+
   try {
     const existing = await readCuratedItemSummaries(database);
     const importResult = buildRegistryItemsByNamespace(catalog, existing);
@@ -193,7 +210,9 @@ async function main(argv = process.argv.slice(2)) {
 
     console.log(`Imported ${report.item_count} item summaries across ${report.registry_count} registries`);
     console.log(`Namespaces: ${report.namespaces.join(', ')}`);
+
     if (report.warnings.length > 0) console.log(`Warnings: ${report.warnings.length}`);
+
     if (report.skipped.length > 0) console.log(`Skipped: ${report.skipped.length}`);
   } finally {
     await database.close();

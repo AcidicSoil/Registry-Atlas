@@ -30,6 +30,7 @@ interface RuntimeRegistrySnapshot {
 }
 
 const mirrorData = readRepositoryRegistrySnapshot<RuntimeRegistrySnapshot>();
+
 const catalogIndexData = readRepositoryCatalog<RegistryCatalogIndex>();
 
 describe('registryData mirror artifact', () => {
@@ -84,10 +85,12 @@ describe('registryData mirror artifact', () => {
 
     expect(index.meta.registry_count).toBe(Object.keys(index.registries).length);
     expect(index.meta.item_count).toBe(items.length);
+
     const reviewedItemCount = mirrorData.registries.reduce(
       (count, registry) => count + registry.atlas.item_summaries.length,
       0,
     );
+
     expect(items.length).toBeGreaterThan(reviewedItemCount);
   });
 

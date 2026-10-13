@@ -1,6 +1,6 @@
 # Mandatory quality-tooling certification evidence
 
-Status: **three requested tool gates verified; global PPM certification still pending**. Updated 2026-10-13.
+Status: **three gates verified; anti-slop applied but remediation required; global PPM certification pending**. Updated 2026-10-13.
 Scope: Registry Atlas canonical workspace root.
 
 ## User authorization
@@ -14,7 +14,30 @@ The user explicitly granted standing approval (“always”) to install and conf
 
 
 ## Anti-slop TypeScript
-Stackforge source `anti-slop` is already available locally. The prescribed setup apply/dry-run command was blocked by the execution safety layer before execution, so its root Oxlint integration is **not installed or certified**. Do not substitute an unrelated lint rule set or describe the setup as complete.
+
+Stackforge applied the official vendored `anti-slop/typescript` setup to the
+canonical Registry Atlas root on 2026-10-13. The setup added `oxlint.config.ts`,
+the first-party vendored plugin source in `tools/oxlint/anti-slop/`,
+pinned `oxlint` and `@oxlint/plugins` at 1.87.0 in the root dependency lockfile,
+and the `pnpm lint:anti-slop` command.
+
+The full-scope `oxlint .` gate was inserted before dependency-cruiser in
+`pnpm verify`, with a corresponding mise task. No policy rule was disabled and
+no grandfathered error limit was introduced. Machine-local Stackforge run
+metadata is excluded from Git, while vendored plugin code is versioned.
+
+First scan: **4,173 errors** (plus 18 warnings), including 3,582 missing
+blank-line failures. A safe `--fix` pass and small unused-code cleanups
+eliminated the spacing and trivial-rule failures. A second full scan still
+reports **593 semantic violations** in source, scripts and tests.
+The exact by-rule and by-file queue is
+`.design/anti-slop-remediation.json`.
+
+**The root `pnpm verify` gate now correctly fails at anti-slop.** Existing
+legitimate I/O-boundary validation must not be replaced with weaker checks
+solely to silence anti-slop. Pass–fail–pass proof remains blocked until
+the clean pass is attained. This policy must remain remediation-required,
+not compliant.
 
 ## Independent code checks
 
@@ -24,5 +47,5 @@ The complete `pnpm verify` run finished with **exit 0** on 2026-10-13. Vitest: *
 
 ## Remaining global certification work
 
-- Apply and validate the separately approved Stackforge anti-slop TypeScript setup when the execution safety layer permits. Its Oxlint root setup is still not installed; do not claim certification.
-- Close independent PPM/OrchestKit conformance standards with real evidence and PAO references, never fabricated approvals. This is separate from the three quality gates addressed here.
+- Refactor the remaining 591 anti-slop errors (plus 2 warnings) and obtain a genuine clean → deliberate failure → clean proof while retaining every rule and root scope.
+- Close independent PPM/OrchestKit conformance standards with real evidence and PAO decision references. PAO readiness passed, but there is no existing tooling-adoption approval record, and its available generic approval-request interface is restricted to frontend provenance exceptions. Do not invent a tooling decision or borrow another request. This is separate from the three quality gates addressed here.

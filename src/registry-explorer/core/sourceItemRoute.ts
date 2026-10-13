@@ -32,12 +32,15 @@ const KIND_SEGMENTS: Readonly<Record<SourceItemKind, readonly string[]>> = {
 
 export function resolveSourceItemRoute(input: SourceItemRouteInput): string | null {
   const direct = safeSourcePage(input.directRoute?.url, input.homepage);
+
   if (direct) return direct;
 
   const candidates = (input.patterns ?? [])
     .map(pattern => {
       const url = resolveSourcePattern(pattern, input.slug, input.homepage);
+
       if (!url) return null;
+
       return {
         url,
         score: patternScore(pattern, input.kind, input.slug, input.categories ?? []),
@@ -46,10 +49,13 @@ export function resolveSourceItemRoute(input: SourceItemRouteInput): string | nu
     .filter((candidate): candidate is { url: string; score: number } => Boolean(candidate));
 
   if (candidates.length === 0) return null;
+
   if (candidates.length === 1) return candidates[0]!.url;
 
   candidates.sort((a, b) => b.score - a.score || a.url.localeCompare(b.url));
+
   if (candidates[0]!.score <= 0 || candidates[0]!.score === candidates[1]!.score) return null;
+
   return candidates[0]!.url;
 }
 
@@ -65,9 +71,12 @@ export function resolveSourcePattern(
     || !/^(?:[^{}])*(?:\{slug\}|\{leaf\})(?:[^{}])*$/.test(pattern.urlTemplate)) {
     return null;
   }
+
   const remainder = slug.slice(pattern.slugPrefix.length);
+
   if (!validSlug(remainder)) return null;
   const encoded = remainder.split('/').map(encodeURIComponent).join('/');
+
   return safeSourcePage(
     pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/, encoded),
     homepage,
@@ -76,18 +85,25 @@ export function resolveSourcePattern(
 
 function hasPublicSourcePath(page: URL, homepage: URL): boolean {
   if (page.hash) return false;
+
   if (/%2f|%5c|%00/i.test(page.pathname)) return false;
+
   if (/\.(?:json|js|css|svg|png|jpe?g|webp|pdf|woff2?|map)\/?$/i.test(page.pathname)) return false;
+
   return page.pathname.replace(/\/+$/, '') !== homepage.pathname.replace(/\/+$/, '');
 }
 
 export function safeSourcePage(raw: string | undefined, root: string): string | null {
   if (!raw || !root || raw.startsWith('//')) return null;
+
   try {
     const home = new URL(root);
     const page = new URL(raw);
+
     if (!publicHttps(home) || !publicHttps(page)) return null;
+
     if (page.origin !== home.origin || !hasPublicSourcePath(page, home)) return null;
+
     return page.href;
   } catch {
     return null;
@@ -96,15 +112,20 @@ export function safeSourcePage(raw: string | undefined, root: string): string | 
 
 function publicHostname(host: string): boolean {
   if (!host.includes('.') || host.includes(':')) return false;
+
   if (host === 'localhost') return false;
+
   if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+
   return !/^\d+(?:\.\d+){3}$/.test(host);
 }
 
 function publicHttps(url: URL): boolean {
   if (url.protocol !== 'https:') return false;
+
   if (url.username || url.password || url.port) return false;
   const host = url.hostname.toLowerCase().replace(/\.$/, '');
+
   return publicHostname(host);
 }
 
@@ -129,9 +150,12 @@ function patternScore(
     ...tokenize(slug),
     ...categories.flatMap(tokenize),
   ]);
+
   for (const token of pathTokens) {
     if (itemTokens.has(token)) score += 20;
+
     if (token.endsWith('s') && itemTokens.has(token.slice(0, -1))) score += 12;
+
     if (!token.endsWith('s') && itemTokens.has(token + 's')) score += 12;
   }
 

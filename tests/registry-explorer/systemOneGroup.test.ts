@@ -25,11 +25,13 @@ function response(body: unknown, ok = true, status = 200) {
 describe('bounded SystemOne group choice', () => {
   it('sends only exact observed labels plus NONE and returns the selected probability', async () => {
     let sent: any;
+
     const result = await chooseObservedGroup({
       state: stateFor('Free', 'Actions'),
       groups: ['Free', 'Actions'],
       fetchImpl: async (_url: string, init: any) => {
         sent = JSON.parse(init.body);
+
         return response({
           answers: {
             group: {
@@ -69,6 +71,7 @@ describe('bounded SystemOne group choice', () => {
       groups,
       fetchImpl: async (_url: string, init: any) => {
         body = init.body;
+
         return response({
           answers: { group: {
             type: 'choice', choice: 'One',

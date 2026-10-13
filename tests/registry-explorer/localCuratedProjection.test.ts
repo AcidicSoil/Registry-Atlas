@@ -13,6 +13,7 @@ const runtime = {
       status: { warnings: [] } },
   ],
 };
+
 const curated = { '@eight': [
   { name: 'Button', slug: 'button', type: 'registry:component', source: 'registry-json',
     provenance: 'Official JSON', catalog_status: 'available', route_eligible: true,

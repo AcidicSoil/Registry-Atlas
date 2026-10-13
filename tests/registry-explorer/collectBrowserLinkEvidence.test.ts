@@ -3,13 +3,18 @@ import { describe, expect, it } from 'vitest';
 import { collectBrowserLinkEvidence } from '../../scripts/collect-browser-link-evidence.mjs';
 
 const registry = { name: '@eight', homepage: 'https://eight.example', url: 'https://eight.example/r/{name}.json' };
+
 const records = [
   { slug: 'button', docs_url: 'https://eight.example/old-button' },
   { slug: 'card', docs_url: null },
 ];
+
 const HOME = 'https://eight.example/';
+
 const INDEX = 'https://eight.example/docs/components';
+
 const BUTTON = 'https://eight.example/docs/components/button';
+
 const CARD = 'https://eight.example/docs/components/card';
 
 const pages: Record<string, {
@@ -43,17 +48,23 @@ class FakeBrowser {
   async url() { return this.current; }
   async snap() {
     this.log.push(['snap', this.current]);
+
     return { url: this.current, nodes: this.pages[this.current].nodes };
   }
-  async attr(ref: string) { this.log.push(['attr', ref]); return this.pages[this.current].links[ref]; }
+  async attr(ref: string) { this.log.push(['attr', ref]);
+
+ return this.pages[this.current].links[ref]; }
   async click(ref: string) {
     this.log.push(['click', ref]);
     this.current = new URL(this.pages[this.current].links[ref], this.current).href;
   }
   async nav(url: string) { this.log.push(['nav', url]); this.current = url; }
-  async capture(path: string) { this.log.push(['capture', this.current]); return { url: this.current, capturePath: path }; }
+  async capture(path: string) { this.log.push(['capture', this.current]);
+
+ return { url: this.current, capturePath: path }; }
   async extract() {
     this.log.push(['extract', this.current]);
+
     return { installationCommands: ['pnpm dlx shadcn@latest add @eight/button'],
       usageExamples: ['import { Button } from "@/components/ui/button"', '<Button />'] };
   }
@@ -161,6 +172,7 @@ describe('source-browser link collection', () => {
   it('refuses cross-origin or conflicting DOM-anchor fallbacks', async () => {
     const source = structuredClone(pages);
     source[INDEX].nodes = source[INDEX].nodes.filter((n: { name: string }) => n.name !== 'Button Clickable pixel buttons');
+
     for (const domLinks of [
       [{ name: 'Button', href: 'https://another.example/docs/components/button' }],
       [{ name: 'Button', href: '/docs/components/button' }, { name: 'Button', href: '/docs/other/button' }],

@@ -16,15 +16,18 @@ import { projectReviewedCatalogClassifications } from '../../scripts/sync-shadcn
 import { readRepositoryDocument } from './testAtlasDatabase';
 
 const taxonomy = validateCatalogTaxonomy(readRepositoryDocument('catalog-taxonomy'));
+
 const accessRules = readRepositoryDocument('catalog-access-rules');
 
 function classification(namespace = '@7ovr', name = 'app-shell-1', categories = ['app-shell']) {
   const kind = 'block';
+
   const state = buildCatalogClassificationState({
     namespace,
     item: { name, title: 'Sidebar Dashboard Shell', description: 'App shell with navigation.', kind },
     sourceHints: { categories },
   });
+
   return {
     namespace,
     name,
@@ -39,19 +42,23 @@ function classification(namespace = '@7ovr', name = 'app-shell-1', categories = 
 
 function reviewedBundle(items: any[]) {
   const classificationRunFingerprint = catalogArtifactFingerprint(items);
+
   const evaluationBase = {
     schema: 'registry-atlas.catalog-classification-evaluation.v1',
     taxonomyVersion: 'v1',
     classificationRunFingerprint,
     metrics: { exactPrimary: { correct: items.length, total: items.length, accuracy: 1 } },
   };
+
   const evaluationReportFingerprint = catalogArtifactFingerprint(evaluationBase);
   const evaluation = { ...evaluationBase, evaluationReportFingerprint };
+
   const review = {
     schema: 'registry-atlas.catalog-promotion-review.v1', approved: true,
     taxonomyVersion: 'v1', classificationRunFingerprint, evaluationReportFingerprint,
     reviewer: 'catalog-reviewer', approvedAt: '2026-10-06T21:00:00.000Z',
   };
+
   return { evaluation, review };
 }
 
@@ -103,6 +110,7 @@ describe('classification overlay application', () => {
         description: 'App shell with navigation.', categories: ['app-shell'], fileCount: 3,
       }],
     };
+
     const entry = classification();
     const { evaluation, review } = reviewedBundle([entry]);
     const overlay = buildReviewedClassificationOverlay({ taxonomy, classifications: [entry], evaluation, review });
@@ -130,10 +138,13 @@ describe('classification overlay application', () => {
       classification('@7ovr', 'app-shell-default', ['app-shell']),
       classification('@8bitcn', 'plain-block', ['layout']),
     ];
+
     const { evaluation, review } = reviewedBundle(entries);
+
     const overlay = buildReviewedClassificationOverlay({
       taxonomy, classifications: entries, evaluation, review,
     });
+
     const result = applyCatalogClassificationOverlay({
       '@7ovr': [{
         name: 'app-shell-default',
@@ -165,7 +176,9 @@ describe('classification overlay application', () => {
       { ...classification('@boardui', 'premium-block', ['Premium']), sourceGroups: ['Premium'] },
       { ...classification('@8bitcn', 'plain-block', ['layout']) },
     ];
+
     const itemsByNamespace: Record<string, any[]> = {};
+
     for (const entry of entries) {
       itemsByNamespace[entry.namespace] ??= [];
       const label = entry.sourceGroups?.[0] ?? 'layout';
@@ -174,6 +187,7 @@ describe('classification overlay application', () => {
         description: 'App shell with navigation.', categories: [label],
       });
     }
+
     const { evaluation, review } = reviewedBundle(entries);
     const overlay = buildReviewedClassificationOverlay({ taxonomy, classifications: entries, evaluation, review });
     const result = applyCatalogClassificationOverlay(itemsByNamespace, overlay, accessRules).itemsByNamespace;
@@ -188,12 +202,14 @@ describe('classification overlay application', () => {
     const entry = classification();
     const { evaluation, review } = reviewedBundle([entry]);
     const overlay = buildReviewedClassificationOverlay({ taxonomy, classifications: [entry], evaluation, review });
+
     const result = applyCatalogClassificationOverlay({
       '@7ovr': [{
         name: 'app-shell-1', type: 'registry:block', title: 'Renamed unrelated surface',
         description: 'Changed upstream meaning.', categories: ['app-shell'],
       }],
     }, overlay, accessRules);
+
     expect(result.itemsByNamespace['@7ovr'][0]).not.toHaveProperty('canonical');
     expect(result.report).toMatchObject({ applied: 0, stale: 1 });
   });
@@ -206,6 +222,7 @@ describe('classification overlay application', () => {
       canonical: { taxonomyVersion: 'v1', primary: 'controls/button', path: ['controls', 'controls/button'] },
       access: { normalized: 'paid', sourceLabel: 'Old' },
     }] };
+
     const entry = classification();
     const { evaluation, review } = reviewedBundle([entry]);
     const overlay = buildReviewedClassificationOverlay({ taxonomy, classifications: [entry], evaluation, review });
@@ -225,6 +242,7 @@ describe('classification overlay application', () => {
       name: 'app-shell-1', type: 'registry:block', title: 'Sidebar Dashboard Shell',
       description: 'App shell with navigation.', categories: ['app-shell'],
     }] };
+
     const entry = classification();
     const { evaluation, review } = reviewedBundle([entry]);
     const overlay = buildReviewedClassificationOverlay({ taxonomy, classifications: [entry], evaluation, review });

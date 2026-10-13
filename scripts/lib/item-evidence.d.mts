@@ -11,6 +11,7 @@ export interface ItemEvidenceArgs {
   maxAgeMs?:number;
   assetExists?: (path:string)=>boolean;
 }
+
 export interface ItemEvidenceRecord {
   token:string;
   namespace:string;
@@ -20,6 +21,7 @@ export interface ItemEvidenceRecord {
   visual:{status:'verified'|'pending'|'blocked';reason?:string;url?:string;officialPage?:string};
   functional:{status:'fixture'|'upstream-built'|'pending'|'blocked';reason?:string};
 }
+
 export interface ItemEvidenceSummary {
   registryCount:number;
   identityCount:number;
@@ -33,6 +35,7 @@ export interface ItemEvidenceSummary {
   errors:number;
   complete:boolean;
 }
+
 export function compileItemEvidence(input:ItemEvidenceArgs): {
   schema:string;asOf:string;summary:ItemEvidenceSummary;items:ItemEvidenceRecord[];
   errors:Array<{token:string;reason:string;count?:number}>;

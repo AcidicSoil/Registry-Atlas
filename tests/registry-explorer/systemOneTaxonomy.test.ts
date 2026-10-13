@@ -5,6 +5,7 @@ import { chooseTaxonomyOption } from '../../scripts/lib/systemone-taxonomy.mjs';
 const state = {
   item: { name: 'workspace', title: 'Workspace', kind: 'block' },
 };
+
 const options = [
   {
     id: 'application',
@@ -35,12 +36,14 @@ function response(answer: any, ok = true, status = 200) {
 describe('System One taxonomy adapter', () => {
   it('sends compact state once and taxonomy-owned criteria only', async () => {
     let sent: any;
+
     const result = await chooseTaxonomyOption({
       state,
       node: null,
       options,
       fetchImpl: async (_url: string, init: any) => {
         sent = JSON.parse(init.body);
+
         return response({
           answers: {
             taxonomy: {
@@ -84,6 +87,7 @@ describe('System One taxonomy adapter', () => {
       }],
       fetchImpl: async (_url: string, init: any) => {
         criteria = JSON.parse(init.body).questions.taxonomy.criteria;
+
         return response({ answers: { taxonomy: {
           type: 'choice', choice: 'THIS_CATEGORY',
           probabilities: { 'application/app-shell': 0.4, THIS_CATEGORY: 0.6 },

@@ -6,10 +6,12 @@ export interface ReferenceCandidateLink {
   count?: number;
   active?: boolean;
 }
+
 export interface ReferenceSidebarGroupInput {
   heading?: string;
   links?: readonly ReferenceCandidateLink[];
 }
+
 export interface ReferenceControlInput {
   kind?: string;
   label?: string;
@@ -17,6 +19,7 @@ export interface ReferenceControlInput {
   selected?: boolean;
   disabled?: boolean;
 }
+
 export interface ReferencePageInput {
   url: string;
   title?: string;
@@ -26,12 +29,14 @@ export interface ReferencePageInput {
   controls?: readonly ReferenceControlInput[];
   links?: readonly ReferenceCandidateLink[];
 }
+
 export interface ReferenceLink {
   label: string;
   url: string;
   count?: number;
   active?: boolean;
 }
+
 export interface ReferenceObservation {
   url: string;
   title: string;
@@ -42,6 +47,7 @@ export interface ReferenceObservation {
   controls: Array<{kind: string;label: string;expanded?: boolean;selected?: boolean;disabled?: boolean}>;
   links: ReferenceLink[];
 }
+
 export interface ReferenceRoutePlan {
   queue: string[];
   selected: string[];
@@ -50,6 +56,7 @@ export interface ReferenceRoutePlan {
   nextCursor: string | null;
   complete: boolean;
 }
+
 export function normalized21stUrl(raw: string, from?: string): string | null;
 export function planReferenceRoutes(input: {
   queue?: readonly string[];

@@ -1,5 +1,7 @@
 import { vi } from 'vitest';
+
 vi.setConfig({testTimeout: 30000});
+
 import {describe,expect,it} from 'vitest';
 import { testRouteDatabase } from './postgresFixture';
 // @ts-expect-error Standalone Node ESM helper.
@@ -8,9 +10,11 @@ import {discoverRegistryIntoPostgres} from '../../scripts/discover-registry-rout
 import {reconcileRegistryCatalog} from '../../scripts/verify-registry-patterns.mjs';
 
 type Page={heading?:string;links?:Array<[string,string]>};
+
 function fakeBrowser(pages:Record<string,Page>,initial:string){
   let current=initial;
   const page=()=>pages[current]??{heading:'Unknown',links:[]};
+
   return {
     async url(){return current;},
     async snap(){return {url:current,nodes:[
@@ -22,10 +26,13 @@ function fakeBrowser(pages:Record<string,Page>,initial:string){
     async nav(url:string){current=url;},
   };
 }
+
 const registry={name:'@discover',homepage:'https://discover.example'};
+
 const catalog={registries:{'@discover':[
   {name:'button',title:'Button'},{name:'card',title:'Card'},{name:'dialog',title:'Dialog'},
 ]}};
+
 const pages:Record<string,Page>={
   'https://discover.example/':{links:[['Docs','/docs']]},
   'https://discover.example/docs':{heading:'Docs',links:[['Components','/docs/components']]},
@@ -35,9 +42,11 @@ const pages:Record<string,Page>={
   'https://discover.example/docs/components/button':{heading:'Button'},
   'https://discover.example/docs/components/card':{heading:'Card'},
 };
+
 const fetchPage=async(url:string)=>{
   const slug=new URL(url).pathname.split('/').filter(Boolean).at(-1)??'';
   const heading=slug.split('-').map(part=>part[0]?.toUpperCase()+part.slice(1)).join(' ');
+
   return new Response('<!doctype html><html><title>'+heading+'</title><h1>'+heading+'</h1></html>',{
     status:200,headers:{'content-type':'text/html'},
   });
@@ -47,12 +56,14 @@ describe('browser discovery -> PostgreSQL route verification',()=>{
   it('discovers one route family, verifies it, infers the remaining slug, and verifies generated pages',async()=>{
     const db=await testRouteDatabase();
     (await reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}}));
+
     const result=await discoverRegistryIntoPostgres({
       db,registry,indexedItems:['button','card','dialog'],catalog,curated:{},
       browser:fakeBrowser(pages,'https://discover.example/'),
       checkedAt:'2026-10-05T03:00:00.000Z',limit:2,maxPages:4,maxDepth:3,maxLinks:50,
       delayMs:0,samples:2,componentChecks:3,fetchPage,
     });
+
     expect(result.derived).toMatchObject({patterns:1,matchedItems:2,verifiedObservedPages:2});
     expect(result.merged).toMatchObject({newPatterns:1,newExamples:2});
     expect(result.patternVerification).toMatchObject({verifiedPatterns:1});
@@ -68,6 +79,7 @@ describe('browser discovery -> PostgreSQL route verification',()=>{
   it('follows an observed generic entry link when its URL enters a docs/components section',async()=>{
     const db=await testRouteDatabase();
     (await reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}}));
+
     const result=await discoverRegistryIntoPostgres({
       db,registry,indexedItems:['button','card','dialog'],catalog,curated:{},
       browser:fakeBrowser({
@@ -81,6 +93,7 @@ describe('browser discovery -> PostgreSQL route verification',()=>{
       checkedAt:'2026-10-05T03:00:00.000Z',limit:2,maxPages:4,maxDepth:3,maxLinks:50,
       delayMs:0,samples:2,componentChecks:0,fetchPage,
     });
+
     expect(result.derived.patterns).toBe(1);
     expect(result.merged.newPatterns).toBe(1);
     expect((await db.prepare("SELECT template,status FROM route_patterns WHERE namespace='@discover'").get()))
@@ -91,6 +104,7 @@ describe('browser discovery -> PostgreSQL route verification',()=>{
   it('does not add a route family from only unrelated navigation',async()=>{
     const db=await testRouteDatabase();
     (await reconcileRegistryCatalog(db,{raw:[registry],catalog,curated:{}}));
+
     const result=await discoverRegistryIntoPostgres({
       db,registry,indexedItems:['button','card','dialog'],catalog,curated:{},
       browser:fakeBrowser({
@@ -100,6 +114,7 @@ describe('browser discovery -> PostgreSQL route verification',()=>{
       checkedAt:'2026-10-05T03:00:00.000Z',limit:2,maxPages:3,maxDepth:2,maxLinks:20,
       delayMs:0,samples:2,componentChecks:0,fetchPage,
     });
+
     expect(result.derived.patterns).toBe(0);
     expect(result.merged.newPatterns).toBe(0);
     expect((await db.prepare("SELECT COUNT(*) n FROM route_patterns WHERE namespace='@discover'").get()))

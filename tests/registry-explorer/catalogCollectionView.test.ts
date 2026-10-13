@@ -39,6 +39,7 @@ function result(): CatalogQueryResult {
     atlas: { aliases: [], coverageStatus: "verified", confidence: "high", notes: "", catalogStatus: "available" },
     itemSummaries: [],
   };
+
   return {
     items: [{
       id: "@delta:theme",

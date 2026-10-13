@@ -3,16 +3,21 @@ import { describe, expect, it } from 'vitest';
 import { buildSourcePageIndex } from '../../scripts/build-source-page-index.mjs';
 // @ts-expect-error Node ESM helper lives outside the browser-oriented tsconfig.
 import {catalogFingerprint} from '../../scripts/lib/registry-discovery.mjs';
+
 const raw = [
   { name: '@alpha', homepage: 'https://alpha.example/', url: 'https://alpha.example/r/{name}.json' },
   { name: '@beta', homepage: 'https://beta.example/', url: 'https://beta.example/r/{name}.json' },
 ];
+
 const catalog = { registries: {
   '@alpha': [{ name: 'forms/button' }, { name: 'button' }, {name:'card'}],
   '@beta': [{name: 'button'}],
 } };
+
 const now = '2026-10-04T20:00:00Z';
+
 const surveyedAt = '2026-10-03T20:00:00Z';
+
 const traversal = {
   schema: 'registry-atlas-traversal-inventory/v1',
   registries: [
@@ -28,6 +33,7 @@ const traversal = {
     ]},
   ],
 };
+
 const input = (opts: Record<string,unknown> = {}) => ({
   raw, catalog, curated:{'@alpha':[{
     slug:'button',docs_url:'https://alpha.example/components/button',
@@ -44,6 +50,7 @@ describe('published original-page source index', () => {
         url:'https://alpha.example/docs/button',observedAt:surveyedAt}],
       links:[],verifiedPages:[],
     }}));
+
     expect(output.pages['@alpha/button']?.level).toBe('sitemap');
   });
   it('keeps exact nested identities and distinct same-slug registry pages', () => {
@@ -70,6 +77,7 @@ describe('published original-page source index', () => {
         {namespace:'@alpha',slug:'button',source_url:'https://foreign.example/docs/button',status:'pattern-inferred',checkedAt:surveyedAt},
       ],
     }}));
+
     expect(result.pages['@alpha/card']).toMatchObject({
       url:'https://alpha.example/docs/card',level:'pattern',source:'verified-route-pattern',
     });
@@ -82,6 +90,7 @@ describe('published original-page source index', () => {
   it('promotes only current, exact individually checked pages from SQLite',()=>{
     const link={namespace:'@alpha',slug:'forms/button',
       url:'https://alpha.example/docs/forms/button',checkedAt:surveyedAt};
+
     const output=buildSourcePageIndex(input({
       curated:{},traversal:null,patternLinks:{
         schema:'registry-atlas-pattern-links/v1',
@@ -98,6 +107,7 @@ describe('published original-page source index', () => {
         ],
       },
     }));
+
     expect(output.pages['@alpha/forms/button']).toMatchObject({
       level:'reviewed',source:'component-page-verified',url:link.url,
     });
@@ -121,6 +131,7 @@ describe('published original-page source index', () => {
           url:'https://alpha.example/docs/button'}],
       },
     }));
+
     expect(result.pages['@alpha/button']).toBeUndefined();
     expect(result.coverage.rejections['confirmed-missing']).toBe(1);
   });
@@ -137,6 +148,7 @@ describe('published original-page source index', () => {
         {namespace:'@beta',slug:'button',url:'https://beta.example/docs/button',observedAt:surveyedAt},
       ],links:[],
     };
+
     const result=buildSourcePageIndex(input({traversal:null,curated:{},patternLinks:snapshot}));
     expect(result.coverage.sitemap).toBe(2);
     expect(result.pages['@alpha/forms/button']).toMatchObject({

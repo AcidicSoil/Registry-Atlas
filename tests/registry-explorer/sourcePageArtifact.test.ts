@@ -15,6 +15,7 @@ describe('PostgreSQL source-page projection', () => {
       url: 'https://www.8bitcn.com/docs/components/input-otp',
       level: 'reviewed',
     });
+
     for (const page of Object.values(manifest.pages) as Array<{url:string;level:string}>) {
       expect(page.url).toMatch(/^https:\/\//);
       expect(page.level).toMatch(/^(reviewed|sitemap|pattern)$/);

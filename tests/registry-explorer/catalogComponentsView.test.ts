@@ -34,6 +34,7 @@ describe("renderCatalogComponents", () => {
     const html=renderCatalogComponentCard({...component(),
       sourcePage:{url:'https://delta.example/docs/code-block',
         level:'sitemap',source:'official-sitemap'}});
+
     expect(html).toContain('href="https://delta.example/docs/code-block"');
     expect(html).toContain('Source ↗');
     expect(html).toContain('data-source-level="sitemap"');
@@ -45,6 +46,7 @@ describe("renderCatalogComponents", () => {
   });
   it("uses the source component deeplink on cards and never exposes raw item JSON", () => {
     const base = component();
+
     const html = renderCatalogComponentCard({
       ...base,
       docsUrl: "https://delta.example/components/code-block",
@@ -53,6 +55,7 @@ describe("renderCatalogComponents", () => {
         rawItemUrl: "https://delta.example/r/code-block.json",
       },
     });
+
     expect(html).toContain('class="catalog-component-source-actions"');
     expect(html).toContain('class="catalog-component-deeplink"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
@@ -67,16 +70,19 @@ describe("renderCatalogComponents", () => {
     const raw = renderCatalogComponentCard({
       ...component(), docsUrl: "https://delta.example/r/code-block.json",
     });
+
     expect(raw).not.toContain('catalog-component-original');
 
     const external = renderCatalogComponentCard({
       ...component(), docsUrl: "https://another-registry.example/components/code-block",
     });
+
     expect(external).not.toContain("catalog-component-original");
   });
 
   it("does not substitute raw item JSON when no source component deeplink exists", () => {
     const base = component();
+
     const html = renderCatalogComponentCard({
       ...base,
       item: {
@@ -84,6 +90,7 @@ describe("renderCatalogComponents", () => {
         rawItemUrl: "https://delta.example/r/new-york-v4/code-block.json",
       },
     } as CatalogComponent);
+
     expect(html).not.toContain('href="https://delta.example/r/new-york-v4/code-block.json"');
     expect(html).not.toContain("View item JSON");
     expect(html).not.toContain("catalog-component-original");
@@ -183,6 +190,7 @@ describe("renderCatalogComponents", () => {
     const context = renderCatalogBrowseControls(state, {
       searchTerm: "button",
     });
+
     expect(context).toContain('Search: “button”');
     expect(context).toContain('Registry: @delta');
     expect(context).toContain('Access: Free');
@@ -202,6 +210,7 @@ describe("renderCatalogComponents", () => {
     }, {
       selectedAssetKinds: ["component"],
     });
+
     expect(markup).toContain('Asset type: Components');
     expect(markup).toContain('data-asset-kind-value="component"');
     expect(markup).toContain('data-catalog-clear');
@@ -321,6 +330,7 @@ describe("catalog applied-filter context", () => {
     const html = renderCatalogBrowseControls(state as any, {
       selectedAssetKinds: ["block"],
     });
+
     expect(html).toContain('data-asset-kind-value="block"');
     expect(html).toContain('Asset type: Blocks');
     expect(html).not.toContain('data-asset-kind-select');
@@ -330,6 +340,7 @@ describe("catalog applied-filter context", () => {
     const html = renderCatalogBrowseControls(state as any, {
       taxonomy: TEST_TAXONOMY,
     });
+
     expect(html).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*Category: App Shell/);
     expect(html).toContain('data-catalog-access-value="free"');
     expect(html).toContain("Access: Free");
@@ -342,6 +353,7 @@ describe("catalog applied-filter context", () => {
     const html = renderCatalogBrowseControls({ ...state, access: [] } as any, {
       taxonomy: TEST_TAXONOMY,
     });
+
     expect(html).not.toContain('data-catalog-access-value');
     expect(html).not.toContain("Access: Free");
   });

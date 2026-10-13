@@ -12,10 +12,12 @@ function setupMobileSidebarControls(): void {
       if (!appSidebar || !sidebarToggle || !sidebarBackdrop) return;
       appSidebar.dataset.open = String(open);
       appSidebar.setAttribute('role', open ? 'dialog' : 'complementary');
+
       if (open) appSidebar.setAttribute('aria-modal', 'true');
       else appSidebar.removeAttribute('aria-modal');
       sidebarToggle.setAttribute('aria-expanded', String(open));
       sidebarBackdrop.hidden = !open;
+
       if (open) sidebarClose?.focus();
       else if (restoreFocus) sidebarToggle.focus();
     };
@@ -25,12 +27,14 @@ function setupMobileSidebarControls(): void {
     sidebarBackdrop?.addEventListener('click', () => setSidebarOpen(false, true));
     appSidebar?.addEventListener('click', event => {
       const target = event.target as HTMLElement;
+
       if (target.closest('[data-view], [data-catalog-route], .brand-home-link')) {
         setSidebarOpen(false);
       }
     });
     window.addEventListener('keydown', event => {
       if (appSidebar?.dataset.open !== 'true') return;
+
       if (event.key === 'Escape') {
         setSidebarOpen(false, true);
       } else if (event.key === 'Tab') {
@@ -38,11 +42,14 @@ function setupMobileSidebarControls(): void {
           'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), ' +
           'textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
         );
+
         const focusable = Array.from(candidates).filter(element =>
           element.getClientRects().length > 0
           && getComputedStyle(element).visibility !== 'hidden',
         );
+
         const target = drawerWrapTarget(focusable, document.activeElement as HTMLElement | null, event.shiftKey);
+
         if (target) {
           event.preventDefault();
           target.focus();

@@ -7,6 +7,7 @@ describe('official registry sitemap route inventory', () => {
     expect(canonicalWwwRedirect('https://shadcnblocks.com/sitemap.xml',308,
       'https://www.shadcnblocks.com/sitemap.xml'))
       .toBe('https://www.shadcnblocks.com/sitemap.xml');
+
     for (const url of ['https://other.example/sitemap.xml',
       'https://www.shadcnblocks.com/different.xml',
       'http://www.shadcnblocks.com/sitemap.xml'])
@@ -20,6 +21,7 @@ describe('official registry sitemap route inventory', () => {
         'https://animateicons.in/icons/huge/activity',
         'https://animateicons.in/icons/lucide/accessibility',
       ]);
+
     expect(entries).toEqual([
       {slug:'hu-activity',url:'https://animateicons.in/icons/huge/activity'},
       {slug:'lu-accessibility',url:'https://animateicons.in/icons/lucide/accessibility'},
@@ -55,6 +57,7 @@ describe('official registry sitemap route inventory', () => {
       'https://alpha.example/r/button.json',
       'https://alpha.example/docs/not-button',
     ]);
+
     expect(matched).toEqual([
       {slug:'button',url:'https://alpha.example/docs/button'},
       {slug:'card',url:'https://alpha.example/docs/card/'},

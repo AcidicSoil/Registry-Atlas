@@ -8,15 +8,18 @@ export async function createPagesSpaFallback(outputDir = 'dist') {
   const fallbackPath = path.join(directory, '404.html');
 
   const indexStat = await stat(indexPath);
+
   if (!indexStat.isFile() || indexStat.size === 0) {
     throw new Error(`Expected a non-empty Vite entrypoint at ${indexPath}`);
   }
 
   await copyFile(indexPath, fallbackPath);
+
   return { indexPath, fallbackPath };
 }
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
+
 const modulePath = fileURLToPath(import.meta.url);
 
 if (invokedPath === modulePath) {

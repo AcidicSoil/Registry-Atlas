@@ -43,6 +43,7 @@ describe('registry catalog evidence sync', () => {
 
   it('falls through style candidates until a real registry catalog is found', async () => {
     const seen: string[] = [];
+
     const result = await syncCatalogEvidenceForRegistries([
       { name: '@style', url: 'https://example.com/r/{style}/{name}.json' },
     ], {
@@ -50,6 +51,7 @@ describe('registry catalog evidence sync', () => {
       timeoutMs: 1000,
       fetchImpl: async (url: string | URL | Request) => {
         seen.push(String(url));
+
         if (String(url).includes('/new-york-v4/')) {
           return new Response(JSON.stringify({
             items: [{ name: 'button', type: 'registry:ui' }],
@@ -58,6 +60,7 @@ describe('registry catalog evidence sync', () => {
             headers: { 'content-type': 'application/json' },
           });
         }
+
         return new Response('missing', { status: 404 });
       },
     });
@@ -192,6 +195,7 @@ describe('registry catalog evidence sync', () => {
   it('promotes bounded native compact metadata and structured theme swatches', () => {
     const longDescription = 'd'.repeat(320);
     const longAuthor = 'a'.repeat(140);
+
     const items = buildCompactCatalogItems({ items: [{
       name: 'midnight',
       title: 'Midnight',
@@ -262,6 +266,7 @@ describe('registry catalog evidence sync', () => {
       '@alpha': [{ name: 'old-alpha', type: 'registry:ui' }],
       '@beta': [{ name: 'old-beta', type: 'registry:ui' }],
     };
+
     const fresh = {
       '@beta': [{ name: 'new-beta', type: 'registry:block' }],
     };

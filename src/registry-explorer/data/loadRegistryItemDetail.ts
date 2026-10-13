@@ -17,6 +17,7 @@ export async function loadRegistryItemDetail(
   fetchImpl: typeof fetch = fetch,
 ): Promise<RegistryItemDetailResult> {
   const summaryResult = resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug);
+
   return loadResolvedRegistryItemDetail(
     summaryResult,
     payload => resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug, payload),
@@ -38,6 +39,7 @@ export async function loadRegistryItemDetailFromCatalogIndex(
     namespace,
     itemSlug,
   );
+
   return loadResolvedRegistryItemDetail(
     summaryResult,
     payload => resolveRegistryItemDetailFromCatalogIndex(
@@ -68,15 +70,18 @@ async function loadResolvedRegistryItemDetail(
     namespace,
     fetchImpl,
   );
+
   if (localResult) return localResult;
 
   try {
     const response = await fetchImpl(summaryResult.detail.route.url);
+
     if (!response.ok) {
       return fetchErrorResult(summaryResult.detail, `http-${response.status}`);
     }
 
     let payload: unknown;
+
     try {
       payload = await response.json();
     } catch {
@@ -84,6 +89,7 @@ async function loadResolvedRegistryItemDetail(
     }
 
     const normalized = normalizeRegistryItemDetailJson(payload);
+
     if (!normalized.valid) {
       return {
         status: 'invalid-schema',
@@ -106,14 +112,17 @@ async function loadDatabaseDetail(
   fetchImpl: typeof fetch,
 ): Promise<RegistryItemDetailResult | null> {
   const registryName = namespace?.trim();
+
   if (!registryName) return null;
 
   try {
     const details = await loadDetailRuntimeData(fetchImpl);
     const item = details[registryName + '/' + summaryResult.detail.slug] ?? null;
+
     if (!item) return null;
 
     const normalized = normalizeRegistryItemDetailJson(item);
+
     if (!normalized.valid) {
       return {
         status: 'invalid-schema',
@@ -122,6 +131,7 @@ async function loadDatabaseDetail(
         reason: normalized.reason,
       };
     }
+
     return resolveWithPayload(item);
   } catch {
     return null;
@@ -133,6 +143,7 @@ export function buildSummaryOnlyRegistryItemDetail(
   itemSlug: string,
 ): RegistryItemDetailResult {
   const summary = registry.itemSummaries?.find(item => item.slug === itemSlug);
+
   if (!summary) {
     return {
       status: 'not-found',

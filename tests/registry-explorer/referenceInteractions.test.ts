@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { selectReferenceAction, assessReferenceTransition } from '../../scripts/audit-21st-interactions.mjs';
 
 const category='https://21st.dev/community/components/s/button';
+
 const snap={nodes:[
   {ref:'e1',role:'button',name:'Filter'},
   {ref:'e2',role:'tab',name:'Newest'},

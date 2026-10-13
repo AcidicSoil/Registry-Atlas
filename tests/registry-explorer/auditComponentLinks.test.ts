@@ -6,11 +6,14 @@ const registries = [
   { name: '@delta', homepage: 'https://delta.example', url: 'https://delta.example/r/{name}.json' },
   { name: '@other', homepage: 'https://other.example', url: 'https://other.example/r/{name}.json' },
 ];
+
 const catalog = { registries: { '@delta': [{ name: 'button' }, { name: 'card' }], '@other': [{ name: 'switch' }] } };
+
 const curated = {
   '@delta': [{ slug: 'button', name: 'Button', docs_url: 'https://delta.example/docs/old', raw_item_url: 'https://delta.example/r/button.json' },
     { slug: 'orphan', name: 'Orphan', docs_url: 'https://delta.example/docs/orphan' }],
 };
+
 const observation = {
   namespace: '@delta', slug: 'button', previousUrl: 'https://delta.example/docs/old',
   verifiedUrl: 'https://delta.example/components/button',
@@ -34,8 +37,10 @@ describe('registry component link audit', () => {
       .toBe('https://delta.example/r/button.json');
     expect(report.totals.registryCoverage).toBe(0);
     expect(report.totals).toMatchObject({ catalogEntries: 3, duplicateCatalogEntries: 0 });
+
     const duplicate = inventoryLinks(registries, { registries: { ...catalog.registries,
       '@delta': [...catalog.registries['@delta'], { name: 'button', type: 'registry:block' }] } }, curated);
+
     expect(duplicate.totals).toMatchObject({ catalogEntries: 4, duplicateCatalogEntries: 1, items: 4 });
   });
 
@@ -57,6 +62,7 @@ describe('registry component link audit', () => {
   it('rechecks the recorded source page and heading in the live browser before automated URL promotion', async () => {
     const seen: string[] = [];
     let current = 'https://delta.example/';
+
     const browser = {
       url: async () => current,
       nav: async (url: string) => { seen.push(url); current = url; },
@@ -65,14 +71,17 @@ describe('registry component link audit', () => {
         nodes: [{ role: 'heading', name: 'Button' }, { role: 'heading', name: 'Installation' }],
       }),
     };
+
     const result = await recheckLivePages(inventoryLinks(registries, catalog, curated),
       [observation], browser);
+
     expect(result).toEqual([]);
     expect(seen).toEqual([observation.verifiedUrl]);
   });
 
   it('refuses an automated apply when the browser lands on a different component', async () => {
     let current = 'https://delta.example/';
+
     const browser = {
       url: async () => current,
       nav: async (url: string) => { current = url; },
@@ -81,6 +90,7 @@ describe('registry component link audit', () => {
         nodes: [{ role: 'heading', name: 'Card' }],
       }),
     };
+
     expect(await recheckLivePages(inventoryLinks(registries, catalog, curated),
       [observation], browser)).toMatchObject([
       { token: '@delta/button', reason: 'live-heading-mismatch' },
@@ -93,6 +103,7 @@ describe('registry component link audit', () => {
       nav: async () => { throw new Error('must not navigate'); },
       snap: async () => { throw new Error('must not snap'); },
     };
+
     expect(await recheckLivePages(inventoryLinks(registries, catalog, curated),
       [observation], browser)).toMatchObject([
       { token: '@delta/button', reason: 'live-tab-origin-mismatch' },
@@ -101,9 +112,11 @@ describe('registry component link audit', () => {
 
   it('supports explicitly witnessed query-based component-page exceptions', () => {
     const verifiedUrl = 'https://delta.example/?component=button';
+
     const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated,
       [{ ...observation, verifiedUrl, exception: true,
         browser: { ...observation.browser, observedUrl: verifiedUrl } }]);
+
     expect(result.repaired).toEqual(['@delta/button']);
     expect(result.verifiedUrls[0]).toMatchObject({ url: verifiedUrl, exception: true });
   });
@@ -125,6 +138,7 @@ describe('registry component link audit', () => {
     const forged = { ...observation, verifiedUrl: 'https://other.example/components/button',
       browser: { ...observation.browser, observedUrl: 'https://other.example/components/button',
         listingUrl: 'https://other.example/components' } };
+
     const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [forged]);
     expect(result.repaired).toEqual([]);
     expect(result.unresolved).toMatchObject([{ token: '@delta/button', reason: 'foreign-component-origin' }]);
@@ -157,6 +171,7 @@ describe('registry component link audit', () => {
   it('does not claim full audit completion from an unchecked manifest without an explicit review gate', () => {
     const inv = inventoryLinks([registries[0]], { registries: { '@delta': [{ name: 'button' }] } },
       { '@delta': [curated['@delta'][0]] });
+
     const accepted = applyVerifiedLinks(inv, { '@delta': [curated['@delta'][0]] }, [observation]);
     expect(summarizeAuditCoverage(inv, accepted).totals.completed).toBe(false);
     expect(summarizeAuditCoverage(inv, accepted, true).totals.completed).toBe(true);
@@ -164,8 +179,10 @@ describe('registry component link audit', () => {
 
   it('does not mark invalid or duplicated evidence as verified in the coverage ledger', () => {
     const inventory = inventoryLinks(registries, catalog, curated);
+
     const broken = applyVerifiedLinks(inventory, curated,
       [observation, { ...observation, verifiedUrl: 'https://delta.example/docs/button-2' }]);
+
     const summary = summarizeAuditCoverage(inventory, broken);
     expect(summary.totals).toMatchObject({ repaired: 0, unresolved: 1, notChecked: 3, completed: false });
     expect(summary.rows.find((x: { token: string }) => x.token === '@delta/button'))
@@ -174,8 +191,10 @@ describe('registry component link audit', () => {
 
   it('rejects conflicting evidence and cannot silently drop existing links', () => {
     const report = inventoryLinks(registries, catalog, curated);
+
     const result = applyVerifiedLinks(report, curated,
       [observation, { ...observation, verifiedUrl: 'https://delta.example/components/button-2' }]);
+
     expect(result.repaired).toEqual([]);
     expect(result.unresolved.map((x: { reason: string }) => x.reason)).toContain('duplicate-evidence');
     expect(result.curated).toEqual(curated);

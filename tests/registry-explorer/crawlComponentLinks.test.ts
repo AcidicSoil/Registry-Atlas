@@ -7,15 +7,19 @@ const registries = [
   { name: '@b', homepage: 'https://b.example', url: 'https://b.example/r/{name}.json' },
   { name: '@empty', homepage: 'https://empty.example', url: 'https://empty.example/r/{name}.json' },
 ];
+
 const catalog = { registries: {
   '@a': [{ name: 'button', type: 'registry:ui' }, { name: 'card', type: 'registry:ui' },
     { name: 'card', type: 'registry:block' }],
   '@b': [{ name: 'switch', type: 'registry:ui' }],
 } };
+
 const curated = { '@a': [{ slug: 'button', docs_url: 'https://a.example/old' },
   { slug: 'orphan', docs_url: 'https://a.example/orphan' }] };
+
 function fakeBrowser() {
   let url = 'https://a.example/'; const navigations: string[] = [];
+
   return {
     navigations,
     url: async () => url,
@@ -27,8 +31,10 @@ function fakeBrowser() {
     ] }),
   };
 }
+
 function memoryJournal() {
   const entries = new Map<string, any>();
+
   return {
     entries, get: (key: string) => entries.get(key),
     append: async (value: any) => { if (entries.has(value.token)) throw Error('duplicate write'); entries.set(value.token, value); },
@@ -49,9 +55,11 @@ describe('autonomous full-catalog URL crawler', () => {
     const journal = memoryJournal();
     const browser = fakeBrowser();
     let calls = 0;
+
     const collect = async (_browser: any, reg: any, targets: any[]) => {
       calls++;
       expect(reg.name).toBe('@a');
+
       return { homepageUrl: 'https://a.example/', listingUrl: 'https://a.example/components',
         records: targets.filter(x => x.slug === 'button').map(x => ({
           namespace: reg.name, slug: x.slug, verifiedUrl: 'https://a.example/components/button',
@@ -63,10 +71,13 @@ describe('autonomous full-catalog URL crawler', () => {
         })),
       };
     };
+
     const jobs = planRegistryCrawl(registries, catalog, curated, { registry: '@a' });
+
     const result = await runRegistryCrawl({ jobs, browser, journal, collect, batchSize: 2, delayMs: 0,
       siteAllowed: (r: any) => r.name === '@a', probe: async () => ({ status: 'unresolved' }),
       verifyPage: async () => true });
+
     expect(calls).toBe(2);
     expect(result).toMatchObject({ verified: 1, unresolved: 2, pending: 0 });
     expect(journal.get('@a/button').status).toBe('verified');
@@ -78,18 +89,21 @@ describe('autonomous full-catalog URL crawler', () => {
   it('resumes finished items and records unavailable registry domains', async () => {
     const journal = memoryJournal();
     await journal.append({ token: '@a/button', status: 'verified', verifiedUrl: 'https://a.example/components/button' });
+
     const result = await runRegistryCrawl({ jobs: planRegistryCrawl(registries, catalog, curated),
       browser: fakeBrowser(), journal, batchSize: 10, delayMs: 0,
       siteAllowed: (r: any) => r.name === '@a', probe: async () => ({ status: 'unresolved' }),
       collect: async (_browser: any, _reg: any, targets: any[]) => ({
         records: [], unresolved: targets.map(x => ({ slug: x.slug, reason: 'no-safe-catalog-link' })),
       }), verifyPage: async () => true });
+
     expect(result).toMatchObject({ verified: 1, unresolved: 4, blocked: 2 });
     expect(journal.get('@b/switch').reason).toBe('profile-domain-not-allowed');
     expect(journal.get('registry:@empty').reason).toBe('profile-domain-not-allowed');
   });
   it('never verifies a page without independent destination confirmation', async () => {
     const journal = memoryJournal();
+
     const result = await runRegistryCrawl({
       jobs: planRegistryCrawl(registries, catalog, curated, { registry: '@a' }),
       browser: fakeBrowser(), journal, batchSize: 5, delayMs: 0,
@@ -99,6 +113,7 @@ describe('autonomous full-catalog URL crawler', () => {
       }], unresolved: [] }),
       verifyPage: async () => false,
     });
+
     expect(result.verified).toBe(0);
     expect(journal.get('@a/button').reason).toBe('source-identity-mismatch');
     expect(journal.get('@a/card').reason).toBe('collector-omitted-item');
@@ -106,6 +121,7 @@ describe('autonomous full-catalog URL crawler', () => {
   it('does not capture screenshots and keeps a strict partial-batch item limit', async () => {
     const journal = memoryJournal();
     const captured: string[] = [];
+
     const result = await runRegistryCrawl({
       jobs: planRegistryCrawl(registries, catalog, curated, { registry: '@a' }),
       browser: { ...fakeBrowser(), capture: async (path: string) => { captured.push(path); throw Error('screenshots prohibited'); } },
@@ -116,15 +132,18 @@ describe('autonomous full-catalog URL crawler', () => {
         expect(await b.capture('/would-have-been.jpg')).toEqual({
           url: 'https://a.example/', capturePath: null,
         });
+
         return { records: [], unresolved: [{ slug: 'button', reason: 'not-visible' }] };
       },
       verifyPage: async () => false,
     });
+
     expect(captured).toEqual([]);
     expect(result).toMatchObject({ pending: 2, unresolved: 1 });
   });
   it('reports empty registries and preserves not-attempted counts', async () => {
     const journal = memoryJournal();
+
     const result = await runRegistryCrawl({
       jobs: planRegistryCrawl(registries, catalog, curated, { registry: '@empty' }),
       browser: fakeBrowser(), journal, batchSize: 5, delayMs: 0,
@@ -132,6 +151,7 @@ describe('autonomous full-catalog URL crawler', () => {
       collect: async () => ({ records: [], unresolved: [{ reason: 'no-safe-catalog-link' }] }),
       verifyPage: async () => true,
     });
+
     expect(result).toMatchObject({ verified: 0, unresolved: 1, pending: 0 });
     expect(journal.get('registry:@empty').reason).toBe('no-safe-catalog-link');
     const overall = summarizeRegistryCrawl(planRegistryCrawl(registries, catalog, curated), journal);
@@ -142,10 +162,13 @@ describe('autonomous full-catalog URL crawler', () => {
 describe('applying verified crawler results to Atlas sources', () => {
   const current = { '@a': [{ slug: 'button', name: 'Button',
     type: 'registry:ui', docs_url: 'https://a.example/old' }] };
+
   const runtime = { registries: [{ official: { name: '@a' },
     atlas: { item_summaries: [{ slug: 'button', name: 'Button',
       docs_url: 'https://a.example/old' }] } }] };
+
   const jobs = planRegistryCrawl([registries[0]], catalog, current, { registry: '@a' });
+
   function trustedEntry(slug: string, url: string, previousUrl: string | null) {
     return { token: '@a/' + slug, registry: '@a', slug, status: 'verified', verifiedUrl: url,
       evidence: { namespace: '@a', slug, previousUrl, verifiedUrl: url,
@@ -154,15 +177,18 @@ describe('applying verified crawler results to Atlas sources', () => {
           homepageUrl: 'https://a.example/', listingUrl: 'https://a.example/components',
           checkedAt: '2026-10-01T19:00:00Z' } } };
   }
+
   it('repairs an exact item and adds a documented indexed identity without rewriting other fields', async () => {
     const journal = memoryJournal();
     await journal.append(trustedEntry('button', 'https://a.example/components/button',
       'https://a.example/old'));
     await journal.append(trustedEntry('card', 'https://a.example/components/card', null));
+
     const unambiguousJobs = planRegistryCrawl([registries[0]], {
       registries: { '@a': [{ name: 'button', type: 'registry:ui' },
         { name: 'card', type: 'registry:ui' }] },
     }, current, { registry: '@a' });
+
     const change = proposeVerifiedLinkUpdates(unambiguousJobs, journal, current, runtime);
     expect(change.unresolved).toEqual([]);
     expect(change.changes.map((x: any) => x.token)).toEqual(['@a/button', '@a/card']);
@@ -197,8 +223,10 @@ describe('shared discovery to source-verified crawler bridge', () => {
   const docs = 'https://example.test/docs/components';
   const button = 'https://example.test/docs/components/button';
   const nested = 'https://example.test/docs/components/radix/accordion';
+
   function site() {
     let current = home;
+
     const pages: Record<string, {heading?: string; links?: Array<[string,string]>}> = {
       [home]: {links:[['Components','/docs/components']]},
       [docs]: {heading:'Components',links:[['Button','/docs/components/button'],
@@ -211,8 +239,10 @@ describe('shared discovery to source-verified crawler bridge', () => {
       [button]: {heading:'Button'},
       [nested]: {heading:'Accordion'},
     };
+
     const visited: string[] = [];
     const page = () => pages[current] ?? {};
+
     return {visited, url: async () => current,
       nav: async (dest: string) => {current=dest;visited.push(dest);},
       snap: async () => ({url:current,nodes:[
@@ -223,18 +253,22 @@ describe('shared discovery to source-verified crawler bridge', () => {
       domLinks: async () => (page().links ?? []).map(([name,href])=>({name,href})),
     };
   }
+
   const registry = {name:'@example',homepage:home};
+
   const targets = [
     {slug:'button',token:'@example/button',docs_url:null},
     {slug:'components-radix-accordion',token:'@example/components-radix-accordion',
       docs_url:null},
   ];
+
   const source = new Map([
     ['@example/button', {status:'verified', summary:{title:'Button',
       files:[{path:'registry/components/button/index.tsx'}]}}],
     ['@example/components-radix-accordion', {status:'verified',
       summary:{title:'Accordion', files:[{path:'registry/components/radix/accordion/index.tsx'}]}}],
   ]);
+
   it('maps observed pages to source-checked records for flat and nested item names', async () => {
     const browser = site();
     const result = await collectDiscoveryLinkEvidence(browser, registry, targets, source);
@@ -251,11 +285,14 @@ describe('shared discovery to source-verified crawler bridge', () => {
   it('distinguishes same-titled docs from different nested source paths', async () => {
     const extra = {slug:'components-base-accordion',token:'@example/components-base-accordion',
       docs_url:null};
+
     const facts = new Map(source);
     facts.set(extra.token, {status:'verified',summary:{title:'Accordion',
       files:[{path:'registry/components/base/accordion/index.tsx'}]}} as any);
+
     const result = await collectDiscoveryLinkEvidence(site(), registry,
       [targets[1],extra], facts);
+
     expect(result.unresolved).toEqual([]);
     expect(result.records.map((row:any) => [row.slug,row.verifiedUrl])).toEqual([
       ['components-radix-accordion',nested],
@@ -269,6 +306,7 @@ describe('shared discovery to source-verified crawler bridge', () => {
   it('does not promote observed docs without independently verified registry source facts', async () => {
     const result = await collectDiscoveryLinkEvidence(site(), registry, targets,
       new Map([['@example/button', {status:'unresolved'}]]));
+
     expect(result.records).toEqual([]);
     expect(result.unresolved.map((r: any) => r.reason))
       .toEqual(['official-item-not-verified','official-item-not-verified']);

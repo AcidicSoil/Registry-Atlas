@@ -35,9 +35,11 @@ function renderRegistryPicker(
 ): string {
   const selected = new Set(selectedNames);
   const query = search.trim().toLocaleLowerCase();
+
   const candidates = availableRegistryNames
     .filter(name => !selected.has(name) && (!query || name.toLocaleLowerCase().includes(query)))
     .slice(0, REGISTRY_PICKER_LIMIT);
+
   const full = selected.size >= 4;
 
   return `
@@ -76,6 +78,7 @@ function renderRegistryPicker(
 
 function renderSummary(result: CatalogCompareResult): string {
   const shared = result.intersectionCount === 1 ? "1 shared component" : `${result.intersectionCount.toLocaleString()} shared components`;
+
   return `
     <div class="catalog-compare-summary">
       <strong>${escapeHtml(shared)}</strong>
@@ -93,15 +96,18 @@ function renderTable(result: CatalogCompareResult): string {
   const headers = result.selectedRegistryNames
     .map(name => `<th scope="col">${escapeHtml(name)}</th>`)
     .join("");
+
   const rows = result.rows.map(row => `
     <tr>
       <th scope="row"><code>${escapeHtml(row.slug)}</code></th>
       ${row.cells.map(cell => {
         if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
+
         const original = sourcePageNavigationForItem(cell.namespace, row.slug, cell.registryHomepage ?? '', {
           docsUrl: cell.docsUrl,
           sourcePage: cell.sourcePage,
         });
+
         return `<td>${cell.routePath ? `<a class="compare-presence-link" href="${escapeHtml(cell.routePath)}"
           data-view-item-registry="${escapeHtml(cell.namespace)}" data-view-item-slug="${escapeHtml(row.slug)}"
           data-view-item-kind="${escapeHtml(cell.routeKind ?? 'component')}">Present</a>` : '<span>Present</span>'}
@@ -125,6 +131,7 @@ function renderTable(result: CatalogCompareResult): string {
 
 function renderPagination(result: CatalogCompareResult): string {
   if (result.pageCount <= 1) return "";
+
   return `
     <nav class="catalog-pagination" aria-label="Comparison pages">
       <button type="button" data-discovery-page="${result.page - 1}" ${result.page > 1 ? "" : "disabled"}>Previous</button>

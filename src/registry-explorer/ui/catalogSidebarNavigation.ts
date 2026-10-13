@@ -34,6 +34,7 @@ const ASSET_KIND_LABELS: Readonly<Record<CatalogAssetKind, string>> = {
 
 function sidebarIcon(kind: string): string {
   const root = kind.split('/')[0] ?? kind;
+
   const paths: Record<string, string> = {
     source: '<circle cx="8" cy="8" r="5"></circle><path d="M3 8h10M8 3c1.6 1.5 2.4 3.2 2.4 5S9.6 11.5 8 13M8 3C6.4 4.5 5.6 6.2 5.6 8s.8 3.5 2.4 5"></path>',
     foundation: '<rect x="3" y="3" width="10" height="10" rx="1.5"></rect><path d="M6 6h4v4H6z"></path>',
@@ -57,6 +58,7 @@ function sidebarIcon(kind: string): string {
     free: '<path d="M4 8.5 6.8 11 12 5"></path>',
     paid: '<circle cx="8" cy="8" r="5"></circle><path d="M9.8 5.8H7.2a1.4 1.4 0 1 0 0 2.8h1.6a1.4 1.4 0 1 1 0 2.8H6M8 4.5v7"></path>',
   };
+
   return `<svg class="sidebar-nav-icon-svg" viewBox="0 0 16 16" aria-hidden="true">${paths[root] ?? paths.other}</svg>`;
 }
 
@@ -90,6 +92,7 @@ function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): s
     { value: 'name', label: 'Name' },
     ...(showRegistrySort ? [{ value: 'registry' as const, label: 'Registry' }] : []),
   ];
+
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-sort-heading">
     <p class="sidebar-nav-section-label" id="catalog-sort-heading">Sort</p>
     ${options.map(option => rowButton({
@@ -117,6 +120,7 @@ function renderCanonical(
 ): string {
   const counts = new Map(facets.canonical.map(item => [item.value, item.count]));
   const rows = topLevelCanonical(taxonomy.roots, counts);
+
   if (!rows.length) return '';
   const selected = state.canonicalIds[0] ?? '';
 
@@ -139,8 +143,10 @@ function renderAssetKinds(
 ): string {
   if (!counts) return '';
   const selected = state.assetKinds?.[0] ?? '';
+
   const rows = (Object.keys(ASSET_KIND_LABELS) as CatalogAssetKind[])
     .filter(kind => Boolean(counts[kind]) || selected === kind);
+
   if (!rows.length) return '';
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-types-heading">
@@ -163,8 +169,10 @@ function renderAccess(
   if (!facets.access?.length) return '';
   const counts = new Map(facets.access.map(option => [option.value, option.count]));
   const selected = state.access[0] ?? '';
+
   const rows = (['free', 'paid'] as const)
     .filter(value => counts.has(value) || selected === value);
+
   if (!rows.length) return '';
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-access-heading">

@@ -68,6 +68,7 @@ export function renderCatalogComponents(
 
 function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
   const visible = bands.filter(band => band.items.length > 0);
+
   if (!visible.length) return "";
 
   return `
@@ -98,6 +99,7 @@ function appliedCatalogFilters(
   const access = state.access ?? [];
   const selectedAssetKinds = options.selectedAssetKinds ?? state.assetKinds ?? [];
   const taxonomyMap = options.taxonomy ? catalogTaxonomyNodeMap(options.taxonomy) : null;
+
   return [
     ...state.registryNames.map(value => ({
       attribute:'data-catalog-registry-value',value,label:'Registry: '+value,
@@ -135,6 +137,7 @@ export function renderCatalogBrowseControls(
   const activeFilters = appliedCatalogFilters(state, options);
   const query = options.searchTerm?.trim() ?? '';
   const active = Boolean(query) || activeFilters.length > 0;
+
   if (!active) return '';
 
   return `<div class="catalog-results-context" aria-label="Current catalog scope">
@@ -166,6 +169,7 @@ function catalogCardRoutePath(
   if (routeKind === 'component') return component.routePath;
   const base = component.routePath.slice(0, component.routePath.indexOf(component.namespace));
   const kind = routeKind === 'icon' ? 'component' : routeKind;
+
   return catalogRoutePath(
     { kind, namespace: component.namespace, slug: component.slug }, base,
   );
@@ -176,15 +180,20 @@ export function renderCatalogComponentCard(
   routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon' = 'component',
 ): string {
   const homepage = component.registry?.url ?? '';
+
   const original = sourcePageNavigationForItem(component.namespace, component.slug, homepage, {
     docsUrl: component.docsUrl,
     sourcePage: component.sourcePage,
   });
+
   const routePath = catalogCardRoutePath(component, routeKind);
+
   const kindLabel = routeKind === 'component' ? component.type.replace(/^registry:/, '')
     : routeKind;
+
   const supportingCopy = component.description?.trim()
     || (component.categories.length ? component.categories.slice(0, 3).join(' · ') : kindLabel);
+
   const themeData = routeKind === 'theme' && component.themePreview
     ? renderCatalogThemeSpecimen(component) : '';
 
@@ -243,9 +252,11 @@ function renderCatalogThemeSpecimen(component: CatalogComponent): string {
     { label: "Light", values: component.themePreview?.light },
     { label: "Dark", values: component.themePreview?.dark },
   ];
+
   const visible = groups.filter(group =>
     group.values && THEME_SWATCH_KEYS.some(key => Boolean(group.values?.[key])),
   );
+
   if (!visible.length) return renderCatalogMetadataSpecimen(component);
 
   return `
@@ -256,8 +267,10 @@ function renderCatalogThemeSpecimen(component: CatalogComponent): string {
           <div class="catalog-theme-swatch-row">
             ${THEME_SWATCH_KEYS.map(name => {
               const value = group.values?.[name];
+
               if (!value) return "";
               const color = safeCssColor(value);
+
               return `<span class="catalog-theme-swatch" title="${escapeHtml(name)}: ${escapeHtml(value)}"${color ? ` style="background-color:${escapeHtml(color)}"` : ""}></span>`;
             }).join("")}
           </div>
@@ -269,8 +282,11 @@ function renderCatalogThemeSpecimen(component: CatalogComponent): string {
 
 function safeCssColor(value: string): string | null {
   const candidate = value.trim();
+
   if (/^#[0-9a-f]{3,8}$/i.test(candidate)) return candidate;
-  if (/^(?:rgb|rgba|hsl|hsla|oklch|oklab|lab|lch)\([0-9a-z.%+\-\s,\/]+\)$/i.test(candidate)) return candidate;
+
+  if (/^(?:rgb|rgba|hsl|hsla|oklch|oklab|lab|lch)\([0-9a-z.%+\-\s,/]+\)$/i.test(candidate)) return candidate;
+
   return null;
 }
 
@@ -294,11 +310,13 @@ function renderCatalogMetadataSpecimen(component: CatalogComponent): string {
 function renderResultMeta(result: CatalogQueryResult): string {
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
+
   return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
 }
 
 function renderPagination(result: CatalogQueryResult): string {
   if (result.pageCount <= 1) return "";
+
   return `
     <nav class="catalog-pagination" aria-label="Component catalog pages">
       <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>

@@ -36,6 +36,7 @@ describe('catalog classification state', () => {
       item: { name: 'mystery-shell', title: 'Mystery Surface', kind: 'block' },
       groups: ['App Shell'],
     } as any);
+
     expect(legacySurveyRecord).not.toHaveProperty('sourceHints');
     expect(findDeterministicAliasClassification(legacySurveyRecord, taxonomy)).toBeNull();
 
@@ -44,6 +45,7 @@ describe('catalog classification state', () => {
       item: { name: 'mystery-shell', title: 'Mystery Surface', kind: 'block' },
       sourceHints: { verifiedGroups: ['App Shell'] },
     });
+
     expect(findDeterministicAliasClassification(reviewedConversion, taxonomy)?.primary)
       .toBe('application/app-shell');
   });
@@ -53,6 +55,7 @@ describe('catalog classification state', () => {
       namespace: '@offline',
       item: { name: 'button', title: 'Button', kind: 'component' },
     });
+
     expect(findDeterministicAliasClassification(state, taxonomy)).toMatchObject({
       primary: 'controls/button',
       method: 'deterministic-alias',
@@ -70,6 +73,7 @@ describe('catalog classification state', () => {
         pathHints: ['/components/button'],
       },
     });
+
     expect(state.sourceHints).toEqual({
       categories: ['Controls'],
       verifiedGroups: ['Form controls'],
@@ -99,6 +103,7 @@ describe('deterministic canonical alias classification', () => {
       namespace: '@demo',
       item: { name: title.toLowerCase().replace(/\s+/g, '-'), title, kind: 'block' },
     });
+
     const result = findDeterministicAliasClassification(state, taxonomy);
 
     expect(result).toMatchObject({
@@ -116,6 +121,7 @@ describe('deterministic canonical alias classification', () => {
       item: { name: 'shell-01', title: 'Workspace Layout 01', kind: 'block' },
       sourceHints: { categories: ['App Shell'] },
     });
+
     expect(findDeterministicAliasClassification(sourceMatch, taxonomy)?.primary)
       .toBe('application/app-shell');
 
@@ -128,6 +134,7 @@ describe('deterministic canonical alias classification', () => {
         kind: 'block',
       },
     });
+
     expect(findDeterministicAliasClassification(descriptionOnly, taxonomy)).toBeNull();
   });
 
@@ -137,6 +144,7 @@ describe('deterministic canonical alias classification', () => {
       item: { name: 'button-shell', title: 'Button', kind: 'block' },
       sourceHints: { verifiedGroups: ['App Shell'] },
     });
+
     expect(findDeterministicAliasClassification(state, taxonomy)).toBeNull();
   });
 
@@ -145,14 +153,17 @@ describe('deterministic canonical alias classification', () => {
       namespace: '@one',
       item: { name: 'button', title: 'Button', kind: 'component' },
     });
+
     const second = buildCatalogClassificationState({
       namespace: '@two',
       item: { name: 'button', title: 'Button', kind: 'component' },
     });
+
     const changed = buildCatalogClassificationState({
       namespace: '@two',
       item: { name: 'button', title: 'Primary Button', kind: 'component' },
     });
+
     const a = findDeterministicAliasClassification(first, taxonomy);
     const b = findDeterministicAliasClassification(second, taxonomy);
     expect(a?.inputFingerprint).toBe(b?.inputFingerprint);
@@ -192,6 +203,7 @@ function ambiguousState() {
 describe('hierarchical canonical classification', () => {
   it('bypasses choose entirely for deterministic aliases', async () => {
     let calls = 0;
+
     const result = await classifyCatalogItem({
       state: buildCatalogClassificationState({
         namespace: '@demo', item: { name: 'app-shell', title: 'App Shell', kind: 'block' },
@@ -199,12 +211,14 @@ describe('hierarchical canonical classification', () => {
       taxonomy: beamTaxonomy,
       choose: async () => { calls += 1; throw new Error('must not run'); },
     });
+
     expect(calls).toBe(0);
     expect(result).toMatchObject({ primary: 'application/app-shell', method: 'deterministic-alias' });
   });
 
   it('classifies normalized icon kind as foundation/iconography without System One', async () => {
     let calls = 0;
+
     const result = await classifyCatalogItem({
       state: buildCatalogClassificationState({
         namespace: '@icons',
@@ -227,6 +241,7 @@ describe('hierarchical canonical classification', () => {
       state: ambiguousState(), taxonomy: beamTaxonomy, beamWidth: 1,
       choose: async ({ node }: any) => {
         expect(node).toBeNull();
+
         return {
           choice: 'UNCLASSIFIED',
           probabilities: { application: 0.1, ai: 0.2, UNCLASSIFIED: 0.7 },
@@ -234,6 +249,7 @@ describe('hierarchical canonical classification', () => {
         };
       },
     });
+
     expect(result).toMatchObject({
       taxonomyVersion: 'beam-v1', primary: null, path: [], method: 'unclassified',
     });
@@ -254,25 +270,30 @@ describe('hierarchical canonical classification', () => {
         confidence: 0.5, model: 'fixture',
       },
     });
+
     expect(result).toMatchObject({ primary: 'application', path: ['application'], method: 'system-one' });
   });
 
   it('uses beam width 2 so a runner-up root can overtake after deeper evidence', async () => {
     const expanded: string[] = [];
+
     const result = await classifyCatalogItem({
       state: ambiguousState(), taxonomy: beamTaxonomy,
       choose: async ({ node }: any) => {
         expanded.push(node?.id ?? 'ROOT');
+
         if (node === null) return {
           choice: 'application',
           probabilities: { application: 0.55, ai: 0.45, UNCLASSIFIED: 0 },
           confidence: 0.1, model: 'fixture',
         };
+
         if (node.id === 'application') return {
           choice: 'application/app-shell',
           probabilities: { 'application/app-shell': 0.51, THIS_CATEGORY: 0.49 },
           confidence: 0.05, model: 'fixture',
         };
+
         return {
           choice: 'ai/chat',
           probabilities: { 'ai/chat': 0.99, THIS_CATEGORY: 0.01 },
@@ -307,6 +328,7 @@ describe('hierarchical canonical classification', () => {
         confidence: 0.01, model: 'fixture',
       },
     });
+
     expect(result.primary).toBe('ai/chat');
     expect(result.systemOne.finalPathScore).toBeCloseTo(Math.sqrt(0.4 * 0.51), 8);
     expect(result.systemOne.decisions[0].confidence).toBe(0.01);

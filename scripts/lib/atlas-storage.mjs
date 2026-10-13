@@ -34,14 +34,18 @@ export async function readAtlasState(db) {
       readDocument(db,'catalog-classification-evaluation'),
       readDocument(db,'catalog-promotion-review'),readClassificationOverlay(db)
     ]);
+
   return {rawRegistries,runtime,catalog,curated,catalogEvidence,sourcePages,taxonomy,
     accessRules:accessRules??{},kindOverrides:kindOverrides??{},gold,
     classificationEvaluation,promotionReview,classificationOverlay};
 }
+
 export async function readClassificationOverlay(db) {
   const meta=await readDocument(db,'catalog-classification-overlay');
+
   return meta?{...meta,items:await readClassifications(db)}:null;
 }
+
 export async function replaceClassificationOverlay(db,overlay) {
   const {items=[],...meta}=overlay??{};
   await transaction(db,async tx=>{

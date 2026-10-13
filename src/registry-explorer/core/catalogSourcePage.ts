@@ -18,10 +18,12 @@ export function resolveCatalogSourcePage(
   item: RegistryCatalogItem,
 ): RegistrySourcePage | undefined {
   const direct = index.sourcePages?.[`${registry.name}/${item.name}`];
+
   if (direct) return direct;
 
   const kind = assetKindForCatalogItem(item, registry.name);
   const sourceKind: SourceItemKind = kind === 'other' ? 'component' : kind;
+
   const url = resolveSourceItemRoute({
     homepage: registry.url,
     slug: item.name,
@@ -30,6 +32,7 @@ export function resolveCatalogSourcePage(
     directRoute: index.itemRoutes?.[`${registry.name}/${item.name}`],
     patterns: index.routePatterns?.[registry.name],
   });
+
   if (url) return {
     url,
     level: 'pattern',

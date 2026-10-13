@@ -37,9 +37,11 @@ function renderHeader(
 
   const libraryUrl = catalogRoutePath({ kind: 'registry', namespace: detail.namespace }, '/Registry-Atlas/');
   const registryHomepage = verifiedRegistryHomepage(detail.registry.url);
+
   const source = sourcePageNavigationForItem(detail.namespace, detail.slug, detail.registry.url, {
     docsUrl: detail.componentPageUrl, sourcePage: detail.sourcePage,
   });
+
   return `
     <div class="item-detail-header">
       <nav class="item-quick-links" aria-label="Component links">
@@ -118,6 +120,7 @@ export function renderRelatedComponentLinks(
   const related = items
     .filter(item => item.namespace === namespace && item.slug !== currentSlug)
     .slice(0, 8);
+
   if (!related.length) return '';
 
   return `<section class="item-related-section" aria-label="More from the same registry">
@@ -130,16 +133,19 @@ export function renderRelatedComponentLinks(
       ${related.map(item => {
         const routeKind = routeKindForItem(item);
         const basePath = item.routePath.slice(0, item.routePath.indexOf(item.namespace));
+
         const routePath = routeKind === 'component'
           ? item.routePath
           : catalogRoutePath(
               { kind: routeKind, namespace: item.namespace, slug: item.slug },
               basePath,
             );
+
         const original = sourcePageNavigationForItem(item.namespace, item.slug, item.registry.url, {
           docsUrl: item.docsUrl,
           sourcePage: item.sourcePage,
         });
+
         return `<div class="item-related-entry">
           <a class="item-related-link" href="${escapeHtml(routePath)}"
             data-view-item-registry="${escapeHtml(item.namespace)}"
@@ -165,10 +171,15 @@ function routeKindForItem(
   item: CatalogComponent,
 ): 'component' | 'block' | 'page' | 'template' | 'theme' {
   const kind = assetKindForCatalogItem(item.item, item.namespace);
+
   if (kind === 'block') return 'block';
+
   if (kind === 'page') return 'page';
+
   if (kind === 'template') return 'template';
+
   if (kind === 'theme') return 'theme';
+
   return 'component';
 }
 
@@ -198,6 +209,7 @@ function renderInstallActions(
   }
 
   const queued = queuedTokens.has(action.token);
+
   const queueButton = queued
     ? `<button class="install-button" type="button" data-queue-remove="${escapeHtml(action.token)}">Remove from queue</button>`
     : `<button class="install-button" type="button" data-queue-add="${escapeHtml(action.token)}"
@@ -225,6 +237,7 @@ function renderInstallActions(
 function renderPromptActions(detail: RegistryItemDetail): string {
   const agentPrompt = buildInstallAgentPrompt(detail);
   const inspectionPrompt = buildInspectionPrompt(detail);
+
   return `
     <div class="item-prompt-actions" aria-label="Copy item context">
       ${agentPrompt ? `<button class="install-button" type="button"
@@ -244,6 +257,7 @@ function renderEvaluationLabels(detail: RegistryItemDetail): string {
     `${detail.registryDependencies.length} registry dependencies`,
     `${detail.files.length} files`,
   ];
+
   return `<div class="discovery-item-meta" aria-label="Item summary">
     ${labels.map(label => `<span>${escapeHtml(label)}</span>`).join('')}
   </div>`;
@@ -251,6 +265,7 @@ function renderEvaluationLabels(detail: RegistryItemDetail): string {
 
 function renderListCard(title: string, items: readonly string[]): string {
   if (!items.length) return '';
+
   return `
     <section class="item-detail-card">
       <h2>${escapeHtml(title)}</h2>
@@ -263,6 +278,7 @@ function renderListCard(title: string, items: readonly string[]): string {
 
 function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
   if (!files.length) return '';
+
   return `
     <section class="item-detail-card">
       <h2>Files</h2>
@@ -295,8 +311,10 @@ function renderFallback(result: RegistryItemDetailResult): string {
   if (result.status === 'fetch-error') {
     return '<div class="partial-data-note">Full item details could not be loaded. Showing the saved summary.</div>';
   }
+
   if (result.status === 'invalid-json' || result.status === 'invalid-schema') {
     return '<div class="partial-data-note">Atlas could not read this registry item safely. Showing the saved summary.</div>';
   }
+
   return `<div class="partial-data-note">${escapeHtml(result.message ?? 'Item details unavailable.')}</div>`;
 }

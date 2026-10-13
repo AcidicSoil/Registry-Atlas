@@ -4,8 +4,11 @@ import path from 'node:path';
 import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 
 const server = process.env.PINCHTAB_SERVER;
+
 const tab = process.env.PINCHTAB_TAB;
+
 const baseUrl = (process.env.REGISTRY_ATLAS_URL ?? 'http://127.0.0.1:5189/Registry-Atlas').replace(/\/$/, '');
+
 const outputDir = process.env.REGISTRY_ATLAS_ACCEPTANCE_DIR
   ?? path.join('/tmp', `registry-atlas-acceptance-${new Date().toISOString().replace(/[:.]/g, '-')}`);
 
@@ -15,41 +18,64 @@ if (!server || !tab) {
 }
 
 const database = openAtlasCoreDatabase(process.cwd(), { readOnly: true });
+
 const atlasState = await readAtlasState(database);
+
 await database.close();
+
 const catalog = atlasState.catalog;
+
 const kindDefaults = atlasState.kindOverrides?.registryDefaults ?? {};
+
 const entries = Object.entries(catalog.registries);
+
 const flat = entries.flatMap(([namespace, items]) =>
   items.map(item => ({ namespace, ...item, assetKind: assetKind(item, namespace) })));
 
 function assetKind(item, namespace) {
   const categories = (item.categories ?? []).map(value => String(value).trim().toLowerCase());
+
   if (categories.some(value => value === 'template' || value === 'templates')) return 'template';
+
   if (item.kind) return item.kind;
+
   if (kindDefaults[namespace]) return kindDefaults[namespace];
+
   if (item.type === 'registry:icon'
     || categories.some(value => ['icon', 'icons', 'icon-stack', 'morph-icon'].includes(value))) {
     return 'icon';
   }
+
   if (item.type === 'registry:block') return 'block';
+
   if (item.type === 'registry:page') return 'page';
+
   if (item.type === 'registry:style' || item.type === 'registry:theme') return 'theme';
+
   if (['registry:component', 'registry:ui', 'registry:item'].includes(item.type)) return 'component';
+
   return 'other';
 }
 
 const simple = flat.find(item => item.name === 'button' && item.assetKind === 'component')
   ?? flat.find(item => item.assetKind === 'component');
+
 const nested = flat.find(item => item.assetKind === 'component' && item.name.includes('/'));
+
 const block = flat.find(item => item.assetKind === 'block');
+
 const page = flat.find(item => item.assetKind === 'page');
+
 const template = flat.find(item => item.assetKind === 'template');
+
 const theme = flat.find(item => item.assetKind === 'theme');
+
 const icon = flat.find(item => item.assetKind === 'icon');
+
 const largeRegistry = entries
   .map(([namespace, items]) => ({ namespace, count: items.length }))
   .sort((a, b) => b.count - a.count)[0];
+
 const comparisonRegistry = entries.find(([namespace]) => namespace !== largeRegistry?.namespace)?.[0];
 
 for (const [label, value] of Object.entries({
@@ -62,6 +88,7 @@ for (const [label, value] of Object.entries({
 }
 
 const nsPath = namespace => namespace;
+
 const itemPath = item => item.name.split('/').map(encodeURIComponent).join('/');
 
 const routes = [
@@ -121,7 +148,9 @@ const viewports = [
 ];
 
 mkdirSync(outputDir, { recursive: true });
+
 const results = [];
+
 const failures = [];
 
 function run(args, { allowFailure = false } = {}) {
@@ -129,9 +158,11 @@ function run(args, { allowFailure = false } = {}) {
     encoding: 'utf8',
     maxBuffer: 8 * 1024 * 1024,
   });
+
   if (result.status !== 0 && !allowFailure) {
     throw new Error(`pinchtab ${args.join(' ')} failed: ${result.stderr || result.stdout}`);
   }
+
   return {
     status: result.status ?? 1,
     stdout: (result.stdout ?? '').trim(),
@@ -178,12 +209,15 @@ function pageState() {
       duplicateIdCount: new Set(duplicateIds).size
     });
   })()`;
+
   const raw = run(['eval', '--tab', tab, expression]).stdout;
+
   return JSON.parse(raw);
 }
 
 function expectedPathname(routePath) {
   const url = new URL(baseUrl + (routePath === '/' ? '/' : routePath));
+
   return url.pathname;
 }
 
@@ -201,6 +235,7 @@ function mobileSidebarFocusState() {
     toggle.click();
     return JSON.stringify({ available: true });
   })()`]).stdout);
+
   if (!openResult.available) return openResult;
 
   const opened = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
@@ -208,6 +243,7 @@ function mobileSidebarFocusState() {
     expanded: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'true',
     focusMovedInside: document.activeElement?.id === 'sidebarClose'
   })`]).stdout);
+
   const focusLoop = JSON.parse(run(['eval', '--tab', tab, `(() => {
     const drawer = document.querySelector('#appSidebar');
     const focusable = [...drawer.querySelectorAll(
@@ -228,7 +264,9 @@ function mobileSidebarFocusState() {
       modalSemantics: drawer.getAttribute('role') === 'dialog' && drawer.getAttribute('aria-modal') === 'true',
     });
   })()`]).stdout);
+
   run(['eval', '--tab', tab, `document.querySelector('#sidebarClose')?.click(); 'clicked'`]);
+
   const closed = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
     closed: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'false',
     collapsed: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'false',
@@ -251,7 +289,9 @@ function readNetwork5xx() {
   const raw = run([
     'network', '--tab', tab, '--status', '5xx', '--limit', '100', '--json',
   ]).stdout;
+
   const parsed = JSON.parse(raw || '{"count":0,"entries":[]}');
+
   return Array.isArray(parsed.entries) ? parsed.entries : [];
 }
 
@@ -262,25 +302,33 @@ function networkEntryKey(entry) {
 function capturePairedScreenshot(screenshot, expectedUrl) {
   const args = ['capture', '--tab', tab, '--require-pair',
     '--beyond-viewport', '--format', 'png', '--output', screenshot];
+
   for (let attempt = 0; attempt < 3; attempt++) {
     const capture = run(args, { allowFailure: true });
+
     if (capture.status === 0) return;
     const error = capture.stderr || capture.stdout;
+
     if (!/pairing broken: navigation observed during capture window/.test(error)
       || run(['url', '--tab', tab]).stdout !== expectedUrl) {
       throw new Error('Paired capture failed: ' + error);
     }
+
     // The page moved during capture. Reobserve the current page and retry
     // a bounded number of times without accepting an unpaired screenshot.
     run(['snap', '--tab', tab, '--max-tokens', '300']);
   }
+
   throw new Error('Could not obtain a stable paired screenshot after 3 attempts');
 }
 
 const selectedRoute = process.env.REGISTRY_ATLAS_ACCEPTANCE_ROUTE;
+
 const selectedViewport = process.env.REGISTRY_ATLAS_ACCEPTANCE_VIEWPORT;
+
 for (const viewport of viewports.filter(item => !selectedViewport || item.name === selectedViewport)) {
   const viewportArgs = ['set', 'viewport', String(viewport.width), String(viewport.height), '--tab', tab];
+
   if (viewport.mobile) viewportArgs.push('--mobile');
   run(viewportArgs);
 
@@ -302,41 +350,66 @@ for (const viewport of viewports.filter(item => !selectedViewport || item.name =
     const newNetwork5xx = networkEntries.filter(entry => !networkBefore.has(networkEntryKey(entry)));
 
     const routeFailures = [];
+
     if (state.pathname !== expectedPathname(route.path)) {
       routeFailures.push(`pathname ${state.pathname} != ${expectedPathname(route.path)}`);
     }
+
     if (state.overflow) routeFailures.push(`horizontal overflow ${state.scrollWidth} > ${state.width}`);
+
     if (errors !== 'No errors') routeFailures.push(`browser errors: ${errors}`);
+
     if (newNetwork5xx.length > 0) routeFailures.push('unexpected 5xx network response');
+
     if (/\[ERROR\]/.test(consoleOutput)) routeFailures.push('console contains ERROR');
+
     if (route.expectUnavailable && !state.evidenceUnavailable) {
       routeFailures.push('expected evidence-unavailable state was not rendered');
     }
+
     if (!route.expectUnavailable && state.evidenceUnavailable) {
       routeFailures.push('unexpected evidence-unavailable state');
     }
+
     if (route.requireItems && state.visibleCatalogItems === 0) {
       routeFailures.push('expected exact catalog items but none were rendered');
     }
+
     if (route.expectAuthors && (state.heading !== 'Authors' || state.attributedAuthors === 0)) {
       routeFailures.push('expected source-backed author directory but none was rendered');
     }
+
     if (!state.heading) routeFailures.push('missing h1');
+
     if (state.h1Count !== 1) routeFailures.push(`expected one h1, found ${state.h1Count}`);
+
     if (state.unlabeledButtons > 0) routeFailures.push(`${state.unlabeledButtons} visible button(s) lack an accessible name`);
+
     if (state.unlabeledLinks > 0) routeFailures.push(`${state.unlabeledLinks} visible link(s) lack an accessible name`);
+
     if (state.unlabeledFields > 0) routeFailures.push(`${state.unlabeledFields} visible form field(s) lack a label`);
+
     if (state.imagesMissingAlt > 0) routeFailures.push(`${state.imagesMissingAlt} visible image(s) lack alt text`);
+
     if (state.duplicateIdCount > 0) routeFailures.push(`${state.duplicateIdCount} duplicate DOM id(s)`);
+
     if (viewport.mobile && route.name === 'components') {
       const sidebarFocus = mobileSidebarFocusState();
+
       if (!sidebarFocus.available) routeFailures.push('mobile sidebar is unavailable');
+
       if (sidebarFocus.available && !sidebarFocus.opened) routeFailures.push('mobile sidebar did not open');
+
       if (sidebarFocus.available && !sidebarFocus.focusMovedInside) routeFailures.push('mobile sidebar did not move focus to Close');
+
       if (sidebarFocus.available && !sidebarFocus.modalSemantics) routeFailures.push('mobile sidebar did not declare modal dialog semantics');
+
       if (sidebarFocus.available && !sidebarFocus.backwardsWrapped) routeFailures.push('Shift+Tab escaped the first sidebar control');
+
       if (sidebarFocus.available && !sidebarFocus.forwardsWrapped) routeFailures.push('Tab escaped the final sidebar control');
+
       if (sidebarFocus.available && !sidebarFocus.closed) routeFailures.push('mobile sidebar did not close');
+
       if (sidebarFocus.available && !sidebarFocus.focusReturned) routeFailures.push('mobile sidebar did not return focus to the menu button');
     }
 
@@ -350,7 +423,9 @@ for (const viewport of viewports.filter(item => !selectedViewport || item.name =
       network5xxCount: newNetwork5xx.length,
       failures: routeFailures,
     };
+
     results.push(record);
+
     for (const failure of routeFailures) {
       failures.push(`${viewport.name}/${route.name}: ${failure}`);
     }
@@ -372,15 +447,19 @@ const report = {
   failures,
   results,
 };
+
 const reportPath = path.join(outputDir, 'report.json');
+
 writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n');
 
 if (failures.length) {
   console.error(`Registry Atlas browser acceptance failed (${failures.length}):`);
+
   for (const failure of failures) console.error(`- ${failure}`);
   console.error(`Report: ${reportPath}`);
   process.exit(1);
 }
 
 console.log(`Registry Atlas browser acceptance passed: ${results.length} route/viewport checks.`);
+
 console.log(`Evidence: ${outputDir}`);

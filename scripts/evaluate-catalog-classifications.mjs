@@ -10,6 +10,7 @@ import {
 } from './lib/atlas-storage.mjs';
 
 const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
+
 const FINGERPRINT = /^sha256:[a-f0-9]{64}$/;
 
 function isRecord(value) {
@@ -18,33 +19,41 @@ function isRecord(value) {
 
 function requiredString(value, field) {
   if (typeof value !== 'string' || !value.trim()) throw new Error(`${field} is required`);
+
   return value.trim();
 }
 
 function validateExpected(expected) {
   if (!isRecord(expected) || !KINDS.has(expected.kind)) throw new Error('Gold expected kind is invalid');
+
   if (!Array.isArray(expected.path) || expected.path.some(id => typeof id !== 'string' || !id)) {
     throw new Error('Gold expected path is invalid');
   }
+
   if (expected.primary === null) {
     if (expected.path.length) throw new Error('Gold expected path must be empty when primary is null');
   } else {
     const primary = requiredString(expected.primary, 'Gold expected primary');
+
     if (!expected.path.length || expected.path.at(-1) !== primary) {
       throw new Error('Gold expected path must end at primary');
     }
+
     for (let index = 0; index < expected.path.length; index += 1) {
       const id = expected.path[index];
+
       if (index === 0) {
         if (id.includes('/')) throw new Error('Gold expected path must begin at a root');
       } else {
         const parent = expected.path[index - 1];
+
         if (!id.startsWith(`${parent}/`) || id.split('/').length !== parent.split('/').length + 1) {
           throw new Error('Gold expected path must be hierarchical');
         }
       }
     }
   }
+
   return { kind: expected.kind, primary: expected.primary, path: [...expected.path] };
 }
 
@@ -52,17 +61,23 @@ export function validateGoldSet(value) {
   if (!isRecord(value)) throw new Error('Gold set must be an object');
   const version = requiredString(value.version, 'Gold version');
   const taxonomyVersion = requiredString(value.taxonomyVersion, 'Gold taxonomyVersion');
+
   if (!Array.isArray(value.records) || value.records.length === 0) throw new Error('Gold records are required');
   const seen = new Set();
+
   const records = value.records.map(raw => {
     if (!isRecord(raw) || !isRecord(raw.item)) throw new Error('Gold record is invalid');
     const registry = requiredString(raw.registry, 'Gold registry');
+
     if (!registry.startsWith('@')) throw new Error('Gold registry must be a namespace');
     const name = requiredString(raw.item.name, 'Gold item name');
+
     if (!KINDS.has(raw.item.kind)) throw new Error('Gold item kind is invalid');
     const key = `${registry}/${name}`;
+
     if (seen.has(key)) throw new Error(`Duplicate gold identity: ${key}`);
     seen.add(key);
+
     return {
       ...raw,
       registry,
@@ -70,12 +85,15 @@ export function validateGoldSet(value) {
       expected: validateExpected(raw.expected),
     };
   });
+
   return { ...value, version, taxonomyVersion, records };
 }
 
 function stable(value) {
   if (Array.isArray(value)) return value.map(stable);
+
   if (isRecord(value)) return Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])]));
+
   return value;
 }
 
@@ -93,8 +111,10 @@ function accuracy(correct, total) {
 
 function numericSummary(values) {
   const nums = values.filter(Number.isFinite).map(Number);
+
   if (!nums.length) return { count: 0, min: null, max: null, mean: null };
   const sum = nums.reduce((total, value) => total + value, 0);
+
   return { count: nums.length, min: Math.min(...nums), max: Math.max(...nums), mean: sum / nums.length };
 }
 
@@ -116,24 +136,29 @@ function evaluateOne(gold, items) {
     const expectedPrimary = row.expected.primary;
     const actualPrimary = actual?.canonical?.primary ?? (actual ? null : '<missing>');
     const primaryCorrect = actual !== undefined && actualPrimary === expectedPrimary;
+
     if (primaryCorrect) exact += 1;
 
     const expectedFamily = row.expected.path[0] ?? null;
     const actualFamily = actual?.canonical?.path?.[0] ?? (actual ? null : '<missing>');
+
     if (actual !== undefined && actualFamily === expectedFamily) family += 1;
 
     if (expectedPrimary === null) {
       pathTotal += 1;
+
       if (actual !== undefined && actual?.canonical?.primary === null) pathCorrect += 1;
     } else {
       for (let index = 0; index < row.expected.path.length; index += 1) {
         pathTotal += 1;
+
         if (actual?.canonical?.path?.[index] === row.expected.path[index]) pathCorrect += 1;
       }
     }
 
     const predictedUnclassified = actual !== undefined && actual?.canonical?.primary === null;
     const expectedUnclassified = expectedPrimary === null;
+
     if (predictedUnclassified && expectedUnclassified) truePositive += 1;
     else if (predictedUnclassified && !expectedUnclassified) falsePositive += 1;
     else if (!predictedUnclassified && expectedUnclassified) falseNegative += 1;
@@ -148,6 +173,7 @@ function evaluateOne(gold, items) {
     for (const [map, key] of [[byKind, row.expected.kind], [byRegistry, row.registry]]) {
       const current = map.get(key) ?? { correct: 0, total: 0 };
       current.total += 1;
+
       if (primaryCorrect && actual?.kind === row.expected.kind) current.correct += 1;
       map.set(key, current);
     }
@@ -156,6 +182,7 @@ function evaluateOne(gold, items) {
   const summarizeGroups = map => Object.fromEntries([...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => [
     key, accuracy(value.correct, value.total),
   ]));
+
   return {
     exactPrimary: accuracy(exact, gold.records.length),
     topFamily: accuracy(family, gold.records.length),
@@ -167,6 +194,7 @@ function evaluateOne(gold, items) {
     },
     confusions: [...confusions.entries()].map(([key, count]) => {
       const [expected, actual] = key.split('\u0000');
+
       return { expected, actual, count };
     }).sort((a, b) => b.count - a.count || a.expected.localeCompare(b.expected) || a.actual.localeCompare(b.actual)),
     byKind: summarizeGroups(byKind),
@@ -176,22 +204,31 @@ function evaluateOne(gold, items) {
 
 export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = null } = {}) {
   const reviewed = validateGoldSet(gold);
+
   if (!Array.isArray(beamItems)) throw new Error('Beam classification items are required');
+
   if (greedyItems !== null && !Array.isArray(greedyItems)) throw new Error('Greedy classification items must be an array');
   const metrics = evaluateOne(reviewed, beamItems);
   const selectedProbabilities = [];
   const finalPathScores = [];
   const separations = [];
+
   for (const item of beamItems) {
     if (!item?.systemOne) continue;
+
     if (Number.isFinite(item.systemOne.finalPathScore)) finalPathScores.push(item.systemOne.finalPathScore);
+
     if (Number.isFinite(item.systemOne.separation)) separations.push(item.systemOne.separation);
+
     for (const decision of item.systemOne.decisions ?? []) {
       const probability = decision?.probabilities?.[decision?.choice];
+
       if (Number.isFinite(probability)) selectedProbabilities.push(probability);
     }
   }
+
   const greedyMetrics = greedyItems ? evaluateOne(reviewed, greedyItems) : null;
+
   const base = {
     schema: 'registry-atlas.catalog-classification-evaluation.v1',
     taxonomyVersion: reviewed.taxonomyVersion,
@@ -210,6 +247,7 @@ export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = 
       separation: numericSummary(separations),
     },
   };
+
   return { ...base, evaluationReportFingerprint: catalogArtifactFingerprint(base) };
 }
 
@@ -217,13 +255,18 @@ export function validatePromotionReview(value) {
   if (!isRecord(value) || value.schema !== 'registry-atlas.catalog-promotion-review.v1') {
     throw new Error('Promotion review schema is invalid');
   }
+
   if (value.approved !== true) throw new Error('Promotion review must be explicitly approved');
   requiredString(value.taxonomyVersion, 'Promotion taxonomyVersion');
+
   if (!FINGERPRINT.test(value.classificationRunFingerprint ?? '')) throw new Error('Promotion classification fingerprint is invalid');
+
   if (!FINGERPRINT.test(value.evaluationReportFingerprint ?? '')) throw new Error('Promotion evaluation fingerprint is invalid');
   requiredString(value.reviewer, 'Promotion reviewer');
   const approvedAt = requiredString(value.approvedAt, 'Promotion approvedAt');
+
   if (Number.isNaN(Date.parse(approvedAt))) throw new Error('Promotion approvedAt is invalid');
+
   return value;
 }
 
@@ -233,45 +276,61 @@ export function parseEvaluationArgs(argv) {
     greedyRun: null,
     document: 'catalog-classification-evaluation',
   };
+
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
+
     if (!['--beam-run', '--greedy-run', '--document'].includes(flag)) {
       throw new Error(`Unknown argument: ${flag}`);
     }
+
     const value = argv[++index];
+
     if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
+
     if (flag === '--beam-run') output.beamRun = value;
     else if (flag === '--greedy-run') output.greedyRun = value;
     else output.document = value;
   }
+
   if (!output.beamRun) throw new Error('Missing required --beam-run');
+
   if (!/^[a-z0-9][a-z0-9._:-]{0,119}$/i.test(output.document)) {
     throw new Error('Evaluation document name is invalid');
   }
+
   return output;
 }
 
 export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parseEvaluationArgs(argv);
   const database = openAtlasCoreDatabase(cwd);
+
   try {
     const gold = await readDocument(database, 'catalog-gold-set');
+
     if (!gold) throw new Error('Catalog gold set is missing from the Atlas database');
     const beamRun = await readClassificationRun(database, options.beamRun);
+
     if (!beamRun) throw new Error(`Unknown beam classification run: ${options.beamRun}`);
     const beamItems = await readClassificationRunItems(database, options.beamRun);
+
     const greedyItems = options.greedyRun
       ? await readClassificationRunItems(database, options.greedyRun)
       : null;
+
     if (options.greedyRun && !await readClassificationRun(database, options.greedyRun)) {
       throw new Error(`Unknown greedy classification run: ${options.greedyRun}`);
     }
+
     const report = {
       ...evaluateCatalogClassifications({ gold, beamItems, greedyItems }),
       beamRunId: options.beamRun,
       ...(options.greedyRun ? { greedyRunId: options.greedyRun } : {}),
     };
+
     await putDocument(database, options.document, 'taxonomy-evaluation', report);
+
     return report;
   } finally {
     await database.close();

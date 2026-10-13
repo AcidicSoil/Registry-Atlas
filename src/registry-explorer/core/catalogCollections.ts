@@ -9,12 +9,19 @@ export interface ExploreCollectionOption {
 }
 
 const COMPONENT_TYPES = new Set(["registry:component", "registry:ui", "registry:item"]);
+
 const TEMPLATE_CATEGORIES = new Set(["template", "templates"]);
+
 const BLOCK_TYPES = new Set(["registry:block"]);
+
 const PAGE_TYPES = new Set(["registry:page"]);
+
 const THEME_TYPES = new Set(["registry:style", "registry:theme"]);
+
 const ICON_TYPES = new Set(["registry:icon"]);
+
 const ICON_CATEGORIES = new Set(["icon", "icons", "icon-stack", "morph-icon"]);
+
 let registryKindDefaults = new Map<string, CatalogCanonicalKind>();
 
 const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
@@ -29,6 +36,7 @@ const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
 export function configureCatalogKindOverrides(value: unknown): void {
   const record = isRecord(value) && isRecord(value.registryDefaults)
     ? value.registryDefaults : {};
+
   registryKindDefaults = new Map(
     Object.entries(record).flatMap(([namespace, kind]) =>
       isCatalogCanonicalKind(kind) ? [[namespace, kind] as const] : []),
@@ -44,9 +52,11 @@ function assetKindForItemType(type: string): CatalogCanonicalKind {
     [BLOCK_TYPES, 'block'], [PAGE_TYPES, 'page'],
     [THEME_TYPES, 'theme'], [COMPONENT_TYPES, 'component'],
   ] as const;
+
   for (const [types, kind] of classes) {
     if (types.has(type)) return kind;
   }
+
   return 'other';
 }
 
@@ -55,15 +65,20 @@ export function assetKindForCatalogItem(
   namespace?: string,
 ): CatalogCanonicalKind {
   if (isTemplateCatalogItem(item)) return "template";
+
   if (item.kind) return item.kind;
+
   if (namespace) {
     const reviewed = registryKindDefaults.get(namespace);
+
     if (reviewed) return reviewed;
   }
+
   if (ICON_TYPES.has(item.type)
     || (item.categories ?? []).some(category => ICON_CATEGORIES.has(normalize(category)))) {
     return "icon";
   }
+
   return assetKindForItemType(item.type);
 }
 
@@ -78,6 +93,7 @@ export function buildExploreCollectionOptions(
   observedCategories: readonly string[],
 ): ExploreCollectionOption[] {
   const observed = new Set(observedCategories.map(normalize));
+
   return EXPLORE_COLLECTIONS.filter(option =>
     option.categories.some(category => observed.has(normalize(category))),
   );

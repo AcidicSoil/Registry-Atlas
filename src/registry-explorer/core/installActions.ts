@@ -26,27 +26,35 @@ export function buildInstallToken(namespace: string, itemSlug: string): string |
 
 export function buildSingleInstallCommand(token: string): string | null {
   if (!isValidInstallToken(token)) return null;
+
   return `npx shadcn@latest add ${token}`;
 }
 
 export function buildInspectCommand(token: string): string | null {
   if (!isValidInstallToken(token)) return null;
+
   return `npx shadcn@latest view ${token}`;
 }
 
 function invalidInstallIdentity(namespace: string, slug: string): string | null {
   if (!namespace) return 'Missing registry namespace.';
+
   if (!normalizeNamespace(namespace)) return 'Invalid registry namespace.';
+
   if (!slug) return 'Missing item slug.';
+
   if (!isSafeRegistryItemName(slug)) return 'Invalid item slug.';
+
   return null;
 }
 
 function missingRegistryRouteReason(input: InstallActionInput): string | null {
   if (!input.routeEligible) return 'Item is not route eligible in the validated registry catalog.';
+
   if (!input.registryUrlTemplate?.trim() && !input.rawItemUrl?.trim()) {
     return 'Registry mirror/template is unavailable.';
   }
+
   return null;
 }
 
@@ -54,27 +62,32 @@ function unavailableInstallReason(input: InstallActionInput): string | null {
   if (input.isFallbackCandidate) {
     return input.fallbackReason ?? 'Inferred/fallback candidate; install command unavailable.';
   }
+
   return invalidInstallIdentity(input.namespace?.trim() ?? '', input.itemSlug?.trim() ?? '')
     ?? missingRegistryRouteReason(input);
 }
 
 export function getInstallActionState(input: InstallActionInput): InstallActionState {
   const unavailable = unavailableInstallReason(input);
+
   if (unavailable) return disabled(unavailable);
   const namespace = input.namespace!.trim();
   const slug = input.itemSlug!.trim();
   const template = input.registryUrlTemplate?.trim() ?? '';
 
   const token = buildInstallToken(namespace, slug);
+
   if (!token) return disabled('Invalid install token.');
 
   const route = resolveRegistryItemRoute(normalizeNamespace(namespace) ?? '', template, slug, input.rawItemUrl);
+
   if (route.status !== 'available') {
     return disabled(disabledReasonForRoute(route.status));
   }
 
   const installCommand = buildSingleInstallCommand(token);
   const inspectCommand = buildInspectCommand(token);
+
   if (!installCommand || !inspectCommand) {
     return disabled('Invalid install token.');
   }
@@ -91,7 +104,9 @@ export function getInstallActionState(input: InstallActionInput): InstallActionS
 
 export function buildBatchInstallCommand(tokens: readonly string[]): string | null {
   const deduped = dedupeInstallTokens(tokens);
+
   if (deduped.length === 0) return null;
+
   return `npx shadcn@latest add ${deduped.join(' ')}`;
 }
 
@@ -113,6 +128,7 @@ function dedupeInstallTokens(tokens: readonly string[]): string[] {
 
   tokens.forEach(token => {
     const normalized = normalizeInstallToken(token);
+
     if (!normalized || seen.has(normalized)) return;
     seen.add(normalized);
     result.push(normalized);
@@ -124,10 +140,12 @@ function dedupeInstallTokens(tokens: readonly string[]): string[] {
 export function isValidInstallToken(token: string): boolean {
   const trimmed = token.trim();
   const separator = trimmed.indexOf('/');
+
   if (separator <= 1) return false;
 
   const namespace = trimmed.slice(0, separator);
   const itemName = trimmed.slice(separator + 1);
+
   return namespace.startsWith('@')
     && normalizeNamespace(namespace) === namespace
     && isSafeRegistryItemName(itemName);
@@ -135,16 +153,21 @@ export function isValidInstallToken(token: string): boolean {
 
 function normalizeInstallToken(token: string): string | null {
   const trimmed = token.trim();
+
   if (!isValidInstallToken(trimmed)) return null;
+
   return trimmed;
 }
 
 function normalizeNamespace(namespace: string): string | null {
   const trimmed = namespace.trim();
+
   if (!NAMESPACE_PATTERN.test(trimmed)) return null;
 
   const withoutAt = trimmed.replace(/^@+/, '');
+
   if (!withoutAt || !/^[a-z0-9][a-z0-9_-]*$/.test(withoutAt)) return null;
+
   return `@${withoutAt}`;
 }
 
@@ -161,10 +184,16 @@ function disabled(disabledReason: string): InstallActionState {
 
 function disabledReasonForRoute(status: string): string {
   if (status === 'invalid-template') return 'Registry route template is invalid.';
+
   if (status === 'invalid-url') return 'Resolved item route URL is invalid.';
+
   if (status === 'catalog-not-verified') return 'Catalog is not verified.';
+
   if (status === 'unresolved-template') return 'Registry route template has unresolved placeholders.';
+
   if (status === 'missing-item-slug') return 'Missing item slug.';
+
   if (status === 'invalid-item-slug') return 'Invalid item slug.';
+
   return 'Item route unavailable.';
 }

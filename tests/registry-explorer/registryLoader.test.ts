@@ -12,8 +12,10 @@ describe('loadRegistries PostgreSQL static JSON runtime', () => {
   it('fetches one runtime database from the Vite base path and maps registry state', async () => {
     const fixture = await runtimeFixture();
     const calls: string[] = [];
+
     const data = await loadRegistries(async input => {
       calls.push(String(input));
+
       return gzipResponse(fixture.coreGzipPath);
     });
 
@@ -56,6 +58,7 @@ describe('loadRegistries PostgreSQL static JSON runtime', () => {
   it('accepts a gzip transport response whose body was already decoded by fetch', async () => {
     const fixture = await runtimeFixture();
     const compressed = await readFile(fixture.coreGzipPath);
+
     const data = await loadRegistries(async () => new Response(gunzipSync(compressed), {
       status: 200,
       headers: {
@@ -97,6 +100,7 @@ async function runtimeFixture(options: {
 } = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'registry-atlas-loader-'));
   const coreGzipPath = join(dir, 'registry-atlas.json.gz');
+
   const mirror = {
     meta: {
       source_url: 'https://ui.shadcn.com/r/registries.json',
@@ -127,6 +131,7 @@ async function runtimeFixture(options: {
       status: {warnings: []},
     }],
   };
+
   const payload = {
     mirror,
     catalog: {
@@ -154,7 +159,9 @@ async function runtimeFixture(options: {
     itemRoutes:{},
     routePatterns:{},
   };
+
   await writeFile(coreGzipPath,gzipSync(JSON.stringify(payload)));
+
   return {coreGzipPath};
 }
 

@@ -2,8 +2,11 @@
 // Each core/data/ui directory is a module. Root files are public entry points;
 // files in lib/, internal/, tests/, or any other subdirectory are private.
 const PACKAGES_ROOT = 'src/registry-explorer';
+
 const MODULES = '(core|data|ui)';
+
 const INTERNALS = `^${PACKAGES_ROOT}/${MODULES}/[^/]+/`;
+
 const PUBLIC_MODULES = `^${PACKAGES_ROOT}/${MODULES}/`;
 
 /** @type {import('dependency-cruiser').IConfiguration} */
@@ -51,7 +54,7 @@ module.exports = {
     {
       name: 'no-production-to-tests', severity: 'error',
       from: { path: '^src/' },
-      to: { path: '(^|/)(tests|__tests__)/|\.(test|spec)\.' },
+      to: { path: '(^|/)(tests|__tests__)/|.(test|spec).' },
     },
   ],
   options: {

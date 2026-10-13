@@ -1,15 +1,19 @@
 import { vi } from 'vitest';
+
 vi.setConfig({testTimeout: 30000});
+
 import { testRouteDatabase } from './postgresFixture';
 import { describe, expect, it } from 'vitest';
 // @ts-ignore Standalone Node ESM script intentionally has no TypeScript declaration.
 import * as catalogClassificationCli from '../../scripts/classify-registry-catalog.mjs';
+
 const {
   classifyRegistryCatalog,
   main,
   parseCatalogClassificationArgs,
   runCatalogClassificationBatches,
 } = catalogClassificationCli;
+
 // @ts-ignore Standalone Node ESM module.
 import { validateCatalogTaxonomy } from '../../scripts/lib/catalog-taxonomy.mjs';
 // @ts-ignore Standalone Node ESM module.
@@ -59,6 +63,7 @@ async function fixtureDatabase() {
   });
   await putDocument(db, 'catalog-taxonomy', 'taxonomy', fixtureTaxonomy);
   await putDocument(db, 'catalog-kind-overrides', 'taxonomy-support', { registryDefaults: {} });
+
   return { dir, db };
 }
 
@@ -112,6 +117,7 @@ describe('catalog classification batching', () => {
       stopAfterBatches: 1,
       executeBatch: async (cursor: string | undefined) => {
         seen.push(cursor);
+
         return {
           completed: 1, failed: 0, totalRegistries: 2,
           nextCursor: '@alpha', results: [],
@@ -120,6 +126,7 @@ describe('catalog classification batching', () => {
     });
 
     const resumed: Array<string | undefined> = [];
+
     const result = await runCatalogClassificationBatches({
       database,
       runId: 'fixture-run',
@@ -130,6 +137,7 @@ describe('catalog classification batching', () => {
       catalogFingerprint: 'sha256:catalog',
       executeBatch: async (cursor: string | undefined) => {
         resumed.push(cursor);
+
         return {
           completed: 1, failed: 0, totalRegistries: 2,
           nextCursor: null, results: [],
@@ -162,10 +170,12 @@ describe('catalog classification batching', () => {
 describe('catalog classification artifacts', () => {
   it('stores every deterministic registry result in PostgreSQL and marks model-required items pending', async () => {
     const fixture = await fixtureDatabase();
+
     const result = await main([
       '--run-id', 'deterministic-run', '--max-registries', '1',
       '--all-batches', '--deterministic-only',
     ], fixture.dir, fixture.db);
+
     expect(result).toMatchObject({ status: 'completed', completed: 2, failed: 0, batches: 2 });
 
     const items = await readClassificationRunItems(fixture.db, 'deterministic-run');
@@ -263,12 +273,14 @@ describe('catalog classification artifacts', () => {
           confidence: 0.3,
           model: 'fixture-model',
         };
+
         if (node.id === 'application') return {
           choice: 'application/app-shell',
           probabilities: { 'application/app-shell': 0.8, THIS_CATEGORY: 0.2 },
           confidence: 0.4,
           model: 'fixture-model',
         };
+
         return {
           choice: 'THIS_CATEGORY',
           probabilities: { 'controls/button': 0.4, THIS_CATEGORY: 0.6 },
@@ -277,6 +289,7 @@ describe('catalog classification artifacts', () => {
         };
       },
     });
+
     expect(artifact.items[0]).toMatchObject({
       method: 'system-one',
       canonical: { primary: 'application/app-shell' },

@@ -142,8 +142,10 @@ describe('registry explorer shell interactions', () => {
 
     const noAccess=setup('', '/Registry-Atlas/blocks', undefined, undefined, canonicalCatalogItems().map(item => {
       const { access: _access, ...rest } = item;
+
       return rest;
     }));
+
     expect(noAccess.aside.innerHTML).not.toContain('data-catalog-access-value');
   });
 
@@ -196,6 +198,7 @@ describe('registry explorer shell interactions', () => {
       '?layout=list&registrySort=item-count-desc&asset=component',
       '/Registry-Atlas/registries',
     );
+
     expect(reloaded.aside.innerHTML).toMatch(/data-browse-layout="list"[^>]*aria-pressed="true"/);
     expect(reloaded.aside.innerHTML).toMatch(/data-registry-sort-value="item-count-desc"[^>]*aria-pressed="true"/);
     expect(reloaded.aside.innerHTML).toMatch(/data-registry-asset-value="component"[^>]*aria-pressed="true"/);
@@ -420,6 +423,7 @@ describe('registry explorer shell interactions', () => {
       const harness = setup('', path);
       const header = harness.contentHeader.innerHTML;
       expect(header, path).toContain('href="https://delta.example/"');
+
       if (header.includes('item-quick-links')) {
         expect(header, path).toContain('>Registry homepage ↗</a>');
         expect(header, path).toContain('aria-label="Visit upstream registry homepage for @delta"');
@@ -429,6 +433,7 @@ describe('registry explorer shell interactions', () => {
         expect(header, path).toContain('target="_blank" rel="noreferrer"');
       }
     }
+
     for (const path of [
       '/Registry-Atlas/',
       '/Registry-Atlas/registries',
@@ -524,6 +529,7 @@ describe('registry explorer shell interactions', () => {
       dependencies: ['react'],
       files: [{ path: 'registry/catalog-only.tsx', type: 'registry:ui' }],
     }));
+
     const harness = setup(
       '',
       '/Registry-Atlas/@delta/components/catalog-only',
@@ -580,7 +586,9 @@ function setup(
     hash: '',
     href: `http://localhost${pathname}${search}`,
   };
+
   const windowListeners = new Map<string, ((event: any) => void)[]>();
+
   const history = {
     pushes: [] as string[],
     replaces: [] as string[],
@@ -593,6 +601,7 @@ function setup(
       updateLocation(next);
     },
   };
+
   function updateLocation(next: string): void {
     const url = new URL(next, 'http://localhost');
     location.pathname = url.pathname;
@@ -600,6 +609,7 @@ function setup(
     location.hash = url.hash;
     location.href = url.href;
   }
+
   vi.stubGlobal('window', {
     location,
     history,
@@ -668,16 +678,21 @@ function root(): FakeRoot {
 
 function tab(view: string) {
   const attrs: Record<string, string> = { 'data-view': view };
+
   const item = root() as FakeRoot & {
     getAttribute: (name: string) => string | null;
     setAttribute: (name: string, value: string) => void;
     removeAttribute: (name: string) => void;
     classList: { toggle: () => void };
   };
+
   item.getAttribute = name => attrs[name] ?? null;
   item.setAttribute = (name, value) => { attrs[name] = value; };
+
   item.removeAttribute = name => { delete attrs[name]; };
+
   item.classList = { toggle: vi.fn() };
+
   return item;
 }
 
@@ -693,11 +708,13 @@ function jsonResponse(data: unknown): Response {
 function input() {
   const item = root() as FakeRoot & { value: string };
   item.value = '';
+
   return item;
 }
 
 function target(attributes: Record<string, string>) {
   const focus = vi.fn();
+
   return {
     focus,
     value: attributes.value ?? '',
@@ -710,6 +727,7 @@ function target(attributes: Record<string, string>) {
     closest: (selector: string) => {
       if (selector.includes('.component-peek-trigger') && !attributes.class?.split(' ').includes('component-peek-trigger')) return null;
       const names = [...selector.matchAll(/\[([a-zA-Z0-9_-]+)/g)].map(match => match[1]);
+
       return names.some(name => name in attributes) ? targetWithFocus(attributes, focus) : null;
     },
   };

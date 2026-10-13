@@ -6,11 +6,15 @@ export function verifiedSourcePageUrl(
   registryHomepage: string,
 ): string | null {
   if (!candidate || !registryHomepage || candidate.startsWith('//')) return null;
+
   try {
     const page = new URL(candidate);
     const homepage = new URL(registryHomepage);
+
     if (!hasAcceptableSourceOrigin(page, homepage)) return null;
+
     if (!isDisplayableSourcePath(page, homepage)) return null;
+
     return page.href;
   } catch {
     return null;
@@ -20,6 +24,7 @@ export function verifiedSourcePageUrl(
 export function verifiedRegistryHomepage(candidate: string): string | null {
   try {
     const homepage = new URL(candidate);
+
     return homepage.protocol === 'https:'
       && hasNoCredentialsOrPort(homepage)
       && isPublicHostname(homepage.hostname)

@@ -25,10 +25,12 @@ describe('original registry page link policy', () => {
 
   it('distinguishes pattern-matched links from individually reviewed pages',async()=> {
     const {sourcePageNavigation}=await import('../../src/registry-explorer/ui/sourcePageLink');
+
     const navigation=sourcePageNavigation('https://example.org/',{
       sourcePage:{url:'https://example.org/docs/button',level:'pattern',
         source:'verified-route-pattern',observedAt:new Date().toISOString()},
     });
+
     expect(navigation).toMatchObject({
       url:'https://example.org/docs/button',level:'pattern',label:'View pattern-matched page',
     });

@@ -1,5 +1,7 @@
 import { vi } from 'vitest';
+
 vi.setConfig({testTimeout: 30000});
+
 import { describe, expect, it } from 'vitest';
 import { testRouteDatabase } from './postgresFixture';
 // @ts-expect-error Node ESM file exercised under Vitest.
@@ -14,7 +16,9 @@ const catalog = {registries: {
   ],
   '@two':[{name:'button',title:'Distinct Button'}],
 }};
+
 const raw=[{name:'@one',homepage:'https://one.example'}, {name:'@two',homepage:'https://two.example'}];
+
 const inventory={schema:'registry-atlas-traversal-inventory/v1',registries:[
   {namespace:'@one',homepage:'https://one.example',patterns:[{
     urlTemplate:'https://one.example/components/{slug}',slugPrefix:'',examples:[
@@ -26,6 +30,7 @@ const inventory={schema:'registry-atlas-traversal-inventory/v1',registries:[
       {slug:'button',url:'https://two.example/docs/button'},
     ]}],sitemapPatterns:[],sitemapPages:[]},
 ]};
+
 async function fixture(){
   const db=await testRouteDatabase();
   (await importRegistryPatterns(db,{catalog,raw,inventory}));
@@ -33,11 +38,14 @@ async function fixture(){
     new Response('<h1>'+new URL(url).pathname.split('/').at(-1)+'</h1>',{status:200,
       headers:{'content-type':'text/html'}})});
   (await initializeComponentChecks(db));
+
   return db;
 }
+
 const html=(body:string,status=200)=>
   new Response('<!doctype html><html><title>Registry</title><body>'+body+'</body></html>',
     {status,headers:{'content-type':'text/html'}});
+
 describe('individual component URL verification',()=>{
   it('seeds exact nested component candidates without inventing an unverified-registry URL',async()=>{
     const db=await fixture();
@@ -52,13 +60,18 @@ describe('individual component URL verification',()=>{
   it('accepts title-verified pages and records missing pages without a false positive',async()=>{
     const db=await fixture();(await seedComponentCandidates(db,{catalog}));
     const fetched:string[]=[];
+
     const result=await verifyComponentCandidates(db,{registry:'@one',maxPages:4,delayMs:0,
       fetchPage:async (url:string)=>{
         fetched.push(url);
+
         if(url.endsWith('/absent'))return html('<h1>Not Found</h1>',404);
+
         if(url.endsWith('/card-grid'))return html('<h1>Elegant Card Grid</h1>');
+
         return html('<h1>'+(new URL(url).pathname.split('/').at(-1)??'').replace(/-/g,' ')+'</h1>');
       }});
+
     expect(result).toMatchObject({checked:4,verified:3,missing:1});
     expect(fetched).toHaveLength(4);
     expect((await db.prepare("SELECT status FROM component_url_checks WHERE namespace='@one' AND slug='card-grid'").get())).toEqual({status:'verified'});
@@ -69,9 +82,12 @@ describe('individual component URL verification',()=>{
     const db=await fixture();(await seedComponentCandidates(db,{catalog}));
     await verifyComponentCandidates(db,{registry:'@one',maxPages:4,delayMs:0,fetchPage:async (url:string)=>{
       if(url.endsWith('/button'))return html('<h1>Page not found</h1>');
+
       if(url.endsWith('/card-grid'))return new Response('<h1>Elegant Card Grid</h1>',{
         status:200,headers:{'content-type':'text/html','location':'https://evil.example/'},});
+
       if(url.endsWith('/absent'))return html('<h1>Missing</h1>',200);
+
       return new Response('<h1>Form Input</h1>',{status:301,headers:{location:'https://evil.example'}});
     }});
     expect((await db.prepare("SELECT status FROM component_url_checks WHERE namespace='@one' AND slug='button'").get())).toEqual({status:'unresolved'});
@@ -82,7 +98,11 @@ describe('individual component URL verification',()=>{
   it('resumes without refetching verified/missing records; changes reset stale evidence',async()=>{
     const db=await fixture();(await seedComponentCandidates(db,{catalog}));
     let count=0;
-    const fetchPage=async(url:string)=>{count++;return html('<h1>'+url.split('/').at(-1)+'</h1>')};
+
+    const fetchPage=async(url:string)=>{count++;
+
+return html('<h1>'+url.split('/').at(-1)+'</h1>')};
+
     await verifyComponentCandidates(db,{registry:'@one',maxPages:2,delayMs:0,fetchPage});
     expect(count).toBe(2);
     await verifyComponentCandidates(db,{registry:'@one',maxPages:2,delayMs:0,fetchPage});
@@ -120,14 +140,17 @@ describe('individual component URL verification',()=>{
   it('promotes a JavaScript-hydrated component only with a matching browser URL and identity',async()=>{
     const db=await fixture();(await seedComponentCandidates(db,{catalog}));
     (await db.prepare("UPDATE component_url_checks SET status='missing' WHERE namespace='@one' AND slug='absent'").run());
+
     const results=await verifyComponentCandidates(db,{registry:'@one',maxPages:1,delayMs:0,
       fetchPage:async()=>html('<div id="app"></div>'),
       browserPage:async(url:string,slug:string,home:string,title:string)=>{
         expect(new URL(url).origin).toBe(new URL(home).origin);
         expect(title).toBe('Button');
+
         return {status:'verified',observedUrl:url,observedHeading:'Button',observedIdentity:slug};
       },
     });
+
     expect(results.checked).toBe(1);
     expect(results.verified).toBe(1);
     (await db.close());
@@ -136,6 +159,7 @@ describe('individual component URL verification',()=>{
   it('does not let a browser or model claim success without the observed component heading',async()=>{
     const db=await fixture();(await seedComponentCandidates(db,{catalog}));
     (await db.prepare("UPDATE component_url_checks SET status='missing' WHERE namespace='@one' AND slug='absent'").run());
+
     const result=await verifyComponentCandidates(db,{registry:'@one',maxPages:1,delayMs:0,
       fetchPage:async()=>html('<div id="app"></div>'),
       browserPage:async(url:string,slug:string)=>({
@@ -143,6 +167,7 @@ describe('individual component URL verification',()=>{
         observedIdentity:slug,
       }),
     });
+
     expect(result.verified).toBe(0);
     expect((await db.prepare("SELECT status FROM component_url_checks WHERE namespace='@one' AND slug='button'").get()))
       .toEqual({status:'unresolved'});

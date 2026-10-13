@@ -1,5 +1,7 @@
 import { vi } from 'vitest';
+
 vi.setConfig({testTimeout: 30000});
+
 import { describe, it, expect } from 'vitest';
 // @ts-ignore Node ESM utility tested in Vitest.
 import { testRouteDatabase } from './postgresFixture';
@@ -23,24 +25,34 @@ const inventory = {
     sitemapPatterns:[],sitemapPages:[],
   }],
 };
+
 const catalog={registries:{
   '@one':[{name:'button'},{name:'card'},{name:'forms/input'},{name:'button-group'}],
   '@multi':[{name:'button'},{name:'hero'},{name:'unknown'}],
 }};
+
 const raw=[{name:'@one',homepage:'https://one.example'}, {name:'@multi',homepage:'https://multi.example'}];
+
 function getHtml(url:string) {
  const slug=new URL(url).pathname.split('/').at(-1);
+
  const title=slug==='forms'?'Forms':slug==='input'?'Input':slug==='button-group'?'Button Group':
    slug==='hero'?'Hero':slug==='card'?'Card':slug==='code'?'Code':slug==='tabs'?'Tabs':'Button';
+
  return new Response('<!doctype html><html><head><title>'+title+' | Library</title></head><body><h1>'+title+'</h1></body></html>',
    {status:200,headers:{'content-type':'text/html'}});
 }
+
 describe('bounded PostgreSQL registry route-pattern verification', () => {
   it('imports matching patterns once, checks representative real pages, and infers missing only when unambiguous',async()=>{
     const db=await testRouteDatabase();
     (await importRegistryPatterns(db,{inventory,catalog,raw,now:'2026-10-04T20:00:00.000Z'}));
     const hits:string[]=[];
-    const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async(url:string)=>{hits.push(url);return getHtml(url);}});
+
+    const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async(url:string)=>{hits.push(url);
+
+return getHtml(url);}});
+
     expect(result).toMatchObject({checkedPatterns:1,verifiedPatterns:1});
     expect(hits).toEqual(['https://one.example/docs/button','https://one.example/docs/card']);
     const entries=(await db.prepare("SELECT slug, source_url, status FROM item_routes WHERE namespace='@one' ORDER BY slug").all());
@@ -85,6 +97,7 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
   it('resolves a prefixed catalog identity from a verified leaf route pattern', async()=>{
     const db=await testRouteDatabase();
     const source={name:'@leaf',homepage:'https://leaf.example'};
+
     const input={raw:[source],catalog:{registries:{'@leaf':[
       {name:'components-animate-code'},{name:'components-animate-tabs'},
       {name:'components-animate-dialog'}]}},inventory:{
@@ -97,9 +110,12 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
           ]}],sitemapPatterns:[],sitemapPages:[],
       }]
     },now:'2026-10-04T20:00:00.000Z'};
+
     expect((await importRegistryPatterns(db,input)).patterns).toBe(1);
+
     const output=await verifyRegistryPatterns(db,{registry:'@leaf',samples:2,
       fetchPage:async (url:string)=>getHtml(url)});
+
     expect(output.verifiedPatterns).toBe(1);
     expect((await db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@leaf' AND slug='components-animate-dialog'").get()))
       .toEqual({source_url:'https://leaf.example/docs/animate/dialog',status:'pattern-inferred'});
@@ -127,8 +143,10 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       checkedAt:'2025-01-01T00:00:00Z',fetchPage:async (url:string)=>getHtml(url)});
     expect((await pendingRegistryNames(db,2,10,'2026-10-04T20:00:00Z'))).toContain('@one');
+
     const refreshed=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       checkedAt:'2026-10-04T20:00:00Z',fetchPage:async (url:string)=>getHtml(url)});
+
     expect(refreshed.verifiedPatterns).toBe(1);
     expect((await pendingRegistryNames(db,2,10,'2026-10-04T20:00:00Z'))).toEqual([]);
     (await db.close());
@@ -149,6 +167,7 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
 
   it('persists original sitemap candidates in PostgreSQL and exports them without another traversal',async()=>{
     const db=await testRouteDatabase();
+
     const sitemap={
       ...structuredClone(inventory),
       generatedAt:'2026-10-03T20:00:00.000Z',
@@ -162,6 +181,7 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
         ] : [],
       })),
     };
+
     (await importRegistryPatterns(db,{inventory:sitemap,catalog,raw}));
     const published=(await exportPatternLinkSnapshot(db));
     expect(published.sourceSnapshotAt).toBe(sitemap.generatedAt);
@@ -178,8 +198,10 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
   it('requeues failed identities by repair strategy with a persistent retry cap',async()=>{
     const db=await testRouteDatabase();
     (await importRegistryPatterns(db,{inventory,catalog,raw}));
+
     const fails=async()=>new Response('<h1>Unavailable</h1>',{status:200,
       headers:{'content-type':'text/html'}});
+
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:fails});
     expect((await pendingRegistryNames(db,2,10,new Date().toISOString(),{retryFailed:true,maxAttempts:2})))
       .toEqual(['@one']);
@@ -201,15 +223,18 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
     const db=await testRouteDatabase();
     (await importRegistryPatterns(db,{inventory,catalog,raw}));
     const visits:string[]=[];
+
     const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       fetchPage:async()=>new Response('<html><div id="root"></div></html>',{status:200,
         headers:{'content-type':'text/html'}}),
       browserPage:async (url:string,slug:string,home:string)=>{
         visits.push(url);
         expect(new URL(url).origin).toBe(new URL(home).origin);
+
         return {status:'verified',reason:null,observedUrl:url,observedIdentity:slug};
       },
     });
+
     expect(result.verifiedPatterns).toBe(1);
     expect(visits).toHaveLength(2);
     expect(((await db.prepare("SELECT COUNT(*) AS n FROM pattern_checks WHERE status='verified'").get()) as { n: number }).n).toBe(2);
@@ -218,19 +243,27 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
 
   it('checks actual managed browser page URL and heading, without treating a matching URL alone as proof',async()=>{
     const calls:string[]=[];
+
     const execute=(_command:string,args:string[])=>{
       calls.push(args.join(' '));
+
       if(_command==='pinchtab-profile-manager')return JSON.stringify({
         ok:true,data:{settings:{allowedDomains:['example.org']},
           instances:[{status:'running',url:'http://127.0.0.1:9877'}]}});
+
       if(args.includes('nav'))return JSON.stringify({url:'https://example.org/docs/button'});
+
       if(args.includes('url'))return JSON.stringify({url:'https://example.org/docs/button'});
+
       if(args.includes('snap'))return JSON.stringify({
         url:'https://example.org/docs/button',nodes:[{role:'heading',name:'Button'}]});
+
       return JSON.stringify({});
     };
+
     const browser=managedBrowserPatternProof({profile:'source-audit',server:'http://127.0.0.1:9877',
       tab:'a'.repeat(32),exec:execute});
+
     expect(await browser('https://example.org/docs/button','button','https://example.org/'))
       .toMatchObject({status:'verified',observedUrl:'https://example.org/docs/button'});
     expect(await browser('https://evil.example/docs/button','button','https://example.org/'))
@@ -257,11 +290,13 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
   it('never treats a browser redirect to a different page as verification',async()=>{
     const db=await testRouteDatabase();
     (await importRegistryPatterns(db,{inventory,catalog,raw}));
+
     const result=await verifyRegistryPatterns(db,{registry:'@one',samples:2,
       fetchPage:async()=>new Response('<html><div id="root"></div></html>',{status:200,
         headers:{'content-type':'text/html'}}),
       browserPage:async()=>({status:'failed',reason:'browser-url-mismatch'}),
     });
+
     expect(result.verifiedPatterns).toBe(0);
     expect((await db.prepare("SELECT failure FROM route_patterns WHERE namespace='@one'").get())).toEqual({
       failure:'browser-url-mismatch',
@@ -294,8 +329,10 @@ describe('bounded PostgreSQL registry route-pattern verification', () => {
     const db=await testRouteDatabase();
     (await importRegistryPatterns(db,{inventory,catalog,raw}));
     await verifyRegistryPatterns(db,{registry:'@one',samples:2,fetchPage:async(url:string)=>getHtml(url)});
+
     const replaced=raw.map(row=>row.name==='@one'
       ?{...row,homepage:'https://updated-one.example'}:row);
+
     expect((await reconcileRegistryCatalog(db,{raw:replaced,catalog})).changedHomepages).toBe(1);
     expect((await db.prepare("SELECT COUNT(*) AS n FROM route_patterns WHERE namespace='@one'").get())).toEqual({n:0});
     expect((await db.prepare("SELECT source_url,status FROM item_routes WHERE namespace='@one' AND slug='button'").get()))

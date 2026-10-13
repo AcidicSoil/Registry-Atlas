@@ -187,6 +187,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
     itemRoutes: Record<string,{url:string;status:string}>;
     routePatterns: Record<string,Array<{urlTemplate:string;slugPrefix:string;source:string;checkedAt?:string}>>;
   }>('data/registry-atlas.json.gz', fetchImpl);
+
   const mirrorData = data.mirror;
   const catalogData = data.catalog;
   const taxonomyData = data.taxonomy;
@@ -200,9 +201,11 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   configureDefaultCatalogTaxonomy(taxonomy);
   configureCatalogKindOverrides(kindOverridesData);
   const catalogIndex = parseRegistryCatalogIndex(catalogData);
+
   const officialSites = mirrorData.registries.map(row => ({
     name: row.official?.name, url: row.official?.homepage,
   }));
+
   const sourcePages = readSourcePageManifest(sourcePageManifest, catalogIndex, officialSites);
   const validation = validateRegistryMirror(mirrorData);
 
@@ -225,6 +228,7 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
 }
 
 type RawSummary = NonNullable<RegistryMirrorRecord['atlas']>['item_summaries'];
+
 type SummaryRecord = NonNullable<RawSummary>[number];
 
 function mappedSummaryIdentity(item: SummaryRecord) {
@@ -286,8 +290,10 @@ function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): M
 function isKnownSourceProvenance(record: Record<string, unknown>): boolean {
   const reviewed = record.level === 'reviewed'
     && ['reviewed-summary', 'component-page-verified'].includes(String(record.source));
+
   const sitemap = record.level === 'sitemap' && record.source === 'official-sitemap';
   const pattern = record.level === 'pattern' && record.source === 'verified-route-pattern';
+
   return reviewed || sitemap || pattern;
 }
 
@@ -295,6 +301,7 @@ function sourceProvenanceIsFresh(record: Record<string, unknown>): boolean {
   if (record.level === 'reviewed' && record.source !== 'component-page-verified') return true;
   const observed = typeof record.observedAt === 'string' ? Date.parse(record.observedAt) : NaN;
   const age = Date.now() - observed;
+
   return Number.isFinite(age) && age >= 0 && age <= 30 * 24 * 60 * 60 * 1000;
 }
 
@@ -302,8 +309,10 @@ function sourceManifestIdentity(
   token: string, knownNames: ReadonlyMap<string, ReadonlySet<string>>,
 ): string | null {
   const split = token.indexOf('/');
+
   if (split < 1) return null;
   const namespace = token.slice(0, split);
+
   return knownNames.get(namespace)?.has(token.slice(split + 1)) ? namespace : null;
 }
 
@@ -312,7 +321,9 @@ function sourceManifestRecord(
 ): (Record<string, unknown> & { url: string }) | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const record = value as Record<string, unknown>;
+
   if (!isKnownSourceProvenance(record) || typeof record.url !== 'string') return null;
+
   return sourceProvenanceIsFresh(record) ? record as Record<string, unknown> & { url: string } : null;
 }
 
@@ -323,11 +334,15 @@ function recognizedSourcePage(
   roots: ReadonlyMap<string, string>,
 ): RegistrySourcePage | null {
   const namespace = sourceManifestIdentity(token, knownNames);
+
   if (!namespace) return null;
   const record = sourceManifestRecord(value);
+
   if (!record) return null;
   const url = verifiedSourcePageUrl(record.url, roots.get(namespace) ?? '');
+
   if (!url || url !== record.url) return null;
+
   return {
     url,
     level: record.level as RegistrySourcePage['level'],
@@ -344,15 +359,21 @@ export function readSourcePageManifest(
 ): Readonly<Record<string, RegistrySourcePage>> {
   if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
   const manifest = input as Record<string, unknown>;
+
   if (manifest.schema !== 'registry-atlas-source-page-index/v1'
     || !manifest.pages || typeof manifest.pages !== 'object' || Array.isArray(manifest.pages)) return {};
   const roots = new Map(registries.map(registry => [registry.name, registry.url]));
+
   const knownNames = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
     [namespace, new Set(items.map(item => item.name))]));
+
   const pages: Record<string, RegistrySourcePage> = {};
+
   for (const [token, value] of Object.entries(manifest.pages)) {
     const page = recognizedSourcePage(token, value, knownNames, roots);
+
     if (page) pages[token] = page;
   }
+
   return pages;
 }

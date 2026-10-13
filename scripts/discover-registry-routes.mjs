@@ -1,5 +1,4 @@
 
-import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { PinchTabBrowser } from './collect-browser-link-evidence.mjs';
 import { discoverRegistry } from './lib/registry-discovery.mjs';
@@ -15,11 +14,13 @@ import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
 function memoryLedger(namespace) {
   const rows=new Map();
   rows.history=[];
+
   return {
     rows,
     get: token=>rows.get(token),
     append: async row=>{
       rows.set(row.token,row);
+
       if(row.token==='registry:'+namespace)rows.history.push(row);
     },
   };
@@ -33,25 +34,33 @@ export async function discoverRegistryIntoPostgres({
   if(!db||!registry||!Array.isArray(indexedItems)||!catalog?.registries||!browser)
     throw Error('Missing discovery inputs');
   const ledger=memoryLedger(registry.name);
+
   const discovery=await discoverRegistry({
     registry,indexedItems,browser,ledger,checkedAt,limit,maxPages,maxDepth,maxLinks,delayMs,
   });
+
   const traversal=deriveTraversalInventory(
     [registry],catalog,curated,{[registry.name]:ledger.rows},checkedAt,{},
   );
+
   const observed=traversal.registries[0];
+
   const merged=(await mergeDiscoveredPatterns(db,{
     namespace:registry.name,homepage:registry.homepage,patterns:observed.patterns,
   }));
+
   const patternVerification=await verifyRegistryPatterns(db,{
     registry:registry.name,samples,fetchPage,checkedAt,browserPage,
   });
+
   const candidates=(await seedComponentCandidates(db,{catalog}));
+
   const componentVerification=componentChecks>0
     ?await verifyComponentCandidates(db,{
       registry:registry.name,maxPages:componentChecks,maxPerRegistry:componentChecks,
       delayMs,fetchPage,browserPage,now:checkedAt,
     }):null;
+
   return {
     namespace:registry.name,
     discovery:{
@@ -73,21 +82,30 @@ export async function discoverRegistryIntoPostgres({
 function parseArgs(argv) {
   const valued=new Set(['--registry','--profile','--server','--tab','--limit',
     '--max-pages','--max-depth','--max-links','--delay-ms','--samples','--component-checks']);
+
   const opts={};
+
   for(let i=0;i<argv.length;i++){
     const key=argv[i];
+
     if(!valued.has(key)||Object.hasOwn(opts,key))throw Error('Unknown or repeated argument: '+key);
     const value=argv[++i];
+
     if(!value||value.startsWith('--'))throw Error('Missing value for '+key);
     opts[key]=value;
   }
+
   for(const key of ['--registry','--profile','--server','--tab'])
     if(!opts[key])throw Error('Missing required '+key);
+
   const number=(key,fallback,min,max)=>{
     const value=opts[key]===undefined?fallback:Number(opts[key]);
+
     if(!Number.isSafeInteger(value)||value<min||value>max)throw Error('Invalid '+key);
+
     return value;
   };
+
   return {
     registry:opts['--registry'],profile:opts['--profile'],server:opts['--server'],tab:opts['--tab'],
     limit:number('--limit',20,1,200),maxPages:number('--max-pages',40,1,250),
@@ -104,19 +122,25 @@ export async function main(argv,cwd=process.cwd()) {
   await core.close();
   const raw=state.rawRegistries,catalog=state.catalog,curated=state.curated;
   const registry=raw.find(row=>row.name===options.registry);
+
   if(!registry)throw Error('Unknown exact registry namespace');
+
   const indexedItems=[...new Set([
     ...(catalog.registries[registry.name]??[]).map(item=>item.name),
     ...(curated[registry.name]??[]).map(item=>item.slug),
   ])].filter(value=>typeof value==='string').sort();
+
   const db=openAtlasCoreDatabase();
+
   try{
     (await reconcileRegistryCatalog(db,{raw,catalog,curated}));
     checkedSourceProfile(options,registry);
     const browser=configureManagedSourceBrowser(new PinchTabBrowser(options.server,options.tab));
+
     const browserPage=managedBrowserPatternProof({
       profile:options.profile,server:options.server,tab:options.tab,
     });
+
     return await discoverRegistryIntoPostgres({
       db,registry,indexedItems,catalog,curated,browser,browserPage,
       limit:options.limit,maxPages:options.maxPages,maxDepth:options.maxDepth,

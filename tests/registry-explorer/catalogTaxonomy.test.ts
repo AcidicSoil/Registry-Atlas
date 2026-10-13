@@ -42,11 +42,13 @@ describe('canonical catalog taxonomy', () => {
     const raw = readRepositoryDocument('catalog-taxonomy');
     const taxonomy = validateCatalogTaxonomy(raw);
     const records = flattenCatalogTaxonomy(taxonomy);
+
     const semanticLabels = new Set(records.flatMap((record: any) => [
       record.id.toLowerCase(),
       record.label.toLowerCase(),
       ...record.aliases.map((alias: string) => alias.toLowerCase()),
     ]));
+
     for (const navigationLabel of ['docs', 'privacy', 'license']) {
       expect(semanticLabels.has(navigationLabel)).toBe(false);
     }

@@ -17,6 +17,7 @@ describe('renderItemDetailView', () => {
       '@delta',
       'code-block',
     );
+
     const header = root();
     const body = root();
 
@@ -41,10 +42,12 @@ describe('renderItemDetailView', () => {
       const registry = registryFixture();
       const summary = registry.itemSummaries?.[0];
       expect(summary).toBeDefined();
+
       const fixture = {
         ...registry,
         itemSummaries: [{ ...summary!, type }],
       };
+
       const result = resolveRegistryItemDetailFromSummary([fixture], '@delta', 'code-block');
       const header = root();
       renderItemDetailView(header, root(), result, new Set());
@@ -74,6 +77,7 @@ describe('renderItemDetailView', () => {
       '@delta',
       'source-only',
     );
+
     const header = root();
     renderItemDetailView(header, root(), result, new Set());
     expect(header.innerHTML).toContain('href="https://delta.example/docs/source-only"');
@@ -85,6 +89,7 @@ describe('renderItemDetailView', () => {
       meta: { registry_count: 1, item_count: 1 },
       registries: { '@delta': [{ name: 'unknown-original', type: 'registry:ui' }] },
     }, '@delta', 'unknown-original');
+
     const header = root();
     renderItemDetailView(header, root(), result, new Set());
     expect(header.innerHTML).toContain('aria-label="Visit upstream registry homepage for @delta"');
@@ -168,6 +173,7 @@ describe('renderItemDetailView', () => {
       '@delta',
       'code-block',
     );
+
     const header = root();
     const body = root();
 
@@ -207,6 +213,7 @@ describe('renderItemDetailView', () => {
       '@delta',
       'code-block',
     );
+
     expect(base.detail).not.toBeNull();
     const body = root();
 
@@ -322,6 +329,7 @@ function catalogItem(
   kind: 'component' | 'block' | 'page' | 'template' | 'theme',
 ): CatalogComponent {
   const registry = registryFixture();
+
   const rawType = kind === 'block'
     ? 'registry:block'
     : kind === 'page' || kind === 'template'
@@ -329,6 +337,7 @@ function catalogItem(
       : kind === 'theme'
         ? 'registry:theme'
         : 'registry:component';
+
   return {
     id: `@delta:${slug}`,
     namespace: '@delta',

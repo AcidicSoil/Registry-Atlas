@@ -19,12 +19,14 @@ function fixture() {
     title: 'App Shell',
     type: 'registry:block',
   };
+
   const inputFingerprint = catalogClassificationInputFingerprint(
     buildCatalogClassificationState({
       namespace: '@demo',
       item: { name: raw.name, title: raw.title, kind: 'block' },
     }),
   );
+
   const overlay = {
     schema: 'registry-atlas.catalog-classification-overlay.v1',
     taxonomyVersion: 'v1',
@@ -44,6 +46,7 @@ function fixture() {
       inputFingerprint,
     }],
   };
+
   const runtimeCatalog: any = {
     meta: { registry_count: 1, item_count: 1 },
     registries: {
@@ -58,12 +61,14 @@ function fixture() {
       }],
     },
   };
+
   return { overlay, runtimeCatalog };
 }
 
 describe('canonical runtime contract', () => {
   it('accepts an exact source/runtime taxonomy, reviewed overlay, and promoted catalog projection', () => {
     const { overlay, runtimeCatalog } = fixture();
+
     const result = validateCatalogRuntimeContract({
       sourceTaxonomy: taxonomy,
       runtimeTaxonomy: structuredClone(taxonomy),
@@ -71,6 +76,7 @@ describe('canonical runtime contract', () => {
       runtimeCatalog,
       accessRules: {},
     });
+
     expect(result.errors).toEqual([]);
     expect(result.summary).toMatchObject({
       overlayItems: 1,
@@ -84,6 +90,7 @@ describe('canonical runtime contract', () => {
     const { overlay, runtimeCatalog } = fixture();
     const drifted = structuredClone(taxonomy);
     drifted.roots = drifted.roots.filter((root: any) => root.id !== 'application');
+
     const driftResult = validateCatalogRuntimeContract({
       sourceTaxonomy: taxonomy,
       runtimeTaxonomy: drifted,
@@ -91,6 +98,7 @@ describe('canonical runtime contract', () => {
       runtimeCatalog,
       accessRules: {},
     });
+
     expect(driftResult.errors.join('\n')).toMatch(/runtime taxonomy.*source taxonomy/i);
 
     const invalidRuntime = structuredClone(runtimeCatalog);
@@ -99,6 +107,7 @@ describe('canonical runtime contract', () => {
       primary: 'application/not-real',
       path: ['application', 'application/not-real'],
     };
+
     const invalidResult = validateCatalogRuntimeContract({
       sourceTaxonomy: taxonomy,
       runtimeTaxonomy: taxonomy,
@@ -106,6 +115,7 @@ describe('canonical runtime contract', () => {
       runtimeCatalog: invalidRuntime,
       accessRules: {},
     });
+
     expect(invalidResult.errors.join('\n')).toMatch(/canonical|taxonomy/i);
   });
 
@@ -160,6 +170,7 @@ describe('canonical runtime contract', () => {
   it('rejects stale overlay input fingerprints instead of silently preserving old classification', () => {
     const { overlay, runtimeCatalog } = fixture();
     runtimeCatalog.registries['@demo'][0].title = 'Renamed unrelated surface';
+
     const result = validateCatalogRuntimeContract({
       sourceTaxonomy: taxonomy,
       runtimeTaxonomy: taxonomy,
@@ -167,6 +178,7 @@ describe('canonical runtime contract', () => {
       runtimeCatalog,
       accessRules: {},
     });
+
     expect(result.errors.join('\n')).toMatch(/stale|fingerprint|not applied/i);
     expect(result.summary.staleOverlayItems).toBe(1);
   });
@@ -184,6 +196,7 @@ describe('canonical runtime contract', () => {
       },
     });
     runtimeCatalog.meta.item_count = 2;
+
     const result = validateCatalogRuntimeContract({
       sourceTaxonomy: taxonomy,
       runtimeTaxonomy: taxonomy,
@@ -191,6 +204,7 @@ describe('canonical runtime contract', () => {
       runtimeCatalog,
       accessRules: {},
     });
+
     expect(result.errors.join('\n')).toMatch(/not present in reviewed overlay/i);
   });
 });

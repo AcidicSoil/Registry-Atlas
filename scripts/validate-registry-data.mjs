@@ -12,8 +12,11 @@ import {
 } from './lib/atlas-storage.mjs';
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
+
 const projectRoot = resolve(scriptDir, '..');
+
 const coreDatabasePath = 'PostgreSQL: atlas schema';
+
 const { validateRegistryMirror } = await loadRegistryMirrorValidator();
 
 const core = openAtlasCoreDatabase(projectRoot, { readOnly: true });
@@ -30,6 +33,7 @@ try {
 
   const result = validateRegistryMirror(runtimeData, rawData);
   const knownItemIssues = validateKnownItemOutput(runtimeData, knownItemData);
+
   for (const message of knownItemIssues) {
     result.errors.push({
       code: 'atlas-invalid-item-summary',
@@ -47,6 +51,7 @@ try {
       field: 'atlas_documents',
     });
   }
+
   if (!classificationOverlay) {
     result.errors.push({
       code: 'atlas-missing-classification-overlay',
@@ -64,6 +69,7 @@ try {
       runtimeCatalog: catalogData,
       accessRules,
     });
+
     for (const message of canonicalContract.errors) {
       result.errors.push({
         code: 'atlas-invalid-canonical-runtime',
@@ -88,6 +94,7 @@ try {
   console.log(`warnings: ${result.warnings.length}`);
 
   for (const issue of result.errors) console.error(formatIssue(issue));
+
   for (const issue of result.warnings) console.warn(formatIssue(issue));
 
   if (result.errors.length > 0) process.exitCode = 1;
@@ -98,12 +105,15 @@ try {
 async function validateDatabaseInvariants(core, state) {
   const issues = [];
   const catalogMeta = state.catalog?.meta ?? {};
+
   const catalogNamespaces = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_namespaces',
   ).get()).n);
+
   const catalogItems = Number((await core.prepare(
     'SELECT COUNT(*) AS n FROM atlas_catalog_items',
   ).get()).n);
+
   const duplicateCatalogItems = Number((await core.prepare(`
     SELECT COUNT(*) AS n FROM (
       SELECT namespace,name,COUNT(*) AS c
@@ -112,6 +122,7 @@ async function validateDatabaseInvariants(core, state) {
       HAVING COUNT(*) > 1
     )
   `).get()).n);
+
   const duplicateDetails = Number((await core.prepare(`
     SELECT COUNT(*) AS n FROM (
       SELECT namespace,name,COUNT(*) AS c
@@ -124,12 +135,15 @@ async function validateDatabaseInvariants(core, state) {
   if (catalogNamespaces !== catalogMeta.registry_count) {
     issues.push(`catalog namespace count ${catalogNamespaces} does not match metadata ${catalogMeta.registry_count}`);
   }
+
   if (catalogItems !== catalogMeta.item_count) {
     issues.push(`catalog item count ${catalogItems} does not match metadata ${catalogMeta.item_count}`);
   }
+
   if (duplicateCatalogItems !== 0) {
     issues.push(`catalog contains ${duplicateCatalogItems} duplicate namespace/name identities`);
   }
+
   if (duplicateDetails !== 0) {
     issues.push(`detail database contains ${duplicateDetails} duplicate namespace/name identities`);
   }
@@ -141,9 +155,11 @@ async function validateDatabaseInvariants(core, state) {
     'catalog-gold-set',
     'source-page-index-meta',
   ];
+
   const available = new Set((await core.prepare(
     'SELECT name FROM atlas_documents',
   ).all()).map(row => row.name));
+
   for (const name of requiredDocuments) {
     if (!available.has(name)) issues.push(`required database document is missing: ${name}`);
   }
@@ -155,8 +171,10 @@ function validateKnownItemOutput(runtimeData, knownItemData) {
   const issues = [];
   const registries = Array.isArray(runtimeData?.registries) ? runtimeData.registries : [];
   const byNamespace = new Map(registries.map(registry => [registry?.official?.name, registry]));
+
   const knownEntries = Object.entries(knownItemData ?? {})
     .filter(([, items]) => Array.isArray(items) && items.length > 0);
+
   const generatedItemCount = registries.reduce(
     (count, registry) => count
       + (Array.isArray(registry?.atlas?.item_summaries)
@@ -171,6 +189,7 @@ function validateKnownItemOutput(runtimeData, knownItemData) {
   for (const [namespace] of knownEntries) {
     const registry = byNamespace.get(namespace);
     const generatedItems = registry?.atlas?.item_summaries;
+
     if (!registry || !Array.isArray(generatedItems) || generatedItems.length === 0) {
       issues.push(`${namespace} has known catalog-backed items but no generated atlas.item_summaries`);
       continue;
@@ -180,6 +199,7 @@ function validateKnownItemOutput(runtimeData, knownItemData) {
       if (!item.source || !item.provenance) {
         issues.push(`${namespace}/${item.slug ?? 'unknown'} is missing source or provenance`);
       }
+
       if (item.route_eligible === true
         && (!item.slug || !registry.official?.registry_url_template?.includes('{name}'))) {
         issues.push(`${namespace}/${item.slug ?? 'unknown'} is route_eligible without route prerequisites`);
@@ -196,15 +216,18 @@ function validateKnownItemOutput(runtimeData, knownItemData) {
 
 function formatIssue(issue) {
   const location = [issue.namespace, issue.field].filter(Boolean).join(' ');
+
   const prefix = location.length > 0
     ? `${issue.severity} ${issue.code} ${location}`
     : `${issue.severity} ${issue.code}`;
+
   return `${prefix}: ${issue.message}`;
 }
 
 async function loadRegistryMirrorValidator() {
   const sourceDir = resolve(projectRoot, 'src/registry-explorer/core');
   const compiledDir = await mkdtemp(join(tmpdir(), 'registry-atlas-validator-'));
+
   const modules = [
     'registry.schema.ts',
     'coverageStatus.ts',
@@ -213,6 +236,7 @@ async function loadRegistryMirrorValidator() {
 
   await Promise.all(modules.map(async moduleName => {
     const source = await readFile(resolve(sourceDir, moduleName), 'utf8');
+
     const transpiled = ts.transpileModule(source, {
       compilerOptions: {
         target: ts.ScriptTarget.ES2022,
@@ -220,6 +244,7 @@ async function loadRegistryMirrorValidator() {
         verbatimModuleSyntax: true,
       },
     }).outputText.replaceAll(".ts';", ".mjs';");
+
     await writeFile(resolve(compiledDir, moduleName.replace(/\.ts$/, '.mjs')), transpiled);
   }));
 

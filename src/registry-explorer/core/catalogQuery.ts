@@ -51,6 +51,7 @@ export interface CatalogQueryOptions {
   pageSize?: number;
   basePath?: string;
 }
+
 export interface CatalogQueryResult {
   items: CatalogComponent[];
   total: number;
@@ -77,6 +78,7 @@ export interface CatalogFacetSummary {
 }
 
 const DEFAULT_PAGE_SIZE = 32;
+
 const MAX_PAGE_SIZE = 100;
 
 interface CatalogMatch {
@@ -88,8 +90,10 @@ interface CatalogMatch {
 /** The raw import retains duplicate source rows for integrity reporting. */
 function* distinctCatalogItems(items: readonly RegistryCatalogItem[]): Generator<RegistryCatalogItem> {
   const seen = new Set<string>();
+
   for (const item of items) {
     const key = registryCatalogItemIdentity(item.name);
+
     if (seen.has(key)) continue;
     seen.add(key);
     yield item;
@@ -132,12 +136,15 @@ function registryCatalogMatches(
 ): CatalogMatch[] {
   const reviewed = reviewedSummaryMap(registry);
   const matches: CatalogMatch[] = [];
+
   for (const item of distinctCatalogItems(items)) {
     if (author !== undefined && item.author?.trim() !== author) continue;
     const overlay = reviewed.get(registryCatalogItemIdentity(item.name));
+
     if (!matchesFilters(item, registry.name, filters, Boolean(overlay))) continue;
     matches.push({ registry, item, ...(overlay ? { reviewed: overlay } : {}) });
   }
+
   return matches;
 }
 
@@ -149,12 +156,15 @@ function findCatalogMatches(
 ): CatalogMatch[] {
   const byRegistry = new Map(registries.map(registry => [registry.name, registry]));
   const matches: CatalogMatch[] = [];
+
   for (const namespace of Object.keys(index.registries).sort((a, b) => a.localeCompare(b))) {
     if (filters.registryNames.size && !filters.registryNames.has(namespace)) continue;
     const registry = byRegistry.get(namespace);
+
     if (!registry) continue;
     matches.push(...registryCatalogMatches(registry, index.registries[namespace] ?? [], filters, author));
   }
+
   return matches;
 }
 
@@ -172,6 +182,7 @@ export function queryCatalogComponents(
   const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
   const page = pageCount === 0 ? 1 : Math.min(requestedPage, pageCount);
   const start = (page - 1) * pageSize;
+
   const items = matches
     .slice(start, start + pageSize)
     .map(match => toCatalogComponent(
@@ -213,9 +224,13 @@ function createFacetCounts(): FacetCounts {
 function collectCatalogFacet(counts: FacetCounts, namespace: string, item: RegistryCatalogItem, reviewed: boolean): void {
   increment(counts.registries, namespace);
   increment(counts.types, item.type);
+
   for (const category of item.categories ?? []) increment(counts.categories, category);
+
   for (const id of item.canonical?.path ?? []) increment(counts.canonical, id);
+
   if (item.access) increment(counts.access, item.access.normalized);
+
   if (reviewed) counts.reviewed += 1;
   else counts.unreviewed += 1;
 }
@@ -225,6 +240,7 @@ function includeCanonicalAndAccessFacet(
   filters: Pick<CatalogFilters, 'canonicalIds' | 'access'>,
 ): boolean {
   if (filters.canonicalIds.size && !(item.canonical?.path ?? []).some(id => filters.canonicalIds.has(id))) return false;
+
   return !filters.access.size || (!!item.access && filters.access.has(item.access.normalized));
 }
 
@@ -234,7 +250,9 @@ function includeCatalogFacet(
   filters: Pick<CatalogFilters, 'assetKinds' | 'canonicalIds' | 'access' | 'search'>,
 ): boolean {
   if (filters.assetKinds.size && !filters.assetKinds.has(assetKindForCatalogItem(item, namespace))) return false;
+
   if (!includeCanonicalAndAccessFacet(item, filters)) return false;
+
   return !filters.search || matchesSearch(item, namespace, filters.search);
 }
 
@@ -258,17 +276,21 @@ export function buildCatalogFacetSummary(
   const filters = queryFilters(options);
   const namespaces = new Map(registries.map(registry => [registry.name, registry]));
   const counts = createFacetCounts();
+
   for (const [namespace, items] of Object.entries(index.registries)) {
     if (filters.registryNames.size && !filters.registryNames.has(namespace)) continue;
     const registry = namespaces.get(namespace);
+
     if (!registry) continue;
     const reviewed = reviewedSummaryMap(registry);
+
     for (const item of distinctCatalogItems(items)) {
       if (!includeCatalogFacet(item, namespace, filters)) continue;
       collectCatalogFacet(counts, namespace, item,
         reviewed.has(registryCatalogItemIdentity(item.name)));
     }
   }
+
   return facetSummaryFromCounts(counts);
 }
 
@@ -284,6 +306,7 @@ export function catalogItemCountForRegistry(
 ): number {
   return [...distinctCatalogItems(index.registries[namespace] ?? [])].length;
 }
+
 function catalogDisplayFields(item: RegistryCatalogItem, reviewed?: RegistryItemSummary) {
   return {
     ...(item.title ? { title: item.title } : {}),
@@ -351,6 +374,7 @@ function compareCatalogMatches(
       || aName.localeCompare(bName)
       || a.item.name.localeCompare(b.item.name);
   }
+
   return aName.localeCompare(bName)
     || a.registry.name.localeCompare(b.registry.name)
     || a.item.name.localeCompare(b.item.name);
@@ -363,6 +387,7 @@ function displayName(match: CatalogMatch): string {
 function displayLabel(item: RegistryCatalogItem): string {
   if (item.title?.trim()) return item.title.trim();
   const segments = item.name.split('/').filter(Boolean);
+
   return segments.at(-1) ?? item.name;
 }
 
@@ -372,14 +397,18 @@ function matchesCategoryAndAccess(
 ): boolean {
   if (filters.categories.size &&
     !(item.categories ?? []).map(normalize).some(category => filters.categories.has(category))) return false;
+
   if (filters.canonicalIds.size &&
     !(item.canonical?.path ?? []).some(id => filters.canonicalIds.has(id))) return false;
+
   return !filters.access.size || (!!item.access && filters.access.has(item.access.normalized));
 }
 
 function matchesReviewStatus(expected: CatalogReviewedFilter, actual: boolean): boolean {
   if (expected === 'reviewed') return actual;
+
   if (expected === 'unreviewed') return !actual;
+
   return true;
 }
 
@@ -390,9 +419,13 @@ function matchesFilters(
   isReviewed: boolean,
 ): boolean {
   if (filters.itemTypes.size && !filters.itemTypes.has(normalize(item.type))) return false;
+
   if (filters.assetKinds.size && !filters.assetKinds.has(assetKindForCatalogItem(item, namespace))) return false;
+
   if (!matchesCategoryAndAccess(item, filters)) return false;
+
   if (!matchesReviewStatus(filters.reviewed, isReviewed)) return false;
+
   return !filters.search || matchesSearch(item, namespace, filters.search);
 }
 
@@ -400,6 +433,7 @@ function matchesSearch(item: RegistryCatalogItem, namespace: string, query: stri
   const canonicalValues = item.canonical?.path?.length
     ? defaultCatalogTaxonomySearchValues(item.canonical.path)
     : [];
+
   return [
     item.name,
     item.title ?? "",
@@ -414,6 +448,7 @@ function matchesSearch(item: RegistryCatalogItem, namespace: string, query: stri
 
 function increment(counts: Map<string, number>, value: string): void {
   const normalized = value.trim();
+
   if (!normalized) return;
   counts.set(normalized, (counts.get(normalized) ?? 0) + 1);
 }

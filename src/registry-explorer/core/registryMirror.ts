@@ -92,9 +92,13 @@ const OFFICIAL_URL_POLICY: UrlPolicy = {
 };
 
 const COVERAGE_STATUS_SET = new Set<CoverageStatus>(COVERAGE_STATUS_VALUES);
+
 const COVERAGE_CONFIDENCE_SET = new Set<CoverageConfidence>(COVERAGE_CONFIDENCE_VALUES);
+
 const ITEM_CATALOG_STATUS_SET = new Set<ItemCatalogStatus>(ITEM_CATALOG_STATUS_VALUES);
+
 const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 const INSTALL_TOKEN_PATTERN = /^@[a-z0-9][a-z0-9-]*\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorValidationResult {
@@ -106,10 +110,12 @@ export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorVa
       message: 'Mirror data must be an object.',
       severity: 'error',
     });
+
     return result;
   }
 
   const mirrorData = mirror as MirrorData;
+
   if (!Array.isArray(mirrorData.registries)) {
     addIssue(result, {
       code: 'mirror-invalid-shape',
@@ -117,6 +123,7 @@ export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorVa
       severity: 'error',
       field: 'registries',
     });
+
     return result;
   }
 
@@ -137,6 +144,7 @@ export function validateRegistryMirror(mirror: unknown, raw?: unknown): MirrorVa
         message: `Registry record ${index} must be an object.`,
         severity: 'error',
       });
+
       return;
     }
 
@@ -152,6 +160,7 @@ export function validateNamespace(
 ): MirrorValidationResult {
   const result = createResult();
   validateNamespaceIntoResult(namespace, seenNamespaces, result);
+
   return result;
 }
 
@@ -162,6 +171,7 @@ export function validateUrlField(
 ): MirrorValidationResult {
   const result = createResult();
   validateUrlIntoResult(value, field, namespace, result);
+
   return result;
 }
 
@@ -171,6 +181,7 @@ export function validateRegistryUrlTemplate(
 ): MirrorValidationResult {
   const result = createResult();
   validateRegistryUrlTemplateIntoResult(value, namespace, result);
+
   return result;
 }
 
@@ -181,6 +192,7 @@ function validateRawRegistries(raw: unknown, mirrorCount: number, result: Mirror
       message: 'Raw upstream data must be an array.',
       severity: 'error',
     });
+
     return;
   }
 
@@ -203,6 +215,7 @@ function validateRawRegistries(raw: unknown, mirrorCount: number, result: Mirror
         message: `Raw registry record ${index} must be an object.`,
         severity: 'error',
       });
+
       return;
     }
 
@@ -242,10 +255,12 @@ function validateNamespaceIntoResult(
       severity: 'error',
       field: 'official.name',
     });
+
     return undefined;
   }
 
   const trimmed = namespace.trim();
+
   if (!trimmed.startsWith('@')) {
     addIssue(result, {
       code: 'namespace-missing-prefix',
@@ -258,6 +273,7 @@ function validateNamespaceIntoResult(
   }
 
   const lookupKey = trimmed.toLowerCase();
+
   if (seenNamespaces.has(lookupKey)) {
     addIssue(result, {
       code: 'namespace-duplicate',
@@ -270,6 +286,7 @@ function validateNamespaceIntoResult(
   }
 
   seenNamespaces.add(lookupKey);
+
   return trimmed;
 }
 
@@ -287,10 +304,12 @@ function validateUrlIntoResult(
       namespace,
       field,
     });
+
     return;
   }
 
   const trimmed = value.trim();
+
   if (trimmed.startsWith('//')) {
     addIssue(result, {
       code: 'url-protocol-relative',
@@ -300,10 +319,12 @@ function validateUrlIntoResult(
       field,
       value: trimmed,
     });
+
     return;
   }
 
   let url: URL;
+
   try {
     url = new URL(trimmed);
   } catch {
@@ -315,6 +336,7 @@ function validateUrlIntoResult(
       field,
       value: trimmed,
     });
+
     return;
   }
 
@@ -327,6 +349,7 @@ function validateUrlIntoResult(
       field,
       value: trimmed,
     });
+
     return;
   }
 
@@ -413,6 +436,7 @@ function validateItemSummaries(
       namespace,
       field: 'atlas.item_summaries',
     });
+
     return;
   }
 
@@ -468,6 +492,7 @@ function validateItemSummaryStatus(
 ): void {
   const catalogStatus = record.catalog_status ?? record.catalogStatus;
   const routeEligible = record.route_eligible ?? record.routeEligible;
+
     if (typeof catalogStatus !== 'string' || !ITEM_CATALOG_STATUS_SET.has(catalogStatus as ItemCatalogStatus)) {
       addIssue(result, {
         code: 'atlas-invalid-catalog-status',
@@ -501,6 +526,7 @@ function validateItemSummaryRoute(
   const slug = record.slug;
   const routeEligible = record.route_eligible ?? record.routeEligible;
     const rawItemUrl = record.raw_item_url ?? record.rawItemUrl;
+
     if (routeEligible === true && (typeof slug !== 'string' || !ITEM_SLUG_PATTERN.test(slug) || !hasRouteSource(registryUrlTemplate, rawItemUrl))) {
       addIssue(result, {
         code: 'atlas-invalid-item-summary',
@@ -542,6 +568,7 @@ function validateItemSummary(
   result: MirrorValidationResult,
 ): void {
   const field = 'atlas.item_summaries[' + index + ']';
+
   if (!isObject(item)) {
     addIssue(result, {
       code: 'atlas-invalid-item-summary',
@@ -550,8 +577,10 @@ function validateItemSummary(
       namespace,
       field,
     });
+
     return;
   }
+
   validateItemSummaryIdentity(item, field, namespace, result);
   validateItemSummaryStatus(item, field, namespace, result);
   validateItemSummaryRoute(item, field, namespace, registryUrlTemplate, result);
@@ -570,6 +599,7 @@ function validateOptionalUrlField(
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null || value === '') return;
+
   if (typeof value !== 'string') {
     addIssue(result, {
       code: 'atlas-invalid-item-url',
@@ -579,12 +609,16 @@ function validateOptionalUrlField(
       field,
       value: String(value),
     });
+
     return;
   }
+
   const beforeErrors = result.errors.length;
   validateUrlIntoResult(value, field, namespace, result);
+
   if (result.errors.length > beforeErrors) {
     const issue = result.errors[result.errors.length - 1];
+
     if (issue) issue.code = 'atlas-invalid-item-url';
   }
 }
@@ -596,6 +630,7 @@ function validateOptionalConfidence(
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null || value === '') return;
+
   if (typeof value !== 'string' || !COVERAGE_CONFIDENCE_SET.has(value as CoverageConfidence)) {
     addIssue(result, {
       code: 'atlas-invalid-confidence',
@@ -615,6 +650,7 @@ function validateOptionalInstallToken(
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null || value === '') return;
+
   if (typeof value !== 'string' || !INSTALL_TOKEN_PATTERN.test(value.trim())) {
     addIssue(result, {
       code: 'atlas-invalid-item-token',
@@ -636,6 +672,7 @@ function validateOptionalCommand(
 ): void {
   if (value === undefined || value === null || value === '') return;
   const expectedPrefix = `npx shadcn@latest ${verb} `;
+
   if (typeof value !== 'string' || !value.startsWith(expectedPrefix) || !INSTALL_TOKEN_PATTERN.test(value.slice(expectedPrefix.length).trim())) {
     addIssue(result, {
       code: 'atlas-invalid-item-command',
@@ -655,6 +692,7 @@ function validateOptionalStringArray(
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null) return;
+
   if (!Array.isArray(value) || value.some(item => typeof item !== 'string')) {
     addIssue(result, {
       code: 'atlas-invalid-item-array',
@@ -674,6 +712,7 @@ function validateOptionalFiles(
   result: MirrorValidationResult,
 ): void {
   if (value === undefined || value === null) return;
+
   if (!Array.isArray(value)) {
     addIssue(result, {
       code: 'atlas-invalid-item-file',
@@ -683,6 +722,7 @@ function validateOptionalFiles(
       field,
       value: String(value),
     });
+
     return;
   }
 
@@ -695,6 +735,7 @@ function validateOptionalFiles(
         namespace,
         field: `${field}[${index}]`,
       });
+
       return;
     }
 
@@ -742,6 +783,7 @@ function createResult(): MirrorValidationResult {
 function addIssue(result: MirrorValidationResult, issue: MirrorValidationIssue): void {
   if (issue.severity === 'error') {
     result.errors.push(issue);
+
     return;
   }
 

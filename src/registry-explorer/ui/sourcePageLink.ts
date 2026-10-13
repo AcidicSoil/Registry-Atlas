@@ -1,4 +1,5 @@
 import { verifiedSourcePageUrl, verifiedRegistryHomepage } from '../core/sourcePageValidation';
+
 export { verifiedSourcePageUrl, verifiedRegistryHomepage } from '../core/sourcePageValidation';
 
 import type { RegistrySourcePage } from '../core/registry.schema';
@@ -12,11 +13,15 @@ export function sourcePageNavigation(
   },
 ): { url: string; label: string; level: 'reviewed' | 'sitemap' | 'pattern' | 'observed' } | null {
   const reviewed = verifiedSourcePageUrl(candidates.docsUrl, homepage);
+
   if (reviewed) return { url: reviewed, label: 'View original', level: 'reviewed' };
   const page = candidates.sourcePage;
+
   if (!page) return null;
   const url = verifiedSourcePageUrl(page.url, homepage);
+
   if (!url) return null;
+
   return page.level === 'reviewed'
     ? { url, label: 'View original', level: 'reviewed' }
     : page.level === 'sitemap'
@@ -49,17 +54,24 @@ export function sourcePageNavigationForItem(
   candidates: { docsUrl?: string | null; sourcePage?: RegistrySourcePage },
 ): ReturnType<typeof sourcePageNavigation> {
   const indexed = sourcePageNavigation(homepage, candidates);
+
   if (indexed) return indexed;
+
   if (namespace !== '@spaceui') return null;
   const anchor = SPACEUI_ASPECT_RATIO_ANCHORS[slug];
+
   if (!anchor) return null;
   const verifiedHomepage = verifiedRegistryHomepage(homepage);
+
   if (!verifiedHomepage) return null;
   const hostname = new URL(verifiedHomepage).hostname;
+
   if (hostname !== 'www.spaceui.one' && hostname !== 'spaceui.one') return null;
+
   const url = verifiedSourcePageUrl(
     `https://${hostname}/primitives/aspect-ratio#${anchor}`,
     verifiedHomepage,
   );
+
   return url ? { url, label: 'View documented example', level: 'observed' } : null;
 }

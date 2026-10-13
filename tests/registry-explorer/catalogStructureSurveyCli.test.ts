@@ -78,14 +78,18 @@ describe('catalog structure survey CLI arguments', () => {
   it('runs every batch and persists resumable state after each batch', async () => {
     const outputDir = await mkdtemp(join(tmpdir(), 'catalog-structure-batches-'));
     const seen: Array<string | undefined> = [];
+
     const result = await runCatalogStructureSurveyBatches({
       outputDir,
       initialCursor: undefined,
       resume: false,
       executeBatch: async (cursor: string | undefined) => {
         seen.push(cursor);
+
         if (!cursor) return { completed: 2, failed: 0, nextCursor: '@b', results: [] };
+
         if (cursor === '@b') return { completed: 2, failed: 1, nextCursor: '@d', results: [] };
+
         return { completed: 1, failed: 0, nextCursor: null, results: [] };
       },
     });
@@ -108,12 +112,14 @@ describe('catalog structure survey CLI arguments', () => {
       executeBatch: async () => ({ completed: 2, failed: 0, nextCursor: '@b', results: [] }),
     });
     const seen: Array<string | undefined> = [];
+
     const result = await runCatalogStructureSurveyBatches({
       outputDir,
       initialCursor: undefined,
       resume: true,
       executeBatch: async (cursor: string | undefined) => {
         seen.push(cursor);
+
         return { completed: 1, failed: 0, nextCursor: null, results: [] };
       },
     });

@@ -12,8 +12,12 @@ describe('quality-tooling integration contract', () => {
     expect(pkg.scripts['lint:boundaries']).toBe('depcruise src tests --config .dependency-cruiser.cjs');
     expect(pkg.scripts['lint:react-doctor']).toContain('--blocking warning --no-telemetry');
     expect(pkg.scripts['lint:complexity']).toBe('cccc src/registry-explorer');
+    expect(pkg.scripts['lint:anti-slop']).toBe('oxlint .');
+    expect(pkg.devDependencies.oxlint).toBe('1.87.0');
+    expect(pkg.devDependencies['@oxlint/plugins']).toBe('1.87.0');
     expect(pkg.scripts['test:complexity-gate']).toBe('node scripts/verify-complexity-gate.mjs');
-    for (const gate of ['pnpm lint:deps', 'pnpm lint:react-doctor', 'pnpm lint:complexity']) {
+
+    for (const gate of ['pnpm lint:anti-slop', 'pnpm lint:deps', 'pnpm lint:react-doctor', 'pnpm lint:complexity']) {
       expect(pkg.scripts.verify).toContain(gate);
     }
   });

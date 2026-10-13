@@ -13,9 +13,11 @@ const REGISTRY_ICON_PATHS = [
 
 export function registryIconCandidates(homepage: string, preferredIconUrl?: string): string[] {
   const verified = verifiedRegistryHomepage(homepage);
+
   if (!verified) return [];
   const conventional = REGISTRY_ICON_PATHS.map(path => new URL(path, verified).href);
   const preferred = verifiedRegistryIconUrl(preferredIconUrl);
+
   return preferred
     ? [preferred, ...conventional.filter(candidate => candidate !== preferred)]
     : conventional;
@@ -31,6 +33,7 @@ export function nextRegistryIconCandidate(
 ): { index: number; src: string } | null {
   const index = currentIndex + 1;
   const src = candidates[index];
+
   return src ? { index, src } : null;
 }
 
@@ -42,6 +45,7 @@ export function renderRegistryIcon(
   const candidates = registryIconCandidates(registry.url, registry.iconUrl);
   const favicon = candidates[0];
   const encodedCandidates = escapeHtml(JSON.stringify(candidates));
+
   return `<span class="${escapeHtml(className)}" aria-hidden="true">
     <span class="registry-icon-fallback">${escapeHtml(fallback)}</span>
     ${favicon ? `<img src="${escapeHtml(favicon)}" alt="" data-registry-icon-image
@@ -52,18 +56,25 @@ export function renderRegistryIcon(
 
 function isSafeIconHostname(host: string): boolean {
   if (!host.includes('.')) return false;
+
   if (['localhost', ''].includes(host)) return false;
+
   if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+
   return !/^\d+(?:\.\d+){3}$/.test(host);
 }
 
 function verifiedRegistryIconUrl(candidate?: string): string | null {
   if (!candidate || candidate.trim().startsWith('//')) return null;
+
   try {
     const url = new URL(candidate);
     const host = url.hostname.toLowerCase().replace(/\.$/, '');
+
     if (url.protocol !== 'https:') return null;
+
     if (url.username || url.password || url.port) return null;
+
     return isSafeIconHostname(host) ? url.href : null;
   } catch {
     return null;
@@ -81,5 +92,6 @@ export function registryItemSourceUrl(
     slug,
     rawItemUrl,
   );
+
   return route.status === 'available' ? route.url : null;
 }

@@ -62,6 +62,7 @@ describe('frontend completion contract', () => {
 
   it('copies concise operational prompts without defensive review gates', () => {
     const registry = component().registry;
+
     const detail = buildBaseDetail(registry, {
       name: 'dashboard',
       slug: 'dashboard',
@@ -75,6 +76,7 @@ describe('frontend completion contract', () => {
       dependencies: ['react'],
       files: [{ path: 'registry/dashboard.tsx', type: 'registry:block' }],
     });
+
     const install = buildInstallAgentPrompt(detail) ?? '';
     const inspect = buildInspectionPrompt(detail) ?? '';
 
@@ -105,6 +107,7 @@ function component(): CatalogComponent {
       warnings: [],
     },
   };
+
   return {
     id: '@delta:dashboard',
     namespace: '@delta',

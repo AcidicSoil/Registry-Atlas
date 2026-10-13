@@ -6,13 +6,16 @@ import { writeFileSync, rmSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
+
 const command = ['exec', 'depcruise', 'src', 'tests', '--config', '.dependency-cruiser.cjs'];
 
 function cruise() {
   const result = spawnSync('pnpm', command, {
     cwd: root, encoding: 'utf8', timeout: 120_000,
   });
+
   if (result.error) throw result.error;
+
   return { exit: result.status, output: result.stdout + result.stderr };
 }
 
@@ -64,26 +67,34 @@ const proofs = [
 
 function assertClean(label) {
   const result = cruise();
+
   if (result.exit !== 0) throw Error(label + ': expected clean dependency graph.\n' + result.output);
 }
 
 assertClean('initial');
+
 for (const proof of proofs) {
   const paths = Object.keys(proof.files).map(name => resolve(root, name));
+
   try {
     for (const [name, content] of Object.entries(proof.files)) {
       const path = resolve(root, name);
       mkdirSync(dirname(path), { recursive: true });
       writeFileSync(path, content, { flag: 'wx' }); // never replace owned files
     }
+
     const result = cruise();
+
     if (result.exit === 0 || !result.output.includes(proof.rule)) {
       throw Error(proof.name + ': rule did not fire.\n' + result.output);
     }
+
     console.log('PASS: ' + proof.name + ' -> ' + proof.rule);
   } finally {
     for (const path of paths) rmSync(path, { force: true });
   }
+
   assertClean(proof.name + ' cleanup');
 }
+
 console.log('All five dependency boundaries passed clean -> violation -> clean.');

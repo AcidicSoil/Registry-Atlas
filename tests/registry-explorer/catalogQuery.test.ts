@@ -18,6 +18,7 @@ import { configureCatalogKindOverrides } from "../../src/registry-explorer/core/
 import { readRepositoryDocument } from "./testAtlasDatabase";
 
 configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy")));
+
 configureCatalogKindOverrides(readRepositoryDocument("catalog-kind-overrides"));
 
 function registry(name: string, itemSummaries: RegistryItemSummary[] = []): Registry {
@@ -67,6 +68,7 @@ describe("queryCatalogComponents", () => {
       ],
       "@beta": [{ name: "button", type: "registry:ui", categories: ["controls"] }],
     });
+
     const registries = [registry("@alpha"), registry("@beta")];
     const first = queryCatalogComponents(registries, catalog, { pageSize: 2 });
     expect(first.total).toBe(3);
@@ -89,6 +91,7 @@ describe("queryCatalogComponents", () => {
     const idx = index({ "@svgl": [
       { name: "mastra", type: "registry:component" },
     ] });
+
     const icons = queryCatalogComponents([registry("@svgl")], idx, { assetKinds: ["icon"] });
     expect(icons.total).toBe(1);
     expect(icons.items[0]?.slug).toBe("mastra");
@@ -120,11 +123,13 @@ describe("queryCatalogComponents", () => {
 
   it('matches the author field exactly rather than guessing from title or description',()=>{
     const registries=[registry('@alpha')];
+
     const idx=index({'@alpha':[
       {name:'author-name',type:'registry:ui',title:'Alice Example',author:'Bob'},
       {name:'owned-item',type:'registry:ui',title:'Button',author:'Alice'},
       {name:'no-owner',type:'registry:ui',title:'Alice Option'},
     ]});
+
     expect(queryCatalogComponents(registries,idx,{author:'Alice',pageSize:10} as any)
       .items.map(x=>x.slug)).toEqual(['owned-item']);
   });
@@ -150,6 +155,7 @@ describe("queryCatalogComponents", () => {
       confidence: "high",
       routeEligible: true,
     };
+
     const orphan: RegistryItemSummary = {
       name: "Orphan",
       slug: "not-in-index",
@@ -177,6 +183,7 @@ describe("queryCatalogComponents", () => {
 
   it("searches only concrete item fields and registry identity", () => {
     const registries = [registry("@alpha"), registry("@beta")];
+
     const catalog = index({
       "@alpha": [{ name: "button", type: "registry:ui", categories: ["controls"] }],
       "@beta": [{ name: "contact-form", title: "Contact Form", type: "registry:block", categories: ["forms"] }],
@@ -197,7 +204,9 @@ describe("queryCatalogComponents", () => {
       catalogStatus: "available",
       routeEligible: true,
     };
+
     const registries = [registry("@alpha", [reviewed]), registry("@beta")];
+
     const catalog = index({
       "@alpha": [
         { name: "zebra", type: "registry:ui", categories: ["forms"] },
@@ -292,6 +301,7 @@ describe("queryCatalogComponents", () => {
 
   it("derives bounded facet counts from real indexed item facts", () => {
     const registries = [registry("@alpha"), registry("@beta")];
+
     const catalog = index({
       "@alpha": [
         { name: "button", type: "registry:ui", categories: ["controls"] },
@@ -372,6 +382,7 @@ describe('canonical taxonomy catalog queries', () => {
       },
     ],
   });
+
   const canonicalRegistries = [registry('@alpha'), registry('@beta'), registry('@gamma')];
 
   it('filters equivalent cross-registry items by canonical id and accurate kind', () => {
@@ -445,6 +456,7 @@ describe('canonical taxonomy catalog queries', () => {
         canonical: { taxonomyVersion: 'v1', primary: 'controls/button', path: ['controls', 'controls/button'] },
       }] }),
     );
+
     expect(noAccess.access).toBeUndefined();
   });
 });

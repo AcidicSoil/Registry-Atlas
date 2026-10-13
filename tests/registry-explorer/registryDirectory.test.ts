@@ -48,6 +48,7 @@ describe("registryDirectory", () => {
       {name:"button",type:"registry:ui"},
       {name:"forms/button",type:"registry:ui"},
     ]});
+
     expect(catalog.meta.item_count).toBe(3);
     expect(buildRegistryDirectory([registry("@alpha")],catalog).entries[0].itemCount).toBe(2);
   });
@@ -56,6 +57,7 @@ describe("registryDirectory", () => {
     const catalog = index({
       "@large": Array.from({ length: 125 }, (_, i) => ({ name: `item-${i}`, type: "registry:component" })),
     });
+
     const result = buildRegistryDirectory([registry("@large")], catalog);
 
     expect(result.entries[0]).toMatchObject({
@@ -85,6 +87,7 @@ describe("registryDirectory", () => {
 
   it("searches registry identity/description and paginates the directory", () => {
     const registries = Array.from({ length: 65 }, (_, i) => registry(`@registry-${String(i).padStart(2, "0")}`));
+
     const catalog = index(Object.fromEntries(
       registries.map(item => [item.name, [{ name: "button", type: "registry:ui" }]]),
     ));
@@ -107,12 +110,14 @@ describe("registry asset-type filters", () => {
 
   it("matches any selected asset type and uses the approved alphabetical sort", () => {
     const regs = [registry("@components"), registry("@templates"), registry("@themes"), registry("@mixed")];
+
     const data = index({
       "@components": [{ name: "button", type: "registry:ui" }],
       "@templates": [{ name: "landing", type: "registry:page" }],
       "@themes": [{ name: "tint", type: "registry:theme" }],
       "@mixed": [{ name: "button", type: "registry:ui" }, { name: "landing", type: "registry:page" }],
     });
+
     const filtered = buildRegistryDirectory(regs, data, { assetKinds: ["page", "theme"], sort: "name" });
     expect(filtered.entries.map(entry => entry.registry.name)).toEqual(["@mixed", "@templates", "@themes"]);
   });
@@ -126,6 +131,7 @@ describe("corrective registry controls", () => {
       registry("@stale", "stale-catalog"),
       registry("@failed", "none"),
     ];
+
     const catalog = index({
       "@small": [{ name: "one", type: "registry:ui" }],
       "@large": [
@@ -135,11 +141,13 @@ describe("corrective registry controls", () => {
       ],
       "@stale": [{ name: "old", type: "registry:ui" }],
     });
+
     const current = buildRegistryDirectory(regs, catalog, {
       coverage: ["current"],
       sort: "item-count-desc",
       pageSize: 1,
     });
+
     expect(current.total).toBe(2);
     expect(current.entries.map(entry => entry.registry.name)).toEqual(["@large"]);
     const unavailable = buildRegistryDirectory(regs, catalog, { coverage: ["failed"] });

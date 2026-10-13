@@ -113,3 +113,7 @@ run = "pnpm lint:react-doctor"
 
 [tasks."lint:complexity"]
 run = "pnpm lint:complexity"
+
+[tasks."lint:anti-slop"]
+description = "Enforce the root Stackforge anti-slop TypeScript policy"
+run = "pnpm lint:anti-slop"

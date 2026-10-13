@@ -27,6 +27,7 @@ const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
 
 function normalizeNamespace(value) {
   if (typeof value !== 'string') return '';
+
   return value.startsWith('@') ? value : `@${value}`;
 }
 
@@ -39,6 +40,7 @@ function readPreviousEnrichment(previousRuntimeData) {
 
   for (const registry of previousRuntimeData.registries) {
     const name = registry?.official?.name;
+
     if (typeof name === 'string' && registry.atlas && typeof registry.atlas === 'object') {
       enrichment.set(name, registry.atlas);
     }
@@ -53,6 +55,7 @@ function normalizeStringArray(value) {
 
 function normalizeFiles(value) {
   if (!Array.isArray(value)) return [];
+
   return value
     .filter(file => file && typeof file === 'object')
     .map(file => ({
@@ -98,11 +101,14 @@ function normalizeItemSummary(item) {
 function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummariesByNamespace, catalogEvidenceByNamespace) {
   const name = normalizeNamespace(registry.name);
   const atlas = enrichmentByNamespace.get(name) || DEFAULT_ATLAS_ENRICHMENT;
+
   const itemSummaries = Array.isArray(itemSummariesByNamespace?.[name])
     ? itemSummariesByNamespace[name].map(normalizeItemSummary)
     : [];
+
   const catalogEvidence = catalogEvidenceByNamespace?.[name] ?? null;
   const catalogFacts = buildCatalogCoverageFacts(atlas, itemSummaries, catalogEvidence);
+
   const catalogStatus = itemSummaries.length > 0
     ? (itemSummaries.some(item => item.catalog_status === 'partial') ? 'partial' : 'available')
     : (catalogFacts.comparison_evidence === 'catalog' || catalogFacts.comparison_evidence === 'stale-catalog'
@@ -137,13 +143,16 @@ export function projectReviewedCatalogClassifications(
 ) {
   const reviewedTaxonomy = validateCatalogTaxonomy(taxonomy);
   const stripped = stripCatalogClassificationFields(itemsByNamespace);
+
   if (!overlay) {
     return {
       itemsByNamespace: stripped,
       report: { applied: 0, stale: 0, missing: 0 },
     };
   }
+
   const reviewedOverlay = validateCatalogClassificationOverlay(overlay, reviewedTaxonomy);
+
   return applyCatalogClassificationOverlay(stripped, reviewedOverlay, accessRules);
 }
 
@@ -151,21 +160,29 @@ export function projectCuratedSummaries(runtime, curated) {
   if (!Array.isArray(runtime?.registries)) throw new Error('Expected an official runtime mirror');
   const names = new Map(runtime.registries.map((entry, index) => [entry.official.name, index]));
   const output = structuredClone(runtime);
+
   for (const [namespace, items] of Object.entries(curated)) {
     const index = names.get(namespace);
+
     if (index === undefined) throw new Error(`Curated namespace ${namespace} not in official runtime mirror`);
+
     if (!Array.isArray(items)) throw new Error(`Invalid curated items in ${namespace}`);
     const slugs = new Set();
+
     for (const item of items) {
       if (!item?.slug || slugs.has(item.slug)) {
         throw new Error(`duplicate curated slug in ${namespace}: ${item?.slug}`);
       }
+
       slugs.add(item.slug);
     }
+
     const atlas = output.registries[index].atlas;
     atlas.item_summaries = items.map(normalizeItemSummary);
+
     if (items.length && atlas.catalog_status === 'unavailable') atlas.catalog_status = 'available';
   }
+
   return output;
 }
 
@@ -182,10 +199,12 @@ function changedRegistries(previousRegistries, nextRegistries) {
 
   for (const registry of nextRegistries) {
     const old = previous.get(registry.official.name);
+
     if (!old) continue;
 
     const oldOfficial = JSON.stringify(old.official);
     const nextOfficial = JSON.stringify(registry.official);
+
     if (oldOfficial !== nextOfficial) {
       changed.push(registry.official.name);
     }
@@ -196,6 +215,7 @@ function changedRegistries(previousRegistries, nextRegistries) {
 
 async function main() {
   const core = openAtlasCoreDatabase();
+
   try {
     const state = await readAtlasState(core);
 
@@ -203,24 +223,30 @@ async function main() {
       const projected = projectCuratedSummaries(state.runtime, state.curated);
       await replaceRegistrySnapshot(core, projected);
       console.log('Projected curated item summaries directly into PostgreSQL atlas schema');
+
       return;
     }
 
     const response = await fetch(SOURCE_URL);
+
     if (!response.ok) {
       throw new Error(`Failed to fetch ${SOURCE_URL}: ${response.status} ${response.statusText}`);
     }
 
     const upstream = await response.json();
+
     if (!Array.isArray(upstream)) {
       throw new Error('Official registry directory response must be a JSON array.');
     }
 
     const previousRuntimeData = state.runtime;
+
     const previousRegistries = Array.isArray(previousRuntimeData?.registries)
       ? previousRuntimeData.registries
       : [];
+
     const previousEnrichment = readPreviousEnrichment(previousRuntimeData);
+
     const catalogSync = await syncCatalogEvidenceForRegistries(upstream, {
       previous: state.catalogEvidence,
       previousItems: state.catalog?.registries ?? {},
@@ -228,6 +254,7 @@ async function main() {
 
     if (!state.taxonomy) throw new Error('Missing catalog-taxonomy document in PostgreSQL atlas schema');
     const taxonomy = validateCatalogTaxonomy(state.taxonomy);
+
     const classificationProjection = projectReviewedCatalogClassifications(
       catalogSync.itemsByNamespace,
       {
@@ -236,6 +263,7 @@ async function main() {
         accessRules: state.accessRules ?? {},
       },
     );
+
     const catalogEvidenceByNamespace = catalogSync.evidence;
     const syncedAt = new Date().toISOString();
 
@@ -263,8 +291,10 @@ async function main() {
 
     const previousNames = new Set(sortedNames(previousRegistries));
     const nextNames = new Set(sortedNames(registries));
+
     const added = [...nextNames].filter(name => !previousNames.has(name))
       .sort((a, b) => a.localeCompare(b));
+
     const removed = [...previousNames].filter(name => !nextNames.has(name))
       .sort((a, b) => a.localeCompare(b));
 
@@ -292,9 +322,11 @@ async function main() {
       },
       registries: classificationProjection.itemsByNamespace,
     });
+
     for (const [namespace, rows] of Object.entries(catalogSync.freshDetailsByNamespace)) {
       await replaceItemDetails(tx, namespace, rows);
     }
+
     await replaceRegistrySnapshot(tx, runtimeData);
     await putDocument(tx, 'registry-sync-report', 'sync-report', report);
     await putDocument(tx, 'catalog-classification-projection-report', 'sync-report',

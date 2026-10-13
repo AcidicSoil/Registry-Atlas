@@ -26,6 +26,7 @@ export type CatalogRoute =
   | { kind: "compare" };
 
 export type CatalogSort = "name" | "registry";
+
 export type CatalogReviewedFilter = "all" | "reviewed" | "unreviewed";
 
 export interface CatalogBrowseQueryState {
@@ -46,9 +47,11 @@ export const REGISTRY_ASSET_SEGMENTS: Readonly<Record<string, CatalogAssetKind>>
 };
 
 const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry"]);
+
 const CATALOG_ASSET_KINDS = new Set<CatalogAssetKind>([
   'component', 'block', 'page', 'template', 'theme', 'icon', 'other',
 ]);
+
 const CATALOG_ACCESS_VALUES = new Set(['free', 'paid'] as const);
 
 const FLAT_ROUTE_KINDS = new Set([
@@ -68,55 +71,75 @@ function routeForOneSegment(segment: string): CatalogRoute | null {
   if (FLAT_ROUTE_KINDS.has(segment as FlatRouteKind)) {
     return { kind: segment as FlatRouteKind };
   }
+
   return isSafeNamespace(segment) ? { kind: 'registry', namespace: segment } : null;
 }
 
 function routeForTwoSegments(first: string, second: string): CatalogRoute | null {
   if (first === 'themes' && second === 'editor') return { kind: 'theme-editor' };
+
   if (first === 'icons') return { kind: 'icon-family', family: second };
+
   if (!isSafeNamespace(first)) return null;
   const assetKind = REGISTRY_ASSET_SEGMENTS[second];
+
   return assetKind ? { kind: 'registry-assets', namespace: first, assetKind } : null;
 }
 
 function specialRouteForThreeSegments(segments: string[]): CatalogRoute | null {
   if (segments.length !== 3) return null;
   const [first, second, third] = segments;
+
   if (first === 'components') {
     if (second === 's') return { kind: 'components', pathSearchTerm: third };
+
     if (second === 'explore') return { kind: 'explore', collection: third! };
   }
+
   if (first === 'icons' && second === 'c') return { kind: 'icon-category', category: third! };
+
   return null;
 }
 
 function routeForLongPath(segments: string[]): CatalogRoute | null {
   const special = specialRouteForThreeSegments(segments);
+
   if (special) return special;
   const [first, second] = segments;
+
   if (!first || !isSafeNamespace(first)) return null;
   const kind = ITEM_SEGMENT_KINDS[second ?? ''];
+
   if (!kind) return null;
   const slugSegments = segments.slice(2);
+
   if (slugSegments.length === 0 || !slugSegments.every(isSafeItemSegment)) return null;
+
   return { kind, namespace: first, slug: slugSegments.join('/') };
 }
 
 export function parseCatalogRoute(pathname: string, basePath = '/'): CatalogRoute | null {
   const relative = stripBasePath(pathname, basePath);
+
   if (relative === null) return null;
   const segments = relative.split('/').filter(Boolean).map(decodeSafeSegment);
+
   if (segments.some(segment => segment === null)) return null;
   const decoded = segments as string[];
+
   if (decoded.length === 0) return { kind: 'home' };
+
   if (decoded.length === 1) return routeForOneSegment(decoded[0]!);
+
   if (decoded.length === 2) return routeForTwoSegments(decoded[0]!, decoded[1]!);
+
   return routeForLongPath(decoded);
 }
 
 export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQueryState {
   const pageValue = Number(params.get("page"));
   const sortValue = params.get("sort");
+
   return {
     page: Number.isInteger(pageValue) && pageValue > 0 ? pageValue : 1,
     sort: normalizeCatalogSort(sortValue),
@@ -133,7 +156,9 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
 
 export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URLSearchParams {
   const params = new URLSearchParams();
+
   if (state.page > 1) params.set("page", String(state.page));
+
   if (state.sort !== "name" && CATALOG_SORTS.has(state.sort)) params.set("sort", state.sort);
   state.registryNames.forEach(value => {
     if (isSafeNamespace(value)) params.append("registry", value);
@@ -150,6 +175,7 @@ export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URL
   state.access.forEach(value => {
     if (CATALOG_ACCESS_VALUES.has(value)) params.append('access', value);
   });
+
   return params;
 }
 
@@ -163,9 +189,11 @@ function relativeSimplePath(route: CatalogRoute): string | null {
   if (route.kind === 'components' && route.pathSearchTerm) {
     return `components/s/${encodeSegment(route.pathSearchTerm)}`;
   }
+
   if (route.kind in FLAT_ROUTE_PATHS) {
     return FLAT_ROUTE_PATHS[route.kind as FlatRouteKind] ?? null;
   }
+
   switch (route.kind) {
     case 'explore': return `components/explore/${encodeSegment(route.collection)}`;
     case 'theme-editor': return 'themes/editor';
@@ -179,42 +207,58 @@ function relativeRegistryPath(route: CatalogRoute): string {
   if (!('namespace' in route) || !isSafeNamespace(route.namespace)) {
     throw new Error('Unsafe registry namespace');
   }
+
   const namespace = encodeNamespace(route.namespace);
+
   if (route.kind === 'registry') return namespace;
+
   if (route.kind === 'registry-assets') {
     const segment = Object.entries(REGISTRY_ASSET_SEGMENTS).find(([, kind]) => kind === route.assetKind)?.[0];
+
     if (!segment) throw new Error(`Invalid registry asset kind: ${route.assetKind}`);
+
     return `${namespace}/${segment}`;
   }
+
   const segments = route.slug.split('/');
+
   if (segments.length === 0 || !segments.every(isSafeItemSegment)) {
     throw new Error(`Unsafe catalog slug: ${route.slug}`);
   }
+
   const kindSegment = {
     component: 'components', block: 'blocks', page: 'pages',
     template: 'templates', theme: 'themes',
   }[route.kind];
+
   return `${namespace}/${kindSegment}/${segments.map(encodeSegment).join('/')}`;
 }
 
 export function catalogRoutePath(route: CatalogRoute, basePath = '/'): string {
   const base = normalizeBasePath(basePath);
+
   if (route.kind === 'home') return base;
+
   if (route.kind === 'not-found') return route.path;
   const simple = relativeSimplePath(route);
+
   return joinBase(base, simple ?? relativeRegistryPath(route));
 }
 
 function stripBasePath(pathname: string, basePath: string): string | null {
   const base = normalizeBasePath(basePath);
   const baseWithoutTrailing = base === "/" ? "" : base.slice(0, -1);
+
   if (baseWithoutTrailing && pathname === baseWithoutTrailing) return "";
+
   if (baseWithoutTrailing && !pathname.startsWith(base)) return null;
+
   return baseWithoutTrailing ? pathname.slice(base.length) : pathname.replace(/^\//, "");
 }
 
 function normalizeBasePath(basePath: string): string {
   const withLeading = basePath.startsWith("/") ? basePath : `/${basePath}`;
+
   return withLeading.endsWith("/") ? withLeading : `${withLeading}/`;
 }
 
@@ -225,6 +269,7 @@ function joinBase(base: string, relative: string): string {
 function decodeSafeSegment(value: string): string | null {
   try {
     const decoded = decodeURIComponent(value);
+
     return isSafePathSegment(decoded) ? decoded : null;
   } catch {
     return null;
@@ -261,6 +306,7 @@ function isCatalogAccess(value: string): value is 'free' | 'paid' {
 
 function normalizeCatalogSort(value: string | null): CatalogSort {
   if (value === 'registry' || value === 'registry-desc') return 'registry';
+
   return 'name';
 }
 
@@ -270,5 +316,6 @@ function encodeNamespace(value: string): string {
 
 function encodeSegment(value: string): string {
   if (!isSafeItemSegment(value)) throw new Error(`Unsafe path segment: ${value}`);
+
   return encodeURIComponent(value);
 }

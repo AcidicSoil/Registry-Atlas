@@ -1,12 +1,23 @@
 export * from './registry.schema';
+
 export * from './registryMirror';
+
 export * from './registryCatalogIndex';
+
 export * from './catalogRoutes';
+
 export * from './catalogQuery';
+
 export * from './catalogCollections';
+
 export * from './registryDirectory';
+
 export * from './registryItemDetail';
+
 export * from './catalogCompare';
+
 export * from './itemRoutes';
+
 export * from './installQueue';
+
 export * from './installActions';

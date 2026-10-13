@@ -72,6 +72,7 @@ export function renderRegistryDirectorySidebar(
 ): string {
   const assetKinds = (Object.keys(ASSET_LABELS) as CatalogAssetKind[])
     .filter(kind => options.assetCounts[kind] > 0);
+
   const selectedKind = options.selectedAssetKinds[0] ?? "";
 
   return `
@@ -129,8 +130,10 @@ function assetRow(
 function renderEntry(entry: RegistryDirectoryEntry): string {
   const count = entry.itemCount === 1 ? "1 item" : `${entry.itemCount.toLocaleString()} items`;
   const homepage = renderRegistryHomepageLink(entry.registry.url, "registry-directory-homepage", "Homepage ↗");
+
   const route = catalogRoutePath({kind:"registry",namespace:entry.registry.name},
     "/Registry-Atlas/");
+
   return `
     <article class="registry-directory-card">
       <a class="registry-directory-copy registry-directory-open"
@@ -158,11 +161,13 @@ function renderEntry(entry: RegistryDirectoryEntry): string {
 function renderMeta(result: RegistryDirectoryResult): string {
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
+
   return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()} registries</div>`;
 }
 
 function renderPagination(result: RegistryDirectoryResult): string {
   if (result.pageCount <= 1) return "";
+
   return `
     <nav class="catalog-pagination" aria-label="Registry directory pages">
       <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>

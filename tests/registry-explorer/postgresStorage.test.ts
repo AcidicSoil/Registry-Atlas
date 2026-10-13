@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { testRouteDatabase } from './postgresFixture';
 // @ts-ignore Standalone JavaScript PostgreSQL module.
 import * as atlasPostgres from '../../scripts/lib/atlas-postgres.mjs';
+
 const {
   transaction, replaceRawRegistries, readRawRegistries, replaceCatalogSnapshot,
   readCatalogSnapshot, replaceRegistrySnapshot, readRegistrySnapshot,
@@ -16,6 +17,7 @@ vi.setConfig({testTimeout: 30000});
 describe('authoritative PostgreSQL storage', () => {
   it('persists related catalog, registry, source-page and detail records atomically', async () => {
     const db = await testRouteDatabase();
+
     try {
       await transaction(db, async (tx: any) => {
         await replaceRawRegistries(tx, [{name:'@demo',homepage:'https://demo.test'}]);
@@ -36,6 +38,7 @@ describe('authoritative PostgreSQL storage', () => {
 
   it('rolls back all nested writes when the outer transaction fails', async () => {
     const db = await testRouteDatabase();
+
     try {
       await expect(transaction(db, async (tx: any) => {
         await replaceCatalogSnapshot(tx,{meta:{},registries:{'@demo':[{name:'button'}]}});
@@ -51,6 +54,7 @@ describe('authoritative PostgreSQL storage', () => {
 
   it('upserts and resets resumable classification batches without duplicate records', async () => {
     const db = await testRouteDatabase();
+
     try {
       await putClassificationRun(db,'fixture',{status:'running'});
       await putClassificationRun(db,'fixture',{status:'paused'});

@@ -5,8 +5,11 @@ import { prepareSitemapSurveys } from '../../scripts/import-official-sitemap-sur
 import { catalogFingerprint } from '../../scripts/lib/registry-discovery.mjs';
 
 const raw = [{name:'@alpha',homepage:'https://alpha.example/',url:'https://alpha.example/r/{name}.json'}];
+
 const catalog = {registries:{'@alpha':[{name:'nested/button'},{name:'card'}]}};
+
 const surveyedAt='2026-10-12T08:00:00.000Z';
+
 const survey=(options: Record<string,unknown>={})=>({
   schema:'registry-atlas-sitemap-survey/v1',namespace:'@alpha',
   officialHomepage:'https://alpha.example/',surveyedAt,
@@ -16,6 +19,7 @@ const survey=(options: Record<string,unknown>={})=>({
     {slug:'card',url:'https://alpha.example/docs/card'},
   ],...options,
 });
+
 const prepare=(s=survey(),existing: unknown[]=[])=>
   prepareSitemapSurveys({raw,catalog,surveys:{'@alpha':s},
     existing,now:'2026-10-12T09:00:00.000Z'});
@@ -31,6 +35,7 @@ describe('incremental official sitemap publication',()=>{
   it('rejects conflicting prior evidence without overwriting it',()=>{
     const out=prepare(survey(),[{namespace:'@alpha',slug:'card',
       url:'https://alpha.example/docs/old-card'}]);
+
     expect(out.accepted).toHaveLength(1);
     expect(out.rejected['conflicting-prior-evidence']).toBe(1);
   });
@@ -46,6 +51,7 @@ describe('incremental official sitemap publication',()=>{
       {slug:'nested/button',url:'https://foreign.example/docs/button'},
       {slug:'nonexistent',url:'https://alpha.example/docs/nonexistent'},
     ]}));
+
     expect(result.accepted).toHaveLength(0);
     expect(result.rejected['ambiguous-sitemap']).toBe(1);
     expect(result.rejected['invalid-or-off-origin']).toBe(1);

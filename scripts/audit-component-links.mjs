@@ -11,38 +11,49 @@ import {
 } from './lib/atlas-storage.mjs';
 
 const SCHEMA = 'registry-atlas-component-link-evidence/v1';
+
 function publicHttps(input) {
   if (typeof input !== 'string') return null;
+
   try {
     const u = new URL(input);
+
     if (u.protocol !== 'https:' || u.username || u.password || u.port) return null;
     const h = u.hostname.toLowerCase();
+
     if (h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local')
       || h === '[::1]' || /^\[(?:fc|fd|fe80)/i.test(h)
       || /^(?:10|127|0|192\.168|169\.254)\./.test(h)
       || (/^172\.(\d+)\./.test(h) && Number(h.split('.')[1]) >= 16 && Number(h.split('.')[1]) <= 31)) return null;
+
     return u.href;
   } catch { return null; }
 }
 
 function uniqueRows(items) {
   const result = new Map();
+
   for (const item of items) {
     if (typeof item?.slug !== 'string' || result.has(item.slug)) continue;
     result.set(item.slug, item);
   }
+
   return result;
 }
+
 export function inventoryLinks(registries, catalog, curated) {
   const rows = [];
   const perRegistry = [];
   const known = new Map(registries.map(r => [r.name, r]));
+
   for (const registry of [...registries].sort((a, b) => a.name.localeCompare(b.name))) {
     const namespace = registry.name;
     const existing = uniqueRows(curated[namespace] ?? []);
     const slugs = new Set((catalog.registries?.[namespace] ?? []).map(i => i.name));
+
     for (const slug of existing.keys()) slugs.add(slug);
     const start = rows.length;
+
     for (const slug of [...slugs].sort()) {
       const item = existing.get(slug);
       rows.push({
@@ -55,6 +66,7 @@ export function inventoryLinks(registries, catalog, curated) {
         status: 'not-checked',
       });
     }
+
     const section = rows.slice(start);
     perRegistry.push({
       namespace, homepage: registry.homepage, count: section.length,
@@ -63,10 +75,14 @@ export function inventoryLinks(registries, catalog, curated) {
       reviewedItems: 0, homepageVisited: false, listingVisited: false,
     });
   }
+
   const docsLinks = rows.filter(x => x.docsUrl).length;
+
   const catalogEntries = Object.values(catalog.registries ?? {})
     .reduce((count, items) => count + items.length, 0);
+
   const uniqueIndexedItems = rows.filter(x => x.indexed).length;
+
   return {
     schemaVersion: 'registry-atlas-component-link-inventory/v1',
     totals: { registries: known.size, items: rows.length, catalogEntries,
@@ -76,72 +92,96 @@ export function inventoryLinks(registries, catalog, curated) {
     perRegistry, rows,
   };
 }
+
 function checkObservation(row, record) {
   if (!row) return 'unrecognized-item';
+
   if (record.previousUrl !== row.docsUrl) return 'stale-existing-url';
   const target = publicHttps(record.verifiedUrl);
+
   if (!target) return 'invalid-public-url';
   const browser = record.browser;
+
   if (!browser || !browser.capturePath || !browser.renderedHeading
     || !browser.checkedAt || !Number.isFinite(Date.parse(browser.checkedAt))
     || !browser.listingUrl || !browser.homepageUrl) return 'missing-browser-evidence';
   const homepage = publicHttps(row.homepage);
+
   if (!homepage || publicHttps(browser.homepageUrl) !== homepage) return 'official-homepage-mismatch';
+
   if (!publicHttps(browser.listingUrl)) return 'invalid-listing-url';
+
   if (new URL(target).origin !== new URL(homepage).origin
     || new URL(browser.listingUrl).origin !== new URL(homepage).origin)
     return 'foreign-component-origin';
   const normalize = text => text.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+
   if (normalize(browser.renderedHeading) !== normalize(row.slug)) return 'browser-heading-mismatch';
+
   if (new URL(target).origin === new URL(homepage).origin
     && new URL(target).pathname.replace(/\/+$/, '') === new URL(homepage).pathname.replace(/\/+$/, '')
     && (record.exception !== true || !(new URL(target).search || new URL(target).hash)))
     return 'generic-homepage';
+
   if (browser.observedUrl !== target) return 'browser-url-mismatch';
+
   if (browser.observedSlug !== row.slug) return 'browser-identity-mismatch';
+
   return null;
 }
 
 export async function recheckLivePages(inventory, evidence, browser) {
   const rows = new Map(inventory.rows.map(row => [row.token, row]));
   const unresolved = [];
+
   for (const record of evidence) {
     const token = `${record.namespace}/${record.slug}`;
     const row = rows.get(token);
     const invalid = checkObservation(row, record);
+
     if (invalid) {
       unresolved.push({ token, reason: invalid });
       continue;
     }
+
     const homepage = new URL(publicHttps(row.homepage));
     const target = new URL(record.verifiedUrl);
+
     if (target.origin !== homepage.origin) {
       unresolved.push({ token, reason: 'live-origin-mismatch' });
       continue;
     }
+
     try {
       const initial = new URL(await browser.url());
+
       if (initial.origin !== homepage.origin) {
         unresolved.push({ token, reason: 'live-tab-origin-mismatch' });
         break;
       }
+
       await browser.nav(record.verifiedUrl);
       const snapshot = await browser.snap();
       const landed = await browser.url();
+
       if (landed !== record.verifiedUrl || snapshot.url !== landed) {
         unresolved.push({ token, reason: 'live-navigation-mismatch' });
         continue;
       }
+
       const expected = record.slug.replace(/[-_]+/g, ' ').toLowerCase();
+
       const actualHeading = (snapshot.nodes ?? []).some(node =>
         node.role === 'heading' && typeof node.name === 'string'
           && node.name.trim().toLowerCase().replace(/\s+/g, ' ') === expected);
+
       if (!actualHeading) unresolved.push({ token, reason: 'live-heading-mismatch' });
     } catch {
       unresolved.push({ token, reason: 'live-browser-error' });
       break;
     }
   }
+
   return unresolved;
 }
 
@@ -149,54 +189,72 @@ export function applyVerifiedLinks(inventory, curated, evidence) {
   const output = structuredClone(curated);
   const rows = new Map(inventory.rows.map(r => [r.token, r]));
   const counts = new Map();
+
   for (const record of evidence) {
     const token = `${record.namespace}/${record.slug}`;
     counts.set(token, (counts.get(token) ?? 0) + 1);
   }
+
   const repaired = [], confirmedUnchanged = [], unresolved = [], verifiedUrls = [];
+
   for (const record of evidence) {
     const token = `${record.namespace}/${record.slug}`;
     const row = rows.get(token);
     const reason = counts.get(token) !== 1 ? 'duplicate-evidence' : checkObservation(row, record);
+
     if (reason) { unresolved.push({ token, reason }); continue; }
+
     const list = output[row.namespace] ?? [];
     const index = list.findIndex(i => i.slug === row.slug);
+
     if (index < 0) { unresolved.push({ token, reason: 'missing-curated-summary' }); continue; }
+
     verifiedUrls.push({ token, url: record.verifiedUrl,
       homepageUrl: record.browser.homepageUrl, listingUrl: record.browser.listingUrl,
       capturePath: record.browser.capturePath, checkedAt: record.browser.checkedAt,
       routePattern: record.routePattern ?? null, exception: record.exception === true });
+
     if (row.docsUrl === record.verifiedUrl) { confirmedUnchanged.push(token); continue; }
+
     list[index] = { ...list[index], docs_url: record.verifiedUrl };
     repaired.push(token);
   }
+
   return { curated: output, repaired, confirmedUnchanged, unresolved, verifiedUrls };
 }
+
 export function summarizeAuditCoverage(inventory, evaluation, independentlyReviewed = false) {
   const repaired = new Set(evaluation.repaired);
   const confirmed = new Set(evaluation.confirmedUnchanged);
   const unresolved = new Map(evaluation.unresolved.map(item => [item.token, item.reason]));
   const verified = new Map(evaluation.verifiedUrls.map(item => [item.token, item]));
+
   const rows = inventory.rows.map(item => {
     const status = unresolved.has(item.token) ? 'unresolved'
       : repaired.has(item.token) ? 'repaired'
       : confirmed.has(item.token) ? 'confirmed-unchanged' : 'not-checked';
+
     return { ...item, status,
       ...(unresolved.has(item.token) ? { reason: unresolved.get(item.token) } : {}),
       ...(verified.has(item.token) ? { verifiedUrl: verified.get(item.token).url } : {}) };
   });
+
   const perRegistry = inventory.perRegistry.map(registry => {
     const items = rows.filter(item => item.namespace === registry.namespace);
+
     const counts = Object.fromEntries(['repaired', 'confirmed-unchanged', 'unresolved', 'not-checked']
       .map(status => [status, items.filter(item => item.status === status).length]));
+
     return { ...registry, repaired: counts.repaired, confirmedUnchanged: counts['confirmed-unchanged'],
       unresolved: counts.unresolved, notChecked: counts['not-checked'],
       reviewedItems: items.length - counts['not-checked'],
       homepageVisited: items.some(item => verified.has(item.token)),
       listingVisited: items.some(item => verified.has(item.token)) };
   });
+
   const counts = Object.fromEntries(['repaired', 'confirmed-unchanged', 'unresolved', 'not-checked']
     .map(status => [status, rows.filter(item => item.status === status).length]));
+
   return { schemaVersion: 'registry-atlas-link-coverage/v1',
     totals: { registries: perRegistry.length, items: rows.length, repaired: counts.repaired,
       confirmedUnchanged: counts['confirmed-unchanged'], unresolved: counts.unresolved,
@@ -207,9 +265,11 @@ export function summarizeAuditCoverage(inventory, evaluation, independentlyRevie
 }
 
 async function loadJson(file) { return JSON.parse(await readFile(file, 'utf8')); }
+
 const checksum = value => createHash('sha256').update(
   typeof value === 'string' ? value : JSON.stringify(value),
 ).digest('hex');
+
 async function main(argv) {
   const args = new Set(argv);
   const indexOf = key => argv.indexOf(key);
@@ -217,11 +277,15 @@ async function main(argv) {
   const evidenceFile = valueOf('--evidence');
   const reportPath = valueOf('--report');
   const apply = args.has('--apply');
+
   if (apply && !evidenceFile) throw new Error('--apply requires --evidence');
+
   if (apply && !args.has('--reviewed') && !args.has('--recheck-browser'))
     throw new Error('--apply requires --reviewed or independent --recheck-browser with a dedicated managed PinchTab tab');
+
   if (args.has('--recheck-browser') && (!valueOf('--server') || !valueOf('--tab')))
     throw new Error('--recheck-browser requires --server and --tab');
+
   if ((indexOf('--evidence') >= 0 && !evidenceFile) || (indexOf('--report') >= 0 && !reportPath))
     throw new Error('Missing path for --evidence or --report');
   const database = openAtlasCoreDatabase(process.cwd());
@@ -230,36 +294,49 @@ async function main(argv) {
   const catalog = state.catalog;
   const curated = state.curated;
   const inventory = inventoryLinks(raw, catalog, curated);
+
   const metadata = {
     rawSha256: checksum(raw),
     catalogSha256: checksum(catalog),
     curatedSha256: checksum(curated),
   };
+
   let evaluation = { repaired: [], confirmedUnchanged: [], unresolved: [], verifiedUrls: [] };
+
   if (evidenceFile) {
     const evidence = await loadJson(evidenceFile);
+
     if (evidence.schemaVersion !== SCHEMA || !Array.isArray(evidence.records))
       throw new Error('Unsupported browser evidence manifest');
     evaluation = applyVerifiedLinks(inventory, curated, evidence.records);
+
     if (apply && evaluation.unresolved.length) throw new Error(`Refusing partial apply: ${JSON.stringify(evaluation.unresolved)}`);
+
     if (apply && args.has('--recheck-browser')) {
       const browser = new PinchTabBrowser(valueOf('--server'), valueOf('--tab'));
       const liveProblems = await recheckLivePages(inventory, evidence.records, browser);
+
       if (liveProblems.length) throw new Error(`Refusing apply after live browser check: ${JSON.stringify(liveProblems)}`);
     }
+
     if (apply) {
       for (const record of evidence.records) {
         const file = record?.browser?.capturePath;
+
         if (!file || !(await stat(file).catch(() => null))?.isFile()) throw new Error(`Missing PinchTab capture: ${file}`);
       }
+
       if (checksum(await readCuratedItemSummaries(database)) !== metadata.curatedSha256) {
         throw new Error('Curated records changed during audit');
       }
+
       if (evaluation.repaired.length) await replaceCuratedItemSummaries(database, evaluation.curated);
     }
   }
+
   const coverage = summarizeAuditCoverage(inventory, evaluation,
     apply && (args.has('--reviewed') || args.has('--recheck-browser')));
+
   const report = {
     ...inventory, rows: coverage.rows, perRegistry: coverage.perRegistry,
     generatedAt: new Date().toISOString(), dataset: metadata,
@@ -272,16 +349,20 @@ async function main(argv) {
     },
     apply,
   };
+
   await putDocument(database, 'component-link-audit-report', 'audit-report', report);
   await database.close();
+
   if (reportPath) await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n', { flag: 'wx' });
   console.log(JSON.stringify({
     mode: apply ? 'apply' : 'dry-run',
     totals: inventory.totals, audit: report.audit, reportPath,
     coverageNote: 'Browser evidence must be independently reviewed. A manifest alone does not verify a page. The full-catalog audit remains incomplete.',
   }, null, 2));
+
   if (evaluation.unresolved.length) process.exitCode = 2;
 }
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main(process.argv.slice(2)).catch(error => {
     console.error(error.message); process.exitCode = 1;
