@@ -196,10 +196,13 @@ export function renderCatalogComponentCard(
   const themeData = routeKind === 'theme' && component.themePreview
     ? renderCatalogThemeSpecimen(component) : '';
 
+  const sourcePreviewAttribute = renderSourcePreviewAttribute(original);
+
   return `
     <article class="catalog-component-card catalog-component-card-${routeKind}">
       <a class="catalog-component-open"
         href="${escapeHtml(routePath)}"
+        ${sourcePreviewAttribute}
         data-view-item-registry="${escapeHtml(component.namespace)}"
         data-view-item-slug="${escapeHtml(component.slug)}"
         data-view-item-kind="${routeKind}"
@@ -219,6 +222,7 @@ export function renderCatalogComponentCard(
       </a>
       <div class="catalog-component-source-actions" aria-label="Item links">
         <a class="catalog-component-deeplink" href="${escapeHtml(routePath)}"
+          ${sourcePreviewAttribute}
           data-item-deeplink-kind="${escapeHtml(routeKind)}">${escapeHtml(itemActionLabel(routeKind))}</a>
         ${original ? `<a class="catalog-component-original" href="${escapeHtml(original.url)}"
           data-source-level="${escapeHtml(original.level)}"
@@ -227,6 +231,10 @@ export function renderCatalogComponentCard(
       </div>
     </article>
   `;
+}
+
+function renderSourcePreviewAttribute(source: { url: string } | null): string {
+  return source ? `data-preview-source-url="${escapeHtml(source.url)}"` : '';
 }
 
 function itemActionLabel(

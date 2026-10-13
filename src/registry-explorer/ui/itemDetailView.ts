@@ -141,6 +141,7 @@ export function renderRelatedComponentLinks(
 
         return `<div class="item-related-entry">
           <a class="item-related-link" href="${escapeHtml(routePath)}"
+            ${original ? `data-preview-source-url="${escapeHtml(original.url)}"` : ''}
             data-view-item-registry="${escapeHtml(item.namespace)}"
             data-view-item-slug="${escapeHtml(item.slug)}"
             data-view-item-kind="${routeKind}"

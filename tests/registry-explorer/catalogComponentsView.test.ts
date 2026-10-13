@@ -36,6 +36,7 @@ describe("renderCatalogComponents", () => {
         level:'sitemap',source:'official-sitemap'}});
 
     expect(html).toContain('href="https://delta.example/docs/code-block"');
+    expect(html).toContain('data-preview-source-url="https://delta.example/docs/code-block"');
     expect(html).toContain('Source ↗');
     expect(html).toContain('data-source-level="sitemap"');
     expect(html).toContain('class="catalog-component-deeplink"');

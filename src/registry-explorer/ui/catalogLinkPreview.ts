@@ -1,136 +1,82 @@
-import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
-import type { Registry, RegistryCatalogIndex, RegistryCatalogItem, RegistryItemSummary, RegistryThemePreview } from '../core/registry.schema';
-import { parseCatalogRoute } from '../core/catalogRoutes';
 import { escapeHtml } from './renderSafety';
-import { renderRegistryIcon } from './registryIdentity';
-
-type PreviewRouteKind = 'component' | 'block' | 'page' | 'template' | 'theme';
-
-export interface CatalogLinkPreviewData {
-  namespace: string;
-  title: string;
-  kind: PreviewRouteKind;
-  description?: string;
-  author?: string;
-  fileCount?: number;
-  categories: readonly string[];
-  themePreview?: RegistryThemePreview;
-  registry: Registry;
-}
 
 const PREVIEW_ID = 'catalog-link-preview';
 
-const POINTER_DELAY_MS = 240;
+const POINTER_DELAY_MS = 250;
 
-export function resolveCatalogLinkPreview(
-  href: string,
-  basePath: string,
-  index: RegistryCatalogIndex,
-  registries: readonly Registry[],
-  pageOrigin: string,
-): CatalogLinkPreviewData | null {
-  const route = itemRouteFromHref(href, basePath, pageOrigin);
+/** Only verified upstream links attached by Atlas renderers qualify for previews. */
+export function sourceLinkPreview(url: string): { src: string; hostname: string } | null {
+  const parsed = parsePublicSourceUrl(url);
 
-  if (!route) return null;
+  if (!parsed) return null;
 
-  const registry = registries.find(entry => entry.name === route.namespace);
-  const item = findRegistryCatalogItem(index, route.namespace, route.slug);
+  const hostname = parsed.hostname.toLowerCase();
 
-  if (!registry || !item) return null;
+  const logo = hostname === 'logoforge.terravidhal.me'
+    ? /^\/logos\/([a-z0-9][a-z0-9-]*)\/?$/.exec(parsed.pathname) : null;
 
-  const summary = registry.itemSummaries?.find(entry => entry.slug === route.slug);
-
-  return previewData(route, registry, item, summary);
-}
-
-function itemRouteFromHref(href: string, basePath: string, pageOrigin: string) {
-  const url = new URL(href, pageOrigin);
-
-  if (url.origin !== pageOrigin) return null;
-
-  const route = parseCatalogRoute(url.pathname, basePath);
-
-  return isItemRoute(route) ? route : null;
-}
-
-function previewData(
-  route: { kind: PreviewRouteKind; namespace: string; slug: string },
-  registry: Registry,
-  item: RegistryCatalogItem,
-  summary?: RegistryItemSummary,
-): CatalogLinkPreviewData {
-  return {
-    namespace: route.namespace,
-    title: item.title || summary?.title || route.slug,
-    kind: route.kind,
-    description: item.description || summary?.description,
-    registry,
-    ...previewFacts(item, summary),
+  if (logo) return {
+    src: `https://logoforge.terravidhal.me/logos/${logo[1]}/icon.svg`,
+    hostname,
   };
+
+  // Direct media URLs are also valid visual sources; HTML docs are not.
+  return /\.(?:svg|png|jpe?g|webp|avif|gif)$/i.test(parsed.pathname)
+    ? { src: parsed.href, hostname }
+    : null;
 }
 
-function previewFacts(item: RegistryCatalogItem, summary?: RegistryItemSummary) {
-  return {
-    author: item.author || summary?.author,
-    fileCount: item.fileCount ?? summary?.files?.length,
-    categories: item.categories ?? [],
-    themePreview: item.themePreview,
-  };
+function parsePublicSourceUrl(url: string): URL | null {
+  if (url.trim().startsWith('//')) return null;
+
+  let parsed: URL;
+
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+
+  if (parsed.protocol !== 'https:' || parsed.username || parsed.password || parsed.port) return null;
+
+  const host = parsed.hostname.toLowerCase();
+
+  if (isPrivateHostname(host)) return null;
+
+  return parsed;
 }
 
-function isItemRoute(route: ReturnType<typeof parseCatalogRoute>): route is
-  { kind: PreviewRouteKind; namespace: string; slug: string } {
-  return route !== null && ['component', 'block', 'page', 'template', 'theme'].includes(route.kind);
+function isPrivateHostname(host: string): boolean {
+  return !host.includes('.')
+    || host.includes(':')
+    || host === 'localhost'
+    || host.endsWith('.local')
+    || host.endsWith('.internal')
+    || /^\d+(?:\.\d+){3}$/.test(host);
 }
 
-export function renderCatalogLinkPreview(data: CatalogLinkPreviewData): string {
-  const label = data.kind.charAt(0).toUpperCase() + data.kind.slice(1);
-
-  const facts = [
-    data.author ? `By ${data.author}` : '',
-    data.fileCount !== undefined ? `${data.fileCount} ${data.fileCount === 1 ? 'file' : 'files'}` : '',
-    ...data.categories.slice(0, 2),
-  ].filter(Boolean);
-
+export function renderSourceLinkPreview(
+  source: NonNullable<ReturnType<typeof sourceLinkPreview>>,
+  title: string,
+): string {
   return `<div class="catalog-link-preview-content">
-    <div class="catalog-link-preview-heading">
-      <span class="catalog-link-preview-kind">${escapeHtml(label)}</span>
-      <span class="catalog-link-preview-namespace">${escapeHtml(data.namespace)}</span>
+    <div class="catalog-link-preview-visual">
+      <img src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} visual"
+        decoding="async" referrerpolicy="no-referrer" />
     </div>
-    <div class="catalog-link-preview-identity">
-      ${renderRegistryIcon(data.registry, 'registry-icon catalog-link-preview-icon')}
-      <strong>${escapeHtml(data.title)}</strong>
+    <div class="catalog-link-preview-attribution">
+      <span>Component preview</span>
+      <span>${escapeHtml(source.hostname)}</span>
     </div>
-    ${data.description ? `<p class="catalog-link-preview-description">${escapeHtml(data.description)}</p>` : ''}
-    ${data.kind === 'theme' && data.themePreview ? renderThemePreview(data.themePreview) : ''}
-    ${facts.length ? `<div class="catalog-link-preview-facts">${facts.map(fact =>
-      `<span>${escapeHtml(fact)}</span>`).join('')}</div>` : ''}
-    <span class="catalog-link-preview-footer">Open item details <span aria-hidden="true">↗</span></span>
   </div>`;
 }
 
-function renderThemePreview(theme: RegistryThemePreview): string {
-  const colors = Object.entries(theme.light ?? {})
-    .slice(0, 5)
-    .map(([, value]) => value)
-    .filter(color => color && /^#[0-9a-f]{3,8}$/i.test(color));
-
-  if (!colors.length) return '';
-
-  return `<div class="catalog-link-preview-swatches" aria-label="Published theme colors">
-    ${colors.map(color => `<span style="background-color:${escapeHtml(color)}"></span>`).join('')}
-  </div>`;
-}
-
-/** The preview is supplementary: all links remain normal, independently useful anchors. */
-export function attachCatalogLinkPreviews(
-  roots: readonly HTMLElement[],
-  resolve: (href: string) => CatalogLinkPreviewData | null,
-) {
+/** Link previews never change the original href, click handler, or native navigation. */
+export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
   let active: HTMLAnchorElement | null = null;
-  let previousDescription: string | null = null;
   let pending: number | undefined;
   let preview: HTMLElement | null = null;
+  let previousDescription: string | null = null;
 
   function close(): void {
     window.clearTimeout(pending);
@@ -151,28 +97,47 @@ export function attachCatalogLinkPreviews(
     return window.innerWidth >= 640 && !window.matchMedia?.('(hover: none)').matches;
   }
 
-  function show(anchor: HTMLAnchorElement, immediate = false): void {
-    if (!anchor.isConnected) return;
-    const details = resolve(anchor.href);
+  function previewFor(anchor: HTMLAnchorElement) {
+    const sourceUrl = anchor.getAttribute('data-preview-source-url')
+      || (anchor.matches('.catalog-component-original, .item-related-original') ? anchor.href : '');
 
-    if (!details) return;
+    return sourceUrl ? sourceLinkPreview(sourceUrl) : null;
+  }
+
+  function show(anchor: HTMLAnchorElement, immediate = false): void {
+    if (!anchor.isConnected || !canPreview()) return;
+
+    const data = previewFor(anchor);
+
+    if (!data) return;
 
     close();
     active = anchor;
     previousDescription = anchor.getAttribute('aria-describedby');
 
     const element = document.createElement('div');
+    const card = anchor.closest('.catalog-component-card, .item-related-entry');
+
+    const title = previewTitle(card, anchor);
+
     element.id = PREVIEW_ID;
     element.className = immediate ? 'catalog-link-preview catalog-link-preview-instant' : 'catalog-link-preview';
     element.setAttribute('role', 'tooltip');
-    element.innerHTML = renderCatalogLinkPreview(details);
+    element.innerHTML = renderSourceLinkPreview(data, title);
+    element.querySelector('img')?.addEventListener('error', close);
+
     document.body.append(element);
     preview = element;
     anchor.setAttribute('aria-describedby', [previousDescription, PREVIEW_ID].filter(Boolean).join(' '));
     position(anchor, element);
   }
 
-  function triggerFrom(event: Event): HTMLAnchorElement | null {
+  function previewTitle(card: Element | null, anchor: HTMLAnchorElement): string {
+    return card?.querySelector('strong, .item-related-title')?.textContent?.trim()
+      || anchor.getAttribute('aria-label') || 'Component';
+  }
+
+  function trigger(event: Event): HTMLAnchorElement | null {
     const target = event.target;
 
     if (!(target instanceof Element)) return null;
@@ -183,7 +148,7 @@ export function attachCatalogLinkPreviews(
   function onPointerOver(event: PointerEvent): void {
     if (event.pointerType === 'touch' || !canPreview()) return;
 
-    const anchor = triggerFrom(event);
+    const anchor = trigger(event);
 
     if (!anchor || anchor === active) return;
 
@@ -192,7 +157,7 @@ export function attachCatalogLinkPreviews(
   }
 
   function onPointerOut(event: PointerEvent): void {
-    const anchor = triggerFrom(event);
+    const anchor = trigger(event);
 
     if (!anchor) return;
 
@@ -206,13 +171,13 @@ export function attachCatalogLinkPreviews(
   function onFocusIn(event: FocusEvent): void {
     if (!canPreview()) return;
 
-    const anchor = triggerFrom(event);
+    const anchor = trigger(event);
 
     if (anchor) show(anchor, true);
   }
 
   function onFocusOut(event: FocusEvent): void {
-    if (triggerFrom(event)) close();
+    if (trigger(event)) close();
   }
 
   for (const root of roots) {
@@ -232,27 +197,19 @@ export function attachCatalogLinkPreviews(
 
   document.addEventListener('scroll', close, true);
   window.addEventListener('resize', close);
-
 }
 
-function position(anchor: HTMLAnchorElement, preview: HTMLElement): void {
+function position(anchor: HTMLAnchorElement, element: HTMLElement): void {
   const rect = anchor.getBoundingClientRect();
+  const width = element.getBoundingClientRect().width;
+  const height = element.getBoundingClientRect().height;
   const margin = 12;
-  const width = preview.getBoundingClientRect().width;
-  const height = preview.getBoundingClientRect().height;
 
-  const left = Math.max(margin, Math.min(
-    rect.left + Math.min(rect.width / 2, 80) - width / 2,
-    window.innerWidth - width - margin,
-  ));
+  const left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin));
 
-  const below = window.innerHeight - rect.bottom;
-  const above = rect.top;
+  const top = window.innerHeight - rect.bottom >= height + margin
+    ? rect.bottom + margin : Math.max(margin, rect.top - height - margin);
 
-  const top = below >= height + margin || below >= above
-    ? Math.min(window.innerHeight - height - margin, rect.bottom + margin)
-    : Math.max(margin, rect.top - height - margin);
-
-  preview.style.left = `${left}px`;
-  preview.style.top = `${Math.max(margin, top)}px`;
+  element.style.left = `${left}px`;
+  element.style.top = `${top}px`;
 }

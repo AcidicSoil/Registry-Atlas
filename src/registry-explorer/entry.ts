@@ -1,7 +1,7 @@
 import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
 import { drawerWrapTarget } from './ui/mobileSidebarFocus';
-import { attachCatalogLinkPreviews, resolveCatalogLinkPreview } from './ui/catalogLinkPreview';
+import { attachCatalogLinkPreviews } from './ui/catalogLinkPreview';
 
 function setupMobileSidebarControls(): void {
     const appSidebar = document.getElementById('appSidebar');
@@ -110,11 +110,7 @@ async function bootstrap() {
         },
       });
 
-      attachCatalogLinkPreviews([contentBody, contentHeader],
-        href => resolveCatalogLinkPreview(
-          href, import.meta.env.BASE_URL, loadedData.catalogIndex,
-          loadedData.registries, window.location.origin,
-        ));
+      attachCatalogLinkPreviews([contentBody, contentHeader]);
     } else {
       console.error('Registry Explorer: Missing DOM roots');
     }
