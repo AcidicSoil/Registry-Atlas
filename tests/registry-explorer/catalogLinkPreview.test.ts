@@ -46,13 +46,34 @@ describe('upstream source previews', () => {
       src: 'https://cdn.shadcnblocks.com/shadcnblocks/screenshots/block/about1-4x3.webp',
       hostname: 'shadcnblocks.com',
     });
+
+    expect(sourceLinkPreview('https://shadcnblocks.com/component/combobox/combobox-grouped-7')?.src)
+      .toBe('https://cdn.shadcnblocks.com/shadcnblocks/screenshots/example/combobox/combobox-grouped-7-4x3.webp');
+
+    expect(sourceLinkPreview('https://reui.io/blocks/application/sheet/sheet-16')?.src)
+      .toBe('https://reui.io/thumbnails/blocks/sheet-16-light.webp');
+
+    expect(sourceLinkPreview('https://reui.io/components/button/c-button-22')?.src)
+      .toBe('https://reui.io/thumbnails/components/c-button-22-light.webp');
+
+    expect(sourceLinkPreview('https://reactframe.com/components/testimonial-pills')?.src)
+      .toBe('https://reactframe.com/components/testimonial-pills/opengraph-image');
+  });
+
+  it('uses observed media for Aceternity, without guessing file locations', () => {
+    expect(sourceLinkPreview('https://ui.aceternity.com/components/hero-highlight')?.src)
+      .toBe('https://assets.aceternity.com/hero-highlight.webp');
+
+    expect(sourceLinkPreview('https://ui.aceternity.com/components/unknown-component')).toBeNull();
+    expect(sourceLinkPreview('https://ui.aceternity.com/categories/grid')).toBeNull();
   });
 
   it('rejects generic marketing cards and unverified route families', () => {
     expect(sourceLinkPreview('https://keylineicons.com/icons/sharp/accessibility')).toBeNull();
-    expect(sourceLinkPreview('https://shadcnblocks.com/component/button/button1')).toBeNull();
+    expect(sourceLinkPreview('https://shadcnblocks.com/blocks/hero/iphone')).toBeNull();
     expect(sourceLinkPreview('https://uiable.com/components/button')).toBeNull();
     expect(sourceLinkPreview('https://reui.io/docs/components/button')).toBeNull();
+    expect(sourceLinkPreview('https://reui.io/blocks')).toBeNull();
     expect(sourceLinkPreview('https://animateicons.in/icons/unknown/activity')).toBeNull();
   });
 

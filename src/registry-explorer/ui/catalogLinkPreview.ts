@@ -1,3 +1,4 @@
+import { publishedComponentAsset } from './upstreamVisualPatterns';
 import { escapeHtml } from './renderSafety';
 
 const PREVIEW_ID = 'catalog-link-preview';
@@ -19,42 +20,6 @@ export function sourceLinkPreview(url: string): { src: string; hostname: string 
   return /\.(?:svg|png|jpe?g|webp|avif|gif)$/i.test(parsed.pathname)
     ? { src: parsed.href, hostname }
     : null;
-}
-
-function publishedComponentAsset(page: URL): string | null {
-  const host = page.hostname.toLowerCase();
-  const path = page.pathname.replace(/\/$/, '');
-  const match = (expression: RegExp) => expression.exec(path);
-
-  if (host === 'logoforge.terravidhal.me') {
-    const logo = match(/^\/logos\/([a-z0-9][a-z0-9-]*)$/);
-
-    return logo ? `https://logoforge.terravidhal.me/logos/${logo[1]}/icon.svg` : null;
-  }
-
-  if (host === 'keylineicons.com') {
-    const icon = match(/^\/icons\/([a-z0-9][a-z0-9-]*)$/);
-
-    return icon ? `https://keylineicons.com/icons/${icon[1]}/opengraph-image/card` : null;
-  }
-
-  if (host === 'animateicons.in') {
-    const icon = match(/^\/icons\/(huge|lucide)\/([a-z0-9][a-z0-9-]*)$/);
-
-    return icon
-      ? `https://animateicons.in/icons/${icon[1]}/${icon[2]}/opengraph-image`
-      : null;
-  }
-
-  if (host === 'shadcnblocks.com') {
-    const block = match(/^\/block\/([a-z0-9][a-z0-9-]*)$/);
-
-    return block
-      ? `https://cdn.shadcnblocks.com/shadcnblocks/screenshots/block/${block[1]}-4x3.webp`
-      : null;
-  }
-
-  return null;
 }
 
 function parsePublicSourceUrl(url: string): URL | null {
