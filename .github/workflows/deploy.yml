@@ -1,4 +1,4 @@
-name: Verify and deploy Registry Atlas
+name: Registry Atlas source checks
 
 on:
   push:
@@ -9,49 +9,23 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: 'pages-${{ github.ref }}'
-  cancel-in-progress: true
-
+# Database-backed releases are built from the private self-hosted database.
+# Do not run untrusted public PR code on a self-hosted runner.
+# Pages deployment is paused until a separate trusted publisher is configured.
 jobs:
-  verify:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v4
       - name: Install dependencies
         run: mise run install
-      - name: Verify release gate from PostgreSQL
-        env:
-          DATABASE_URL: ${{ secrets.REGISTRY_ATLAS_DATABASE_URL }}
-          ATLAS_TEST_DATABASE_URL: ${{ secrets.REGISTRY_ATLAS_TEST_DATABASE_URL }}
-        run: mise run verify
-      - uses: actions/upload-artifact@v4
-        if: github.event_name != 'pull_request'
-        with:
-          name: registry-atlas-dist
-          path: './dist'
-          if-no-files-found: error
-
-  deploy:
-    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-    needs: verify
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: registry-atlas-dist
-          path: './dist'
-      - uses: actions/configure-pages@v4
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dist'
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Check source without a database connection
+        run: |
+          pnpm audit:dependencies
+          pnpm lint:anti-slop
+          pnpm lint:deps
+          pnpm lint:react-doctor
+          pnpm lint:complexity
+          pnpm typecheck
+          pnpm typecheck:test

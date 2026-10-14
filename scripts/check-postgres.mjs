@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import postgres from 'postgres';
-import {readFileSync} from 'node:fs';
+import { localPostgresUrl } from './lib/local-postgres-url.mjs';
 
-const url=process.env.DATABASE_URL || readFileSync('.instance/neon-database-url','utf8').trim();
+const url=localPostgresUrl();
 
 const sql=postgres(url,{max:1,connect_timeout:20});
 

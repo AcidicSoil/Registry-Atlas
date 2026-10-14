@@ -1,7 +1,8 @@
-import { mkdir, writeFile, rm, readFile } from 'node:fs/promises';
+import { mkdir, writeFile, rm } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 import { join, resolve } from 'node:path';
 import postgres from 'postgres';
+import { localPostgresUrl } from './lib/local-postgres-url.mjs';
 
 export function projectRuntimePayloads({
   registryMeta, registryRows, catalogMeta, namespaceRows, catalogRows,
@@ -56,10 +57,7 @@ export function projectRuntimePayloads({
 }
 
 export async function buildRuntimeData({databaseUrl=process.env.DATABASE_URL,outputDir='public/data'}={}) {
-  if (!databaseUrl) {
-    try { databaseUrl=(await readFile('.instance/neon-database-url','utf8')).trim(); }
-    catch { throw new Error('Set DATABASE_URL for PostgreSQL runtime asset generation'); }
-  }
+  databaseUrl = localPostgresUrl(databaseUrl);
 
   const sql=postgres(databaseUrl,{max:1,connect_timeout:20});
 

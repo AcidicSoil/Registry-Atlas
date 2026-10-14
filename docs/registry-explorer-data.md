@@ -1,31 +1,54 @@
 # Registry Atlas data
 
-**PostgreSQL is the only authoritative database.** The Neon project is `Registry Atlas` (ID `jolly-scene-27028293`), schema `atlas`. It contains 23 imported tables, including catalog items, item details, taxonomy, classification state, verified source pages, and crawled evidence.
+**The authoritative database is self-hosted PostgreSQL 18.** The service runs under Docker Compose on this machine, bound only to `127.0.0.1:55432`. All 23 Atlas tables, classification records and evidence are stored in a persistent Docker volume. No managed database or paid provider is used by any supported command.
 
-## Website data
+## Runtime assets
 
-GitHub Pages is static. An explicit runtime refresh queries PostgreSQL using a server-side `DATABASE_URL` and creates two disposable compressed JSON assets in `public/data/`:
+The website is static. An explicit PostgreSQL export produces two compressed JSON files in `public/data/`:
 
-- `registry-atlas.json.gz` has the compact catalog, taxonomy, registry mirror, and source-page links.
-- `registry-details.json.gz` has item detail payloads; browsers fetch this only when viewing an item.
+- `registry-atlas.json.gz` contains the registry mirror, catalog, taxonomy, and source-page evidence.
+- `registry-details.json.gz` contains exact item details, loaded lazily by the browser.
 
-The generated assets do **not** use SQLite or expose database credentials. Files in `public/data/` are ignored by Git.
+These files are ignored by Git and contain no credentials. The builder also creates `.instance/atlas-test-documents.json` for tests. Browser routes do not connect to PostgreSQL.
 
-## Local commands
+## Common commands
 
 ```sh
-pnpm install
-pnpm dev                    # Use existing local runtime assets; no database connection
-pnpm verify:local           # Local snapshots, non-database tests, and build without Neon
-pnpm prepare:runtime-data   # Explicitly refresh the runtime assets from PostgreSQL
-pnpm verify                 # Refresh once, then run all local and database checks
+pnpm db:setup              # Create owner-only local credentials if needed
+pnpm db:up                 # Start the local PostgreSQL container
+pnpm db:status             # Check container health
+pnpm dev                   # Start Vite using existing local assets
+pnpm prepare:runtime-data  # Explicit refresh from local PostgreSQL
+pnpm verify:local          # Offline subset: local assets, non-DB tests, build
+pnpm verify                # Full local PostgreSQL checks, all tests, and build
+pnpm db:backup             # Produce and verify a timestamped PostgreSQL dump
+pnpm db:down               # Stop container without deleting its volume
 ```
 
-Store the Postgres URL in `DATABASE_URL` or the ignored, mode-600 `.instance/neon-database-url`. For deployed builds, the GitHub Actions secret `REGISTRY_ATLAS_DATABASE_URL` uses a read-only PostgreSQL role.
+The PostgreSQL URLs are stored in ignored, mode-600 files under `.instance/`: `local-postgres-url` for the authoritative database and `local-postgres-test-url` for the isolated test database. All database entrypoints reject non-loopback connections. Legacy provider credential files are ignored and never read.
 
-The builder also generates `.instance/atlas-test-documents.json` for deterministic test fixtures. This is a disposable test output, not a second database.
+The local test database must contain the same schema as the authoritative database, but no production records. A fresh machine can create it after restoring the authoritative database:
 
-The `predev`, `pretest`, and `prebuild` hooks validate these three existing files instead of exporting the entire remote database on every invocation. They fail with an explicit missing/corrupt-artifact error rather than silently using incomplete files. The checked-in repository does not contain these ignored snapshots, so the first setup and CI still require one explicit refresh from PostgreSQL. The deployment workflow invokes `pnpm verify`, which refreshes **once** and runs the database gates. When the remote database quota is exhausted, local development and `pnpm verify:local` can continue using a valid previously generated snapshot. The local verification command intentionally excludes the database-integration test suites and the database-backed product-contract/data-validation checks; it cannot certify authoritative PostgreSQL state; `pnpm verify` still runs those suites and the database checks. Remote validation and deployment remain blocked until the database is available again.
+```sh
+docker exec registry-atlas-local-database-1 createdb -U atlas -O atlas atlas_test
+docker exec registry-atlas-local-database-1 pg_dump -U atlas -d atlas --schema=atlas --schema-only --no-owner | docker exec -i registry-atlas-local-database-1 psql -v ON_ERROR_STOP=1 -U atlas -d atlas_test
+```
+
+## Recovery and backups
+
+Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. The one-time SQLite importer accepts separate core and detail files in `.instance/legacy-recovery/` and refuses to overwrite an existing `atlas` schema. The local recovered PostgreSQL database was reconciled against the latest available runtime snapshot using `scripts/reconcile-runtime-source-evidence.mjs`, with a dry-run before `--apply`.
+
+The two regenerated compressed runtime files match the previous runtime files byte-for-byte. The recovered database contains 91,716 catalog/detail pairs and 46,390 source-page records. Historical operational records outside those runtime files cannot be independently compared with the former provider while it is unavailable.
+
+`pnpm db:backup` writes a custom-format `pg_dump` to `.instance/backups/`, verifies the dump structure, and never deletes earlier backups. Verify that a backup is restorable with `pnpm db:restore-check -- /absolute/path/to/backup.dump`; this restores into a temporary database, checks record counts, then removes only that temporary database. Override the backup location with `ATLAS_BACKUP_DIR` for an external disk.
+
+**A backup stored only on the same WSL disk is not disaster recovery.** Schedule external/off-device copies and regularly test those copies before relying on the restored database for permanent writes. The workstation has limited available free storage; monitor it and do not enable unbounded local data accumulation.
+
+## CI and publishing
+
+The public repository's hosted CI runs code-quality checks without accessing local PostgreSQL. Automatic Pages deployment is paused while a trusted release path is configured. The last successfully deployed site remains online. Do **not** put the database credentials or an unrestricted self-hosted runner into a public pull-request workflow. GitHub's security guidance warns that self-hosted runners in public repositories can be compromised by untrusted PR code.
+
+A future trusted publisher must build from the local authoritative database, validate the generated artifacts, and publish the static `dist/` output without exposing PostgreSQL. The site's hosting provider may impose limits even though the database itself has none.
 
 ## PostgreSQL maintenance
 
@@ -42,12 +65,7 @@ ID sequences, and defaults after an initial import. Run
 `pnpm check:postgres`, `pnpm check:product-contract`, and `pnpm validate:data`
 to check authoritative data before building the site.
 
-Use writable database credentials only in the maintenance environment.
-GitHub Actions uses a read-only `REGISTRY_ATLAS_DATABASE_URL` secret for site
-generation and a separate, isolated writable test database
-(`REGISTRY_ATLAS_TEST_DATABASE_URL`) for database integration tests.
-Tests create and remove disposable PostgreSQL schemas; they must not modify
-production catalog records.
+Maintenance connects only to the loopback-bound PostgreSQL service. Database integration tests use the separate local `atlas_test` database, create temporary schemas there, and remove them after each suite. They must not modify production catalog records. Public GitHub-hosted CI does not connect to the workstation database.
 
 ### Fresh original-page discovery
 

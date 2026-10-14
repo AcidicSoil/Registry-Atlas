@@ -1,13 +1,22 @@
 import { randomBytes } from 'node:crypto';
 import { readFileSync } from 'node:fs';
+// @ts-ignore Server-side JavaScript PostgreSQL connection policy.
+import { localPostgresUrl } from '../../scripts/lib/local-postgres-url.mjs';
 // @ts-ignore Standalone PostgreSQL adapter module.
 import {openAtlasCoreDatabase} from '../../scripts/lib/atlas-storage.mjs';
 
-function testUrl():string {
-  if(process.env.ATLAS_TEST_DATABASE_URL)return process.env.ATLAS_TEST_DATABASE_URL;
+function testUrl(): string {
+  const raw = process.env.ATLAS_TEST_DATABASE_URL
+    || readFileSync('.instance/local-postgres-test-url', 'utf8').trim();
 
-  try{return readFileSync('.instance/neon-test-url','utf8').trim();}
-  catch{throw Error('Isolated ATLAS_TEST_DATABASE_URL is required; refusing production DB tests');}
+  const parsed = new URL(localPostgresUrl(raw));
+  const production = new URL(readFileSync('.instance/local-postgres-url', 'utf8').trim());
+
+  if (parsed.origin !== production.origin || parsed.pathname === production.pathname) {
+    throw new Error('Isolated local PostgreSQL test database required; refusing production database');
+  }
+
+  return parsed.toString();
 }
 
 export async function testRouteDatabase():Promise<any> {

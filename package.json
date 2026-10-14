@@ -56,7 +56,14 @@
     "test:anti-slop-gate": "node scripts/verify-anti-slop-gate.mjs",
     "check:runtime-data": "node scripts/check-runtime-data.mjs",
     "verify:local": "pnpm check:runtime-data && pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm typecheck && pnpm typecheck:test && pnpm test:local && pnpm build",
-    "test:local": "TMPDIR=${TMPDIR:-/tmp} vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts"
+    "test:local": "TMPDIR=${TMPDIR:-/tmp} vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts",
+    "db:setup": "node scripts/manage-local-postgres.mjs setup",
+    "db:up": "node scripts/manage-local-postgres.mjs up",
+    "db:down": "node scripts/manage-local-postgres.mjs down",
+    "db:status": "node scripts/manage-local-postgres.mjs status",
+    "db:backup": "bash scripts/backup-local-postgres.sh",
+    "db:restore-check": "bash scripts/check-local-postgres-backup.sh",
+    "db:reconcile-source-evidence": "node scripts/reconcile-runtime-source-evidence.mjs --apply"
   },
   "type": "module",
   "version": "0.0.0"

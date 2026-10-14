@@ -1,0 +1,21 @@
+name: registry-atlas-local
+services:
+  database:
+    image: postgres:18-alpine
+    pull_policy: never
+    environment:
+      POSTGRES_USER: atlas
+      POSTGRES_DB: atlas
+      POSTGRES_PASSWORD: ${ATLAS_LOCAL_POSTGRES_PASSWORD:?Missing local database password}
+    ports:
+      - '127.0.0.1:55432:5432'
+    volumes:
+      - atlas-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U atlas -d atlas']
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    restart: unless-stopped
+volumes:
+  atlas-postgres-data:

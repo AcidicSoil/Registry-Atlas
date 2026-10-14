@@ -1,6 +1,6 @@
 import { isInputCallable, isInputString } from './input-guards.mjs';
 import postgres from 'postgres';
-import { readFileSync } from 'node:fs';
+import { localPostgresUrl } from './local-postgres-url.mjs';
 import { attachLegacyQueries } from './atlas-pg-queries.mjs';
 
 export function openAtlasCoreDatabase(_cwd=process.cwd(),{readOnly=false,databaseUrl}={}) {
@@ -8,15 +8,9 @@ export function openAtlasCoreDatabase(_cwd=process.cwd(),{readOnly=false,databas
     throw new Error('A separate test workspace needs an explicit PostgreSQL test database URL');
   }
 
-  let url=databaseUrl??process.env.DATABASE_URL;
+  const url = localPostgresUrl(databaseUrl);
 
-  if(!url){try{url=readFileSync('.instance/neon-database-url','utf8').trim()}catch{throw Error('DATABASE_URL required')}}
-
-  // Maintenance commands use session-scoped transactions and search_path.
-  // Neon's transaction-pooling endpoint cannot preserve that session state.
-  const connection = new URL(url);
-  connection.hostname = connection.hostname.replace('-pooler.', '.');
-  const sql=postgres(connection.toString(),{max:1,connect_timeout:20});
+  const sql=postgres(url,{max:1,connect_timeout:20});
   sql.close=()=>sql.end({timeout:10});
 
   if(readOnly)sql.__atlasReadOnly=true;

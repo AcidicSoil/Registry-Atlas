@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // One-time migration: read SQLite as an import source, write PostgreSQL.
 import { DatabaseSync } from 'node:sqlite';
-import { readFileSync } from 'node:fs';
+import { localPostgresUrl } from './lib/local-postgres-url.mjs';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { resolve } from 'node:path';
@@ -9,9 +9,11 @@ import postgres from 'postgres';
 
 const quote = name => '"' + name.replaceAll('"', '""') + '"';
 
-const url = process.env.DATABASE_URL || readFileSync(process.env.DATABASE_URL_FILE || '.instance/neon-database-url', 'utf8').trim();
+const url = localPostgresUrl();
 
-const source = new DatabaseSync(resolve(process.env.ATLAS_IMPORT_SOURCE || 'data/registry-atlas.sqlite'), { readOnly: true });
+const source = new DatabaseSync(resolve(process.env.ATLAS_IMPORT_SOURCE || '.instance/legacy-recovery/registry-atlas.sqlite'), { readOnly: true });
+
+source.prepare('ATTACH DATABASE ? AS atlas_details').run(resolve(process.env.ATLAS_DETAILS_SOURCE || '.instance/legacy-recovery/registry-details.sqlite'));
 
 const db = postgres(url, { max: 1, connect_timeout: 20, idle_timeout: 60 });
 
@@ -44,7 +46,13 @@ function* rows(table,fields) {
 
 try {
   if (source.prepare('PRAGMA integrity_check').get().integrity_check !== 'ok') throw new Error('Invalid source');
-  const tableNames = source.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map(r => r.name);
+  const coreTables = source.prepare("SELECT name FROM main.sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map(r => r.name);
+  const detailTables = source.prepare("SELECT name FROM atlas_details.sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name").all().map(r => r.name);
+  const tableNames = [...coreTables, ...detailTables].sort();
+
+  if (new Set(tableNames).size !== tableNames.length) throw Error('Duplicate names across legacy databases');
+
+  if (source.prepare('PRAGMA atlas_details.quick_check').get().quick_check !== 'ok') throw Error('Invalid detail source');
 
   if (!tableNames.includes('atlas_catalog_items') || !tableNames.includes('atlas_item_details')) throw new Error('Not an Atlas SQLite source');
 
