@@ -117,3 +117,7 @@ run = "pnpm lint:complexity"
 [tasks."lint:anti-slop"]
 description = "Enforce the root Stackforge anti-slop TypeScript policy"
 run = "pnpm lint:anti-slop"
+
+[tasks."lint:all"]
+description = "runs all lint scripts"
+run = "pnpm lint"
