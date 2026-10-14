@@ -40,9 +40,11 @@ Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. T
 
 The two regenerated compressed runtime files match the previous runtime files byte-for-byte. The recovered database contains 91,716 catalog/detail pairs and 46,390 source-page records. Historical operational records outside those runtime files cannot be independently compared with the former provider while it is unavailable.
 
-`pnpm db:backup` writes a custom-format `pg_dump` to `.instance/backups/`, verifies the dump structure, and never deletes earlier backups. Verify that a backup is restorable with `pnpm db:restore-check -- /absolute/path/to/backup.dump`; this restores into a temporary database, checks record counts, then removes only that temporary database. Override the backup location with `ATLAS_BACKUP_DIR` for an external disk.
+`pnpm db:backup` writes a custom-format PostgreSQL dump to **`I:\Backups\Registry-Atlas\PostgreSQL`** (`/mnt/i/Backups/Registry-Atlas/PostgreSQL` from WSL). I: is a separate physical NVMe disk from G:, which stores Docker Desktop's database volume. The command verifies the dump structure and writes a `.sha256` checksum beside each dump. It refuses to fall back to the WSL filesystem if I: is disconnected, and it never deletes older backups. To use another destination intentionally, set `ATLAS_BACKUP_DIR`.
 
-**A backup stored only on the same WSL disk is not disaster recovery.** Schedule external/off-device copies and regularly test those copies before relying on the restored database for permanent writes. The workstation has limited available free storage; monitor it and do not enable unbounded local data accumulation.
+Verify a complete restore with `pnpm db:restore-check /mnt/i/Backups/Registry-Atlas/PostgreSQL/<backup-file>.dump`; it validates any accompanying checksum, restores into a temporary database, checks record counts, and deletes only that temporary database. The current I: backup has been successfully tested this way.
+
+**A second physical drive protects against failure of the database drive, but not against theft, fire, ransomware, or whole-machine failure.** Backups on I: are local and not automatically replicated off-site. Backups are not yet scheduled; use `pnpm db:backup` after significant updates, and set up a separate scheduled job if daily backups are needed. Monitor free space on I: and regularly test restores.
 
 ## CI and publishing
 

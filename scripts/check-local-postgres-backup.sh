@@ -6,6 +6,11 @@ if [[ $# -ne 1 || ! -f "$1" ]]; then
 fi
 
 archive="$(realpath "$1")"
+
+# Backups made by the local writer include a SHA-256 checksum.
+if [[ -f "$archive.sha256" ]]; then
+  sha256sum --check "$archive.sha256"
+fi
 container='registry-atlas-local-database-1'
 db='atlas_backup_restore_test'
 

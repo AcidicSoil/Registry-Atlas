@@ -2,7 +2,19 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-backup_dir="${ATLAS_BACKUP_DIR:-.instance/backups}"
+# I: is a separate physical disk from Docker Desktop's G: data disk.
+# Never fall back to a local WSL directory when the drive is disconnected.
+default_backup_dir='/mnt/i/Backups/Registry-Atlas/PostgreSQL'
+backup_dir="${ATLAS_BACKUP_DIR:-$default_backup_dir}"
+if [[ "$backup_dir" == /mnt/i/* ]]; then
+  mounted_drive="$(findmnt -n -T /mnt/i -o SOURCE 2>/dev/null || true)"
+  if [[ "$mounted_drive" != 'I:\' ]]; then
+    echo 'Backup drive I: is not mounted; refusing to write to the system disk' >&2
+    exit 1
+  fi
+fi
+
+backup_dir="$(realpath -m "$backup_dir")"
 mkdir -p "$backup_dir"
 chmod 700 "$backup_dir"
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
@@ -21,5 +33,7 @@ fi
 
 chmod 600 "$partial"
 mv "$partial" "$archive"
+sha256sum "$archive" > "$archive.sha256"
+chmod 600 "$archive.sha256"
 trap - EXIT
 printf 'BACKUP_OK tables=%s archive=%s\n' "$table_count" "$archive"
