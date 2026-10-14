@@ -4,7 +4,7 @@
 
 ## Website data
 
-GitHub Pages is static. The build queries PostgreSQL using a server-side `DATABASE_URL` and creates two disposable compressed JSON assets in `public/data/`:
+GitHub Pages is static. An explicit runtime refresh queries PostgreSQL using a server-side `DATABASE_URL` and creates two disposable compressed JSON assets in `public/data/`:
 
 - `registry-atlas.json.gz` has the compact catalog, taxonomy, registry mirror, and source-page links.
 - `registry-details.json.gz` has item detail payloads; browsers fetch this only when viewing an item.
@@ -15,15 +15,17 @@ The generated assets do **not** use SQLite or expose database credentials. Files
 
 ```sh
 pnpm install
-pnpm check:postgres
-pnpm prepare:runtime-data
-pnpm dev
-pnpm verify
+pnpm dev                    # Use existing local runtime assets; no database connection
+pnpm verify:local           # Local snapshots, non-database tests, and build without Neon
+pnpm prepare:runtime-data   # Explicitly refresh the runtime assets from PostgreSQL
+pnpm verify                 # Refresh once, then run all local and database checks
 ```
 
 Store the Postgres URL in `DATABASE_URL` or the ignored, mode-600 `.instance/neon-database-url`. For deployed builds, the GitHub Actions secret `REGISTRY_ATLAS_DATABASE_URL` uses a read-only PostgreSQL role.
 
 The builder also generates `.instance/atlas-test-documents.json` for deterministic test fixtures. This is a disposable test output, not a second database.
+
+The `predev`, `pretest`, and `prebuild` hooks validate these three existing files instead of exporting the entire remote database on every invocation. They fail with an explicit missing/corrupt-artifact error rather than silently using incomplete files. The checked-in repository does not contain these ignored snapshots, so the first setup and CI still require one explicit refresh from PostgreSQL. The deployment workflow invokes `pnpm verify`, which refreshes **once** and runs the database gates. When the remote database quota is exhausted, local development and `pnpm verify:local` can continue using a valid previously generated snapshot. The local verification command intentionally excludes the database-integration test suites and the database-backed product-contract/data-validation checks; it cannot certify authoritative PostgreSQL state; `pnpm verify` still runs those suites and the database checks. Remote validation and deployment remain blocked until the database is available again.
 
 ## PostgreSQL maintenance
 
