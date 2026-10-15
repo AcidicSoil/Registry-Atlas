@@ -1,6 +1,8 @@
 import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
 import { attachCatalogLinkPreviews } from './ui/catalogLinkPreview';
+import { setupAppShellPanels } from './ui/appShellPanels';
+import { setupRegistryProfilePanel } from './ui/registryProfilePanel';
 
 function setupMobileSidebarControls(): void {
   const appSidebar = document.getElementById('appSidebar');
@@ -81,6 +83,7 @@ async function bootstrap() {
     const setupCount = document.getElementById('setupCount');
     const tabs = document.querySelectorAll('.primary-nav [data-view]');
     setupMobileSidebarControls();
+    setupAppShellPanels();
 
     if (aside && contentHeader && contentBody && searchInput && tabs.length) {
       contentBody.innerHTML = `
@@ -92,6 +95,7 @@ async function bootstrap() {
 
       const loadedData = await loadRegistries();
 
+      setupRegistryProfilePanel(contentBody);
       initRegistryExplorer({
         registries: loadedData.registries,
         catalogIndex: loadedData.catalogIndex,

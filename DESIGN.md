@@ -35,3 +35,12 @@
 - Pinned React Doctor 0.9.18 and dependency-cruiser 18.6.0 run from the root verification command. Their isolated pass–fail–pass proofs are recorded in `.design/quality-tooling-progress.md`.
 - cccc 1.8.0 is pinned through mise’s official GitHub release backend; complexity limits are cognitive 15 / cyclomatic 10. The previous 44 threshold violations were resolved without changing the limits. The full `pnpm verify` suite now passes; formal PPM/PAO certification remains separate.
 - Stackforge anti-slop TypeScript is installed at the root with all 117 rules active. The scan passes at zero errors and warnings, and its deliberate failure-detection proof passes. Formal PPM/PAO certification remains pending. Full PPM/OrchestKit certification is not complete.
+
+## Application-shell certification controls (2026-10-15)
+
+- The desktop app-shell uses a shared drag and keyboard separator between the left navigation and the main content. Both panels independently collapse and reopen; the left panel width is clamped to 190–440 pixels and persists in browser local storage. The content region scrolls within the viewport; the navigation body owns its own scroll. Mobile preserves the native HTML dialog instead of showing desktop resizing controls.
+- Registry-collection routes add an auxiliary registry-summary rail with a dedicated 200–400 pixel keyboard/pointer separator, independent collapse/reopen controls and owned scrolling. Its narrow-layout presentation stacks above the inventory.
+- The Collections menu is a native expandable detail group with real nested route links, while both Registry Atlas brand anchors lead home.
+- Browser favicon PNG, ICO and Apple-touch assets are stored at `public/registry-atlas/`; their source head references do not duplicate the Vite `/Registry-Atlas/` base. The real Chromium tab and served URLs were verified.
+- Source and browser verification: `tests/registry-explorer/appShellBranding.test.ts`, `panelLayout.test.ts`, `registrySummaryPanel.test.ts`, `tests/app-shell-panels.e2e.ts`, `tests-mobile/native-sidebar.e2e.ts`, and `.design/evidence/app-shell/ppm-browser-tab-favicon.png`. Detailed task contract: `.design/frontend-work-brief.md`.
+- Catalog infinite scroll persists bounded page counts and scroll offsets in session storage for browser Back, maintains a visible Load more fallback, `role="feed"` item position/total metadata, and polite item-count announcements. Its behavior remains subject to regression tests.

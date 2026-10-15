@@ -56,6 +56,7 @@ import { configureDefaultCatalogTaxonomy, catalogTaxonomyNodeMap, type CatalogTa
 import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
 import { renderCatalogComponents, renderCatalogBrowseControls, type AssetKindToken } from './catalogComponentsView';
 import { markAccessibleFeed } from './infiniteScrollControl';
+import { browseSnapshotKey, parseBrowseSnapshot, type BrowseSnapshot } from './browseHistory';
 import { renderCatalogLanding } from './catalogLandingView';
 import { renderCatalogCollection, renderEvidenceUnavailable } from './catalogCollectionView';
 import {
@@ -186,8 +187,25 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   roots.searchInput.value = state.searchTerm;
 
-  const browsedHistory = new Map<string, { pages: number; scrollY: number }>();
+  const browsedHistory = new Map<string, BrowseSnapshot>();
   const currentHistoryKey = () => window.location.pathname + window.location.search;
+
+  function rememberBrowseRoute(): void {
+    const route = currentHistoryKey();
+
+    const snapshot = {
+      pages: state.discoveryPage,
+      scrollY: roots.contentBody.parentElement?.scrollTop ?? window.scrollY ?? 0,
+    };
+
+    browsedHistory.set(route, snapshot);
+
+    try {
+      window.sessionStorage?.setItem(browseSnapshotKey(route), JSON.stringify(snapshot));
+    } catch {
+      // Session storage can be disabled; in-memory back navigation still works.
+    }
+  }
 
   const setState = (
     partial: Partial<AppState>,
@@ -197,12 +215,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const routeChanged = partial.route !== undefined
       && catalogRouteIdentity(partial.route) !== catalogRouteIdentity(state.route);
 
-    if (routeChanged) {
-      browsedHistory.set(currentHistoryKey(), {
-        pages: state.discoveryPage,
-        scrollY: window.scrollY ?? 0,
-      });
-    }
+    if (routeChanged) rememberBrowseRoute();
 
     state = { ...state, ...partial };
 
@@ -662,6 +675,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const page = state.discoveryPage;
 
     expandingResults = true;
+    previousList.setAttribute('aria-busy', 'true');
     scrollObserver?.disconnect();
     state.discoveryPage = page + 1;
     render();
@@ -1738,6 +1752,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
   }
 
+  function readPersistedBrowseState(): BrowseSnapshot | null {
+    try {
+      return parseBrowseSnapshot(window.sessionStorage?.getItem(browseSnapshotKey(currentHistoryKey())) ?? null);
+    } catch {
+      // Private-browsing restrictions do not prevent in-memory restoration.
+      return null;
+    }
+  }
+
+  function restoreBrowseState(): void {
+    const snapshot = browsedHistory.get(currentHistoryKey()) ?? readPersistedBrowseState();
+
+    if (!snapshot || state.discoveryPage !== 1) return;
+
+    for (let page = 1; page < snapshot.pages; page += 1) {
+      if (!roots.contentBody.querySelector?.('[data-scroll-load-more]')) break;
+
+      loadNextPage();
+    }
+
+    window.requestAnimationFrame?.(() => {
+      const scrollContainer = roots.contentBody.parentElement;
+
+      if (scrollContainer) scrollContainer.scrollTop = snapshot.scrollY;
+      else window.scrollTo?.({ top: snapshot.scrollY, behavior: 'instant' });
+    });
+  }
+
   window.addEventListener('popstate', () => {
     state = {
       ...state,
@@ -1747,19 +1789,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     };
     roots.searchInput.value = state.searchTerm;
     render();
-
-    const snapshot = browsedHistory.get(currentHistoryKey());
-
-    if (snapshot && state.discoveryPage === 1) {
-      for (let page = 1; page < snapshot.pages; page += 1) {
-        if (!roots.contentBody.querySelector?.('[data-scroll-load-more]')) break;
-        loadNextPage();
-      }
-
-      window.requestAnimationFrame?.(() => {
-        window.scrollTo?.({ top: snapshot.scrollY, behavior: 'instant' });
-      });
-    }
+    restoreBrowseState();
   });
 
   syncUrlState(state);

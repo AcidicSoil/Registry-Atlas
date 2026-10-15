@@ -31,5 +31,6 @@ export function markAccessibleFeed(list: FeedElement | null, resultLabel: string
   for (const [index, item] of Array.from(list.children).entries()) {
     item.setAttribute('aria-posinset', String(index + 1));
     item.setAttribute('aria-setsize', String(total));
+    item.setAttribute('tabindex', '0');
   }
 }

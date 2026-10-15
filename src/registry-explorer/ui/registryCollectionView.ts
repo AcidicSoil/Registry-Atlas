@@ -43,7 +43,7 @@ export function renderRegistryCollection(
 
   bodyRoot.innerHTML = `
     <div class="registry-profile-layout">
-      <section class="registry-profile-summary-rail" aria-label="Registry summary">
+      <section id="registryProfileSummary" class="registry-profile-summary-rail" aria-label="Registry summary">
         <div class="catalog-eyebrow">Registry summary</div>
         <h2>${escapeHtml(registry.name)}</h2>
         <p>${escapeHtml(registry.description)}</p>
@@ -52,6 +52,12 @@ export function renderRegistryCollection(
           ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
         </div>
       </section>
+      <div class="registry-profile-divider" aria-label="Registry summary panel controls">
+        <button type="button" class="registry-profile-toggle" data-profile-rail-toggle aria-label="Collapse registry summary" aria-controls="registryProfileSummary" aria-expanded="true">◂</button>
+        <div role="separator" tabindex="0" data-profile-rail-resize
+          aria-label="Resize registry summary and inventory" aria-controls="registryProfileSummary"
+          aria-orientation="vertical" aria-valuemin="200" aria-valuemax="400" aria-valuenow="280"></div>
+      </div>
       <section class="registry-profile-inventory registry-collection-components">
         <div class="section-heading-row">
           <div>

@@ -34,6 +34,7 @@ describe('accessible incremental results', () => {
     expect(attributes['aria-busy']).toBe('false');
     expect(positions.map(record => record['aria-posinset'])).toEqual(['1', '2']);
     expect(positions.map(record => record['aria-setsize'])).toEqual(['76520', '76520']);
+    expect(positions.map(record => record.tabindex)).toEqual(['0', '0']);
   });
 
 });

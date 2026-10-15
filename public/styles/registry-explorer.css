@@ -4283,3 +4283,208 @@ main {
   width: 100%;
   height: 1px;
 }
+
+/* Desktop split panels: a shared keyboard/pointer separator resizes both surfaces. */
+@media (min-width: 861px) {
+  main#appMain {
+    --sidebar-panel-width: 240px;
+    grid-template-columns: var(--sidebar-panel-width) 16px minmax(0, 1fr);
+    gap: 0;
+    height: 100dvh;
+    padding: 0 18px 0 0;
+    overflow: hidden;
+  }
+
+  main#appMain > .app-sidebar {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  main#appMain > .content {
+    height: 100dvh;
+    min-width: 0;
+    overflow: hidden;
+    padding: 18px 0 0 18px;
+  }
+
+  main#appMain > .content > .content-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  main#appMain[data-sidebar-collapsed="true"] {
+    grid-template-columns: 0 16px minmax(0, 1fr);
+  }
+
+  main#appMain[data-content-collapsed="true"] {
+    grid-template-columns: minmax(0, 1fr) 16px 0;
+  }
+
+  main#appMain[data-sidebar-collapsed="true"] > .app-sidebar,
+  main#appMain[data-content-collapsed="true"] > .content {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.app-panel-boundary {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  gap: 6px;
+  padding: 9px 0;
+  border-right: 1px solid color-mix(in srgb, var(--border) 44%, transparent);
+}
+
+.panel-collapse-toggle {
+  display: grid;
+  width: 16px;
+  height: 22px;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.panel-collapse-toggle:hover,
+.panel-collapse-toggle:focus-visible {
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.panel-resize-handle {
+  display: grid;
+  width: 100%;
+  min-height: 48px;
+  flex: 1 1 auto;
+  place-items: center;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.panel-resize-handle::before {
+  width: 3px;
+  height: 32px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--muted-foreground) 36%, transparent);
+  content: "";
+}
+
+.panel-resize-handle:hover::before,
+.panel-resize-handle:focus-visible::before {
+  background: var(--primary);
+}
+
+.panel-resize-handle[aria-disabled="true"] {
+  cursor: default;
+}
+
+@media (max-width: 860px) {
+  .app-panel-boundary {
+    display: none;
+  }
+}
+
+@media (max-width: 860px) {
+  main#appMain {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+
+@media (min-width: 861px) {
+  html,
+  body,
+  #app,
+  .app-inner {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 861px) {
+  .registry-profile-layout {
+    grid-template-columns: var(--registry-summary-width, 280px) 14px minmax(0, 1fr);
+    gap: 0;
+  }
+
+  .registry-profile-summary-rail {
+    min-width: 0;
+    max-height: calc(100dvh - 155px);
+    overflow-y: auto;
+  }
+
+  .registry-profile-inventory {
+    padding-left: 20px;
+  }
+
+  main#appMain[data-profile-summary-collapsed="true"] .registry-profile-layout {
+    grid-template-columns: 0 14px minmax(0, 1fr);
+  }
+
+  main#appMain[data-profile-summary-collapsed="true"] .registry-profile-summary-rail {
+    visibility: hidden;
+    pointer-events: none;
+    overflow: hidden;
+    padding: 0;
+    border: 0;
+  }
+}
+
+.registry-profile-divider {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+}
+
+.registry-profile-toggle {
+  width: 14px;
+  min-height: 26px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+
+.registry-profile-toggle:focus-visible,
+.registry-profile-toggle:hover {
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+[data-profile-rail-resize] {
+  display: grid;
+  min-height: 35px;
+  width: 100%;
+  flex: 1;
+  place-items: center;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+[data-profile-rail-resize]::before {
+  width: 2px;
+  height: 28px;
+  border-radius: 4px;
+  background: var(--muted-foreground);
+  content: '';
+  opacity: 0.5;
+}
+
+@media (max-width: 860px) {
+  .registry-profile-divider {
+    display: none;
+  }
+}
