@@ -10,8 +10,15 @@ export function renderInfiniteScrollControl(page: number, pageCount: number): st
   `;
 }
 
+/** The minimal DOM contract needed to mark a progressive result feed. */
+export interface FeedElement {
+  tagName: string;
+  children: ArrayLike<{ setAttribute(name: string, value: string): void }>;
+  setAttribute(name: string, value: string): void;
+}
+
 /** Keep screen-reader item positions accurate after incremental DOM insertion. */
-export function markAccessibleFeed(list: Element | null, resultLabel: string): void {
+export function markAccessibleFeed(list: FeedElement | null, resultLabel: string): void {
   if (!list || list.tagName === 'TBODY') return;
 
   const number = / of ([0-9,]+)/.exec(resultLabel)?.[1];

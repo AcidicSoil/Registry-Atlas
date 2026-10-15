@@ -1,10 +1,10 @@
 # Mandatory quality-tooling certification evidence
 
-Status: **all four quality gates passing; global PPM/PAO certification remains pending**. Updated 2026-10-13.
+Status: **all four quality gates verified; remaining project standards still require assessment**. Updated 2026-10-13.
 Scope: Registry Atlas canonical workspace root.
 
 ## User authorization
-The user explicitly granted standing approval (“always”) to install and configure anti-slop TypeScript, dependency-cruiser, cccc, and React Doctor, including normal verification and pass–fail–pass proof. This is an authorization to perform work, not a fabricated PPM/PAO receipt; policy records retain their unresolved formal PAO reference where required.
+The user explicitly granted standing approval (“always”) to install and configure anti-slop TypeScript, dependency-cruiser, cccc, and React Doctor, including normal verification and pass–fail–pass proof. The project records the user's decision here. PAO correlates conversations and project work; it does not grant tooling approval.
 
 ## Verified gates
 - **dependency-cruiser 18.6.0** is pinned and enforced in `pnpm lint:deps` (delegates to `pnpm lint:boundaries`). Per the installed `setup-ts-deep-modules` skill, the configuration scans both application and test files, prohibits cross-module imports into nested implementation paths, prevents tests importing private internals and production imports from test fixtures, prohibits cycles, and retains core/data/UI layering. `pnpm test:boundaries` verifies five clean → deliberate violation → clean scenarios. A real `core/lib/sourcePageOrigin.ts` file is private and consumed via public `core/sourcePageValidation.ts`.
@@ -43,8 +43,7 @@ The standalone registry-data validator now imports the real project TypeScript
 module instead of copying a partial module tree into a temporary directory.
 This retains the boundary schemas and supports native Node 24 module loading.
 
-**Anti-slop technical remediation is complete.** Formal PPM/PAO approval is
-still a separate unresolved requirement, and no receipt has been fabricated.
+**Anti-slop technical remediation is complete.** Tooling compliance depends on installed configuration, checks and failure-detection evidence, not on a PAO approval receipt.
 
 ## Independent code checks
 
@@ -55,4 +54,4 @@ The complete `pnpm verify` run finished with **exit 0** again after anti-slop re
 ## Remaining global certification work
 
 - The anti-slop error queue is closed and the deliberate failure-detection proof passed. No anti-slop technical violations remain.
-- Close independent PPM/OrchestKit conformance standards with real evidence and PAO decision references. PAO readiness passed, but there is no existing tooling-adoption approval record, and its available generic approval-request interface is restricted to frontend provenance exceptions. Do not invent a tooling decision or borrow another request. This is separate from the three quality gates addressed here.
+- Close remaining PPM/OrchestKit rules with rule-specific implementation and evidence. The four required tooling gates are compliant without PAO approval references. Retain independent user decisions for actual replacement or exception requests; PAO check-ins remain optional work provenance. Frontend provenance exceptions retain their separately defined approval procedure.

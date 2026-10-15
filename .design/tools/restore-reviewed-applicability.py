@@ -65,15 +65,21 @@ def reconcile(root: Path, current: dict, previous: dict) -> tuple[dict, dict]:
         row.update({
             "applicability": old["applicability"],
             # A re-review of applicability does not change compliance, even when
-            # technical checks passed. PAO approval remains a separate decision.
+            # technical checks passed. PAO does not authorize ordinary tools.
             "compliance": old["compliance"],
             "reason": old["reason"],
             "evidence": old["evidence"],
             "evidenceDigests": hashes,
             "reviewedSourceDigest": row["sourceDigest"],
             "stackFingerprint": updated["project"]["stack"]["fingerprint"],
-            "paoDecisionRef": old.get("paoDecisionRef", ""),
         })
+        # Preserve real user decisions, including legacy provenance references,
+        # without requiring a PAO token for ordinary required-tool adoption.
+        decision = old.get("decisionRef") or old.get("paoDecisionRef")
+
+        if decision:
+            row["decisionRef"] = decision
+
         preserved.append(ref)
 
     return updated, {

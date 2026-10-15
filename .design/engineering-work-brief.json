@@ -2,7 +2,7 @@
   "schemaVersion": "ppm-engineering-work-brief/v1",
   "revision": 7,
   "artifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b",
-  "objective": "Finish adoption and verification of required quality gates, including Stackforge anti-slop, pinned React Doctor CI, and formal PPM/PAO decisions without fabricating approval evidence.",
+  "objective": "Finish adoption and verification of required quality gates, including Stackforge anti-slop, pinned React Doctor CI, and evidence-based PPM standards compliance and PAO work traceability.",
   "projectContext": {
     "projectRoot": ".",
     "baseCommit": "fff36ca",
@@ -16,8 +16,8 @@
     "applicationVerification": "Full pnpm verify completed exit 0 after anti-slop remediation: 552 tests passed, 8 opt-in live tests skipped; React Doctor, dependency-cruiser, cccc, anti-slop, TypeScript, PostgreSQL integrity, product contract, data validation and Vite production build all passed. Anti-slop clean-fail-clean, dependency boundary 5-case and complexity gate negative tests passed. PPM browser mobile and desktop acceptance passed.",
     "globalCertification": "blocked",
     "systemOneMerge": "Pushed origin/main commit fff36ca; 549 tests passed, eight opt-in live tests skipped, production build passed.",
-    "qualityToolingStatus": "Four technical gates pass: dependency-cruiser, React Doctor, cccc and the full-root Stackforge TypeScript anti-slop (0 errors, 0 warnings, 173 files, 117 rules). Root verification and adversarial anti-slop/boundary/complexity proofs pass. Formal PAO tooling approvals are still unavailable.",
-    "projectStandardsReaudit": "Stack/dependency and DESIGN.md changes require a formal PPM applicability/evidence refresh; latest read-only standards check reports 960 blocking issues, including stale review evidence and missing PAO decisions. This is distinct from anti-slop lint."
+    "qualityToolingStatus": "Four technical gates pass: dependency-cruiser, React Doctor, cccc and the full-root Stackforge TypeScript anti-slop (0 errors, 0 warnings, 173 files, 117 rules). Root verification and adversarial anti-slop/boundary/complexity proofs pass. Tooling compliance needs technical evidence, not PAO approval.",
+    "projectStandardsReaudit": "Stack/dependency and DESIGN.md changes require a formal PPM applicability/evidence refresh; the updated checker now reports 285 genuine open requirements; four tooling approvals were falsely inferred from PAO provenance. This is distinct from anti-slop lint."
   },
   "taskKinds": [
     "project-standards-conformance",
@@ -67,7 +67,7 @@
       "ownerSkills": [
         "quality-gates"
       ],
-      "selectionReason": "All four technical tooling checks pass; PAO tooling approval records remain unavailable.",
+      "selectionReason": "All four required tooling checks pass; PAO approval records are neither required nor applicable.",
       "status": "blocked",
       "requiredAtClose": true,
       "dependencies": [
@@ -249,7 +249,7 @@
       "evidenceRefs": [
         ".design/standards.json"
       ],
-      "reason": "Full root anti-slop gate fails on 593 pre-existing semantic rule violations. React Doctor, cccc and dependency-cruiser pass. Formal tooling adoption decisions lack PAO receipts."
+      "reason": "Full root anti-slop gate fails on 593 pre-existing semantic rule violations. React Doctor, cccc and dependency-cruiser pass. PAO is a provenance system, not an approval gate for required tooling."
     }
   },
   "acceptance": [
@@ -271,7 +271,7 @@
     "Formal PAO correlation remains incomplete without verified initiating conversation identity.",
     "Full pnpm verify intentionally returns nonzero until 44 existing complexity violations are refactored; do not merge this incomplete feature checkpoint into main.",
     "Anti-slop setup apply was blocked by execution safety checks despite source availability and user approval.",
-    "PAO approval CLI exposes frontend-provenance exception requests but not tooling-adoption decisions; no valid paoDecisionRef exists.",
+    "PAO check-ins link conversations and work. Ordinary tooling adoption does not require PAO permission; frontend provenance exceptions use their own separate procedure.",
     "Root pnpm verify intentionally fails at anti-slop until its 593 pre-existing semantic issues are repaired."
   ],
   "verificationTargets": [
@@ -365,7 +365,7 @@
         "mise.toml"
       ],
       "findings": [
-        "All four technical gates pass. Tooling adoption approvals are still missing formal PAO decision references."
+        "All four technical gates pass. All four installed tooling gates passed; compliance must be determined from current checks and evidence."
       ],
       "checkedBriefRevision": 7,
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"
@@ -380,7 +380,7 @@
         ".design/standards.json"
       ],
       "findings": [
-        "Latest project standards check reports 960 blockers after source/dependency fingerprint changes; refresh and re-audit required, PAO approval refs unavailable."
+        "After refreshing current inventory and restoring reviewed rules, 285 real standards issues remain; no PAO approval is needed for four installed mandatory tooling gates."
       ],
       "checkedBriefRevision": 7,
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"
@@ -479,5 +479,5 @@
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"
     }
   ],
-  "reviewEvidence": "Full pnpm verify passed on 2026-10-13 (552 tests, 8 opt-in live skips, PostgreSQL data integrity, product contract, data validation and Vite build). Mobile and desktop Registry Atlas PPM browser acceptance passed; all three deliberate violation proofs passed. Global PPM certification remains pending new stack/DESIGN re-audit and formal PAO approval."
+  "reviewEvidence": "Full pnpm verify passed on 2026-10-13 (552 tests, 8 opt-in live skips, PostgreSQL data integrity, product contract, data validation and Vite build). Mobile and desktop Registry Atlas PPM browser acceptance passed; all three deliberate violation proofs passed. Global PPM certification remains pending unfinished applicable standards and new app-shell applicability reviews, not PAO approval."
 }

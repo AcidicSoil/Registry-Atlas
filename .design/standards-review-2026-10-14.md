@@ -1,8 +1,8 @@
 # Registry Atlas standards re-audit — 2026-10-14
 
-**Status: review fingerprints current; global certification blocked.**
+**Status: four tooling-policy false approval blockers corrected; global certification remains blocked.**
 
-This re-audit follows the local PostgreSQL migration, changed Vite UI, source-preview changes and new deterministic e2e verification skill. The original applicability and compliance decisions are preserved from the previously reviewed baseline at Git HEAD. The current OrchestKit catalog has **109 skills, 667 references**; all existing rule digests still match. The refreshed project stack, `DESIGN.md` and current evidence file digests are recorded in `.design/standards.json`.
+This re-audit follows the local PostgreSQL migration, changed Vite UI, source-preview changes and new deterministic e2e verification skill. The original applicability and compliance decisions are preserved from the previously reviewed baseline at Git HEAD. The refreshed OrchestKit catalog has **109 skills, 671 references**; all existing rule digests still match. The refreshed project stack, `DESIGN.md` and current evidence file digests are recorded in `.design/standards.json`.
 
 ## Scope and evidence
 
@@ -17,13 +17,14 @@ This re-audit follows the local PostgreSQL migration, changed Vite UI, source-pr
 | Standard disposition | Count | Meaning |
 | --- | ---: | --- |
 | Not applicable, previous rationale preserved | 379 | Not a compliance claim |
-| Applicable, compliant with existing evidence | 3 | Previously assessed controls; rechecked core app tests |
+| Applicable, compliant with existing evidence | 7 | Previously assessed controls; rechecked core app tests |
 | Applicable, still unevaluated | 277 | Needs distinct rule-by-rule verification |
 | Applicable, remediation required | 4 | Confirmed issues listed below |
-| Applicable, approval pending | 4 | Technical gates work, PAO decisions absent |
-| Stale review evidence or missing applicability review | **0** | Reconciled |
+| Applicable, approval pending | 0 | Four required tooling policies are compliant without PAO approvals |
+| Stale review evidence | **0** | Reconciled |
+| New app-shell applicability reviews | **4** | Not yet reviewed |
 
-**Result:** `project_standards.py check` reports **285 blockers**. No stale source hashes, stack fingerprints or `DESIGN.md` fingerprints remain. This is **not** a passing certification.
+**Current result after correcting the PAO interpretation:** `project_standards.py check` reports **285 blockers**: 277 unevaluated rules, four remediations, and four newly introduced app-shell applicability reviews. The four tooling approval blockers are gone. No stale source hashes, stack fingerprints or `DESIGN.md` fingerprints remain in the current structural check. This is **not** a passing certification.
 
 ## Confirmed remediation requirements
 
@@ -36,9 +37,20 @@ This re-audit follows the local PostgreSQL migration, changed Vite UI, source-pr
 
 The proposals are already present in `.design/standards.json`. No migration approval was fabricated, no tooling replaced as part of this audit, and no remediation was silently marked complete.
 
-## Pending PAO decisions
+## Required tooling — PAO is not an approval authority
 
-`policy:anti-slop-typescript`, `policy:cccc-complexity`, `policy:dependency-cruiser` and `policy:react-doctor` are technically installed, pinned, and verified by the normal checks. Their previous records deliberately remain `pending-approval` until the PAO authority supplies real tooling-adoption decision references. A chat instruction to proceed is not a fabricated `pao:` reference.
+The four installed, pinned and verified required tools — anti-slop TypeScript,
+cccc, dependency-cruiser and React Doctor — are technically compliant. PPM
+tracks their work provenance through PAO, **not** tooling authorization.
+Their original installation proposals are implemented, with the existing user
+authorization evidence recorded in `.design/quality-tooling-progress.md`.
+No `paoDecisionRef` or synthetic PAO receipt is necessary. Custom frontend
+provenance exceptions retain their separate, explicit approval process.
+
+**New baseline inventory:** The current PPM catalog adds four app-shell
+standards (collapsible nested sidebar, adjustable panels, logo-to-home,
+favicon metadata). They need independent review; the existing 277 unevaluated
+applicable OrchestKit rules are not waived by the corrected tooling decisions.
 
 ## Remaining assessment work
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { renderInfiniteScrollControl, markAccessibleFeed } from '../../src/registry-explorer/ui/infiniteScrollControl';
+import { renderInfiniteScrollControl, markAccessibleFeed, type FeedElement } from '../../src/registry-explorer/ui/infiniteScrollControl';
 
 describe('accessible incremental results', () => {
   it('uses a load-more fallback and observer sentinel without numbered pagination', () => {
@@ -20,14 +20,14 @@ describe('accessible incremental results', () => {
   it('adds feed position and total semantics to appended cards', () => {
     const attributes: Record<string, string> = {};
     const positions: Array<Record<string, string>> = [{}, {}];
-    // SAFETY: This is a minimal DOM stub for setAttribute and children only.
-    const list = {
+
+    const list: FeedElement = {
       tagName: 'DIV',
       children: positions.map(record => ({
         setAttribute: (name: string, value: string) => { record[name] = value; },
       })),
       setAttribute: (name: string, value: string) => { attributes[name] = value; },
-    } as unknown as Element;
+    };
 
     markAccessibleFeed(list, 'Showing 1–2 of 76,520');
     expect(attributes.role).toBe('feed');
