@@ -20,13 +20,13 @@
 ## Interaction and responsive behavior
 
 - Use semantic anchors for navigation, buttons for actions, structured headings and breadcrumb `nav`; preserve keyboard reachability and `:focus-visible` outlines defined in CSS. Provide a first-focus **Skip to main content** link to a focusable content-header target. **These implementation choices do not establish WCAG conformance.**
-- The mobile menu is `position: fixed` under 860px and must not consume document space when closed. The menu supports close button, backdrop click, Escape, and focus restoration. The desktop sidebar remains sticky.
+- The mobile menu is a native HTML `<dialog>` under 860px; the existing navigation moves into its top layer only while open. Native modal semantics and Escape handling replace the previous custom `aria-modal` focus trap. The drawer supports close, backdrop dismissal, and focus restoration. The desktop sidebar remains sticky.
 - Validate at mobile width around 390px and desktop width around 1440px, including no horizontal overflow, correct destination URLs, and usable focus/interaction states.
 - Preference motion handling is present in CSS; motion behavior and contrast still require rule-by-rule inspection and browser tests.
 
 ## Verification and unresolved decisions
 
-- Existing gates: `pnpm audit:dependencies` (rejects moderate or higher dependency advisories), `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, chained by `pnpm verify`. Browser interactions are independently verified in PPM `registry-atlas`.
+- Existing gates: `pnpm audit:dependencies` (rejects low or higher dependency advisories), `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, chained by `pnpm verify`. Browser interactions are independently verified in PPM `registry-atlas` and model-free e2e production previews. Catalog browse pages append bounded result chunks when scrolled, with visible Load more fallback and `aria-live` status rather than numbered pagination. The build also emits a CycloneDX dependency inventory.
 - Existing automated checks are not proof of every accessibility, security or UX standard. Scope, test evidence and exceptions for individual OrchestKit rules live in `.design/standards.json`. A standard with insufficient evidence stays unverified.
 - No general exception, third-party tooling replacement, or novel design language is approved by this document. Any required migration must be proposed and separately approved through the project workflow.
 

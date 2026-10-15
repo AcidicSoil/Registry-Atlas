@@ -1,10 +1,10 @@
 packages:
-  - src/*
+  - '.'
 
+overrides:
+  esbuild: 0.28.1
+
+# Only audited, version-specific native binary setup is trusted.
 allowBuilds:
-  es5-ext: false
-  esbuild: true
-
-minimumReleaseAgeExclude:
-  - oxlint-plugin-react-doctor@0.9.18
-  - react-doctor@0.9.18
+  esbuild@0.28.1: true
+  es5-ext@0.10.64: false

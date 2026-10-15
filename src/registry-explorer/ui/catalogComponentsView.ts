@@ -1,3 +1,4 @@
+import { renderInfiniteScrollControl } from './infiniteScrollControl';
 import type {
   CatalogComponent,
   CatalogQueryResult,
@@ -59,7 +60,7 @@ export function renderCatalogComponents(
         <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-component">
           ${result.items.map(item => renderCatalogComponentCard(item)).join("")}
         </div>
-        ${renderPagination(result)}
+        ${renderInfiniteScrollControl(result.page, result.pageCount)}
       `
       : `<div class="empty-state"><h2>${emptyCopy}</h2><p>Try a different item name, category, kind, or registry.</p></div>`}
   `;
@@ -321,14 +322,3 @@ function renderResultMeta(result: CatalogQueryResult): string {
   return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
 }
 
-function renderPagination(result: CatalogQueryResult): string {
-  if (result.pageCount <= 1) return "";
-
-  return `
-    <nav class="catalog-pagination" aria-label="Component catalog pages">
-      <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>
-      <span>Page ${result.page.toLocaleString()} of ${result.pageCount.toLocaleString()}</span>
-      <button type="button" data-discovery-page="${result.page + 1}" ${result.hasNextPage ? "" : "disabled"}>Next</button>
-    </nav>
-  `;
-}

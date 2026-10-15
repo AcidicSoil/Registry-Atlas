@@ -18,16 +18,17 @@
     "react-doctor": "0.9.18",
     "react-grab": "^0.1.47",
     "typescript": "~5.9.3",
-    "vite": "^7.3.5",
-    "vitest": "^4.1.11"
+    "vite": "7.3.7",
+    "vitest": "^4.1.11",
+    "yaml": "2.9.0"
   },
   "name": "registry-atlas",
   "private": true,
   "scripts": {
     "all": "pnpm verify",
-    "audit:dependencies": "pnpm audit --audit-level moderate",
+    "audit:dependencies": "pnpm audit --audit-level low",
     "browser:acceptance": "node scripts/check-browser-acceptance.mjs",
-    "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs",
+    "build": "tsc && vite build && node scripts/create-pages-spa-fallback.mjs && node scripts/generate-sbom.mjs",
     "check:postgres": "node scripts/check-postgres.mjs",
     "check:product-contract": "node scripts/check-product-contract.mjs",
     "dev": "vite",
@@ -68,7 +69,9 @@
     "db:restore-check": "bash scripts/check-local-postgres-backup.sh",
     "db:reconcile-source-evidence": "node scripts/reconcile-runtime-source-evidence.mjs --apply",
     "test:e2e": "pnpm build && e2e run",
-    "test:e2e:smoke": "pnpm build && e2e run tests/smoke.e2e.ts"
+    "test:e2e:smoke": "pnpm build && e2e run tests/smoke.e2e.ts",
+    "test:e2e:mobile": "pnpm build && e2e run --config e2e.mobile.config.ts",
+    "lint:commit": "node scripts/check-commit-message.mjs --range HEAD^..HEAD"
   },
   "type": "module",
   "version": "0.0.0"

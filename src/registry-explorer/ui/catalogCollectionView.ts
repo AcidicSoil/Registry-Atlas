@@ -1,3 +1,4 @@
+import { renderInfiniteScrollControl } from './infiniteScrollControl';
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
 import { escapeHtml } from "./renderSafety";
@@ -11,17 +12,6 @@ export interface CatalogCollectionViewOptions {
   layout?: 'grid' | 'list';
   emptyTitle?: string;
   emptyBody?: string;
-}
-
-function renderCollectionPagination(result: CatalogQueryResult, title: string): string {
-  if (result.pageCount <= 1) return '';
-
-  return '<nav class="catalog-pagination" aria-label="' + escapeHtml(title) + ' pages">' +
-    '<button type="button" data-discovery-page="' + (result.page - 1) + '" ' +
-    (result.hasPreviousPage ? '' : 'disabled') + '>Previous</button>' +
-    '<span>Page ' + result.page.toLocaleString() + ' of ' + result.pageCount.toLocaleString() + '</span>' +
-    '<button type="button" data-discovery-page="' + (result.page + 1) + '" ' +
-    (result.hasNextPage ? '' : 'disabled') + '>Next</button></nav>';
 }
 
 export function renderCatalogCollection(
@@ -58,7 +48,7 @@ export function renderCatalogCollection(
     <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-${options.routeKind ?? "component"}">
       ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
     </div>
-    ${renderCollectionPagination(result, options.title)}
+    ${renderInfiniteScrollControl(result.page, result.pageCount)}
   `;
 }
 

@@ -1,3 +1,4 @@
+import { renderInfiniteScrollControl } from './infiniteScrollControl';
 import type { CatalogAuthor } from '../core/catalogAuthors';
 import { escapeHtml } from './renderSafety';
 
@@ -31,11 +32,7 @@ export function renderCatalogAuthors(
         </div>
       </button></article>`).join('')}
     </div>
-    ${pageCount > 1 ? `<nav class="catalog-pagination" aria-label="Authors pages">
-      <button type="button" data-discovery-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>
-      <span>Page ${currentPage} of ${pageCount}</span>
-      <button type="button" data-discovery-page="${currentPage + 1}" ${currentPage === pageCount ? 'disabled' : ''}>Next</button>
-    </nav>` : ''}
+    ${renderInfiniteScrollControl(currentPage, pageCount)}
   ` : `<div class="empty-state"><h2>No attributed components</h2><p>
     ${search ? 'No named contributors match this search.' : 'This registry catalog provides no named component authors.'}
     </p></div>`;

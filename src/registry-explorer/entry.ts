@@ -1,68 +1,69 @@
 import { initRegistryExplorer } from './ui';
 import { loadRegistries } from './data/loadRegistries';
-import { drawerWrapTarget } from './ui/mobileSidebarFocus';
 import { attachCatalogLinkPreviews } from './ui/catalogLinkPreview';
 
 function setupMobileSidebarControls(): void {
-    const appSidebar = document.getElementById('appSidebar');
-    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
-    const sidebarToggle = document.getElementById('sidebarToggle') as HTMLButtonElement | null;
-    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
-    const sidebarClose = document.getElementById('sidebarClose') as HTMLButtonElement | null;
-    // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
-    const sidebarBackdrop = document.getElementById('sidebarBackdrop') as HTMLButtonElement | null;
+  const appSidebar = document.getElementById('appSidebar');
+  const mobileDialog = document.getElementById('mobileSidebarDialog');
+  const sidebarToggle = document.getElementById('sidebarToggle');
+  const sidebarClose = document.getElementById('sidebarClose');
+  const home = appSidebar?.parentElement;
+  const nextSibling = appSidebar?.nextSibling;
+  const mobileScreen = window.matchMedia('(max-width: 860px)');
+  let returnFocus = false;
 
-    const setSidebarOpen = (open: boolean, restoreFocus = false) => {
-      if (!appSidebar || !sidebarToggle || !sidebarBackdrop) return;
-      appSidebar.dataset.open = String(open);
-      appSidebar.setAttribute('role', open ? 'dialog' : 'complementary');
+  if (!appSidebar || !(mobileDialog instanceof HTMLDialogElement)
+    || !(sidebarToggle instanceof HTMLButtonElement) || !home) return;
 
-      if (open) appSidebar.setAttribute('aria-modal', 'true');
-      else appSidebar.removeAttribute('aria-modal');
-      sidebarToggle.setAttribute('aria-expanded', String(open));
-      sidebarBackdrop.hidden = !open;
+  const restoreDesktopSidebar = (): void => {
+    if (appSidebar.parentElement !== home) home.insertBefore(appSidebar, nextSibling ?? null);
 
-      if (open) sidebarClose?.focus();
-      else if (restoreFocus) sidebarToggle.focus();
-    };
+    appSidebar.dataset.open = 'false';
+    sidebarToggle.setAttribute('aria-expanded', 'false');
+  };
 
-    sidebarToggle?.addEventListener('click', () => setSidebarOpen(true));
-    sidebarClose?.addEventListener('click', () => setSidebarOpen(false, true));
-    sidebarBackdrop?.addEventListener('click', () => setSidebarOpen(false, true));
-    appSidebar?.addEventListener('click', event => {
-      // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
-      const target = event.target as HTMLElement;
+  const close = (restoreFocus = true): void => {
+    returnFocus = restoreFocus;
 
-      if (target.closest('[data-view], [data-catalog-route], .brand-home-link')) {
-        setSidebarOpen(false);
-      }
-    });
-    window.addEventListener('keydown', event => {
-      if (appSidebar?.dataset.open !== 'true') return;
+    if (mobileDialog.open) mobileDialog.close();
+    else restoreDesktopSidebar();
+  };
 
-      if (event.key === 'Escape') {
-        setSidebarOpen(false, true);
-      } else if (event.key === 'Tab') {
-        const candidates = appSidebar.querySelectorAll<HTMLElement>(
-          'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), ' +
-          'textarea:not(:disabled), [tabindex]:not([tabindex="-1"])',
-        );
+  const open = (): void => {
+    if (!mobileScreen.matches || mobileDialog.open) return;
 
-        const focusable = Array.from(candidates).filter(element =>
-          element.getClientRects().length > 0
-          && getComputedStyle(element).visibility !== 'hidden',
-        );
+    mobileDialog.append(appSidebar);
+    appSidebar.dataset.open = 'true';
+    mobileDialog.showModal();
+    sidebarToggle.setAttribute('aria-expanded', 'true');
+    sidebarClose?.focus();
+  };
 
-        // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
-        const target = drawerWrapTarget(focusable, document.activeElement as HTMLElement | null, event.shiftKey);
+  mobileDialog.addEventListener('close', () => {
+    restoreDesktopSidebar();
 
-        if (target) {
-          event.preventDefault();
-          target.focus();
-        }
-      }
-    });
+    if (returnFocus) sidebarToggle.focus();
 
+    returnFocus = false;
+  });
+  mobileDialog.addEventListener('cancel', () => {
+    // Native Escape closes the modal and restores focus to its invoker.
+    returnFocus = true;
+  });
+  mobileDialog.addEventListener('click', event => {
+    if (event.target === mobileDialog) close();
+  });
+  appSidebar.addEventListener('click', event => {
+    const target = event.target;
+
+    if (target instanceof Element && target.closest('[data-view], [data-catalog-route], .brand-home-link')) close(false);
+  });
+
+  sidebarToggle.addEventListener('click', open);
+  sidebarClose?.addEventListener('click', () => close());
+  mobileScreen.addEventListener('change', event => {
+    if (!event.matches && mobileDialog.open) close(false);
+  });
 }
 
 async function bootstrap() {

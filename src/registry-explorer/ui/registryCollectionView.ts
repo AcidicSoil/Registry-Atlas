@@ -1,3 +1,4 @@
+import { renderInfiniteScrollControl } from './infiniteScrollControl';
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
 import { catalogRoutePath } from "../core/catalogRoutes";
@@ -77,7 +78,7 @@ export function renderRegistryCollection(
           ? `
             ${renderMeta(result)}
             <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"}">${result.items.map(item => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
-            ${renderPagination(result)}
+            ${renderInfiniteScrollControl(result.page, result.pageCount)}
           `
           : renderEmptyRegistryInventory(options.coverage)}
       </section>
@@ -117,18 +118,6 @@ function renderMeta(result: CatalogQueryResult): string {
   const end = Math.min(result.page * result.pageSize, result.total);
 
   return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
-}
-
-function renderPagination(result: CatalogQueryResult): string {
-  if (result.pageCount <= 1) return "";
-
-  return `
-    <nav class="catalog-pagination" aria-label="Registry component pages">
-      <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>
-      <span>Page ${result.page.toLocaleString()} of ${result.pageCount.toLocaleString()}</span>
-      <button type="button" data-discovery-page="${result.page + 1}" ${result.hasNextPage ? "" : "disabled"}>Next</button>
-    </nav>
-  `;
 }
 
 function legacyCardRouteKind(

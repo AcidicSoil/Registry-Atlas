@@ -70,7 +70,7 @@ describe("renderRegistryDirectory", () => {
     },
   );
 
-  it("renders registry pagination instead of an unbounded card wall", () => {
+  it("renders bounded registry chunks with incremental loading", () => {
     const body = root();
     renderRegistryDirectory(root(), body, {
       ...result(),
@@ -83,9 +83,9 @@ describe("renderRegistryDirectory", () => {
     });
 
     expect(body.innerHTML).toContain("33–64 of 392 registries");
-    expect(body.innerHTML).toContain("Page 2 of 13");
-    expect(body.innerHTML).toContain('data-discovery-page="1"');
-    expect(body.innerHTML).toContain('data-discovery-page="3"');
+    expect(body.innerHTML).toContain('data-scroll-load-more');
+    expect(body.innerHTML).toContain('data-scroll-sentinel');
+    expect(body.innerHTML).not.toContain('catalog-pagination');
   });
 });
 

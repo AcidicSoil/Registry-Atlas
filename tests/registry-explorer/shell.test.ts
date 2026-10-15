@@ -374,12 +374,11 @@ describe('registry explorer shell interactions', () => {
     expect(harness.contentBody.innerHTML).toContain('@delta');
   });
 
-  it('writes component pagination to the shareable URL', () => {
+  it('shows accessible incremental loading instead of numbered pagination', () => {
     const harness = setup('', '/Registry-Atlas/components');
 
-    harness.contentBody.dispatch('click', target({ 'data-discovery-page': '2' }));
-
-    expect(harness.location.search).toBe('?page=2');
+    expect(harness.contentBody.innerHTML).not.toContain('catalog-pagination');
+    expect(harness.location.search).toBe('');
   });
 
   it('retains focus while toggling a Compare option twice', () => {

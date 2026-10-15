@@ -1,3 +1,4 @@
+import { renderInfiniteScrollControl } from './infiniteScrollControl';
 import type { CatalogCompareResult } from "../core/catalogCompare";
 import { escapeHtml } from "./renderSafety";
 import { sourcePageNavigationForItem } from "./sourcePageLink";
@@ -22,7 +23,7 @@ export function renderCatalogCompare(
   bodyRoot.innerHTML = `
     ${renderRegistryPicker(result.selectedRegistryNames, availableRegistryNames, registrySearch)}
     ${result.selectedRegistryNames.length >= 2
-      ? `${renderSummary(result)}${renderTable(result)}${renderPagination(result)}`
+      ? `${renderSummary(result)}${renderTable(result)}${renderInfiniteScrollControl(result.page, result.pageCount)}`
       : renderEmpty(result.selectedRegistryNames.length)}
   `;
 }
@@ -125,18 +126,6 @@ function renderTable(result: CatalogCompareResult): string {
         <tbody>${rows}</tbody>
       </table>
     </div>
-  `;
-}
-
-function renderPagination(result: CatalogCompareResult): string {
-  if (result.pageCount <= 1) return "";
-
-  return `
-    <nav class="catalog-pagination" aria-label="Comparison pages">
-      <button type="button" data-discovery-page="${result.page - 1}" ${result.page > 1 ? "" : "disabled"}>Previous</button>
-      <span>Page ${result.page.toLocaleString()} of ${result.pageCount.toLocaleString()}</span>
-      <button type="button" data-discovery-page="${result.page + 1}" ${result.page < result.pageCount ? "" : "disabled"}>Next</button>
-    </nav>
   `;
 }
 

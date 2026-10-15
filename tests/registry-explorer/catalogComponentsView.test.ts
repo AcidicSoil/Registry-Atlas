@@ -244,7 +244,7 @@ describe("renderCatalogComponents", () => {
     expect(body.innerHTML).toContain('No catalog items are available');
   });
 
-  it("renders truthful pagination over the full query result", () => {
+  it("renders accessible incremental controls over the full query result", () => {
     const body = root();
     renderCatalogComponents(root(), body, {
       ...result([component()]),
@@ -257,9 +257,9 @@ describe("renderCatalogComponents", () => {
     }, { searchTerm: "" });
 
     expect(body.innerHTML).toContain("33–64 of 76,520");
-    expect(body.innerHTML).toContain("Page 2 of 2,392");
-    expect(body.innerHTML).toContain('data-discovery-page="1"');
-    expect(body.innerHTML).toContain('data-discovery-page="3"');
+    expect(body.innerHTML).toContain('data-scroll-load-more');
+    expect(body.innerHTML).toContain('data-scroll-sentinel');
+    expect(body.innerHTML).not.toContain('catalog-pagination');
   });
 });
 

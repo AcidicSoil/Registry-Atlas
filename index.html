@@ -28,7 +28,7 @@
         <a class="setup-header-link" href="/Registry-Atlas/setup">Setup</a>
       </header>
 
-      <button id="sidebarBackdrop" class="sidebar-backdrop" type="button" aria-label="Close navigation" hidden></button>
+      <dialog id="mobileSidebarDialog" class="mobile-sidebar-dialog" aria-label="Registry Atlas navigation"></dialog>
 
       <main>
         <aside id="appSidebar" class="app-sidebar" data-open="false" aria-label="Registry Atlas navigation">
@@ -90,6 +90,7 @@
           <div class="content-header" id="contentHeader" tabindex="-1"></div>
           <div class="content-body">
             <div class="scroll-region" id="contentBody"></div>
+            <div id="catalogScrollStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
           </div>
         </section>
       </main>

@@ -1,0 +1,25 @@
+name: New commit conventions
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  commit-subjects:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate new commits only
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ -z "$BASE_SHA" || "$BASE_SHA" =~ ^0+$ ]]; then
+            node scripts/check-commit-message.mjs --range "HEAD^..HEAD"
+          else
+            node scripts/check-commit-message.mjs --range "$BASE_SHA..HEAD"
+          fi

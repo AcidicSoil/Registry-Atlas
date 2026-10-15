@@ -1,3 +1,4 @@
+import { renderInfiniteScrollControl } from './infiniteScrollControl';
 import type {
   RegistryCatalogCoverage,
   RegistryDirectoryEntry,
@@ -62,7 +63,7 @@ export function renderRegistryDirectory(
       <div class="registry-directory-grid registry-directory-grid-${layout}">
         ${result.entries.map(renderEntry).join("")}
       </div>
-      ${renderPagination(result)}`
+      ${renderInfiniteScrollControl(result.page, result.pageCount)}`
     : '<div class="empty-state"><h2>No registries match this view.</h2><p>Try another search or category.</p></div>';
 }
 
@@ -161,14 +162,3 @@ function renderMeta(result: RegistryDirectoryResult): string {
   return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()} registries</div>`;
 }
 
-function renderPagination(result: RegistryDirectoryResult): string {
-  if (result.pageCount <= 1) return "";
-
-  return `
-    <nav class="catalog-pagination" aria-label="Registry directory pages">
-      <button type="button" data-discovery-page="${result.page - 1}" ${result.hasPreviousPage ? "" : "disabled"}>Previous</button>
-      <span>Page ${result.page.toLocaleString()} of ${result.pageCount.toLocaleString()}</span>
-      <button type="button" data-discovery-page="${result.page + 1}" ${result.hasNextPage ? "" : "disabled"}>Next</button>
-    </nav>
-  `;
-}

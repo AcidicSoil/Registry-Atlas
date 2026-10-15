@@ -55,6 +55,7 @@ import {
 import { configureDefaultCatalogTaxonomy, catalogTaxonomyNodeMap, type CatalogTaxonomy } from '../core/catalogTaxonomy';
 import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
 import { renderCatalogComponents, renderCatalogBrowseControls, type AssetKindToken } from './catalogComponentsView';
+import { markAccessibleFeed } from './infiniteScrollControl';
 import { renderCatalogLanding } from './catalogLandingView';
 import { renderCatalogCollection, renderEvidenceUnavailable } from './catalogCollectionView';
 import {
@@ -185,6 +186,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   roots.searchInput.value = state.searchTerm;
 
+  const browsedHistory = new Map<string, { pages: number; scrollY: number }>();
+  const currentHistoryKey = () => window.location.pathname + window.location.search;
+
   const setState = (
     partial: Partial<AppState>,
     historyMode: 'push' | 'replace' = 'replace',
@@ -192,6 +196,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   ) => {
     const routeChanged = partial.route !== undefined
       && catalogRouteIdentity(partial.route) !== catalogRouteIdentity(state.route);
+
+    if (routeChanged) {
+      browsedHistory.set(currentHistoryKey(), {
+        pages: state.discoveryPage,
+        scrollY: window.scrollY ?? 0,
+      });
+    }
 
     state = { ...state, ...partial };
 
@@ -631,6 +642,81 @@ export function initRegistryExplorer(options: ShellOptions): void {
       '<button class="install-button" type="button" data-setup-cancel-replace>Cancel</button></div>');
   }
 
+  let scrollObserver: IntersectionObserver | null = null;
+  let expandingResults = false;
+
+  function activeResultList(): Element | null {
+    return roots.contentBody.querySelector?.(
+      '.catalog-component-grid, .registry-directory-grid, .catalog-compare-table tbody',
+    ) ?? null;
+  }
+
+  function loadNextPage(): void {
+    if (expandingResults || !roots.contentBody.querySelector?.('[data-scroll-load-more]')) return;
+
+    const previousList = activeResultList();
+
+    if (!previousList) return;
+
+    const earlier = Array.from(previousList.children);
+    const page = state.discoveryPage;
+
+    expandingResults = true;
+    scrollObserver?.disconnect();
+    state.discoveryPage = page + 1;
+    render();
+
+    const nextList = activeResultList();
+
+    if (!nextList) {
+      state.discoveryPage = page;
+      render();
+      expandingResults = false;
+
+      return;
+    }
+
+    nextList.prepend(...earlier);
+
+    announceVisibleResults(nextList);
+    updateFeedSemantics();
+
+    expandingResults = false;
+  }
+
+  function announceVisibleResults(list: Element): void {
+    const totalShown = list.children.length;
+    const meta = roots.contentBody.querySelector?.('.catalog-result-meta');
+
+    if (meta?.textContent) {
+      meta.textContent = meta.textContent.replace(/^Showing [^]*? of /, `Showing 1–${totalShown.toLocaleString()} of `);
+    }
+
+    const status = document.getElementById?.('catalogScrollStatus');
+
+    if (status) status.textContent = `Showing ${totalShown.toLocaleString()} items`;
+  }
+
+  function updateFeedSemantics(): void {
+    const list = activeResultList();
+    const label = roots.contentBody.querySelector?.('.catalog-result-meta')?.textContent ?? '';
+
+    markAccessibleFeed(list, label);
+  }
+
+  function observeNextPage(): void {
+    scrollObserver?.disconnect();
+
+    const sentinel = roots.contentBody.querySelector?.('[data-scroll-sentinel]');
+
+    if (!sentinel || !('IntersectionObserver' in window)) return;
+
+    scrollObserver = new IntersectionObserver(entries => {
+      if (entries.some(entry => entry.isIntersecting)) loadNextPage();
+    }, { rootMargin: '250px 0px' });
+    scrollObserver.observe(sentinel);
+  }
+
   function render(): void {
     try {
       renderTabs();
@@ -641,6 +727,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
       renderRouteContent(queued);
 
       renderHeaderDecorations();
+      updateFeedSemantics();
+      observeNextPage();
     } catch (error) {
       console.error('Registry Explorer: Render failed', error);
       roots.contentBody.innerHTML = '<div class="empty-state">Something went wrong while rendering this view.</div>';
@@ -1101,6 +1189,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
       copyFeedback: null,
       discoveryPage: 1,
     });
+  });
+
+  roots.contentBody.addEventListener('click', event => {
+    // SAFETY: This listener is attached to the owned content root; delegated clicks target its own controls.
+    const target = event.target as HTMLElement | null;
+
+    if (target?.closest?.('[data-scroll-load-more]')) loadNextPage();
   });
 
   roots.contentBody.addEventListener('input', event => {
@@ -1652,6 +1747,19 @@ export function initRegistryExplorer(options: ShellOptions): void {
     };
     roots.searchInput.value = state.searchTerm;
     render();
+
+    const snapshot = browsedHistory.get(currentHistoryKey());
+
+    if (snapshot && state.discoveryPage === 1) {
+      for (let page = 1; page < snapshot.pages; page += 1) {
+        if (!roots.contentBody.querySelector?.('[data-scroll-load-more]')) break;
+        loadNextPage();
+      }
+
+      window.requestAnimationFrame?.(() => {
+        window.scrollTo?.({ top: snapshot.scrollY, behavior: 'instant' });
+      });
+    }
   });
 
   syncUrlState(state);

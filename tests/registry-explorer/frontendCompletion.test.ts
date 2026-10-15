@@ -22,7 +22,7 @@ describe('frontend completion contract', () => {
 
   it('runs the dependency security audit as part of normal verification', () => {
     const pkg = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
-    expect(pkg.scripts['audit:dependencies']).toBe('pnpm audit --audit-level moderate');
+    expect(pkg.scripts['audit:dependencies']).toBe('pnpm audit --audit-level low');
     expect(pkg.scripts.verify).toContain('pnpm audit:dependencies &&');
   });
 

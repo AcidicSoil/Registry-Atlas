@@ -2416,7 +2416,6 @@ body {
 
 /* Sidebar-first shell correction */
 .mobile-app-header,
-.sidebar-backdrop,
 .sidebar-close {
   display: none;
 }
@@ -2669,19 +2668,7 @@ aside:has(.aside-inner:empty) {
     flex: 0 0 auto;
   }
 
-  .sidebar-backdrop {
-    position: fixed;
-    z-index: 60;
-    inset: 0;
-    display: block;
-    border: 0;
-    background: rgba(0, 0, 0, 0.64);
-    cursor: pointer;
-  }
 
-  .sidebar-backdrop[hidden] {
-    display: none;
-  }
 }
 
 .catalog-component-open { min-height: 100%; text-decoration: none; }
@@ -4228,4 +4215,71 @@ main {
 
 @media (hover: none), (max-width: 639px) {
   .catalog-link-preview { display: none; }
+}
+
+
+/* Native mobile navigation: the dialog owns modal semantics, focus and its backdrop. */
+.mobile-sidebar-dialog {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .mobile-sidebar-dialog[open] {
+    position: fixed;
+    inset: 0 auto 0 0;
+    display: block;
+    width: min(308px, calc(100vw - 32px));
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: var(--background);
+    box-shadow: 22px 0 48px rgba(0, 0, 0, 0.42);
+  }
+
+  .mobile-sidebar-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.64);
+  }
+
+  .mobile-sidebar-dialog .app-sidebar {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: 100%;
+    padding: 0 8px;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+
+/* Progressive results: visible keyboard fallback plus automatic viewport sentinel. */
+.catalog-scroll-loader {
+  display: grid;
+  min-height: 72px;
+  place-items: center;
+  gap: 6px;
+  padding: 16px 0 28px;
+}
+
+.catalog-load-more {
+  padding: 10px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background: var(--card);
+  color: var(--foreground);
+  cursor: pointer;
+}
+
+.catalog-load-more:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+[data-scroll-sentinel] {
+  width: 100%;
+  height: 1px;
 }
