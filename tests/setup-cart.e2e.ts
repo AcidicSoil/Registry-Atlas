@@ -4,6 +4,11 @@ import { expect } from 'e2e';
 test('add a component and review the non-payment setup', async ({ app, screen, browser }) => {
   await app.open('/Registry-Atlas/@logoforge/components/dotnet');
 
+  // The full catalog hydrates asynchronously. Wait for the actual detail heading,
+  // rather than inspecting a snapshot captured during initial loading.
+  await expect.poll(() => browser.evaluate(() =>
+    document.querySelector('#contentHeader h1')?.textContent?.trim() ?? ''
+  ), { timeout: 20_000 }).toBe('.NET logo');
   await expect(screen.getByRole('heading', '.NET logo')).toBeVisible();
   await screen.getByRole('button', '+ Add to setup').tap();
 

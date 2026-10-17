@@ -802,17 +802,19 @@
       "kind": "rule",
       "sourceDigest": "1b9481a424ad4f8274bd6abb770f81ac2188ced505d3985fb0e3b3bb2f710271",
       "applicability": "applicable",
-      "compliance": "remediation-required",
-      "reason": "The mobile menu currently uses an aside with aria-modal and a manually managed Tab focus trap. The rule explicitly requires native HTML dialog/showModal for modal semantics.",
+      "compliance": "compliant",
+      "reason": "The former custom mobile modal is replaced by the native dialog and showModal; current E2E verifies modal activation and dismiss/navigation. Collections uses native details.",
       "evidence": [
         "index.html",
         "src/registry-explorer/entry.ts",
-        "src/registry-explorer/ui/mobileSidebarFocus.ts"
+        "tests-mobile/native-sidebar.e2e.ts",
+        ".design/standards-review-2026-10-17.md"
       ],
       "evidenceDigests": {
         "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
         "src/registry-explorer/entry.ts": "ed0fe0f8886910088fb40e583101ee8cfa9a87d85564e59838c58e550cda4656",
-        "src/registry-explorer/ui/mobileSidebarFocus.ts": "e4753de246db60b17b924f0a63928e70a8d539af1d4a04997851ff3cc3998624"
+        "tests-mobile/native-sidebar.e2e.ts": "49f6fb4aa72f1dd96b584a93973cbb2bf6cbbe6f5a4f39e8beb931711a2bf982",
+        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
       },
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "1b9481a424ad4f8274bd6abb770f81ac2188ced505d3985fb0e3b3bb2f710271",
@@ -3299,7 +3301,7 @@
       "sourceDigest": "2a2623245058bb9d7b085b373deaee95cd1c2e9f172f6b627a62ba4d2b60f943",
       "applicability": "applicable",
       "compliance": "remediation-required",
-      "reason": "37 of 282 historical Git commit subjects fail the documented conventional commit pattern. Rewriting shared main history is not appropriate.",
+      "reason": "Current commit-message validator rejects 83 of 308 existing non-merge commit subjects, including the latest pushed main commit because its subject exceeds 71 characters. New commits are gated by GitHub Actions; rewriting published history is not authorized.",
       "evidence": [
         "package.json",
         ".github/workflows/deploy.yml"
@@ -6582,23 +6584,23 @@
       "kind": "rule",
       "sourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
       "applicability": "applicable",
-      "compliance": "remediation-required",
-      "reason": "Confirmed remaining numbered pagination in six user-facing routes; incremental scrolling has not been implemented.",
+      "compliance": "compliant",
+      "reason": "Incremental IntersectionObserver loading now has a visible Load more fallback, aria-live status, feed item metadata and sessionStorage-backed Back scroll position. Browser and unit assertions cover these behaviors.",
       "evidence": [
-        "src/registry-explorer/ui/catalogComponentsView.ts",
-        "src/registry-explorer/ui/registryDirectoryView.ts",
-        "src/registry-explorer/ui/registryCollectionView.ts",
-        "src/registry-explorer/ui/catalogCollectionView.ts",
-        "src/registry-explorer/ui/catalogCompareView.ts",
-        "src/registry-explorer/ui/catalogAuthorsView.ts"
+        "src/registry-explorer/ui/infiniteScrollControl.ts",
+        "src/registry-explorer/ui/shell.ts",
+        "src/registry-explorer/ui/browseHistory.ts",
+        "tests/infinite-scroll.e2e.ts",
+        "tests/registry-explorer/browseHistory.test.ts",
+        ".design/standards-review-2026-10-17.md"
       ],
       "evidenceDigests": {
-        "src/registry-explorer/ui/catalogComponentsView.ts": "b3e90d51d577aede1ad5b366f6ab8480192929346330568299a62d6b1e768f3f",
-        "src/registry-explorer/ui/registryDirectoryView.ts": "ebb79cf1a89107c2890ec99d3186a33603149b197c726ba3d05fb016078e6a03",
-        "src/registry-explorer/ui/registryCollectionView.ts": "ad51ec56ed2143bbce44891a9c61cc7ad558dc30a16945b2d0e68c8315c16ad0",
-        "src/registry-explorer/ui/catalogCollectionView.ts": "a164628dd1e73a08a38170105aa71a8b7a0f5618420f53a2428bb72e75b04c16",
-        "src/registry-explorer/ui/catalogCompareView.ts": "ebbe2e17cdc9813defa16db00fa23540114ff3e8bdd47157c94b7896137cfc92",
-        "src/registry-explorer/ui/catalogAuthorsView.ts": "355b48e20554c16c70a644724a0829555d2d386c2ebb63ab6dc10baf3c657057"
+        "src/registry-explorer/ui/infiniteScrollControl.ts": "62750aabca7a214f6152bc2161108708e539508538bdb8894d66ff92552ea8bf",
+        "src/registry-explorer/ui/shell.ts": "fb1678c20a58af87186f71c456f5c9ac2b3fa918d7d1abe227f6335c5ae8df16",
+        "src/registry-explorer/ui/browseHistory.ts": "87960944f9fb5ba4616f893e8c55013684dbae04eb4f610a05d12c9c71e5d03a",
+        "tests/infinite-scroll.e2e.ts": "6de18f50f8d532f3b6af61c7ca416bbebd009b7384b77d1432c74b78cef968cd",
+        "tests/registry-explorer/browseHistory.test.ts": "ddec38bf918011b3cb59ea7d13922a4968ef5603312714dda44281b84b10f0d9",
+        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
       },
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
@@ -12342,7 +12344,7 @@
       "sourceDigest": "71ad0a6b21e26680f9fe7181cd4e984369789494cd8253e94b6c1094fc9bccb0",
       "applicability": "applicable",
       "compliance": "remediation-required",
-      "reason": "A remaining low-severity esbuild advisory affects Windows dev-server builds; release SBOM and provenance/attestation checks are not established. Moderate/high advisory gating was added.",
+      "reason": "pnpm audit --audit-level low now reports zero known vulnerabilities and the production build emits a 553-component SBOM. Release/publisher attestation and provenance verification are still unconfigured because database-backed publishing is paused; this remains remediation-required.",
       "evidence": [
         "package.json",
         "pnpm-lock.yaml",
@@ -14590,13 +14592,27 @@
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
-      "applicability": "review-required",
-      "compliance": "unevaluated",
-      "reason": "",
-      "evidence": [],
-      "evidenceDigests": {},
-      "stackFingerprint": "",
-      "reviewedSourceDigest": "",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Reviewed all existing shell surfaces: primary sidebar, main content and registry-summary auxiliary panel. Own scrolling, responsive modal, pointer/keyboard boundary resizing, independent collapse/restore and sidebar width persistence have current source and browser evidence.",
+      "evidence": [
+        "src/registry-explorer/ui/appShellPanels.ts",
+        "src/registry-explorer/ui/registryProfilePanel.ts",
+        "public/styles/registry-explorer.css",
+        ".design/frontend-work-brief.md",
+        "tests/app-shell-panels.e2e.ts",
+        ".design/standards-review-2026-10-17.md"
+      ],
+      "evidenceDigests": {
+        "src/registry-explorer/ui/appShellPanels.ts": "0bde6fcb3bb47827fb55a9946afa32ba134bef2473fe622c8a61c90c989c7516",
+        "src/registry-explorer/ui/registryProfilePanel.ts": "ef59f11a82bb29cb1f0566be0018c673a6b66c87ceb0276b0d7ea6eb3f0595a0",
+        "public/styles/registry-explorer.css": "5b16ee2fcd793f41e700a987a817b359cc2f09756a6190ebd7f3c514f7016435",
+        ".design/frontend-work-brief.md": "f1f55307c30da65d47cb34576fd193e81427cbf7bb468fc278bdd5b71ba56249",
+        "tests/app-shell-panels.e2e.ts": "1160c4650ce1d464bd951f42a21e605034a79b8814c53cb4a7bd72c4a5cd78d4",
+        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
+      },
+      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
+      "reviewedSourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
       "candidate": "candidate"
     },
     "policy:anti-slop-typescript": {
@@ -14646,13 +14662,25 @@
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "804512daba88a678a2c1b464eff6547ac589dc8f8c5c1874cecf3aee173d8dbb",
-      "applicability": "review-required",
-      "compliance": "unevaluated",
-      "reason": "",
-      "evidence": [],
-      "evidenceDigests": {},
-      "stackFingerprint": "",
-      "reviewedSourceDigest": "",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Project-owned favicon assets resolve under the production Vite base URL; actual managed Chromium tab capture shows application icon, metadata and MIME verified in E2E.",
+      "evidence": [
+        "index.html",
+        "public/registry-atlas/favicon-32x32.png",
+        "tests/app-shell-panels.e2e.ts",
+        ".design/evidence/app-shell/ppm-browser-tab-favicon.png",
+        ".design/standards-review-2026-10-17.md"
+      ],
+      "evidenceDigests": {
+        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
+        "public/registry-atlas/favicon-32x32.png": "7ad50f4cd0e1e0a5eccd1190fe410f25cfea0bd7342c06ab5dd6aed986335be1",
+        "tests/app-shell-panels.e2e.ts": "1160c4650ce1d464bd951f42a21e605034a79b8814c53cb4a7bd72c4a5cd78d4",
+        ".design/evidence/app-shell/ppm-browser-tab-favicon.png": "180335487d1e0981a94e6116f83590c5ba41953b05a7b7a86b72ac6f296cad48",
+        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
+      },
+      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
+      "reviewedSourceDigest": "804512daba88a678a2c1b464eff6547ac589dc8f8c5c1874cecf3aee173d8dbb",
       "candidate": "candidate"
     },
     "policy:cccc-complexity": {
@@ -14686,13 +14714,27 @@
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
-      "applicability": "review-required",
-      "compliance": "unevaluated",
-      "reason": "",
-      "evidence": [],
-      "evidenceDigests": {},
-      "stackFingerprint": "",
-      "reviewedSourceDigest": "",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Reviewed current nested Collections and primary catalog routes: native details disclosure, independent desktop collapse/reopen, and native mobile modal navigation. Desktop and mobile browser journey evidence is documented.",
+      "evidence": [
+        "index.html",
+        "src/registry-explorer/entry.ts",
+        "tests-mobile/native-sidebar.e2e.ts",
+        ".design/frontend-work-brief.md",
+        "tests/app-shell-panels.e2e.ts",
+        ".design/standards-review-2026-10-17.md"
+      ],
+      "evidenceDigests": {
+        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
+        "src/registry-explorer/entry.ts": "ed0fe0f8886910088fb40e583101ee8cfa9a87d85564e59838c58e550cda4656",
+        "tests-mobile/native-sidebar.e2e.ts": "49f6fb4aa72f1dd96b584a93973cbb2bf6cbbe6f5a4f39e8beb931711a2bf982",
+        ".design/frontend-work-brief.md": "f1f55307c30da65d47cb34576fd193e81427cbf7bb468fc278bdd5b71ba56249",
+        "tests/app-shell-panels.e2e.ts": "1160c4650ce1d464bd951f42a21e605034a79b8814c53cb4a7bd72c4a5cd78d4",
+        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
+      },
+      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
+      "reviewedSourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
       "candidate": "candidate"
     },
     "policy:dependency-cruiser": {
@@ -14753,13 +14795,23 @@
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "f046b68e4d2839f781d09cd38b18d8964d5f50b3eca061404e427b15d01f0b67",
-      "applicability": "review-required",
-      "compliance": "unevaluated",
-      "reason": "",
-      "evidence": [],
-      "evidenceDigests": {},
-      "stackFingerprint": "",
-      "reviewedSourceDigest": "",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Both brand links use the actual router base path and browser E2E returns home from Compare, preserving native link semantics.",
+      "evidence": [
+        "index.html",
+        "tests/registry-explorer/appShellBranding.test.ts",
+        "tests/app-shell-panels.e2e.ts",
+        ".design/standards-review-2026-10-17.md"
+      ],
+      "evidenceDigests": {
+        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
+        "tests/registry-explorer/appShellBranding.test.ts": "34bcce85b62487af9439ba33619f302ed5e9adbf6bd6ccee0d246ce270d61f18",
+        "tests/app-shell-panels.e2e.ts": "1160c4650ce1d464bd951f42a21e605034a79b8814c53cb4a7bd72c4a5cd78d4",
+        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
+      },
+      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
+      "reviewedSourceDigest": "f046b68e4d2839f781d09cd38b18d8964d5f50b3eca061404e427b15d01f0b67",
       "candidate": "candidate"
     },
     "policy:react-doctor": {
@@ -14791,21 +14843,46 @@
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "5d92ef6da113057b84b143563c7f71e381439b19f5a723ad6ed3450c3b049d30",
-      "applicability": "applicable",
+      "applicability": "not-applicable",
       "compliance": "unevaluated",
-      "reason": "React Grab is installed and imported in development via index.html; evaluate whether its inspection capabilities actually function with the owned DOM shell before claiming the development-tool standard.",
+      "reason": "Reviewed actual source: first-party Registry Atlas is a Vite native DOM shell, not a React root. The React/React Grab package dependencies and dev import alone cannot give React component source mapping for this UI. Not applicable to this first-party DOM frontend; do not claim functional verification.",
       "evidence": [
-        "package.json",
+        "DESIGN.md",
+        "src/registry-explorer/entry.ts",
         "index.html",
-        "src/registry-explorer/entry.ts"
+        "package.json"
       ],
       "evidenceDigests": {
-        "package.json": "cae8ebe50f6a0e60662843c6a7f592db389451675f73b806f7126aed3b5b8d83",
+        "DESIGN.md": "a62caa4a8ab5aa3eec9c335928fc4feee17f11ac2e1bbc040065cd042353a4e8",
+        "src/registry-explorer/entry.ts": "ed0fe0f8886910088fb40e583101ee8cfa9a87d85564e59838c58e550cda4656",
         "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
-        "src/registry-explorer/entry.ts": "ed0fe0f8886910088fb40e583101ee8cfa9a87d85564e59838c58e550cda4656"
+        "package.json": "cae8ebe50f6a0e60662843c6a7f592db389451675f73b806f7126aed3b5b8d83"
       },
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "5d92ef6da113057b84b143563c7f71e381439b19f5a723ad6ed3450c3b049d30",
+      "candidate": "candidate"
+    },
+    "policy:shared-app-shell-interactions": {
+      "domain": "frontend",
+      "kind": "policy",
+      "sourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
+      "applicability": "applicable",
+      "compliance": "unevaluated",
+      "reason": "Reviewed latest pinned PPM Workbench Shell contract against Registry Atlas static catalog UI. Required chat/model/composer/tabbed-workbench/complex settings surfaces are absent; full parity would be a separate product-scope migration requiring user-approved implementation plan. Review outcome applicable/pending work, not compliant or excepted.",
+      "evidence": [
+        "DESIGN.md",
+        "index.html",
+        ".design/frontend-work-brief.md",
+        ".design/workbench-shell-gap-2026-10-17.md"
+      ],
+      "evidenceDigests": {
+        "DESIGN.md": "a62caa4a8ab5aa3eec9c335928fc4feee17f11ac2e1bbc040065cd042353a4e8",
+        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
+        ".design/frontend-work-brief.md": "f1f55307c30da65d47cb34576fd193e81427cbf7bb468fc278bdd5b71ba56249",
+        ".design/workbench-shell-gap-2026-10-17.md": "2f5c051a75bc8f4f5e4f0cb08d6414a4cfe8f506d2ce1ab54cf40186cf7486e6"
+      },
+      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
+      "reviewedSourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
       "candidate": "candidate"
     },
     "policy:voidzero-toolchain": {
@@ -14890,21 +14967,22 @@
     {
       "id": "finding-custom-mobile-modal",
       "standard": "orchestkit:src/skills/accessibility/rules/wcag-native-html-first.md",
-      "status": "open",
+      "status": "resolved",
       "proposalId": "proposal-native-mobile-dialog",
       "description": "The mobile menu currently uses an aside with aria-modal and a manually managed Tab focus trap. The rule explicitly requires native HTML dialog/showModal for modal semantics.",
       "evidence": [
         "index.html",
         "src/registry-explorer/entry.ts",
         "src/registry-explorer/ui/mobileSidebarFocus.ts"
-      ]
+      ],
+      "resolution": "Verified current native HTML/accessible infinite-scroll implementation in source, unit tests and E2E browser evidence; previous description refers to replaced functionality."
     },
     {
       "id": "finding-supply-chain-provenance",
       "standard": "orchestkit:src/skills/security-patterns/rules/supply-chain.md",
       "status": "open",
       "proposalId": "proposal-supply-chain-provenance",
-      "description": "A remaining low-severity esbuild advisory affects Windows dev-server builds; release SBOM and provenance/attestation checks are not established. Moderate/high advisory gating was added.",
+      "description": "pnpm audit --audit-level low now reports zero known vulnerabilities and the production build emits a 553-component SBOM. Release/publisher attestation and provenance verification are still unconfigured because database-backed publishing is paused; this remains remediation-required.",
       "evidence": [
         "package.json",
         "pnpm-lock.yaml",
@@ -14916,7 +14994,7 @@
       "standard": "orchestkit:src/skills/commit/rules/conventional-format.md",
       "status": "open",
       "proposalId": "proposal-conventional-commit-gate",
-      "description": "37 of 282 historical Git commit subjects fail the documented conventional commit pattern. Rewriting shared main history is not appropriate.",
+      "description": "Current commit-message validator rejects 83 of 308 existing non-merge commit subjects, including the latest pushed main commit because its subject exceeds 71 characters. New commits are gated by GitHub Actions; rewriting published history is not authorized.",
       "evidence": [
         "package.json",
         ".github/workflows/deploy.yml"
@@ -14938,7 +15016,7 @@
     {
       "id": "finding-atlas-pagination-still-visible",
       "standard": "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md",
-      "status": "open",
+      "status": "resolved",
       "proposalId": "proposal-atlas-scroll-inventory",
       "description": "Six rendered views still use catalog-pagination and data-discovery-page; incremental scroll loader is absent.",
       "evidence": [
@@ -14948,7 +15026,8 @@
         "src/registry-explorer/ui/catalogCollectionView.ts",
         "src/registry-explorer/ui/catalogCompareView.ts",
         "src/registry-explorer/ui/catalogAuthorsView.ts"
-      ]
+      ],
+      "resolution": "Verified current native HTML/accessible infinite-scroll implementation in source, unit tests and E2E browser evidence; previous description refers to replaced functionality."
     },
     {
       "id": "finding-existing-complexity-violations",
@@ -15033,5 +15112,5 @@
       "status": "draft"
     }
   ],
-  "updatedAt": "2026-10-15T05:47:39+00:00"
+  "updatedAt": "2026-10-17T08:30:42+00:00"
 }

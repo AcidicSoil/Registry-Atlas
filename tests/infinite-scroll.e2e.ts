@@ -63,12 +63,36 @@ test('back navigation restores previously appended catalog results', async ({ ap
   await expect.poll(count).toBeGreaterThan(32);
   const expandedCount = await count();
 
+  const feedIsAccessible = await browser.evaluate(() => {
+    const list = document.querySelector('.catalog-component-grid');
+    const first = list?.firstElementChild;
+
+    return list?.getAttribute('role') === 'feed'
+      && first?.getAttribute('aria-posinset') === '1'
+      && Number(first?.getAttribute('aria-setsize')) > 50
+      && !!document.querySelector('[data-scroll-load-more]');
+  });
+
+  expect(feedIsAccessible).toBe(true);
+
   await browser.evaluate(() => {
+    const content = document.querySelector<HTMLElement>('.content-body');
+
+    if (content) content.scrollTop = 260;
+
     document.querySelector<HTMLAnchorElement>('.catalog-component-grid .catalog-component-open')?.click();
 
     return true;
   });
   await expect.poll(() => browser.evaluate(() => location.pathname.includes('/components/') && location.pathname.includes('@'))).toBe(true);
+
+  const savedPosition = await browser.evaluate(() => {
+    const snapshot = sessionStorage.getItem('registry-atlas.browse.v1:/Registry-Atlas/components');
+
+    return snapshot ? Number(JSON.parse(snapshot).scrollY) : -1;
+  });
+
+  expect(savedPosition).toBeGreaterThanOrEqual(240);
 
   await browser.evaluate(() => {
     history.back();
@@ -77,4 +101,7 @@ test('back navigation restores previously appended catalog results', async ({ ap
   });
   await expect.poll(() => browser.evaluate(() => location.pathname === '/Registry-Atlas/components')).toBe(true);
   await expect.poll(count).toBeGreaterThan(expandedCount - 1);
+  await expect.poll(() => browser.evaluate(() =>
+    document.querySelector<HTMLElement>('.content-body')?.scrollTop ?? -1
+  )).toBeGreaterThanOrEqual(240);
 });
