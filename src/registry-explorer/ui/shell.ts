@@ -188,6 +188,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
   roots.searchInput.value = state.searchTerm;
 
   const browsedHistory = new Map<string, BrowseSnapshot>();
+  const expandedCategoryIds = new Set<string>();
+  const collapsedCategoryIds = new Set<string>();
   const currentHistoryKey = () => window.location.pathname + window.location.search;
 
   function rememberBrowseRoute(): void {
@@ -453,6 +455,8 @@ export function initRegistryExplorer(options: ShellOptions): void {
       assetKinds: state.catalogAssetKinds,
     }, taxonomy, {
       showRegistrySort: !fixedRegistry,
+      expandedCategoryIds: [...expandedCategoryIds],
+      collapsedCategoryIds: [...collapsedCategoryIds],
       assetCounts: route.kind === 'registry' || route.kind === 'registry-assets'
         ? registryAssetCounts.get(route.namespace) : undefined,
     });
@@ -1269,8 +1273,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
     image.closest('.registry-icon')?.setAttribute('data-registry-icon-failed', 'true');
   }
 
-  // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
-  roots.aside.addEventListener('click', event => handleClick(event.target as HTMLElement));
+  // Native details toggle events are asynchronous. Record intent synchronously
+  // before a filter or sort action replaces the sidebar DOM.
+  roots.aside.addEventListener('click', event => {
+    // SAFETY: The aside owns all interactive targets passed to handleClick.
+    const target = event.target as HTMLElement;
+    const summary = target.closest('summary.sidebar-taxonomy-summary');
+
+    if (summary) {
+      const group = summary.parentElement;
+
+      if (group instanceof HTMLDetailsElement) {
+        const id = group.getAttribute('data-sidebar-taxonomy-group');
+
+        if (id) {
+          if (group.open) {
+            expandedCategoryIds.delete(id);
+            collapsedCategoryIds.add(id);
+          } else {
+            expandedCategoryIds.add(id);
+            collapsedCategoryIds.delete(id);
+          }
+        }
+      }
+    }
+
+    // SAFETY: The app-owned sidebar dispatches clicks from its rendered controls.
+    handleClick(event.target as HTMLElement);
+  });
   // SAFETY: The controlled layout host contains the same trusted browse controls as the sidebar.
   roots.sidebarLayout?.addEventListener('click', event => handleClick(event.target as HTMLElement));
   roots.contentHeader.addEventListener('click', event => {

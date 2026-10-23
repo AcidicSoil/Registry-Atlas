@@ -63,7 +63,32 @@ describe('catalog browse sidebar', () => {
     expect(html).not.toContain('<select');
     expect(html).not.toContain('type="checkbox"');
     expect(html).not.toContain('type="radio"');
-    expect(html).not.toContain('<details');
+    expect(html).toContain('<details');
+    expect(html).toContain('All Application');
+    expect(html).toContain('data-catalog-canonical-value="application/app-shell"');
+  });
+
+  it('opens a category without selecting it, with nested choices in the group', () => {
+    const html = renderCatalogSidebarNavigation(facets, {
+      canonicalIds: [], registryNames: [], kind: 'components', sort: 'name', access: [],
+    }, taxonomy, { expandedCategoryIds: ['application'] });
+
+    expect(html).toMatch(/data-sidebar-taxonomy-group="application"[^>]*open/);
+    expect(html).toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(html).toContain('data-catalog-canonical-value="application"');
+    expect(html).toMatch(/data-sidebar-taxonomy-group="ai"[^>]*>/);
+    expect(html).not.toMatch(/data-sidebar-taxonomy-group="ai"[^>]*open/);
+    expect(html).toMatch(/data-catalog-canonical-value="application"[\s\S]*?aria-pressed="false"/);
+  });
+
+  it('preserves explicit collapsed state even when a child is selected', () => {
+    const html = renderCatalogSidebarNavigation(facets, {
+      canonicalIds: ['application/app-shell'], registryNames: [], kind: 'components',
+      sort: 'name', access: [],
+    }, taxonomy, { collapsedCategoryIds: ['application'] });
+
+    expect(html).toMatch(/data-sidebar-taxonomy-group="application"[^>]*>/);
+    expect(html).not.toMatch(/data-sidebar-taxonomy-group="application"[^>]*open/);
   });
 
   it('keeps high-cardinality registry discovery in the single global search instead of a second selector', () => {
@@ -97,7 +122,9 @@ describe('catalog browse sidebar', () => {
     expect(html).toContain('data-catalog-canonical-value="application"');
     expect(html).toMatch(/data-catalog-canonical-value="application"[\s\S]*?aria-pressed="true"/);
     expect(html).toMatch(/>Application<[\s\S]*>4</);
-    expect(html).not.toContain('data-catalog-canonical-value="application/app-shell"');
-    expect(html).not.toContain('>App Shell<');
+    expect(html).toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(html).toContain('App Shell');
+    expect(html).toContain('data-sidebar-taxonomy-group="application"');
+    expect(html).toMatch(/data-sidebar-taxonomy-group="application"[^>]*open/);
   });
 });

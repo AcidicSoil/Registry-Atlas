@@ -91,7 +91,7 @@ describe('registry explorer shell interactions', () => {
   it('routes top-level category rows into shareable first-class block filters', () => {
     const harness=setup('', '/Registry-Atlas/blocks', undefined, undefined, canonicalCatalogItems());
     expect(harness.aside.innerHTML).toContain('data-catalog-canonical-value="application"');
-    expect(harness.aside.innerHTML).not.toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(harness.aside.innerHTML).toContain('data-catalog-canonical-value="application/app-shell"');
 
     harness.aside.dispatch('click',target({
       'data-catalog-canonical-value':'application',
@@ -166,7 +166,7 @@ describe('registry explorer shell interactions', () => {
       canonicalCatalogItems(),
     );
 
-    expect(harness.aside.innerHTML).toMatch(/data-catalog-canonical-value="application"[\s\S]*?aria-pressed="true"/);
+    expect(harness.aside.innerHTML).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*?aria-pressed="true"/);
     expect(harness.aside.innerHTML).toMatch(/data-catalog-access-value="free"[\s\S]*?aria-pressed="true"/);
     expect(harness.contentBody.innerHTML).toContain('Access: Free');
     expect(harness.contentBody.innerHTML).toContain('Free App Shell');
@@ -178,7 +178,7 @@ describe('registry explorer shell interactions', () => {
     const harness=setup('', '/Registry-Atlas/@delta', undefined, undefined, canonicalCatalogItems());
     expect(harness.aside.innerHTML).toContain('data-catalog-canonical-value="application"');
     expect(harness.aside.innerHTML).toContain('>Application<');
-    expect(harness.aside.innerHTML).not.toContain('>App Shell<');
+    expect(harness.aside.innerHTML).toContain('>App Shell<');
     expect(harness.contentBody.innerHTML).not.toContain('data-catalog-category-value="app-shell"');
   });
 

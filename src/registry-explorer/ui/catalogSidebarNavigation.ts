@@ -21,6 +21,8 @@ export interface CatalogSidebarNavigationOptions {
   showAccess?: boolean;
   showRegistrySort?: boolean;
   assetCounts?: Readonly<Partial<Record<CatalogAssetKind, number>>>;
+  expandedCategoryIds?: readonly string[];
+  collapsedCategoryIds?: readonly string[];
 }
 
 const ASSET_KIND_LABELS: Readonly<Record<CatalogAssetKind, string>> = {
@@ -97,38 +99,79 @@ function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): s
   </section>`;
 }
 
-function topLevelCanonical(
-  nodes: readonly CatalogTaxonomyNode[],
+function isCanonicalNodeRelevant(
+  child: CatalogTaxonomyNode,
   counts: ReadonlyMap<string, number>,
-): Array<{ id: string; label: string; count: number }> {
-  return nodes.flatMap(node => {
-    const count = counts.get(node.id) ?? 0;
+  selected: string,
+): boolean {
+  return (counts.get(child.id) ?? 0) > 0
+    || selected === child.id || selected.startsWith(child.id + '/');
+}
 
-    return count > 0 ? [{ id: node.id, label: node.label, count }] : [];
-  });
+function renderCanonicalNode(
+  node: CatalogTaxonomyNode,
+  counts: ReadonlyMap<string, number>,
+  selected: string,
+  expandedIds: readonly string[],
+  collapsedIds: readonly string[],
+): string {
+  const count = counts.get(node.id) ?? 0;
+
+  const children = node.children.filter(child => isCanonicalNodeRelevant(child, counts, selected));
+
+  if (!isCanonicalNodeRelevant(node, counts, selected) && !children.length) return '';
+
+  if (!children.length) {
+    return rowButton({
+      attribute: 'data-catalog-canonical-value',
+      value: node.id,
+      label: node.label,
+      count,
+      selected: selected === node.id,
+      icon: node.id,
+    });
+  }
+
+  const active = selected === node.id || selected.startsWith(node.id + '/');
+  const expanded = !collapsedIds.includes(node.id) && (active || expandedIds.includes(node.id));
+
+  return `<details class="sidebar-taxonomy-group" data-sidebar-taxonomy-group="${escapeHtml(node.id)}"${expanded ? ' open' : ''}>
+    <summary class="sidebar-nav-row sidebar-taxonomy-summary${active ? ' sidebar-taxonomy-active' : ''}">
+      <span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon(node.id)}</span>
+      <span class="sidebar-nav-row-label">${escapeHtml(node.label)}</span>
+      <span class="sidebar-nav-row-count">${count.toLocaleString()}</span>
+      <span class="sidebar-taxonomy-chevron" aria-hidden="true"></span>
+    </summary>
+    <div class="sidebar-taxonomy-children">
+      ${rowButton({
+        attribute: 'data-catalog-canonical-value',
+        value: node.id,
+        label: 'All ' + node.label,
+        selected: selected === node.id,
+      })}
+      ${children.map(child => renderCanonicalNode(child, counts, selected, expandedIds, collapsedIds)).join('')}
+    </div>
+  </details>`;
 }
 
 function renderCanonical(
   facets: CatalogFacetSummary,
   state: SidebarNavigationState,
   taxonomy: CatalogTaxonomy,
+  expandedIds: readonly string[],
+  collapsedIds: readonly string[],
 ): string {
   const counts = new Map(facets.canonical.map(item => [item.value, item.count]));
-  const rows = topLevelCanonical(taxonomy.roots, counts);
+  const selected = state.canonicalIds[0] ?? '';
+
+  const rows = taxonomy.roots.map(node => renderCanonicalNode(node, counts, selected, expandedIds, collapsedIds))
+    .filter(Boolean);
 
   if (!rows.length) return '';
-  const selected = state.canonicalIds[0] ?? '';
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-categories-heading">
     <p class="sidebar-nav-section-label" id="catalog-categories-heading">Categories</p>
-    ${rows.map(row => rowButton({
-      attribute: 'data-catalog-canonical-value',
-      value: row.id,
-      label: row.label,
-      count: row.count,
-      selected: selected === row.id || selected.startsWith(row.id + '/'),
-      icon: row.id,
-    })).join('')}
+    ${rows.join('')}
   </section>`;
 }
 
@@ -196,7 +239,7 @@ export function renderCatalogSidebarNavigation(
 
   return `<nav class="sidebar-browse-navigation" aria-label="Browse catalog">
     ${renderSort(state, showRegistrySort)}
-    ${showCanonical ? renderCanonical(facets, state, taxonomy) : ''}
+    ${showCanonical ? renderCanonical(facets, state, taxonomy, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? []) : ''}
     ${renderAssetKinds(options.assetCounts, state)}
     ${showAccess ? renderAccess(facets, state) : ''}
   </nav>`;

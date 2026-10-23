@@ -44,3 +44,7 @@
 - Browser favicon PNG, ICO and Apple-touch assets are stored at `public/registry-atlas/`; their source head references do not duplicate the Vite `/Registry-Atlas/` base. The real Chromium tab and served URLs were verified.
 - Source and browser verification: `tests/registry-explorer/appShellBranding.test.ts`, `panelLayout.test.ts`, `registrySummaryPanel.test.ts`, `tests/app-shell-panels.e2e.ts`, `tests-mobile/native-sidebar.e2e.ts`, and `.design/evidence/app-shell/ppm-browser-tab-favicon.png`. Detailed task contract: `.design/frontend-work-brief.md`.
 - Catalog infinite scroll persists bounded page counts and scroll offsets in session storage for browser Back, maintains a visible Load more fallback, `role="feed"` item position/total metadata, and polite item-count announcements. Its behavior remains subject to regression tests.
+
+## Grouped catalog taxonomy navigation (2026-10-23)
+
+Catalog browse filters use an expandable canonical taxonomy tree. Clicking a root summary (for example Navigation) opens its children without changing the filtered results or URL. A nested category button filters by its real taxonomy ID; an explicit "All <family>" button filters by the parent and matches descendants. Open families survive filter and sort rerenders, and the selected branch remains expanded. The mobile dialog dismisses after a filter choice to show results. The global search, Grid/List and sort remain independent. See `.design/grouped-filter-navigation-2026-10-23.md` and the project verification skill.

@@ -58,7 +58,7 @@ function setupMobileSidebarControls(): void {
   appSidebar.addEventListener('click', event => {
     const target = event.target;
 
-    if (target instanceof Element && target.closest('[data-view], [data-catalog-route], .brand-home-link')) close(false);
+    if (target instanceof Element && target.closest('[data-view], [data-catalog-route], [data-catalog-canonical-value], [data-catalog-sort-value], [data-catalog-access-value], [data-asset-kind-value], .brand-home-link')) close(false);
   });
 
   sidebarToggle.addEventListener('click', open);

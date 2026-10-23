@@ -4488,3 +4488,64 @@ main {
     display: none;
   }
 }
+
+
+/* Exemplar category navigation: expand a family before choosing a matching subtype. */
+.sidebar-taxonomy-group {
+  min-width: 0;
+}
+
+.sidebar-taxonomy-summary {
+  grid-template-columns: 20px minmax(0, 1fr) auto 12px;
+  list-style: none;
+}
+
+.sidebar-taxonomy-summary::-webkit-details-marker {
+  display: none;
+}
+
+.sidebar-taxonomy-summary .sidebar-nav-row-count {
+  font-size: 11px;
+}
+
+.sidebar-taxonomy-chevron {
+  width: 6px;
+  height: 6px;
+  justify-self: center;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 150ms ease-out;
+}
+
+.sidebar-taxonomy-group[open] > .sidebar-taxonomy-summary .sidebar-taxonomy-chevron {
+  transform: rotate(225deg);
+}
+
+.sidebar-taxonomy-active {
+  color: var(--foreground);
+}
+
+.sidebar-taxonomy-children {
+  display: grid;
+  gap: 2px;
+  margin: 2px 0 6px 16px;
+  padding-left: 8px;
+  border-left: 1px solid var(--border);
+}
+
+.sidebar-taxonomy-children .sidebar-nav-row {
+  min-height: 30px;
+  font-size: 12px;
+}
+
+.sidebar-taxonomy-summary:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-taxonomy-chevron {
+    transition: none;
+  }
+}
