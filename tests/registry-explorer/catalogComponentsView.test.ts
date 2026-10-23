@@ -45,6 +45,36 @@ describe("renderCatalogComponents", () => {
     expect(html).not.toContain('View original ↗');
     expect(html).not.toContain('View item JSON');
   });
+  it("places a verified registry homepage in the card heading and Inspect on the prior internal route", () => {
+    const html = renderCatalogComponentCard(component());
+
+    expect(html).toContain('class="catalog-component-homepage"');
+    expect(html).toContain('href="https://delta.example/"');
+    expect(html).toContain('>Registry homepage ↗</a>');
+    expect(html).toContain('class="catalog-component-inspect"');
+    expect(html).toContain('aria-label="Inspect Code Block in Registry Atlas"');
+    expect(html).toContain('data-view-item-registry="@delta"');
+    expect(html).toContain('data-view-item-slug="code-block"');
+    expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
+    expect(html).toContain('>Inspect</a>');
+    expect(html.indexOf('catalog-component-homepage')).toBeLessThan(
+      html.indexOf('catalog-component-source-actions'),
+    );
+    expect(html.indexOf('catalog-component-inspect')).toBeGreaterThan(
+      html.indexOf('catalog-component-original'),
+    );
+  });
+
+  it("omits the homepage action if the upstream registry URL is not verified", () => {
+    const html = renderCatalogComponentCard({
+      ...component(),
+      registry: { ...registry(), url: "http://127.0.0.1:8080/" },
+    });
+
+    expect(html).not.toContain('class="catalog-component-homepage"');
+    expect(html).toContain('class="catalog-component-inspect"');
+  });
+
   it("uses the source component deeplink on cards and never exposes raw item JSON", () => {
     const base = component();
 

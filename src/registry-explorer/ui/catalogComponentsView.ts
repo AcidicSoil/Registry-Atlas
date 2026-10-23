@@ -11,7 +11,7 @@ import type { CatalogAssetKind } from "../core/catalogCollections";
 import { catalogTaxonomyNodeMap, type CatalogTaxonomy } from "../core/catalogTaxonomy";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
 import { escapeHtml } from "./renderSafety";
-import { sourcePageNavigationForItem } from './sourcePageLink';
+import { sourcePageNavigationForItem, verifiedRegistryHomepage } from './sourcePageLink';
 import { renderRegistryIcon } from './registryIdentity';
 
 export interface CatalogDiscoveryBand {
@@ -175,11 +175,20 @@ function catalogCardRoutePath(
   );
 }
 
+function renderCardRegistryHomepage(url: string | null, namespace: string): string {
+  if (!url) return '';
+
+  return `<a class="catalog-component-homepage" href="${escapeHtml(url)}"
+    target="_blank" rel="noreferrer noopener"
+    aria-label="Open registry homepage for ${escapeHtml(namespace)}">Registry homepage ↗</a>`;
+}
+
 export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon' = 'component',
 ): string {
   const homepage = component.registry?.url ?? '';
+  const registryHomepage = verifiedRegistryHomepage(homepage);
 
   const original = sourcePageNavigationForItem(component.namespace, component.slug, homepage, {
     docsUrl: component.docsUrl,
@@ -221,6 +230,7 @@ export function renderCatalogComponentCard(
         <p class="catalog-component-description">${escapeHtml(supportingCopy)}</p>
         ${themeData}
       </a>
+      ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
       <div class="catalog-component-source-actions" aria-label="Item links">
         <a class="catalog-component-deeplink" href="${escapeHtml(routePath)}"
           ${sourcePreviewAttribute}
@@ -229,6 +239,11 @@ export function renderCatalogComponentCard(
           data-source-level="${escapeHtml(original.level)}"
           target="_blank" rel="noreferrer noopener"
           aria-label="Open source page on ${escapeHtml(component.namespace)}">Source ↗</a>` : ''}
+        <a class="catalog-component-inspect" href="${escapeHtml(routePath)}"
+          data-view-item-registry="${escapeHtml(component.namespace)}"
+          data-view-item-slug="${escapeHtml(component.slug)}"
+          data-view-item-kind="${escapeHtml(routeKind)}"
+          aria-label="Inspect ${escapeHtml(component.displayName)} in Registry Atlas">Inspect</a>
       </div>
     </article>
   `;
