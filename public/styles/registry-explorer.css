@@ -2692,9 +2692,10 @@ aside:has(.aside-inner:empty) {
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
   margin-top: auto;
+  padding: 0 14px 13px;
 }
 .catalog-component-original {
   position: static;
@@ -3244,6 +3245,7 @@ aside:has(.aside-inner:empty) {
 }
 
 .catalog-component-card {
+  position: relative;
   display: flex;
   min-width: 0;
   min-height: 150px;
@@ -3314,11 +3316,6 @@ aside:has(.aside-inner:empty) {
   line-height: 1.45;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-}
-
-.catalog-component-source-actions {
-  gap: 12px;
-  padding: 0 14px 13px;
 }
 
 .catalog-component-original {
@@ -4551,11 +4548,7 @@ main {
 }
 
 
-/* Registry-homepage provenance lives in the card header, outside its internal link. */
-.catalog-component-card {
-  position: relative;
-}
-
+/* Registry homepage remains independent of the internal card link. */
 .catalog-component-homepage {
   position: absolute;
   z-index: 1;
@@ -4578,26 +4571,10 @@ main {
   text-decoration: underline;
 }
 
-.catalog-component-inspect {
-  margin-left: auto;
-  color: var(--primary);
-  font-size: 11px;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.catalog-component-inspect:hover,
-.catalog-component-inspect:focus-visible {
-  color: var(--primary);
-  text-decoration: underline;
-}
-
-.catalog-component-homepage:focus-visible,
-.catalog-component-inspect:focus-visible {
+.catalog-component-homepage:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
-
 
 /* List rows keep provenance clear of the description column. */
 .catalog-component-grid-list .catalog-component-homepage {

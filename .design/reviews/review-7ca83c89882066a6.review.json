@@ -1,0 +1,96 @@
+{
+  "review": {
+    "title": "PPM consolidated operator decisions",
+    "reviewId": "review-7ca83c89882066a6",
+    "mode": "review",
+    "project": "/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas",
+    "actions": [
+      {
+        "id": "project-question:registry-atlas-ai-slop-scope-2026-10-29",
+        "group": "Product and design direction",
+        "title": "What scope should the Registry Atlas AI-slop cleanup cover?",
+        "reason": "Read-only audit found 4,621 lines of layered global CSS, a 2,082-line UI shell, redundant card navigation, and avoidable copy. Preserve the existing visual identity, data flow, URLs, and functionality unless you choose broader redesign. Required tooling and standards repair are automatic, not approval choices.",
+        "status": "review-required",
+        "decisionStatus": "unreviewed",
+        "options": [
+          {
+            "value": "unchanged",
+            "label": "No change"
+          },
+          {
+            "value": "option-0",
+            "label": "Scoped UI cleanup: consolidate repeated card CSS, simplify labels, preserve architecture and navigation"
+          },
+          {
+            "value": "option-1",
+            "label": "Broader behavior-preserving frontend cleanup: also refactor verified shell and UI duplication behind tests"
+          },
+          {
+            "value": "option-2",
+            "label": "Propose a separate visual redesign before any UI changes"
+          },
+          {
+            "value": "respond",
+            "label": "Answer \u2014 type below"
+          },
+          {
+            "value": "defer",
+            "label": "Defer the question"
+          },
+          {
+            "value": "other",
+            "label": "Other \u2014 type a response below"
+          }
+        ],
+        "choice": "unchanged",
+        "response": "",
+        "ppm": {
+          "sourceDigest": "cbc053076e58752003db1d283823df545c36911861ceb225db1138ee0c417dec",
+          "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+          "required": false
+        }
+      },
+      {
+        "id": "project-question:registry-atlas-card-navigation-2026-10-29",
+        "group": "Product and design direction",
+        "title": "Should Inspect replace the duplicate internal View item action on catalog cards?",
+        "reason": "catalogComponentsView.ts renders the clickable card, View item, and Inspect to the same internal detail route. Source and Registry homepage are different external destinations. Removing View item would simplify the action row while retaining Inspect and the card link.",
+        "status": "review-required",
+        "decisionStatus": "unreviewed",
+        "options": [
+          {
+            "value": "unchanged",
+            "label": "No change"
+          },
+          {
+            "value": "option-0",
+            "label": "Keep Inspect and clickable card; remove duplicate View item action"
+          },
+          {
+            "value": "option-1",
+            "label": "Preserve both existing actions; only consolidate CSS and copy"
+          },
+          {
+            "value": "respond",
+            "label": "Answer \u2014 type below"
+          },
+          {
+            "value": "defer",
+            "label": "Defer the question"
+          },
+          {
+            "value": "other",
+            "label": "Other \u2014 type a response below"
+          }
+        ],
+        "choice": "unchanged",
+        "response": "",
+        "ppm": {
+          "sourceDigest": "cc1562318cc6bfe0fe5b26d24eb0976a98a6187e57a1ed1731b7c0a5fa0fc269",
+          "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+          "required": false
+        }
+      }
+    ]
+  }
+}

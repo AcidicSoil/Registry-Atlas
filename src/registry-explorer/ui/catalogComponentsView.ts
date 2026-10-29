@@ -239,11 +239,6 @@ export function renderCatalogComponentCard(
           data-source-level="${escapeHtml(original.level)}"
           target="_blank" rel="noreferrer noopener"
           aria-label="Open source page on ${escapeHtml(component.namespace)}">Source ↗</a>` : ''}
-        <a class="catalog-component-inspect" href="${escapeHtml(routePath)}"
-          data-view-item-registry="${escapeHtml(component.namespace)}"
-          data-view-item-slug="${escapeHtml(component.slug)}"
-          data-view-item-kind="${escapeHtml(routeKind)}"
-          aria-label="Inspect ${escapeHtml(component.displayName)} in Registry Atlas">Inspect</a>
       </div>
     </article>
   `;

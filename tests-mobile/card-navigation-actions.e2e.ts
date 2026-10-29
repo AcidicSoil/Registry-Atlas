@@ -1,14 +1,14 @@
 import { test } from '@e2e-dev/web';
 import { expect } from 'e2e';
 
-test('mobile card keeps registry homepage and Inspect independently accessible', async ({ app, browser, screen }) => {
+test('mobile card keeps registry homepage and deeplink independently accessible', async ({ app, browser, screen }) => {
   await app.open('/Registry-Atlas/components/s/.NET%20logo');
 
   const homepage = screen.getByRole('link', 'Open registry homepage for @logoforge');
-  const inspect = screen.getByRole('link', 'Inspect .NET logo in Registry Atlas');
+  const deeplink = screen.getByRole('link', 'View component');
 
   await expect(homepage).toBeVisible();
-  await expect(inspect).toBeVisible();
+  await expect(deeplink).toBeVisible();
 
   const geometry = await browser.evaluate(() => {
     const card = document.querySelector('.catalog-component-card');
@@ -29,7 +29,9 @@ test('mobile card keeps registry homepage and Inspect independently accessible',
       homepageClearOfType: !overlap(home, kindBox),
       homepageClearOfRegistry: !overlap(home, registryBox),
       homepageWithinViewport: home.right <= window.innerWidth,
-      inspectWithinViewport: card.getBoundingClientRect().right <= window.innerWidth,
+      deeplinkWithinViewport: Boolean(card.querySelector('.catalog-component-deeplink'))
+        && card.getBoundingClientRect().right <= window.innerWidth,
+      noInspect: !card.querySelector('.catalog-component-inspect'),
     };
   });
 
@@ -37,10 +39,11 @@ test('mobile card keeps registry homepage and Inspect independently accessible',
     homepageClearOfType: true,
     homepageClearOfRegistry: true,
     homepageWithinViewport: true,
-    inspectWithinViewport: true,
+    deeplinkWithinViewport: true,
+    noInspect: true,
   });
 
-  await app.screenshot('mobile-card-homepage-and-inspect');
-  await inspect.tap();
+  await app.screenshot('mobile-card-homepage-and-deeplink');
+  await deeplink.tap();
   await expect(browser).toHaveURL('/Registry-Atlas/@logoforge/components/dotnet');
 });

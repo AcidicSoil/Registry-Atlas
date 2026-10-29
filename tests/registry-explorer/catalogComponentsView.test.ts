@@ -45,23 +45,21 @@ describe("renderCatalogComponents", () => {
     expect(html).not.toContain('View original ↗');
     expect(html).not.toContain('View item JSON');
   });
-  it("places a verified registry homepage in the card heading and Inspect on the prior internal route", () => {
+  it("keeps registry homepage and the existing deeplink without a duplicate Inspect action", () => {
     const html = renderCatalogComponentCard(component());
 
     expect(html).toContain('class="catalog-component-homepage"');
     expect(html).toContain('href="https://delta.example/"');
     expect(html).toContain('>Registry homepage ↗</a>');
-    expect(html).toContain('class="catalog-component-inspect"');
-    expect(html).toContain('aria-label="Inspect Code Block in Registry Atlas"');
+    expect(html).toContain('class="catalog-component-deeplink"');
+    expect(html).toContain('>View component</a>');
     expect(html).toContain('data-view-item-registry="@delta"');
     expect(html).toContain('data-view-item-slug="code-block"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
-    expect(html).toContain('>Inspect</a>');
+    expect(html).not.toContain('catalog-component-inspect');
+    expect(html).not.toContain('>Inspect</a>');
     expect(html.indexOf('catalog-component-homepage')).toBeLessThan(
       html.indexOf('catalog-component-source-actions'),
-    );
-    expect(html.indexOf('catalog-component-inspect')).toBeGreaterThan(
-      html.indexOf('catalog-component-original'),
     );
   });
 
@@ -72,7 +70,8 @@ describe("renderCatalogComponents", () => {
     });
 
     expect(html).not.toContain('class="catalog-component-homepage"');
-    expect(html).toContain('class="catalog-component-inspect"');
+    expect(html).not.toContain('catalog-component-inspect');
+    expect(html).toContain('class="catalog-component-deeplink"');
   });
 
   it("uses the source component deeplink on cards and never exposes raw item JSON", () => {

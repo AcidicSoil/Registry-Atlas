@@ -1610,7 +1610,7 @@
       "status": "draft"
     }
   ],
-  "updatedAt": "2026-10-23T13:09:29+00:00",
+  "updatedAt": "2026-10-29T09:16:28+00:00",
   "featureMap": {
     "schemaVersion": "ppm-feature-work-map/v1",
     "objective": "Group canonical catalog navigation filters; preserve sidebar disclosure, keyboard, URL and mobile dismiss behavior",
@@ -1625,7 +1625,33 @@
       "src/registry-explorer/ui/shell.ts",
       "src/registry-explorer/entry.ts"
     ],
-    "questions": [],
+    "questions": [
+      {
+        "id": "registry-atlas-ai-slop-scope-2026-10-29",
+        "status": "answered",
+        "answer": "Scoped UI cleanup: consolidate repeated card CSS, simplify labels, preserve architecture and navigation",
+        "answerRef": "user-decision:review-7ca83c89882066a6",
+        "question": "What scope should the Registry Atlas AI-slop cleanup cover?",
+        "reason": "Read-only audit found 4,621 lines of layered global CSS, a 2,082-line UI shell, redundant card navigation, and avoidable copy. Preserve the existing visual identity, data flow, URLs, and functionality unless you choose broader redesign. Required tooling and standards repair are automatic, not approval choices.",
+        "options": [
+          "Scoped UI cleanup: consolidate repeated card CSS, simplify labels, preserve architecture and navigation",
+          "Broader behavior-preserving frontend cleanup: also refactor verified shell and UI duplication behind tests",
+          "Propose a separate visual redesign before any UI changes"
+        ]
+      },
+      {
+        "id": "registry-atlas-card-navigation-2026-10-29",
+        "status": "answered",
+        "answer": "keep only homepage deeplink and source and clicking the card with mouse",
+        "answerRef": "user-decision:review-7ca83c89882066a6",
+        "question": "Should Inspect replace the duplicate internal View item action on catalog cards?",
+        "reason": "catalogComponentsView.ts renders the clickable card, View item, and Inspect to the same internal detail route. Source and Registry homepage are different external destinations. Removing View item would simplify the action row while retaining Inspect and the card link.",
+        "options": [
+          "Keep Inspect and clickable card; remove duplicate View item action",
+          "Preserve both existing actions; only consolidate CSS and copy"
+        ]
+      }
+    ],
     "featureRules": {
       "navigation": [
         "orchestkit:src/skills/accessibility/SKILL.md",
@@ -15395,6 +15421,28 @@
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "18b468e26a5da5411aafe7d327cded17324dbe91c56f2dbd3f4b2485c5e8b575",
       "candidate": "candidate"
+    }
+  },
+  "reviewDecisions": {
+    "schemaVersion": "ppm-review-decisions/v1",
+    "revision": 1,
+    "entries": {
+      "project-question:registry-atlas-ai-slop-scope-2026-10-29": {
+        "choice": "option-0",
+        "sourceDigest": "cbc053076e58752003db1d283823df545c36911861ceb225db1138ee0c417dec",
+        "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+        "reviewId": "review-7ca83c89882066a6",
+        "recordedAt": "2026-10-29T09:16:28+00:00",
+        "selectionLabel": "Scoped UI cleanup: consolidate repeated card CSS, simplify labels, preserve architecture and navigation"
+      },
+      "project-question:registry-atlas-card-navigation-2026-10-29": {
+        "choice": "other",
+        "sourceDigest": "cc1562318cc6bfe0fe5b26d24eb0976a98a6187e57a1ed1731b7c0a5fa0fc269",
+        "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+        "reviewId": "review-7ca83c89882066a6",
+        "recordedAt": "2026-10-29T09:16:28+00:00",
+        "response": "keep only homepage deeplink and source and clicking the card with mouse"
+      }
     }
   }
 }

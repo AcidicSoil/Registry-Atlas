@@ -15,6 +15,7 @@
 - Library pages show all indexed library items and type-specific inventory routes (`components`, `blocks`, `pages`, `templates`, `themes`, `icons` when populated). A detail page offers an explicit **Browse library** internal action.
 - In a detail page's **registry · component** identity row, registry names link to the **external official registry homepage**. Component names link to a **verified/observed original upstream page**; if none exists, render text rather than an internal self-link or an invented upstream URL.
 - Original source links are distinct from internal Atlas routes. Never expose `item.json` / raw registry JSON navigation as user-facing actions; JSON may still be used internally for catalog import and inspection.
+- Catalog cards expose a clickable internal card link and a single explicit "View" deeplink, plus an external Registry homepage and verified upstream Source when available. Do not duplicate the detail action as "Inspect"; preserve keyboard access to the card link.
 - Keep important links near the start of the detail view; use brief labels and visible keyboard focus indicators. Do not duplicate controls in a second toolbar.
 
 ## Interaction and responsive behavior
