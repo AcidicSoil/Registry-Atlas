@@ -1,0 +1,51 @@
+{
+  "review": {
+    "title": "PPM consolidated operator decisions",
+    "reviewId": "review-a23fc947aa295ed0",
+    "mode": "review",
+    "project": "/home/user/projects/temp/ai-apps/.personal-projects/registry-atlas",
+    "actions": [
+      {
+        "id": "project-question:registry-atlas-observed-design-approval-2026-10-29",
+        "group": "Product and design direction",
+        "title": "Approve the Registry Atlas DESIGN.md as the source-observed design contract?",
+        "reason": "The mandatory Google-format repair documents existing CSS values and observed UI behavior without changing the application. DESIGN.md now passes Google lint with zero errors/warnings and the project semantic audit. The design-document standard separately requires an explicit project-specific review decision; accepting here records feedback and still requires source-linked rendered evidence before compliance can be claimed.",
+        "status": "review-required",
+        "decisionStatus": "unreviewed",
+        "options": [
+          {
+            "value": "unchanged",
+            "label": "No change"
+          },
+          {
+            "value": "option-0",
+            "label": "Approve the source-observed design contract as written"
+          },
+          {
+            "value": "option-1",
+            "label": "Request changes before approving the design document"
+          },
+          {
+            "value": "respond",
+            "label": "Answer \u2014 type below"
+          },
+          {
+            "value": "defer",
+            "label": "Defer the question"
+          },
+          {
+            "value": "other",
+            "label": "Other \u2014 type a response below"
+          }
+        ],
+        "choice": "unchanged",
+        "response": "",
+        "ppm": {
+          "sourceDigest": "0fad100c3b01742f0d26d32dcec49d4b114f66ece5a5ad210382a3f571ed20ea",
+          "stackFingerprint": "f18187d9825d9db71eb8d92b721b1bb6927cfb4399987a47362a1a08e6655e93",
+          "required": false
+        }
+      }
+    ]
+  }
+}

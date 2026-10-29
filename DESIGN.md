@@ -1,51 +1,114 @@
-# Registry Atlas — observed frontend design contract
+---
+version: alpha
+name: Registry Atlas
+description: Observed design system for the Vite and TypeScript registry catalog
+colors:
+  background: "#0b0c0e"
+  foreground: "#edeef0"
+  card: "#121316"
+  popover: "#16181c"
+  secondary: "#1a1c20"
+  muted: "#8a8f98"
+  primary: "#4ea1ff"
+typography:
+  body:
+    fontFamily: "Inter"
+    fontSize: 14px
+    lineHeight: 1.5
+  heading2:
+    fontSize: 1.05rem
+    lineHeight: 1.2
+spacing:
+  xsmall: 4px
+  small: 8px
+  medium: 12px
+  large: 16px
+  xlarge: 20px
+  xxlarge: 24px
+rounded:
+  button: 11px
+  card: 14px
+  catalogCard: 12px
+components:
+  page:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+  catalogCard:
+    backgroundColor: "{colors.card}"
+    rounded: "{rounded.catalogCard}"
+  search:
+    backgroundColor: "{colors.card}"
+    rounded: "{rounded.button}"
+  popover:
+    backgroundColor: "{colors.popover}"
+  metadata:
+    textColor: "{colors.muted}"
+  link:
+    textColor: "{colors.primary}"
+---
+# Registry Atlas design contract
 
-**Status:** Project implementation inventory, reviewed against current source on 2026-10-12. This records *existing conventions*, not a new user approval. Standards and accessibility compliance are assessed separately in `.design/standards.json`.
+**Status:** Source-observed design guidance. Values below come from `public/styles/registry-explorer.css` and established UI components; they are not a new design approval. Accessibility and standards assessments remain in `.design/standards.json`.
 
-## Technology and boundaries
+## Overview
 
-- Vite + TypeScript static web application. Its production entry in `src/registry-explorer/entry.ts` uses DOM APIs and `initRegistryExplorer`, not a React root. React, Sandpack and React Grab are package dependencies; do not assume React-specific UI conventions apply to first-party views without source evidence.
-- The UI is assembled in `src/registry-explorer/ui/`, with routes in `src/registry-explorer/core/catalogRoutes.ts` and data loading in `src/registry-explorer/data/`. The established dependency direction is **core → data → UI**: core must not import data or UI; data must not import UI. Dependency-cruiser checks this invariant. Persistent catalog content and projections originate from the canonical PostgreSQL workflow; client production assets are generated snapshots.
-- Reuse the existing HTML/CSS/TypeScript surfaces and established data bindings. Do not add a second global styling or component system merely to implement a feature.
+Registry Atlas is a dense, dark catalog for finding registries and their published UI assets. Optimize for search, navigation, and source provenance, not promotional illustrations. The Vite and TypeScript entry uses DOM rendering through `src/registry-explorer/entry.ts` and `src/registry-explorer/ui/`. Retain the existing core/data/UI boundaries and reuse the project's HTML and CSS rather than installing another component system.
 
-## Visual tokens and information architecture
+## Colors
 
-- Existing dark UI uses the CSS variables in `public/styles/registry-explorer.css`: background `#0b0c0e`, foreground `#edeef0`, accent `#4ea1ff`, dark cards and muted secondary text. Existing spacing units run from 4 to 24px; button/card corner radii are 11/14px. Font stack prefers Inter then system sans. These are *observed*, not new color contrast approvals.
-- Navigation uses one primary sidebar, one global catalog search, contextual browse/filter rows and content surfaces. Internal canonical links must preserve the established route structure and browser history. Breadcrumbs express `Home → Registries → Library → Asset kind → Item`, with valid parent links.
-- Library pages show all indexed library items and type-specific inventory routes (`components`, `blocks`, `pages`, `templates`, `themes`, `icons` when populated). A detail page offers an explicit **Browse library** internal action.
-- In a detail page's **registry · component** identity row, registry names link to the **external official registry homepage**. Component names link to a **verified/observed original upstream page**; if none exists, render text rather than an internal self-link or an invented upstream URL.
-- Original source links are distinct from internal Atlas routes. Never expose `item.json` / raw registry JSON navigation as user-facing actions; JSON may still be used internally for catalog import and inspection.
-- Catalog cards expose a clickable internal card link and a single explicit "View" deeplink, plus an external Registry homepage and verified upstream Source when available. Do not duplicate the detail action as "Inspect"; preserve keyboard access to the card link.
-- Keep important links near the start of the detail view; use brief labels and visible keyboard focus indicators. Do not duplicate controls in a second toolbar.
+- Page background is `#0b0c0e`; primary text is `#edeef0`. Cards use `#121316`, popovers `#16181c`, and secondary surfaces `#1a1c20`.
+- `#4ea1ff` marks actionable links and keyboard focus. Muted metadata uses `#8a8f98`. These values are defined by the corresponding CSS custom properties under `:root`.
+- Keep dark surface boundaries distinct through existing borders. Contrast and forced-color support require separate rendered checks; the listed colors are not WCAG certification.
 
-## Interaction and responsive behavior
+## Typography
 
-- Use semantic anchors for navigation, buttons for actions, structured headings and breadcrumb `nav`; preserve keyboard reachability and `:focus-visible` outlines defined in CSS. Provide a first-focus **Skip to main content** link to a focusable content-header target. **These implementation choices do not establish WCAG conformance.**
-- The mobile menu is a native HTML `<dialog>` under 860px; the existing navigation moves into its top layer only while open. Native modal semantics and Escape handling replace the previous custom `aria-modal` focus trap. The drawer supports close, backdrop dismissal, and focus restoration. The desktop sidebar remains sticky.
-- Validate at mobile width around 390px and desktop width around 1440px, including no horizontal overflow, correct destination URLs, and usable focus/interaction states.
-- Preference motion handling is present in CSS; motion behavior and contrast still require rule-by-rule inspection and browser tests.
+- Body copy uses `14px`, `line-height: 1.5`, and `--font-sans` (Inter, followed by system sans-serif fallbacks).
+- The `h1` uses `clamp(1.5rem, 2vw, 2rem)`; `h2` uses `1.05rem`. Both use `line-height: 1.2`.
+- Catalog names use stronger weight than source metadata. Truncate only where the component can still expose the full identity through its link or accessible label.
+
+## Layout
+
+- The catalog grid displays three columns by default, two at a maximum viewport width of `1080px`, and one at `700px`. Grid and list controls represent distinct views of the same catalog.
+- Desktop left navigation can resize between `190px` and `440px`; the collection summary rail can resize between `200px` and `400px`. Each panel owns its scroll region. The content region scrolls independently.
+- Below `860px`, the navigation is a native modal `<dialog>`, not a desktop panel. Check layout at approximately `390px` and `1440px`, including horizontal overflow and link overlap.
+- Use the source-backed `--space-1` through `--space-6` scale, corresponding to `4px`, `8px`, `12px`, `16px`, `20px`, and `24px`.
+
+## Elevation & Depth
+
+- Catalog cards use solid dark fills and visible borders, with hover border changes rather than animated lift. The current card implementation removes hover box-shadow and transforms.
+- Sidebar and popover surfaces use the existing dark layers. Do not add glows, glass effects, or large decorative shadows absent from the current components.
+
+## Shapes
+
+- Shared `--radius-button` is `11px`; shared `--radius-card` is `14px`. Catalog component cards have their own observed `12px` radius.
+- Focus outlines are `2px` solid blue, with offsets that keep them visible beside borders. Keep control sizing and corner treatment consistent with its owning component.
+
+## Components
+
+- **Catalog card:** a keyboard-focusable main anchor opens the internal item route. A separate **View component** (or corresponding asset kind) deeplink opens the same route. **Registry homepage** opens the verified external registry home; **Source** opens a verified upstream item page. Do not restore a redundant **Inspect** action or link to raw `item.json` data.
+- **Browse controls:** one global search, grouped taxonomy filters, and independent Grid/List and sort controls. Expanding a taxonomy group does not change the filter until a category is selected. Preserve selected state and browser history.
+- **Navigation:** primary sidebar, breadcrumb hierarchy (`Home → Registries → Library → Asset kind → Item`), and the `Browse library` action on item detail pages. Both Registry Atlas brand anchors navigate home.
+- **Dialog:** mobile sidebar closes on Escape, backdrop dismissal, or a filter selection, then restores focus appropriately. The desktop sidebar remains outside the modal behavior.
+- **Focus and states:** semantic anchors for routes, buttons for actions, visible `:focus-visible` for interactive elements, a first-focus Skip to main content link, and accessible labels when visual text is shortened. Preserve hover, active/selected, and disabled states already implemented.
+
+## Do's and Don'ts
+
+- Do preserve verified upstream URL identity, internal canonical routes, keyboard interaction, and semantic navigation.
+- Do keep styling within the owning component or feature; share tokens without adding new global override layers.
+- Do test mobile and desktop rendered behavior after modifying card positioning or responsive rules.
+- Don't invent external component pages, expose registry JSON as navigation, duplicate card actions, or add nonfunctional interface controls.
+- Don't treat a successful build or design lint result as independent visual or accessibility approval.
 
 ## Verification and unresolved decisions
 
-- Existing gates: `pnpm audit:dependencies` (rejects low or higher dependency advisories), `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, chained by `pnpm verify`. Browser interactions are independently verified in PPM `registry-atlas` and model-free e2e production previews. Catalog browse pages append bounded result chunks when scrolled, with visible Load more fallback and `aria-live` status rather than numbered pagination. The build also emits a CycloneDX dependency inventory.
-- Existing automated checks are not proof of every accessibility, security or UX standard. Scope, test evidence and exceptions for individual OrchestKit rules live in `.design/standards.json`. A standard with insufficient evidence stays unverified.
-- No general exception, third-party tooling replacement, or novel design language is approved by this document. Any required migration must be proposed and separately approved through the project workflow.
+The relevant checks are `pnpm audit:dependencies`, `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, composed by `pnpm verify`. Browser interaction verification is separate. The build emits a CycloneDX dependency inventory. Existing project-wide or deferred standards findings remain open until separately verified and approved.
 
 ## Quality gates under certification
 
-- Pinned React Doctor 0.9.18 and dependency-cruiser 18.6.0 run from the root verification command. Their isolated pass–fail–pass proofs are recorded in `.design/quality-tooling-progress.md`.
-- cccc 1.8.0 is pinned through mise’s official GitHub release backend; complexity limits are cognitive 15 / cyclomatic 10. The previous 44 threshold violations were resolved without changing the limits. The full `pnpm verify` suite now passes; formal PPM/PAO certification remains separate.
-- Stackforge anti-slop TypeScript is installed at the root with all 117 rules active. The scan passes at zero errors and warnings, and its deliberate failure-detection proof passes. Formal PPM/PAO certification remains pending. Full PPM/OrchestKit certification is not complete.
+React Doctor `0.9.18` and dependency-cruiser `18.6.0` are pinned. The cccc complexity gate uses cognitive `15` and cyclomatic `10`. Stackforge anti-slop TypeScript checks use the root Oxlint configuration. See `.design/quality-tooling-progress.md` for earlier check evidence; passing checks do not imply PPM/PAO certification.
 
-## Application-shell certification controls (2026-10-15)
+## Application shell and grouped navigation
 
-- The desktop app-shell uses a shared drag and keyboard separator between the left navigation and the main content. Both panels independently collapse and reopen; the left panel width is clamped to 190–440 pixels and persists in browser local storage. The content region scrolls within the viewport; the navigation body owns its own scroll. Mobile preserves the native HTML dialog instead of showing desktop resizing controls.
-- Registry-collection routes add an auxiliary registry-summary rail with a dedicated 200–400 pixel keyboard/pointer separator, independent collapse/reopen controls and owned scrolling. Its narrow-layout presentation stacks above the inventory.
-- The Collections menu is a native expandable detail group with real nested route links, while both Registry Atlas brand anchors lead home.
-- Browser favicon PNG, ICO and Apple-touch assets are stored at `public/registry-atlas/`; their source head references do not duplicate the Vite `/Registry-Atlas/` base. The real Chromium tab and served URLs were verified.
-- Source and browser verification: `tests/registry-explorer/appShellBranding.test.ts`, `panelLayout.test.ts`, `registrySummaryPanel.test.ts`, `tests/app-shell-panels.e2e.ts`, `tests-mobile/native-sidebar.e2e.ts`, and `.design/evidence/app-shell/ppm-browser-tab-favicon.png`. Detailed task contract: `.design/frontend-work-brief.md`.
-- Catalog infinite scroll persists bounded page counts and scroll offsets in session storage for browser Back, maintains a visible Load more fallback, `role="feed"` item position/total metadata, and polite item-count announcements. Its behavior remains subject to regression tests.
+The desktop app shell has draggable and keyboard-operated panel separators, persistent sidebar width, and independently collapsible rails. Registry collections have an auxiliary summary panel. Infinite-scroll catalog results append bounded batches, retain a visible Load more fallback, and restore browser Back position through session storage; the result count is announced politely.
 
-## Grouped catalog taxonomy navigation (2026-10-23)
-
-Catalog browse filters use an expandable canonical taxonomy tree. Clicking a root summary (for example Navigation) opens its children without changing the filtered results or URL. A nested category button filters by its real taxonomy ID; an explicit "All <family>" button filters by the parent and matches descendants. Open families survive filter and sort rerenders, and the selected branch remains expanded. The mobile dialog dismisses after a filter choice to show results. The global search, Grid/List and sort remain independent. See `.design/grouped-filter-navigation-2026-10-23.md` and the project verification skill.
+Grouped taxonomy navigation expands and collapses parent branches without filtering; selecting a child filters by its taxonomy ID. An explicit All-family action includes descendants. The selected branch stays expanded; choosing a filter in the mobile dialog dismisses the dialog. See `.design/grouped-filter-navigation-2026-10-23.md` and `.design/frontend-work-brief.md` for source-backed flow evidence, along with `tests/registry-explorer/appShellBranding.test.ts`, `tests/registry-explorer/panelLayout.test.ts`, `tests/card-navigation-actions.e2e.ts`, and `tests-mobile/card-navigation-actions.e2e.ts`.

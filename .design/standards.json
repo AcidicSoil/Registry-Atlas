@@ -1650,6 +1650,16 @@
           "Keep Inspect and clickable card; remove duplicate View item action",
           "Preserve both existing actions; only consolidate CSS and copy"
         ]
+      },
+      {
+        "id": "registry-atlas-observed-design-approval-2026-10-29",
+        "status": "open",
+        "question": "Approve the Registry Atlas DESIGN.md as the source-observed design contract?",
+        "reason": "The mandatory Google-format repair documents existing CSS values and observed UI behavior without changing the application. DESIGN.md now passes Google lint with zero errors/warnings and the project semantic audit. The design-document standard separately requires an explicit project-specific review decision; accepting here records feedback and still requires source-linked rendered evidence before compliance can be claimed.",
+        "options": [
+          "Approve the source-observed design contract as written",
+          "Request changes before approving the design document"
+        ]
       }
     ],
     "featureRules": {
