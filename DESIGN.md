@@ -28,7 +28,7 @@ spacing:
 rounded:
   button: 11px
   card: 14px
-  catalogCard: 12px
+  catalogCard: 0px
 components:
   page:
     backgroundColor: "{colors.background}"
@@ -48,7 +48,7 @@ components:
 ---
 # Registry Atlas design contract
 
-**Status:** Source-observed design guidance. Values below come from `public/styles/registry-explorer.css` and established UI components; they are not a new design approval. Accessibility and standards assessments remain in `.design/standards.json`.
+**Status:** Documentation of the **existing, currently running UI**, not a proposed redesign. The CSS values below were compared against live headed-Chromium captures at 1440×900 and 390×844 on 2026-10-29. Evidence: `.design/evidence/design-current/browser-observations.json` and matching screenshots. Approval of this documentation remains a separate decision; accessibility and standards assessments remain in `.design/standards.json`.
 
 ## Overview
 
@@ -80,8 +80,8 @@ Registry Atlas is a dense, dark catalog for finding registries and their publish
 
 ## Shapes
 
-- Shared `--radius-button` is `11px`; shared `--radius-card` is `14px`. Catalog component cards have their own observed `12px` radius.
-- Focus outlines are `2px` solid blue, with offsets that keep them visible beside borders. Keep control sizing and corner treatment consistent with its owning component.
+- Shared `--radius-button` is `11px`; shared `--radius-card` is `14px`. The base `.catalog-component-card` rule declares `12px`, but component collection grids use the more specific `.catalog-collection-grid-component .catalog-component-card` override, so the **current rendered collection cards have square `0px` corners** at both 1440px and 390px. The `catalogCard` token above records this effective collection style, not the overridden base rule.
+- The global focus-visible rule defines `2px` blue outlines with a `3px` offset. The existing `.catalog-component-open:focus-visible` override explicitly removes the inner card anchor outline; the surrounding card also has `tabindex="0"`. This is an observed exception, not evidence of complete keyboard-accessibility conformance.
 
 ## Components
 
@@ -89,7 +89,7 @@ Registry Atlas is a dense, dark catalog for finding registries and their publish
 - **Browse controls:** one global search, grouped taxonomy filters, and independent Grid/List and sort controls. Expanding a taxonomy group does not change the filter until a category is selected. Preserve selected state and browser history.
 - **Navigation:** primary sidebar, breadcrumb hierarchy (`Home → Registries → Library → Asset kind → Item`), and the `Browse library` action on item detail pages. Both Registry Atlas brand anchors navigate home.
 - **Dialog:** mobile sidebar closes on Escape, backdrop dismissal, or a filter selection, then restores focus appropriately. The desktop sidebar remains outside the modal behavior.
-- **Focus and states:** semantic anchors for routes, buttons for actions, visible `:focus-visible` for interactive elements, a first-focus Skip to main content link, and accessible labels when visual text is shortened. Preserve hover, active/selected, and disabled states already implemented.
+- **Focus and states:** semantic anchors for routes, buttons for actions, a first-focus Skip to main content link, and accessible labels when visual text is shortened. The global `:focus-visible` rule is subject to component overrides (including the inner catalog-card link). Preserve hover, active/selected, and disabled states already implemented; independently test keyboard focus instead of assuming every control displays the global outline.
 
 ## Do's and Don'ts
 

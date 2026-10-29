@@ -1,0 +1,233 @@
+{
+  "schema": "registry-atlas-observed-design-evidence/v1",
+  "capturedAt": "2026-10-29T19:55:47.850824+00:00",
+  "captureMethod": "PPM registry-atlas headed Chromium profile; PinchTab CDP live computed-style and DOM evaluation; screenshot capture at 1440x900 and 390x844",
+  "projectRevision": "421bf442c919434fb71e088ea217c854ba23f2aa",
+  "route": "/Registry-Atlas/components/s/.NET%20logo",
+  "status": "observed-unapproved",
+  "screenshots": [
+    ".design/evidence/design-current/desktop-1440.png",
+    ".design/evidence/design-current/mobile-390.png",
+    ".design/evidence/design-current/mobile-navigation-open.png"
+  ],
+  "checks": {
+    "page": {
+      "colors": {
+        "background": "#0b0c0e",
+        "bodyComputedBackground": "rgb(11, 12, 14)",
+        "card": "#121316",
+        "foreground": "#edeef0",
+        "muted": "#8a8f98",
+        "popover": "#16181c",
+        "primary": "#4ea1ff",
+        "secondary": "#1a1c20"
+      },
+      "typography": {
+        "bodyFamily": "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+        "bodyLineHeight": "21px",
+        "bodySize": "14px",
+        "h1LineHeight": "34.56px",
+        "h1Size": "28.8px"
+      },
+      "spacing": [
+        "4px",
+        "8px",
+        "12px",
+        "16px",
+        "20px",
+        "24px"
+      ],
+      "rounded": {
+        "button": "11px",
+        "card": "14px",
+        "catalogCardComputed": "0px"
+      }
+    },
+    "catalogCard": {
+      "desktop": {
+        "actionLinks": [
+          {
+            "label": "View component",
+            "rel": null,
+            "target": null,
+            "url": "/Registry-Atlas/@logoforge/components/dotnet"
+          },
+          {
+            "label": "Source ↗",
+            "rel": "noreferrer noopener",
+            "target": "_blank",
+            "url": "https://logoforge.terravidhal.me/logos/dotnet"
+          }
+        ],
+        "background": "rgb(18, 19, 22)",
+        "border": "0px 1px 1px 0px",
+        "boxShadow": "none",
+        "count": 1,
+        "focus": {
+          "isFocused": true,
+          "outlineColor": "rgb(237, 238, 240)",
+          "outlineOffset": "0px",
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "tag": "A"
+        },
+        "homepage": {
+          "color": "rgb(78, 161, 255)",
+          "rect": {
+            "height": 14,
+            "width": 112,
+            "x": 574,
+            "y": 280
+          },
+          "rel": "noreferrer noopener",
+          "target": "_blank",
+          "url": "https://logoforge.terravidhal.me/"
+        },
+        "inspectCount": 0,
+        "link": "/Registry-Atlas/@logoforge/components/dotnet",
+        "linkLabel": "Open .NET logo from @logoforge",
+        "position": "relative",
+        "rect": {
+          "height": 150,
+          "width": 349,
+          "x": 352,
+          "y": 238
+        }
+      },
+      "mobile": {
+        "actionLinks": [
+          {
+            "label": "View component",
+            "rel": null,
+            "target": null,
+            "url": "/Registry-Atlas/@logoforge/components/dotnet"
+          },
+          {
+            "label": "Source ↗",
+            "rel": "noreferrer noopener",
+            "target": "_blank",
+            "url": "https://logoforge.terravidhal.me/logos/dotnet"
+          }
+        ],
+        "background": "rgb(18, 19, 22)",
+        "border": "0px 1px 1px 0px",
+        "boxShadow": "none",
+        "count": 1,
+        "focus": {
+          "isFocused": true,
+          "outlineColor": "rgb(237, 238, 240)",
+          "outlineOffset": "3px",
+          "outlineStyle": "none",
+          "outlineWidth": "0px",
+          "tag": "A"
+        },
+        "homepage": {
+          "color": "rgb(78, 161, 255)",
+          "rect": {
+            "height": 14,
+            "width": 112,
+            "x": 248,
+            "y": 326
+          },
+          "rel": "noreferrer noopener",
+          "target": "_blank",
+          "url": "https://logoforge.terravidhal.me/"
+        },
+        "inspectCount": 0,
+        "link": "/Registry-Atlas/@logoforge/components/dotnet",
+        "linkLabel": "Open .NET logo from @logoforge",
+        "position": "relative",
+        "rect": {
+          "height": 150,
+          "width": 359,
+          "x": 16,
+          "y": 284
+        }
+      },
+      "effectiveRadius": "0px",
+      "declaredBaseRadius": "12px",
+      "effectiveRule": ".catalog-collection-grid-component .catalog-component-card { border-radius: 0 }",
+      "cssSource": "public/styles/registry-explorer.css"
+    },
+    "responsive": {
+      "desktop": {
+        "dialog": {
+          "hasCloseButton": false,
+          "open": false,
+          "visible": "none"
+        },
+        "gridColumnCount": 3,
+        "gridTemplateColumns": "348.656px 348.672px 348.672px",
+        "horizontalOverflow": false,
+        "mobileMenu": {
+          "ariaExpanded": "false",
+          "rect": {
+            "height": 0,
+            "width": 0,
+            "x": 0,
+            "y": 0
+          },
+          "tag": "BUTTON"
+        },
+        "scrollWidth": 1440,
+        "sidebar": {
+          "display": "flex",
+          "rect": {
+            "height": 900,
+            "width": 317,
+            "x": 0,
+            "y": 0
+          }
+        }
+      },
+      "mobile": {
+        "dialog": {
+          "hasCloseButton": false,
+          "open": false,
+          "visible": "none"
+        },
+        "gridColumnCount": 1,
+        "gridTemplateColumns": "359px",
+        "horizontalOverflow": false,
+        "mobileMenu": {
+          "ariaExpanded": "false",
+          "rect": {
+            "height": 34,
+            "width": 34,
+            "x": 12,
+            "y": 8
+          },
+          "tag": "BUTTON"
+        },
+        "scrollWidth": 390,
+        "sidebar": {
+          "display": "flex",
+          "rect": {
+            "height": 844,
+            "width": 308,
+            "x": -169,
+            "y": 0
+          }
+        }
+      }
+    },
+    "mobileNavigation": {
+      "opened": {
+        "dialogTag": "DIALOG",
+        "focusedElement": "Close navigation",
+        "isModal": true,
+        "open": true,
+        "triggerExpanded": "true"
+      },
+      "afterEscape": {
+        "focusRestored": true,
+        "open": false,
+        "triggerExpanded": "false"
+      }
+    }
+  },
+  "limitations": [
+    "Programmatic anchor focus styling is not evidence of keyboard-only :focus-visible state.",
+    "Not an exhaustive WCAG accessibility audit or full design approval."
+  ]
+}
