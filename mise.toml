@@ -57,15 +57,15 @@ run = "pnpm import:catalog"
 
 [tasks."sync:registries"]
 description = "Refresh the official shadcn registry mirror"
-run = "pnpm sync:registries"
+run = "pnpm sync registries"
 
 [tasks."sync:catalog-evidence"]
 description = "Refresh registry catalog evidence"
-run = "pnpm sync:catalog-evidence"
+run = "pnpm sync catalog-evidence"
 
 [tasks."sync:registry-icons"]
 description = "Discover source-backed registry icons from registry homepages and persist them to PostgreSQL"
-run = "pnpm sync:registry-icons"
+run = "pnpm sync registry-icons"
 
 [tasks."source-pages"]
 description = "Build exact source-page links and coverage from current verified/sitemap evidence"
@@ -81,7 +81,7 @@ run = "node scripts/verify-component-pages.mjs --max-pages 20 --max-per-registry
 
 [tasks.all]
 description = "Refresh registry data and run the full verification gate"
-run = "pnpm all"
+run = "pnpm verify"
 
 [tasks."check:postgres"]
 run = "pnpm run check:postgres"

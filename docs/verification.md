@@ -18,6 +18,24 @@ mise run test
 
 The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is the preferred project entrypoint so local and CI toolchains stay aligned.
 
+
+## Package scripts
+
+The root `package.json` exposes the frequent development and verification entrypoints. Infrequent operations use grouped commands instead of one npm script per action:
+
+```bash
+pnpm db status                   # setup | up | down | status | backup
+pnpm db restore-check /path/to/backup.dump
+pnpm db reconcile-source-evidence
+pnpm sync registries              # registries | catalog-evidence | registry-icons
+
+pnpm test:e2e tests/smoke.e2e.ts
+pnpm test:e2e --config e2e.mobile.config.ts
+```
+
+`pnpm db --help` and `pnpm sync --help` list supported actions. `mise run sync:registries` and the other documented mise sync tasks remain compatibility entrypoints. Existing database and catalog scripts are reused unchanged; selecting a database subcommand does not automatically start PostgreSQL, and synchronizations require an explicit `sync` subcommand. E2E options go directly after `pnpm test:e2e` (do not insert an extra `--` separator). The normal `pnpm verify` gate retains the mandatory quality checks.
+
+
 ## Git worktree isolation
 
 Root Vitest discovery intentionally excludes `**/.worktrees/**` through `vitest.config.ts`. This keeps verification for one checkout from silently collecting tests from sibling development worktrees stored beneath the repository.

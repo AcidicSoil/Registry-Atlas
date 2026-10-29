@@ -8,8 +8,7 @@ describe('quality-tooling integration contract', () => {
     const pkg = JSON.parse(read('package.json'));
     expect(pkg.devDependencies['dependency-cruiser']).toBe('18.6.0');
     expect(pkg.devDependencies['react-doctor']).toBe('0.9.18');
-    expect(pkg.scripts['lint:deps']).toBe('pnpm lint:boundaries');
-    expect(pkg.scripts['lint:boundaries']).toBe('depcruise src tests --config .dependency-cruiser.cjs');
+    expect(pkg.scripts['lint:deps']).toBe('depcruise src tests --config .dependency-cruiser.cjs');
     expect(pkg.scripts['lint:react-doctor']).toContain('--blocking warning --no-telemetry');
     expect(pkg.scripts['lint:complexity']).toBe('cccc src/registry-explorer');
     expect(pkg.scripts['lint:anti-slop']).toBe('oxlint .');

@@ -14,15 +14,15 @@ These files are ignored by Git and contain no credentials. The builder also crea
 ## Common commands
 
 ```sh
-pnpm db:setup              # Create owner-only local credentials if needed
-pnpm db:up                 # Start the local PostgreSQL container
-pnpm db:status             # Check container health
+pnpm db setup              # Create owner-only local credentials if needed
+pnpm db up                 # Start the local PostgreSQL container
+pnpm db status             # Check container health
 pnpm dev                   # Start Vite using existing local assets
 pnpm prepare:runtime-data  # Explicit refresh from local PostgreSQL
 pnpm verify:local          # Offline subset: local assets, non-DB tests, build
 pnpm verify                # Full local PostgreSQL checks, all tests, and build
-pnpm db:backup             # Produce and verify a timestamped PostgreSQL dump
-pnpm db:down               # Stop container without deleting its volume
+pnpm db backup             # Produce and verify a timestamped PostgreSQL dump
+pnpm db down               # Stop container without deleting its volume
 ```
 
 The PostgreSQL URLs are stored in ignored, mode-600 files under `.instance/`: `local-postgres-url` for the authoritative database and `local-postgres-test-url` for the isolated test database. All database entrypoints reject non-loopback connections. Legacy provider credential files are ignored and never read.
@@ -40,11 +40,11 @@ Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. T
 
 The two regenerated compressed runtime files match the previous runtime files byte-for-byte. The recovered database contains 91,716 catalog/detail pairs and 46,390 source-page records. Historical operational records outside those runtime files cannot be independently compared with the former provider while it is unavailable.
 
-`pnpm db:backup` writes a custom-format PostgreSQL dump to **`I:\Backups\Registry-Atlas\PostgreSQL`** (`/mnt/i/Backups/Registry-Atlas/PostgreSQL` from WSL). I: is a separate physical NVMe disk from G:, which stores Docker Desktop's database volume. The command verifies the dump structure and writes a `.sha256` checksum beside each dump. It refuses to fall back to the WSL filesystem if I: is disconnected, and it never deletes older backups. To use another destination intentionally, set `ATLAS_BACKUP_DIR`.
+`pnpm db backup` writes a custom-format PostgreSQL dump to **`I:\Backups\Registry-Atlas\PostgreSQL`** (`/mnt/i/Backups/Registry-Atlas/PostgreSQL` from WSL). I: is a separate physical NVMe disk from G:, which stores Docker Desktop's database volume. The command verifies the dump structure and writes a `.sha256` checksum beside each dump. It refuses to fall back to the WSL filesystem if I: is disconnected, and it never deletes older backups. To use another destination intentionally, set `ATLAS_BACKUP_DIR`.
 
-Verify a complete restore with `pnpm db:restore-check /mnt/i/Backups/Registry-Atlas/PostgreSQL/<backup-file>.dump`; it validates any accompanying checksum, restores into a temporary database, checks record counts, and deletes only that temporary database. The current I: backup has been successfully tested this way.
+Verify a complete restore with `pnpm db restore-check /mnt/i/Backups/Registry-Atlas/PostgreSQL/<backup-file>.dump`; it validates any accompanying checksum, restores into a temporary database, checks record counts, and deletes only that temporary database. The current I: backup has been successfully tested this way.
 
-**A second physical drive protects against failure of the database drive, but not against theft, fire, ransomware, or whole-machine failure.** Backups on I: are local and not automatically replicated off-site. Backups are not yet scheduled; use `pnpm db:backup` after significant updates, and set up a separate scheduled job if daily backups are needed. Monitor free space on I: and regularly test restores.
+**A second physical drive protects against failure of the database drive, but not against theft, fire, ransomware, or whole-machine failure.** Backups on I: are local and not automatically replicated off-site. Backups are not yet scheduled; use `pnpm db backup` after significant updates, and set up a separate scheduled job if daily backups are needed. Monitor free space on I: and regularly test restores.
 
 ## CI and publishing
 
