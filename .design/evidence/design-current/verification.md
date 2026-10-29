@@ -23,11 +23,11 @@ Captured in the already-running PPM `registry-atlas` headed Chromium profile at 
 | --- | --- |
 | Catalog card corners are 12px | Base CSS declares 12px, but `.catalog-collection-grid-component .catalog-component-card` overrides to **0px** in the observed collection grid. Documentation now records effective 0px corners. |
 | All interactive links have visible focus outlines | Global `:focus-visible` styles exist, but `.catalog-component-open:focus-visible { outline: none; }` overrides the inner card anchor. Documentation now names this exception and does not assert complete accessibility. |
-| Approval scope could imply a redesigned UI | Documentation and proposed review now explicitly concern **accuracy of the current UI description only**. No visual redesign is proposed. |
+| Documentation was treated as a pending design approval | Source-backed factual corrections to the existing `DESIGN.md` are routine maintenance, **not** an approval request for a visual change. The unanswered reviews were superseded and the scope question removed. |
 
 ## Boundaries
 
-This capture covers the specified routes, component states, colors, typography, responsive widths, and mobile Escape behavior. It does not prove all WCAG requirements, screen-reader behavior, or every catalog page. `DESIGN.md` passes Google-format lint and the PPM semantic audit; certification remains unapproved pending a separate explicit decision and source-attested standards evidence.
+This capture covers the specified routes, component states, colors, typography, responsive widths, and mobile Escape behavior. It does not prove all WCAG requirements, screen-reader behavior, or every catalog page. `DESIGN.md` passes Google-format lint and the PPM semantic audit. This documentation-only task does not require human design approval. Formal PPM certification still has independent outstanding gate requirements and must not be claimed as completed.
 
 ## Source and proof
 

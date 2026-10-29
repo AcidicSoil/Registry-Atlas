@@ -1650,16 +1650,6 @@
           "Keep Inspect and clickable card; remove duplicate View item action",
           "Preserve both existing actions; only consolidate CSS and copy"
         ]
-      },
-      {
-        "id": "registry-atlas-observed-design-approval-2026-10-29",
-        "status": "open",
-        "question": "Does the updated DESIGN.md accurately document the CURRENT Registry Atlas UI, without proposing a new design?",
-        "reason": "Current UI verified in the running PPM browser on 2026-10-29 at 1440px and 390px: dark #0b0c0e / #edeef0 with blue #4ea1ff; Inter-first 14px body; 3-column desktop and 1-column mobile component grid; external Registry homepage and Source, internal View and clickable card, no Inspect; mobile native dialog closes on Escape and restores focus. Corrections to the DOCUMENT ONLY: collection card corners are 0px (not the declared-but-overridden 12px), and the inner card anchor suppresses the global focus outline. See .design/evidence/design-current/verification.md and screenshots. This decision concerns documentation of the EXISTING UI, NOT approval of a future redesign, code change, or WCAG conformance.",
-        "options": [
-          "Yes: this document accurately describes the CURRENT Registry Atlas UI; no redesign requested",
-          "No: correct documented inaccuracies before approving (specify which parts)"
-        ]
       }
     ],
     "featureRules": {

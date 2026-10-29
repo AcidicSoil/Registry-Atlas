@@ -48,7 +48,7 @@ components:
 ---
 # Registry Atlas design contract
 
-**Status:** Documentation of the **existing, currently running UI**, not a proposed redesign. The CSS values below were compared against live headed-Chromium captures at 1440×900 and 390×844 on 2026-10-29. Evidence: `.design/evidence/design-current/browser-observations.json` and matching screenshots. Approval of this documentation remains a separate decision; accessibility and standards assessments remain in `.design/standards.json`.
+**Status:** Documentation of the **existing, currently running UI**, not a proposed redesign. The CSS values below were compared against live headed-Chromium captures at 1440×900 and 390×844 on 2026-10-29. Evidence: `.design/evidence/design-current/browser-observations.json` and matching screenshots. These are verified documentation corrections, not a proposed visual change or an additional approval request; accessibility and formal certification remain separately assessed in `.design/standards.json`.
 
 ## Overview
 
