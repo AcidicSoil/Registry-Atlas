@@ -11,10 +11,10 @@ and import those private files only from within the same package.
 - `entry.ts` and the tests under `tests/`: consumers, so import only root public entry points.
 
 Do not add a broad export-all barrel. Expose focused files with narrow interfaces.
-The existing `core/index.ts` and `ui/index.ts` are legacy barrels; do not grow them.
+The `ui/index.ts` barrel remains the current application bootstrap entry; do not add broad new barrels.
 The `core/lib/sourcePageOrigin.ts` module demonstrates private implementation.
 
-`pnpm lint:boundaries` scans both `src` and `tests`. It enforces entry-point
+`pnpm lint:deps` scans both `src` and `tests`. It enforces entry-point
 boundaries, test imports through entry points, no cross-module private imports,
 no cycles, and the existing core/data/UI dependency direction.
 Use `node scripts/verify-deep-module-boundaries.mjs` for repeatable

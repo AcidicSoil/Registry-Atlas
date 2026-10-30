@@ -85,7 +85,7 @@ Registry Atlas is a dense, dark catalog for finding registries and their publish
 
 ## Components
 
-- **Catalog card:** a keyboard-focusable main anchor opens the internal item route. A separate **View component** (or corresponding asset kind) deeplink opens the same route. **Registry homepage** opens the verified external registry home; **Source** opens a verified upstream item page. Do not restore a redundant **Inspect** action or link to raw `item.json` data.
+- **Catalog card:** source styles remain in `public/styles/registry-explorer.css`; homepage provenance link styling is now owned by `src/registry-explorer/ui/catalog-component-provenance.css`, loaded after the global sheet to preserve the effective cascade. A keyboard-focusable main anchor opens the internal item route. A separate **View component** (or corresponding asset kind) deeplink opens the same route. **Registry homepage** opens the verified external registry home; **Source** opens a verified upstream item page. Do not restore a redundant **Inspect** action or link to raw `item.json` data.
 - **Browse controls:** one global search, grouped taxonomy filters, and independent Grid/List and sort controls. Expanding a taxonomy group does not change the filter until a category is selected. Preserve selected state and browser history.
 - **Navigation:** primary sidebar, breadcrumb hierarchy (`Home → Registries → Library → Asset kind → Item`), and the `Browse library` action on item detail pages. Both Registry Atlas brand anchors navigate home.
 - **Dialog:** mobile sidebar closes on Escape, backdrop dismissal, or a filter selection, then restores focus appropriately. The desktop sidebar remains outside the modal behavior.

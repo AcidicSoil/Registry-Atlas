@@ -19,6 +19,12 @@ mise run test
 The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is the preferred project entrypoint so local and CI toolchains stay aligned.
 
 
+## Gradual quality cleanup
+
+`pnpm lint:styles` runs Stylelint with the source-backed CSS ownership/size rules; `pnpm lint:unused` runs Knip against the explicit project/CLI/test entrypoints. Both commands are part of `pnpm lint`, `pnpm verify`, `pnpm verify:local`, and deploy CI.
+
+The checked-in `.design/quality-debt-baseline.json` records existing violations. These commands reject **new** issue signatures or increased counts. They do **not** certify the existing stylesheet or unused-export backlog as clean. An intentional reviewed baseline update requires `node scripts/check-quality-debt.mjs all --update-baseline`; ordinarily remediate findings until the baseline shrinks. The current count and accepted deferrals are described in `.design/stale-code-cleanup-2026-10-29.md`.
+
 ## Package scripts
 
 The root `package.json` exposes the frequent development and verification entrypoints. Infrequent operations use grouped commands instead of one npm script per action:

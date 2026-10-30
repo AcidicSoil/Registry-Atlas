@@ -39,5 +39,7 @@ jobs:
           pnpm lint:deps
           pnpm lint:react-doctor
           pnpm lint:complexity
+          pnpm lint:styles
+          pnpm lint:unused
           pnpm typecheck
           pnpm typecheck:test

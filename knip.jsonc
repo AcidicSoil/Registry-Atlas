@@ -1,0 +1,30 @@
+{
+  "$schema": "https://unpkg.com/knip@6.44.0/schema.json",
+  "entry": [
+    "src/registry-explorer/entry.ts",
+    "scripts/*.mjs",
+    "tests/**/*.{test,spec}.{ts,tsx,js,mjs}",
+    "tests/**/*.e2e.ts",
+    "tests-mobile/**/*.e2e.ts",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "e2e*.config.ts",
+    "oxlint.config.ts",
+    "stylelint.config.mjs",
+    "tools/oxlint/anti-slop/index.ts",
+    "tools/eslint/anti-slop-stylex/index.mjs",
+    "tools/stylelint/anti-slop-css/index.mjs",
+    "tools/oxlint/anti-slop/**/*.test.ts",
+    "scripts/**/*.d.mts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.{mjs,mts}",
+    "tests/**/*.{ts,tsx,mjs}",
+    "tests-mobile/**/*.{ts,tsx,mjs}",
+    "tools/**/*.{ts,mjs}",
+    "*.config.ts",
+    "*.config.mjs",
+    "index.html"
+  ]
+}

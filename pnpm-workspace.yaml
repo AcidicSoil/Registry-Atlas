@@ -8,3 +8,6 @@ overrides:
 allowBuilds:
   esbuild@0.28.1: true
   es5-ext@0.10.64: false
+
+minimumReleaseAgeExclude:
+  - knip@6.44.0
