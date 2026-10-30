@@ -230,11 +230,8 @@ export function renderCatalogComponentCard(
         <p class="catalog-component-description">${escapeHtml(supportingCopy)}</p>
         ${themeData}
       </a>
-      ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
       <div class="catalog-component-source-actions" aria-label="Item links">
-        <a class="catalog-component-deeplink" href="${escapeHtml(routePath)}"
-          ${sourcePreviewAttribute}
-          data-item-deeplink-kind="${escapeHtml(routeKind)}">${escapeHtml(itemActionLabel(routeKind))}</a>
+        ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
         ${original ? `<a class="catalog-component-original" href="${escapeHtml(original.url)}"
           data-source-level="${escapeHtml(original.level)}"
           target="_blank" rel="noreferrer noopener"
@@ -246,12 +243,6 @@ export function renderCatalogComponentCard(
 
 function renderSourcePreviewAttribute(source: { url: string } | null): string {
   return source ? `data-preview-source-url="${escapeHtml(source.url)}"` : '';
-}
-
-function itemActionLabel(
-  routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon',
-): string {
-  return 'View ' + routeKind;
 }
 
 const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [

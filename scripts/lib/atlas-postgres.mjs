@@ -30,9 +30,9 @@ return fn(tx);};
   return db.begin(run);
 }
 
-export const json=value=>JSON.stringify(value);
+const json=value=>JSON.stringify(value);
 
-export const parseJson=value=>isInputString(value)?JSON.parse(value):value;
+const parseJson=value=>isInputString(value)?JSON.parse(value):value;
 
 export const exec=(db,sql,params=[])=>db.unsafe(db.__atlasSchema?sql.replace(/\batlas\./g,db.__atlasSchema+'.'):sql,params);
 
@@ -58,9 +58,9 @@ return '$'+args.length}).join(',')+')').join(',');
   }
 }
 
-export async function getMeta(db,key){return (await one(db,'SELECT value FROM atlas.atlas_meta WHERE key=$1',[String(key)]))?.value??null;}
+async function getMeta(db,key){return (await one(db,'SELECT value FROM atlas.atlas_meta WHERE key=$1',[String(key)]))?.value??null;}
 
-export async function setMeta(db,key,value){await exec(db,'INSERT INTO atlas.atlas_meta(key,value) VALUES($1,$2) ON CONFLICT(key) DO UPDATE SET value=excluded.value',[String(key),String(value)]);}
+async function setMeta(db,key,value){await exec(db,'INSERT INTO atlas.atlas_meta(key,value) VALUES($1,$2) ON CONFLICT(key) DO UPDATE SET value=excluded.value',[String(key),String(value)]);}
 
 async function replaceRows(db,table,cols,rows,opts={}){
   await transaction(db,async tx=>{await exec(tx,'DELETE FROM atlas.'+table);await bulkInsert(tx,table,cols,rows,opts)});
@@ -192,12 +192,6 @@ export async function readDocument(db,name){const r=await one(db,'SELECT payload
 
 return r?parseJson(r.payload_json):null;}
 
-export async function listDocuments(db,kind=null){
-  const rs=await exec(db,kind?'SELECT * FROM atlas.atlas_documents WHERE kind=$1 ORDER BY name':'SELECT * FROM atlas.atlas_documents ORDER BY name',kind?[kind]:[]);
-
-  return rs.map(r=>({name:r.name,kind:r.kind,value:parseJson(r.payload_json),updatedAt:r.updated_at}));
-}
-
 export async function replaceClassifications(db,items){
   await replaceRows(db,'atlas_classifications',['namespace','name','payload_json'],(items??[]).filter(i=>i?.namespace&&i?.name).map(i=>[i.namespace,i.name,json(i)]));
 }
@@ -225,5 +219,3 @@ export async function replaceItemDetails(db,ns,items){await transaction(db,async
 export async function readItemDetail(db,ns,name){const r=await one(db,'SELECT payload_json FROM atlas.atlas_item_details WHERE namespace=$1 AND name=$2',[ns,name]);
 
 return r?parseJson(r.payload_json):null;}
-
-export async function readItemDetailsForRegistry(db,ns){return (await exec(db,'SELECT payload_json FROM atlas.atlas_item_details WHERE namespace=$1 ORDER BY name',[ns])).map(r=>parseJson(r.payload_json));}

@@ -49,7 +49,8 @@ describe('frontend completion contract', () => {
     expect(html).toContain('src="https://delta.example/favicon.ico"');
     expect(html).toContain('href="/Registry-Atlas/@delta/blocks/dashboard"');
     expect(html).toContain('href="https://delta.example/components/dashboard"');
-    expect(html).toContain('View block');
+    expect(html).not.toContain('View block');
+    expect(html).toContain('Registry homepage ↗');
     expect(html).not.toContain('href="https://delta.example/r/dashboard.json"');
     expect(html).not.toContain('View item JSON');
     expect(html).not.toContain('<iframe');

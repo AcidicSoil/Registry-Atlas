@@ -22,7 +22,7 @@ function pgPlaceholders(statement) {
   return output;
 }
 
-export function pgStatement(source) {
+function pgStatement(source) {
   let sql=String(source).trim();
 
   if(/^PRAGMA\b/i.test(sql))throw new Error('PRAGMA is not supported by PostgreSQL');

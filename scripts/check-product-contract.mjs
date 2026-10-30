@@ -117,11 +117,12 @@ assert(!detailViewSource.includes('data-source-sandbox')
   'item detail must not expose fake/local component previews');
 
 assert(componentViewSource.includes('sourcePageNavigation')
-    && componentViewSource.includes('itemActionLabel')
-    && componentViewSource.includes('catalog-component-deeplink')
+    && componentViewSource.includes('catalog-component-open')
+    && componentViewSource.includes('renderCardRegistryHomepage(registryHomepage')
     && componentViewSource.includes('Source ↗')
+    && !componentViewSource.includes('catalog-component-deeplink')
     && !componentViewSource.includes('View item JSON'),
-  'catalog cards must expose an internal item deeplink, keep upstream pages as separate Source links, and never expose raw item JSON actions');
+  'catalog cards retain their internal card link and only one external homepage action, keeping upstream Source links independent');
 
 assert(detailViewSource.includes('sourcePageNavigationForItem')
     && detailViewSource.includes('verifiedRegistryHomepage')

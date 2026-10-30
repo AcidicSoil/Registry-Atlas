@@ -11,16 +11,8 @@ import {
   upsertClassificationRunItems
 } from './atlas-postgres.mjs';
 
-export { openAtlasCoreDatabase, transaction, exec, one, bulkInsert,
-  putClassificationBatch, putClassificationRun, putDocument,
-  readCatalogEvidence, readCatalogSnapshot, readClassificationBatches,
-  readClassificationRun, readClassificationRunItems, readClassifications,
-  readCuratedItemSummaries, readDocument, readRawRegistries, readRegistrySnapshot,
-  readSourcePages, replaceCatalogEvidence, replaceCatalogSnapshot,
-  replaceClassifications, replaceCuratedAndRegistrySnapshot,
-  replaceCuratedItemSummaries, replaceItemDetails, replaceRawRegistries,
-  replaceRegistrySnapshot, replaceSourcePages, resetClassificationRun,
-  upsertClassificationRunItems
+export {
+  openAtlasCoreDatabase, transaction, putClassificationBatch, putClassificationRun, putDocument, readCatalogSnapshot, readClassificationRun, readClassificationRunItems, readCuratedItemSummaries, readDocument, readRawRegistries, replaceCatalogEvidence, replaceCatalogSnapshot, replaceCuratedAndRegistrySnapshot, replaceCuratedItemSummaries, replaceItemDetails, replaceRawRegistries, replaceRegistrySnapshot, replaceSourcePages, resetClassificationRun, upsertClassificationRunItems
 };
 
 export async function readAtlasState(db) {
@@ -40,7 +32,7 @@ export async function readAtlasState(db) {
     classificationEvaluation,promotionReview,classificationOverlay};
 }
 
-export async function readClassificationOverlay(db) {
+async function readClassificationOverlay(db) {
   const meta=await readDocument(db,'catalog-classification-overlay');
 
   return meta?{...meta,items:await readClassifications(db)}:null;

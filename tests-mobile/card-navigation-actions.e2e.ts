@@ -1,49 +1,45 @@
 import { test } from '@e2e-dev/web';
 import { expect } from 'e2e';
 
-test('mobile card keeps registry homepage and deeplink independently accessible', async ({ app, browser, screen }) => {
+test('mobile card keeps one footer homepage link and clickable internal card', async ({ app, browser, screen }) => {
   await app.open('/Registry-Atlas/components/s/.NET%20logo');
 
   const homepage = screen.getByRole('link', 'Open registry homepage for @logoforge');
-  const deeplink = screen.getByRole('link', 'View component');
+  const cardLink = screen.getByRole('link', 'Open .NET logo from @logoforge');
 
   await expect(homepage).toBeVisible();
-  await expect(deeplink).toBeVisible();
+  await expect(homepage).toHaveAttribute('target', '_blank');
 
   const geometry = await browser.evaluate(() => {
     const card = document.querySelector('.catalog-component-card');
-    const homepageLink = card?.querySelector('.catalog-component-homepage');
-    const registry = card?.querySelector('.catalog-component-registry');
-    const kind = card?.querySelector('.catalog-component-kind');
+    const footer = card?.querySelector('.catalog-component-source-actions');
+    const link = footer?.querySelector('.catalog-component-homepage');
 
-    if (!card || !homepageLink || !registry || !kind) return null;
+    if (!card || !footer || !link) return null;
 
-    const home = homepageLink.getBoundingClientRect();
-    const kindBox = kind.getBoundingClientRect();
-    const registryBox = registry.getBoundingClientRect();
-
-    const overlap = (a: DOMRect, b: DOMRect) =>
-      a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+    const box = link.getBoundingClientRect();
+    const footerBox = footer.getBoundingClientRect();
 
     return {
-      homepageClearOfType: !overlap(home, kindBox),
-      homepageClearOfRegistry: !overlap(home, registryBox),
-      homepageWithinViewport: home.right <= window.innerWidth,
-      deeplinkWithinViewport: Boolean(card.querySelector('.catalog-component-deeplink'))
-        && card.getBoundingClientRect().right <= window.innerWidth,
-      noInspect: !card.querySelector('.catalog-component-inspect'),
+      homepageCount: card.querySelectorAll('.catalog-component-homepage').length,
+      homepageInFooter: link.parentElement === footer,
+      homepageWithinViewport: box.right <= window.innerWidth,
+      homepageBelowContent: box.top >= footerBox.top,
+      noViewAction: !card.querySelector('.catalog-component-deeplink'),
+      noHorizontalOverflow: document.documentElement.scrollWidth <= window.innerWidth,
     };
   });
 
   expect(geometry).toEqual({
-    homepageClearOfType: true,
-    homepageClearOfRegistry: true,
+    homepageCount: 1,
+    homepageInFooter: true,
     homepageWithinViewport: true,
-    deeplinkWithinViewport: true,
-    noInspect: true,
+    homepageBelowContent: true,
+    noViewAction: true,
+    noHorizontalOverflow: true,
   });
 
-  await app.screenshot('mobile-card-homepage-and-deeplink');
-  await deeplink.tap();
+  await app.screenshot('mobile-card-single-homepage');
+  await cardLink.tap();
   await expect(browser).toHaveURL('/Registry-Atlas/@logoforge/components/dotnet');
 });

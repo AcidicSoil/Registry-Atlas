@@ -1,5 +1,5 @@
 /** Private URL-origin and path rules. Import through ../sourcePageValidation outside core. */
-export const trimTrailingSlashes = (path: string): string => path.replace(/\/+$/, '');
+const trimTrailingSlashes = (path: string): string => path.replace(/\/+$/, '');
 
 export function isPublicHostname(hostname: string): boolean {
   return hostname.includes('.')

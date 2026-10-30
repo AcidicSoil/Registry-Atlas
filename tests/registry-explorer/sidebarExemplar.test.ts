@@ -26,7 +26,7 @@ describe('21st.dev-inspired sidebar shell', () => {
     expect(layout).toBeLessThan(navigation);
     expect(navigation).toBeLessThan(filters);
     expect(html).toContain('class="sidebar-body-scroll"');
-    expect(css).toMatch(/\.sidebar-body-scroll\s*\{[^}]*overflow-y:\s*auto/s);
+    expect(css).toMatch(/\.sidebar-body-scroll\s*\{[^}]*overflow:\s*hidden auto/s);
     expect(html).not.toContain('shadcn directory');
     expect(html).toContain('<details class="sidebar-collections"');
     expect(html).toContain('id="sidebarCollectionCurrent"');
