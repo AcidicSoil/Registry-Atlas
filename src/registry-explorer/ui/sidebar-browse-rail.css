@@ -1,0 +1,351 @@
+/* Authoritative browse sidebar: modeled on the 21st.dev Libraries rail. */
+main {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.app-sidebar {
+  /* Preserve the responsive fixed positioning declared at 860px. */
+  top: 0;
+  display: flex;
+  height: 100vh;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 8px;
+  border-right: 1px solid var(--border);
+  background: var(--background);
+}
+
+.sidebar-topbar {
+  display: flex;
+  min-height: 42px;
+  flex: 0 0 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  padding: 0 8px;
+}
+
+.app-sidebar .brand {
+  gap: 8px;
+}
+
+.app-sidebar .brand-logo {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  border-radius: 5px;
+}
+
+.app-sidebar .brand-logo-inner {
+  font-size: 11px;
+}
+
+.app-sidebar .brand-title {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+}
+
+.sidebar-context {
+  min-height: 36px;
+  flex: 0 0 36px;
+}
+
+.sidebar-context-link {
+  display: grid;
+  height: 36px;
+  min-width: 0;
+  grid-template-columns: 20px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 4px;
+  padding: 0 8px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.sidebar-context-link:hover,
+.sidebar-context-link:focus-visible {
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.sidebar-context-icon {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  color: currentcolor;
+}
+
+.sidebar-context-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-context-end {
+  width: 16px;
+  height: 16px;
+}
+
+.app-sidebar .search-bar {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  flex: 0 0 32px;
+  gap: 7px;
+  margin: 0 0 8px;
+  padding: 0 9px;
+  border-color: color-mix(in srgb, var(--border) 80%, transparent);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.app-sidebar .search-icon {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  place-items: center;
+  color: var(--muted-foreground);
+}
+
+.app-sidebar .search-input {
+  min-height: 30px;
+  padding: 0;
+  font-size: 13px;
+}
+
+.search-shortcut {
+  min-width: 14px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 12px;
+  text-align: center;
+}
+
+.app-sidebar .aside-inner {
+  flex-direction: column;
+  border: 0;
+}
+
+.sidebar-layout-strip {
+  min-height: 40px;
+  flex: 0 0 40px;
+  padding: 4px 0;
+}
+
+.sidebar-layout-toggle {
+  display: grid;
+  height: 32px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.sidebar-layout-toggle button {
+  min-width: 0;
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.sidebar-layout-toggle button:hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--secondary) 72%, transparent);
+}
+
+.sidebar-layout-toggle button[aria-pressed="true"] {
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--border) 75%, transparent);
+  font-weight: 600;
+}
+
+.sidebar-scroll-pane {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--muted-foreground) 45%, transparent) transparent;
+}
+
+.app-sidebar .desktop-browse-rail,
+.sidebar-browse-navigation,
+.registry-library-sidebar {
+  display: grid;
+  min-width: 0;
+  gap: 0;
+  padding: 0 0 18px;
+}
+
+.sidebar-nav-section {
+  display: grid;
+  min-width: 0;
+  gap: 0;
+}
+
+.sidebar-nav-section-label {
+  display: flex;
+  min-height: 36px;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0 8px 6px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.sidebar-nav-row {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.sidebar-nav-row:not(:has(.sidebar-nav-row-icon)) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.sidebar-nav-row:hover {
+  background: color-mix(in srgb, var(--secondary) 72%, transparent);
+  color: var(--foreground);
+}
+
+.sidebar-nav-row:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+}
+
+.sidebar-nav-row-active,
+.sidebar-nav-row[aria-current="page"] {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.sidebar-nav-row-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-nav-row-count {
+  min-width: 20px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.sidebar-nav-row-active .sidebar-nav-row-label {
+  font-weight: 600;
+}
+
+.sidebar-nav-row-icon {
+  display: grid;
+  width: 16px;
+  height: 16px;
+  place-items: center;
+  color: currentcolor;
+}
+
+.sidebar-nav-icon-svg {
+  width: 16px;
+  height: 16px;
+  overflow: visible;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sidebar-source-row {
+  margin-bottom: 2px;
+}
+
+.content {
+  padding-top: 58px;
+}
+
+.catalog-component-grid-list,
+.registry-directory-grid-list {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.catalog-component-grid-list {
+  gap: 0;
+  border-top: 1px solid var(--border);
+}
+
+.catalog-component-grid-list .catalog-component-card {
+  min-height: 104px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+.catalog-component-grid-list .catalog-component-open {
+  min-height: 72px;
+  grid-template-columns: minmax(220px, 0.36fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+}
+
+.catalog-component-grid-list .catalog-component-description {
+  min-height: 0;
+}
+
+@media (width <= 860px) {
+  .app-sidebar {
+    padding: 0 8px;
+    overflow-y: auto;
+  }
+
+  .app-sidebar .aside-inner {
+    overflow: visible;
+  }
+
+  .sidebar-scroll-pane {
+    overflow: visible;
+  }
+
+  .content {
+    padding-top: 18px;
+  }
+}

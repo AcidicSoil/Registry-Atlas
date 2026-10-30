@@ -26,7 +26,7 @@ export function resizeSummaryWidth(width: number, key: string): number {
 
 /** Owns panel actions across route renders, without listeners on replaced markup. */
 export function setupRegistryProfilePanel(body: HTMLElement): void {
-  const main = document.getElementById('appMain');
+  const main = document.getElementById('app-main');
 
   if (!(main instanceof HTMLElement)) return;
 

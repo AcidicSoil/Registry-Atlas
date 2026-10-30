@@ -27,7 +27,7 @@ export function nextPanelWidth(width: number, key: string): number {
 }
 
 export function setupAppShellPanels(): void {
-  const main = document.getElementById('appMain');
+  const main = document.getElementById('app-main');
   const handle = document.getElementById('appPanelResize');
   const navigation = document.getElementById('toggleSidebarPanel');
   const content = document.getElementById('toggleContentPanel');

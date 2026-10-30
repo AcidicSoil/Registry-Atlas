@@ -1,0 +1,85 @@
+{
+  "schema": "registry-atlas/css-cascade-browser-parity/v1",
+  "purpose": "Verify existing visual behavior after stylesheet extraction and safe precedence cleanup",
+  "sourceRevision": "725c2e48e2fc233012810c1cea21bbc343dd9f59",
+  "originalStylesheetSha256": "23adb87a5fe9735ece901791de149ee423e59d60b35d8380ff6a5cd6a289b630",
+  "currentStylesheetSha256": "3bca802335da065f83a3155f392d96091acc8956924c58c7dadf4a974a75d4cf",
+  "browserProfile": "registry-atlas",
+  "instance": "http://127.0.0.1:9890",
+  "reference": "Original committed stylesheet was loaded in place of new base + nine extracted sheets; seven unchanged feature sheets remained loaded",
+  "loadGuard": "Original reference sheet fully loaded before sampling, verified cssRules > 400",
+  "comparisons": [
+    {
+      "route": "catalog",
+      "viewport": [
+        1440,
+        900
+      ],
+      "selectorsObserved": 16,
+      "propertyFieldsPerSelector": 30,
+      "computedStyleAndGeometryDifferences": 0,
+      "baselineSha256": "b1691751da3c1607789888c01fea35f19d09200a3b3acb28962f9ae11f35b498",
+      "currentSha256": "b1691751da3c1607789888c01fea35f19d09200a3b3acb28962f9ae11f35b498"
+    },
+    {
+      "route": "catalog",
+      "viewport": [
+        390,
+        844
+      ],
+      "selectorsObserved": 16,
+      "propertyFieldsPerSelector": 30,
+      "computedStyleAndGeometryDifferences": 0,
+      "baselineSha256": "42c6815bed88730e3c871955ddd0df86e6fe1a8b040d5620ee56af3e37ceac0d",
+      "currentSha256": "42c6815bed88730e3c871955ddd0df86e6fe1a8b040d5620ee56af3e37ceac0d"
+    },
+    {
+      "route": "item-detail",
+      "viewport": [
+        1440,
+        900
+      ],
+      "selectorsObserved": 15,
+      "propertyFieldsPerSelector": 30,
+      "computedStyleAndGeometryDifferences": 0,
+      "baselineSha256": "020942a68a5fb8615ce09a8f05f285e29d777fd3a53811be462f3931d56ede58",
+      "currentSha256": "020942a68a5fb8615ce09a8f05f285e29d777fd3a53811be462f3931d56ede58"
+    },
+    {
+      "route": "item-detail",
+      "viewport": [
+        390,
+        844
+      ],
+      "selectorsObserved": 15,
+      "propertyFieldsPerSelector": 30,
+      "computedStyleAndGeometryDifferences": 0,
+      "baselineSha256": "f73406ad178b87cc702ffef97ddb57ba7b09b2d6dcb25751fd10c8aa3bd70f2e",
+      "currentSha256": "f73406ad178b87cc702ffef97ddb57ba7b09b2d6dcb25751fd10c8aa3bd70f2e"
+    },
+    {
+      "route": "homepage",
+      "viewport": [
+        1440,
+        900
+      ],
+      "selectorsObserved": 15,
+      "propertyFieldsPerSelector": 30,
+      "computedStyleAndGeometryDifferences": 0,
+      "baselineSha256": "4550f8d249735a1a6b7ea7bee77042b00f5b19eb2278d51fea46cf9d3e73b238",
+      "currentSha256": "4550f8d249735a1a6b7ea7bee77042b00f5b19eb2278d51fea46cf9d3e73b238"
+    },
+    {
+      "route": "homepage",
+      "viewport": [
+        390,
+        844
+      ],
+      "selectorsObserved": 15,
+      "propertyFieldsPerSelector": 30,
+      "computedStyleAndGeometryDifferences": 0,
+      "baselineSha256": "fa151d27f72f152b48025811b6f357aeb79f152aa904d688148230d7c17b4b24",
+      "currentSha256": "fa151d27f72f152b48025811b6f357aeb79f152aa904d688148230d7c17b4b24"
+    }
+  ]
+}

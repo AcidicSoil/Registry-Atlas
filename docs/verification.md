@@ -23,7 +23,9 @@ The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is t
 
 `pnpm lint:styles` runs Stylelint with the source-backed CSS ownership/size rules; `pnpm lint:unused` runs Knip against the explicit project/CLI/test entrypoints. Both commands are part of `pnpm lint`, `pnpm verify`, `pnpm verify:local`, and deploy CI.
 
-The checked-in `.design/quality-debt-baseline.json` records existing violations. These commands reject **new** issue signatures or increased counts. They do **not** certify the existing stylesheet or unused-export backlog as clean. An intentional reviewed baseline update requires `node scripts/check-quality-debt.mjs all --update-baseline`; ordinarily remediate findings until the baseline shrinks. The current count and accepted deferrals are described in `.design/stale-code-cleanup-2026-10-29.md`.
+`pnpm audit:dependencies` is also mandatory: the workspace pins patched `zod@4.6.6` and transitive `fast-uri@3.1.9` through `pnpm-workspace.yaml` overrides. This prevents vulnerable versions from resurfacing in E2E or CSS tooling dependency trees. Regenerate and audit `pnpm-lock.yaml` when those overrides change.
+
+The checked-in `.design/quality-debt-baseline.json` records the current clean Stylelint and Knip results. Both commands reject **new** issue signatures or increased counts. The Knip configuration explicitly identifies installed, non-npm CLI binaries; the dev-only React Grab/React peer pair loaded by `index.html`; and generated vendor declarations outside authored source. These are documented tooling boundaries, not globally disabled rules. Any intentional new baseline requires `node scripts/check-quality-debt.mjs all --update-baseline` and reviewer evidence. Historical findings and repairs are recorded in `.design/stale-code-cleanup-2026-10-29.md`.
 
 ## Package scripts
 

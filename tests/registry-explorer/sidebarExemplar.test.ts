@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
 
-const css = readFileSync(new URL('../../public/styles/registry-explorer.css', import.meta.url), 'utf8');
+const css = readFileSync(new URL('../../src/registry-explorer/ui/sidebar-exemplar-rail.css', import.meta.url), 'utf8');
 
 describe('21st.dev-inspired sidebar shell', () => {
   it('keeps browse routes as real links in the single desktop sidebar, not a top toolbar', () => {

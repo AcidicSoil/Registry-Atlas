@@ -29,3 +29,36 @@ test('mobile menu is native modal, dismissible, and preserves routes', async ({ 
   await expect(browser).toHaveURL('/Registry-Atlas/registries');
   await expect(modal).not.toBeVisible();
 });
+
+test('mobile backdrop dismisses navigation without dismissing inside clicks', async ({ app, screen, browser }) => {
+  await app.open();
+
+  const opener = screen.getByRole('button', 'Open navigation');
+  const modal = screen.getByRole('dialog', 'Registry Atlas navigation');
+
+  await opener.tap();
+  await expect(modal).toBeVisible();
+
+  await browser.evaluate(() => {
+    const dialog = document.getElementById('mobileSidebarDialog');
+    const sidebar = document.getElementById('appSidebar');
+
+    if (!(dialog instanceof HTMLDialogElement) || !sidebar) throw new Error('Missing mobile dialog/sidebar');
+
+    sidebar.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  await expect(modal).toBeVisible();
+
+  await browser.evaluate(() => {
+    const dialog = document.getElementById('mobileSidebarDialog');
+
+    if (!(dialog instanceof HTMLDialogElement)) throw new Error('Missing mobile dialog');
+
+    dialog.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+  await expect(modal).not.toBeVisible();
+  await expect(opener).toHaveAttribute('aria-expanded', 'false');
+  await expect.poll(() => browser.evaluate(() =>
+    document.activeElement === document.querySelector('[aria-label="Open navigation"]'),
+  )).toBe(true);
+});

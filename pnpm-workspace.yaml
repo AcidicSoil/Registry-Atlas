@@ -3,6 +3,9 @@ packages:
 
 overrides:
   esbuild: 0.28.1
+  # Fix advisories in the directly used validation layer and nested tooling.
+  zod: 4.6.6
+  fast-uri: 3.1.9
 
 # Only audited, version-specific native binary setup is trusted.
 allowBuilds:

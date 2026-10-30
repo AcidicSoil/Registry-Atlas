@@ -156,7 +156,6 @@
   text-decoration: none;
 }
 
-.setup-selection-description a:hover { text-decoration: underline; }
 
 .setup-selection-description span {
   color: var(--muted-foreground);
@@ -240,6 +239,8 @@
 .setup-empty h2, .setup-empty p { margin: 0; }
 .setup-empty p { color: var(--muted-foreground); }
 .setup-empty a { text-decoration: none; }
+
+.setup-selection-description a:hover { text-decoration: underline; }
 
 .setup-review-content {
   display: grid;

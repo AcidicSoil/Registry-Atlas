@@ -1,4 +1,7 @@
 {
+  // Explicit external executables are installed by the workstation, not npm.
+  // React Grab is imported from index.html in development; React is its peer.
+  // Bundled vendor type declarations are generated, not authored application code.
   "$schema": "https://unpkg.com/knip@6.44.0/schema.json",
   "entry": [
     "src/registry-explorer/entry.ts",
@@ -15,7 +18,8 @@
     "tools/eslint/anti-slop-stylex/index.mjs",
     "tools/stylelint/anti-slop-css/index.mjs",
     "tools/oxlint/anti-slop/**/*.test.ts",
-    "scripts/**/*.d.mts"
+    "scripts/**/*.d.mts",
+    "tools/oxlint/anti-slop/effect/index.ts"
   ],
   "project": [
     "src/**/*.{ts,tsx}",
@@ -24,7 +28,17 @@
     "tests-mobile/**/*.{ts,tsx,mjs}",
     "tools/**/*.{ts,mjs}",
     "*.config.ts",
+    "!tools/oxlint/anti-slop/vendor/**",
     "*.config.mjs",
     "index.html"
+  ],
+  "ignoreBinaries": [
+    "cccc",
+    "pinchtab",
+    "pinchtab-profile-manager"
+  ],
+  "ignoreDependencies": [
+    "react",
+    "react-grab"
   ]
 }

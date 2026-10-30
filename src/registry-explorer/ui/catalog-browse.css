@@ -1,0 +1,319 @@
+/* 2026-10 source-reference UX: browseable sidebar, visual-first cards and detail.
+   Atlas retains its own typography and identity; reference patterns are structural. */
+
+.app-sidebar .aside-inner {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.app-sidebar .desktop-browse-rail {
+  display: grid;
+}
+
+.sidebar-browse-navigation {
+  display: grid;
+  min-width: 0;
+  gap: 12px;
+}
+
+.sidebar-browse-section {
+  display: grid;
+  min-width: 0;
+  gap: 7px;
+  margin: 0;
+}
+
+.sidebar-browse-heading {
+  display: flex;
+  width: 100%;
+  min-height: 32px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px 3px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 550;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.sidebar-browse-heading h2 {
+  margin: 0;
+  font: inherit;
+}
+
+.sidebar-select-control {
+  display: block;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+.sidebar-select-control select {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  padding: 5px 28px 5px 9px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--secondary);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 12px;
+}
+
+.sidebar-select-control select:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 1px;
+}
+
+.sidebar-browser-list {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+  max-height: none;
+}
+.sidebar-canonical-tree { gap: 2px; }
+
+.sidebar-canonical-family {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.sidebar-canonical-children {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+  margin-left: 10px;
+  padding-left: 7px;
+  border-left: 1px solid var(--border);
+}
+
+.sidebar-fieldset {
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.sidebar-choice-list {
+  display: grid;
+  min-width: 0;
+  gap: 1px;
+}
+
+.sidebar-choice-row {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.sidebar-choice-row:hover {
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.sidebar-choice-row:focus-within {
+  outline: 2px solid var(--ring);
+  outline-offset: -2px;
+  color: var(--foreground);
+}
+
+.sidebar-choice-row input[type="checkbox"],
+.sidebar-choice-row input[type="radio"] {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+}
+
+.sidebar-choice-row:has(input:checked) {
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.sidebar-choice-canonical.depth-1,
+.sidebar-choice-canonical.depth-2 {
+  min-height: 31px;
+}
+
+.sidebar-browser-label {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+
+.sidebar-choice-row:has(input:checked) .sidebar-browser-label {
+  font-weight: 600;
+}
+
+.sidebar-browser-count {
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  white-space: nowrap; clip-path: inset(50%);
+}
+.content { padding: 24px 26px 56px; }
+
+.catalog-component-grid {
+  display: grid;
+}
+
+.catalog-component-card {
+  padding: 0;
+  box-shadow: none;
+}
+
+.catalog-component-card:hover {
+  box-shadow: none;
+  transform: none;
+}
+
+.catalog-component-open {
+  flex-direction: column;
+  text-decoration: none;
+}
+.catalog-component-open:focus-visible { outline: none; }
+
+.catalog-component-card-copy,
+.catalog-component-card:has(.catalog-component-original) .catalog-component-card-copy {
+  display: grid;
+  align-content: start;
+  min-height: 0;
+}
+
+.catalog-component-card-copy strong {
+  overflow: hidden;
+  color: var(--foreground);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.catalog-component-card-copy .catalog-component-registry { font-size: 12px; }
+
+.catalog-component-unavailable,
+.catalog-component-card:has(.catalog-component-unavailable) .catalog-component-unavailable {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  place-items: center;
+  padding: 0;
+  background: color-mix(in srgb, var(--card) 55%, var(--background));
+}
+
+.catalog-component-unavailable-icon {
+  display: inline-grid;
+  width: 47px;
+  height: 37px;
+  place-items: center;
+  border: 1px solid var(--input);
+  border-radius: 7px;
+  color: var(--muted-foreground);
+  font-size: 25px;
+  font-weight: 300;
+  opacity: 0.43;
+}
+
+.catalog-component-original {
+  position: static;
+  align-self: start;
+  padding: 0;
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+
+.catalog-component-original:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+.catalog-discovery-band-heading { margin-top: 8px; }
+.catalog-discovery-row { gap: 18px; }
+
+.catalog-results-context {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 var(--space-3);
+  flex-wrap: wrap;
+}
+
+.catalog-search-context {
+  color: var(--muted-foreground);
+  font-size: 12px;
+}
+
+.catalog-filter-clear {
+  min-height: 30px;
+  margin-left: auto;
+}
+
+.catalog-applied-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-right: auto;
+}
+
+.catalog-applied-filter {
+  padding: 7px 9px;
+  border: 1px solid var(--input);
+  border-radius: 20px;
+  background: var(--secondary);
+  color: var(--foreground);
+  font-size: 12px;
+  cursor: pointer;
+}
+.catalog-applied-filter:hover { border-color: var(--primary); }
+
+.item-detail-hero {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.item-detail-summary {
+  width: 100%;
+  max-width: 100%;
+}
+.item-detail-summary > p { max-width: 70ch; }
+.item-detail-cards { gap: 14px; }
+.item-detail-card { box-shadow: none; }
+
+@media(width <= 860px) {
+  .app-sidebar .aside-inner { overflow-y: auto; }
+
+  .content {
+    padding: 18px 15px 42px;
+    min-width: 0;
+  }
+  .sidebar-browse-navigation { padding-bottom: 22px; }
+}
+
+@media(width <= 520px) {
+  .catalog-component-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 21px;
+  }
+  .catalog-component-card-copy strong { font-size: 15px; }
+}

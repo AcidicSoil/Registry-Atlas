@@ -6,6 +6,8 @@ settings:
 
 overrides:
   esbuild: 0.28.1
+  zod: 4.6.6
+  fast-uri: 3.1.9
 
 importers:
 
@@ -18,8 +20,8 @@ importers:
         specifier: 18.3.1
         version: 18.3.1
       zod:
-        specifier: 4.3.6
-        version: 4.3.6
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@e2e-dev/web':
         specifier: 0.14.0
@@ -27,18 +29,9 @@ importers:
       '@oxlint/plugins':
         specifier: 1.87.0
         version: 1.87.0
-      '@shadcn/lint':
-        specifier: file:tools/oxlint/shadcn-lint
-        version: file:tools/oxlint/shadcn-lint(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))
-      '@stylexjs/eslint-plugin':
-        specifier: 0.19.1
-        version: 0.19.1
       '@types/node':
         specifier: ^26.6.4
         version: 26.6.4
-      '@types/react':
-        specifier: ^18.3.31
-        version: 18.3.31
       dependency-cruiser:
         specifier: 18.6.0
         version: 18.6.0
@@ -390,10 +383,6 @@ packages:
     resolution: {integrity: sha512-DObd/KKUsU+FaFv4PLxSRenpXfQWmPXXP3pPZ6/K1PCrMu2vQpMDMuQe/BqYeoLcz8ro0bVDF1RxOJgfVEdhUw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@eslint/core@0.17.0':
-    resolution: {integrity: sha512-yL/sLrpmtDaFEiUj1osRP4TI2MDz1AddJL+jZ7KSqvBuliN4xqYY54IfdN8qD8Toa6g1iloph1fxQNkjOxrrpQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@eslint/core@1.2.1':
     resolution: {integrity: sha512-MwcE1P+AZ4C6DWlpin/OmOA54mmIZ/+xZuJiQd4SyB29oAJjN30UW9wkKNptW2ctp4cEsvhlLY/CsQ1uoHDloQ==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
@@ -510,6 +499,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.12.0':
     resolution: {integrity: sha512-JOERgZCxRM06FEJ5kEWxlSRChah6MmXDx3KwCruqEv/iEyLkTokCSemf2y1w8oIHtfrr8EVTpzebq/31vn2Cpg==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -1562,30 +1552,12 @@ packages:
     resolution: {integrity: sha512-wogj6Trj8fAu+aD7HbpvHEBlyANMOvvO9MP5NFJaiQbprLKugtCdE6rFTxDhofXvRo4nswL9m4Cvysg3k5KcvQ==}
     engines: {node: '>=18'}
 
-  '@shadcn/lint@file:tools/oxlint/shadcn-lint':
-    resolution: {directory: tools/oxlint/shadcn-lint, type: directory}
-    engines: {node: '>=20.19'}
-    peerDependencies:
-      '@typescript-eslint/parser': '>=8.40.0'
-      eslint: '>=9.30.0'
-    peerDependenciesMeta:
-      '@typescript-eslint/parser':
-        optional: true
-      eslint:
-        optional: true
-
   '@shaderfrog/glsl-parser@7.0.1':
     resolution: {integrity: sha512-8mpfsoPeRhesY3pOrzNZBL8uG6N5GVX1EHLBYbd4gzKs+c7vaEIqpTNK5VrffU33qQN4cwpP2v3u4aPPBU32sw==}
     engines: {node: '>=16'}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
-
-  '@stylexjs/eslint-plugin@0.19.1':
-    resolution: {integrity: sha512-875KpR4M71F5rTSTfDoGWbs09u8atZvVGWBN5bWt3svIEmuNwTMRZGdY8iHiaPrL+W49/tifc6pouKcn3t8d+A==}
-
-  '@stylexjs/shared@0.19.1':
-    resolution: {integrity: sha512-oFBtW0NPNLJOT1gLweWRNKrIJHjJMwOmSV7fgd6ewok4fwb/Nh95PEaYGKu+ZONk0nNghjLFfOwiIsxJdvh3TQ==}
 
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
@@ -1607,12 +1579,6 @@ packages:
 
   '@types/node@26.6.4':
     resolution: {integrity: sha512-ldVPDCzj7fsaGZrLB0NuHuTvJcsNasysBAqMolr/cgxrLd1xbqxIr3XJiPnHHJUCxj5sNF1vnRj9aWnrVh5Jcg==}
-
-  '@types/prop-types@15.7.15':
-    resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
-
-  '@types/react@18.3.31':
-    resolution: {integrity: sha512-vfEqpXTvwT91yhmwdfouStN2hSKwTvyRs8qpLfADyrq/kxDw0hZM7Wk9Ug1FELj8hIby+S/+kQCSRFF32nv2Qw==}
 
   '@typescript-eslint/types@8.71.1':
     resolution: {integrity: sha512-ybYnPTUwg3VQQOFEiBPLs8Jxl1ry2vXdn1kVKguomBbvxpetdu3MKTNDqFNUrlG8ylP9MpZosmXMFYlGQHk1oQ==}
@@ -1795,11 +1761,6 @@ packages:
     resolution: {integrity: sha512-bXfOC4QcT1tKXGorxL3wbJm6XJPDqEnij2gQ2m7ESQuE+/z9YFIWnl/5RpTiKWbMq3EVKR4fRLJGn6DVfu0mpw==}
     engines: {node: '>=18.20'}
 
-  cn@0.4.0:
-    resolution: {integrity: sha512-qOAeUhPwPzBxx6jaeQdo646XIKliKHc2j1ZF7Ngb1o0pJZKH5gq8FkA0aVdUdPFUDXNXyUCXpCtoJISo6dhizg==}
-    engines: {node: '>=20'}
-    hasBin: true
-
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
     engines: {node: '>=7.0.0'}
@@ -1853,9 +1814,6 @@ packages:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
     engines: {node: '>=4'}
     hasBin: true
-
-  csstype@3.2.3:
-    resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
   debounce-fn@6.0.0:
     resolution: {integrity: sha512-rBMW+F2TXryBwB54Q0d8drNEI+TfoS9JpNTAoVpukbWEhjXQq4rySFYLaqXMFXwdv61Zb2OHtj5bviSoimqxRQ==}
@@ -2036,8 +1994,8 @@ packages:
   fast-string-width@3.0.2:
     resolution: {integrity: sha512-gX8LrtNEI5hq8DVUfRQMbr5lpaS4nMIWV+7XEbXk2b8kiQIizgnlr12B4dA3ZEx3308ze0O4Q1R+cHts8kyUJg==}
 
-  fast-uri@3.1.8:
-    resolution: {integrity: sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==}
+  fast-uri@3.1.9:
+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
 
   fast-wrap-ansi@0.2.2:
     resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
@@ -3053,13 +3011,7 @@ packages:
     resolution: {integrity: sha512-Q6/nZLe6jxuU80qb/4uJ4t5v2VEZ44lzQjPDhYJNztRQ4wyWc6VF3D3Kb/fAuPetZQnhS3hnajCf9CsWesghLQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
-      zod: ^3.25.0 || ^4.0.0
-
-  zod@4.3.6:
-    resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
-
-  zod@4.6.1:
-    resolution: {integrity: sha512-341aRWQsve0rvronKNTqZpjmzdbUDlFuzHaI/XLg/Ej82qffDJRRfBTCuv7+9q/rMjB6LSLyEBnW4InJeMtt/Q==}
+      zod: 4.6.6
 
   zod@4.6.6:
     resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
@@ -3335,10 +3287,6 @@ snapshots:
     dependencies:
       '@eslint/core': 1.2.1
 
-  '@eslint/core@0.17.0':
-    dependencies:
-      '@types/json-schema': 7.0.15
-
   '@eslint/core@1.2.1':
     dependencies:
       '@types/json-schema': 7.0.15
@@ -3397,12 +3345,12 @@ snapshots:
 
   '@modelcontextprotocol/core@2.3.0':
     dependencies:
-      zod: 4.3.6
+      zod: 4.6.6
 
   '@modelcontextprotocol/server@2.3.0':
     dependencies:
       '@modelcontextprotocol/core': 2.3.0
-      zod: 4.3.6
+      zod: 4.6.6
 
   '@napi-rs/wasm-runtime@1.2.5(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)':
     dependencies:
@@ -4012,25 +3960,9 @@ snapshots:
       '@sentry/conventions': 0.16.0
       '@sentry/core': 10.76.2
 
-  '@shadcn/lint@file:tools/oxlint/shadcn-lint(eslint@10.12.0(jiti@2.7.0)(supports-color@7.2.0))':
-    dependencies:
-      '@eslint/core': 0.17.0
-      cn: 0.4.0
-    optionalDependencies:
-      eslint: 10.12.0(jiti@2.7.0)(supports-color@7.2.0)
-
   '@shaderfrog/glsl-parser@7.0.1': {}
 
   '@standard-schema/spec@1.1.0': {}
-
-  '@stylexjs/eslint-plugin@0.19.1':
-    dependencies:
-      '@csstools/css-tokenizer': 3.0.4
-      '@stylexjs/shared': 0.19.1
-      micromatch: 4.0.8
-      postcss-value-parser: 4.2.0
-
-  '@stylexjs/shared@0.19.1': {}
 
   '@tybys/wasm-util@0.10.4':
     dependencies:
@@ -4053,13 +3985,6 @@ snapshots:
   '@types/node@26.6.4':
     dependencies:
       undici-types: 8.9.0
-
-  '@types/prop-types@15.7.15': {}
-
-  '@types/react@18.3.31':
-    dependencies:
-      '@types/prop-types': 15.7.15
-      csstype: 3.2.3
 
   '@typescript-eslint/types@8.71.1': {}
 
@@ -4173,7 +4098,7 @@ snapshots:
   ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
-      fast-uri: 3.1.8
+      fast-uri: 3.1.9
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
@@ -4257,8 +4182,6 @@ snapshots:
 
   cli-spinners@3.4.0: {}
 
-  cn@0.4.0: {}
-
   color-convert@2.0.1:
     dependencies:
       color-name: 1.1.4
@@ -4310,8 +4233,6 @@ snapshots:
       source-map-js: 1.2.2
 
   cssesc@3.0.0: {}
-
-  csstype@3.2.3: {}
 
   debounce-fn@6.0.0:
     dependencies:
@@ -4371,7 +4292,7 @@ snapshots:
       oxc-transform: 0.152.0
       picocolors: 1.1.1
       pixelmatch: 8.0.0
-      zod: 4.6.1
+      zod: 4.6.6
 
   electron-to-chromium@1.5.452: {}
 
@@ -4537,7 +4458,7 @@ snapshots:
     dependencies:
       fast-string-truncated-width: 3.0.3
 
-  fast-uri@3.1.8: {}
+  fast-uri@3.1.9: {}
 
   fast-wrap-ansi@0.2.2:
     dependencies:
@@ -5573,9 +5494,5 @@ snapshots:
   zod-validation-error@4.0.2(zod@4.6.6):
     dependencies:
       zod: 4.6.6
-
-  zod@4.3.6: {}
-
-  zod@4.6.1: {}
 
   zod@4.6.6: {}

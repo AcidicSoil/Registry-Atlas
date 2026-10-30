@@ -5,7 +5,7 @@ export default {
   plugins: antiSlopCss,
   ignoreFiles: ['dist/**', 'node_modules/**'],
   rules: {
-    'anti-slop-css/max-stylesheet-size': 4545,
+    'anti-slop-css/max-stylesheet-size': 1700,
     'anti-slop-css/require-style-ownership': [{
       sourceRoots: ['public/styles', 'src'],
       ownerDirectories: ['ui', 'components'],

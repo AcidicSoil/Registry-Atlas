@@ -22,3 +22,11 @@ Option A was a single parent filter click plus an expanding second button. It mi
 `tests/registry-explorer/catalogSidebarNavigation.test.ts` proves grouping, count-derived rows, escaping, and that opening a category does not select it. `tests/grouped-sidebar.e2e.ts` proves the full desktop open, sort/rerender, filter, URL, active row, and keyboard flow. `tests-mobile/grouped-sidebar.e2e.ts` proves mobile closes the drawer after filtering; `tests-mobile/native-sidebar.e2e.ts` checks existing native dialog behavior. PPM screenshot: `.design/evidence/grouped-filters/navigation-expanded.png`.
 
 No chat, model selection, unrelated Workbench packages or registry provider changes are part of this feature.
+
+## 2026-10-30 light-dismiss source re-audit
+
+The updated project light-dismiss policy additionally requires outside-pointer dismissal of eligible transient surfaces, not just Escape and selection-based closure.
+
+The existing `src/registry-explorer/entry.ts` listener closes `#mobileSidebarDialog` only when the dialog itself receives the click. It does not close on clicks from its child sidebar. In the dedicated headed Registry Atlas browser at 390×844, the open dialog was 308px wide and modal. A real pointer click at x=375, y=420 (outside its bounds) closed the dialog, changed the invoker `aria-expanded` from `true` to `false`, and restored focus to the invoker. The current E2E test `tests-mobile/native-sidebar.e2e.ts` checks both nested inside-click retention and dialog-target dismissal, and the existing grouped/sidebar desktop and mobile tests were rerun. The existing Escape, selected-route dismissal, and modal/focus behavior remain intact.
+
+This source-linked behavioral evidence revalidates `policy:light-dismiss`. It is not a separate design-baseline approval.
