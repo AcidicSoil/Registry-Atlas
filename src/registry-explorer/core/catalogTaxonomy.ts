@@ -115,7 +115,7 @@ export function parseCatalogTaxonomy(value: RawJsonInput): CatalogTaxonomy {
   return { version, roots: value.roots.map(root => visit(root, null)) };
 }
 
-export function flattenCatalogTaxonomy(taxonomy: CatalogTaxonomy): CatalogTaxonomyRecord[] {
+function flattenCatalogTaxonomy(taxonomy: CatalogTaxonomy): CatalogTaxonomyRecord[] {
   const records: CatalogTaxonomyRecord[] = [];
 
   const walk = (node: CatalogTaxonomyNode, parentId: string | null, depth: number): void => {

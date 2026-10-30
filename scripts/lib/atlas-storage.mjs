@@ -1,7 +1,7 @@
 import {
-  openAtlasCoreDatabase, transaction, exec, one, bulkInsert,
+  openAtlasCoreDatabase, transaction,
   putClassificationBatch, putClassificationRun, putDocument,
-  readCatalogEvidence, readCatalogSnapshot, readClassificationBatches,
+  readCatalogEvidence, readCatalogSnapshot,
   readClassificationRun, readClassificationRunItems, readClassifications,
   readCuratedItemSummaries, readDocument, readRawRegistries, readRegistrySnapshot,
   readSourcePages, replaceCatalogEvidence, replaceCatalogSnapshot,

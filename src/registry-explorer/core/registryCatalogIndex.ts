@@ -35,23 +35,6 @@ const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [
   'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
 ];
 
-export interface RegistryCatalogMatch {
-  namespace: string;
-  item: RegistryCatalogItem;
-}
-
-export interface RegistryCatalogSearchResult {
-  matches: readonly RegistryCatalogMatch[];
-  totalMatches: number;
-  truncated: boolean;
-}
-
-export interface RegistryCatalogComponentOption {
-  value: string;
-  label: string;
-  count: number;
-}
-
 type ParsedCatalogBuckets = Record<string, RegistryCatalogItem[]>;
 
 function parsedCatalogBuckets(raw: Record<string, RawJsonInput>): ParsedCatalogBuckets {
@@ -102,93 +85,6 @@ export function parseRegistryCatalogIndex(value: RawJsonInput): RegistryCatalogI
     },
     registries,
   };
-}
-
-function matchesRegistryCatalogItem(
-  namespace: string, item: RegistryCatalogItem, query: string,
-  selected: ReadonlySet<string>, excludedKeys: ReadonlySet<string>,
-): boolean {
-  const identity = registryCatalogItemIdentity(item.name);
-
-  if (selected.size && !selected.has(identity)) return false;
-
-  if (excludedKeys.has(namespace + ':' + identity)) return false;
-  const values = [item.name, item.title].flatMap(value => value ? [normalize(String(value))] : []);
-
-  return !query || values.some(value => matchesSearch(value, query));
-}
-
-export function searchRegistryCatalog(
-  index: RegistryCatalogIndex,
-  search: string,
-  selectedComponentValues: readonly string[] = [],
-  limit = 1000,
-  excludedKeys: ReadonlySet<string> = new Set(),
-): RegistryCatalogSearchResult {
-  const query = normalize(search);
-
-  const selected = new Set(selectedComponentValues.flatMap(value => { const id=registryCatalogItemIdentity(value);
-
- return id ? [id] : []; }));
-
-  if (!query && selected.size === 0) {
-    return { matches: [], totalMatches: 0, truncated: false };
-  }
-
-  const matches: RegistryCatalogMatch[] = [];
-  let totalMatches = 0;
-
-  for (const [namespace, items] of Object.entries(index.registries)) {
-    for (const item of items) {
-      if (!matchesRegistryCatalogItem(namespace, item, query, selected, excludedKeys)) continue;
-      totalMatches += 1;
-
-      if (matches.length < limit) matches.push({ namespace, item });
-    }
-  }
-
-  return {
-    matches,
-    totalMatches,
-    truncated: totalMatches > matches.length,
-  };
-}
-
-export function searchRegistryCatalogComponentOptions(
-  index: RegistryCatalogIndex,
-  search: string,
-  limit = 25,
-): RegistryCatalogComponentOption[] {
-  const query = normalize(search);
-
-  if (!query) return [];
-
-  const options = new Map<string, RegistryCatalogComponentOption>();
-
-  for (const items of Object.values(index.registries)) {
-    for (const item of items) {
-      const values = [item.name, item.title].flatMap(value => value ? [normalize(String(value))] : []);
-
-      if (!values.some(value => matchesSearch(value, query))) continue;
-
-      const key = registryCatalogItemIdentity(item.name);
-      const existing = options.get(key);
-
-      if (existing) {
-        existing.count += 1;
-      } else {
-        options.set(key, {
-          value: item.name,
-          label: item.title ?? titleCase(item.name),
-          count: 1,
-        });
-      }
-    }
-  }
-
-  return [...options.values()]
-    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
-    .slice(0, limit);
 }
 
 export function findRegistryCatalogItem(
@@ -515,21 +411,6 @@ function parseThemePreview(value: RawJsonInput): RegistryThemePreview | undefine
 
 export function registryCatalogItemIdentity(value: string): string {
   return value.trim().toLowerCase();
-}
-
-function matchesSearch(value: string, query: string): boolean {
-  if (value.includes(query) || query.includes(value)) return true;
-  const words = query.split('-').filter(word => word.length >= 3);
-
-  return words.length > 1 && words.every(word => value.includes(word));
-}
-
-function normalize(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-}
-
-function titleCase(value: string): string {
-  return value.replace(/[-_]+/g, ' ').replace(/\b\w/g, character => character.toUpperCase());
 }
 
 function optionalString(value: RawJsonInput): string | undefined {

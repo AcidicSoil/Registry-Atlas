@@ -1,4 +1,3 @@
-import { resolveRegistryItemRoute } from '../core/itemRoutes';
 import type { Registry } from '../core/registry.schema';
 import { escapeHtml } from './renderSafety';
 import { verifiedRegistryHomepage } from './sourcePageLink';
@@ -21,10 +20,6 @@ export function registryIconCandidates(homepage: string, preferredIconUrl?: stri
   return preferred
     ? [preferred, ...conventional.filter(candidate => candidate !== preferred)]
     : conventional;
-}
-
-export function registryFaviconUrl(homepage: string): string | null {
-  return registryIconCandidates(homepage)[0] ?? null;
 }
 
 export function nextRegistryIconCandidate(
@@ -79,19 +74,4 @@ function verifiedRegistryIconUrl(candidate?: string): string | null {
   } catch {
     return null;
   }
-}
-
-export function registryItemSourceUrl(
-  registry: Registry,
-  slug: string,
-  rawItemUrl?: string,
-): string | null {
-  const route = resolveRegistryItemRoute(
-    registry.name,
-    registry.mirror?.registryUrlTemplate ?? '',
-    slug,
-    rawItemUrl,
-  );
-
-  return route.status === 'available' ? route.url : null;
 }

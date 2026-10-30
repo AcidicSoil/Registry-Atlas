@@ -1,6 +1,5 @@
 import type { RawJsonInput } from '../core/jsonInput';
 import {
-  buildBaseDetail,
   fetchErrorResult,
   invalidJsonResult,
   normalizeRegistryItemDetailJson,
@@ -137,26 +136,4 @@ async function loadDatabaseDetail(
   } catch {
     return null;
   }
-}
-
-export function buildSummaryOnlyRegistryItemDetail(
-  registry: Registry,
-  itemSlug: string,
-): RegistryItemDetailResult {
-  const summary = registry.itemSummaries?.find(item => item.slug === itemSlug);
-
-  if (!summary) {
-    return {
-      status: 'not-found',
-      detail: null,
-      message: 'Item not found in registry catalog.',
-      reason: 'missing-item',
-    };
-  }
-
-  return {
-    status: 'summary-only',
-    detail: buildBaseDetail(registry, summary),
-    message: 'Full item JSON was not loaded; showing catalog summary details.',
-  };
 }

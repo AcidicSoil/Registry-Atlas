@@ -49,3 +49,11 @@ User-approved card behavior is now documented in `DESIGN.md`: the internal card 
 - Desktop and mobile card-navigation E2E plus native mobile dialog regression tests verify the requested UI and preserved navigation. Full suite not run by default.
 - `pnpm check:product-contract` reports pre-existing reviewed-overlay input-fingerprint drift (432 stale inputs); not fixed by changing card links. A database/runtime data rebuild would be a different task.
 - PPM global conformance remains unapproved until its independent design evidence, source revision recheck, and feature-map refresh requirements are met. This task does not assert project-wide compliance.
+
+## 2026-10-30 continuation
+
+- Stylelint debt reduced **155 → 117** by inserting 38 required blank separators. Semantic PostCSS AST traversal (selectors, declarations, at-rules, order and comments) was byte-identical before and after when formatting metadata was excluded. No CSS declarations or selectors changed.
+- Knip debt reduced **48 → 35**. Deleted uncalled icon/source URL helpers, an unused summary-only loader, an unused core input callable guard, and the obsolete catalog-index search/option-building API. Privatized constants and helper functions still used within their defining modules, including `buildBaseDetail` and coverage rank/label maps.
+- Active `findRegistryCatalogItem`, `parseRegistryCatalogIndex`, `compactCatalogItemToSummary`, runtime search, icon candidate logic, and legacy URL behavior remain. Historical plans mentioning the removed search API are preserved as historical documents, not current implementation contracts.
+- The remaining 117 CSS warnings are mostly deliberate layered selector overrides and specificity warnings, plus `#appMain` selector conventions and one deprecated property; the remaining 35 Knip findings include externally meaningful domain types, pinned tooling dependencies, and CLI executables not understood by static import analysis. No automatic removal or linter suppression was applied.
+- Updated the quality-debt baseline **only after** lint, typecheck and targeted test evidence. The remaining counts stay explicitly open and enforce a no-increase gate.

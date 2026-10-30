@@ -250,7 +250,7 @@ function summaryDependencyAttributes(summary: RegistryItemSummary) {
   };
 }
 
-export function buildBaseDetail(registry: Registry, summary: RegistryItemSummary): RegistryItemDetail {
+function buildBaseDetail(registry: Registry, summary: RegistryItemSummary): RegistryItemDetail {
   const route = routeForSummary(registry, summary);
 
   const installAction = getInstallActionState({

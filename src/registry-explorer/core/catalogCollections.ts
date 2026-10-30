@@ -45,7 +45,7 @@ export function configureCatalogKindOverrides(value: RawJsonInput): void {
   );
 }
 
-export function isTemplateCatalogItem(item: RegistryCatalogItem): boolean {
+function isTemplateCatalogItem(item: RegistryCatalogItem): boolean {
   return (item.categories ?? []).some(category => TEMPLATE_CATEGORIES.has(normalize(category)));
 }
 

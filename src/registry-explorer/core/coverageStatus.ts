@@ -17,7 +17,7 @@ export const ITEM_CATALOG_STATUS_VALUES = [
   'unverified',
 ] as const;
 
-export const COVERAGE_STATUS_LABELS: Record<CoverageStatus, string> = {
+const COVERAGE_STATUS_LABELS: Record<CoverageStatus, string> = {
   verified: 'Verified item',
   inferred: 'Inferred from Atlas tags',
   partial: 'Partial catalog',
@@ -25,7 +25,7 @@ export const COVERAGE_STATUS_LABELS: Record<CoverageStatus, string> = {
   unverified: 'Unverified coverage',
 };
 
-export const COVERAGE_STATUS_ORDER: Record<CoverageStatus, number> = {
+const COVERAGE_STATUS_ORDER: Record<CoverageStatus, number> = {
   verified: 0,
   inferred: 1,
   partial: 2,
