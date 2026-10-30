@@ -14,7 +14,7 @@ import { escapeHtml } from "./renderSafety";
 import { sourcePageNavigationForItem, verifiedRegistryHomepage } from './sourcePageLink';
 import { renderRegistryIcon } from './registryIdentity';
 
-export interface CatalogDiscoveryBand {
+interface CatalogDiscoveryBand {
   label: string;
   routePath: string;
   items: readonly CatalogComponent[];

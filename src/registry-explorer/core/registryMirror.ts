@@ -11,9 +11,9 @@ import {
   type ItemCatalogStatus,
 } from './registry.schema.ts';
 
-export type MirrorValidationSeverity = 'error' | 'warning';
+type MirrorValidationSeverity = 'error' | 'warning';
 
-export type MirrorValidationCode =
+type MirrorValidationCode =
   | 'mirror-invalid-shape'
   | 'raw-invalid-shape'
   | 'count-mismatch'

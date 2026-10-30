@@ -92,7 +92,7 @@ export interface RegistryCatalogItem {
   themePreview?: RegistryThemePreview;
 }
 
-export interface RegistryCatalogIndexMeta {
+interface RegistryCatalogIndexMeta {
   source_url?: string;
   source?: string;
   synced_at?: string;
@@ -154,9 +154,9 @@ export interface Registry {
   itemSummaries?: readonly RegistryItemSummary[];
 }
 
-export type InstallActionStatus = 'enabled' | 'disabled';
+type InstallActionStatus = 'enabled' | 'disabled';
 
-export interface EnabledInstallActionState {
+interface EnabledInstallActionState {
   status: 'enabled';
   token: string;
   installCommand: string;
@@ -165,7 +165,7 @@ export interface EnabledInstallActionState {
   disabledReason: null;
 }
 
-export interface DisabledInstallActionState {
+interface DisabledInstallActionState {
   status: 'disabled';
   token: null;
   installCommand: null;

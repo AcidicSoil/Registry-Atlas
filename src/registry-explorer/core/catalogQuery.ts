@@ -62,7 +62,7 @@ export interface CatalogQueryResult {
   hasNextPage: boolean;
 }
 
-export interface CatalogFacetOption {
+interface CatalogFacetOption {
   value: string;
   count: number;
 }

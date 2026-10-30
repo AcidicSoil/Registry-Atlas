@@ -19,7 +19,7 @@ import type {
   RegistryItemSummaryFile,
 } from './registry.schema.ts';
 
-export type RegistryItemDetailErrorStatus =
+type RegistryItemDetailErrorStatus =
   | 'route-unavailable'
   | 'not-found'
   | 'fetch-error'
@@ -75,20 +75,6 @@ export type RegistryItemDetailResult =
       message: string;
       reason: string;
     };
-
-export interface RegistryItemDetailJson {
-  name?: unknown;
-  title?: unknown;
-  description?: unknown;
-  author?: unknown;
-  cssVars?: unknown;
-  type?: unknown;
-  category?: unknown;
-  dependencies?: unknown;
-  devDependencies?: unknown;
-  registryDependencies?: unknown;
-  files?: unknown;
-}
 
 interface NormalizedRegistryItemDetailJson {
   name?: string;

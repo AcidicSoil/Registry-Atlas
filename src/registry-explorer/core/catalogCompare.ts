@@ -4,7 +4,7 @@ import { assetKindForCatalogItem } from './catalogCollections';
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import type { Registry, RegistryCatalogIndex, RegistryCatalogItem, RegistrySourcePage } from "./registry.schema";
 
-export interface CatalogCompareCell {
+interface CatalogCompareCell {
   namespace: string;
   present: boolean;
   routePath?: string;
@@ -14,7 +14,7 @@ export interface CatalogCompareCell {
   docsUrl?: string;
 }
 
-export interface CatalogCompareRow {
+interface CatalogCompareRow {
   identity: string;
   slug: string;
   displayName: string;

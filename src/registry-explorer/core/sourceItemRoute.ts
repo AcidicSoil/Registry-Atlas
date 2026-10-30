@@ -9,7 +9,7 @@ export interface RegistryRoutePattern {
   checkedAt?: string;
 }
 
-export interface RegistryItemRoute {
+interface RegistryItemRoute {
   url: string;
   status: string;
 }
