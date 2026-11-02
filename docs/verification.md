@@ -25,7 +25,7 @@ The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is t
 
 `pnpm audit:dependencies` is also mandatory: the workspace pins patched `zod@4.6.6` and transitive `fast-uri@3.1.9` through `pnpm-workspace.yaml` overrides. This prevents vulnerable versions from resurfacing in E2E or CSS tooling dependency trees. Regenerate and audit `pnpm-lock.yaml` when those overrides change.
 
-The checked-in `.design/quality-debt-baseline.json` records the current clean Stylelint and Knip results. Both commands reject **new** issue signatures or increased counts. The Knip configuration explicitly identifies installed, non-npm CLI binaries; the dev-only React Grab/React peer pair loaded by `index.html`; and generated vendor declarations outside authored source. These are documented tooling boundaries, not globally disabled rules. Any intentional new baseline requires `node scripts/check-quality-debt.mjs all --update-baseline` and reviewer evidence. Historical findings and repairs are recorded in `.design/stale-code-cleanup-2026-10-29.md`.
+The checked-in `.design/quality-debt-baseline.json` records zero accepted findings. Direct Stylelint and Knip commands now enforce zero actionable issues; `node scripts/check-quality-debt.mjs all` retains the optional historical baseline check. The Knip configuration explicitly identifies installed, non-npm CLI binaries; the dev-only React Grab/React peer pair loaded by `index.html`; and generated vendor declarations outside authored source. These are documented tooling boundaries, not globally disabled rules. Any intentional new baseline requires `node scripts/check-quality-debt.mjs all --update-baseline` and reviewer evidence. Historical findings and repairs are recorded in `.design/stale-code-cleanup-2026-10-29.md`.
 
 ## Package scripts
 
@@ -68,3 +68,9 @@ Review the generated reports and runtime mirror before accepting regenerated dat
 ## Browser release checks
 
 Automated verification does not replace the maintained browser/accessibility release smoke. Use `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md` when release-level browser behavior needs validation.
+
+## Updated PPM bootstrap (2026-11-02)
+
+`project_bootstrap.py --project . --write` applied the Stackforge TypeScript, CSS, StyleX and Shadcn setups, generated mise tasks and Oxfmt 0.74.0. Its next preview has zero failures and reports unchanged mise/Oxfmt setup. StyleX/Shadcn plugins are staged only; there is no authored StyleX or Tailwind-v4 UI code. React Doctor scans the application but excludes backend maintenance scripts via `doctor.config.json`; the strict anti-slop Oxlint gate still checks authored scripts.
+
+`pnpm format:check` currently reports 288 **pre-existing** formatting differences. The new `pnpm check`/mise check gate therefore remains blocked by the separate formatter migration. Do not treat the format gate as passing, and do not mass-format unrelated code or add blanket formatter ignores without a reviewed migration scope.

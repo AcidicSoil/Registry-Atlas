@@ -25,15 +25,11 @@ export default defineConfig({
     { name: "anti-slop", specifier: "./tools/oxlint/anti-slop/index.ts" },
   ],
   rules: {
+    "no-restricted-imports": ["error", { patterns: [{ regex: "^\\.\\./\\.\\./\\.\\./" }] }],
+
     "oxc/no-accumulating-spread": "error",
     "typescript/no-confusing-non-null-assertion": "error",
     "typescript/no-empty-object-type": "error",
-    "no-restricted-imports": ["error", {
-      patterns: [{
-        regex: "^\\.\\./\\.\\./\\.\\./",
-        message: "Use a package entrypoint or an established short import path",
-      }],
-    }],
     "anti-slop/no-array-filter-map": "error",
     "anti-slop/no-reduce-accumulator-copy": "error",
     "anti-slop/no-chained-type-assertions": "error",

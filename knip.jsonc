@@ -1,6 +1,7 @@
 {
   // Explicit external executables are installed by the workstation, not npm.
   // React Grab is imported from index.html in development; React is its peer.
+  // StyleX and Shadcn are managed anti-slop setups; no authored StyleX/Tailwind v4 yet.
   // Bundled vendor type declarations are generated, not authored application code.
   "$schema": "https://unpkg.com/knip@6.44.0/schema.json",
   "entry": [
@@ -32,6 +33,10 @@
     "*.config.mjs",
     "index.html"
   ],
+  // Exclude only exports from Stackforge's generated shared helper, not authored source.
+  "ignoreIssues": {
+    "tools/oxlint/anti-slop/shared/dictionary-types.ts": ["exports", "types"]
+  },
   "ignoreBinaries": [
     "cccc",
     "pinchtab",
@@ -39,6 +44,8 @@
   ],
   "ignoreDependencies": [
     "react",
-    "react-grab"
+    "react-grab",
+    "@stylexjs/eslint-plugin",
+    "@shadcn/lint"
   ]
 }

@@ -5,21 +5,25 @@ import { resolveTask } from '../../scripts/project-tasks.mjs';
 describe('package script surface', () => {
   it('exposes a compact set of primary entrypoints without redundant aliases', () => {
     const scripts = packageJson.scripts;
-    expect(Object.keys(scripts).length).toBeLessThanOrEqual(36);
+    expect(Object.keys(scripts).length).toBeLessThanOrEqual(40);
 
     for (const name of ['dev', 'build', 'test', 'verify', 'verify:local', 'lint:deps',
-      'lint:react-doctor', 'db', 'sync', 'test:e2e', 'prepare:runtime-data',
+      'lint:react-doctor', 'db', 'sync', 'test:e2e', 'check', 'lint:boundaries', 'format:check', 'format:write', 'prepare:runtime-data',
       'check:runtime-data', 'predev', 'pretest', 'prebuild', 'lint:styles', 'lint:unused']) {
       expect(scripts).toHaveProperty(name);
     }
 
-    for (const redundant of ['all', 'doctor', 'lint:boundaries',
+    for (const redundant of ['all', 'doctor',
       'db:setup', 'db:up', 'db:down', 'db:status', 'db:backup', 'db:restore-check',
       'db:reconcile-source-evidence', 'sync:registries', 'sync:catalog-evidence',
       'sync:registry-icons', 'test:e2e:smoke', 'test:e2e:mobile']) {
       expect(scripts).not.toHaveProperty(redundant);
     }
 
+    expect(scripts['lint:boundaries']).toBe('depcruise src');
+    expect(scripts['lint:styles']).toContain('stylelint ');
+    expect(scripts['lint:unused']).toBe('knip');
+    expect(scripts.check).toContain('pnpm run format:check');
     expect(scripts['lint:deps']).toBe('depcruise src tests --config .dependency-cruiser.cjs');
   });
 

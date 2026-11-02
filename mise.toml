@@ -1,4 +1,6 @@
 [tools]
+bun = "latest"
+
 node = "lts"
 pnpm = "latest"
 "github:moznion/cccc" = "1.8.0"
@@ -106,18 +108,72 @@ description = "Reject moderate and higher dependency advisories"
 run = "pnpm audit:dependencies"
 
 [tasks."lint:deps"]
-run = "pnpm lint:deps"
+run = "pnpm run lint:deps"
 
 [tasks."lint:react-doctor"]
-run = "pnpm lint:react-doctor"
+run = "pnpm run lint:react-doctor"
 
 [tasks."lint:complexity"]
-run = "pnpm lint:complexity"
+run = "pnpm run lint:complexity"
 
 [tasks."lint:anti-slop"]
 description = "Enforce the root Stackforge anti-slop TypeScript policy"
-run = "pnpm lint:anti-slop"
+run = "pnpm run lint:anti-slop"
 
 [tasks."lint:all"]
 description = "runs all lint scripts"
 run = "pnpm lint"
+
+[tasks.check]
+run = "mise run lint:complexity && mise run lint:node && mise run test"
+
+[tasks."check:runtime-data"]
+run = "pnpm run check:runtime-data"
+
+[tasks.db]
+run = "pnpm run db"
+
+[tasks.lint]
+run = "pnpm run lint"
+
+[tasks."lint:commit"]
+run = "pnpm run lint:commit"
+
+[tasks."lint:node"]
+run = "(cd . && pnpm run check)"
+
+[tasks."lint:styles"]
+run = "pnpm run lint:styles"
+
+[tasks."lint:unused"]
+run = "pnpm run lint:unused"
+
+[tasks.sync]
+run = "pnpm run sync"
+
+[tasks."test:anti-slop-gate"]
+run = "pnpm run test:anti-slop-gate"
+
+[tasks."test:boundaries"]
+run = "pnpm run test:boundaries"
+
+[tasks."test:complexity-gate"]
+run = "pnpm run test:complexity-gate"
+
+[tasks."test:e2e"]
+run = "pnpm run test:e2e"
+
+[tasks."test:local"]
+run = "pnpm run test:local"
+
+[tasks."verify:local"]
+run = "pnpm run verify:local"
+
+[tasks."format:check"]
+run = "pnpm run format:check"
+
+[tasks."format:write"]
+run = "pnpm run format:write"
+
+[tasks."lint:boundaries"]
+run = "pnpm run lint:boundaries"
