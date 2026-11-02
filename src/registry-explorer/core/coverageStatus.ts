@@ -1,28 +1,28 @@
-import type { CoverageStatus } from './registry.schema.ts';
+import type { CoverageStatus } from "./registry.schema.ts";
 
 export const COVERAGE_STATUS_VALUES = [
-  'verified',
-  'inferred',
-  'partial',
-  'unavailable',
-  'unverified',
+  "verified",
+  "inferred",
+  "partial",
+  "unavailable",
+  "unverified",
 ] as const;
 
-export const COVERAGE_CONFIDENCE_VALUES = ['high', 'medium', 'low', 'unknown'] as const;
+export const COVERAGE_CONFIDENCE_VALUES = ["high", "medium", "low", "unknown"] as const;
 
 export const ITEM_CATALOG_STATUS_VALUES = [
-  'available',
-  'partial',
-  'unavailable',
-  'unverified',
+  "available",
+  "partial",
+  "unavailable",
+  "unverified",
 ] as const;
 
 const COVERAGE_STATUS_LABELS: Record<CoverageStatus, string> = {
-  verified: 'Verified item',
-  inferred: 'Inferred from Atlas tags',
-  partial: 'Partial catalog',
-  unavailable: 'Catalog unavailable',
-  unverified: 'Unverified coverage',
+  verified: "Verified item",
+  inferred: "Inferred from Atlas tags",
+  partial: "Partial catalog",
+  unavailable: "Catalog unavailable",
+  unverified: "Unverified coverage",
 };
 
 const COVERAGE_STATUS_ORDER: Record<CoverageStatus, number> = {

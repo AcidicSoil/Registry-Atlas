@@ -10,11 +10,11 @@ The static site may read a published preview manifest, but must not call Postgre
 
 ## Alternatives considered
 
-| Shape | Ownership | Cost and failure mode | Decision |
-| --- | --- | --- | --- |
-| UI hardcodes provider URL formulas and a literal index | Browser application | Every provider addition changes application code; rules can claim unverified media | Interim implementation only |
-| Hosted dynamic screenshot or live component renderer | Runtime service | Ongoing request limits, service cost, unrelated page screenshots, untrusted code | Reject |
-| Offline resolver and provenance manifest | Build-time evidence pipeline | Bounded refresh, static lookup, no runtime provider query except the chosen image | **Target** |
+| Shape                                                  | Ownership                    | Cost and failure mode                                                              | Decision                    |
+| ------------------------------------------------------ | ---------------------------- | ---------------------------------------------------------------------------------- | --------------------------- |
+| UI hardcodes provider URL formulas and a literal index | Browser application          | Every provider addition changes application code; rules can claim unverified media | Interim implementation only |
+| Hosted dynamic screenshot or live component renderer   | Runtime service              | Ongoing request limits, service cost, unrelated page screenshots, untrusted code   | Reject                      |
+| Offline resolver and provenance manifest               | Build-time evidence pipeline | Bounded refresh, static lookup, no runtime provider query except the chosen image  | **Target**                  |
 
 ## Domain
 
@@ -25,18 +25,18 @@ Proposed discriminated types:
 ```ts
 type PreviewEvidence =
   | {
-      state: 'verified';
+      state: "verified";
       sourceUrl: string;
       mediaUrl: string;
-      format: 'svg' | 'png' | 'webp' | 'jpeg' | 'avif' | 'gif';
-      kind: 'icon-art' | 'component-specimen' | 'block-screenshot';
+      format: "svg" | "png" | "webp" | "jpeg" | "avif" | "gif";
+      kind: "icon-art" | "component-specimen" | "block-screenshot";
       provider: string;
-      method: 'provider-pattern' | 'page-metadata' | 'explicit-asset';
+      method: "provider-pattern" | "page-metadata" | "explicit-asset";
       observedAt: string;
       mediaDigest?: string;
     }
   | {
-      state: 'unsupported' | 'rejected';
+      state: "unsupported" | "rejected";
       sourceUrl: string;
       reason: string;
       checkedAt: string;
@@ -47,14 +47,14 @@ Publish **only verified** records into a compact manifest indexed by source URL.
 
 ## Ownership and boundaries
 
-| Owner | Responsibility |
-| --- | --- |
-| PostgreSQL source-page manifest | Authoritative upstream URL and item identity; not a source of arbitrary images |
-| Offline collector under `scripts/` | Enumerate current sources, fetch provider metadata with bounded concurrency and timeouts, record provenance and failures |
-| Provider policy module | Provider-specific extraction, safe URL transformations, asset-specific proof rules, and versioned acceptance fixtures |
-| Verification step | Check MIME, redirects, source-to-media identity, duplicate/shared images, and representative rendered visuals; reject ambiguous results |
-| Generated static manifest under `public/data/` | Small runtime lookup table; generated from verified evidence, separate from the catalog's core JSON |
-| `catalogLinkPreview.ts` | Presentation only: lookup, hover/focus, position, load/error/cleanup, original-link behavior, and responsive constraints |
+| Owner                                          | Responsibility                                                                                                                          |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| PostgreSQL source-page manifest                | Authoritative upstream URL and item identity; not a source of arbitrary images                                                          |
+| Offline collector under `scripts/`             | Enumerate current sources, fetch provider metadata with bounded concurrency and timeouts, record provenance and failures                |
+| Provider policy module                         | Provider-specific extraction, safe URL transformations, asset-specific proof rules, and versioned acceptance fixtures                   |
+| Verification step                              | Check MIME, redirects, source-to-media identity, duplicate/shared images, and representative rendered visuals; reject ambiguous results |
+| Generated static manifest under `public/data/` | Small runtime lookup table; generated from verified evidence, separate from the catalog's core JSON                                     |
+| `catalogLinkPreview.ts`                        | Presentation only: lookup, hover/focus, position, load/error/cleanup, original-link behavior, and responsive constraints                |
 
 Use a build-time data adapter rather than importing a large generated map into the UI source bundle. The existing `upstreamVisualPatterns.ts` and `aceternityVisualEvidence.ts` become migration inputs; keep their known-good cases until a manifest proves equivalence, then remove superseded branches rather than maintaining two authorities.
 
@@ -114,12 +114,12 @@ flowchart TD
 
 ## Risks to prove, not assume
 
-| Risk | How to disprove it |
-| --- | --- |
-| Provider URL pattern returns the same branded banner for every item | Compare distinct item pixels/identity with the upstream demos |
-| CDN images change or expire | Recheck a bounded sample and capture refresh failures without hiding the previous good state |
-| Preview controller retains listeners across rerenders | Navigate repeatedly and assert only one tooltip and clean dismissal |
-| External media blocks hotlinking | Test loading in the browser (not just HTTP HEAD) and preserve the source link on failure |
-| Third-party source imports leak private or untrusted URLs | Run URL-policy and fixture tests at extraction and rendering boundaries |
-| Generated manifest bloats the JS bundle | Keep the evidence as a separate static asset and measure transfer size |
-| Static corpus drifts from PostgreSQL | Tie generated preview manifest version to the current source-page projection |
+| Risk                                                                | How to disprove it                                                                           |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Provider URL pattern returns the same branded banner for every item | Compare distinct item pixels/identity with the upstream demos                                |
+| CDN images change or expire                                         | Recheck a bounded sample and capture refresh failures without hiding the previous good state |
+| Preview controller retains listeners across rerenders               | Navigate repeatedly and assert only one tooltip and clean dismissal                          |
+| External media blocks hotlinking                                    | Test loading in the browser (not just HTTP HEAD) and preserve the source link on failure     |
+| Third-party source imports leak private or untrusted URLs           | Run URL-policy and fixture tests at extraction and rendering boundaries                      |
+| Generated manifest bloats the JS bundle                             | Keep the evidence as a separate static asset and measure transfer size                       |
+| Static corpus drifts from PostgreSQL                                | Tie generated preview manifest version to the current source-page projection                 |

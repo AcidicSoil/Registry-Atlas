@@ -1,11 +1,11 @@
-import { assetKindForCatalogItem } from './catalogCollections';
-import { resolveSourceItemRoute, type SourceItemKind } from './sourceItemRoute';
+import { assetKindForCatalogItem } from "./catalogCollections";
+import { resolveSourceItemRoute, type SourceItemKind } from "./sourceItemRoute";
 import type {
   Registry,
   RegistryCatalogIndex,
   RegistryCatalogItem,
   RegistrySourcePage,
-} from './registry.schema';
+} from "./registry.schema";
 
 /**
  * One source-page decision for every catalog surface.
@@ -22,7 +22,7 @@ export function resolveCatalogSourcePage(
   if (direct) return direct;
 
   const kind = assetKindForCatalogItem(item, registry.name);
-  const sourceKind: SourceItemKind = kind === 'other' ? 'component' : kind;
+  const sourceKind: SourceItemKind = kind === "other" ? "component" : kind;
 
   const url = resolveSourceItemRoute({
     homepage: registry.url,
@@ -33,11 +33,12 @@ export function resolveCatalogSourcePage(
     patterns: index.routePatterns?.[registry.name],
   });
 
-  if (url) return {
-    url,
-    level: 'pattern',
-    source: 'verified-route-pattern',
-  };
+  if (url)
+    return {
+      url,
+      level: "pattern",
+      source: "verified-route-pattern",
+    };
 
   return undefined;
 }

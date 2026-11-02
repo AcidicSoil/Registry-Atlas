@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { CatalogComponent, CatalogQueryResult } from "../../src/registry-explorer/core/catalogQuery";
+import type {
+  CatalogComponent,
+  CatalogQueryResult,
+} from "../../src/registry-explorer/core/catalogQuery";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
 import { parseCatalogTaxonomy } from "../../src/registry-explorer/core/catalogTaxonomy";
 import {
@@ -10,56 +13,65 @@ import {
 
 const TEST_TAXONOMY = parseCatalogTaxonomy({
   version: "v1",
-  roots: [{
-    id: "application",
-    label: "Application",
-    aliases: ["app"],
-    what: "Application surfaces",
-    notFor: [],
-    examples: [],
-    children: [{
-      id: "application/app-shell",
-      label: "App Shell",
-      aliases: ["workspace shell"],
-      what: "Application shell",
+  roots: [
+    {
+      id: "application",
+      label: "Application",
+      aliases: ["app"],
+      what: "Application surfaces",
       notFor: [],
       examples: [],
-      children: [],
-    }],
-  }],
+      children: [
+        {
+          id: "application/app-shell",
+          label: "App Shell",
+          aliases: ["workspace shell"],
+          what: "Application shell",
+          notFor: [],
+          examples: [],
+          children: [],
+        },
+      ],
+    },
+  ],
 });
 
 describe("renderCatalogComponents", () => {
   it("deeplinks sitemap-backed component pages while preserving provenance metadata", () => {
-    const html=renderCatalogComponentCard({...component(),
-      sourcePage:{url:'https://delta.example/docs/code-block',
-        level:'sitemap',source:'official-sitemap'}});
+    const html = renderCatalogComponentCard({
+      ...component(),
+      sourcePage: {
+        url: "https://delta.example/docs/code-block",
+        level: "sitemap",
+        source: "official-sitemap",
+      },
+    });
 
     expect(html).toContain('href="https://delta.example/docs/code-block"');
     expect(html).toContain('data-preview-source-url="https://delta.example/docs/code-block"');
-    expect(html).toContain('Source ↗');
+    expect(html).toContain("Source ↗");
     expect(html).toContain('data-source-level="sitemap"');
     expect(html).not.toContain('class="catalog-component-deeplink"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
-    expect(html).not.toContain('View component');
-    expect(html).not.toContain('View original ↗');
-    expect(html).not.toContain('View item JSON');
+    expect(html).not.toContain("View component");
+    expect(html).not.toContain("View original ↗");
+    expect(html).not.toContain("View item JSON");
   });
   it("places a single registry homepage link in the footer, without View or Inspect", () => {
     const html = renderCatalogComponentCard(component());
 
     expect(html).toContain('class="catalog-component-homepage"');
     expect(html).toContain('href="https://delta.example/"');
-    expect(html).toContain('>Registry homepage ↗</a>');
+    expect(html).toContain(">Registry homepage ↗</a>");
     expect(html).not.toContain('class="catalog-component-deeplink"');
-    expect(html).not.toContain('>View component</a>');
+    expect(html).not.toContain(">View component</a>");
     expect(html).toContain('data-view-item-registry="@delta"');
     expect(html).toContain('data-view-item-slug="code-block"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
-    expect(html).not.toContain('catalog-component-inspect');
-    expect(html).not.toContain('>Inspect</a>');
-    expect(html.indexOf('catalog-component-homepage')).toBeGreaterThan(
-      html.indexOf('catalog-component-source-actions'),
+    expect(html).not.toContain("catalog-component-inspect");
+    expect(html).not.toContain(">Inspect</a>");
+    expect(html.indexOf("catalog-component-homepage")).toBeGreaterThan(
+      html.indexOf("catalog-component-source-actions"),
     );
     expect((html.match(/catalog-component-homepage/g) ?? []).length).toBe(1);
   });
@@ -71,7 +83,7 @@ describe("renderCatalogComponents", () => {
     });
 
     expect(html).not.toContain('class="catalog-component-homepage"');
-    expect(html).not.toContain('catalog-component-inspect');
+    expect(html).not.toContain("catalog-component-inspect");
     expect(html).not.toContain('class="catalog-component-deeplink"');
   });
 
@@ -92,20 +104,22 @@ describe("renderCatalogComponents", () => {
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
     expect(html).not.toContain("View component");
     expect(html).toContain('href="https://delta.example/components/code-block"');
-    expect(html).toContain('Source ↗');
+    expect(html).toContain("Source ↗");
     expect(html).not.toContain('href="https://delta.example/r/code-block.json"');
     expect(html).not.toContain("View item JSON");
   });
 
   it("does not confuse a raw JSON route or another registry with a component page", () => {
     const raw = renderCatalogComponentCard({
-      ...component(), docsUrl: "https://delta.example/r/code-block.json",
+      ...component(),
+      docsUrl: "https://delta.example/r/code-block.json",
     });
 
-    expect(raw).not.toContain('catalog-component-original');
+    expect(raw).not.toContain("catalog-component-original");
 
     const external = renderCatalogComponentCard({
-      ...component(), docsUrl: "https://another-registry.example/components/code-block",
+      ...component(),
+      docsUrl: "https://another-registry.example/components/code-block",
     });
 
     expect(external).not.toContain("catalog-component-original");
@@ -149,8 +163,8 @@ describe("renderCatalogComponents", () => {
 
     expect(header.innerHTML).toContain("<h1>Components</h1>");
     expect(header.innerHTML).toContain("1 item");
-    expect(body.innerHTML).toContain("data-view-item-registry=\"@delta\"");
-    expect(body.innerHTML).toContain("data-view-item-slug=\"code-block\"");
+    expect(body.innerHTML).toContain('data-view-item-registry="@delta"');
+    expect(body.innerHTML).toContain('data-view-item-slug="code-block"');
     expect(body.innerHTML).toContain("Code Block");
     expect(body.innerHTML).toContain("@delta");
     expect(body.innerHTML).not.toContain("Copy install");
@@ -162,17 +176,21 @@ describe("renderCatalogComponents", () => {
     const body = root();
     renderCatalogComponents(root(), body, result([component()]), {
       searchTerm: "",
-      discoveryBands: [{
-        label: "Forms",
-        routePath: "/Registry-Atlas/components/explore/forms",
-        items: [component()],
-      }],
+      discoveryBands: [
+        {
+          label: "Forms",
+          routePath: "/Registry-Atlas/components/explore/forms",
+          items: [component()],
+        },
+      ],
     });
 
     expect(body.innerHTML).toContain('class="catalog-discovery-bands"');
     expect(body.innerHTML).toContain('class="catalog-discovery-band"');
     expect(body.innerHTML).toContain(">Forms<");
-    expect(body.innerHTML).toContain('data-catalog-route="/Registry-Atlas/components/explore/forms"');
+    expect(body.innerHTML).toContain(
+      'data-catalog-route="/Registry-Atlas/components/explore/forms"',
+    );
     expect(body.innerHTML.indexOf("catalog-discovery-bands")).toBeLessThan(
       body.innerHTML.indexOf("catalog-component-grid"),
     );
@@ -224,30 +242,40 @@ describe("renderCatalogComponents", () => {
       searchTerm: "button",
     });
 
-    expect(context).toContain('Search: “button”');
-    expect(context).toContain('Registry: @delta');
-    expect(context).toContain('Access: Free');
-    expect(context).toContain('data-catalog-clear');
-    expect(context).not.toContain('data-catalog-search');
-    expect(context).not.toContain('data-catalog-registry-select');
-    expect(context).not.toContain('data-catalog-access-select');
-    expect(context).not.toContain('data-catalog-sort');
-    expect(context).not.toContain('<select');
-    expect(context).not.toContain('<details');
+    expect(context).toContain("Search: “button”");
+    expect(context).toContain("Registry: @delta");
+    expect(context).toContain("Access: Free");
+    expect(context).toContain("data-catalog-clear");
+    expect(context).not.toContain("data-catalog-search");
+    expect(context).not.toContain("data-catalog-registry-select");
+    expect(context).not.toContain("data-catalog-access-select");
+    expect(context).not.toContain("data-catalog-sort");
+    expect(context).not.toContain("<select");
+    expect(context).not.toContain("<details");
   });
 
   it("renders selected asset type only as removable applied context", () => {
-    const markup = renderCatalogBrowseControls({
-      page: 1, sort: "name", registryNames: [], itemTypes: [], categories: [],
-      assetKinds: ["component"], canonicalIds: [], access: [], reviewed: "all",
-    }, {
-      selectedAssetKinds: ["component"],
-    });
+    const markup = renderCatalogBrowseControls(
+      {
+        page: 1,
+        sort: "name",
+        registryNames: [],
+        itemTypes: [],
+        categories: [],
+        assetKinds: ["component"],
+        canonicalIds: [],
+        access: [],
+        reviewed: "all",
+      },
+      {
+        selectedAssetKinds: ["component"],
+      },
+    );
 
-    expect(markup).toContain('Asset type: Components');
+    expect(markup).toContain("Asset type: Components");
     expect(markup).toContain('data-asset-kind-value="component"');
-    expect(markup).toContain('data-catalog-clear');
-    expect(markup).not.toContain('data-asset-kind-select');
+    expect(markup).toContain("data-catalog-clear");
+    expect(markup).not.toContain("data-asset-kind-select");
   });
 
   it("keeps applied filter context visible when a filter combination has no matches", () => {
@@ -267,29 +295,34 @@ describe("renderCatalogComponents", () => {
       },
     });
 
-    expect(body.innerHTML).toContain('Type: block');
-    expect(body.innerHTML).toContain('data-catalog-clear');
-    expect(body.innerHTML).not.toContain('data-catalog-sort');
-    expect(body.innerHTML).not.toContain('<select');
-    expect(body.innerHTML).toContain('No catalog items are available');
+    expect(body.innerHTML).toContain("Type: block");
+    expect(body.innerHTML).toContain("data-catalog-clear");
+    expect(body.innerHTML).not.toContain("data-catalog-sort");
+    expect(body.innerHTML).not.toContain("<select");
+    expect(body.innerHTML).toContain("No catalog items are available");
   });
 
   it("renders accessible incremental controls over the full query result", () => {
     const body = root();
-    renderCatalogComponents(root(), body, {
-      ...result([component()]),
-      total: 76520,
-      page: 2,
-      pageSize: 32,
-      pageCount: 2392,
-      hasPreviousPage: true,
-      hasNextPage: true,
-    }, { searchTerm: "" });
+    renderCatalogComponents(
+      root(),
+      body,
+      {
+        ...result([component()]),
+        total: 76520,
+        page: 2,
+        pageSize: 32,
+        pageCount: 2392,
+        hasPreviousPage: true,
+        hasNextPage: true,
+      },
+      { searchTerm: "" },
+    );
 
     expect(body.innerHTML).toContain("33–64 of 76,520");
-    expect(body.innerHTML).toContain('data-scroll-load-more');
-    expect(body.innerHTML).toContain('data-scroll-sentinel');
-    expect(body.innerHTML).not.toContain('catalog-pagination');
+    expect(body.innerHTML).toContain("data-scroll-load-more");
+    expect(body.innerHTML).toContain("data-scroll-sentinel");
+    expect(body.innerHTML).not.toContain("catalog-pagination");
   });
 });
 
@@ -310,9 +343,11 @@ function result(items: CatalogComponent[]): CatalogQueryResult {
   };
 }
 
-function component(options: {
-  themePreview?: CatalogComponent["themePreview"];
-} = {}): CatalogComponent {
+function component(
+  options: {
+    themePreview?: CatalogComponent["themePreview"];
+  } = {},
+): CatalogComponent {
   return {
     id: "@delta:code-block",
     namespace: "@delta",
@@ -346,7 +381,6 @@ function registry(): Registry {
   };
 }
 
-
 describe("catalog applied-filter context", () => {
   const state = {
     page: 1,
@@ -367,8 +401,8 @@ describe("catalog applied-filter context", () => {
     });
 
     expect(html).toContain('data-asset-kind-value="block"');
-    expect(html).toContain('Asset type: Blocks');
-    expect(html).not.toContain('data-asset-kind-select');
+    expect(html).toContain("Asset type: Blocks");
+    expect(html).not.toContain("data-asset-kind-select");
   });
 
   it("renders canonical and access state as removable context without duplicating selection controls", () => {
@@ -377,12 +411,14 @@ describe("catalog applied-filter context", () => {
       taxonomy: TEST_TAXONOMY,
     });
 
-    expect(html).toMatch(/data-catalog-canonical-value="application\/app-shell"[\s\S]*Category: App Shell/);
+    expect(html).toMatch(
+      /data-catalog-canonical-value="application\/app-shell"[\s\S]*Category: App Shell/,
+    );
     expect(html).toContain('data-catalog-access-value="free"');
     expect(html).toContain("Access: Free");
-    expect(html).not.toContain('data-catalog-access-select');
-    expect(html).not.toContain('data-catalog-canonical-checkbox');
-    expect(html).not.toContain('<select');
+    expect(html).not.toContain("data-catalog-access-select");
+    expect(html).not.toContain("data-catalog-canonical-checkbox");
+    expect(html).not.toContain("<select");
   });
 
   it("omits access context when no access filter is active", () => {
@@ -391,7 +427,7 @@ describe("catalog applied-filter context", () => {
       taxonomy: TEST_TAXONOMY,
     });
 
-    expect(html).not.toContain('data-catalog-access-value');
+    expect(html).not.toContain("data-catalog-access-value");
     expect(html).not.toContain("Access: Free");
   });
 });

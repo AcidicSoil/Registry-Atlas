@@ -1,11 +1,11 @@
-import { copyFile, stat } from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { copyFile, stat } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-export async function createPagesSpaFallback(outputDir = 'dist') {
+export async function createPagesSpaFallback(outputDir = "dist") {
   const directory = path.resolve(outputDir);
-  const indexPath = path.join(directory, 'index.html');
-  const fallbackPath = path.join(directory, '404.html');
+  const indexPath = path.join(directory, "index.html");
+  const fallbackPath = path.join(directory, "404.html");
 
   const indexStat = await stat(indexPath);
 
@@ -18,10 +18,10 @@ export async function createPagesSpaFallback(outputDir = 'dist') {
   return { indexPath, fallbackPath };
 }
 
-const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
+const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : "";
 
 const modulePath = fileURLToPath(import.meta.url);
 
 if (invokedPath === modulePath) {
-  await createPagesSpaFallback(process.argv[2] ?? 'dist');
+  await createPagesSpaFallback(process.argv[2] ?? "dist");
 }

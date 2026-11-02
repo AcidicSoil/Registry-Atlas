@@ -14,7 +14,7 @@ The purpose of a component preview is to help people recognize what a component 
 
 ## Discovery, capture and publication
 
-1. Reuse `scripts/schedule-registry-discovery.mjs` and `scripts/discover-registry-components.mjs` to discover each website's *observed* navigation and listing links. Different URL patterns are expected; no URL is verified by a slug-to-URL guess. The official source profile is `registry-atlas-source-audit`.
+1. Reuse `scripts/schedule-registry-discovery.mjs` and `scripts/discover-registry-components.mjs` to discover each website's _observed_ navigation and listing links. Different URL patterns are expected; no URL is verified by a slug-to-URL guess. The official source profile is `registry-atlas-source-audit`.
 2. The discovery JSONL ledger records exactly matched catalog identity, observed documentation URL, rendered heading, source homepage and catalog fingerprint. Only current `page-observed` records may be considered for capture.
 3. `scripts/capture-component-visuals.mjs` runs in the **same managed source browser**. It independently reopens the observed URL, confirms the heading, and clips an actual demo surface. The worker uses reusable demo-container strategies (a titled component frame or an active Preview tab); it never screenshots a random entire page or generically selects the site's `og:image`. Unknown page shapes remain unresolved for later inspection.
 4. Publish successful images to `public/data/previews/<registry>/` and their exact catalog identity, local image path, official page URL and capture evidence to `public/data/component-previews.json`. Keep failed capture outcomes in durable user-state JSONL. A failed capture must not publish a broken image.

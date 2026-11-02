@@ -43,7 +43,7 @@ Live discovery then tested `@basecn`, which previously had 56 identities with no
 - [x] One registry-grouped report contains unresolved slugs, candidate URLs, patterns, observed examples, states, and failure reasons.
 - [x] The existing evidence-based browser discovery engine is reused instead of creating a second crawler.
 - [x] Browser discovery can now feed newly observed route families directly into SQLite with `scripts/discover-registry-routes-to-sqlite.mjs`.
-- [x] Generic entry links such as “Get Started” can be followed when the *observed same-site URL* enters a docs/components path and ends in a known component identity.
+- [x] Generic entry links such as “Get Started” can be followed when the _observed same-site URL_ enters a docs/components path and ends in a known component identity.
 - [x] Newly discovered patterns remain unverified until representative real pages pass the existing deterministic verifier.
 - [x] Once a route family is verified, compatible unresolved slugs receive generated candidates and enter the individual URL checker.
 - [x] Completed checks survive restarts.

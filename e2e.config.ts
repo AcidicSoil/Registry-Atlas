@@ -1,19 +1,28 @@
-import { web } from '@e2e-dev/web';
-import type { E2EConfig } from 'e2e';
+import { web } from "@e2e-dev/web";
+import type { E2EConfig } from "e2e";
 
 export default {
-  tests: 'tests/**/*.e2e.ts',
+  tests: "tests/**/*.e2e.ts",
   targets: [
     {
-      name: 'registry-atlas-web',
+      name: "registry-atlas-web",
       engine: web({ viewport: { width: 1440, height: 900 } }),
       app: {
-        url: 'http://127.0.0.1:0/Registry-Atlas/',
+        url: "http://127.0.0.1:0/Registry-Atlas/",
         command: {
-          executable: 'pnpm',
-          args: ['exec', 'vite', 'preview', '--host', '127.0.0.1', '--port', '{port}', '--strictPort'],
+          executable: "pnpm",
+          args: [
+            "exec",
+            "vite",
+            "preview",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "{port}",
+            "--strictPort",
+          ],
           startupTimeout: 90_000,
-          log: '.e2e/logs/vite.log',
+          log: ".e2e/logs/vite.log",
         },
       },
     },
@@ -24,6 +33,6 @@ export default {
   timeout: 180_000,
   workers: 1,
   retries: 0,
-  trace: 'on',
-  reporters: ['list'],
+  trace: "on",
+  reporters: ["list"],
 } satisfies E2EConfig;

@@ -1,14 +1,14 @@
-import { isInputCallable, isInputObject, isInputString } from './lib/input-guards.mjs';
-import { createHash } from 'node:crypto';
-import { pathToFileURL } from 'node:url';
-import { buildCatalogClassificationState } from './lib/catalog-classification-state.mjs';
+import { isInputCallable, isInputObject, isInputString } from "./lib/input-guards.mjs";
+import { createHash } from "node:crypto";
+import { pathToFileURL } from "node:url";
+import { buildCatalogClassificationState } from "./lib/catalog-classification-state.mjs";
 import {
   catalogClassificationInputFingerprint,
   classifyCatalogItem,
   findDeterministicAliasClassification,
   findDeterministicKindClassification,
-} from './lib/catalog-classifier.mjs';
-import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
+} from "./lib/catalog-classifier.mjs";
+import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,
   putClassificationBatch,
@@ -17,26 +17,25 @@ import {
   readClassificationRun,
   resetClassificationRun,
   upsertClassificationRunItems,
-} from './lib/atlas-storage.mjs';
-import { chooseTaxonomyOption } from './lib/systemone-taxonomy.mjs';
+} from "./lib/atlas-storage.mjs";
+import { chooseTaxonomyOption } from "./lib/systemone-taxonomy.mjs";
 
-const SCHEMA = 'registry-atlas.catalog-classification.v1';
+const SCHEMA = "registry-atlas.catalog-classification.v1";
 
-const DEFAULT_DECISION_URL = 'http://127.0.0.1:18080/v1/systemone';
+const DEFAULT_DECISION_URL = "http://127.0.0.1:18080/v1/systemone";
 
-const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
+const KINDS = new Set(["component", "block", "page", "template", "theme", "icon", "other"]);
 
-const VALUE_FLAGS = new Set([
-  '--run-id', '--cursor', '--max-registries', '--decision-url',
-]);
+const VALUE_FLAGS = new Set(["--run-id", "--cursor", "--max-registries", "--decision-url"]);
 
-const BOOLEAN_FLAGS = new Set(['--dry-run', '--deterministic-only', '--all-batches', '--resume']);
+const BOOLEAN_FLAGS = new Set(["--dry-run", "--deterministic-only", "--all-batches", "--resume"]);
 
 function boundedInteger(raw, flag, fallback, min, max) {
   if (raw === undefined) return fallback;
   const value = Number(raw);
 
-  if (!Number.isSafeInteger(value) || value < min || value > max) throw new Error(`Invalid ${flag}`);
+  if (!Number.isSafeInteger(value) || value < min || value > max)
+    throw new Error(`Invalid ${flag}`);
 
   return value;
 }
@@ -49,42 +48,50 @@ export function parseCatalogClassificationArgs(argv) {
     const flag = argv[index];
 
     if (BOOLEAN_FLAGS.has(flag)) {
-      if (booleans.has(flag) || Object.hasOwn(values, flag)) throw new Error(`Repeated argument: ${flag}`);
+      if (booleans.has(flag) || Object.hasOwn(values, flag))
+        throw new Error(`Repeated argument: ${flag}`);
       booleans.add(flag);
       continue;
     }
 
     if (!VALUE_FLAGS.has(flag)) throw new Error(`Unknown argument: ${flag}`);
 
-    if (Object.hasOwn(values, flag) || booleans.has(flag)) throw new Error(`Repeated argument: ${flag}`);
+    if (Object.hasOwn(values, flag) || booleans.has(flag))
+      throw new Error(`Repeated argument: ${flag}`);
     const value = argv[++index];
 
-    if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
+    if (!value || value.startsWith("--")) throw new Error(`Missing value for ${flag}`);
     values[flag] = value;
   }
 
   const result = (() => {
-  const result = {};
+    const result = {};
 
-  if (values['--run-id']) Object.assign(result, { runId: values['--run-id'] });
+    if (values["--run-id"]) Object.assign(result, { runId: values["--run-id"] });
 
-  if (values['--cursor']) Object.assign(result, { cursor: values['--cursor'] });
-  result.maxRegistries = boundedInteger(values['--max-registries'], '--max-registries', 20, 1, 10000);
-  result.decisionUrl = values['--decision-url'] ?? DEFAULT_DECISION_URL;
-  result.dryRun = booleans.has('--dry-run');
-  result.deterministicOnly = booleans.has('--deterministic-only');
-  result.allBatches = booleans.has('--all-batches');
-  result.resume = booleans.has('--resume');
+    if (values["--cursor"]) Object.assign(result, { cursor: values["--cursor"] });
+    result.maxRegistries = boundedInteger(
+      values["--max-registries"],
+      "--max-registries",
+      20,
+      1,
+      10000,
+    );
+    result.decisionUrl = values["--decision-url"] ?? DEFAULT_DECISION_URL;
+    result.dryRun = booleans.has("--dry-run");
+    result.deterministicOnly = booleans.has("--deterministic-only");
+    result.allBatches = booleans.has("--all-batches");
+    result.resume = booleans.has("--resume");
 
-  return result;
-})();
+    return result;
+  })();
 
-  if (result.resume && !result.allBatches) throw new Error('--resume requires --all-batches');
+  if (result.resume && !result.allBatches) throw new Error("--resume requires --all-batches");
 
-  if (!result.dryRun && !result.runId) throw new Error('Missing required --run-id');
+  if (!result.dryRun && !result.runId) throw new Error("Missing required --run-id");
 
   if (result.runId && !/^[a-z0-9][a-z0-9._-]{0,79}$/i.test(result.runId)) {
-    throw new Error('Classification run id is invalid');
+    throw new Error("Classification run id is invalid");
   }
 
   return result;
@@ -94,25 +101,40 @@ function stable(value) {
   if (Array.isArray(value)) return value.map(stable);
 
   if (value && isInputObject(value)) {
-    return Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])]));
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .map((key) => [key, stable(value[key])]),
+    );
   }
 
   return value;
 }
 
 function sha256(value) {
-  return 'sha256:' + createHash('sha256').update(JSON.stringify(stable(value))).digest('hex');
+  return (
+    "sha256:" +
+    createHash("sha256")
+      .update(JSON.stringify(stable(value)))
+      .digest("hex")
+  );
 }
 
 function validateCatalog(value) {
-  if (!value || !isInputObject(value) || Array.isArray(value)
-    || !value.registries || !isInputObject(value.registries) || Array.isArray(value.registries)) {
-    throw new Error('Catalog classification input requires a registries object');
+  if (
+    !value ||
+    !isInputObject(value) ||
+    Array.isArray(value) ||
+    !value.registries ||
+    !isInputObject(value.registries) ||
+    Array.isArray(value.registries)
+  ) {
+    throw new Error("Catalog classification input requires a registries object");
   }
 
   for (const [namespace, items] of Object.entries(value.registries)) {
-    if (!namespace.startsWith('@') || !Array.isArray(items)) {
-      throw new Error('Catalog classification input contains an invalid registry bucket');
+    if (!namespace.startsWith("@") || !Array.isArray(items)) {
+      throw new Error("Catalog classification input contains an invalid registry bucket");
     }
   }
 
@@ -121,10 +143,11 @@ function validateCatalog(value) {
 
 function normalizeKind(item, namespace, overrides) {
   const categories = Array.isArray(item?.categories)
-    ? item.categories.map(value => String(value).trim().toLowerCase()) : [];
+    ? item.categories.map((value) => String(value).trim().toLowerCase())
+    : [];
 
-  if (categories.some(value => value === 'template' || value === 'templates')) {
-    return 'template';
+  if (categories.some((value) => value === "template" || value === "templates")) {
+    return "template";
   }
 
   if (KINDS.has(item?.kind)) return item.kind;
@@ -132,22 +155,28 @@ function normalizeKind(item, namespace, overrides) {
 
   if (KINDS.has(reviewed)) return reviewed;
 
-  if (item?.type === 'registry:icon'
-    || categories.some(value => ['icon', 'icons', 'icon-stack', 'morph-icon'].includes(value))) {
-    return 'icon';
+  if (
+    item?.type === "registry:icon" ||
+    categories.some((value) => ["icon", "icons", "icon-stack", "morph-icon"].includes(value))
+  ) {
+    return "icon";
   }
 
-  if (item?.type === 'registry:block') return 'block';
+  if (item?.type === "registry:block") return "block";
 
-  if (item?.type === 'registry:page') return 'page';
+  if (item?.type === "registry:page") return "page";
 
-  if (item?.type === 'registry:style' || item?.type === 'registry:theme') return 'theme';
+  if (item?.type === "registry:style" || item?.type === "registry:theme") return "theme";
 
-  if (item?.type === 'registry:component' || item?.type === 'registry:ui' || item?.type === 'registry:item') {
-    return 'component';
+  if (
+    item?.type === "registry:component" ||
+    item?.type === "registry:ui" ||
+    item?.type === "registry:item"
+  ) {
+    return "component";
   }
 
-  return 'other';
+  return "other";
 }
 
 function sourceHintsFor(item) {
@@ -155,7 +184,8 @@ function sourceHintsFor(item) {
 
   if (Array.isArray(item?.categories) && item.categories.length) hints.categories = item.categories;
 
-  if (Array.isArray(item?.sourceGroups) && item.sourceGroups.length) hints.verifiedGroups = item.sourceGroups;
+  if (Array.isArray(item?.sourceGroups) && item.sourceGroups.length)
+    hints.verifiedGroups = item.sourceGroups;
 
   return Object.keys(hints).length ? hints : undefined;
 }
@@ -165,7 +195,7 @@ function pendingClassification(state, taxonomyVersion) {
     taxonomyVersion,
     primary: null,
     path: [],
-    method: 'unclassified',
+    method: "unclassified",
     inputFingerprint: catalogClassificationInputFingerprint(state),
     pendingDecision: true,
   };
@@ -181,11 +211,11 @@ export async function classifyRegistryCatalog({
   choose,
   kindOverrides = {},
 } = {}) {
-  if (!isInputString(namespace) || !namespace.startsWith('@')) {
-    throw new Error('Classification namespace is invalid');
+  if (!isInputString(namespace) || !namespace.startsWith("@")) {
+    throw new Error("Classification namespace is invalid");
   }
 
-  if (!Array.isArray(items)) throw new Error('Classification items must be an array');
+  if (!Array.isArray(items)) throw new Error("Classification items must be an array");
   const generatedAt = new Date().toISOString();
   const outputItems = [];
 
@@ -193,28 +223,31 @@ export async function classifyRegistryCatalog({
     if (!item || !isInputString(item.name) || !item.name.trim()) continue;
     const kind = normalizeKind(item, namespace, kindOverrides);
 
-    const state = buildCatalogClassificationState((() => {
-  const result = {};
-  result.namespace = namespace;
-  result.item = (() => {
-  const result = {};
-  result.name = item.name;
+    const state = buildCatalogClassificationState(
+      (() => {
+        const result = {};
+        result.namespace = namespace;
+        result.item = (() => {
+          const result = {};
+          result.name = item.name;
 
-  if (item.title) Object.assign(result, { title: item.title });
+          if (item.title) Object.assign(result, { title: item.title });
 
-  if (item.description) Object.assign(result, { description: item.description });
-  result.kind = kind;
+          if (item.description) Object.assign(result, { description: item.description });
+          result.kind = kind;
 
-  return result;
-})();
+          return result;
+        })();
 
-  if (sourceHintsFor(item)) Object.assign(result, { sourceHints: sourceHintsFor(item) });
+        if (sourceHintsFor(item)) Object.assign(result, { sourceHints: sourceHintsFor(item) });
 
-  return result;
-})());
+        return result;
+      })(),
+    );
 
-    let classification = findDeterministicKindClassification(state, taxonomy)
-      ?? findDeterministicAliasClassification(state, taxonomy);
+    let classification =
+      findDeterministicKindClassification(state, taxonomy) ??
+      findDeterministicAliasClassification(state, taxonomy);
 
     if (!classification) {
       if (deterministicOnly) {
@@ -224,23 +257,26 @@ export async function classifyRegistryCatalog({
       }
     }
 
-    outputItems.push((() => {
-  const result = {};
-  result.namespace = namespace;
-  result.name = item.name;
-  result.kind = kind;
-  result.taxonomyVersion = classification.taxonomyVersion;
-  result.canonical = { primary: classification.primary, path: classification.path };
-  result.method = classification.method;
-  result.inputFingerprint = classification.inputFingerprint;
+    outputItems.push(
+      (() => {
+        const result = {};
+        result.namespace = namespace;
+        result.name = item.name;
+        result.kind = kind;
+        result.taxonomyVersion = classification.taxonomyVersion;
+        result.canonical = { primary: classification.primary, path: classification.path };
+        result.method = classification.method;
+        result.inputFingerprint = classification.inputFingerprint;
 
-  if (classification.pendingDecision) Object.assign(result, { pendingDecision: true });
+        if (classification.pendingDecision) Object.assign(result, { pendingDecision: true });
 
-  if (classification.systemOne) Object.assign(result, { systemOne: classification.systemOne });
-  result.generatedAt = generatedAt;
+        if (classification.systemOne)
+          Object.assign(result, { systemOne: classification.systemOne });
+        result.generatedAt = generatedAt;
 
-  return result;
-})());
+        return result;
+      })(),
+    );
   }
 
   return {
@@ -252,11 +288,12 @@ export async function classifyRegistryCatalog({
     generatedAt,
     summary: {
       items: outputItems.length,
-      deterministic: outputItems.filter(item => item.method === 'deterministic-alias'
-        || item.method === 'deterministic-kind').length,
-      systemOne: outputItems.filter(item => item.method === 'system-one').length,
-      unclassified: outputItems.filter(item => item.method === 'unclassified').length,
-      pendingDecision: outputItems.filter(item => item.pendingDecision).length,
+      deterministic: outputItems.filter(
+        (item) => item.method === "deterministic-alias" || item.method === "deterministic-kind",
+      ).length,
+      systemOne: outputItems.filter((item) => item.method === "system-one").length,
+      unclassified: outputItems.filter((item) => item.method === "unclassified").length,
+      pendingDecision: outputItems.filter((item) => item.pendingDecision).length,
     },
     items: outputItems,
   };
@@ -294,28 +331,31 @@ export async function runCatalogClassificationBatches({
   executeBatch,
   stopAfterBatches = Number.POSITIVE_INFINITY,
 } = {}) {
-  if (!database) throw new Error('Classification database is required');
+  if (!database) throw new Error("Classification database is required");
 
-  if (!runId) throw new Error('Classification run id is required');
+  if (!runId) throw new Error("Classification run id is required");
 
-  if (!isInputCallable(executeBatch)) throw new Error('executeBatch is required');
+  if (!isInputCallable(executeBatch)) throw new Error("executeBatch is required");
 
-  if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
+  if (!(stopAfterBatches > 0)) throw new Error("stopAfterBatches must be positive");
 
   const previous = resume ? await readClassificationRun(database, runId) : null;
 
-  if (resume && !previous) throw new Error('No resumable classification state found');
+  if (resume && !previous) throw new Error("No resumable classification state found");
 
-  if (previous && (previous.taxonomyFingerprint !== taxonomyFingerprint
-    || previous.catalogFingerprint !== catalogFingerprint)) {
-    throw new Error('Classification resume fingerprint mismatch');
+  if (
+    previous &&
+    (previous.taxonomyFingerprint !== taxonomyFingerprint ||
+      previous.catalogFingerprint !== catalogFingerprint)
+  ) {
+    throw new Error("Classification resume fingerprint mismatch");
   }
 
   if (!resume) await resetClassificationRun(database, runId);
 
-  if (previous?.status === 'completed') return previous;
+  if (previous?.status === "completed") return previous;
 
-  let cursor = resume ? previous.nextCursor ?? initialCursor : initialCursor;
+  let cursor = resume ? (previous.nextCursor ?? initialCursor) : initialCursor;
   let batches = previous?.batches ?? 0;
   let completed = previous?.completed ?? 0;
   let failed = previous?.failed ?? 0;
@@ -343,9 +383,8 @@ export async function runCatalogClassificationBatches({
 
     await putClassificationBatch(database, runId, batches, batchRecord);
 
-    const status = nextCursor === null
-      ? 'completed'
-      : executed >= stopAfterBatches ? 'paused' : 'running';
+    const status =
+      nextCursor === null ? "completed" : executed >= stopAfterBatches ? "paused" : "running";
 
     const state = {
       schema: SCHEMA,
@@ -369,17 +408,21 @@ export async function runCatalogClassificationBatches({
     cursor = nextCursor;
   }
 
-  throw new Error('Classification batch runner stopped unexpectedly');
+  throw new Error("Classification batch runner stopped unexpectedly");
 }
 
-export async function main(argv = process.argv.slice(2), cwd = process.cwd(), providedDatabase = null) {
+export async function main(
+  argv = process.argv.slice(2),
+  cwd = process.cwd(),
+  providedDatabase = null,
+) {
   const options = parseCatalogClassificationArgs(argv);
   const database = providedDatabase ?? openAtlasCoreDatabase(cwd);
 
   try {
     const state = await readAtlasState(database);
 
-    if (!state.taxonomy) throw new Error('Catalog taxonomy is missing from the Atlas database');
+    if (!state.taxonomy) throw new Error("Catalog taxonomy is missing from the Atlas database");
     const taxonomy = validateCatalogTaxonomy(state.taxonomy);
     const catalog = validateCatalog(state.catalog);
     const taxonomyFingerprint = sha256(taxonomy);
@@ -401,19 +444,22 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd(), pr
         totalRegistries: dryPlan.totalRegistries,
         batchSize: dryPlan.batch.length,
         nextCursor: dryPlan.nextCursor,
-        registries: dryPlan.batch.map(namespace => ({
+        registries: dryPlan.batch.map((namespace) => ({
           namespace,
           itemCount: catalog.registries[namespace].length,
         })),
       };
     }
 
-    const choose = options.deterministicOnly ? undefined : request => chooseTaxonomyOption({
-      ...request,
-      endpoint: options.decisionUrl,
-    });
+    const choose = options.deterministicOnly
+      ? undefined
+      : (request) =>
+          chooseTaxonomyOption({
+            ...request,
+            endpoint: options.decisionUrl,
+          });
 
-    const executeBatch = async cursor => {
+    const executeBatch = async (cursor) => {
       const plan = planCatalog(catalog, { cursor, maxRegistries: options.maxRegistries });
       const results = [];
 
@@ -433,13 +479,13 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd(), pr
           await upsertClassificationRunItems(database, options.runId, artifact.items);
           results.push({
             namespace,
-            outcome: 'completed',
+            outcome: "completed",
             summary: artifact.summary,
           });
         } catch (error) {
           results.push({
             namespace,
-            outcome: 'failed',
+            outcome: "failed",
             reason: String(error?.message ?? error).slice(0, 250),
           });
         }
@@ -448,8 +494,8 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd(), pr
       return {
         schema: SCHEMA,
         totalRegistries: plan.totalRegistries,
-        completed: results.filter(result => result.outcome === 'completed').length,
-        failed: results.filter(result => result.outcome === 'failed').length,
+        completed: results.filter((result) => result.outcome === "completed").length,
+        failed: results.filter((result) => result.outcome === "failed").length,
         nextCursor: plan.nextCursor,
         results,
       };
@@ -472,8 +518,10 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd(), pr
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().then(result => console.log(JSON.stringify(result, null, 2))).catch(error => {
-    console.error('Catalog classification failed: ' + String(error?.message ?? error));
-    process.exitCode = 1;
-  });
+  main()
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => {
+      console.error("Catalog classification failed: " + String(error?.message ?? error));
+      process.exitCode = 1;
+    });
 }

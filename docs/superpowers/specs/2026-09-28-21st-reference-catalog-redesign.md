@@ -21,6 +21,7 @@ Live 21st.dev was inspected on 2026-09-28. Viewport and full-page screenshots pl
 `~/.local/share/registry-atlas/reference/21st-dev-2026-09-28/`
 
 The audit covered these route families:
+
 - `/`: marketing/entry surface.
 - `/community/components`: component catalogue with category navigation and dense visual cards.
 - `/community/components/featured` and `/community/components/newest`: catalogue ordering lenses.
@@ -32,6 +33,7 @@ The audit covered these route families:
 - Templates, themes/editor, and icon family/category routes were captured to understand shared navigation and grid/detail patterns; Registry Atlas does not need to clone unrelated commerce/publishing features.
 
 The reference pattern relevant to Atlas is:
+
 1. browse pages show concrete component records, never library-level pseudo-components;
 2. cards are visually dense but action-light;
 3. component detail owns installation/copy/source actions;
@@ -54,6 +56,7 @@ Registry metadata, aliases, primary-focus values, curated component tags, descri
 Reviewed summaries are enrichment overlays only. They may add description, docs, preview, dependencies, files, provenance, or stronger confidence to a real indexed item.
 
 If a registry catalog cannot be read, Atlas shows that registry's coverage gap. It does not synthesize generic components from registry metadata.
+
 ## User stories
 
 1. As a component consumer, I want the default catalogue to browse real indexed components, so that I can discover the actual inventory without knowing a search term.
@@ -77,6 +80,7 @@ If a registry catalog cannot be read, Atlas shows that registry's coverage gap. 
 Registry Atlas adopts a path-based catalogue contract under the configured Vite base path.
 
 Canonical route families:
+
 - `/components` — default real-component catalogue.
 - `/components/featured` — reserved for future evidence-backed ranking; until ranking evidence exists it aliases the default deterministic catalogue.
 - `/components/newest` — only enabled when trustworthy item timestamps exist; otherwise it is not shown.
@@ -89,6 +93,7 @@ Canonical route families:
 Query parameters remain available for secondary state such as text search, sorting, selected upstream item types, registry filter, and page number.
 
 Legacy `?view=...` URLs remain readable and redirect/replace to the canonical path shape rather than breaking existing links.
+
 ## GitHub Pages routing
 
 The app remains a static Vite SPA under `/Registry-Atlas/`.
@@ -102,6 +107,7 @@ The fallback must be deterministic, same-origin only, and must not accept arbitr
 Introduce one deep catalogue query module as the public seam for browse/profile/compare inventory.
 
 Inputs:
+
 - the loaded `RegistryCatalogIndex`;
 - registries;
 - optional query text;
@@ -111,6 +117,7 @@ Inputs:
 - page/offset and limit.
 
 Outputs:
+
 - real catalog-backed component records;
 - total matching count;
 - page metadata;
@@ -127,6 +134,7 @@ The old 1,000 materialization cap may remain as a defensive search-work bound on
 Component search is open-vocabulary and data-backed.
 
 Searchable component fields:
+
 - item `name`;
 - optional `title`;
 - upstream `categories`;
@@ -144,6 +152,7 @@ Registry search may use registry name, description, homepage, and explicit regis
 Replace the current default Discover candidate model with the real catalogue query.
 
 Visual structure follows the reference:
+
 - persistent compact left rail for Components, Registries, Compare, search, and data-backed category/type shortcuts;
 - a dense multi-column component grid;
 - simple cards whose primary interaction is opening component detail;
@@ -155,11 +164,13 @@ Visual structure follows the reference:
 The page header shows truthful inventory counts from the index, not the reviewed-summary count.
 
 The empty install queue is hidden. Queue functionality may remain accessible from detail/actions and appears only when it contains items.
+
 ## Component detail
 
 Component detail is the action-heavy surface.
 
 It must show:
+
 - component name/title;
 - registry namespace with link to the registry page;
 - stable canonical URL;
@@ -180,6 +191,7 @@ Nested slugs are preserved exactly after normalization/safety validation. A comp
 The registry list uses compact-index bucket counts.
 
 Each registry entry shows:
+
 - namespace/name;
 - description/homepage;
 - real indexed item count;
@@ -189,6 +201,7 @@ Each registry entry shows:
 The registry list is paginated/windowed.
 
 The registry profile is modeled after the reference library page:
+
 - concise registry identity/sidebar/header;
 - real component grid/list as the dominant content;
 - local search/filter within that registry;
@@ -206,6 +219,7 @@ The current closed `ComponentTag` matrix is removed from product behavior.
 Compare uses exact normalized real item identities from the compact index for the selected registries.
 
 The comparison surface provides:
+
 - selected registry counts;
 - intersection/union summary;
 - searchable/paginated component-name rows;
@@ -217,6 +231,7 @@ No `Verified/Inferred` component presence is derived from registry-level tags. S
 ## Coverage and failure semantics
 
 Catalogue coverage is explicit:
+
 - `current`: latest sync succeeded and produced discoverable items;
 - `empty`: latest sync succeeded but produced zero supported discoverable items;
 - `stale`: latest sync failed but prior compact items were preserved;
@@ -225,11 +240,13 @@ Catalogue coverage is explicit:
 The UI surfaces aggregate catalogue coverage such as `342 / 392 catalogues fetched` and total indexed items. Internal strings such as `Review: not_run` are not user-facing product copy.
 
 The existing 50 catalog failures remain a separate acquisition backlog. This redesign must make those gaps visible but does not fabricate their contents.
+
 ## Visual/UI correction contract
 
 The target is a close structural analogue of the audited 21st.dev catalogue, adapted to Registry Atlas data.
 
 Required corrections:
+
 - left rail becomes the primary browse/navigation affordance;
 - component cards are visually dominant and action-light;
 - registry/profile component inventory appears before diagnostic facts;
@@ -259,6 +276,7 @@ The component taxonomy modules may remain temporarily for legacy URL migration/t
 Use public/core seams rather than private helpers.
 
 Required deterministic tests:
+
 - default catalogue returns real compact-index items with no query;
 - zero registry-level fallback candidates exist;
 - reviewed summary overlays a matching compact item rather than creating a duplicate;
@@ -272,9 +290,11 @@ Required deterministic tests:
 - browse cards do not render install-action clusters;
 - component detail retains install/inspect actions;
 - narrow viewport has no horizontal page overflow in managed-browser verification.
+
 ## Acceptance criteria
 
 The redesign is complete when:
+
 1. Opening Components with no query shows real indexed components immediately.
 2. The UI no longer reports `34 known items` as the catalogue inventory.
 3. No registry metadata can create a component result without a real catalog item.

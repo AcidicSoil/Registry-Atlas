@@ -1,33 +1,29 @@
-const UNSUPPORTED_URL_COPY = 'Link unavailable: unsupported URL protocol.';
+const UNSUPPORTED_URL_COPY = "Link unavailable: unsupported URL protocol.";
 
 export function escapeHtml(value: string): string {
   return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 export function toSafeExternalUrl(value: string): URL | null {
-  if (value.trim().startsWith('//')) {
+  if (value.trim().startsWith("//")) {
     return null;
   }
 
   try {
     const url = new URL(value);
 
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url : null;
+    return url.protocol === "https:" || url.protocol === "http:" ? url : null;
   } catch {
     return null;
   }
 }
 
-export function renderExternalLink(
-  url: string,
-  label: string,
-  className = 'registry-url'
-): string {
+export function renderExternalLink(url: string, label: string, className = "registry-url"): string {
   const safeUrl = toSafeExternalUrl(url);
 
   if (!safeUrl) {
@@ -38,9 +34,9 @@ export function renderExternalLink(
 }
 
 function isPublicHomepageHost(host: string): boolean {
-  if (!host || host === 'localhost' || host.includes(':')) return false;
+  if (!host || host === "localhost" || host.includes(":")) return false;
 
-  if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+  if ([".localhost", ".local", ".internal"].some((suffix) => host.endsWith(suffix))) return false;
 
   return !/^\d+(?:\.\d+){3}$/.test(host);
 }
@@ -48,14 +44,14 @@ function isPublicHomepageHost(host: string): boolean {
 /** Homepage links are navigation only: never render raw registry endpoints as replacements. */
 export function renderRegistryHomepageLink(
   homepage: string,
-  className = 'link-button registry-homepage-link',
-  label = 'Visit registry homepage',
+  className = "link-button registry-homepage-link",
+  label = "Visit registry homepage",
 ): string {
   const url = toSafeExternalUrl(homepage);
 
-  if (!url || url.username || url.password) return '';
+  if (!url || url.username || url.password) return "";
 
-  if (!isPublicHomepageHost(url.hostname.toLowerCase().replace(/\.$/, ''))) return '';
+  if (!isPublicHomepageHost(url.hostname.toLowerCase().replace(/\.$/, ""))) return "";
 
   return renderExternalLink(url.href, label, className);
 }
@@ -63,11 +59,11 @@ export function renderRegistryHomepageLink(
 export function renderSafeExternalImage(
   url: string,
   alt: string,
-  className = 'external-image',
+  className = "external-image",
 ): string {
   const safeUrl = toSafeExternalUrl(url);
 
-  if (!safeUrl) return '';
+  if (!safeUrl) return "";
 
   return `<img src="${escapeHtml(safeUrl.href)}" alt="${escapeHtml(alt)}" class="${escapeHtml(className)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" />`;
 }

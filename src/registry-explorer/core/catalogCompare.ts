@@ -1,14 +1,19 @@
 import { catalogRoutePath } from "./catalogRoutes";
-import { resolveCatalogSourcePage } from './catalogSourcePage';
-import { assetKindForCatalogItem } from './catalogCollections';
+import { resolveCatalogSourcePage } from "./catalogSourcePage";
+import { assetKindForCatalogItem } from "./catalogCollections";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
-import type { Registry, RegistryCatalogIndex, RegistryCatalogItem, RegistrySourcePage } from "./registry.schema";
+import type {
+  Registry,
+  RegistryCatalogIndex,
+  RegistryCatalogItem,
+  RegistrySourcePage,
+} from "./registry.schema";
 
 interface CatalogCompareCell {
   namespace: string;
   present: boolean;
   routePath?: string;
-  routeKind?: 'component' | 'block' | 'page' | 'template' | 'theme';
+  routeKind?: "component" | "block" | "page" | "template" | "theme";
   sourcePage?: RegistrySourcePage;
   registryHomepage?: string;
   docsUrl?: string;
@@ -48,7 +53,10 @@ interface UnionRecord {
 
 const DEFAULT_PAGE_SIZE = 40;
 
-function mergeRegistryItems(index: RegistryCatalogIndex, namespaces: readonly string[]): Map<string, UnionRecord> {
+function mergeRegistryItems(
+  index: RegistryCatalogIndex,
+  namespaces: readonly string[],
+): Map<string, UnionRecord> {
   const union = new Map<string, UnionRecord>();
 
   for (const namespace of namespaces) {
@@ -85,12 +93,10 @@ function buildComparisonCell(
     namespace,
     present: true,
     routeKind,
-    routePath: catalogRoutePath(
-      { kind: routeKind, namespace, slug: item.name }, basePath,
-    ),
+    routePath: catalogRoutePath({ kind: routeKind, namespace, slug: item.name }, basePath),
     registryHomepage: registry?.url,
     sourcePage: registry ? resolveCatalogSourcePage(index, registry, item) : undefined,
-    docsUrl: registry?.itemSummaries?.find(summary => summary.slug === item.name)?.docsUrl,
+    docsUrl: registry?.itemSummaries?.find((summary) => summary.slug === item.name)?.docsUrl,
   };
 }
 
@@ -106,10 +112,16 @@ function buildComparisonRow(
     identity,
     slug: record.slug,
     displayName: record.displayName,
-    presentIn: namespaces.filter(namespace => record.itemsByNamespace.has(namespace)),
-    cells: namespaces.map(namespace => buildComparisonCell(
-      namespace, record.itemsByNamespace.get(namespace), byName.get(namespace), index, basePath,
-    )),
+    presentIn: namespaces.filter((namespace) => record.itemsByNamespace.has(namespace)),
+    cells: namespaces.map((namespace) =>
+      buildComparisonCell(
+        namespace,
+        record.itemsByNamespace.get(namespace),
+        byName.get(namespace),
+        index,
+        basePath,
+      ),
+    ),
   };
 }
 
@@ -119,25 +131,33 @@ export function buildCatalogComparison(
   registryNames: readonly string[],
   options: CatalogCompareOptions = {},
 ): CatalogCompareResult {
-  const available = new Set(registries.map(registry => registry.name));
-  const registryByName = new Map(registries.map(registry => [registry.name, registry]));
+  const available = new Set(registries.map((registry) => registry.name));
+  const registryByName = new Map(registries.map((registry) => [registry.name, registry]));
 
   const selectedRegistryNames = [...new Set(registryNames)]
-    .filter(name => available.has(name))
+    .filter((name) => available.has(name))
     .slice(0, 4);
 
   const union = mergeRegistryItems(index, selectedRegistryNames);
 
   const unionCount = union.size;
 
-  const intersectionCount = selectedRegistryNames.length === 0
-    ? 0
-    : [...union.values()].filter(record => record.itemsByNamespace.size === selectedRegistryNames.length).length;
+  const intersectionCount =
+    selectedRegistryNames.length === 0
+      ? 0
+      : [...union.values()].filter(
+          (record) => record.itemsByNamespace.size === selectedRegistryNames.length,
+        ).length;
 
   const query = normalize(options.search ?? "");
 
   const matching = [...union.entries()]
-    .filter(([, record]) => !query || normalize(record.slug).includes(query) || normalize(record.displayName).includes(query))
+    .filter(
+      ([, record]) =>
+        !query ||
+        normalize(record.slug).includes(query) ||
+        normalize(record.displayName).includes(query),
+    )
     .sort((a, b) => a[1].slug.localeCompare(b[1].slug));
 
   const page = positiveInteger(options.page, 1);
@@ -146,11 +166,18 @@ export function buildCatalogComparison(
   const pageCount = total === 0 ? 0 : Math.ceil(total / pageSize);
   const start = (page - 1) * pageSize;
 
-  const rows = matching.slice(start, start + pageSize).map(([identity, record]) =>
-    buildComparisonRow(identity, record, selectedRegistryNames, registryByName, index,
-      options.basePath ?? '/Registry-Atlas/'));
-
-
+  const rows = matching
+    .slice(start, start + pageSize)
+    .map(([identity, record]) =>
+      buildComparisonRow(
+        identity,
+        record,
+        selectedRegistryNames,
+        registryByName,
+        index,
+        options.basePath ?? "/Registry-Atlas/",
+      ),
+    );
 
   return {
     selectedRegistryNames,
@@ -165,12 +192,14 @@ export function buildCatalogComparison(
 }
 
 function comparisonRouteKind(
-  item: RegistryCatalogItem, namespace: string,
-): 'component' | 'block' | 'page' | 'template' | 'theme' {
+  item: RegistryCatalogItem,
+  namespace: string,
+): "component" | "block" | "page" | "template" | "theme" {
   const kind = assetKindForCatalogItem(item, namespace);
 
-  return kind === 'block' || kind === 'page' || kind === 'template' || kind === 'theme'
-    ? kind : 'component';
+  return kind === "block" || kind === "page" || kind === "template" || kind === "theme"
+    ? kind
+    : "component";
 }
 
 function normalize(value: string): string {

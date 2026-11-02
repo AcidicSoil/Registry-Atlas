@@ -37,10 +37,12 @@
 ### Task 1: Pure catalog structure discovery
 
 **Files:**
+
 - Create: `scripts/lib/catalog-structure-discovery.mjs`
 - Create: `tests/registry-explorer/catalogStructureDiscovery.test.ts`
 
 **Interfaces:**
+
 - Produces: `discoverCatalogGroups(observation, context)`
 - Produces: `resolveDirectMembership(assetId, groups)`
 - Produces: `classifyObservedAccess({groups, markers})`
@@ -55,10 +57,12 @@
 ### Task 2: Surface planning from existing evidence
 
 **Files:**
+
 - Modify: `scripts/lib/catalog-structure-discovery.mjs`
 - Modify: `tests/registry-explorer/catalogStructureDiscovery.test.ts`
 
 **Interfaces:**
+
 - Produces: `deriveCatalogSurfaceCandidates({homepage, routePatterns, examples, itemRoutes, sitemapLinks})`
 
 - [x] **Step 1: Add failing tests** for route-template parent derivation, same-origin filtering, deduplication, homepage fallback, and no item-slug URL fabrication.
@@ -69,10 +73,12 @@
 ### Task 3: Bounded Clef group-choice adapter
 
 **Files:**
+
 - Create: `scripts/lib/systemone-group.mjs`
 - Create: `tests/registry-explorer/systemOneGroup.test.ts`
 
 **Interfaces:**
+
 - Produces: `chooseObservedGroup({state, groups, endpoint?, timeoutMs?, fetchImpl?})`
 
 - [x] **Step 1: Write failing tests** for exact choices + `NONE`, duplicate labels, invalid endpoint, invalid choice, invalid probability/confidence, timeout, and successful response.
@@ -83,11 +89,13 @@
 ### Task 4: Survey core and CLI
 
 **Files:**
+
 - Create: `scripts/lib/catalog-structure-survey.mjs`
 - Create: `scripts/survey-registry-catalog-structure.mjs`
 - Create: `tests/registry-explorer/catalogStructureSurvey.test.ts`
 
 **Interfaces:**
+
 - Produces: `planCatalogStructureSurvey(...)`
 - Produces: `surveyRegistryCatalogStructure(...)`
 - CLI writes `registry-atlas-catalog-structure-survey/v1` per-registry JSON and enforces a bounded minimum delay between live source-page navigations.
@@ -102,6 +110,7 @@
 ### Task 5: Full-inventory dry plan and bounded live smoke
 
 **Files:**
+
 - Modify only if a test exposes a real defect in Tasks 1–4.
 - Output: `/tmp/registry-atlas-catalog-structure-survey-<run>/`
 
@@ -114,6 +123,7 @@
 ### Task 6: Retire experimental harnesses and verify
 
 **Files:**
+
 - Delete: `scripts/evaluate-source-group-discovery*.mjs` created by the smoke-test work, after useful fixtures are represented in permanent tests.
 - Preserve: `scripts/lib/systemone-identity.mjs` and its tests.
 
@@ -123,15 +133,16 @@
 - [x] **Step 4: Run `git diff --check`.**
 - [x] **Step 5: Review the diff against the spec; no public/generated catalog mutation is allowed.**
 
-
 ### Task 7: Full survey, aggregate report, and quality gate
 
 **Files:**
+
 - Create: `scripts/aggregate-registry-catalog-structure.mjs`
 - Create: `tests/registry-explorer/catalogStructureAggregate.test.ts`
 - Reuse: `scripts/survey-registry-catalog-structure.mjs`
 
 **Outputs:**
+
 - Per-registry survey JSON under the selected run directory.
 - `summary.json` with whole-run counts.
 - `review.json` ordered by failed/no-surface/high-unresolved/high-Clef/high-group-count registries.
@@ -146,6 +157,7 @@
 ### Task 8: Promote approved classification into generated catalog data
 
 **Files:**
+
 - Create: `scripts/promote-registry-catalog-structure.mjs`
 - Modify: `src/registry-explorer/core/registry.schema.ts`
 - Modify: `src/registry-explorer/core/registryCatalogIndex.ts`
@@ -154,6 +166,7 @@
 - Modify: `tests/registry-explorer/registryCatalogIndex.test.ts` if present, otherwise add equivalent parser coverage.
 
 **Runtime item fields:**
+
 - `kind`
 - `groups[]`
 - `access: "free" | "paid" | "unknown"`
@@ -169,6 +182,7 @@
 ### Task 9: Add kind, access, and group query facets
 
 **Files:**
+
 - Modify: `src/registry-explorer/core/catalogCollections.ts`
 - Modify: `src/registry-explorer/core/catalogQuery.ts`
 - Modify: `src/registry-explorer/core/catalogRoutes.ts`
@@ -177,6 +191,7 @@
 - Modify: `tests/registry-explorer/catalogRoutes.test.ts`
 
 **Interfaces:**
+
 - `CatalogComponent.kind`
 - `CatalogComponent.groups`
 - `CatalogComponent.access`
@@ -193,6 +208,7 @@
 ### Task 10: Expose the filters in the Registry Atlas UI
 
 **Files:**
+
 - Modify: `src/registry-explorer/ui/catalogComponentsView.ts`
 - Modify: `src/registry-explorer/ui/catalogSidebarNavigation.ts`
 - Modify: `src/registry-explorer/ui/registryCollectionView.ts`
@@ -215,6 +231,7 @@
 ### Task 11: End-to-end product verification
 
 **Files:**
+
 - Modify only when verification exposes a real defect.
 
 - [ ] **Step 1: Run focused promotion/query/route/UI tests.**

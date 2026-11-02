@@ -1,202 +1,340 @@
-import { describe, expect, it } from 'vitest';
-// @ts-ignore Standalone Node ESM script.
-import { inventoryLinks, applyVerifiedLinks, recheckLivePages, summarizeAuditCoverage } from '../../scripts/audit-component-links.mjs';
+import { describe, expect, it } from "vitest";
+import {
+  inventoryLinks,
+  applyVerifiedLinks,
+  recheckLivePages,
+  summarizeAuditCoverage,
+  // @ts-ignore Standalone Node ESM script.
+} from "../../scripts/audit-component-links.mjs";
 
 const registries = [
-  { name: '@delta', homepage: 'https://delta.example', url: 'https://delta.example/r/{name}.json' },
-  { name: '@other', homepage: 'https://other.example', url: 'https://other.example/r/{name}.json' },
+  { name: "@delta", homepage: "https://delta.example", url: "https://delta.example/r/{name}.json" },
+  { name: "@other", homepage: "https://other.example", url: "https://other.example/r/{name}.json" },
 ];
 
-const catalog = { registries: { '@delta': [{ name: 'button' }, { name: 'card' }], '@other': [{ name: 'switch' }] } };
+const catalog = {
+  registries: { "@delta": [{ name: "button" }, { name: "card" }], "@other": [{ name: "switch" }] },
+};
 
 const curated = {
-  '@delta': [{ slug: 'button', name: 'Button', docs_url: 'https://delta.example/docs/old', raw_item_url: 'https://delta.example/r/button.json' },
-    { slug: 'orphan', name: 'Orphan', docs_url: 'https://delta.example/docs/orphan' }],
+  "@delta": [
+    {
+      slug: "button",
+      name: "Button",
+      docs_url: "https://delta.example/docs/old",
+      raw_item_url: "https://delta.example/r/button.json",
+    },
+    { slug: "orphan", name: "Orphan", docs_url: "https://delta.example/docs/orphan" },
+  ],
 };
 
 const observation = {
-  namespace: '@delta', slug: 'button', previousUrl: 'https://delta.example/docs/old',
-  verifiedUrl: 'https://delta.example/components/button',
+  namespace: "@delta",
+  slug: "button",
+  previousUrl: "https://delta.example/docs/old",
+  verifiedUrl: "https://delta.example/components/button",
   browser: {
-    homepageUrl: 'https://delta.example/', listingUrl: 'https://delta.example/components',
-    observedUrl: 'https://delta.example/components/button', observedSlug: 'button',
-    renderedHeading: 'Button', checkedAt: '2026-10-01T19:00:00.000Z',
-    capturePath: '/tmp/pinchtab-delta-button.png',
+    homepageUrl: "https://delta.example/",
+    listingUrl: "https://delta.example/components",
+    observedUrl: "https://delta.example/components/button",
+    observedSlug: "button",
+    renderedHeading: "Button",
+    checkedAt: "2026-10-01T19:00:00.000Z",
+    capturePath: "/tmp/pinchtab-delta-button.png",
   },
 };
 
-describe('registry component link audit', () => {
-  it('accounts for every indexed item and curated-only record without inventing docs URLs', () => {
+describe("registry component link audit", () => {
+  it("accounts for every indexed item and curated-only record without inventing docs URLs", () => {
     const report = inventoryLinks(registries, catalog, curated);
-    expect(report.totals).toMatchObject({ registries: 2, items: 4, docsLinks: 2, missingDocsLinks: 2 });
-    expect(report.rows.map((r: { token: string }) => r.token)).toEqual(
-      ['@delta/button', '@delta/card', '@delta/orphan', '@other/switch'],
-    );
-    expect(report.rows.find((r: { token: string }) => r.token === '@delta/card')?.docsUrl).toBeNull();
-    expect(report.rows.find((r: { token: string }) => r.token === '@delta/button')?.rawItemUrl)
-      .toBe('https://delta.example/r/button.json');
+    expect(report.totals).toMatchObject({
+      registries: 2,
+      items: 4,
+      docsLinks: 2,
+      missingDocsLinks: 2,
+    });
+    expect(report.rows.map((r: { token: string }) => r.token)).toEqual([
+      "@delta/button",
+      "@delta/card",
+      "@delta/orphan",
+      "@other/switch",
+    ]);
+    expect(
+      report.rows.find((r: { token: string }) => r.token === "@delta/card")?.docsUrl,
+    ).toBeNull();
+    expect(
+      report.rows.find((r: { token: string }) => r.token === "@delta/button")?.rawItemUrl,
+    ).toBe("https://delta.example/r/button.json");
     expect(report.totals.registryCoverage).toBe(0);
     expect(report.totals).toMatchObject({ catalogEntries: 3, duplicateCatalogEntries: 0 });
 
-    const duplicate = inventoryLinks(registries, { registries: { ...catalog.registries,
-      '@delta': [...catalog.registries['@delta'], { name: 'button', type: 'registry:block' }] } }, curated);
+    const duplicate = inventoryLinks(
+      registries,
+      {
+        registries: {
+          ...catalog.registries,
+          "@delta": [...catalog.registries["@delta"], { name: "button", type: "registry:block" }],
+        },
+      },
+      curated,
+    );
 
-    expect(duplicate.totals).toMatchObject({ catalogEntries: 4, duplicateCatalogEntries: 1, items: 4 });
+    expect(duplicate.totals).toMatchObject({
+      catalogEntries: 4,
+      duplicateCatalogEntries: 1,
+      items: 4,
+    });
   });
 
-  it('updates an exact existing item only after recorded browser identity and URL agreement', () => {
+  it("updates an exact existing item only after recorded browser identity and URL agreement", () => {
     const report = inventoryLinks(registries, catalog, curated);
     const result = applyVerifiedLinks(report, curated, [observation]);
-    expect(result.repaired).toEqual(['@delta/button']);
-    expect(result.verifiedUrls).toEqual([{ token: '@delta/button', url: observation.verifiedUrl,
-      homepageUrl: observation.browser.homepageUrl, listingUrl: observation.browser.listingUrl,
-      capturePath: observation.browser.capturePath, checkedAt: observation.browser.checkedAt,
-      routePattern: null, exception: false }]);
-    expect(result.curated['@delta'][0].docs_url).toBe('https://delta.example/components/button');
-    expect(result.curated['@delta'][1].docs_url).toBe('https://delta.example/docs/orphan');
-    expect(curated['@delta'][0].docs_url).toBe('https://delta.example/docs/old');
-    expect(applyVerifiedLinks(inventoryLinks(registries, catalog, result.curated), result.curated,
-      [{ ...observation, previousUrl: observation.verifiedUrl }]).repaired).toEqual([]);
+    expect(result.repaired).toEqual(["@delta/button"]);
+    expect(result.verifiedUrls).toEqual([
+      {
+        token: "@delta/button",
+        url: observation.verifiedUrl,
+        homepageUrl: observation.browser.homepageUrl,
+        listingUrl: observation.browser.listingUrl,
+        capturePath: observation.browser.capturePath,
+        checkedAt: observation.browser.checkedAt,
+        routePattern: null,
+        exception: false,
+      },
+    ]);
+    expect(result.curated["@delta"][0].docs_url).toBe("https://delta.example/components/button");
+    expect(result.curated["@delta"][1].docs_url).toBe("https://delta.example/docs/orphan");
+    expect(curated["@delta"][0].docs_url).toBe("https://delta.example/docs/old");
+    expect(
+      applyVerifiedLinks(inventoryLinks(registries, catalog, result.curated), result.curated, [
+        { ...observation, previousUrl: observation.verifiedUrl },
+      ]).repaired,
+    ).toEqual([]);
   });
 
-  it('rechecks the recorded source page and heading in the live browser before automated URL promotion', async () => {
+  it("rechecks the recorded source page and heading in the live browser before automated URL promotion", async () => {
     const seen: string[] = [];
-    let current = 'https://delta.example/';
+    let current = "https://delta.example/";
 
     const browser = {
       url: async () => current,
-      nav: async (url: string) => { seen.push(url); current = url; },
+      nav: async (url: string) => {
+        seen.push(url);
+        current = url;
+      },
       snap: async () => ({
         url: observation.verifiedUrl,
-        nodes: [{ role: 'heading', name: 'Button' }, { role: 'heading', name: 'Installation' }],
+        nodes: [
+          { role: "heading", name: "Button" },
+          { role: "heading", name: "Installation" },
+        ],
       }),
     };
 
-    const result = await recheckLivePages(inventoryLinks(registries, catalog, curated),
-      [observation], browser);
+    const result = await recheckLivePages(
+      inventoryLinks(registries, catalog, curated),
+      [observation],
+      browser,
+    );
 
     expect(result).toEqual([]);
     expect(seen).toEqual([observation.verifiedUrl]);
   });
 
-  it('refuses an automated apply when the browser lands on a different component', async () => {
-    let current = 'https://delta.example/';
+  it("refuses an automated apply when the browser lands on a different component", async () => {
+    let current = "https://delta.example/";
 
     const browser = {
       url: async () => current,
-      nav: async (url: string) => { current = url; },
+      nav: async (url: string) => {
+        current = url;
+      },
       snap: async () => ({
         url: observation.verifiedUrl,
-        nodes: [{ role: 'heading', name: 'Card' }],
+        nodes: [{ role: "heading", name: "Card" }],
       }),
     };
 
-    expect(await recheckLivePages(inventoryLinks(registries, catalog, curated),
-      [observation], browser)).toMatchObject([
-      { token: '@delta/button', reason: 'live-heading-mismatch' },
-    ]);
+    expect(
+      await recheckLivePages(inventoryLinks(registries, catalog, curated), [observation], browser),
+    ).toMatchObject([{ token: "@delta/button", reason: "live-heading-mismatch" }]);
   });
 
-  it('never navigates a browser tab owned by a different registry or worker', async () => {
+  it("never navigates a browser tab owned by a different registry or worker", async () => {
     const browser = {
-      url: async () => 'https://other.example/',
-      nav: async () => { throw new Error('must not navigate'); },
-      snap: async () => { throw new Error('must not snap'); },
+      url: async () => "https://other.example/",
+      nav: async () => {
+        throw new Error("must not navigate");
+      },
+      snap: async () => {
+        throw new Error("must not snap");
+      },
     };
 
-    expect(await recheckLivePages(inventoryLinks(registries, catalog, curated),
-      [observation], browser)).toMatchObject([
-      { token: '@delta/button', reason: 'live-tab-origin-mismatch' },
-    ]);
+    expect(
+      await recheckLivePages(inventoryLinks(registries, catalog, curated), [observation], browser),
+    ).toMatchObject([{ token: "@delta/button", reason: "live-tab-origin-mismatch" }]);
   });
 
-  it('supports explicitly witnessed query-based component-page exceptions', () => {
-    const verifiedUrl = 'https://delta.example/?component=button';
+  it("supports explicitly witnessed query-based component-page exceptions", () => {
+    const verifiedUrl = "https://delta.example/?component=button";
 
-    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated,
-      [{ ...observation, verifiedUrl, exception: true,
-        browser: { ...observation.browser, observedUrl: verifiedUrl } }]);
+    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [
+      {
+        ...observation,
+        verifiedUrl,
+        exception: true,
+        browser: { ...observation.browser, observedUrl: verifiedUrl },
+      },
+    ]);
 
-    expect(result.repaired).toEqual(['@delta/button']);
+    expect(result.repaired).toEqual(["@delta/button"]);
     expect(result.verifiedUrls[0]).toMatchObject({ url: verifiedUrl, exception: true });
   });
 
   it.each([
-    [{ ...observation, previousUrl: 'https://delta.example/docs/other' }, 'stale-existing-url'],
-    [{ ...observation, verifiedUrl: 'https://delta.example/' }, 'generic-homepage'],
-    [{ ...observation, verifiedUrl: 'https://delta.example/components/elsewhere' }, 'browser-url-mismatch'],
-    [{ ...observation, browser: { ...observation.browser, observedSlug: 'card' } }, 'browser-identity-mismatch'],
-    [{ ...observation, browser: { ...observation.browser, capturePath: '' } }, 'missing-browser-evidence'],
-    [{ ...observation, verifiedUrl: 'http://127.0.0.1/admin' }, 'invalid-public-url'],
-    [{ ...observation, slug: 'unknown' }, 'unrecognized-item'],
-  ] as const)('rejects unsupported or ambiguous link corrections (%s)', (candidate, reason) => {
-    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [candidate]);
+    [{ ...observation, previousUrl: "https://delta.example/docs/other" }, "stale-existing-url"],
+    [{ ...observation, verifiedUrl: "https://delta.example/" }, "generic-homepage"],
+    [
+      { ...observation, verifiedUrl: "https://delta.example/components/elsewhere" },
+      "browser-url-mismatch",
+    ],
+    [
+      { ...observation, browser: { ...observation.browser, observedSlug: "card" } },
+      "browser-identity-mismatch",
+    ],
+    [
+      { ...observation, browser: { ...observation.browser, capturePath: "" } },
+      "missing-browser-evidence",
+    ],
+    [{ ...observation, verifiedUrl: "http://127.0.0.1/admin" }, "invalid-public-url"],
+    [{ ...observation, slug: "unknown" }, "unrecognized-item"],
+  ] as const)("rejects unsupported or ambiguous link corrections (%s)", (candidate, reason) => {
+    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [
+      candidate,
+    ]);
+
     expect(result.repaired).toEqual([]);
     expect(result.unresolved).toMatchObject([{ token: `@delta/${candidate.slug}`, reason }]);
   });
-  it('rejects records pointing to an unrelated host even if every field agrees', () => {
-    const forged = { ...observation, verifiedUrl: 'https://other.example/components/button',
-      browser: { ...observation.browser, observedUrl: 'https://other.example/components/button',
-        listingUrl: 'https://other.example/components' } };
+  it("rejects records pointing to an unrelated host even if every field agrees", () => {
+    const forged = {
+      ...observation,
+      verifiedUrl: "https://other.example/components/button",
+      browser: {
+        ...observation.browser,
+        observedUrl: "https://other.example/components/button",
+        listingUrl: "https://other.example/components",
+      },
+    };
 
-    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [forged]);
+    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [
+      forged,
+    ]);
+
     expect(result.repaired).toEqual([]);
-    expect(result.unresolved).toMatchObject([{ token: '@delta/button', reason: 'foreign-component-origin' }]);
+    expect(result.unresolved).toMatchObject([
+      { token: "@delta/button", reason: "foreign-component-origin" },
+    ]);
   });
 
-  it('rejects a heading that does not name the expected component', () => {
-    const forged = { ...observation, browser: { ...observation.browser, renderedHeading: 'Card' } };
-    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [forged]);
+  it("rejects a heading that does not name the expected component", () => {
+    const forged = { ...observation, browser: { ...observation.browser, renderedHeading: "Card" } };
+
+    const result = applyVerifiedLinks(inventoryLinks(registries, catalog, curated), curated, [
+      forged,
+    ]);
+
     expect(result.repaired).toEqual([]);
-    expect(result.unresolved).toMatchObject([{ token: '@delta/button', reason: 'browser-heading-mismatch' }]);
+    expect(result.unresolved).toMatchObject([
+      { token: "@delta/button", reason: "browser-heading-mismatch" },
+    ]);
   });
 
-  it('produces a complete per-item and per-registry coverage ledger without inventing checked statuses', () => {
+  it("produces a complete per-item and per-registry coverage ledger without inventing checked statuses", () => {
     const inventory = inventoryLinks(registries, catalog, curated);
-    const summary = summarizeAuditCoverage(inventory, applyVerifiedLinks(inventory, curated, [observation]));
+
+    const summary = summarizeAuditCoverage(
+      inventory,
+      applyVerifiedLinks(inventory, curated, [observation]),
+    );
+
     expect(summary.totals).toMatchObject({
-      items: 4, repaired: 1, confirmedUnchanged: 0, unresolved: 0, notChecked: 3,
-      registries: 2, fullyReviewedRegistries: 0, completed: false,
+      items: 4,
+      repaired: 1,
+      confirmedUnchanged: 0,
+      unresolved: 0,
+      notChecked: 3,
+      registries: 2,
+      fullyReviewedRegistries: 0,
+      completed: false,
     });
-    expect(summary.perRegistry.find((x: { namespace: string }) => x.namespace === '@delta'))
-      .toMatchObject({ count: 3, repaired: 1, notChecked: 2, homepageVisited: true, listingVisited: true });
-    expect(summary.perRegistry.find((x: { namespace: string }) => x.namespace === '@other'))
-      .toMatchObject({ count: 1, repaired: 0, notChecked: 1, homepageVisited: false });
-    expect(summary.rows.find((x: { token: string }) => x.token === '@delta/button'))
-      .toMatchObject({ status: 'repaired', verifiedUrl: observation.verifiedUrl });
-    expect(summary.rows.find((x: { token: string }) => x.token === '@delta/card'))
-      .toMatchObject({ status: 'not-checked' });
+    expect(
+      summary.perRegistry.find((x: { namespace: string }) => x.namespace === "@delta"),
+    ).toMatchObject({
+      count: 3,
+      repaired: 1,
+      notChecked: 2,
+      homepageVisited: true,
+      listingVisited: true,
+    });
+    expect(
+      summary.perRegistry.find((x: { namespace: string }) => x.namespace === "@other"),
+    ).toMatchObject({ count: 1, repaired: 0, notChecked: 1, homepageVisited: false });
+    expect(summary.rows.find((x: { token: string }) => x.token === "@delta/button")).toMatchObject({
+      status: "repaired",
+      verifiedUrl: observation.verifiedUrl,
+    });
+    expect(summary.rows.find((x: { token: string }) => x.token === "@delta/card")).toMatchObject({
+      status: "not-checked",
+    });
   });
 
-  it('does not claim full audit completion from an unchecked manifest without an explicit review gate', () => {
-    const inv = inventoryLinks([registries[0]], { registries: { '@delta': [{ name: 'button' }] } },
-      { '@delta': [curated['@delta'][0]] });
+  it("does not claim full audit completion from an unchecked manifest without an explicit review gate", () => {
+    const inv = inventoryLinks(
+      [registries[0]],
+      { registries: { "@delta": [{ name: "button" }] } },
+      { "@delta": [curated["@delta"][0]] },
+    );
 
-    const accepted = applyVerifiedLinks(inv, { '@delta': [curated['@delta'][0]] }, [observation]);
+    const accepted = applyVerifiedLinks(inv, { "@delta": [curated["@delta"][0]] }, [observation]);
     expect(summarizeAuditCoverage(inv, accepted).totals.completed).toBe(false);
     expect(summarizeAuditCoverage(inv, accepted, true).totals.completed).toBe(true);
   });
 
-  it('does not mark invalid or duplicated evidence as verified in the coverage ledger', () => {
+  it("does not mark invalid or duplicated evidence as verified in the coverage ledger", () => {
     const inventory = inventoryLinks(registries, catalog, curated);
 
-    const broken = applyVerifiedLinks(inventory, curated,
-      [observation, { ...observation, verifiedUrl: 'https://delta.example/docs/button-2' }]);
+    const broken = applyVerifiedLinks(inventory, curated, [
+      observation,
+      { ...observation, verifiedUrl: "https://delta.example/docs/button-2" },
+    ]);
 
     const summary = summarizeAuditCoverage(inventory, broken);
-    expect(summary.totals).toMatchObject({ repaired: 0, unresolved: 1, notChecked: 3, completed: false });
-    expect(summary.rows.find((x: { token: string }) => x.token === '@delta/button'))
-      .toMatchObject({ status: 'unresolved', reason: 'duplicate-evidence' });
+    expect(summary.totals).toMatchObject({
+      repaired: 0,
+      unresolved: 1,
+      notChecked: 3,
+      completed: false,
+    });
+    expect(summary.rows.find((x: { token: string }) => x.token === "@delta/button")).toMatchObject({
+      status: "unresolved",
+      reason: "duplicate-evidence",
+    });
   });
 
-  it('rejects conflicting evidence and cannot silently drop existing links', () => {
+  it("rejects conflicting evidence and cannot silently drop existing links", () => {
     const report = inventoryLinks(registries, catalog, curated);
 
-    const result = applyVerifiedLinks(report, curated,
-      [observation, { ...observation, verifiedUrl: 'https://delta.example/components/button-2' }]);
+    const result = applyVerifiedLinks(report, curated, [
+      observation,
+      { ...observation, verifiedUrl: "https://delta.example/components/button-2" },
+    ]);
 
     expect(result.repaired).toEqual([]);
-    expect(result.unresolved.map((x: { reason: string }) => x.reason)).toContain('duplicate-evidence');
+    expect(result.unresolved.map((x: { reason: string }) => x.reason)).toContain(
+      "duplicate-evidence",
+    );
     expect(result.curated).toEqual(curated);
   });
 });

@@ -4,4 +4,8 @@ export interface ResolvedProjectTask {
 }
 
 /** Look up an existing maintenance command without invoking it. */
-export function resolveTask(group: string, operation: string, extraArgs?: string[]): ResolvedProjectTask;
+export function resolveTask(
+  group: string,
+  operation: string,
+  extraArgs?: string[],
+): ResolvedProjectTask;

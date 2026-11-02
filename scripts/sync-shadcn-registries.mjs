@@ -1,7 +1,14 @@
-import { isInputObject, isInputString } from './lib/input-guards.mjs';
-import { buildCatalogCoverageFacts, syncCatalogEvidenceForRegistries } from './sync-registry-catalog-evidence.mjs';
-import { applyCatalogClassificationOverlay, stripCatalogClassificationFields, validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
-import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
+import { isInputObject, isInputString } from "./lib/input-guards.mjs";
+import {
+  buildCatalogCoverageFacts,
+  syncCatalogEvidenceForRegistries,
+} from "./sync-registry-catalog-evidence.mjs";
+import {
+  applyCatalogClassificationOverlay,
+  stripCatalogClassificationFields,
+  validateCatalogClassificationOverlay,
+} from "./lib/catalog-classification-overlay.mjs";
+import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,
   transaction,
@@ -12,24 +19,24 @@ import {
   replaceItemDetails,
   replaceRawRegistries,
   replaceRegistrySnapshot,
-} from './lib/atlas-storage.mjs';
-import { pathToFileURL } from 'node:url';
+} from "./lib/atlas-storage.mjs";
+import { pathToFileURL } from "node:url";
 
-const SOURCE_URL = 'https://ui.shadcn.com/r/registries.json';
+const SOURCE_URL = "https://ui.shadcn.com/r/registries.json";
 
 const DEFAULT_ATLAS_ENRICHMENT = Object.freeze({
   aliases: [],
-  coverage_status: 'unverified',
-  confidence: 'unknown',
-  notes: '',
-  catalog_status: 'unavailable',
+  coverage_status: "unverified",
+  confidence: "unknown",
+  notes: "",
+  catalog_status: "unavailable",
   item_summaries: [],
 });
 
 function normalizeNamespace(value) {
-  if (!isInputString(value)) return '';
+  if (!isInputString(value)) return "";
 
-  return value.startsWith('@') ? value : `@${value}`;
+  return value.startsWith("@") ? value : `@${value}`;
 }
 
 function readPreviousEnrichment(previousRuntimeData) {
@@ -51,20 +58,20 @@ function readPreviousEnrichment(previousRuntimeData) {
 }
 
 function normalizeStringArray(value) {
-  return Array.isArray(value) ? value.filter(item => isInputString(item)) : [];
+  return Array.isArray(value) ? value.filter((item) => isInputString(item)) : [];
 }
 
 function normalizeFiles(value) {
   if (!Array.isArray(value)) return [];
 
   return value
-    .filter(file => file && isInputObject(file))
-    .map(file => ({
-      path: isInputString(file.path) ? file.path : '',
-      type: isInputString(file.type) ? file.type : '',
+    .filter((file) => file && isInputObject(file))
+    .map((file) => ({
+      path: isInputString(file.path) ? file.path : "",
+      type: isInputString(file.type) ? file.type : "",
       target: isInputString(file.target) ? file.target : undefined,
     }))
-    .filter(file => file.path && file.type);
+    .filter((file) => file.path && file.type);
 }
 
 function optionalString(value) {
@@ -99,7 +106,12 @@ function normalizeItemSummary(item) {
   };
 }
 
-function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummariesByNamespace, catalogEvidenceByNamespace) {
+function normalizeOfficialRegistry(
+  registry,
+  enrichmentByNamespace,
+  itemSummariesByNamespace,
+  catalogEvidenceByNamespace,
+) {
   const name = normalizeNamespace(registry.name);
   const atlas = enrichmentByNamespace.get(name) || DEFAULT_ATLAS_ENRICHMENT;
 
@@ -110,18 +122,22 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummarie
   const catalogEvidence = catalogEvidenceByNamespace?.[name] ?? null;
   const catalogFacts = buildCatalogCoverageFacts(atlas, itemSummaries, catalogEvidence);
 
-  const catalogStatus = itemSummaries.length > 0
-    ? (itemSummaries.some(item => item.catalog_status === 'partial') ? 'partial' : 'available')
-    : (catalogFacts.comparison_evidence === 'catalog' || catalogFacts.comparison_evidence === 'stale-catalog'
-      ? 'available'
-      : 'unavailable');
+  const catalogStatus =
+    itemSummaries.length > 0
+      ? itemSummaries.some((item) => item.catalog_status === "partial")
+        ? "partial"
+        : "available"
+      : catalogFacts.comparison_evidence === "catalog" ||
+          catalogFacts.comparison_evidence === "stale-catalog"
+        ? "available"
+        : "unavailable";
 
   return {
     official: {
       name,
-      homepage: isInputString(registry.homepage) ? registry.homepage : '',
-      registry_url_template: isInputString(registry.url) ? registry.url : '',
-      description: isInputString(registry.description) ? registry.description : '',
+      homepage: isInputString(registry.homepage) ? registry.homepage : "",
+      registry_url_template: isInputString(registry.url) ? registry.url : "",
+      description: isInputString(registry.description) ? registry.description : "",
     },
     atlas: {
       aliases: Array.isArray(atlas.aliases) ? atlas.aliases : [],
@@ -132,7 +148,7 @@ function normalizeOfficialRegistry(registry, enrichmentByNamespace, itemSummarie
       catalog_item_count: catalogFacts.catalog_item_count,
       catalog_evidence_url: catalogFacts.catalog_evidence_url,
       item_summaries: itemSummaries,
-      notes: isInputString(atlas.notes) ? atlas.notes : '',
+      notes: isInputString(atlas.notes) ? atlas.notes : "",
     },
     status: { warnings: [] },
   };
@@ -158,14 +174,15 @@ export function projectReviewedCatalogClassifications(
 }
 
 export function projectCuratedSummaries(runtime, curated) {
-  if (!Array.isArray(runtime?.registries)) throw new Error('Expected an official runtime mirror');
+  if (!Array.isArray(runtime?.registries)) throw new Error("Expected an official runtime mirror");
   const names = new Map(runtime.registries.map((entry, index) => [entry.official.name, index]));
   const output = structuredClone(runtime);
 
   for (const [namespace, items] of Object.entries(curated)) {
     const index = names.get(namespace);
 
-    if (index === undefined) throw new Error(`Curated namespace ${namespace} not in official runtime mirror`);
+    if (index === undefined)
+      throw new Error(`Curated namespace ${namespace} not in official runtime mirror`);
 
     if (!Array.isArray(items)) throw new Error(`Invalid curated items in ${namespace}`);
     const slugs = new Set();
@@ -181,7 +198,7 @@ export function projectCuratedSummaries(runtime, curated) {
     const atlas = output.registries[index].atlas;
     atlas.item_summaries = items.map(normalizeItemSummary);
 
-    if (items.length && atlas.catalog_status === 'unavailable') atlas.catalog_status = 'available';
+    if (items.length && atlas.catalog_status === "unavailable") atlas.catalog_status = "available";
   }
 
   return output;
@@ -189,13 +206,16 @@ export function projectCuratedSummaries(runtime, curated) {
 
 function sortedNames(registries) {
   return registries
-    .map(registry => registry?.official?.name)
-    .filter(name => isInputString(name))
+    .map((registry) => registry?.official?.name)
+    .filter((name) => isInputString(name))
     .sort((a, b) => a.localeCompare(b));
 }
 
 function changedRegistries(previousRegistries, nextRegistries) {
-  const previous = new Map(previousRegistries.map(registry => [registry.official.name, registry]));
+  const previous = new Map(
+    previousRegistries.map((registry) => [registry.official.name, registry]),
+  );
+
   const changed = [];
 
   for (const registry of nextRegistries) {
@@ -220,10 +240,10 @@ async function main() {
   try {
     const state = await readAtlasState(core);
 
-    if (process.argv.includes('--local-curated-only')) {
+    if (process.argv.includes("--local-curated-only")) {
       const projected = projectCuratedSummaries(state.runtime, state.curated);
       await replaceRegistrySnapshot(core, projected);
-      console.log('Projected curated item summaries directly into PostgreSQL atlas schema');
+      console.log("Projected curated item summaries directly into PostgreSQL atlas schema");
 
       return;
     }
@@ -237,7 +257,7 @@ async function main() {
     const upstream = await response.json();
 
     if (!Array.isArray(upstream)) {
-      throw new Error('Official registry directory response must be a JSON array.');
+      throw new Error("Official registry directory response must be a JSON array.");
     }
 
     const previousRuntimeData = state.runtime;
@@ -253,7 +273,8 @@ async function main() {
       previousItems: state.catalog?.registries ?? {},
     });
 
-    if (!state.taxonomy) throw new Error('Missing catalog-taxonomy document in PostgreSQL atlas schema');
+    if (!state.taxonomy)
+      throw new Error("Missing catalog-taxonomy document in PostgreSQL atlas schema");
     const taxonomy = validateCatalogTaxonomy(state.taxonomy);
 
     const classificationProjection = projectReviewedCatalogClassifications(
@@ -268,13 +289,13 @@ async function main() {
     const catalogEvidenceByNamespace = catalogSync.evidence;
     const syncedAt = new Date().toISOString();
 
-    const registries = upstream.map(registry =>
+    const registries = upstream.map((registry) =>
       normalizeOfficialRegistry(
         registry,
         previousEnrichment,
         state.curated,
         catalogEvidenceByNamespace,
-      )
+      ),
     );
 
     const runtimeData = {
@@ -284,8 +305,8 @@ async function main() {
         upstream_count: upstream.length,
         registry_count: registries.length,
         local_count: registries.length,
-        validation_status: 'not_run',
-        report_path: 'database:registry-sync-report',
+        validation_status: "not_run",
+        report_path: "database:registry-sync-report",
       },
       registries,
     };
@@ -293,10 +314,12 @@ async function main() {
     const previousNames = new Set(sortedNames(previousRegistries));
     const nextNames = new Set(sortedNames(registries));
 
-    const added = [...nextNames].filter(name => !previousNames.has(name))
+    const added = [...nextNames]
+      .filter((name) => !previousNames.has(name))
       .sort((a, b) => a.localeCompare(b));
 
-    const removed = [...previousNames].filter(name => !nextNames.has(name))
+    const removed = [...previousNames]
+      .filter((name) => !nextNames.has(name))
       .sort((a, b) => a.localeCompare(b));
 
     const report = {
@@ -310,40 +333,46 @@ async function main() {
       changed: changedRegistries(previousRegistries, registries),
     };
 
-    await transaction(core, async tx => {
-    await replaceRawRegistries(tx, upstream);
-    await replaceCatalogEvidence(tx, catalogEvidenceByNamespace);
-    await putDocument(tx, 'catalog-evidence-report', 'sync-report', catalogSync.report);
-    await replaceCatalogSnapshot(tx, {
-      meta: {
-        source_url: SOURCE_URL,
-        synced_at: syncedAt,
-        registry_count: Object.keys(classificationProjection.itemsByNamespace).length,
-        item_count: catalogSync.report.discoverable_item_count,
-      },
-      registries: classificationProjection.itemsByNamespace,
-    });
+    await transaction(core, async (tx) => {
+      await replaceRawRegistries(tx, upstream);
+      await replaceCatalogEvidence(tx, catalogEvidenceByNamespace);
+      await putDocument(tx, "catalog-evidence-report", "sync-report", catalogSync.report);
+      await replaceCatalogSnapshot(tx, {
+        meta: {
+          source_url: SOURCE_URL,
+          synced_at: syncedAt,
+          registry_count: Object.keys(classificationProjection.itemsByNamespace).length,
+          item_count: catalogSync.report.discoverable_item_count,
+        },
+        registries: classificationProjection.itemsByNamespace,
+      });
 
-    for (const [namespace, rows] of Object.entries(catalogSync.freshDetailsByNamespace)) {
-      await replaceItemDetails(tx, namespace, rows);
-    }
+      for (const [namespace, rows] of Object.entries(catalogSync.freshDetailsByNamespace)) {
+        await replaceItemDetails(tx, namespace, rows);
+      }
 
-    await replaceRegistrySnapshot(tx, runtimeData);
-    await putDocument(tx, 'registry-sync-report', 'sync-report', report);
-    await putDocument(tx, 'catalog-classification-projection-report', 'sync-report',
-      classificationProjection.report);
+      await replaceRegistrySnapshot(tx, runtimeData);
+      await putDocument(tx, "registry-sync-report", "sync-report", report);
+      await putDocument(
+        tx,
+        "catalog-classification-projection-report",
+        "sync-report",
+        classificationProjection.report,
+      );
     });
 
     console.log(`Synced ${registries.length} registries from ${SOURCE_URL}`);
-    console.log(`Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`);
-    console.log('Canonical registry/catalog state: PostgreSQL atlas schema');
+    console.log(
+      `Catalog evidence: ${catalogSync.report.fetched_catalog_count} fetched, ${catalogSync.report.stale_registry_count} stale, ${catalogSync.report.failure_count} failed`,
+    );
+    console.log("Canonical registry/catalog state: PostgreSQL atlas schema");
   } finally {
     await core.close();
   }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(error => {
+  main().catch((error) => {
     console.error(error instanceof Error ? error.message : error);
     process.exitCode = 1;
   });

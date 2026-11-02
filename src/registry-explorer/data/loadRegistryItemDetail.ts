@@ -1,4 +1,4 @@
-import type { RawJsonInput } from '../core/jsonInput';
+import type { RawJsonInput } from "../core/jsonInput";
 import {
   fetchErrorResult,
   invalidJsonResult,
@@ -6,9 +6,9 @@ import {
   resolveRegistryItemDetailFromCatalogIndex,
   resolveRegistryItemDetailFromSummary,
   type RegistryItemDetailResult,
-} from '../core/registryItemDetail.ts';
-import type { Registry, RegistryCatalogIndex } from '../core/registry.schema.ts';
-import { loadDetailRuntimeData } from './runtimeJson.ts';
+} from "../core/registryItemDetail.ts";
+import type { Registry, RegistryCatalogIndex } from "../core/registry.schema.ts";
+import { loadDetailRuntimeData } from "./runtimeJson.ts";
 
 export async function loadRegistryItemDetail(
   registries: readonly Registry[],
@@ -20,7 +20,7 @@ export async function loadRegistryItemDetail(
 
   return loadResolvedRegistryItemDetail(
     summaryResult,
-    payload => resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug, payload),
+    (payload) => resolveRegistryItemDetailFromSummary(registries, namespace, itemSlug, payload),
     namespace,
     fetchImpl,
   );
@@ -42,13 +42,14 @@ export async function loadRegistryItemDetailFromCatalogIndex(
 
   return loadResolvedRegistryItemDetail(
     summaryResult,
-    payload => resolveRegistryItemDetailFromCatalogIndex(
-      registries,
-      catalogIndex,
-      namespace,
-      itemSlug,
-      payload,
-    ),
+    (payload) =>
+      resolveRegistryItemDetailFromCatalogIndex(
+        registries,
+        catalogIndex,
+        namespace,
+        itemSlug,
+        payload,
+      ),
     namespace,
     fetchImpl,
   );
@@ -60,7 +61,10 @@ async function loadResolvedRegistryItemDetail(
   namespace: string | null | undefined,
   fetchImpl: typeof fetch,
 ): Promise<RegistryItemDetailResult> {
-  if (summaryResult.status !== 'summary-only' || summaryResult.detail.route.status !== 'available') {
+  if (
+    summaryResult.status !== "summary-only" ||
+    summaryResult.detail.route.status !== "available"
+  ) {
     return summaryResult;
   }
 
@@ -92,21 +96,24 @@ async function loadResolvedRegistryItemDetail(
 
     if (!normalized.valid) {
       return {
-        status: 'invalid-schema',
+        status: "invalid-schema",
         detail: summaryResult.detail,
-        message: 'Registry item data did not match the expected safe shape.',
+        message: "Registry item data did not match the expected safe shape.",
         reason: normalized.reason,
       };
     }
 
     return resolveWithPayload(payload);
   } catch (error) {
-    return fetchErrorResult(summaryResult.detail, error instanceof Error ? error.name : 'network-error');
+    return fetchErrorResult(
+      summaryResult.detail,
+      error instanceof Error ? error.name : "network-error",
+    );
   }
 }
 
 async function loadDatabaseDetail(
-  summaryResult: Extract<RegistryItemDetailResult, { status: 'summary-only' }>,
+  summaryResult: Extract<RegistryItemDetailResult, { status: "summary-only" }>,
   resolveWithPayload: (payload: RawJsonInput) => RegistryItemDetailResult,
   namespace: string | null | undefined,
   fetchImpl: typeof fetch,
@@ -117,7 +124,7 @@ async function loadDatabaseDetail(
 
   try {
     const details = await loadDetailRuntimeData(fetchImpl);
-    const item = details[registryName + '/' + summaryResult.detail.slug] ?? null;
+    const item = details[registryName + "/" + summaryResult.detail.slug] ?? null;
 
     if (!item) return null;
 
@@ -125,9 +132,9 @@ async function loadDatabaseDetail(
 
     if (!normalized.valid) {
       return {
-        status: 'invalid-schema',
+        status: "invalid-schema",
         detail: summaryResult.detail,
-        message: 'Registry item data did not match the expected safe shape.',
+        message: "Registry item data did not match the expected safe shape.",
         reason: normalized.reason,
       };
     }

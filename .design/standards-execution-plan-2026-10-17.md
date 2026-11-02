@@ -2,18 +2,18 @@
 
 This is a working queue, **not a compliance certificate**. Current structural checker has 279 unresolved applicable controls after recording 13 compliant, 380 reviewed-not-applicable, two remediations, and 277 unevaluated applicable checks. Source and app-specific evidence must determine any future outcome.
 
-| Domain | Unevaluated | Next evidence-based audit |
-| --- | ---: | --- |
-| Frontend | 61 | WCAG 2.2 keyboard/zoom/reflow/contrast checks, real component tokens and responsive breakpoints; separate React Grab status already not applicable to native DOM frontend |
-| Testing | 45 | Existing unit/E2E coverage, stateful error paths, test artifacts, optional integration boundary checks |
-| Orchestration | 45 | Audit which agent/workflow rules actually apply to a static registry website and its maintainer process; only reclassify after source-specific inspection |
-| Delivery | 44 | Release provenance, CI branch protection, artifact retention, README/change history; avoid rewriting pushed commits |
-| Platform | 26 | Production build performance, deploy/readiness checks, safe rollback and local database service |
-| Planning | 21 | Review scope-specific planning rules, existing design and work briefs, traceable user decisions |
-| Architecture | 19 | Dependency boundaries, component catalog structure, complexity and high-risk data flow |
-| Backend | 11 | PostgreSQL schema/migrations, recovery, index/drift checks and documented self-hosted choices |
-| Security | 4 | Dependency-chain provenance, hostile metadata handling, input/output schema boundaries |
-| Tooling | 1 | VoidZero-toolchain compatibility versus existing Vite, Oxlint and project quality tools; user decision required for replacements |
+| Domain        | Unevaluated | Next evidence-based audit                                                                                                                                                 |
+| ------------- | ----------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frontend      |          61 | WCAG 2.2 keyboard/zoom/reflow/contrast checks, real component tokens and responsive breakpoints; separate React Grab status already not applicable to native DOM frontend |
+| Testing       |          45 | Existing unit/E2E coverage, stateful error paths, test artifacts, optional integration boundary checks                                                                    |
+| Orchestration |          45 | Audit which agent/workflow rules actually apply to a static registry website and its maintainer process; only reclassify after source-specific inspection                 |
+| Delivery      |          44 | Release provenance, CI branch protection, artifact retention, README/change history; avoid rewriting pushed commits                                                       |
+| Platform      |          26 | Production build performance, deploy/readiness checks, safe rollback and local database service                                                                           |
+| Planning      |          21 | Review scope-specific planning rules, existing design and work briefs, traceable user decisions                                                                           |
+| Architecture  |          19 | Dependency boundaries, component catalog structure, complexity and high-risk data flow                                                                                    |
+| Backend       |          11 | PostgreSQL schema/migrations, recovery, index/drift checks and documented self-hosted choices                                                                             |
+| Security      |           4 | Dependency-chain provenance, hostile metadata handling, input/output schema boundaries                                                                                    |
+| Tooling       |           1 | VoidZero-toolchain compatibility versus existing Vite, Oxlint and project quality tools; user decision required for replacements                                          |
 
 ## Immediate impediments
 

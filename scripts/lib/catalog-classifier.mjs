@@ -1,23 +1,23 @@
-import { isInputCallable, isInputObject, isInputString } from './input-guards.mjs';
-import { createHash } from 'node:crypto';
-import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from './catalog-taxonomy.mjs';
-import { chooseTaxonomyOption } from './systemone-taxonomy.mjs';
+import { isInputCallable, isInputObject, isInputString } from "./input-guards.mjs";
+import { createHash } from "node:crypto";
+import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "./catalog-taxonomy.mjs";
+import { chooseTaxonomyOption } from "./systemone-taxonomy.mjs";
 
-const ROOT_SPECIAL = 'UNCLASSIFIED';
+const ROOT_SPECIAL = "UNCLASSIFIED";
 
-const CHILD_SPECIAL = 'THIS_CATEGORY';
+const CHILD_SPECIAL = "THIS_CATEGORY";
 
 function normalizeAlias(value) {
   return String(value)
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .replace(/^\s+|\s+$/g, '')
-    .replace(/\s+/g, ' ');
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/^\s+|\s+$/g, "")
+    .replace(/\s+/g, " ");
 }
 
 function fingerprintState(state) {
-  return 'sha256:' + createHash('sha256').update(JSON.stringify(state)).digest('hex');
+  return "sha256:" + createHash("sha256").update(JSON.stringify(state)).digest("hex");
 }
 
 function evidenceStrings(state) {
@@ -25,7 +25,7 @@ function evidenceStrings(state) {
     state?.item?.title,
     ...(state?.sourceHints?.categories ?? []),
     ...(state?.sourceHints?.verifiedGroups ?? []),
-  ].filter(value => isInputString(value) && value.trim());
+  ].filter((value) => isInputString(value) && value.trim());
 }
 
 function pathFor(recordsById, id) {
@@ -42,22 +42,22 @@ function pathFor(recordsById, id) {
 
 export function findDeterministicKindClassification(state, taxonomy) {
   const records = flattenCatalogTaxonomy(taxonomy);
-  const recordsById = new Map(records.map(record => [record.id, record]));
+  const recordsById = new Map(records.map((record) => [record.id, record]));
 
-  if (state?.item?.kind !== 'icon' || !recordsById.has('foundation/iconography')) return null;
+  if (state?.item?.kind !== "icon" || !recordsById.has("foundation/iconography")) return null;
 
   return {
     taxonomyVersion: taxonomy.version,
-    primary: 'foundation/iconography',
-    path: pathFor(recordsById, 'foundation/iconography'),
-    method: 'deterministic-kind',
+    primary: "foundation/iconography",
+    path: pathFor(recordsById, "foundation/iconography"),
+    method: "deterministic-kind",
     inputFingerprint: fingerprintState(state),
   };
 }
 
 export function findDeterministicAliasClassification(state, taxonomy) {
   const records = flattenCatalogTaxonomy(taxonomy);
-  const recordsById = new Map(records.map(record => [record.id, record]));
+  const recordsById = new Map(records.map((record) => [record.id, record]));
   const aliasOwners = new Map();
 
   for (const record of records) {
@@ -89,7 +89,7 @@ export function findDeterministicAliasClassification(state, taxonomy) {
     taxonomyVersion: taxonomy.version,
     primary,
     path: pathFor(recordsById, primary),
-    method: 'deterministic-alias',
+    method: "deterministic-alias",
     inputFingerprint: fingerprintState(state),
   };
 }
@@ -107,9 +107,8 @@ function scorePath(path) {
 }
 
 function extendPath(path, probability, id, terminal = false, unclassified = false) {
-  const logProbability = probability === 0
-    ? Number.NEGATIVE_INFINITY
-    : path.logProbability + Math.log(probability);
+  const logProbability =
+    probability === 0 ? Number.NEGATIVE_INFINITY : path.logProbability + Math.log(probability);
 
   const next = {
     ids: id ? [...path.ids, id] : [...path.ids],
@@ -123,9 +122,12 @@ function extendPath(path, probability, id, terminal = false, unclassified = fals
 }
 
 function sortPaths(paths) {
-  return [...paths].sort((a, b) => b.score - a.score
-    || b.edgeCount - a.edgeCount
-    || a.ids.join('/').localeCompare(b.ids.join('/')));
+  return [...paths].sort(
+    (a, b) =>
+      b.score - a.score ||
+      b.edgeCount - a.edgeCount ||
+      a.ids.join("/").localeCompare(b.ids.join("/")),
+  );
 }
 
 function traceDecision(node, answer) {
@@ -151,13 +153,14 @@ export async function classifyCatalogItem({
   const validated = validateCatalogTaxonomy(taxonomy);
 
   if (!state || !isInputObject(state) || Array.isArray(state)) {
-    throw new Error('Catalog classification requires semantic state');
+    throw new Error("Catalog classification requires semantic state");
   }
 
-  if (!isInputCallable(choose)) throw new Error('Catalog classification requires a Choice function');
+  if (!isInputCallable(choose))
+    throw new Error("Catalog classification requires a Choice function");
 
   if (!Number.isSafeInteger(beamWidth) || beamWidth < 1 || beamWidth > 8) {
-    throw new Error('Catalog classification beamWidth must be an integer from 1 to 8');
+    throw new Error("Catalog classification beamWidth must be an integer from 1 to 8");
   }
 
   const deterministicKind = findDeterministicKindClassification(state, validated);
@@ -168,8 +171,8 @@ export async function classifyCatalogItem({
   if (deterministicAlias) return deterministicAlias;
 
   const records = flattenCatalogTaxonomy(validated);
-  const byId = new Map(records.map(record => [record.id, record]));
-  const roots = records.filter(record => record.parentId === null);
+  const byId = new Map(records.map((record) => [record.id, record]));
+  const roots = records.filter((record) => record.parentId === null);
   const decisions = [];
   let model = null;
 
@@ -183,12 +186,22 @@ export async function classifyCatalogItem({
 
   if (rootAnswer.model) model = rootAnswer.model;
 
-  const initial = { ids: [], logProbability: 0, edgeCount: 0, terminal: false, unclassified: false, score: 0 };
+  const initial = {
+    ids: [],
+    logProbability: 0,
+    edgeCount: 0,
+    terminal: false,
+    unclassified: false,
+    score: 0,
+  };
+
   const rootPaths = [];
 
   for (const record of roots) {
     const probability = rootAnswer.probabilities[record.id];
-    rootPaths.push(extendPath(initial, probability, record.id, record.children.length === 0, false));
+    rootPaths.push(
+      extendPath(initial, probability, record.id, record.children.length === 0, false),
+    );
   }
 
   rootPaths.push(extendPath(initial, rootAnswer.probabilities[ROOT_SPECIAL], null, true, true));
@@ -196,23 +209,24 @@ export async function classifyCatalogItem({
 
   const maxDepth = records.reduce((max, record) => Math.max(max, record.depth), 0) + 1;
 
-  for (let depth = 0; depth <= maxDepth && beam.some(path => !path.terminal); depth += 1) {
-    const candidates = beam.filter(path => path.terminal);
+  for (let depth = 0; depth <= maxDepth && beam.some((path) => !path.terminal); depth += 1) {
+    const candidates = beam.filter((path) => path.terminal);
 
-    for (const path of beam.filter(candidate => !candidate.terminal)) {
+    for (const path of beam.filter((candidate) => !candidate.terminal)) {
       const currentId = path.ids.at(-1);
       const current = byId.get(currentId);
 
-      if (!current) throw new Error(`Catalog classification reached unknown taxonomy node ${currentId}`);
+      if (!current)
+        throw new Error(`Catalog classification reached unknown taxonomy node ${currentId}`);
 
       if (current.children.length === 0) {
         candidates.push({ ...path, terminal: true });
         continue;
       }
 
-      const childRecords = current.children.map(id => byId.get(id));
+      const childRecords = current.children.map((id) => byId.get(id));
 
-      if (childRecords.some(record => !record)) {
+      if (childRecords.some((record) => !record)) {
         throw new Error(`Catalog classification found an invalid child under ${current.id}`);
       }
 
@@ -228,7 +242,9 @@ export async function classifyCatalogItem({
 
       for (const child of childRecords) {
         const probability = answer.probabilities[child.id];
-        candidates.push(extendPath(path, probability, child.id, child.children.length === 0, false));
+        candidates.push(
+          extendPath(path, probability, child.id, child.children.length === 0, false),
+        );
       }
 
       candidates.push(extendPath(path, answer.probabilities[CHILD_SPECIAL], null, true, false));
@@ -237,13 +253,16 @@ export async function classifyCatalogItem({
     beam = sortPaths(candidates).slice(0, beamWidth);
   }
 
-  const finals = sortPaths(beam.map(path => path.terminal ? path : { ...path, terminal: true }));
+  const finals = sortPaths(
+    beam.map((path) => (path.terminal ? path : { ...path, terminal: true })),
+  );
+
   const best = finals[0];
 
-  if (!best) throw new Error('Catalog classification produced no path');
+  if (!best) throw new Error("Catalog classification produced no path");
   const runnerUp = finals[1];
   const primary = best.unclassified ? null : (best.ids.at(-1) ?? null);
-  const method = primary === null ? 'unclassified' : 'system-one';
+  const method = primary === null ? "unclassified" : "system-one";
 
   const result = {
     taxonomyVersion: validated.version,
@@ -252,18 +271,19 @@ export async function classifyCatalogItem({
     method,
     inputFingerprint: fingerprintState(state),
     systemOne: (() => {
-  const result = {};
-  result.model = model ?? 'unknown';
-  result.beamWidth = beamWidth;
-  result.decisions = decisions;
-  result.finalPathScore = best.score;
+      const result = {};
+      result.model = model ?? "unknown";
+      result.beamWidth = beamWidth;
+      result.decisions = decisions;
+      result.finalPathScore = best.score;
 
-  if (runnerUp) Object.assign(result, { runnerUpPathScore: runnerUp.score });
+      if (runnerUp) Object.assign(result, { runnerUpPathScore: runnerUp.score });
 
-  if (runnerUp && runnerUp.score > 0) Object.assign(result, { separation: best.score / runnerUp.score });
+      if (runnerUp && runnerUp.score > 0)
+        Object.assign(result, { separation: best.score / runnerUp.score });
 
-  return result;
-})(),
+      return result;
+    })(),
   };
 
   return result;

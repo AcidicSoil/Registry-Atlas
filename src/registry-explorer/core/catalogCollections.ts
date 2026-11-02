@@ -1,5 +1,5 @@
-import type { RawJsonInput } from './jsonInput';
-import { isInputObject } from './inputChecks';
+import type { RawJsonInput } from "./jsonInput";
+import { isInputObject } from "./inputChecks";
 import type { CatalogCanonicalKind, RegistryCatalogItem } from "./registry.schema";
 
 export type CatalogAssetKind = CatalogCanonicalKind;
@@ -36,30 +36,32 @@ const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
 ];
 
 export function configureCatalogKindOverrides(value: RawJsonInput): void {
-  const record = isRecord(value) && isRecord(value.registryDefaults)
-    ? value.registryDefaults : {};
+  const record = isRecord(value) && isRecord(value.registryDefaults) ? value.registryDefaults : {};
 
   registryKindDefaults = new Map(
     Object.entries(record).flatMap(([namespace, kind]) =>
-      isCatalogCanonicalKind(kind) ? [[namespace, kind] as const] : []),
+      isCatalogCanonicalKind(kind) ? [[namespace, kind] as const] : [],
+    ),
   );
 }
 
 function isTemplateCatalogItem(item: RegistryCatalogItem): boolean {
-  return (item.categories ?? []).some(category => TEMPLATE_CATEGORIES.has(normalize(category)));
+  return (item.categories ?? []).some((category) => TEMPLATE_CATEGORIES.has(normalize(category)));
 }
 
 function assetKindForItemType(type: string): CatalogCanonicalKind {
   const classes = [
-    [BLOCK_TYPES, 'block'], [PAGE_TYPES, 'page'],
-    [THEME_TYPES, 'theme'], [COMPONENT_TYPES, 'component'],
+    [BLOCK_TYPES, "block"],
+    [PAGE_TYPES, "page"],
+    [THEME_TYPES, "theme"],
+    [COMPONENT_TYPES, "component"],
   ] as const;
 
   for (const [types, kind] of classes) {
     if (types.has(type)) return kind;
   }
 
-  return 'other';
+  return "other";
 }
 
 export function assetKindForCatalogItem(
@@ -76,8 +78,10 @@ export function assetKindForCatalogItem(
     if (reviewed) return reviewed;
   }
 
-  if (ICON_TYPES.has(item.type)
-    || (item.categories ?? []).some(category => ICON_CATEGORIES.has(normalize(category)))) {
+  if (
+    ICON_TYPES.has(item.type) ||
+    (item.categories ?? []).some((category) => ICON_CATEGORIES.has(normalize(category)))
+  ) {
     return "icon";
   }
 
@@ -88,7 +92,7 @@ export function filterCatalogItemsByAssetKind(
   items: readonly RegistryCatalogItem[],
   kind: CatalogAssetKind,
 ): RegistryCatalogItem[] {
-  return items.filter(item => assetKindForCatalogItem(item) === kind);
+  return items.filter((item) => assetKindForCatalogItem(item) === kind);
 }
 
 export function buildExploreCollectionOptions(
@@ -96,18 +100,25 @@ export function buildExploreCollectionOptions(
 ): ExploreCollectionOption[] {
   const observed = new Set(observedCategories.map(normalize));
 
-  return EXPLORE_COLLECTIONS.filter(option =>
-    option.categories.some(category => observed.has(normalize(category))),
+  return EXPLORE_COLLECTIONS.filter((option) =>
+    option.categories.some((category) => observed.has(normalize(category))),
   );
 }
 
 export function exploreCollectionBySlug(slug: string): ExploreCollectionOption | null {
-  return EXPLORE_COLLECTIONS.find(option => option.slug === normalize(slug)) ?? null;
+  return EXPLORE_COLLECTIONS.find((option) => option.slug === normalize(slug)) ?? null;
 }
 
 function isCatalogCanonicalKind(value: RawJsonInput): value is CatalogCanonicalKind {
-  return value === "component" || value === "block" || value === "page"
-    || value === "template" || value === "theme" || value === "icon" || value === "other";
+  return (
+    value === "component" ||
+    value === "block" ||
+    value === "page" ||
+    value === "template" ||
+    value === "theme" ||
+    value === "icon" ||
+    value === "other"
+  );
 }
 
 function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {

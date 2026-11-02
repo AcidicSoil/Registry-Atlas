@@ -23,9 +23,11 @@
 - `pnpm verify` is the terminal automated verification gate.
 
 ---
+
 ## File Structure
 
 **Create:**
+
 - `src/registry-explorer/core/catalogTaxonomy.ts` — canonical user-facing category mapping that hides legacy Focus terminology.
 - `src/registry-explorer/core/catalogFacets.ts` — Category/Component/Registry facet construction and OR-within/AND-across filtering.
 - `src/registry-explorer/core/catalogSort.ts` — Relevance and Name A-Z sorting.
@@ -43,6 +45,7 @@
 - `tests/registry-explorer/visualContract.test.ts`
 
 **Modify:**
+
 - `src/registry-explorer/data/loadRegistries.ts`
 - `src/registry-explorer/core/urlState.ts`
 - `src/registry-explorer/core/discovery.ts`
@@ -64,11 +67,13 @@
 ### Task 1: Remove Fabricated Runtime Metadata and Lock Preview Pass-through
 
 **Files:**
+
 - Modify: `src/registry-explorer/data/loadRegistries.ts`
 - Test: `tests/registry-explorer/registryLoader.test.ts`
 - Test: `tests/registry-explorer/registryCatalogImport.test.ts`
 
 **Interfaces:**
+
 - Consumes: normalized mirror `atlas.item_summaries[*].preview_url` / `previewUrl`.
 - Produces: `Registry` values whose `framework` and `license` remain `undefined` unless future source data explicitly supplies them; `RegistryItemSummary.previewUrl` remains preserved end-to-end.
 
@@ -78,7 +83,7 @@
 expect(data.registries[0]?.framework).toBeUndefined();
 expect(data.registries[0]?.license).toBeUndefined();
 expect(data.registries[0]?.itemSummaries?.[0]?.previewUrl).toBe(
-  'https://example.com/previews/button.png',
+  "https://example.com/previews/button.png",
 );
 ```
 
@@ -100,15 +105,16 @@ license: 'Community',
 ```
 
 Keep the existing `previewUrl: item.preview_url ?? item.previewUrl` mapping unchanged.
+
 - [ ] **Step 4: Add an importer regression test proving reviewed preview URLs survive normalization**
 
 ```ts
-const imported = normalizeImportedItem('@example', {
-  name: 'button',
+const imported = normalizeImportedItem("@example", {
+  name: "button",
   route_eligible: true,
-  preview_url: 'https://example.com/previews/button.png',
+  preview_url: "https://example.com/previews/button.png",
 });
-expect(imported?.preview_url).toBe('https://example.com/previews/button.png');
+expect(imported?.preview_url).toBe("https://example.com/previews/button.png");
 ```
 
 - [ ] **Step 5: Run both data tests**
@@ -129,6 +135,7 @@ git commit -m "fix: stop fabricating registry metadata"
 ### Task 2: Introduce the User-facing Catalog Taxonomy, Facets, and Sort
 
 **Files:**
+
 - Create: `src/registry-explorer/core/catalogTaxonomy.ts`
 - Create: `src/registry-explorer/core/catalogFacets.ts`
 - Create: `src/registry-explorer/core/catalogSort.ts`
@@ -139,17 +146,21 @@ git commit -m "fix: stop fabricating registry metadata"
 - Retire after migration: `tests/registry-explorer/componentFilters.test.ts`
 
 **Interfaces:**
+
 - Produces: `CatalogCategory`, `CatalogFacetDimension`, `CatalogFacetGroup`, `SelectedCatalogFacet`, and `CatalogSort` types.
 - Produces: `catalogCategoriesForRegistry(registry)`, `catalogCategoriesForCandidate(candidate)`, `buildCatalogFacetGroups(registries, candidates)`, `applyCatalogFacetsToCandidates(candidates, selected)`, `createSelectedCatalogFacet(groups, dimension, value)`, and `sortCatalogCandidates(candidates, sort)`.
 - [ ] **Step 1: Write taxonomy tests for canonical categories instead of legacy Focus labels**
 
 ```ts
-expect(catalogCategoriesForRegistry(registry({ primary_focus: ['forms-and-inputs'] })))
-  .toContain('forms-and-inputs');
-expect(catalogCategoriesForRegistry(registry({ primary_focus: ['marketing-sections'] })))
-  .toContain('marketing');
-expect(catalogCategoriesForItem(item({ componentTagsProposed: ['otp-input'] })))
-  .toContain('forms-and-inputs');
+expect(catalogCategoriesForRegistry(registry({ primary_focus: ["forms-and-inputs"] }))).toContain(
+  "forms-and-inputs",
+);
+expect(catalogCategoriesForRegistry(registry({ primary_focus: ["marketing-sections"] }))).toContain(
+  "marketing",
+);
+expect(catalogCategoriesForItem(item({ componentTagsProposed: ["otp-input"] }))).toContain(
+  "forms-and-inputs",
+);
 ```
 
 - [ ] **Step 2: Run the taxonomy test and verify the new module is missing**
@@ -162,26 +173,34 @@ Expected: FAIL because `catalogTaxonomy.ts` does not exist.
 
 ```ts
 export type CatalogCategory =
-  | 'ai-and-chat' | 'auth-and-account' | 'buttons-and-controls'
-  | 'data-display' | 'developer-tools' | 'ecommerce'
-  | 'feedback-and-overlays' | 'forms-and-inputs'
-  | 'layout-and-templates' | 'marketing' | 'media'
-  | 'navigation' | 'utilities';
+  | "ai-and-chat"
+  | "auth-and-account"
+  | "buttons-and-controls"
+  | "data-display"
+  | "developer-tools"
+  | "ecommerce"
+  | "feedback-and-overlays"
+  | "forms-and-inputs"
+  | "layout-and-templates"
+  | "marketing"
+  | "media"
+  | "navigation"
+  | "utilities";
 
 export const CATALOG_CATEGORY_LABELS: Record<CatalogCategory, string> = {
-  'ai-and-chat': 'AI & Chat',
-  'auth-and-account': 'Auth & Account',
-  'buttons-and-controls': 'Buttons & Controls',
-  'data-display': 'Data Display',
-  'developer-tools': 'Developer Tools',
-  ecommerce: 'Ecommerce',
-  'feedback-and-overlays': 'Feedback & Overlays',
-  'forms-and-inputs': 'Forms & Inputs',
-  'layout-and-templates': 'Layout & Templates',
-  marketing: 'Marketing',
-  media: 'Media',
-  navigation: 'Navigation',
-  utilities: 'Utilities',
+  "ai-and-chat": "AI & Chat",
+  "auth-and-account": "Auth & Account",
+  "buttons-and-controls": "Buttons & Controls",
+  "data-display": "Data Display",
+  "developer-tools": "Developer Tools",
+  ecommerce: "Ecommerce",
+  "feedback-and-overlays": "Feedback & Overlays",
+  "forms-and-inputs": "Forms & Inputs",
+  "layout-and-templates": "Layout & Templates",
+  marketing: "Marketing",
+  media: "Media",
+  navigation: "Navigation",
+  utilities: "Utilities",
 };
 ```
 
@@ -190,18 +209,18 @@ Use this exact legacy-to-catalog mapping:
 
 ```ts
 const FOCUS_CATEGORY_MAP: Record<PrimaryFocus, CatalogCategory> = {
-  'ai-chat': 'ai-and-chat',
-  support: 'feedback-and-overlays',
-  'buttons-and-primitives': 'buttons-and-controls',
-  'dashboards-and-admin': 'data-display',
-  'data-display-and-tables': 'data-display',
-  'auth-and-user': 'auth-and-account',
-  'forms-and-inputs': 'forms-and-inputs',
-  navigation: 'navigation',
-  'templates-and-layouts': 'layout-and-templates',
-  'marketing-sections': 'marketing',
-  ecommerce: 'ecommerce',
-  'misc-utility': 'utilities',
+  "ai-chat": "ai-and-chat",
+  support: "feedback-and-overlays",
+  "buttons-and-primitives": "buttons-and-controls",
+  "dashboards-and-admin": "data-display",
+  "data-display-and-tables": "data-display",
+  "auth-and-user": "auth-and-account",
+  "forms-and-inputs": "forms-and-inputs",
+  navigation: "navigation",
+  "templates-and-layouts": "layout-and-templates",
+  "marketing-sections": "marketing",
+  ecommerce: "ecommerce",
+  "misc-utility": "utilities",
 };
 ```
 
@@ -211,15 +230,12 @@ Map component-taxonomy categories as follows: AI/chat → AI & Chat; badges/data
 
 ```ts
 const selected = [
-  facet('component', 'button'),
-  facet('component', 'input'),
-  facet('registry', '@delta'),
+  facet("component", "button"),
+  facet("component", "input"),
+  facet("registry", "@delta"),
 ];
 const result = applyCatalogFacetsToCandidates(candidates, selected);
-expect(result.map(item => item.id)).toEqual([
-  '@delta:button',
-  '@delta:input',
-]);
+expect(result.map((item) => item.id)).toEqual(["@delta:button", "@delta:input"]);
 ```
 
 Also assert that `buildCatalogFacetGroups()` returns exactly `category`, `component`, and `registry` groups and never `type`, `tag`, `visual`, or `status`.
@@ -229,10 +245,11 @@ Also assert that `buildCatalogFacetGroups()` returns exactly `category`, `compon
 Run: `pnpm exec vitest run tests/registry-explorer/catalogFacets.test.ts`
 
 Expected: FAIL because the new facet module is missing.
+
 - [ ] **Step 6: Implement the facet contract**
 
 ```ts
-export type CatalogFacetDimension = 'category' | 'component' | 'registry';
+export type CatalogFacetDimension = "category" | "component" | "registry";
 
 export interface SelectedCatalogFacet {
   dimension: CatalogFacetDimension;
@@ -248,9 +265,11 @@ export function applyCatalogFacetsToCandidates(
   for (const facet of selected) {
     byDimension.set(facet.dimension, [...(byDimension.get(facet.dimension) ?? []), facet]);
   }
-  return candidates.filter(candidate => [...byDimension.entries()].every(([dimension, facets]) =>
-    facets.some(facet => candidateMatchesCatalogFacet(candidate, dimension, facet.value))
-  ));
+  return candidates.filter((candidate) =>
+    [...byDimension.entries()].every(([dimension, facets]) =>
+      facets.some((facet) => candidateMatchesCatalogFacet(candidate, dimension, facet.value)),
+    ),
+  );
 }
 ```
 
@@ -259,10 +278,14 @@ export function applyCatalogFacetsToCandidates(
 - [ ] **Step 7: Write sort tests before implementation**
 
 ```ts
-expect(sortCatalogCandidates(candidates, 'relevance').map(x => x.id))
-  .toEqual(candidates.map(x => x.id));
-expect(sortCatalogCandidates(candidates, 'name').map(x => x.matchedLabel))
-  .toEqual(['Button', 'Input', 'Table']);
+expect(sortCatalogCandidates(candidates, "relevance").map((x) => x.id)).toEqual(
+  candidates.map((x) => x.id),
+);
+expect(sortCatalogCandidates(candidates, "name").map((x) => x.matchedLabel)).toEqual([
+  "Button",
+  "Input",
+  "Table",
+]);
 ```
 
 - [ ] **Step 8: Implement `CatalogSort = 'relevance' | 'name'`**
@@ -281,15 +304,18 @@ Expected: PASS.
 git add src/registry-explorer/core/catalogTaxonomy.ts src/registry-explorer/core/catalogFacets.ts src/registry-explorer/core/catalogSort.ts src/registry-explorer/core/registry.schema.ts tests/registry-explorer/catalogTaxonomy.test.ts tests/registry-explorer/catalogFacets.test.ts tests/registry-explorer/catalogSort.test.ts
 git commit -m "feat: add catalog discovery facets"
 ```
+
 ---
 
 ### Task 3: Replace Legacy View/URL State with Discover, Registries, Compare, Facets, and Sort
 
 **Files:**
+
 - Modify: `src/registry-explorer/core/urlState.ts`
 - Test: `tests/registry-explorer/urlState.test.ts`
 
 **Interfaces:**
+
 - Produces: `RegistryExplorerView = 'discover' | 'registries' | 'compare' | 'item'`.
 - Produces URL fields: repeated `category`, repeated `component`, repeated `source`, `sort`, repeated `compareRegistry`, repeated `compareComponent`, plus existing `q`, `registry`, `candidate`, and `item` route fields.
 - Legacy migration: `focus` → Discover + mapped Category; `component` view → Discover + Component facet; `matrix` → Compare.
@@ -297,30 +323,34 @@ git commit -m "feat: add catalog discovery facets"
 - [ ] **Step 1: Rewrite URL-state tests around the new contract**
 
 ```ts
-const state = parseRegistryExplorerUrlState(new URLSearchParams(
-  'view=discover&q=button&category=forms-and-inputs&component=button&source=%40delta&sort=name'
-));
-expect(state.view).toBe('discover');
-expect(state.selectedFacets.map(f => [f.dimension, f.value])).toEqual([
-  ['category', 'forms-and-inputs'],
-  ['component', 'button'],
-  ['registry', '@delta'],
+const state = parseRegistryExplorerUrlState(
+  new URLSearchParams(
+    "view=discover&q=button&category=forms-and-inputs&component=button&source=%40delta&sort=name",
+  ),
+);
+expect(state.view).toBe("discover");
+expect(state.selectedFacets.map((f) => [f.dimension, f.value])).toEqual([
+  ["category", "forms-and-inputs"],
+  ["component", "button"],
+  ["registry", "@delta"],
 ]);
-expect(state.sort).toBe('name');
+expect(state.sort).toBe("name");
 ```
+
 Add compatibility tests:
 
 ```ts
-expect(parseRegistryExplorerUrlState(new URLSearchParams(
-  'view=focus&q=button&focus=forms-and-inputs'
-))).toMatchObject({ view: 'discover', searchTerm: 'button' });
+expect(
+  parseRegistryExplorerUrlState(new URLSearchParams("view=focus&q=button&focus=forms-and-inputs")),
+).toMatchObject({ view: "discover", searchTerm: "button" });
 
-expect(parseRegistryExplorerUrlState(new URLSearchParams(
-  'view=component&component=button'
-))).toMatchObject({ view: 'discover' });
+expect(
+  parseRegistryExplorerUrlState(new URLSearchParams("view=component&component=button")),
+).toMatchObject({ view: "discover" });
 
-expect(parseRegistryExplorerUrlState(new URLSearchParams('view=matrix')))
-  .toMatchObject({ view: 'compare' });
+expect(parseRegistryExplorerUrlState(new URLSearchParams("view=matrix"))).toMatchObject({
+  view: "compare",
+});
 ```
 
 The first two cases must migrate the valid legacy selection into the equivalent new facet when mapping is possible.
@@ -334,6 +364,7 @@ Expected: FAIL because the parser still returns `focus`, `component`, and `matri
 - [ ] **Step 3: Implement the new parsed/serializable state types and allowlists**
 
 Use `URLSearchParams.getAll()` for repeated facets/comparison selections, de-duplicate values while preserving stable order, and allow only `relevance`/`name` sort values. Keep queue/install-token values excluded exactly as today.
+
 - [ ] **Step 4: Serialize in a deterministic order**
 
 Serialization order must be:
@@ -362,13 +393,14 @@ git commit -m "feat: migrate catalog URL state"
 ### Task 4: Rebuild Discover as the Search-first Visual Catalog
 
 **Files:**
+
 - Modify: `src/registry-explorer/core/discovery.ts`
 - Modify: `src/registry-explorer/ui/discoveryView.ts`
 - Modify: `src/registry-explorer/ui/renderSafety.ts`
 - Test: `tests/registry-explorer/discovery.test.ts`
 - Test: `tests/registry-explorer/discoveryView.test.ts`
 - Test: `tests/registry-explorer/renderSafety.test.ts`
-**Interfaces:**
+  **Interfaces:**
 - `searchComponentCandidates()` remains the relevance-ranked search source and keeps alias/capability/namespace matching.
 - `renderDiscoveryContent()` receives already-filtered/sorted candidates plus catalog facet groups and selected facets; it does not own filtering logic.
 - `renderSafeExternalImage(url, alt, className)` renders only `http:`/`https:` preview metadata with `loading="lazy"`, `decoding="async"`, and `referrerpolicy="no-referrer"`.
@@ -381,31 +413,29 @@ Add a fixture description such as `"A searchable command palette for keyboard wo
 
 ```ts
 renderDiscoveryContent(header, body, [candidateFixture()], overviewFixture(), {
-  searchTerm: '',
+  searchTerm: "",
   facetGroups,
   selectedFacets: [],
-  sort: 'relevance',
+  sort: "relevance",
   queuedTokens: new Set(),
   activePeekId: null,
 });
-expect(body.innerHTML).toContain('Category');
-expect(body.innerHTML).toContain('Component');
-expect(body.innerHTML).toContain('Registry');
-expect(body.innerHTML).toContain('Relevance');
-expect(body.innerHTML).toContain('Name A-Z');
-expect(body.innerHTML).not.toContain('Type');
-expect(body.innerHTML).not.toContain('Visual');
-expect(body.innerHTML).not.toContain('Status');
+expect(body.innerHTML).toContain("Category");
+expect(body.innerHTML).toContain("Component");
+expect(body.innerHTML).toContain("Registry");
+expect(body.innerHTML).toContain("Relevance");
+expect(body.innerHTML).toContain("Name A-Z");
+expect(body.innerHTML).not.toContain("Type");
+expect(body.innerHTML).not.toContain("Visual");
+expect(body.innerHTML).not.toContain("Status");
 ```
+
 Add two specimen tests:
 
 ```ts
-expect(renderedCandidate(withPreview('https://example.com/button.png')))
-  .toContain('<img');
-expect(renderedCandidate(withoutPreview()))
-  .toContain('Preview unavailable');
-expect(renderedCandidate(withoutPreview()))
-  .not.toContain('<svg');
+expect(renderedCandidate(withPreview("https://example.com/button.png"))).toContain("<img");
+expect(renderedCandidate(withoutPreview())).toContain("Preview unavailable");
+expect(renderedCandidate(withoutPreview())).not.toContain("<svg");
 ```
 
 The unavailable state must be text/neutral chrome only; it must not draw a fake component specimen.
@@ -413,10 +443,10 @@ The unavailable state must be text/neutral chrome only; it must not draw a fake 
 - [ ] **Step 3: Add safe preview-image rendering tests**
 
 ```ts
-expect(renderSafeExternalImage('javascript:alert(1)', 'Button', 'specimen'))
-  .not.toContain('<img');
-expect(renderSafeExternalImage('https://example.com/button.png', '<Button>', 'specimen'))
-  .toContain('alt="&lt;Button&gt;"');
+expect(renderSafeExternalImage("javascript:alert(1)", "Button", "specimen")).not.toContain("<img");
+expect(renderSafeExternalImage("https://example.com/button.png", "<Button>", "specimen")).toContain(
+  'alt="&lt;Button&gt;"',
+);
 ```
 
 - [ ] **Step 4: Run Discover/render-safety tests and verify failures**
@@ -460,12 +490,13 @@ git commit -m "feat: rebuild component discovery catalog"
 ### Task 5: Add the Registries Source-browser Surface
 
 **Files:**
+
 - Create: `src/registry-explorer/core/registryBrowse.ts`
 - Create: `src/registry-explorer/ui/registriesView.ts`
 - Modify: `src/registry-explorer/ui/registryProfileView.ts`
 - Test: `tests/registry-explorer/registryBrowse.test.ts`
 - Modify test: `tests/registry-explorer/registryProfileView.test.ts`
-**Interfaces:**
+  **Interfaces:**
 - Produces `RegistryBrowseEntry` with `registry`, `knownItemCount`, `routeEligibleItemCount`, `categories`, `components`, and coverage status.
 - Produces `buildRegistryBrowseEntries(registries, searchTerm, selectedFacets)`.
 - Registries uses Category and Component facets; a Registry facet is intentionally omitted on this page because the page itself is the registry selector.
@@ -473,13 +504,13 @@ git commit -m "feat: rebuild component discovery catalog"
 - [ ] **Step 1: Write selector tests for registry search and content facets**
 
 ```ts
-const entries = buildRegistryBrowseEntries(registries, 'delta', []);
-expect(entries.map(entry => entry.registry.name)).toEqual(['@delta']);
+const entries = buildRegistryBrowseEntries(registries, "delta", []);
+expect(entries.map((entry) => entry.registry.name)).toEqual(["@delta"]);
 
-const filtered = buildRegistryBrowseEntries(registries, '', [
-  { dimension: 'component', value: 'button', label: 'Button' },
+const filtered = buildRegistryBrowseEntries(registries, "", [
+  { dimension: "component", value: "button", label: "Button" },
 ]);
-expect(filtered.every(entry => entry.components.includes('button'))).toBe(true);
+expect(filtered.every((entry) => entry.components.includes("button"))).toBe(true);
 ```
 
 Also assert `knownItemCount` and `routeEligibleItemCount` come from real `itemSummaries`, not registry-level guesses.
@@ -501,17 +532,19 @@ export function buildRegistryBrowseEntries(
   selectedFacets: readonly SelectedCatalogFacet[],
 ): RegistryBrowseEntry[] {
   return applyRegistryContentFacets(filterRegistries(registries, searchTerm), selectedFacets)
-    .map(registry => ({
+    .map((registry) => ({
       registry,
       knownItemCount: registry.itemSummaries?.length ?? 0,
-      routeEligibleItemCount: registry.itemSummaries?.filter(item => item.routeEligible).length ?? 0,
+      routeEligibleItemCount:
+        registry.itemSummaries?.filter((item) => item.routeEligible).length ?? 0,
       categories: catalogCategoriesForRegistry(registry),
       components: catalogComponentKeysForRegistry(registry),
-      coverageStatus: registry.atlas?.coverageStatus ?? 'unverified',
+      coverageStatus: registry.atlas?.coverageStatus ?? "unverified",
     }))
     .sort((a, b) => a.registry.name.localeCompare(b.registry.name));
 }
 ```
+
 - [ ] **Step 4: Add renderer/profile tests before UI implementation**
 
 Create a render assertion that a registry row/card contains namespace, description, real known-item count, coverage label, and `View registry` action, but does not show `Focus cluster`, fabricated framework, or fabricated license.
@@ -540,12 +573,13 @@ git commit -m "feat: add registry source browser"
 ### Task 6: Reframe Matrix as a Deliberate Compare Surface
 
 **Files:**
+
 - Create: `src/registry-explorer/core/compare.ts`
 - Create: `src/registry-explorer/ui/compareView.ts`
 - Modify: `src/registry-explorer/core/matrixColumns.ts`
 - Test: `tests/registry-explorer/compare.test.ts`
 - Reuse: `tests/registry-explorer/matrixColumns.test.ts`
-**Interfaces:**
+  **Interfaces:**
 - Produces `CompareSelection { registryNames: readonly string[]; componentKeys: readonly ComponentTag[] }`.
 - Produces `buildCompareModel(registries, searchTerm, selection)` returning selected rows/columns plus available registry/component options.
 - Default Compare uses the existing representative `MATRIX_COLUMNS` when no explicit component selection exists.
@@ -553,12 +587,12 @@ git commit -m "feat: add registry source browser"
 - [ ] **Step 1: Write compare-model tests**
 
 ```ts
-const model = buildCompareModel(registries, '', {
-  registryNames: ['@alpha', '@delta'],
-  componentKeys: ['button', 'table'],
+const model = buildCompareModel(registries, "", {
+  registryNames: ["@alpha", "@delta"],
+  componentKeys: ["button", "table"],
 });
-expect(model.rows.map(row => row.registry.name)).toEqual(['@alpha', '@delta']);
-expect(model.columns).toEqual(['button', 'table']);
+expect(model.rows.map((row) => row.registry.name)).toEqual(["@alpha", "@delta"]);
+expect(model.columns).toEqual(["button", "table"]);
 ```
 
 Also test that unknown selections are ignored safely and that an empty explicit selection falls back to representative matrix columns rather than breaking rendering.
@@ -581,20 +615,21 @@ export function buildCompareModel(
 ): CompareModel {
   const columns = selection.componentKeys.length ? selection.componentKeys : MATRIX_COLUMNS;
   const selected = selection.registryNames.length
-    ? registries.filter(registry => selection.registryNames.includes(registry.name))
+    ? registries.filter((registry) => selection.registryNames.includes(registry.name))
     : registries;
   return { rows: buildMatrixRows(selected, searchTerm, columns), columns };
 }
 ```
+
 - [ ] **Step 4: Add Compare renderer assertions**
 
 Extend `compare.test.ts` with lightweight roots or add a renderer section that asserts:
 
 ```ts
-expect(body.innerHTML).toContain('Compare registries');
-expect(body.innerHTML).toContain('Verification');
-expect(body.innerHTML).toContain('@alpha');
-expect(body.innerHTML).not.toContain('Matrix axes');
+expect(body.innerHTML).toContain("Compare registries");
+expect(body.innerHTML).toContain("Verification");
+expect(body.innerHTML).toContain("@alpha");
+expect(body.innerHTML).not.toContain("Matrix axes");
 ```
 
 - [ ] **Step 5: Implement `compareView.ts`**
@@ -619,13 +654,14 @@ git commit -m "feat: add dedicated compare surface"
 ### Task 7: Expand Component Details with Grounded Agent/Debug Prompts and Related Registries
 
 **Files:**
+
 - Create: `src/registry-explorer/core/itemPrompts.ts`
 - Modify: `src/registry-explorer/core/relatedComponents.ts`
 - Modify: `src/registry-explorer/ui/itemDetailView.ts`
 - Test: `tests/registry-explorer/itemPrompts.test.ts`
 - Modify test: `tests/registry-explorer/relatedComponents.test.ts`
 - Modify test: `tests/registry-explorer/itemDetailView.test.ts`
-**Interfaces:**
+  **Interfaces:**
 - Produces `buildInstallAgentPrompt(detail): string | null`.
 - Produces `buildInspectionPrompt(detail): string | null`.
 - Extends related-item logic with `buildRelatedRegistries(registries, current, limit)` using only shared grounded component/category metadata.
@@ -634,10 +670,10 @@ git commit -m "feat: add dedicated compare surface"
 
 ```ts
 const prompt = buildInstallAgentPrompt(detailFixture());
-expect(prompt).toContain('@delta/code-block');
-expect(prompt).toContain('npx shadcn@latest view @delta/code-block');
-expect(prompt).toContain('npx shadcn@latest add @delta/code-block');
-expect(prompt).toContain('Review third-party registry code before applying changes.');
+expect(prompt).toContain("@delta/code-block");
+expect(prompt).toContain("npx shadcn@latest view @delta/code-block");
+expect(prompt).toContain("npx shadcn@latest add @delta/code-block");
+expect(prompt).toContain("Review third-party registry code before applying changes.");
 ```
 
 For a disabled install action, expect `buildInstallAgentPrompt()` to return `null` rather than inventing a command.
@@ -656,26 +692,29 @@ Use short line-oriented prose assembled from `RegistryItemDetail`. Never mention
 
 ```ts
 export function buildInstallAgentPrompt(detail: RegistryItemDetail): string | null {
-  if (detail.installAction.status !== 'enabled') return null;
+  if (detail.installAction.status !== "enabled") return null;
   return [
     `Use ${detail.title} from ${detail.namespace}.`,
     `Inspect first: ${detail.installAction.inspectCommand}`,
     `Install if appropriate: ${detail.installAction.installCommand}`,
-    'Review third-party registry code before applying changes.',
-  ].join('\n');
+    "Review third-party registry code before applying changes.",
+  ].join("\n");
 }
 ```
+
 - [ ] **Step 4: Add related-registry tests before implementation**
 
 ```ts
 const related = buildRelatedRegistries(registries, {
-  registryName: '@delta',
-  itemSlug: 'code-block',
+  registryName: "@delta",
+  itemSlug: "code-block",
 });
-expect(related[0]).toEqual(expect.objectContaining({
-  registryName: '@gamma',
-  matchReasons: expect.arrayContaining(['Shared component']),
-}));
+expect(related[0]).toEqual(
+  expect.objectContaining({
+    registryName: "@gamma",
+    matchReasons: expect.arrayContaining(["Shared component"]),
+  }),
+);
 ```
 
 Group the already-grounded related-component matches by registry; do not create a second speculative similarity algorithm.
@@ -695,6 +734,7 @@ Use `data-copy-text` for prompt text and `data-copy-current-url` for the live de
 Run: `pnpm exec vitest run tests/registry-explorer/itemPrompts.test.ts tests/registry-explorer/relatedComponents.test.ts tests/registry-explorer/itemDetailView.test.ts`
 
 Expected: PASS.
+
 - [ ] **Step 8: Commit**
 
 ```bash
@@ -707,6 +747,7 @@ git commit -m "feat: enrich component detail actions"
 ### Task 8: Rewire the Shell and Static Application IA
 
 **Files:**
+
 - Modify: `src/registry-explorer/ui/shell.ts`
 - Modify: `src/registry-explorer/ui/index.ts`
 - Modify: `src/registry-explorer/entry.ts`
@@ -716,6 +757,7 @@ git commit -m "feat: enrich component detail actions"
 - Add focused shell tests only if event logic cannot remain pure enough to cover through existing core/renderer tests.
 
 **Interfaces:**
+
 - `AppState.currentView` becomes `discover | registries | compare | item`.
 - `AppState` adds `selectedFacets: SelectedCatalogFacet[]`, `sort: CatalogSort`, `compareRegistryNames: string[]`, and `compareComponentKeys: ComponentTag[]`.
 - `AppState` removes user-facing `selectedFocus` and standalone `selectedComponent` state.
@@ -739,25 +781,29 @@ Keep one global search input. Remove the legacy `Interactive SPA · Local data o
 In `shell.ts`, hydrate `selectedFacets`, sort, and Compare selection from `parseRegistryExplorerUrlState()`. Route renders as:
 
 ```ts
-if (state.currentView === 'item') { /* detail */ }
-else if (state.selectedProfileRegistryName) { /* profile */ }
-else if (state.currentView === 'discover') { /* search -> facets -> sort -> Discover */ }
-else if (state.currentView === 'registries') { /* registry browse */ }
-else { /* Compare */ }
+if (state.currentView === "item") {
+  /* detail */
+} else if (state.selectedProfileRegistryName) {
+  /* profile */
+} else if (state.currentView === "discover") {
+  /* search -> facets -> sort -> Discover */
+} else if (state.currentView === "registries") {
+  /* registry browse */
+} else {
+  /* Compare */
+}
 ```
 
 The Discover branch must call `searchComponentCandidates()` once, then `buildCatalogFacetGroups()`, `applyCatalogFacetsToCandidates()`, and `sortCatalogCandidates()` in that order.
+
 - [ ] **Step 3: Replace legacy filter/focus/component event handlers**
 
 Handle the new data attributes only:
 
 ```ts
-[data-facet-add-dimension]
-[data-facet-remove-dimension]
-[data-facet-clear]
-[data-sort]
-[data-compare-registry]
-[data-compare-component]
+[data - facet - add - dimension][data - facet - remove - dimension][data - facet - clear][
+  data - sort
+][data - compare - registry][data - compare - component];
 ```
 
 When adding a facet, use `createSelectedCatalogFacet()` and refuse duplicates. Clearing facets does not clear the search term. Navigation changes clear route-specific item/profile state but preserve the current search term.
@@ -767,7 +813,7 @@ When adding a facet, use `createSelectedCatalogFacet()` and refuse duplicates. C
 Replace command-only `copyCommand()` with:
 
 ```ts
-async function copyText(text: string, successMessage: string): Promise<void>
+async function copyText(text: string, successMessage: string): Promise<void>;
 ```
 
 `data-copy-command` may remain supported as a compatibility alias during this task, but new UI uses `data-copy-text` and `data-copy-current-url`. Clipboard failure must retain the existing manual-copy fallback feedback.
@@ -775,6 +821,7 @@ async function copyText(text: string, successMessage: string): Promise<void>
 - [ ] **Step 5: Serialize every supported state change through the new URL contract**
 
 `syncUrlState()` must include facets, sort, profile/item route state, and Compare selections. Install queue and transient copy feedback remain session-local and never enter the URL.
+
 - [ ] **Step 6: Run source type-check plus state/renderer tests**
 
 Run:
@@ -798,26 +845,28 @@ git commit -m "feat: switch registry atlas navigation"
 ### Task 9: Apply the Approved Name That UI-inspired Visual System and Accessibility Contract
 
 **Files:**
+
 - Modify: `public/styles/registry-explorer.css`
 - Create: `tests/registry-explorer/visualContract.test.ts`
 - Modify renderer tests where class/ARIA contract changes are intentional.
 
 **Interfaces:**
+
 - CSS variables encode the approved palette/radii/spacing; renderers continue to own semantic HTML and data attributes.
 - No runtime JavaScript is added solely for decoration.
 - [ ] **Step 1: Write a CSS design-contract test before rewriting styles**
 
 ```ts
-const css = readFileSync('public/styles/registry-explorer.css', 'utf8').toLowerCase();
-expect(css).toContain('--background: #0b0c0e');
-expect(css).toContain('--card: #121316');
-expect(css).toContain('--primary: #4ea1ff');
-expect(css).toContain('--radius-button: 11px');
-expect(css).toContain('--radius-card: 14px');
-expect(css).not.toContain('#ffd95e');
-expect(css).not.toContain('#65d4ff');
-expect(css).not.toContain('#8b6cff');
-expect(css).not.toContain('fractalnoise');
+const css = readFileSync("public/styles/registry-explorer.css", "utf8").toLowerCase();
+expect(css).toContain("--background: #0b0c0e");
+expect(css).toContain("--card: #121316");
+expect(css).toContain("--primary: #4ea1ff");
+expect(css).toContain("--radius-button: 11px");
+expect(css).toContain("--radius-card: 14px");
+expect(css).not.toContain("#ffd95e");
+expect(css).not.toContain("#65d4ff");
+expect(css).not.toContain("#8b6cff");
+expect(css).not.toContain("fractalnoise");
 ```
 
 - [ ] **Step 2: Run the visual-contract test and verify it fails against the legacy stylesheet**
@@ -845,9 +894,11 @@ Define `--background`, `--foreground`, `--card`, `--popover`, `--secondary`, `--
   --radius-card: 14px;
 }
 ```
+
 - [ ] **Step 4: Implement responsive and accessibility states in CSS**
 
 Requirements:
+
 - Desktop Discover uses a 3-column specimen grid when width permits, 2 columns at medium widths, 1 column on narrow screens.
 - Filter controls wrap without truncating selected values.
 - Compare remains horizontally scrollable on narrow screens.
@@ -878,6 +929,7 @@ git commit -m "style: apply visual dictionary design system"
 ### Task 10: Remove Stranded Legacy UI, Update Browser Smoke Coverage, and Run Final Verification
 
 **Files:**
+
 - Remove: `src/registry-explorer/ui/focusView.ts`
 - Remove: `src/registry-explorer/ui/componentView.ts`
 - Remove: `src/registry-explorer/ui/matrixView.ts` after Compare fully replaces it
@@ -885,7 +937,7 @@ git commit -m "style: apply visual dictionary design system"
 - Retire/replace: `tests/registry-explorer/componentFilters.test.ts` once `catalogFacets.test.ts` covers the new contract
 - Modify: `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md`
 - Modify docs only where user-facing navigation/filter names are stale.
-**Interfaces:**
+  **Interfaces:**
 - No public imports may point at the removed legacy renderers.
 - Browser smoke is the release-level behavioral proof for the new IA in addition to unit tests and `pnpm verify`.
 
@@ -906,6 +958,7 @@ Remove the three old renderers only after Step 1 is clean. Do not delete `Primar
 - [ ] **Step 3: Update the browser smoke checklist for the new product flow**
 
 The checklist must cover `/Registry-Atlas/` with: default Discover route; rough-language search; Category/Component/Registry multi-select; OR-within and AND-across behavior; removable chips/Clear all; Relevance/Name A-Z; deep-link reload; item detail; preview unavailable; install/inspect/prompt/link copy feedback; queue; Registries search/profile; Compare selection/reload; keyboard navigation; visible focus; Escape behavior; safe external links; narrow-screen Discover and horizontally scrollable Compare.
+
 - [ ] **Step 4: Run the complete automated gate**
 
 Run:

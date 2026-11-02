@@ -78,6 +78,7 @@
         "scripts/verify-complexity-gate.mjs",
         "scripts/verify-component-pages.mjs",
         "scripts/verify-deep-module-boundaries.mjs",
+        "scripts/verify-oxfmt-migration.mjs",
         "scripts/verify-registry-patterns.mjs",
         "src/registry-explorer/ui/app-shell-core.css",
         "src/registry-explorer/ui/catalog-browse.css",
@@ -102,7 +103,7 @@
         "tsconfig.json",
         "vite.config.ts"
       ],
-      "fingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee"
+      "fingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b"
     }
   },
   "catalog": {
@@ -665,7 +666,7 @@
     "expected": "required",
     "path": "DESIGN.md",
     "present": true,
-    "digest": "4c2229c2557b5918f4053ab869366c3c7f51f41d4a6098902cd5547921708723"
+    "digest": "008bc2a3aa8d95630e1afd813134102ed34c45f72f2412a0e64173a21129bd16"
   },
   "assessments": {
     "orchestkit:src/skills/accessibility/SKILL.md": {
@@ -681,9 +682,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "5faa2975ec134740318da4f6ff15ed246c2915a0e4b533995320b0dd17e5c3bd",
       "candidate": "likely-relevant"
     },
@@ -701,10 +702,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "d34127ed9e1d122c0c0770448b219b9dc8029006c37c20e01e84df14853ba0cc",
       "candidate": "likely-relevant"
     },
@@ -721,9 +722,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "8fcda5add4cda17224da0bb12ef45e289a4a85b0453df6e713a52264adbb481f",
       "candidate": "likely-relevant"
     },
@@ -740,9 +741,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "49c0910fb40bb50943fd8e855556069b1f8b200fc421dc95460e28b2fd564c19",
       "candidate": "likely-relevant"
     },
@@ -760,10 +761,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "462f4367f1e3f1054da6e57e26887ad237f149946cffabb54bd790722e496926",
       "candidate": "likely-relevant"
     },
@@ -780,9 +781,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "b427b5f64ea9509f1384c0a656af3290d1949a015615801ec147e1817785ce14",
       "candidate": "likely-relevant"
     },
@@ -799,9 +800,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "35ba7e8d59d79fb7485eed85ef42112b4138fdc2ec74a97feffb149a7531aff5",
       "candidate": "likely-relevant"
     },
@@ -819,10 +820,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "1b9481a424ad4f8274bd6abb770f81ac2188ced505d3985fb0e3b3bb2f710271",
       "candidate": "likely-relevant"
     },
@@ -840,10 +841,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "7a9eaf1bd007dab07670c69f74634fd5fddce981edb53bb61a3cc79611c8ab3c",
       "candidate": "likely-relevant"
     },
@@ -860,9 +861,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "b3572d40141ca053a8bad2364f99ef86b40afb1b28a17ce52fd77816d6e0769e",
       "candidate": "likely-relevant"
     },
@@ -879,9 +880,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "cdceecd1847306f93bf99a06668e38221d4718940d300ed4d0d516a81978f428",
       "candidate": "likely-relevant"
     },
@@ -898,9 +899,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "e91b3a9939ce407bab03685235f59fbe5daa5d5987deaf6abf67495cf30518b9",
       "candidate": "likely-relevant"
     },
@@ -918,10 +919,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "be35f7a6c73b0fa2980e01a73f3892fa8e4d84e4da65faaf70aa57e7b472937e",
       "candidate": "likely-relevant"
     },
@@ -938,9 +939,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "19732615f43231255821ac04f4749f272c32e050f23f06ef987d8b8160ec0669",
       "candidate": "likely-relevant"
     },
@@ -957,9 +958,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "a055512616f06f5d5a2e19561cba53e1247c9d1459d77a35c1cefe6f14bf2934",
       "candidate": "likely-relevant"
     },
@@ -977,10 +978,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
       "candidate": "likely-relevant"
     },
@@ -998,10 +999,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "048949e1e5b01eb6828f312b20f38aa5ab9f08079574455591a9e29fc5f03422",
       "candidate": "likely-relevant"
     },
@@ -1018,9 +1019,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "42d19ed33347a086cd7d9e711c4bfb07c470109d240caacd3da733ba4ef4b6a7",
       "candidate": "likely-relevant"
     },
@@ -1038,10 +1039,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "e7b57fa80965b388b8a8b579304c7ab377ba35719b2fcb3cba34e43691ea0445",
       "candidate": "likely-relevant"
     },
@@ -1058,9 +1059,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "cfb03f57a739c5574336f12de27ccd7efc84fec6e61a425438650901ee44923d",
       "candidate": "likely-relevant"
     },
@@ -1077,9 +1078,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "33a38d381db5a51fa4bf1c8c0b713883eb908f973fca1febbea538d9856991bc",
       "candidate": "likely-relevant"
     },
@@ -1096,9 +1097,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "38c059acd3aa45b1dafa7a7a231487d4a8f2713cbec5a1e7aa5fc3a6701fbe53",
       "candidate": "likely-relevant"
     },
@@ -1115,9 +1116,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "b252ad9fc24ef8551a587ef4799daab6f169232f04056b3d24788dd8bb10a9c6",
       "candidate": "likely-relevant"
     },
@@ -1135,10 +1136,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "c3337ce6c05d34d581649eaf1d4c9c8120e921d50df968795960c00015bc02a5",
       "candidate": "likely-relevant"
     },
@@ -1155,9 +1156,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "50c3008c744ec0c7036c77612b912c21eb86722a6eeb0665de038bafc534fc8d",
       "candidate": "likely-relevant"
     },
@@ -1175,10 +1176,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "24881032ffa48a5a116162dcb2b8cc0ac5100e4f434e1c4dfae1c48942dc10d4",
       "candidate": "likely-relevant"
     },
@@ -1196,10 +1197,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "935dada6ad4ee2a8f30a6233c534a6a52dfb79cc17524b2540850e073b6e9763",
       "candidate": "likely-relevant"
     },
@@ -1216,9 +1217,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "35ddf68ba3dd9a77811bfe57eb65bb757a4b16f5b652a57b793183e3ebda4787",
       "candidate": "likely-relevant"
     },
@@ -1235,9 +1236,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "e6388c6fe1a46f202abe045d62b54293d1c9590c2b55b692b36e1cca43b55879",
       "candidate": "likely-relevant"
     },
@@ -1254,9 +1255,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "84cce32cba285ade978b64b240081ed4889198c297c17d0ee5206f1f8d8051ca",
       "candidate": "likely-relevant"
     },
@@ -1273,9 +1274,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "7d3c7462d1aec6e67644dcf0422907db76886fc17de637947b94af6cb34eabef",
       "candidate": "likely-relevant"
     },
@@ -1292,9 +1293,9 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339"
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "2231e847574012f64b856b55db89e104892c747c327eae2e26d7fda56f2c9074",
       "candidate": "likely-relevant"
     },
@@ -1312,10 +1313,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "be8c3f6a0e05825e9f4e578701d498c66c6218289811f9f9b31580753b1fb279",
       "candidate": "likely-relevant"
     },
@@ -1333,10 +1334,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
       "candidate": "candidate"
     },
@@ -1354,10 +1355,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
       "candidate": "candidate"
     },
@@ -1377,12 +1378,12 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/entry.ts": "8c2178fde31b0306728825139eeff8c0729fdba7ea18b498d7159e81f4897462",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059",
-        "tests-mobile/native-sidebar.e2e.ts": "6fafe6c0f91a1d4414510a45cbfefed62fe0471df03b566b0ed41f938972e6c5"
+        "src/registry-explorer/entry.ts": "49bbdc09bf9eeaf5633d12595382c2e6b6add2f3bb1ba3c490389f99264e5643",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07",
+        "tests-mobile/native-sidebar.e2e.ts": "828c3ea70f3c27fd97e523b8fc5ef6e099c20fdaf707d7f74d000d6bcc982dd4"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "candidate": "candidate"
     },
@@ -1400,10 +1401,10 @@
       ],
       "evidenceDigests": {
         ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c609eae3cbd6505f71330a0a1eb217072c0d89162ad0dce5a21b1b4eda0cba79",
-        "tests-mobile/grouped-sidebar.e2e.ts": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059"
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
       },
-      "stackFingerprint": "f2a5f336f16a32650c7563c233eafd9fb3f8ee79a897ddaae2df63402b63bdee",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "f046b68e4d2839f781d09cd38b18d8964d5f50b3eca061404e427b15d01f0b67",
       "candidate": "candidate"
     },
@@ -1421,10 +1422,10 @@
       ],
       "evidenceDigests": {
         ".design/workbench-shell-scope-decision-2026-10-23.md": "d357e330ddaa8fd2a0cb7d53c75aebba6e35e40ad5c33ae598aa858b2cfa8d5a",
-        "DESIGN.md": "4c2229c2557b5918f4053ab869366c3c7f51f41d4a6098902cd5547921708723",
-        "index.html": "58550d3451ab46f873fd492d6337577cfe4b62269be9ea0bb6d309cdded4967a"
+        "DESIGN.md": "008bc2a3aa8d95630e1afd813134102ed34c45f72f2412a0e64173a21129bd16",
+        "index.html": "e738c15d898d2679f04136da92b03759a498b40672c99f883cfe7261b8847ac0"
       },
-      "stackFingerprint": "21f651079783700c4d1cc2d475f1f3ab8b8a3a1635738f42c3c0f5302b1a2c03",
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
       "reviewedSourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
       "candidate": "candidate",
       "decisionRef": ".design/workbench-shell-scope-decision-2026-10-23.md"
@@ -1659,7 +1660,7 @@
       }
     }
   },
-  "updatedAt": "2026-10-30T23:27:33+00:00",
+  "updatedAt": "2026-11-02T20:47:11+00:00",
   "featureMap": {
     "schemaVersion": "ppm-feature-work-map/v1",
     "objective": "Group canonical catalog navigation filters; preserve sidebar disclosure, keyboard, URL and mobile dismiss behavior",
@@ -1814,155 +1815,155 @@
     "taskEvidence": {
       "orchestkit:src/skills/accessibility/SKILL.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/a11y-antipatterns-static.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/aria-components.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/aria-forms.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/focus-keyboard-nav.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/pour-exit-criteria.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/wcag-color-contrast.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/wcag-native-html-first.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/wcag-semantic-html.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/wcag-testing.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/accessibility/rules/wcag-user-preferences.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/SKILL.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/SKILL.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/animation-motion.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/animation-scroll.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/css-intrinsic-responsive.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/css-patterns.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/css-subgrid.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/pwa-offline.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/pwa-service-worker.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/react-patterns.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/responsive-foldables.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "orchestkit:src/skills/responsive-patterns/rules/touch-interaction.md": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "policy:adaptive-panel-surfaces": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "policy:collapsible-sidebar-navigation": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "policy:light-dismiss": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "policy:logo-home-navigation": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       },
       "policy:shared-app-shell-interactions": {
         "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "3e65c2de2401f3175e9f5c1066a3298858807d90b5e7f3527b2aec5acfde6343"
+        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
       }
     }
   },
@@ -1971,8 +1972,8 @@
       "policy": "policy:light-dismiss",
       "path": "index.html",
       "surface": "sidebar",
-      "line": 23,
-      "sourceDigest": "58550d3451ab46f873fd492d6337577cfe4b62269be9ea0bb6d309cdded4967a",
+      "line": 26,
+      "sourceDigest": "e738c15d898d2679f04136da92b03759a498b40672c99f883cfe7261b8847ac0",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -1981,7 +1982,7 @@
       "path": "src/registry-explorer/core/catalogQuery.ts",
       "surface": "overlay",
       "line": 142,
-      "sourceDigest": "f14118dcbead308c8e756693ef8c9185fb9d46a55ea2b8c314fa86e8949fd743",
+      "sourceDigest": "29c76b1fc8162a7fe3a25f28743a074534f38ab0e24d453f0fb2059be45ca812",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -1989,8 +1990,8 @@
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/ui/aceternityVisualEvidence.ts",
       "surface": "sidebar",
-      "line": 136,
-      "sourceDigest": "29047e70c07ca9e644782bc52ac242aad4a128af04619155f94cbb303a0c8a4e",
+      "line": 269,
+      "sourceDigest": "838f57f43f6e279efb694f38255bee8395a5a815f1df2e06f7b53409510402a6",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -1999,7 +2000,7 @@
       "path": "src/registry-explorer/ui/appShellPanels.ts",
       "surface": "sidebar",
       "line": 1,
-      "sourceDigest": "9da9645024124e607a3875bcd3614019adbbb4deb562c5d1d63ce4c4b1f5243a",
+      "sourceDigest": "8783eb9cf50c0176788f3cfad77ae92a33aeff9446f4c2d0ad1e4ce4d87bde29",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -2007,8 +2008,8 @@
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/ui/catalogSidebarNavigation.ts",
       "surface": "sidebar",
-      "line": 65,
-      "sourceDigest": "7beb21e4250f3f4fc82a2895509c4c45f78c0f403c3606c58996b8651e399339",
+      "line": 75,
+      "sourceDigest": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -2016,8 +2017,8 @@
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/ui/registryDirectoryView.ts",
       "surface": "sidebar",
-      "line": 80,
-      "sourceDigest": "ebb79cf1a89107c2890ec99d3186a33603149b197c726ba3d05fb016078e6a03",
+      "line": 79,
+      "sourceDigest": "553fb477cf7aac0f3f185741cd4d3aeca8517e7560f39d14c4e3ebbd6b7c1346",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -2025,8 +2026,8 @@
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/ui/shell.ts",
       "surface": "sidebar",
-      "line": 400,
-      "sourceDigest": "5a7cc8caf2c57da01f61681bb69a2bc82f80102667b5117cf7d725a08abb97ab",
+      "line": 455,
+      "sourceDigest": "122e3b6276571b5a4fee3d9e0c60239f8f11274f6e7c1af41154bb73a26634c5",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -2035,7 +2036,7 @@
       "path": "tests-mobile/grouped-sidebar.e2e.ts",
       "surface": "sidebar",
       "line": 10,
-      "sourceDigest": "aa6923cd2fefc7e2f4e946361a56bdf28a81daf1c9b292b3b395a35d5060b059",
+      "sourceDigest": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     },
@@ -2043,8 +2044,8 @@
       "policy": "policy:light-dismiss",
       "path": "tests-mobile/native-sidebar.e2e.ts",
       "surface": "sidebar",
-      "line": 44,
-      "sourceDigest": "6fafe6c0f91a1d4414510a45cbfefed62fe0471df03b566b0ed41f938972e6c5",
+      "line": 56,
+      "sourceDigest": "828c3ea70f3c27fd97e523b8fc5ef6e099c20fdaf707d7f74d000d6bcc982dd4",
       "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
       "status": "review-required"
     }

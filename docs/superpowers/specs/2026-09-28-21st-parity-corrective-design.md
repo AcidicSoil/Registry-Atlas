@@ -23,7 +23,7 @@ Registry Atlas must not create product inventory from:
 - name-family expansion;
 - generic fallback candidates;
 - popularity, recency, author, or quality claims that are not present in trustworthy source data.
-Reviewed enrichment may improve a real item but may not create an item that is absent from the catalog index.
+  Reviewed enrichment may improve a real item but may not create an item that is absent from the catalog index.
 
 When a 21st.dev-shaped route requires data that Registry Atlas does not have, the route still exists and renders a deliberate evidence-unavailable state. It must not silently redirect to Components or fabricate substitute content.
 
@@ -48,28 +48,28 @@ The current audit proves four corrective requirements:
 
 All routes are base-path aware under `/Registry-Atlas/`.
 
-| Route | Registry Atlas meaning |
-| --- | --- |
-| `/` | dedicated catalog landing page |
-| `/components` | all real component-like catalog items |
-| `/components/featured` | reviewed/enriched real items; no popularity implication |
-| `/components/newest` | real items ordered only by explicit upstream item timestamp |
-| `/components/newest/:period` | timestamp-backed period slice when timestamps exist |
-| `/components/s/:category` | exact real category/search browse |
-| `/components/explore/:collection` | named collection backed by explicit category/type rules |
-| `/authors` | explicit upstream author/publisher identities only |
-| `/@:namespace` | registry/library profile |
-| `/registries` | registry/library directory |
-| `/@:namespace/components/*itemName` | component detail |
-| `/templates` | explicit template assets |
-| `/@:namespace/templates/*itemName` | template detail |
-| `/themes` | explicit theme/style assets |
-| `/@:namespace/themes/*itemName` | theme detail |
-| `/themes/editor` | theme inspector/editor only when real theme-token data exists |
-| `/icons` | explicit icon assets/categories |
-| `/icons/:family` | explicit icon family scope |
-| `/icons/c/:category` | explicit icon category scope |
-| `/compare` | exact catalog comparison |
+| Route                               | Registry Atlas meaning                                        |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `/`                                 | dedicated catalog landing page                                |
+| `/components`                       | all real component-like catalog items                         |
+| `/components/featured`              | reviewed/enriched real items; no popularity implication       |
+| `/components/newest`                | real items ordered only by explicit upstream item timestamp   |
+| `/components/newest/:period`        | timestamp-backed period slice when timestamps exist           |
+| `/components/s/:category`           | exact real category/search browse                             |
+| `/components/explore/:collection`   | named collection backed by explicit category/type rules       |
+| `/authors`                          | explicit upstream author/publisher identities only            |
+| `/@:namespace`                      | registry/library profile                                      |
+| `/registries`                       | registry/library directory                                    |
+| `/@:namespace/components/*itemName` | component detail                                              |
+| `/templates`                        | explicit template assets                                      |
+| `/@:namespace/templates/*itemName`  | template detail                                               |
+| `/themes`                           | explicit theme/style assets                                   |
+| `/@:namespace/themes/*itemName`     | theme detail                                                  |
+| `/themes/editor`                    | theme inspector/editor only when real theme-token data exists |
+| `/icons`                            | explicit icon assets/categories                               |
+| `/icons/:family`                    | explicit icon family scope                                    |
+| `/icons/c/:category`                | explicit icon category scope                                  |
+| `/compare`                          | exact catalog comparison                                      |
 
 Unknown supported-family paths must render a route-specific not-found/unavailable view. They must not canonicalize to `/components`.
 
@@ -81,7 +81,7 @@ Classification is a deterministic mapping from explicit catalog facts. It is not
 - Template: `registry:page`.
 - Theme: `registry:style` or `registry:theme` when those upstream types are present.
 - Icon: an explicit icon item type when present, or an item whose explicit upstream category is one of the configured icon categories.
-The initial icon category allow-list may include only categories observed in generated data, such as `icons`, `icon-stack`, and `morph-icon`. Do not classify an item as an icon because its name contains "icon".
+  The initial icon category allow-list may include only categories observed in generated data, such as `icons`, `icon-stack`, and `morph-icon`. Do not classify an item as an icon because its name contains "icon".
 
 The compact catalog sync must retain all item types needed by these routes. Unsupported item types may remain excluded from primary browse, but the exclusion must be intentional and tested.
 
@@ -139,6 +139,7 @@ The main canvas prioritizes the item grid. Filter controls that do not fit the r
 Preview-backed cards make the preview the largest visual element. Preview-unavailable cards stay reachable but use a smaller deliberate specimen state so missing previews do not visually overwhelm the catalog.
 
 Mobile collapses the browse rail into a compact drawer/control and keeps one-column readable cards without horizontal overflow.
+
 ## Registry directory and library profile
 
 `/registries` must support:
@@ -241,6 +242,7 @@ Views do not classify items themselves.
 ### Router
 
 One discriminated `CatalogRoute` union owns every route family above. Parsing and serialization are exhaustive and base-path aware. Unsupported paths remain distinguishable from Components.
+
 ### Registry directory model
 
 Directory options become a typed object with search, coverage filter, sort, page, and page size. Coverage and sorting operate before pagination.

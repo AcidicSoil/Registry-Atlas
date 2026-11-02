@@ -1,24 +1,24 @@
-import type { Registry } from '../core/registry.schema';
-import { escapeHtml } from './renderSafety';
-import { verifiedRegistryHomepage } from './sourcePageLink';
+import type { Registry } from "../core/registry.schema";
+import { escapeHtml } from "./renderSafety";
+import { verifiedRegistryHomepage } from "./sourcePageLink";
 
 const REGISTRY_ICON_PATHS = [
-  '/favicon.ico',
-  '/favicon.svg',
-  '/icon.svg',
-  '/icon.png',
-  '/apple-touch-icon.png',
+  "/favicon.ico",
+  "/favicon.svg",
+  "/icon.svg",
+  "/icon.png",
+  "/apple-touch-icon.png",
 ] as const;
 
 export function registryIconCandidates(homepage: string, preferredIconUrl?: string): string[] {
   const verified = verifiedRegistryHomepage(homepage);
 
   if (!verified) return [];
-  const conventional = REGISTRY_ICON_PATHS.map(path => new URL(path, verified).href);
+  const conventional = REGISTRY_ICON_PATHS.map((path) => new URL(path, verified).href);
   const preferred = verifiedRegistryIconUrl(preferredIconUrl);
 
   return preferred
-    ? [preferred, ...conventional.filter(candidate => candidate !== preferred)]
+    ? [preferred, ...conventional.filter((candidate) => candidate !== preferred)]
     : conventional;
 }
 
@@ -33,40 +33,44 @@ export function nextRegistryIconCandidate(
 }
 
 export function renderRegistryIcon(
-  registry: Pick<Registry, 'name' | 'url' | 'iconUrl'>,
-  className = 'registry-icon',
+  registry: Pick<Registry, "name" | "url" | "iconUrl">,
+  className = "registry-icon",
 ): string {
-  const fallback = registry.name.replace(/^@/, '').trim().charAt(0).toUpperCase() || 'R';
+  const fallback = registry.name.replace(/^@/, "").trim().charAt(0).toUpperCase() || "R";
   const candidates = registryIconCandidates(registry.url, registry.iconUrl);
   const favicon = candidates[0];
   const encodedCandidates = escapeHtml(JSON.stringify(candidates));
 
   return `<span class="${escapeHtml(className)}" aria-hidden="true">
     <span class="registry-icon-fallback">${escapeHtml(fallback)}</span>
-    ${favicon ? `<img src="${escapeHtml(favicon)}" alt="" data-registry-icon-image
+    ${
+      favicon
+        ? `<img src="${escapeHtml(favicon)}" alt="" data-registry-icon-image
       data-registry-icon-index="0" data-registry-icon-candidates="${encodedCandidates}"
-      loading="lazy" decoding="async" referrerpolicy="no-referrer" />` : ''}
+      loading="lazy" decoding="async" referrerpolicy="no-referrer" />`
+        : ""
+    }
   </span>`;
 }
 
 function isSafeIconHostname(host: string): boolean {
-  if (!host.includes('.')) return false;
+  if (!host.includes(".")) return false;
 
-  if (['localhost', ''].includes(host)) return false;
+  if (["localhost", ""].includes(host)) return false;
 
-  if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+  if ([".localhost", ".local", ".internal"].some((suffix) => host.endsWith(suffix))) return false;
 
   return !/^\d+(?:\.\d+){3}$/.test(host);
 }
 
 function verifiedRegistryIconUrl(candidate?: string): string | null {
-  if (!candidate || candidate.trim().startsWith('//')) return null;
+  if (!candidate || candidate.trim().startsWith("//")) return null;
 
   try {
     const url = new URL(candidate);
-    const host = url.hostname.toLowerCase().replace(/\.$/, '');
+    const host = url.hostname.toLowerCase().replace(/\.$/, "");
 
-    if (url.protocol !== 'https:') return null;
+    if (url.protocol !== "https:") return null;
 
     if (url.username || url.password || url.port) return null;
 

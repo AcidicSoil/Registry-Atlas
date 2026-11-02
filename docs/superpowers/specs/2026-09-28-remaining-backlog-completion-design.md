@@ -13,12 +13,14 @@ The current crawler already reaches most machine-readable registry catalogs, but
 ## Reconciled backlog
 
 Repository evidence shows these old TODOs are already complete and should no longer remain active:
+
 - GitHub Pages base/deployment configuration.
 - The Discover / Registries / Compare visual-dictionary redesign.
 - The August 26 UI/UX cleanup and comparison pass.
 - Rendering real previews when a trusted preview URL exists.
 
 The active backlog is:
+
 - Pin the local package-manager/runtime toolchain and make CI consume the same project configuration.
 - Preserve item-level catalog facts already fetched by the registry sync.
 - Let search and the Component facet discover item names that are not in the ComponentTag vocabulary.
@@ -30,6 +32,7 @@ Open issue #3 remains a separate product/domain question. This work must not cla
 ## Evidence and constraints
 
 As of the September 23 generated data:
+
 - 382 registries are mirrored.
 - Catalog sync fetched 334 registries and reported 48 failures.
 - The crawler observed more than 80,000 upstream catalog items.
@@ -55,6 +58,7 @@ The Pages workflow should use jdx/mise-action@v4 to install the versions from mi
 Extend the existing catalog-evidence sync instead of adding a second crawler.
 
 Generate public/data/registry-catalog-items.json with:
+
 - metadata: source/sync timestamp, registry count, discoverable item count;
 - a registry-keyed map of compact item entries;
 - only real upstream values needed for discovery: name, type, optional title, and optional upstream categories.
@@ -74,6 +78,7 @@ Add a runtime RegistryCatalogIndex contract separate from Registry.itemSummaries
 The loader fetches the normal registry mirror and compact catalog index together. The existing 34 reviewed item summaries remain attached to Registry and remain the default visual catalog.
 
 Indexed records are materialized into normal RegistryItemSummary/candidate behavior only when:
+
 - the global Discover query is non-empty; or
 - the user selects an open-vocabulary Component facet value.
 
@@ -82,6 +87,7 @@ This prevents the default page from constructing and sorting tens of thousands o
 Search matching uses real item name and optional title. The existing curated taxonomy continues to provide aliases/categories for known concepts, but it no longer determines whether an upstream item is discoverable.
 
 A compact indexed match receives:
+
 - registry namespace from the containing index bucket;
 - slug = name;
 - catalog status available;
@@ -116,6 +122,7 @@ Rewrite TODO.md so completed redesign/deployment work is not presented as unfini
 Remove the two completed docs/todo/00_* deployment task files.
 
 Keep these future items explicitly deferred:
+
 - browser-assisted/manual research for the registries whose machine-readable catalogs fail or use unsupported templates;
 - acquisition of trustworthy preview/specimen URLs or generated static screenshot evidence;
 - the open issue #3 entity/relationship domain-model rethink.
@@ -133,6 +140,7 @@ docs/future-enhancements.md should stop proposing a registry-level docBaseUrl as
 ## Testing
 
 Add deterministic coverage for:
+
 - compact item extraction and filtering by allowed item type;
 - stale compact-index preservation after a failed refresh;
 - loader validation/mapping of the new runtime index;
@@ -147,6 +155,7 @@ Add deterministic coverage for:
 ## Acceptance criteria
 
 The work is complete when:
+
 - mise.toml is tracked and local/CI verification use its pinned Node/pnpm versions.
 - Sync emits a compact runtime catalog index from the same catalogs already fetched for evidence.
 - Temporary per-registry fetch failures retain prior index entries.

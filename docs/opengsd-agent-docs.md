@@ -152,15 +152,26 @@ When supported by the runtime, wire the Browser skill into Core agent prompts th
 ```json
 {
   "agent_skills": {
-    "gsd-executor": ["skills/gsd-browser-automation", "skills/opengsd-docs-lookup", "skills/gsd-browser-evidence-verification"],
-    "gsd-verifier": ["skills/gsd-browser-automation", "skills/opengsd-docs-lookup", "skills/gsd-browser-evidence-verification"],
-    "gsd-debugger": ["skills/gsd-browser-automation", "skills/opengsd-docs-lookup", "skills/gsd-browser-evidence-verification"]
+    "gsd-executor": [
+      "skills/gsd-browser-automation",
+      "skills/opengsd-docs-lookup",
+      "skills/gsd-browser-evidence-verification"
+    ],
+    "gsd-verifier": [
+      "skills/gsd-browser-automation",
+      "skills/opengsd-docs-lookup",
+      "skills/gsd-browser-evidence-verification"
+    ],
+    "gsd-debugger": [
+      "skills/gsd-browser-automation",
+      "skills/opengsd-docs-lookup",
+      "skills/gsd-browser-evidence-verification"
+    ]
   }
 }
 ```
 
 Keep this as project-local configuration. Do not add browser workflow rules to the portable global mode or global memories.
-
 
 ## Safe CLI update library references
 

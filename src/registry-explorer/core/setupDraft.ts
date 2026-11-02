@@ -1,13 +1,13 @@
-import { z } from 'zod';
-import { isValidInstallToken } from './installActions.ts';
-import type { InstallQueueEntry } from './registry.schema.ts';
+import { z } from "zod";
+import { isValidInstallToken } from "./installActions.ts";
+import type { InstallQueueEntry } from "./registry.schema.ts";
 
 export interface SetupDraft {
   items: InstallQueueEntry[];
   instructions: string;
 }
 
-export const SETUP_DRAFT_STORAGE_KEY = 'registry-atlas.setup.v1';
+export const SETUP_DRAFT_STORAGE_KEY = "registry-atlas.setup.v1";
 
 const setupDraftSchema = z.object({
   version: z.literal(1),
@@ -28,7 +28,7 @@ function parseEntry(parsed: z.output<typeof setupEntrySchema>): InstallQueueEntr
 
   if (!isValidInstallToken(token)) return null;
 
-  if (registry !== token.split('/')[0] || item !== token.split('/').slice(1).join('/')) return null;
+  if (registry !== token.split("/")[0] || item !== token.split("/").slice(1).join("/")) return null;
 
   const entry: InstallQueueEntry = { token, label, registry, item };
 
@@ -38,7 +38,7 @@ function parseEntry(parsed: z.output<typeof setupEntrySchema>): InstallQueueEntr
 }
 
 export function parseSetupDraft(raw: string | null): SetupDraft {
-  const empty: SetupDraft = { items: [], instructions: '' };
+  const empty: SetupDraft = { items: [], instructions: "" };
 
   if (!raw || raw.length > 32768) return empty;
 
@@ -49,7 +49,7 @@ export function parseSetupDraft(raw: string | null): SetupDraft {
 
     const items = parseSavedItems(result.data.items);
 
-    return { items, instructions: result.data.instructions?.slice(0, 2000) ?? '' };
+    return { items, instructions: result.data.instructions?.slice(0, 2000) ?? "" };
   } catch {
     return empty;
   }
@@ -63,7 +63,9 @@ export function serializeSetupDraft(draft: SetupDraft): string {
   });
 }
 
-function parseSavedItems(rawItems: z.output<typeof setupDraftSchema>['items']): InstallQueueEntry[] {
+function parseSavedItems(
+  rawItems: z.output<typeof setupDraftSchema>["items"],
+): InstallQueueEntry[] {
   const items: InstallQueueEntry[] = [];
 
   for (const rawItem of rawItems.slice(0, 64)) {
@@ -73,7 +75,7 @@ function parseSavedItems(rawItems: z.output<typeof setupDraftSchema>['items']): 
 
     const item = parseEntry(parsed.data);
 
-    if (item && !items.some(existing => existing.token === item.token)) items.push(item);
+    if (item && !items.some((existing) => existing.token === item.token)) items.push(item);
   }
 
   return items;

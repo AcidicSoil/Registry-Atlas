@@ -16,11 +16,11 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).toContain("@registrydirectory");
     expect(body.innerHTML).toContain("13,544 items");
     expect(body.innerHTML).toContain("Current");
-    expect(body.innerHTML).toContain('data-registry-icon-image');
+    expect(body.innerHTML).toContain("data-registry-icon-image");
     expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory"');
     expect(body.innerHTML).toContain('class="registry-directory-copy registry-directory-open"');
     expect(body.innerHTML).toContain('href="https://registry.directory/"');
-    expect(body.innerHTML).toContain('>Homepage ↗</a>');
+    expect(body.innerHTML).toContain(">Homepage ↗</a>");
     expect(body.innerHTML).toContain("registry-directory-grid-grid");
     expect(body.innerHTML).not.toContain("View registry");
     expect(body.innerHTML).not.toContain("registry-directory-controls");
@@ -83,9 +83,9 @@ describe("renderRegistryDirectory", () => {
     });
 
     expect(body.innerHTML).toContain("33–64 of 392 registries");
-    expect(body.innerHTML).toContain('data-scroll-load-more');
-    expect(body.innerHTML).toContain('data-scroll-sentinel');
-    expect(body.innerHTML).not.toContain('catalog-pagination');
+    expect(body.innerHTML).toContain("data-scroll-load-more");
+    expect(body.innerHTML).toContain("data-scroll-sentinel");
+    expect(body.innerHTML).not.toContain("catalog-pagination");
   });
 });
 

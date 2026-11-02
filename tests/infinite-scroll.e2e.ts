@@ -1,61 +1,80 @@
-import { test } from '@e2e-dev/web';
-import { expect } from 'e2e';
+import { test } from "@e2e-dev/web";
+import { expect } from "e2e";
 
-test('catalog appends results without pagination or losing earlier cards', async ({ app, browser }) => {
-  await app.open('/Registry-Atlas/components');
+test("catalog appends results without pagination or losing earlier cards", async ({
+  app,
+  browser,
+}) => {
+  await app.open("/Registry-Atlas/components");
 
-  const count = () => browser.evaluate(() => document.querySelectorAll('.catalog-component-grid > .catalog-component-card').length);
+  const count = () =>
+    browser.evaluate(
+      () => document.querySelectorAll(".catalog-component-grid > .catalog-component-card").length,
+    );
 
   await expect.poll(count).toBeGreaterThan(0);
 
   const before = await count();
 
   await browser.evaluate(() => {
-    document.querySelector<HTMLButtonElement>('[data-scroll-load-more]')?.click();
+    document.querySelector<HTMLButtonElement>("[data-scroll-load-more]")?.click();
 
     return true;
   });
 
   await expect.poll(count).toBeGreaterThan(before);
-  await expect.poll(() => browser.evaluate(() => {
-    const meta = document.querySelector('.catalog-result-meta')?.textContent ?? '';
+  await expect
+    .poll(() =>
+      browser.evaluate(() => {
+        const meta = document.querySelector(".catalog-result-meta")?.textContent ?? "";
 
-    return meta.startsWith('Showing 1–');
-  })).toBe(true);
+        return meta.startsWith("Showing 1–");
+      }),
+    )
+    .toBe(true);
 
-  const pagerCount = await browser.evaluate(() => document.querySelectorAll('.catalog-pagination, [data-discovery-page]').length);
+  const pagerCount = await browser.evaluate(
+    () => document.querySelectorAll(".catalog-pagination, [data-discovery-page]").length,
+  );
 
   expect(pagerCount).toBe(0);
-  await app.screenshot('incremental-components');
+  await app.screenshot("incremental-components");
 });
 
-test('scrolling the registry directory automatically loads additional records', async ({ app, browser }) => {
-  await app.open('/Registry-Atlas/registries');
+test("scrolling the registry directory automatically loads additional records", async ({
+  app,
+  browser,
+}) => {
+  await app.open("/Registry-Atlas/registries");
 
-  const count = () => browser.evaluate(() => document.querySelectorAll('.registry-directory-grid > *').length);
+  const count = () =>
+    browser.evaluate(() => document.querySelectorAll(".registry-directory-grid > *").length);
 
   await expect.poll(count).toBeGreaterThan(0);
 
   const before = await count();
 
   await browser.evaluate(() => {
-    document.querySelector('[data-scroll-sentinel]')?.scrollIntoView();
+    document.querySelector("[data-scroll-sentinel]")?.scrollIntoView();
 
     return true;
   });
 
   await expect.poll(count, { timeout: 20_000 }).toBeGreaterThan(before);
-  await app.screenshot('incremental-registries');
+  await app.screenshot("incremental-registries");
 });
 
-test('back navigation restores previously appended catalog results', async ({ app, browser }) => {
-  await app.open('/Registry-Atlas/components');
+test("back navigation restores previously appended catalog results", async ({ app, browser }) => {
+  await app.open("/Registry-Atlas/components");
 
-  const count = () => browser.evaluate(() => document.querySelectorAll('.catalog-component-grid > .catalog-component-card').length);
+  const count = () =>
+    browser.evaluate(
+      () => document.querySelectorAll(".catalog-component-grid > .catalog-component-card").length,
+    );
 
   await expect.poll(count).toBeGreaterThan(0);
   await browser.evaluate(() => {
-    document.querySelector<HTMLButtonElement>('[data-scroll-load-more]')?.click();
+    document.querySelector<HTMLButtonElement>("[data-scroll-load-more]")?.click();
 
     return true;
   });
@@ -64,30 +83,40 @@ test('back navigation restores previously appended catalog results', async ({ ap
   const expandedCount = await count();
 
   const feedIsAccessible = await browser.evaluate(() => {
-    const list = document.querySelector('.catalog-component-grid');
+    const list = document.querySelector(".catalog-component-grid");
     const first = list?.firstElementChild;
 
-    return list?.getAttribute('role') === 'feed'
-      && first?.getAttribute('aria-posinset') === '1'
-      && Number(first?.getAttribute('aria-setsize')) > 50
-      && !!document.querySelector('[data-scroll-load-more]');
+    return (
+      list?.getAttribute("role") === "feed" &&
+      first?.getAttribute("aria-posinset") === "1" &&
+      Number(first?.getAttribute("aria-setsize")) > 50 &&
+      !!document.querySelector("[data-scroll-load-more]")
+    );
   });
 
   expect(feedIsAccessible).toBe(true);
 
   await browser.evaluate(() => {
-    const content = document.querySelector<HTMLElement>('.content-body');
+    const content = document.querySelector<HTMLElement>(".content-body");
 
     if (content) content.scrollTop = 260;
 
-    document.querySelector<HTMLAnchorElement>('.catalog-component-grid .catalog-component-open')?.click();
+    document
+      .querySelector<HTMLAnchorElement>(".catalog-component-grid .catalog-component-open")
+      ?.click();
 
     return true;
   });
-  await expect.poll(() => browser.evaluate(() => location.pathname.includes('/components/') && location.pathname.includes('@'))).toBe(true);
+  await expect
+    .poll(() =>
+      browser.evaluate(
+        () => location.pathname.includes("/components/") && location.pathname.includes("@"),
+      ),
+    )
+    .toBe(true);
 
   const savedPosition = await browser.evaluate(() => {
-    const snapshot = sessionStorage.getItem('registry-atlas.browse.v1:/Registry-Atlas/components');
+    const snapshot = sessionStorage.getItem("registry-atlas.browse.v1:/Registry-Atlas/components");
 
     return snapshot ? Number(JSON.parse(snapshot).scrollY) : -1;
   });
@@ -99,9 +128,13 @@ test('back navigation restores previously appended catalog results', async ({ ap
 
     return true;
   });
-  await expect.poll(() => browser.evaluate(() => location.pathname === '/Registry-Atlas/components')).toBe(true);
+  await expect
+    .poll(() => browser.evaluate(() => location.pathname === "/Registry-Atlas/components"))
+    .toBe(true);
   await expect.poll(count).toBeGreaterThan(expandedCount - 1);
-  await expect.poll(() => browser.evaluate(() =>
-    document.querySelector<HTMLElement>('.content-body')?.scrollTop ?? -1
-  )).toBeGreaterThanOrEqual(240);
+  await expect
+    .poll(() =>
+      browser.evaluate(() => document.querySelector<HTMLElement>(".content-body")?.scrollTop ?? -1),
+    )
+    .toBeGreaterThanOrEqual(240);
 });

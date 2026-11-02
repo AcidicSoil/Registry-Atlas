@@ -30,26 +30,18 @@
       "id": "standards-applicability",
       "domain": "orchestration",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "pinchtab-profile-manager-engineering"
-      ],
+      "ownerSkills": ["pinchtab-profile-manager-engineering"],
       "selectionReason": "Review source text and record applicability/evidence for all live catalog rules.",
       "status": "completed",
       "requiredAtClose": true,
       "dependencies": [],
-      "evidenceRefs": [
-        ".design/standards.json",
-        "DESIGN.md"
-      ]
+      "evidenceRefs": [".design/standards.json", "DESIGN.md"]
     },
     {
       "id": "frontend-focus-remediation",
       "domain": "frontend",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "pinchtab-profile-manager-frontend",
-        "accessibility"
-      ],
+      "ownerSkills": ["pinchtab-profile-manager-frontend", "accessibility"],
       "selectionReason": "Resolve confirmed keyboard focus leakage in responsive navigation, prove keyboard/focus behavior.",
       "status": "completed",
       "requiredAtClose": true,
@@ -64,52 +56,33 @@
       "id": "tooling-remediation",
       "domain": "testing",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "quality-gates"
-      ],
+      "ownerSkills": ["quality-gates"],
       "selectionReason": "All four required tooling checks pass; PAO approval records are neither required nor applicable.",
       "status": "blocked",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
-      "evidenceRefs": [
-        ".design/standards.json",
-        "mise.toml"
-      ]
+      "dependencies": ["standards-applicability"],
+      "evidenceRefs": [".design/standards.json", "mise.toml"]
     },
     {
       "id": "standards-closing-conformance",
       "domain": "orchestration",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "pinchtab-profile-manager-engineering"
-      ],
+      "ownerSkills": ["pinchtab-profile-manager-engineering"],
       "selectionReason": "Close applicable OrchestKit compliance statuses with domain-specific evidence.",
       "status": "blocked",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability",
-        "tooling-remediation"
-      ],
-      "evidenceRefs": [
-        ".design/standards.json"
-      ]
+      "dependencies": ["standards-applicability", "tooling-remediation"],
+      "evidenceRefs": [".design/standards.json"]
     },
     {
       "id": "supply-chain-remediation",
       "domain": "testing",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "security-patterns",
-        "quality-gates"
-      ],
+      "ownerSkills": ["security-patterns", "quality-gates"],
       "selectionReason": "Patch Vite/Vitest and transitive dependencies, add moderate+ audit to main verification path, preserve low advisory as open finding.",
       "status": "completed",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
+      "dependencies": ["standards-applicability"],
       "evidenceRefs": [
         "package.json",
         "pnpm-lock.yaml",
@@ -121,17 +94,11 @@
       "id": "frontend-certification-review",
       "domain": "frontend",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "pinchtab-profile-manager-frontend",
-        "accessibility",
-        "interaction-patterns"
-      ],
+      "ownerSkills": ["pinchtab-profile-manager-frontend", "accessibility", "interaction-patterns"],
       "selectionReason": "Run responsive and keyboard browser checks, remediate skip-link and identify unresolved native-dialog and scrolling findings.",
       "status": "blocked",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
+      "dependencies": ["standards-applicability"],
       "evidenceRefs": [
         "index.html",
         "public/styles/registry-explorer.css",
@@ -143,15 +110,11 @@
       "id": "dependency-cruiser-gate",
       "domain": "testing",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "quality-gates"
-      ],
+      "ownerSkills": ["quality-gates"],
       "selectionReason": "Root dependency-cruiser gate and pass-fail-pass architecture proof",
       "status": "completed",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
+      "dependencies": ["standards-applicability"],
       "evidenceRefs": [
         "package.json",
         ".dependency-cruiser.cjs",
@@ -162,15 +125,11 @@
       "id": "react-doctor-gate",
       "domain": "testing",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "quality-gates"
-      ],
+      "ownerSkills": ["quality-gates"],
       "selectionReason": "Pinned, root-integrated frontend React Doctor and deliberate-warning proof",
       "status": "completed",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
+      "dependencies": ["standards-applicability"],
       "evidenceRefs": [
         "package.json",
         "pnpm-lock.yaml",
@@ -182,15 +141,11 @@
       "id": "cccc-remediation",
       "domain": "testing",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "quality-gates"
-      ],
+      "ownerSkills": ["quality-gates"],
       "selectionReason": "Refactor 44 violating functions without raising thresholds",
       "status": "completed",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
+      "dependencies": ["standards-applicability"],
       "evidenceRefs": [
         "cccc.toml",
         "mise.toml",
@@ -203,15 +158,11 @@
       "id": "anti-slop-bootstrap",
       "domain": "testing",
       "ownerAgentArchetypes": [],
-      "ownerSkills": [
-        "quality-gates"
-      ],
+      "ownerSkills": ["quality-gates"],
       "selectionReason": "Official Stackforge TypeScript setup installed, enabled at repository root and tested clean-fail-clean. No lint policy changes or exclusions.",
       "status": "completed",
       "requiredAtClose": true,
-      "dependencies": [
-        "standards-applicability"
-      ],
+      "dependencies": ["standards-applicability"],
       "evidenceRefs": [
         ".design/quality-tooling-progress.md",
         "oxlint.config.ts",
@@ -228,9 +179,7 @@
     "orchestration": {
       "status": "blocked",
       "briefRef": null,
-      "evidenceRefs": [
-        ".design/standards.json"
-      ],
+      "evidenceRefs": [".design/standards.json"],
       "reason": "Entire catalog applicability completed; full compliance remains blocked."
     },
     "frontend": {
@@ -246,9 +195,7 @@
     "testing": {
       "status": "blocked",
       "briefRef": null,
-      "evidenceRefs": [
-        ".design/standards.json"
-      ],
+      "evidenceRefs": [".design/standards.json"],
       "reason": "Full root anti-slop gate fails on 593 pre-existing semantic rule violations. React Doctor, cccc and dependency-cruiser pass. PAO is a provenance system, not an approval gate for required tooling."
     }
   },
@@ -331,10 +278,7 @@
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "pass",
       "checkedArtifact": "registry-atlas-quality-tooling:da10877338410918784f793b",
-      "evidenceRefs": [
-        ".design/standards.json",
-        "DESIGN.md"
-      ],
+      "evidenceRefs": [".design/standards.json", "DESIGN.md"],
       "findings": [],
       "checkedBriefRevision": 7,
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"
@@ -360,10 +304,7 @@
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "blocked",
       "checkedArtifact": "registry-atlas-quality-tooling:da10877338410918784f793b",
-      "evidenceRefs": [
-        ".design/standards.json",
-        "mise.toml"
-      ],
+      "evidenceRefs": [".design/standards.json", "mise.toml"],
       "findings": [
         "All four technical gates pass. All four installed tooling gates passed; compliance must be determined from current checks and evidence."
       ],
@@ -376,9 +317,7 @@
       "reviewAuthority": "PPM engineering standards process and verified local project evidence",
       "status": "blocked",
       "checkedArtifact": "registry-atlas-quality-tooling:da10877338410918784f793b",
-      "evidenceRefs": [
-        ".design/standards.json"
-      ],
+      "evidenceRefs": [".design/standards.json"],
       "findings": [
         "After refreshing current inventory and restoring reviewed rules, 285 real standards issues remain; no PAO approval is needed for four installed mandatory tooling gates."
       ],
@@ -441,11 +380,7 @@
       "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
       "status": "pass",
       "checkedArtifact": "registry-atlas-quality-tooling:da10877338410918784f793b",
-      "evidenceRefs": [
-        "package.json",
-        "pnpm-lock.yaml",
-        ".design/quality-tooling-progress.md"
-      ],
+      "evidenceRefs": ["package.json", "pnpm-lock.yaml", ".design/quality-tooling-progress.md"],
       "findings": [],
       "checkedBriefRevision": 7,
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"
@@ -456,11 +391,7 @@
       "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
       "status": "pass",
       "checkedArtifact": "registry-atlas-quality-tooling:da10877338410918784f793b",
-      "evidenceRefs": [
-        "cccc.toml",
-        "mise.toml",
-        ".design/quality-tooling-progress.md"
-      ],
+      "evidenceRefs": ["cccc.toml", "mise.toml", ".design/quality-tooling-progress.md"],
       "findings": [],
       "checkedBriefRevision": 7,
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"
@@ -471,9 +402,7 @@
       "reviewAuthority": "PPM quality-tooling bootstrap and local project verification",
       "status": "pass",
       "checkedArtifact": "registry-atlas-quality-tooling:da10877338410918784f793b",
-      "evidenceRefs": [
-        ".design/quality-tooling-progress.md"
-      ],
+      "evidenceRefs": [".design/quality-tooling-progress.md"],
       "findings": [],
       "checkedBriefRevision": 7,
       "checkedArtifactRevision": "registry-atlas-quality-tooling:da10877338410918784f793b"

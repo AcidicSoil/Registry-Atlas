@@ -42,32 +42,32 @@ Local evidence directory:
 
 Captured public route families include:
 
-| Reference route family | Captured example | Product pattern |
-| --- | --- | --- |
-| Home | `/` | visual catalog landing page |
-| Components | `/community/components` | primary component browse surface |
-| Component category/search | `/community/components/s/button` | category-specific real item grid |
-| Featured | `/community/components/featured` | curated item grid |
-| Newest | `/community/components/newest` | chronologically grouped real items |
-| Newest period | observed `/community/components/newest/YYYY-Www` | nested date browse |
-| Authors | `/community/authors` | creator collection |
-| Author profile | `/@designali-in` | identity + authored item grid |
-| Libraries | `/community/libraries` | library collection |
-| Library category | observed `/community/libraries/s/:category` | filtered library collection |
-| Library detail | `/@originui/library/origin-ui` | metadata rail + real item grid |
-| Component detail | `/@designali-in/components/vercel-hero` | first-class item route |
-| Component family | observed `/@originui/components/tree` | component with examples |
-| Component nested example | `/@originui/components/tree/menu-navigation-tree` | multi-segment item/example path |
-| Component variant | `/@jahed/components/flip-countdown/plain` | variant/example route |
-| Explore collection | `/community/components/explore/react-21` | themed item collection |
-| Templates | `/community/templates` | typed asset catalog |
-| Template detail | `/@lyanchouss/templates/...` | typed asset detail |
-| Themes | `/community/themes` | typed asset catalog |
-| Theme detail | `/@serafimcloud/themes/vercel` | typed asset detail |
-| Theme editor | `/community/themes/editor` | specialized tool surface |
-| Icons | `/community/icons` | family/category browser |
-| Icon family | `/community/icons/lucide` | family-scoped browser |
-| Icon category | `/community/icons/c/layout` | category-scoped browser |
+| Reference route family    | Captured example                                  | Product pattern                    |
+| ------------------------- | ------------------------------------------------- | ---------------------------------- |
+| Home                      | `/`                                               | visual catalog landing page        |
+| Components                | `/community/components`                           | primary component browse surface   |
+| Component category/search | `/community/components/s/button`                  | category-specific real item grid   |
+| Featured                  | `/community/components/featured`                  | curated item grid                  |
+| Newest                    | `/community/components/newest`                    | chronologically grouped real items |
+| Newest period             | observed `/community/components/newest/YYYY-Www`  | nested date browse                 |
+| Authors                   | `/community/authors`                              | creator collection                 |
+| Author profile            | `/@designali-in`                                  | identity + authored item grid      |
+| Libraries                 | `/community/libraries`                            | library collection                 |
+| Library category          | observed `/community/libraries/s/:category`       | filtered library collection        |
+| Library detail            | `/@originui/library/origin-ui`                    | metadata rail + real item grid     |
+| Component detail          | `/@designali-in/components/vercel-hero`           | first-class item route             |
+| Component family          | observed `/@originui/components/tree`             | component with examples            |
+| Component nested example  | `/@originui/components/tree/menu-navigation-tree` | multi-segment item/example path    |
+| Component variant         | `/@jahed/components/flip-countdown/plain`         | variant/example route              |
+| Explore collection        | `/community/components/explore/react-21`          | themed item collection             |
+| Templates                 | `/community/templates`                            | typed asset catalog                |
+| Template detail           | `/@lyanchouss/templates/...`                      | typed asset detail                 |
+| Themes                    | `/community/themes`                               | typed asset catalog                |
+| Theme detail              | `/@serafimcloud/themes/vercel`                    | typed asset detail                 |
+| Theme editor              | `/community/themes/editor`                        | specialized tool surface           |
+| Icons                     | `/community/icons`                                | family/category browser            |
+| Icon family               | `/community/icons/lucide`                         | family-scoped browser              |
+| Icon category             | `/community/icons/c/layout`                       | category-scoped browser            |
 
 ### Reference visual hierarchy
 
@@ -170,16 +170,16 @@ The GitHub Pages base remains `/Registry-Atlas/`.
 
 ### Primary routes
 
-| Route | Purpose |
-| --- | --- |
-| `/` | component-first landing/browse entry; may internally render the Components experience |
-| `/components` | all real discoverable catalog items |
-| `/components/s/:category` | real items carrying that explicit upstream category |
-| `/components?search=:query` | text search over real item and registry facts |
-| `/registries` | all real registries/libraries |
-| `/@:namespace` | registry/library profile |
-| `/@:namespace/components/*itemName` | canonical Registry Atlas component detail |
-| `/compare` | explicit exact-data comparison tool |
+| Route                               | Purpose                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------- |
+| `/`                                 | component-first landing/browse entry; may internally render the Components experience |
+| `/components`                       | all real discoverable catalog items                                                   |
+| `/components/s/:category`           | real items carrying that explicit upstream category                                   |
+| `/components?search=:query`         | text search over real item and registry facts                                         |
+| `/registries`                       | all real registries/libraries                                                         |
+| `/@:namespace`                      | registry/library profile                                                              |
+| `/@:namespace/components/*itemName` | canonical Registry Atlas component detail                                             |
+| `/compare`                          | explicit exact-data comparison tool                                                   |
 
 Namespace paths preserve the upstream `@` convention. Item paths may contain multiple safe path segments.
 

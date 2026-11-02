@@ -22,7 +22,7 @@ The current single long list is hard to scan because it’s essentially flat wit
 
 Registry-Directory-shadcn\_ui
 
-* * *
+---
 
 ### 1\. Data format for each registry (backbone of everything)
 
@@ -44,16 +44,15 @@ Define a normalized object for every registry:
       ]
     }
 
-
 Key pieces:
 
-* `primary_focus`: 1–3 high-level themes that describe the majority of what it offers.
+- `primary_focus`: 1–3 high-level themes that describe the majority of what it offers.
 
-* `component_tags`: granular component types it actually contains.
+- `component_tags`: granular component types it actually contains.
 
-* Everything else (framework, license, etc.) stays as secondary fields if you need them.
+- Everything else (framework, license, etc.) stays as secondary fields if you need them.
 
-* * *
+---
 
 ### 2\. Controlled vocabulary
 
@@ -63,49 +62,49 @@ Examples:
 
 **Primary focus buckets (registry-level):**
 
-* `ai-chat`
+- `ai-chat`
 
-* `forms-and-inputs`
+- `forms-and-inputs`
 
-* `buttons-and-primitives`
+- `buttons-and-primitives`
 
-* `dashboards-and-admin`
+- `dashboards-and-admin`
 
-* `marketing-sections`
+- `marketing-sections`
 
-* `ecommerce`
+- `ecommerce`
 
-* `auth-and-user`
+- `auth-and-user`
 
-* `data-display-and-tables`
+- `data-display-and-tables`
 
-* `navigation`
+- `navigation`
 
-* `templates-and-layouts`
+- `templates-and-layouts`
 
-* `full-design-system`
+- `full-design-system`
 
-* `misc-utility`
+- `misc-utility`
 
 **Component tags (component-level):**
 
-* `button`, `icon-button`, `link-button`
+- `button`, `icon-button`, `link-button`
 
-* `input`, `textarea`, `select`, `datepicker`
+- `input`, `textarea`, `select`, `datepicker`
 
-* `chatbot`, `chat-window`, `messages-list`, `prompt-box`, `typing-indicator`
+- `chatbot`, `chat-window`, `messages-list`, `prompt-box`, `typing-indicator`
 
-* `card`, `modal`, `drawer`, `tabs`, `accordion`
+- `card`, `modal`, `drawer`, `tabs`, `accordion`
 
-* `table`, `data-grid`, `chart`, `stat-widget`
+- `table`, `data-grid`, `chart`, `stat-widget`
 
-* `navbar`, `sidebar`, `breadcrumb`
+- `navbar`, `sidebar`, `breadcrumb`
 
-* etc.
+- etc.
 
 Keep this tag list stable and reused across all registries.
 
-* * *
+---
 
 ### 3\. View A – “By focus area” groupings
 
@@ -127,16 +126,15 @@ Example:
 
       - SaaS Admin Blocks  – Tables, filters, charts, metrics cards
 
-
 Implementation detail:
 
-* Sort the sections in a sensible order (AI, Forms, Dashboards, etc.).
+- Sort the sections in a sensible order (AI, Forms, Dashboards, etc.).
 
-* Inside each section, list the registries alphabetically or by “richness” (number of component tags).
+- Inside each section, list the registries alphabetically or by “richness” (number of component tags).
 
 This satisfies “majority focus” discovery: user scans section titles first.
 
-* * *
+---
 
 ### 4\. View B – “By component type” groupings (what you described)
 
@@ -160,10 +158,9 @@ Example layout:
       - SaaS Admin Blocks  – data-table, filter-bar, bulk-actions
       - Atomic UI          – simple-table, sortable-table
 
-
 Mechanically, this is just grouping all registries where `component_tags` contains `chatbot`, `button`, etc.
 
-* * *
+---
 
 ### 5\. Matrix view (fast expert scan, optional but strong)
 
@@ -179,24 +176,23 @@ Columns = major component types
     SaaS Admin Blocks     -         ✓        ✓       ✓       -
     AuthKit UI            -         ✓        ✓       -       ✓
 
+- A quick scan answers “which registries cover chatbots?” or “which are good all-rounder sets?”.
 
-* A quick scan answers “which registries cover chatbots?” or “which are good all-rounder sets?”.
-
-* * *
+---
 
 ### 6\. Minimal rule set to keep it consistent
 
-* Assign at least 1 and at most 3 `primary_focus` values per registry.
+- Assign at least 1 and at most 3 `primary_focus` values per registry.
 
-* Tag every distinct component family in `component_tags`.
+- Tag every distinct component family in `component_tags`.
 
-* Generate:
+- Generate:
 
-  * Focus-grouped list from `primary_focus`.
+  - Focus-grouped list from `primary_focus`.
 
-  * Component-grouped lists from `component_tags`.
+  - Component-grouped lists from `component_tags`.
 
-  * Optional matrix from both.
+  - Optional matrix from both.
 
 This gives the exact behavior you described: users who need “AI chatbot components” open the AI / chat section or the `chatbot` component group; users who need “button” components open the `button` group and see all registries that contain buttons, regardless of their primary focus.
 
@@ -1920,11 +1916,11 @@ This SPA is an interactive explorer for shadcn-based component registries. It le
 
 It loads a local catalog of registries and normalizes each one into a consistent model: name, URL, description, primary focus tags (e.g. AI chat, dashboards, navigation) and granular component tags (e.g. chatbot, button, table, navbar). On top of that model it provides three coordinated views:
 
-* “By Focus” view: clusters registries by their dominant use-case (AI & Chatbot, Forms & Inputs, Dashboards & Admin, etc.). Selecting a focus in the left sidebar filters the main panel to only registries whose primary focus includes that cluster, with per-registry chips showing focus labels, tech stack, license, and a preview of available component types.
+- “By Focus” view: clusters registries by their dominant use-case (AI & Chatbot, Forms & Inputs, Dashboards & Admin, etc.). Selecting a focus in the left sidebar filters the main panel to only registries whose primary focus includes that cluster, with per-registry chips showing focus labels, tech stack, license, and a preview of available component types.
 
-* “By Component” view: inverts the index so you start from a component type (button, chatbot, table, navbar, etc.) and see every registry that exposes it, along with its other focuses and related components. This answers “who ships X?” for any tagged component.
+- “By Component” view: inverts the index so you start from a component type (button, chatbot, table, navbar, etc.) and see every registry that exposes it, along with its other focuses and related components. This answers “who ships X?” for any tagged component.
 
-* “Matrix” view: renders a compact coverage table where rows are registries and columns are representative component families; each cell marks whether that registry includes that component type, giving a fast visual scan of coverage overlap and gaps.
+- “Matrix” view: renders a compact coverage table where rows are registries and columns are representative component families; each cell marks whether that registry includes that component type, giving a fast visual scan of coverage overlap and gaps.
 
 Global search runs across registry names, descriptions, focus tags, component tags, framework, and license, narrowing all views in-place. The UI is fully client-side, uses only local data, and is designed for quick need-based discovery of which registries to pull from when you know either the problem domain (focus) or the exact component you need.
 

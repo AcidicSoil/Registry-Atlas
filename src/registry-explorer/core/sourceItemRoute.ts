@@ -1,6 +1,6 @@
-import { isInputString } from './inputChecks';
+import { isInputString } from "./inputChecks";
 
-export type SourceItemKind = 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon';
+export type SourceItemKind = "component" | "block" | "page" | "template" | "theme" | "icon";
 
 export interface RegistryRoutePattern {
   urlTemplate: string;
@@ -24,12 +24,12 @@ export interface SourceItemRouteInput {
 }
 
 const KIND_SEGMENTS: Readonly<Record<SourceItemKind, readonly string[]>> = {
-  component: ['component', 'components', 'primitive', 'primitives', 'ui'],
-  block: ['block', 'blocks'],
-  page: ['page', 'pages'],
-  template: ['template', 'templates'],
-  theme: ['theme', 'themes', 'style', 'styles'],
-  icon: ['icon', 'icons'],
+  component: ["component", "components", "primitive", "primitives", "ui"],
+  block: ["block", "blocks"],
+  page: ["page", "pages"],
+  template: ["template", "templates"],
+  theme: ["theme", "themes", "style", "styles"],
+  icon: ["icon", "icons"],
 };
 
 export function resolveSourceItemRoute(input: SourceItemRouteInput): string | null {
@@ -38,7 +38,7 @@ export function resolveSourceItemRoute(input: SourceItemRouteInput): string | nu
   if (direct) return direct;
 
   const candidates = (input.patterns ?? [])
-    .map(pattern => {
+    .map((pattern) => {
       const url = resolveSourcePattern(pattern, input.slug, input.homepage);
 
       if (!url) return null;
@@ -66,23 +66,22 @@ export function resolveSourcePattern(
   slug: string,
   homepage: string,
 ): string | null {
-  if (!validSlug(slug)
-    || !isInputString(pattern.slugPrefix)
-    || !slug.startsWith(pattern.slugPrefix)
-    || !isInputString(pattern.urlTemplate)
-    || !/^(?:[^{}])*(?:\{slug\}|\{leaf\})(?:[^{}])*$/.test(pattern.urlTemplate)) {
+  if (
+    !validSlug(slug) ||
+    !isInputString(pattern.slugPrefix) ||
+    !slug.startsWith(pattern.slugPrefix) ||
+    !isInputString(pattern.urlTemplate) ||
+    !/^(?:[^{}])*(?:\{slug\}|\{leaf\})(?:[^{}])*$/.test(pattern.urlTemplate)
+  ) {
     return null;
   }
 
   const remainder = slug.slice(pattern.slugPrefix.length);
 
   if (!validSlug(remainder)) return null;
-  const encoded = remainder.split('/').map(encodeURIComponent).join('/');
+  const encoded = remainder.split("/").map(encodeURIComponent).join("/");
 
-  return safeSourcePage(
-    pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/, encoded),
-    homepage,
-  );
+  return safeSourcePage(pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/, encoded), homepage);
 }
 
 function hasPublicSourcePath(page: URL, homepage: URL): boolean {
@@ -92,11 +91,11 @@ function hasPublicSourcePath(page: URL, homepage: URL): boolean {
 
   if (/\.(?:json|js|css|svg|png|jpe?g|webp|pdf|woff2?|map)\/?$/i.test(page.pathname)) return false;
 
-  return page.pathname.replace(/\/+$/, '') !== homepage.pathname.replace(/\/+$/, '');
+  return page.pathname.replace(/\/+$/, "") !== homepage.pathname.replace(/\/+$/, "");
 }
 
 export function safeSourcePage(raw: string | undefined, root: string): string | null {
-  if (!raw || !root || raw.startsWith('//')) return null;
+  if (!raw || !root || raw.startsWith("//")) return null;
 
   try {
     const home = new URL(root);
@@ -113,27 +112,26 @@ export function safeSourcePage(raw: string | undefined, root: string): string | 
 }
 
 function publicHostname(host: string): boolean {
-  if (!host.includes('.') || host.includes(':')) return false;
+  if (!host.includes(".") || host.includes(":")) return false;
 
-  if (host === 'localhost') return false;
+  if (host === "localhost") return false;
 
-  if (['.localhost', '.local', '.internal'].some(suffix => host.endsWith(suffix))) return false;
+  if ([".localhost", ".local", ".internal"].some((suffix) => host.endsWith(suffix))) return false;
 
   return !/^\d+(?:\.\d+){3}$/.test(host);
 }
 
 function publicHttps(url: URL): boolean {
-  if (url.protocol !== 'https:') return false;
+  if (url.protocol !== "https:") return false;
 
   if (url.username || url.password || url.port) return false;
-  const host = url.hostname.toLowerCase().replace(/\.$/, '');
+  const host = url.hostname.toLowerCase().replace(/\.$/, "");
 
   return publicHostname(host);
 }
 
 function validSlug(value: string): boolean {
-  return Boolean(value)
-    && value.split('/').every(part => /^[a-z0-9][a-z0-9._-]*$/i.test(part));
+  return Boolean(value) && value.split("/").every((part) => /^[a-z0-9][a-z0-9._-]*$/i.test(part));
 }
 
 function patternScore(
@@ -143,30 +141,27 @@ function patternScore(
   categories: readonly string[],
 ): number {
   let score = pattern.slugPrefix ? 500 : 0;
-  const pathTokens = tokenize(pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/g, ''));
+  const pathTokens = tokenize(pattern.urlTemplate.replace(/\{slug\}|\{leaf\}/g, ""));
   const kindTokens = new Set(KIND_SEGMENTS[kind]);
 
-  if (pathTokens.some(token => kindTokens.has(token))) score += 200;
+  if (pathTokens.some((token) => kindTokens.has(token))) score += 200;
 
-  const itemTokens = new Set([
-    ...tokenize(slug),
-    ...categories.flatMap(tokenize),
-  ]);
+  const itemTokens = new Set([...tokenize(slug), ...categories.flatMap(tokenize)]);
 
   for (const token of pathTokens) {
     if (itemTokens.has(token)) score += 20;
 
-    if (token.endsWith('s') && itemTokens.has(token.slice(0, -1))) score += 12;
+    if (token.endsWith("s") && itemTokens.has(token.slice(0, -1))) score += 12;
 
-    if (!token.endsWith('s') && itemTokens.has(token + 's')) score += 12;
+    if (!token.endsWith("s") && itemTokens.has(token + "s")) score += 12;
   }
 
   return score;
 }
 
 function tokenize(value: string): string[] {
-  return value.toLowerCase()
+  return value
+    .toLowerCase()
     .split(/[^a-z0-9]+/)
-    .filter(token => token.length > 1
-      && !['https', 'www', 'com', 'docs', 'doc'].includes(token));
+    .filter((token) => token.length > 1 && !["https", "www", "com", "docs", "doc"].includes(token));
 }

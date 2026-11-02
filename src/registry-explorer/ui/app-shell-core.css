@@ -213,8 +213,6 @@ aside:has(.aside-inner:empty) {
   .sidebar-close {
     flex: 0 0 auto;
   }
-
-
 }
 
 .catalog-component-unavailable {
@@ -227,10 +225,15 @@ aside:has(.aside-inner:empty) {
   font-size: 12px;
   text-align: center;
 }
-.catalog-component-card:hover .catalog-component-open { color: var(--foreground); }
+
+.catalog-component-card:hover .catalog-component-open {
+  color: var(--foreground);
+}
 
 @media (width <= 640px) {
-  .catalog-component-unavailable { min-height: 140px; }
+  .catalog-component-unavailable {
+    min-height: 140px;
+  }
 }
 
 .catalog-component-source-actions {
@@ -246,7 +249,6 @@ aside:has(.aside-inner:empty) {
 .catalog-component-original {
   text-underline-offset: 3px;
 }
-
 
 .catalog-component-card:has(.catalog-component-unavailable) .catalog-component-unavailable {
   min-height: 78px;

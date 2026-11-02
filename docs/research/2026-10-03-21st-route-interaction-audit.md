@@ -6,23 +6,23 @@
 
 ## Live route/state samples
 
-| Label | Observed official route | Important visible elements / state |
-| --- | --- | --- |
-| Marketing home | `https://21st.dev/` | Separate discovery/marketing shell; preview rails and hero; observed loading-placeholder states during initial navigation. |
-| Components root | `https://21st.dev/community/components` | Category rail, sectioned Newest/Popular/Shader and other bands, mixed source cards, bookmark controls, source-author links. |
-| Buttons category | `https://21st.dev/community/components/s/button` | Component title; Recommended / Most downloaded / Most bookmarked / Newest sort buttons; Filter overlay; list of working component-preview cards and source credit. |
-| Buttons Filter opened | Same route after actual Filter click | Search/Clear and **Category, Time, Primitive library, Tailwind version, License, Library, Built with, Author, Tags** disclosures; option radios appeared. |
-| Templates | `https://21st.dev/community/templates` | Own search, Templates rail, Community section, Included in Plan, Free, Buy on 21st, Verified categories. |
-| Themes | `https://21st.dev/community/themes` | Theme search, create-theme action, theme-specific directory and publishing guidance. |
-| Icons | `https://21st.dev/community/icons` | Icon search, glyph controls (copy and Details per icon), icon families and semantic categories. Not a generic component card grid. |
-| Libraries | `https://21st.dev/community/libraries` | Library search, Grid/List toggle, Views/Components/Recently updated/Newest/Name sort. |
-| Authors | `https://21st.dev/community/authors` | Top Authors and All Authors, author profiles, contribution counts, pagination. |
-| Newest | `https://21st.dev/community/components/newest` | Week-grouped components, Grid/List controls and route-specific navigation. |
-| Featured | `https://21st.dev/community/components/featured` | Featured collection and category rail. |
-| Component detail | `https://21st.dev/@arunachalam/components/scroll-expansion-hero` | Large separate `cdn.21st.dev` iframe, Copy prompt/Save/Remix/CLI/Report, source and dependency sections, code file tabs. |
-| Template detail | `https://21st.dev/@lyanchouss/templates/dali-ai-agency-agent-studio-site` | Third-party live preview iframe, Reload/Open in new tab, Save/Report and purchase action, tags/install. |
-| Theme detail | `https://21st.dev/@serafimcloud/themes/vercel` | Theme route and heading loaded. Initial snapshot showed no iframe; this is not proof that the theme never previews. |
-| Library detail | `https://21st.dev/@manuarora700/library/aceternity-ui` | Source library title, install command, ownership/claim action, internal search, item counts and related source listings. |
+| Label                 | Observed official route                                                   | Important visible elements / state                                                                                                                                 |
+| --------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Marketing home        | `https://21st.dev/`                                                       | Separate discovery/marketing shell; preview rails and hero; observed loading-placeholder states during initial navigation.                                         |
+| Components root       | `https://21st.dev/community/components`                                   | Category rail, sectioned Newest/Popular/Shader and other bands, mixed source cards, bookmark controls, source-author links.                                        |
+| Buttons category      | `https://21st.dev/community/components/s/button`                          | Component title; Recommended / Most downloaded / Most bookmarked / Newest sort buttons; Filter overlay; list of working component-preview cards and source credit. |
+| Buttons Filter opened | Same route after actual Filter click                                      | Search/Clear and **Category, Time, Primitive library, Tailwind version, License, Library, Built with, Author, Tags** disclosures; option radios appeared.          |
+| Templates             | `https://21st.dev/community/templates`                                    | Own search, Templates rail, Community section, Included in Plan, Free, Buy on 21st, Verified categories.                                                           |
+| Themes                | `https://21st.dev/community/themes`                                       | Theme search, create-theme action, theme-specific directory and publishing guidance.                                                                               |
+| Icons                 | `https://21st.dev/community/icons`                                        | Icon search, glyph controls (copy and Details per icon), icon families and semantic categories. Not a generic component card grid.                                 |
+| Libraries             | `https://21st.dev/community/libraries`                                    | Library search, Grid/List toggle, Views/Components/Recently updated/Newest/Name sort.                                                                              |
+| Authors               | `https://21st.dev/community/authors`                                      | Top Authors and All Authors, author profiles, contribution counts, pagination.                                                                                     |
+| Newest                | `https://21st.dev/community/components/newest`                            | Week-grouped components, Grid/List controls and route-specific navigation.                                                                                         |
+| Featured              | `https://21st.dev/community/components/featured`                          | Featured collection and category rail.                                                                                                                             |
+| Component detail      | `https://21st.dev/@arunachalam/components/scroll-expansion-hero`          | Large separate `cdn.21st.dev` iframe, Copy prompt/Save/Remix/CLI/Report, source and dependency sections, code file tabs.                                           |
+| Template detail       | `https://21st.dev/@lyanchouss/templates/dali-ai-agency-agent-studio-site` | Third-party live preview iframe, Reload/Open in new tab, Save/Report and purchase action, tags/install.                                                            |
+| Theme detail          | `https://21st.dev/@serafimcloud/themes/vercel`                            | Theme route and heading loaded. Initial snapshot showed no iframe; this is not proof that the theme never previews.                                                |
+| Library detail        | `https://21st.dev/@manuarora700/library/aceternity-ui`                    | Source library title, install command, ownership/claim action, internal search, item counts and related source listings.                                           |
 
 The category rail inspected at Components root has distinct **Marketing Blocks** and **UI Components** groups, with observed category links and counters (including Heroes, Features, Buttons, Cards, Inputs, Dialogs, Sidebars, Tables and many more). The route census task must enumerate each current link, count, destination, active state and collapse/scroll behavior. This sample deliberately does not claim that every label or control has been exercised.
 
@@ -33,7 +33,7 @@ The category rail inspected at Components root has distinct **Marketing Blocks**
 3. Opened `https://21st.dev/@kuratlielia/components/signature-pad`. The detail page uses a separate observed CDN iframe; clicking the **Component.tsx** tab changed its selected state from false to true. This tests code-panel tab behavior, not execution of the sample.
 4. Opened the source-observed Signature Pad CDN preview in the **same managed profile**. The Black/Blue/Violet ink radio group was rendered; clicking **Blue ink** changed its `aria-checked` value from `false` to `true`. Undo/Redo/Clear/PNG/SVG controls were present but disabled while empty.
 5. Attempted a pointer stroke using both low-level mouse actions and PinchTab drag on the rendered SVG. The signature path remained empty and Undo stayed disabled. This **does not prove** the component itself is broken; the synthetic browser gesture may not match its pointer capture handling. Mark signature drawing unverified until a compatible pointer test or manual action succeeds.
-6. Opened `https://21st.dev/@kuratlielia/components/tabs`, followed its observed CDN preview, then clicked the **Activity** tab. `aria-selected` changed from Overview=true / Activity=false to Overview=false / Activity=true, and the Activity panel's text was visible. This is a verified *working hosted component interaction*.
+6. Opened `https://21st.dev/@kuratlielia/components/tabs`, followed its observed CDN preview, then clicked the **Activity** tab. `aria-selected` changed from Overview=true / Activity=false to Overview=false / Activity=true, and the Activity panel's text was visible. This is a verified _working hosted component interaction_.
 
 These observations show why **image loaded**, **iframe loaded**, **UI selected** and **component interaction verified** must be distinct coverage states. They do **not** establish that every 21st.dev component is tested, nor that every Atlas catalog identity can be executed.
 

@@ -1,5 +1,5 @@
-import type { RawJsonInput } from '../core/jsonInput';
-import { isInputObject, isInputString } from '../core/inputChecks';
+import type { RawJsonInput } from "../core/jsonInput";
+import { isInputObject, isInputString } from "../core/inputChecks";
 import type {
   CoverageConfidence,
   CoverageStatus,
@@ -8,20 +8,17 @@ import type {
   RegistryCatalogIndex,
   RegistryItemSummary,
   RegistrySourcePage,
-} from '../core/registry.schema';
-import { parseRegistryCatalogIndex } from '../core/registryCatalogIndex';
+} from "../core/registry.schema";
+import { parseRegistryCatalogIndex } from "../core/registryCatalogIndex";
 import {
   configureDefaultCatalogTaxonomy,
   parseCatalogTaxonomy,
   type CatalogTaxonomy,
-} from '../core/catalogTaxonomy';
-import { configureCatalogKindOverrides } from '../core/catalogCollections';
-import { verifiedSourcePageUrl } from '../core/sourcePageValidation';
-import {
-  type MirrorValidationIssue,
-  validateRegistryMirror,
-} from '../core/registryMirror';
-import { loadRuntimeJson } from './runtimeJson';
+} from "../core/catalogTaxonomy";
+import { configureCatalogKindOverrides } from "../core/catalogCollections";
+import { verifiedSourcePageUrl } from "../core/sourcePageValidation";
+import { type MirrorValidationIssue, validateRegistryMirror } from "../core/registryMirror";
+import { loadRuntimeJson } from "./runtimeJson";
 
 export interface RegistryMirrorMeta {
   source_url: string;
@@ -54,7 +51,7 @@ interface RegistryMirrorRecord {
     confidence?: CoverageConfidence;
     notes?: string;
     catalog_status?: ItemCatalogStatus;
-    comparison_evidence?: 'catalog' | 'stale-catalog' | 'none';
+    comparison_evidence?: "catalog" | "stale-catalog" | "none";
     catalog_item_count?: number;
     catalog_evidence_url?: string;
     item_summaries?: Array<{
@@ -104,27 +101,30 @@ interface RegistryMirrorData {
 
 interface RegistryIconDocument {
   schema?: string;
-  icons?: Record<string, {
-    url?: string;
-    source?: string;
-    homepage?: string;
-    observedAt?: string;
-  }>;
+  icons?: Record<
+    string,
+    {
+      url?: string;
+      source?: string;
+      homepage?: string;
+      observedAt?: string;
+    }
+  >;
 }
 
 type FetchLike = typeof fetch;
 
 function registryReviewMetadata(record: RegistryMirrorRecord) {
   return {
-    coverageStatus: record.atlas?.coverage_status ?? 'unverified',
-    confidence: record.atlas?.confidence ?? 'unknown',
+    coverageStatus: record.atlas?.coverage_status ?? "unverified",
+    confidence: record.atlas?.confidence ?? "unknown",
   };
 }
 
 function registryCatalogMetadata(record: RegistryMirrorRecord) {
   return {
-    catalogStatus: record.atlas?.catalog_status ?? 'unverified',
-    comparisonEvidence: record.atlas?.comparison_evidence ?? 'none',
+    catalogStatus: record.atlas?.catalog_status ?? "unverified",
+    comparisonEvidence: record.atlas?.comparison_evidence ?? "none",
     catalogItemCount: record.atlas?.catalog_item_count ?? 0,
   };
 }
@@ -136,7 +136,7 @@ function registryCoverageMetadata(record: RegistryMirrorRecord) {
 function registryAtlasMetadata(record: RegistryMirrorRecord) {
   return {
     aliases: record.atlas?.aliases ?? [],
-    notes: record.atlas?.notes ?? '',
+    notes: record.atlas?.notes ?? "",
     catalogEvidenceUrl: record.atlas?.catalog_evidence_url || undefined,
     ...registryCoverageMetadata(record),
   };
@@ -154,10 +154,7 @@ function registryMirrorMetadata(
     syncedAt: meta.synced_at,
     upstreamCount: meta.upstream_count,
     localCount: meta.local_count,
-    warnings: [
-      ...(record.status?.warnings ?? []),
-      ...(warnings.get(record.official.name) ?? []),
-    ],
+    warnings: [...(record.status?.warnings ?? []), ...(warnings.get(record.official.name) ?? [])],
   };
 }
 
@@ -186,9 +183,12 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
     kindOverrides: unknown;
     registryIcons: RegistryIconDocument | null;
     sourcePageManifest: unknown;
-    itemRoutes: Record<string,{url:string;status:string}>;
-    routePatterns: Record<string,Array<{urlTemplate:string;slugPrefix:string;source:string;checkedAt?:string}>>;
-  }>('data/registry-atlas.json.gz', fetchImpl);
+    itemRoutes: Record<string, { url: string; status: string }>;
+    routePatterns: Record<
+      string,
+      Array<{ urlTemplate: string; slugPrefix: string; source: string; checkedAt?: string }>
+    >;
+  }>("data/registry-atlas.json.gz", fetchImpl);
 
   const mirrorData = data.mirror;
   const catalogData = data.catalog;
@@ -204,8 +204,9 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
   configureCatalogKindOverrides(kindOverridesData);
   const catalogIndex = parseRegistryCatalogIndex(catalogData);
 
-  const officialSites = mirrorData.registries.map(row => ({
-    name: row.official?.name, url: row.official?.homepage,
+  const officialSites = mirrorData.registries.map((row) => ({
+    name: row.official?.name,
+    url: row.official?.homepage,
   }));
 
   const sourcePages = readSourcePageManifest(sourcePageManifest, catalogIndex, officialSites);
@@ -224,22 +225,27 @@ export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<Load
     catalogIndex: Object.assign(catalogIndex, { sourcePages, itemRoutes, routePatterns }),
     taxonomy,
     warnings: validation.warnings,
-    registries: typedMirror.registries.map(record =>
-      mapMirrorRegistry(record, typedMirror.meta, registryIcons, warningsByNamespace)),
-
+    registries: typedMirror.registries.map((record) =>
+      mapMirrorRegistry(record, typedMirror.meta, registryIcons, warningsByNamespace),
+    ),
   };
 }
 
-type RawSummary = NonNullable<RegistryMirrorRecord['atlas']>['item_summaries'];
+type RawSummary = NonNullable<RegistryMirrorRecord["atlas"]>["item_summaries"];
 
 type SummaryRecord = NonNullable<RawSummary>[number];
 
 function mappedSummaryIdentity(item: SummaryRecord) {
   return {
-    name: item.name, slug: item.slug, title: item.title,
-    description: item.description, type: item.type, category: item.category,
-    source: item.source, provenance: item.provenance,
-    catalogStatus: item.catalog_status ?? item.catalogStatus ?? 'unverified',
+    name: item.name,
+    slug: item.slug,
+    title: item.title,
+    description: item.description,
+    type: item.type,
+    category: item.category,
+    source: item.source,
+    provenance: item.provenance,
+    catalogStatus: item.catalog_status ?? item.catalogStatus ?? "unverified",
     confidence: item.confidence,
   };
 }
@@ -273,10 +279,12 @@ function mapItemSummaries(items: RawSummary): RegistryItemSummary[] {
   return (items ?? []).map(mapItemSummary);
 }
 
-function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): Map<string, string[]> {
+function groupWarningsByNamespace(
+  warnings: readonly MirrorValidationIssue[],
+): Map<string, string[]> {
   const grouped = new Map<string, string[]>();
 
-  warnings.forEach(warning => {
+  warnings.forEach((warning) => {
     if (!warning.namespace) {
       return;
     }
@@ -291,17 +299,18 @@ function groupWarningsByNamespace(warnings: readonly MirrorValidationIssue[]): M
 
 /** Optional evidence artifact. Unknown identities, hosts and tiers fail closed. */
 function isKnownSourceProvenance(record: Record<string, RawJsonInput>): boolean {
-  const reviewed = record.level === 'reviewed'
-    && ['reviewed-summary', 'component-page-verified'].includes(String(record.source));
+  const reviewed =
+    record.level === "reviewed" &&
+    ["reviewed-summary", "component-page-verified"].includes(String(record.source));
 
-  const sitemap = record.level === 'sitemap' && record.source === 'official-sitemap';
-  const pattern = record.level === 'pattern' && record.source === 'verified-route-pattern';
+  const sitemap = record.level === "sitemap" && record.source === "official-sitemap";
+  const pattern = record.level === "pattern" && record.source === "verified-route-pattern";
 
   return reviewed || sitemap || pattern;
 }
 
 function sourceProvenanceIsFresh(record: Record<string, RawJsonInput>): boolean {
-  if (record.level === 'reviewed' && record.source !== 'component-page-verified') return true;
+  if (record.level === "reviewed" && record.source !== "component-page-verified") return true;
   const observed = isInputString(record.observedAt) ? Date.parse(record.observedAt) : NaN;
   const age = Date.now() - observed;
 
@@ -309,9 +318,10 @@ function sourceProvenanceIsFresh(record: Record<string, RawJsonInput>): boolean 
 }
 
 function sourceManifestIdentity(
-  token: string, knownNames: ReadonlyMap<string, ReadonlySet<string>>,
+  token: string,
+  knownNames: ReadonlyMap<string, ReadonlySet<string>>,
 ): string | null {
-  const split = token.indexOf('/');
+  const split = token.indexOf("/");
 
   if (split < 1) return null;
   const namespace = token.slice(0, split);
@@ -329,7 +339,9 @@ function sourceManifestRecord(
   if (!isKnownSourceProvenance(record) || !isInputString(record.url)) return null;
 
   // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
-  return sourceProvenanceIsFresh(record) ? record as Record<string, RawJsonInput> & { url: string } : null;
+  return sourceProvenanceIsFresh(record)
+    ? (record as Record<string, RawJsonInput> & { url: string })
+    : null;
 }
 
 function recognizedSourcePage(
@@ -344,18 +356,21 @@ function recognizedSourcePage(
   const record = sourceManifestRecord(value);
 
   if (!record) return null;
-  const url = verifiedSourcePageUrl(record.url, roots.get(namespace) ?? '');
+  const url = verifiedSourcePageUrl(record.url, roots.get(namespace) ?? "");
 
   if (!url || url !== record.url) return null;
 
   // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
   const page = {
     url,
-    level: record.level as RegistrySourcePage['level'],
-    source: record.source as RegistrySourcePage['source'],
+    level: record.level as RegistrySourcePage["level"],
+    source: record.source as RegistrySourcePage["source"],
   };
 
-  if ((record.level === 'sitemap' || record.level === 'pattern') && isInputString(record.observedAt)) {
+  if (
+    (record.level === "sitemap" || record.level === "pattern") &&
+    isInputString(record.observedAt)
+  ) {
     return { ...page, observedAt: record.observedAt };
   }
 
@@ -373,12 +388,21 @@ export function readSourcePageManifest(
   // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
   const manifest = input as Record<string, RawJsonInput>;
 
-  if (manifest.schema !== 'registry-atlas-source-page-index/v1'
-    || !manifest.pages || !isInputObject(manifest.pages) || Array.isArray(manifest.pages)) return {};
-  const roots = new Map(registries.map(registry => [registry.name, registry.url]));
+  if (
+    manifest.schema !== "registry-atlas-source-page-index/v1" ||
+    !manifest.pages ||
+    !isInputObject(manifest.pages) ||
+    Array.isArray(manifest.pages)
+  )
+    return {};
+  const roots = new Map(registries.map((registry) => [registry.name, registry.url]));
 
-  const knownNames = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
-    [namespace, new Set(items.map(item => item.name))]));
+  const knownNames = new Map(
+    Object.entries(catalog.registries).map(([namespace, items]) => [
+      namespace,
+      new Set(items.map((item) => item.name)),
+    ]),
+  );
 
   const pages = new Map<string, RegistrySourcePage>();
 

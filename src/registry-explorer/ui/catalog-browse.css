@@ -75,7 +75,10 @@
   gap: 1px;
   max-height: none;
 }
-.sidebar-canonical-tree { gap: 2px; }
+
+.sidebar-canonical-tree {
+  gap: 2px;
+}
 
 .sidebar-canonical-family {
   display: grid;
@@ -167,10 +170,17 @@
 }
 
 .sr-only {
-  position: absolute; width: 1px; height: 1px; overflow: hidden;
-  white-space: nowrap; clip-path: inset(50%);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
 }
-.content { padding: 24px 26px 56px; }
+
+.content {
+  padding: 24px 26px 56px;
+}
 
 .catalog-component-grid {
   display: grid;
@@ -190,7 +200,10 @@
   flex-direction: column;
   text-decoration: none;
 }
-.catalog-component-open:focus-visible { outline: none; }
+
+.catalog-component-open:focus-visible {
+  outline: none;
+}
 
 .catalog-component-card-copy,
 .catalog-component-card:has(.catalog-component-original) .catalog-component-card-copy {
@@ -206,7 +219,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.catalog-component-card-copy .catalog-component-registry { font-size: 12px; }
+
+.catalog-component-card-copy .catalog-component-registry {
+  font-size: 12px;
+}
 
 .catalog-component-unavailable,
 .catalog-component-card:has(.catalog-component-unavailable) .catalog-component-unavailable {
@@ -244,8 +260,14 @@
   color: var(--primary);
   text-decoration: underline;
 }
-.catalog-discovery-band-heading { margin-top: 8px; }
-.catalog-discovery-row { gap: 18px; }
+
+.catalog-discovery-band-heading {
+  margin-top: 8px;
+}
+
+.catalog-discovery-row {
+  gap: 18px;
+}
 
 .catalog-results-context {
   display: flex;
@@ -283,7 +305,10 @@
   font-size: 12px;
   cursor: pointer;
 }
-.catalog-applied-filter:hover { border-color: var(--primary); }
+
+.catalog-applied-filter:hover {
+  border-color: var(--primary);
+}
 
 .item-detail-hero {
   display: flex;
@@ -296,24 +321,41 @@
   width: 100%;
   max-width: 100%;
 }
-.item-detail-summary > p { max-width: 70ch; }
-.item-detail-cards { gap: 14px; }
-.item-detail-card { box-shadow: none; }
 
-@media(width <= 860px) {
-  .app-sidebar .aside-inner { overflow-y: auto; }
+.item-detail-summary > p {
+  max-width: 70ch;
+}
+
+.item-detail-cards {
+  gap: 14px;
+}
+
+.item-detail-card {
+  box-shadow: none;
+}
+
+@media (width <= 860px) {
+  .app-sidebar .aside-inner {
+    overflow-y: auto;
+  }
 
   .content {
     padding: 18px 15px 42px;
     min-width: 0;
   }
-  .sidebar-browse-navigation { padding-bottom: 22px; }
+
+  .sidebar-browse-navigation {
+    padding-bottom: 22px;
+  }
 }
 
-@media(width <= 520px) {
+@media (width <= 520px) {
   .catalog-component-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 21px;
   }
-  .catalog-component-card-copy strong { font-size: 15px; }
+
+  .catalog-component-card-copy strong {
+    font-size: 15px;
+  }
 }

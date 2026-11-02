@@ -38,12 +38,14 @@ dependencies, files, and structured `cssVars`; `cssVars` supports `theme`,
 `light`, and `dark` maps.
 
 Primary source:
+
 - https://github.com/shadcn-ui/ui/blob/db2db460a26fa84fb65c8d903b213925fbdee9ed/packages/shadcn/src/registry/schema.ts#L80-L149
 
 The official API forwards dynamic registry search parameters for query, types, limit, and
 offset.
 
 Primary source:
+
 - https://github.com/shadcn-ui/ui/blob/db2db460a26fa84fb65c8d903b213925fbdee9ed/packages/shadcn/src/registry/api.ts#L49-L100
 
 **Recommendation:** preserve native shadcn metadata before creating parallel enrichment
@@ -59,6 +61,7 @@ Its item index flattens real registry items into a searchable shape containing `
 from committed registry views rather than maintaining a second independent data source.
 
 Primary sources:
+
 - https://github.com/rbadillap/registry.directory/blob/5467cd6051ff8a845b3bb81e664438935d10980f/apps/web/lib/registry-items.ts#L9-L66
 - https://github.com/rbadillap/registry.directory/blob/5467cd6051ff8a845b3bb81e664438935d10980f/apps/web/lib/catalog.ts#L15-L42
 - https://github.com/rbadillap/registry.directory/blob/5467cd6051ff8a845b3bb81e664438935d10980f/apps/web/lib/catalog.ts#L96-L139
@@ -68,11 +71,13 @@ Its local indexer writes slim views containing description, categories, dependen
 cssVars, font metadata, and file paths while explicitly avoiding file contents.
 
 Primary source:
+
 - https://github.com/rbadillap/registry.directory/blob/5467cd6051ff8a845b3bb81e664438935d10980f/apps/web/scripts/README.md#L26-L62
 
 It also ships an IDE/source viewer using normalized registry metadata and Shiki.
 
 Primary source:
+
 - https://github.com/rbadillap/registry.directory/blob/5467cd6051ff8a845b3bb81e664438935d10980f/apps/web/components/viewer/code-viewer.tsx#L1-L40
 
 **Recommendation:** adapt this proven “generated slim view + local cross-registry search”
@@ -84,12 +89,14 @@ The current open-source 21st registry CLI documents a component + demo + optiona
 `preview.png` publishing convention. The preview is explicitly supplied.
 
 Primary source:
+
 - https://github.com/21st-dev/registry/blob/93d686812df081cca6532f07bcb145ad22cc5d72/README.md#L45-L105
 
 An earlier open-source 21st.dev codebase documented demos with `preview.png` and optional
 video, and noted Sandpack support for npm dependencies.
 
 Primary source:
+
 - https://github.com/ProfFeynman/21st-Dev/blob/main/README.md#L33-L104
 
 **Recommendation:** Registry Atlas should render real preview media only when it is
@@ -103,6 +110,7 @@ theme values. It also has an allowlist-oriented parser for `:root` and `.dark` C
 variables.
 
 Primary sources:
+
 - https://github.com/jnsahaj/tweakcn/blob/a3b47b37cba97dd637de517aab52c45ec0f83456/app/ai/components/community-theme-card.tsx#L12-L83
 - https://github.com/jnsahaj/tweakcn/blob/a3b47b37cba97dd637de517aab52c45ec0f83456/utils/parse-css-input.ts#L1-L62
 - https://github.com/jnsahaj/tweakcn/blob/a3b47b37cba97dd637de517aab52c45ec0f83456/LICENSE#L1-L18
@@ -117,6 +125,7 @@ Sandpack provides a framework-agnostic client that coordinates with a bundler if
 React components for browser sandboxes.
 
 Primary source:
+
 - https://github.com/codesandbox/sandpack/blob/7d60a4334980eef304d53b1c3df371ed6dbcf491/sandpack-client/README.md
 - https://github.com/codesandbox/sandpack/blob/7d60a4334980eef304d53b1c3df371ed6dbcf491/README.md
 - https://github.com/codesandbox/sandpack/blob/7d60a4334980eef304d53b1c3df371ed6dbcf491/LICENSE
@@ -131,6 +140,7 @@ The shadcn CLI has an `iconsSchema` and fetches its own `icons/index.json`, but 
 common third-party registry item schema does not define a universal glyph-family index.
 
 Primary sources:
+
 - https://github.com/shadcn-ui/ui/blob/db2db460a26fa84fb65c8d903b213925fbdee9ed/packages/shadcn/src/registry/api.ts
 - https://github.com/shadcn-ui/ui/blob/db2db460a26fa84fb65c8d903b213925fbdee9ed/packages/shadcn/src/registry/schema.ts#L80-L101
 
@@ -145,6 +155,7 @@ Tailwind v4. The separate `registry-template-v3` repository is legacy and is not
 this design.
 
 Primary sources:
+
 - https://github.com/shadcn-ui/registry-template
 - https://ui.shadcn.com/docs/registry
 - https://ui.shadcn.com/docs/registry/getting-started
@@ -160,6 +171,7 @@ The v4 template establishes several reusable patterns:
 5. Built items remain standard shadcn CLI-compatible registry items.
 
 Pinned source examples:
+
 - README:
   https://github.com/shadcn-ui/registry-template/blob/906f859db0125965cba71c51da1707c0a4c6d045/README.md
 - registry definition:
@@ -188,6 +200,7 @@ The current shadcn docs also support public GitHub source registries with a root
 `shadcn/schema` programmatic APIs.
 
 Primary sources:
+
 - https://ui.shadcn.com/docs/registry/github
 - https://ui.shadcn.com/docs/registry/api-reference
 - https://ui.shadcn.com/docs/registry/registry-json
@@ -214,6 +227,7 @@ Inspection of the current branch confirms:
 - Templates, Themes, and Icons all reuse that same card.
 
 Inspected local files:
+
 - `scripts/sync-registry-catalog-evidence.mjs`
 - `src/registry-explorer/core/registry.schema.ts`
 - `src/registry-explorer/core/catalogQuery.ts`

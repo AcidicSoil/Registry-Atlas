@@ -39,7 +39,7 @@ The local catalog contains 408 directory registries and 84,153 indexed rows at t
 
 **Validation:** every candidate must be absolute public HTTPS without credentials, nonstandard ports or unsafe hosts. The rendered destination must belong to the corresponding official registry's approved site origin or a documented reviewed exception. It must not be the registry's generic homepage or a raw JSON route. A reviewed match requires an observed final URL and the original page's matching component identity; HTTP status or sitemap candidate alone is insufficient. Recheck stale evidence before publishing. An image may be shown only when its separate visual evidence allows it.
 
-**Publication:** a compact, versioned source-page index may be produced *only from reviewed items*, with one entry per exact identity and checked URL; include the evidence source, observed date and registry homepage. No duplicate, orphan, ambiguous or unsafe record is publishable. The loader treats missing index files as an empty optional enhancement. Preserve previously verified items when refreshing unrelated registries; a failed refresh does not imply deletion. Do not copy private browser captures into the client artifact.
+**Publication:** a compact, versioned source-page index may be produced _only from reviewed items_, with one entry per exact identity and checked URL; include the evidence source, observed date and registry homepage. No duplicate, orphan, ambiguous or unsafe record is publishable. The loader treats missing index files as an empty optional enhancement. Preserve previously verified items when refreshing unrelated registries; a failed refresh does not imply deletion. Do not copy private browser captures into the client artifact.
 
 **Gallery:** internal card navigation is unchanged. A distinct `View original` link appears only for a verified documentation page; a `View registry` link may use a validated official homepage. A verified upstream source JSON route may appear as `View item JSON` only where appropriate, distinctly labeled. Component preview controls and nested external links never activate the internal card route. Follow `rel="noreferrer noopener"` and open verified originals separately.
 
@@ -75,6 +75,7 @@ No database migration, generic crawler, automatic guessed documentation links, s
 ## Ownership and rollback
 
 Deep-link link resolution stays near the existing query/detail projection; rendering stays in existing card and detail views. Adding an optional manifest requires a versioned loader and a no-manifest fallback. Revert the new resolver/view changes to restore previous route behavior without rewriting catalog identities or deleting existing verified preview data.
+
 ## Implementation checkpoint
 
 At the first independently testable increment, the following behavior is implemented in branch `feat/atlas-catalog-source-links`:

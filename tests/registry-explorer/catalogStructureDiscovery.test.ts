@@ -1,6 +1,13 @@
-import { describe, expect, it } from 'vitest';
-// @ts-ignore Standalone Node ESM script.
-import { classifyObservedAccess, deriveCatalogSurfaceCandidates, discoverCatalogGroups, normalizeCatalogKind, resolveDirectMembership, shortlistObservedGroupLabels } from '../../scripts/lib/catalog-structure-discovery.mjs';
+import { describe, expect, it } from "vitest";
+import {
+  classifyObservedAccess,
+  deriveCatalogSurfaceCandidates,
+  discoverCatalogGroups,
+  normalizeCatalogKind,
+  resolveDirectMembership,
+  shortlistObservedGroupLabels,
+  // @ts-ignore Standalone Node ESM script.
+} from "../../scripts/lib/catalog-structure-discovery.mjs";
 
 type Link = { text: string; href: string; heading?: string };
 
@@ -20,7 +27,7 @@ function observation({
   containers?: Container[];
 }) {
   return {
-    title: 'Fixture',
+    title: "Fixture",
     url,
     pathname: new URL(url).pathname,
     ranges,
@@ -29,440 +36,563 @@ function observation({
   };
 }
 
-const item = (name: string, type = 'registry:component') => ({ name, type });
+const item = (name: string, type = "registry:component") => ({ name, type });
 
-describe('catalog structure discovery', () => {
-  it('discovers Kobra-style source groups from nav heading ranges', () => {
+describe("catalog structure discovery", () => {
+  it("discovers Kobra-style source groups from nav heading ranges", () => {
     const page = observation({
-      url: 'https://example.test/components/input-otp',
+      url: "https://example.test/components/input-otp",
       ranges: [
-        { text: 'Free', ownerTag: 'NAV', links: [
-          { text: 'Input OTP', href: '/components/input-otp' },
-          { text: 'Navigation Menu', href: '/components/navigation-menu' },
-        ] },
-        { text: 'Agents', ownerTag: 'NAV', links: [
-          { text: 'Reasoning Steps', href: '/components/reasoning-steps' },
-          { text: 'File Diff', href: '/components/file-diff' },
-        ] },
+        {
+          text: "Free",
+          ownerTag: "NAV",
+          links: [
+            { text: "Input OTP", href: "/components/input-otp" },
+            { text: "Navigation Menu", href: "/components/navigation-menu" },
+          ],
+        },
+        {
+          text: "Agents",
+          ownerTag: "NAV",
+          links: [
+            { text: "Reasoning Steps", href: "/components/reasoning-steps" },
+            { text: "File Diff", href: "/components/file-diff" },
+          ],
+        },
       ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('input-otp'), item('navigation-menu'), item('reasoning-steps'), item('file-diff')],
+      knownItems: [
+        item("input-otp"),
+        item("navigation-menu"),
+        item("reasoning-steps"),
+        item("file-diff"),
+      ],
     });
 
     expect(result.groups.map((group: any) => [group.label, group.memberIds])).toEqual([
-      ['Free', ['input-otp', 'navigation-menu']],
-      ['Agents', ['reasoning-steps', 'file-diff']],
+      ["Free", ["input-otp", "navigation-menu"]],
+      ["Agents", ["reasoning-steps", "file-diff"]],
     ]);
   });
 
-  it('rejects a generic Categories umbrella heading even when it contains catalog links', () => {
+  it("rejects a generic Categories umbrella heading even when it contains catalog links", () => {
     const page = observation({
-      url: 'https://example.test/components',
-      ranges: [{
-        text: 'Categories',
-        ownerTag: 'NAV',
-        links: [
-          { text: 'Button', href: '/components/button' },
-          { text: 'Card', href: '/components/card' },
-        ],
-      }],
+      url: "https://example.test/components",
+      ranges: [
+        {
+          text: "Categories",
+          ownerTag: "NAV",
+          links: [
+            { text: "Button", href: "/components/button" },
+            { text: "Card", href: "/components/card" },
+          ],
+        },
+      ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('button'), item('card')],
+      knownItems: [item("button"), item("card")],
     });
 
     expect(result.groups).toEqual([]);
   });
 
-  it('does not turn unrelated FAQ/help headings into groups', () => {
+  it("does not turn unrelated FAQ/help headings into groups", () => {
     const page = observation({
-      url: 'https://example.test/design/components',
+      url: "https://example.test/design/components",
       ranges: [
-        { text: 'Actions', ownerTag: 'NAV', links: [
-          { text: 'Button', href: '/design/components/button' },
-          { text: 'Copy Button', href: '/design/components/copy-button' },
-        ] },
-        { text: 'Is it accessible?', ownerTag: 'SECTION', links: [
-          { text: 'Button', href: '/design/components/button' },
-          { text: 'Copy Button', href: '/design/components/copy-button' },
-        ] },
+        {
+          text: "Actions",
+          ownerTag: "NAV",
+          links: [
+            { text: "Button", href: "/design/components/button" },
+            { text: "Copy Button", href: "/design/components/copy-button" },
+          ],
+        },
+        {
+          text: "Is it accessible?",
+          ownerTag: "SECTION",
+          links: [
+            { text: "Button", href: "/design/components/button" },
+            { text: "Copy Button", href: "/design/components/copy-button" },
+          ],
+        },
       ],
-      containers: [{
-        tag: 'SECTION',
-        heads: [{ text: 'Is it accessible?' }, { text: 'Is it styled?' }],
-        links: [
-          { text: 'Button', href: '/design/components/button' },
-          { text: 'Copy Button', href: '/design/components/copy-button' },
-        ],
-      }],
+      containers: [
+        {
+          tag: "SECTION",
+          heads: [{ text: "Is it accessible?" }, { text: "Is it styled?" }],
+          links: [
+            { text: "Button", href: "/design/components/button" },
+            { text: "Copy Button", href: "/design/components/copy-button" },
+          ],
+        },
+      ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('button'), item('copy-button')],
+      knownItems: [item("button"), item("copy-button")],
     });
 
-    expect(result.groups.map((group: any) => group.label)).toEqual(['Actions']);
+    expect(result.groups.map((group: any) => group.label)).toEqual(["Actions"]);
   });
 
-  it('discovers heading-range groups when member routes nest under the heading slug', () => {
+  it("discovers heading-range groups when member routes nest under the heading slug", () => {
     const page = observation({
-      url: 'https://example.test/docs/blocks',
+      url: "https://example.test/docs/blocks",
       ranges: [
-        { text: 'Hero', ownerTag: 'DIV', links: [
-          { text: 'Hero 1', href: '/docs/blocks/hero/hero1' },
-          { text: 'Hero 2', href: '/docs/blocks/hero/hero2' },
-        ] },
-        { text: 'Pricing', ownerTag: 'DIV', links: [
-          { text: 'Pricing 1', href: '/docs/blocks/pricing/pricing1' },
-        ] },
+        {
+          text: "Hero",
+          ownerTag: "DIV",
+          links: [
+            { text: "Hero 1", href: "/docs/blocks/hero/hero1" },
+            { text: "Hero 2", href: "/docs/blocks/hero/hero2" },
+          ],
+        },
+        {
+          text: "Pricing",
+          ownerTag: "DIV",
+          links: [{ text: "Pricing 1", href: "/docs/blocks/pricing/pricing1" }],
+        },
       ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('hero/hero1', 'registry:block'), item('hero/hero2', 'registry:block'), item('pricing/pricing1', 'registry:block')],
+      knownItems: [
+        item("hero/hero1", "registry:block"),
+        item("hero/hero2", "registry:block"),
+        item("pricing/pricing1", "registry:block"),
+      ],
     });
 
     expect(result.groups.map((group: any) => [group.label, group.sourcePattern])).toEqual([
-      ['Hero', 'heading-range'],
-      ['Pricing', 'heading-range'],
+      ["Hero", "heading-range"],
+      ["Pricing", "heading-range"],
     ]);
   });
 
-  it('discovers category cards without treating the category URL as an item', () => {
+  it("discovers category cards without treating the category URL as an item", () => {
     const page = observation({
-      url: 'https://example.test/blocks',
+      url: "https://example.test/blocks",
       ranges: [
-        { text: 'Hero Sections', ownerTag: 'ARTICLE', links: [
-          { text: 'Hero Sections', href: '/blocks/hero-sections' },
-          { text: 'View category', href: '/blocks/hero-sections' },
-        ] },
-        { text: 'Pricing Sections', ownerTag: 'ARTICLE', links: [
-          { text: 'Pricing Sections', href: '/blocks/pricing-sections' },
-        ] },
+        {
+          text: "Hero Sections",
+          ownerTag: "ARTICLE",
+          links: [
+            { text: "Hero Sections", href: "/blocks/hero-sections" },
+            { text: "View category", href: "/blocks/hero-sections" },
+          ],
+        },
+        {
+          text: "Pricing Sections",
+          ownerTag: "ARTICLE",
+          links: [{ text: "Pricing Sections", href: "/blocks/pricing-sections" }],
+        },
       ],
       links: [
-        { text: 'Hero Sections', href: '/blocks/hero-sections', heading: 'Hero Sections' },
-        { text: 'Pricing Sections', href: '/blocks/pricing-sections', heading: 'Pricing Sections' },
+        { text: "Hero Sections", href: "/blocks/hero-sections", heading: "Hero Sections" },
+        { text: "Pricing Sections", href: "/blocks/pricing-sections", heading: "Pricing Sections" },
       ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('hero-01', 'registry:block'), item('pricing-01', 'registry:block')],
+      knownItems: [item("hero-01", "registry:block"), item("pricing-01", "registry:block")],
     });
 
     expect(result.groups.map((group: any) => [group.label, group.sourcePattern])).toEqual([
-      ['Hero Sections', 'category-card'],
-      ['Pricing Sections', 'category-card'],
+      ["Hero Sections", "category-card"],
+      ["Pricing Sections", "category-card"],
     ]);
     expect(result.groups[0].links).toEqual([
-      expect.objectContaining({ href: '/blocks/hero-sections' }),
+      expect.objectContaining({ href: "/blocks/hero-sections" }),
     ]);
   });
 
-  it('discovers a peer category-link collection and preserves exact labels', () => {
+  it("discovers a peer category-link collection and preserves exact labels", () => {
     const page = observation({
-      url: 'https://example.test/blocks/marketing',
+      url: "https://example.test/blocks/marketing",
       links: [
-        { text: 'Blog', href: '/blocks/marketing/blog' },
-        { text: 'How It Works', href: '/blocks/marketing/how-it-works' },
-        { text: 'Pricing', href: '/blocks/marketing/pricing' },
+        { text: "Blog", href: "/blocks/marketing/blog" },
+        { text: "How It Works", href: "/blocks/marketing/how-it-works" },
+        { text: "Pricing", href: "/blocks/marketing/pricing" },
       ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('hero-01', 'registry:block')],
+      knownItems: [item("hero-01", "registry:block")],
     });
 
     expect(result.groups.map((group: any) => group.label)).toEqual([
-      'Blog', 'How It Works', 'Pricing',
+      "Blog",
+      "How It Works",
+      "Pricing",
     ]);
-    expect(result.groups.every((group: any) => group.sourcePattern === 'category-link')).toBe(true);
+    expect(result.groups.every((group: any) => group.sourcePattern === "category-link")).toBe(true);
   });
 
-  it('does not treat a small minority of unknown peer item links as categories', () => {
+  it("does not treat a small minority of unknown peer item links as categories", () => {
     const page = observation({
-      url: 'https://example.test/components',
+      url: "https://example.test/components",
       links: [
-        { text: 'Button', href: '/components/button' },
-        { text: 'Input', href: '/components/input' },
-        { text: 'Card', href: '/components/card' },
-        { text: 'Dialog', href: '/components/dialog' },
-        { text: 'Lamp Effect', href: '/components/lamp-effect' },
-        { text: 'Signup Form', href: '/components/signup-form' },
+        { text: "Button", href: "/components/button" },
+        { text: "Input", href: "/components/input" },
+        { text: "Card", href: "/components/card" },
+        { text: "Dialog", href: "/components/dialog" },
+        { text: "Lamp Effect", href: "/components/lamp-effect" },
+        { text: "Signup Form", href: "/components/signup-form" },
       ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('button'), item('input'), item('card'), item('dialog')],
+      knownItems: [item("button"), item("input"), item("card"), item("dialog")],
     });
 
     expect(result.groups).toEqual([]);
     expect(result.observedAssets.map((asset: any) => asset.id)).toEqual([
-      'button', 'input', 'card', 'dialog',
+      "button",
+      "input",
+      "card",
+      "dialog",
     ]);
   });
 
-  it('does not turn a one-heading marketing section into a source group', () => {
+  it("does not turn a one-heading marketing section into a source group", () => {
     const page = observation({
-      url: 'https://example.test/docs',
-      containers: [{
-        tag: 'SECTION',
-        heads: [{ text: 'Three doors into the library.', tag: 'H2' }],
-        links: [
-          { text: 'Icon library', href: '/docs/icon' },
-          { text: 'Shape studio', href: '/docs/shape' },
-          { text: 'Bento studio', href: '/docs/bento-grid' },
-        ],
-      }],
+      url: "https://example.test/docs",
+      containers: [
+        {
+          tag: "SECTION",
+          heads: [{ text: "Three doors into the library.", tag: "H2" }],
+          links: [
+            { text: "Icon library", href: "/docs/icon" },
+            { text: "Shape studio", href: "/docs/shape" },
+            { text: "Bento studio", href: "/docs/bento-grid" },
+          ],
+        },
+      ],
       links: [
-        { text: 'Icon library', href: '/docs/icon' },
-        { text: 'Shape studio', href: '/docs/shape' },
-        { text: 'Bento studio', href: '/docs/bento-grid' },
+        { text: "Icon library", href: "/docs/icon" },
+        { text: "Shape studio", href: "/docs/shape" },
+        { text: "Bento studio", href: "/docs/bento-grid" },
       ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('icon'), item('shape'), item('bento-grid')],
+      knownItems: [item("icon"), item("shape"), item("bento-grid")],
     });
 
     expect(result.groups).toEqual([]);
     expect(result.observedAssets.map((asset: any) => asset.id)).toEqual([
-      'icon', 'shape', 'bento-grid',
+      "icon",
+      "shape",
+      "bento-grid",
     ]);
   });
 
-  it('keeps a flat catalog group-less even when it has a feature heading', () => {
+  it("keeps a flat catalog group-less even when it has a feature heading", () => {
     const page = observation({
-      url: 'https://example.test/docs/components',
-      ranges: [{
-        text: 'Command Palette',
-        ownerTag: 'SECTION',
-        links: [
-          { text: 'Magic Card', href: '/docs/components/magic-card' },
-          { text: 'Globe', href: '/docs/components/globe' },
-        ],
-      }],
-      containers: [{
-        tag: 'SECTION',
-        heads: [{ text: 'Command Palette' }, { text: 'Components' }],
-        links: [
-          { text: 'Magic Card', href: '/docs/components/magic-card' },
-          { text: 'Globe', href: '/docs/components/globe' },
-        ],
-      }],
+      url: "https://example.test/docs/components",
+      ranges: [
+        {
+          text: "Command Palette",
+          ownerTag: "SECTION",
+          links: [
+            { text: "Magic Card", href: "/docs/components/magic-card" },
+            { text: "Globe", href: "/docs/components/globe" },
+          ],
+        },
+      ],
+      containers: [
+        {
+          tag: "SECTION",
+          heads: [{ text: "Command Palette" }, { text: "Components" }],
+          links: [
+            { text: "Magic Card", href: "/docs/components/magic-card" },
+            { text: "Globe", href: "/docs/components/globe" },
+          ],
+        },
+      ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('magic-card'), item('globe')],
+      knownItems: [item("magic-card"), item("globe")],
     });
 
     expect(result.groups).toEqual([]);
   });
 
-  it('does not conflate repeated nested leaves', () => {
+  it("does not conflate repeated nested leaves", () => {
     const page = observation({
-      url: 'https://example.test/docs/forms',
-      ranges: [{
-        text: 'Inputs',
-        ownerTag: 'NAV',
-        links: [{ text: 'Select', href: '/docs/forms/select' }],
-      }],
+      url: "https://example.test/docs/forms",
+      ranges: [
+        {
+          text: "Inputs",
+          ownerTag: "NAV",
+          links: [{ text: "Select", href: "/docs/forms/select" }],
+        },
+      ],
     });
 
     const result = discoverCatalogGroups(page, {
-      knownItems: [item('forms/select'), item('lists/select')],
+      knownItems: [item("forms/select"), item("lists/select")],
     });
 
     expect(result.groups).toEqual([]);
   });
 
-  it('preserves explicit multi-group direct membership', () => {
+  it("preserves explicit multi-group direct membership", () => {
     const groups = [
-      { label: 'Free', memberIds: ['button'] },
-      { label: 'Actions', memberIds: ['button', 'copy-button'] },
+      { label: "Free", memberIds: ["button"] },
+      { label: "Actions", memberIds: ["button", "copy-button"] },
     ];
 
-    expect(resolveDirectMembership('button', groups)).toEqual(['Free', 'Actions']);
-    expect(resolveDirectMembership('missing', groups)).toEqual([]);
+    expect(resolveDirectMembership("button", groups)).toEqual(["Free", "Actions"]);
+    expect(resolveDirectMembership("missing", groups)).toEqual([]);
   });
 
-  it('keeps small observed group sets unchanged for bounded decisions', () => {
-    const groups = ['Forms', 'Navigation'].map(label => ({ label }));
-    expect(shortlistObservedGroupLabels({ id: 'select', text: 'Select' }, groups)).toEqual([
-      'Forms', 'Navigation',
+  it("keeps small observed group sets unchanged for bounded decisions", () => {
+    const groups = ["Forms", "Navigation"].map((label) => ({ label }));
+    expect(shortlistObservedGroupLabels({ id: "select", text: "Select" }, groups)).toEqual([
+      "Forms",
+      "Navigation",
     ]);
   });
 
-  it('narrows large observed group sets by exact item-label token overlap', () => {
+  it("narrows large observed group sets by exact item-label token overlap", () => {
     const groups = [
       ...Array.from({ length: 20 }, (_, index) => ({ label: `Category ${index}` })),
-      { label: 'Button' },
-      { label: 'Button Group' },
-      { label: 'Avatar' },
+      { label: "Button" },
+      { label: "Button Group" },
+      { label: "Avatar" },
     ];
 
-    expect(shortlistObservedGroupLabels({ id: 'border-button', text: 'Border Button' }, groups)).toEqual([
-      'Button', 'Button Group',
-    ]);
+    expect(
+      shortlistObservedGroupLabels({ id: "border-button", text: "Border Button" }, groups),
+    ).toEqual(["Button", "Button Group"]);
   });
 
-  it('returns no shortlist for a large group set with no item-label overlap', () => {
+  it("returns no shortlist for a large group set with no item-label overlap", () => {
     const groups = Array.from({ length: 20 }, (_, index) => ({ label: `Category ${index}` }));
-    expect(shortlistObservedGroupLabels({ id: 'sparkline', text: 'Sparkline' }, groups)).toEqual([]);
+    expect(shortlistObservedGroupLabels({ id: "sparkline", text: "Sparkline" }, groups)).toEqual(
+      [],
+    );
   });
 
-  it('classifies explicit access evidence without treating non-Free as paid', () => {
-    expect(classifyObservedAccess({ groups: ['Free'], markers: [] })).toBe('free');
-    expect(classifyObservedAccess({ groups: ['Hero'], markers: ['Premium'] })).toBe('paid');
-    expect(classifyObservedAccess({ groups: ['Hero'], markers: [] })).toBe('unknown');
-    expect(classifyObservedAccess({ groups: ['Free'], markers: ['Premium'] })).toBe('unknown');
+  it("classifies explicit access evidence without treating non-Free as paid", () => {
+    expect(classifyObservedAccess({ groups: ["Free"], markers: [] })).toBe("free");
+    expect(classifyObservedAccess({ groups: ["Hero"], markers: ["Premium"] })).toBe("paid");
+    expect(classifyObservedAccess({ groups: ["Hero"], markers: [] })).toBe("unknown");
+    expect(classifyObservedAccess({ groups: ["Free"], markers: ["Premium"] })).toBe("unknown");
   });
 
-  it('normalizes common asset kinds without collapsing blocks or pages', () => {
-    expect(normalizeCatalogKind('registry:block')).toBe('block');
-    expect(normalizeCatalogKind('registry:page')).toBe('page');
-    expect(normalizeCatalogKind('registry:theme')).toBe('theme');
-    expect(normalizeCatalogKind('registry:style')).toBe('theme');
-    expect(normalizeCatalogKind('registry:component')).toBe('component');
-    expect(normalizeCatalogKind('registry:ui')).toBe('component');
-    expect(normalizeCatalogKind('registry:icon')).toBe('icon');
-    expect(normalizeCatalogKind('registry:unknown')).toBe('other');
+  it("normalizes common asset kinds without collapsing blocks or pages", () => {
+    expect(normalizeCatalogKind("registry:block")).toBe("block");
+    expect(normalizeCatalogKind("registry:page")).toBe("page");
+    expect(normalizeCatalogKind("registry:theme")).toBe("theme");
+    expect(normalizeCatalogKind("registry:style")).toBe("theme");
+    expect(normalizeCatalogKind("registry:component")).toBe("component");
+    expect(normalizeCatalogKind("registry:ui")).toBe("component");
+    expect(normalizeCatalogKind("registry:icon")).toBe("icon");
+    expect(normalizeCatalogKind("registry:unknown")).toBe("other");
   });
 });
 
-
-describe('catalog surface planning', () => {
-  it('derives collection surfaces from observed route templates without fabricating item URLs', () => {
+describe("catalog surface planning", () => {
+  it("derives collection surfaces from observed route templates without fabricating item URLs", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/',
+      homepage: "https://example.test/",
       routePatterns: [
-        { template: 'https://example.test/docs/{slug}/', source: 'browser-observed', status: 'verified' },
-        { template: 'https://example.test/blocks/{slug}', source: 'official-sitemap', status: 'unverified' },
+        {
+          template: "https://example.test/docs/{slug}/",
+          source: "browser-observed",
+          status: "verified",
+        },
+        {
+          template: "https://example.test/blocks/{slug}",
+          source: "official-sitemap",
+          status: "unverified",
+        },
       ],
-      examples: [
-        { slug: 'forms/select', url: 'https://example.test/docs/forms/select/' },
-      ],
+      examples: [{ slug: "forms/select", url: "https://example.test/docs/forms/select/" }],
       itemRoutes: [
-        { slug: 'button', source_url: 'https://example.test/docs/button/', status: 'pattern-observed' },
-        { slug: 'guessed', source_url: 'https://example.test/docs/guessed/', status: 'pattern-inferred' },
+        {
+          slug: "button",
+          source_url: "https://example.test/docs/button/",
+          status: "pattern-observed",
+        },
+        {
+          slug: "guessed",
+          source_url: "https://example.test/docs/guessed/",
+          status: "pattern-inferred",
+        },
       ],
-      sitemapLinks: [
-        { slug: 'card', url: 'https://example.test/docs/card/' },
-      ],
+      sitemapLinks: [{ slug: "card", url: "https://example.test/docs/card/" }],
     });
 
     expect(surfaces.map((surface: any) => surface.url)).toEqual([
-      'https://example.test/docs/',
-      'https://example.test/blocks/',
-      'https://example.test/',
+      "https://example.test/docs/",
+      "https://example.test/blocks/",
+      "https://example.test/",
     ]);
-    expect(surfaces.some((surface: any) => surface.url.endsWith('/button/'))).toBe(false);
-    expect(surfaces.some((surface: any) => surface.url.endsWith('/guessed/'))).toBe(false);
+    expect(surfaces.some((surface: any) => surface.url.endsWith("/button/"))).toBe(false);
+    expect(surfaces.some((surface: any) => surface.url.endsWith("/guessed/"))).toBe(false);
   });
 
-  it('adds and prioritizes the nearest catalog collection ancestor for deep route patterns', () => {
+  it("adds and prioritizes the nearest catalog collection ancestor for deep route patterns", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/',
+      homepage: "https://example.test/",
       routePatterns: [
-        { template: 'https://example.test/docs/components/{slug}', source: 'browser-observed', status: 'verified' },
-        { template: 'https://example.test/docs/blocks/gaming/{slug}', source: 'browser-observed', status: 'verified' },
-        { template: 'https://example.test/docs/blocks/authentication/{slug}', source: 'browser-observed', status: 'verified' },
+        {
+          template: "https://example.test/docs/components/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
+        {
+          template: "https://example.test/docs/blocks/gaming/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
+        {
+          template: "https://example.test/docs/blocks/authentication/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
       ],
     });
 
     expect(surfaces.map((surface: any) => surface.url).slice(0, 4)).toEqual([
-      'https://example.test/docs/components/',
-      'https://example.test/docs/blocks/',
-      'https://example.test/docs/blocks/gaming/',
-      'https://example.test/docs/blocks/authentication/',
+      "https://example.test/docs/components/",
+      "https://example.test/docs/blocks/",
+      "https://example.test/docs/blocks/gaming/",
+      "https://example.test/docs/blocks/authentication/",
     ]);
   });
 
-  it('rejects collection surfaces that do not match the registry\'s known asset kinds', () => {
+  it("rejects collection surfaces that do not match the registry's known asset kinds", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/',
-      knownItems: [item('hero-1', 'registry:block'), item('pricing-1', 'registry:block')],
+      homepage: "https://example.test/",
+      knownItems: [item("hero-1", "registry:block"), item("pricing-1", "registry:block")],
       routePatterns: [
-        { template: 'https://example.test/blocks/{slug}', source: 'browser-observed', status: 'verified' },
+        {
+          template: "https://example.test/blocks/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
       ],
       sitemapLinks: [
-        { slug: 'saas-landing', url: 'https://example.test/templates/saas-landing' },
-        { slug: 'hero-1', url: 'https://example.test/blocks/hero-1' },
+        { slug: "saas-landing", url: "https://example.test/templates/saas-landing" },
+        { slug: "hero-1", url: "https://example.test/blocks/hero-1" },
       ],
     });
 
     expect(surfaces.map((surface: any) => surface.url)).toEqual([
-      'https://example.test/blocks/',
-      'https://example.test/',
+      "https://example.test/blocks/",
+      "https://example.test/",
     ]);
   });
 
-  it('never uses examples or item routes attached to a failed route pattern', () => {
+  it("never uses examples or item routes attached to a failed route pattern", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/',
+      homepage: "https://example.test/",
       examples: [
-        { slug: 'startup', url: 'https://example.test/templates/startup', pattern_status: 'failed' },
-        { slug: 'button', url: 'https://example.test/blocks/button', pattern_status: 'verified' },
+        {
+          slug: "startup",
+          url: "https://example.test/templates/startup",
+          pattern_status: "failed",
+        },
+        { slug: "button", url: "https://example.test/blocks/button", pattern_status: "verified" },
       ],
       itemRoutes: [
-        { slug: 'pricing', source_url: 'https://example.test/templates/pricing', status: 'pattern-observed', pattern_status: 'failed' },
-        { slug: 'hero', source_url: 'https://example.test/blocks/hero', status: 'pattern-observed', pattern_status: 'verified' },
+        {
+          slug: "pricing",
+          source_url: "https://example.test/templates/pricing",
+          status: "pattern-observed",
+          pattern_status: "failed",
+        },
+        {
+          slug: "hero",
+          source_url: "https://example.test/blocks/hero",
+          status: "pattern-observed",
+          pattern_status: "verified",
+        },
       ],
     });
 
     expect(surfaces.map((surface: any) => surface.url)).toEqual([
-      'https://example.test/blocks/',
-      'https://example.test/',
+      "https://example.test/blocks/",
+      "https://example.test/",
     ]);
   });
 
-  it('never uses a failed route pattern even when its source was observed', () => {
+  it("never uses a failed route pattern even when its source was observed", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/',
+      homepage: "https://example.test/",
       routePatterns: [
-        { template: 'https://example.test/blocks/{slug}', source: 'browser-observed', status: 'unverified' },
-        { template: 'https://example.test/templates/{slug}', source: 'official-sitemap', status: 'failed' },
+        {
+          template: "https://example.test/blocks/{slug}",
+          source: "browser-observed",
+          status: "unverified",
+        },
+        {
+          template: "https://example.test/templates/{slug}",
+          source: "official-sitemap",
+          status: "failed",
+        },
       ],
     });
 
     expect(surfaces.map((surface: any) => surface.url)).toEqual([
-      'https://example.test/blocks/',
-      'https://example.test/',
+      "https://example.test/blocks/",
+      "https://example.test/",
     ]);
   });
 
-  it('accepts the canonical bare-domain and www pair for catalog surfaces', () => {
+  it("accepts the canonical bare-domain and www pair for catalog surfaces", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/',
-      knownItems: [item('hero-1', 'registry:block')],
+      homepage: "https://example.test/",
+      knownItems: [item("hero-1", "registry:block")],
       routePatterns: [
-        { template: 'https://www.example.test/blocks/{slug}', source: 'browser-observed', status: 'verified' },
+        {
+          template: "https://www.example.test/blocks/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
       ],
     });
 
-    expect(surfaces.map((surface: any) => surface.url)).toContain('https://www.example.test/blocks/');
+    expect(surfaces.map((surface: any) => surface.url)).toContain(
+      "https://www.example.test/blocks/",
+    );
   });
 
-  it('rejects off-origin and non-https surface evidence and deduplicates equivalent parents', () => {
+  it("rejects off-origin and non-https surface evidence and deduplicates equivalent parents", () => {
     const surfaces = deriveCatalogSurfaceCandidates({
-      homepage: 'https://example.test/catalog',
+      homepage: "https://example.test/catalog",
       routePatterns: [
-        { template: 'https://evil.test/docs/{slug}', source: 'browser-observed', status: 'verified' },
-        { template: 'http://example.test/docs/{slug}', source: 'browser-observed', status: 'verified' },
-        { template: 'https://example.test/catalog/{slug}', source: 'browser-observed', status: 'verified' },
+        {
+          template: "https://evil.test/docs/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
+        {
+          template: "http://example.test/docs/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
+        {
+          template: "https://example.test/catalog/{slug}",
+          source: "browser-observed",
+          status: "verified",
+        },
       ],
       examples: [
-        { slug: 'button', url: 'https://example.test/catalog/button' },
-        { slug: 'card', url: 'https://evil.test/catalog/card' },
+        { slug: "button", url: "https://example.test/catalog/button" },
+        { slug: "card", url: "https://evil.test/catalog/card" },
       ],
     });
 
-    expect(surfaces).toEqual([
-      expect.objectContaining({ url: 'https://example.test/catalog/' }),
-    ]);
+    expect(surfaces).toEqual([expect.objectContaining({ url: "https://example.test/catalog/" })]);
   });
 });
-

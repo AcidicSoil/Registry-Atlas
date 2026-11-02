@@ -1,15 +1,15 @@
-import { isInputObject, isInputString } from './lib/input-guards.mjs';
-import { createHash } from 'node:crypto';
-import { pathToFileURL } from 'node:url';
+import { isInputObject, isInputString } from "./lib/input-guards.mjs";
+import { createHash } from "node:crypto";
+import { pathToFileURL } from "node:url";
 import {
   openAtlasCoreDatabase,
   putDocument,
   readClassificationRun,
   readClassificationRunItems,
   readDocument,
-} from './lib/atlas-storage.mjs';
+} from "./lib/atlas-storage.mjs";
 
-const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
+const KINDS = new Set(["component", "block", "page", "template", "theme", "icon", "other"]);
 
 const FINGERPRINT = /^sha256:[a-f0-9]{64}$/;
 
@@ -24,31 +24,33 @@ function requiredString(value, field) {
 }
 
 function validateExpected(expected) {
-  if (!isRecord(expected) || !KINDS.has(expected.kind)) throw new Error('Gold expected kind is invalid');
+  if (!isRecord(expected) || !KINDS.has(expected.kind))
+    throw new Error("Gold expected kind is invalid");
 
-  if (!Array.isArray(expected.path) || expected.path.some(id => !isInputString(id) || !id)) {
-    throw new Error('Gold expected path is invalid');
+  if (!Array.isArray(expected.path) || expected.path.some((id) => !isInputString(id) || !id)) {
+    throw new Error("Gold expected path is invalid");
   }
 
   if (expected.primary === null) {
-    if (expected.path.length) throw new Error('Gold expected path must be empty when primary is null');
+    if (expected.path.length)
+      throw new Error("Gold expected path must be empty when primary is null");
   } else {
-    const primary = requiredString(expected.primary, 'Gold expected primary');
+    const primary = requiredString(expected.primary, "Gold expected primary");
 
     if (!expected.path.length || expected.path.at(-1) !== primary) {
-      throw new Error('Gold expected path must end at primary');
+      throw new Error("Gold expected path must end at primary");
     }
 
     for (let index = 0; index < expected.path.length; index += 1) {
       const id = expected.path[index];
 
       if (index === 0) {
-        if (id.includes('/')) throw new Error('Gold expected path must begin at a root');
+        if (id.includes("/")) throw new Error("Gold expected path must begin at a root");
       } else {
         const parent = expected.path[index - 1];
 
-        if (!id.startsWith(`${parent}/`) || id.split('/').length !== parent.split('/').length + 1) {
-          throw new Error('Gold expected path must be hierarchical');
+        if (!id.startsWith(`${parent}/`) || id.split("/").length !== parent.split("/").length + 1) {
+          throw new Error("Gold expected path must be hierarchical");
         }
       }
     }
@@ -58,21 +60,22 @@ function validateExpected(expected) {
 }
 
 export function validateGoldSet(value) {
-  if (!isRecord(value)) throw new Error('Gold set must be an object');
-  const version = requiredString(value.version, 'Gold version');
-  const taxonomyVersion = requiredString(value.taxonomyVersion, 'Gold taxonomyVersion');
+  if (!isRecord(value)) throw new Error("Gold set must be an object");
+  const version = requiredString(value.version, "Gold version");
+  const taxonomyVersion = requiredString(value.taxonomyVersion, "Gold taxonomyVersion");
 
-  if (!Array.isArray(value.records) || value.records.length === 0) throw new Error('Gold records are required');
+  if (!Array.isArray(value.records) || value.records.length === 0)
+    throw new Error("Gold records are required");
   const seen = new Set();
 
-  const records = value.records.map(raw => {
-    if (!isRecord(raw) || !isRecord(raw.item)) throw new Error('Gold record is invalid');
-    const registry = requiredString(raw.registry, 'Gold registry');
+  const records = value.records.map((raw) => {
+    if (!isRecord(raw) || !isRecord(raw.item)) throw new Error("Gold record is invalid");
+    const registry = requiredString(raw.registry, "Gold registry");
 
-    if (!registry.startsWith('@')) throw new Error('Gold registry must be a namespace');
-    const name = requiredString(raw.item.name, 'Gold item name');
+    if (!registry.startsWith("@")) throw new Error("Gold registry must be a namespace");
+    const name = requiredString(raw.item.name, "Gold item name");
 
-    if (!KINDS.has(raw.item.kind)) throw new Error('Gold item kind is invalid');
+    if (!KINDS.has(raw.item.kind)) throw new Error("Gold item kind is invalid");
     const key = `${registry}/${name}`;
 
     if (seen.has(key)) throw new Error(`Duplicate gold identity: ${key}`);
@@ -92,13 +95,23 @@ export function validateGoldSet(value) {
 function stable(value) {
   if (Array.isArray(value)) return value.map(stable);
 
-  if (isRecord(value)) return Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])]));
+  if (isRecord(value))
+    return Object.fromEntries(
+      Object.keys(value)
+        .sort()
+        .map((key) => [key, stable(value[key])]),
+    );
 
   return value;
 }
 
 export function catalogArtifactFingerprint(value) {
-  return 'sha256:' + createHash('sha256').update(JSON.stringify(stable(value))).digest('hex');
+  return (
+    "sha256:" +
+    createHash("sha256")
+      .update(JSON.stringify(stable(value)))
+      .digest("hex")
+  );
 }
 
 function identity(namespace, name) {
@@ -115,11 +128,16 @@ function numericSummary(values) {
   if (!nums.length) return { count: 0, min: null, max: null, mean: null };
   const sum = nums.reduce((total, value) => total + value, 0);
 
-  return { count: nums.length, min: Math.min(...nums), max: Math.max(...nums), mean: sum / nums.length };
+  return {
+    count: nums.length,
+    min: Math.min(...nums),
+    max: Math.max(...nums),
+    mean: sum / nums.length,
+  };
 }
 
 function evaluateOne(gold, items) {
-  const actualByKey = new Map(items.map(item => [identity(item.namespace, item.name), item]));
+  const actualByKey = new Map(items.map((item) => [identity(item.namespace, item.name), item]));
   let exact = 0;
   let family = 0;
   let pathCorrect = 0;
@@ -134,13 +152,13 @@ function evaluateOne(gold, items) {
   for (const row of gold.records) {
     const actual = actualByKey.get(identity(row.registry, row.item.name));
     const expectedPrimary = row.expected.primary;
-    const actualPrimary = actual?.canonical?.primary ?? (actual ? null : '<missing>');
+    const actualPrimary = actual?.canonical?.primary ?? (actual ? null : "<missing>");
     const primaryCorrect = actual !== undefined && actualPrimary === expectedPrimary;
 
     if (primaryCorrect) exact += 1;
 
     const expectedFamily = row.expected.path[0] ?? null;
-    const actualFamily = actual?.canonical?.path?.[0] ?? (actual ? null : '<missing>');
+    const actualFamily = actual?.canonical?.path?.[0] ?? (actual ? null : "<missing>");
 
     if (actual !== undefined && actualFamily === expectedFamily) family += 1;
 
@@ -164,13 +182,19 @@ function evaluateOne(gold, items) {
     else if (!predictedUnclassified && expectedUnclassified) falseNegative += 1;
 
     if (!primaryCorrect) {
-      const expectedLabel = expectedPrimary ?? 'UNCLASSIFIED';
-      const actualLabel = actual === undefined ? 'MISSING' : (actual?.canonical?.primary ?? 'UNCLASSIFIED');
+      const expectedLabel = expectedPrimary ?? "UNCLASSIFIED";
+
+      const actualLabel =
+        actual === undefined ? "MISSING" : (actual?.canonical?.primary ?? "UNCLASSIFIED");
+
       const key = `${expectedLabel}\u0000${actualLabel}`;
       confusions.set(key, (confusions.get(key) ?? 0) + 1);
     }
 
-    for (const [map, key] of [[byKind, row.expected.kind], [byRegistry, row.registry]]) {
+    for (const [map, key] of [
+      [byKind, row.expected.kind],
+      [byRegistry, row.registry],
+    ]) {
       const current = map.get(key) ?? { correct: 0, total: 0 };
       current.total += 1;
 
@@ -179,24 +203,40 @@ function evaluateOne(gold, items) {
     }
   }
 
-  const summarizeGroups = map => Object.fromEntries([...map.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([key, value]) => [
-    key, accuracy(value.correct, value.total),
-  ]));
+  const summarizeGroups = (map) =>
+    Object.fromEntries(
+      [...map.entries()]
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([key, value]) => [key, accuracy(value.correct, value.total)]),
+    );
 
   return {
     exactPrimary: accuracy(exact, gold.records.length),
     topFamily: accuracy(family, gold.records.length),
-    ancestorPath: { correct: pathCorrect, total: pathTotal, accuracy: pathTotal ? pathCorrect / pathTotal : 1 },
+    ancestorPath: {
+      correct: pathCorrect,
+      total: pathTotal,
+      accuracy: pathTotal ? pathCorrect / pathTotal : 1,
+    },
     unclassified: {
       precision: truePositive + falsePositive ? truePositive / (truePositive + falsePositive) : 1,
       recall: truePositive + falseNegative ? truePositive / (truePositive + falseNegative) : 1,
-      truePositive, falsePositive, falseNegative,
+      truePositive,
+      falsePositive,
+      falseNegative,
     },
-    confusions: [...confusions.entries()].map(([key, count]) => {
-      const [expected, actual] = key.split('\u0000');
+    confusions: [...confusions.entries()]
+      .map(([key, count]) => {
+        const [expected, actual] = key.split("\u0000");
 
-      return { expected, actual, count };
-    }).sort((a, b) => b.count - a.count || a.expected.localeCompare(b.expected) || a.actual.localeCompare(b.actual)),
+        return { expected, actual, count };
+      })
+      .sort(
+        (a, b) =>
+          b.count - a.count ||
+          a.expected.localeCompare(b.expected) ||
+          a.actual.localeCompare(b.actual),
+      ),
     byKind: summarizeGroups(byKind),
     byRegistry: summarizeGroups(byRegistry),
   };
@@ -205,9 +245,10 @@ function evaluateOne(gold, items) {
 export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = null } = {}) {
   const reviewed = validateGoldSet(gold);
 
-  if (!Array.isArray(beamItems)) throw new Error('Beam classification items are required');
+  if (!Array.isArray(beamItems)) throw new Error("Beam classification items are required");
 
-  if (greedyItems !== null && !Array.isArray(greedyItems)) throw new Error('Greedy classification items must be an array');
+  if (greedyItems !== null && !Array.isArray(greedyItems))
+    throw new Error("Greedy classification items must be an array");
   const metrics = evaluateOne(reviewed, beamItems);
   const selectedProbabilities = [];
   const finalPathScores = [];
@@ -216,7 +257,8 @@ export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = 
   for (const item of beamItems) {
     if (!item?.systemOne) continue;
 
-    if (Number.isFinite(item.systemOne.finalPathScore)) finalPathScores.push(item.systemOne.finalPathScore);
+    if (Number.isFinite(item.systemOne.finalPathScore))
+      finalPathScores.push(item.systemOne.finalPathScore);
 
     if (Number.isFinite(item.systemOne.separation)) separations.push(item.systemOne.separation);
 
@@ -230,17 +272,19 @@ export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = 
   const greedyMetrics = greedyItems ? evaluateOne(reviewed, greedyItems) : null;
 
   const base = {
-    schema: 'registry-atlas.catalog-classification-evaluation.v1',
+    schema: "registry-atlas.catalog-classification-evaluation.v1",
     taxonomyVersion: reviewed.taxonomyVersion,
     goldVersion: reviewed.version,
     goldFingerprint: catalogArtifactFingerprint(reviewed),
     classificationRunFingerprint: catalogArtifactFingerprint(beamItems),
     metrics,
-    greedyVsBeam: greedyMetrics ? {
-      beamExactAccuracy: metrics.exactPrimary.accuracy,
-      greedyExactAccuracy: greedyMetrics.exactPrimary.accuracy,
-      delta: metrics.exactPrimary.accuracy - greedyMetrics.exactPrimary.accuracy,
-    } : null,
+    greedyVsBeam: greedyMetrics
+      ? {
+          beamExactAccuracy: metrics.exactPrimary.accuracy,
+          greedyExactAccuracy: greedyMetrics.exactPrimary.accuracy,
+          delta: metrics.exactPrimary.accuracy - greedyMetrics.exactPrimary.accuracy,
+        }
+      : null,
     distributions: {
       selectedProbability: numericSummary(selectedProbabilities),
       finalPathScore: numericSummary(finalPathScores),
@@ -252,20 +296,22 @@ export function evaluateCatalogClassifications({ gold, beamItems, greedyItems = 
 }
 
 export function validatePromotionReview(value) {
-  if (!isRecord(value) || value.schema !== 'registry-atlas.catalog-promotion-review.v1') {
-    throw new Error('Promotion review schema is invalid');
+  if (!isRecord(value) || value.schema !== "registry-atlas.catalog-promotion-review.v1") {
+    throw new Error("Promotion review schema is invalid");
   }
 
-  if (value.approved !== true) throw new Error('Promotion review must be explicitly approved');
-  requiredString(value.taxonomyVersion, 'Promotion taxonomyVersion');
+  if (value.approved !== true) throw new Error("Promotion review must be explicitly approved");
+  requiredString(value.taxonomyVersion, "Promotion taxonomyVersion");
 
-  if (!FINGERPRINT.test(value.classificationRunFingerprint ?? '')) throw new Error('Promotion classification fingerprint is invalid');
+  if (!FINGERPRINT.test(value.classificationRunFingerprint ?? ""))
+    throw new Error("Promotion classification fingerprint is invalid");
 
-  if (!FINGERPRINT.test(value.evaluationReportFingerprint ?? '')) throw new Error('Promotion evaluation fingerprint is invalid');
-  requiredString(value.reviewer, 'Promotion reviewer');
-  const approvedAt = requiredString(value.approvedAt, 'Promotion approvedAt');
+  if (!FINGERPRINT.test(value.evaluationReportFingerprint ?? ""))
+    throw new Error("Promotion evaluation fingerprint is invalid");
+  requiredString(value.reviewer, "Promotion reviewer");
+  const approvedAt = requiredString(value.approvedAt, "Promotion approvedAt");
 
-  if (Number.isNaN(Date.parse(approvedAt))) throw new Error('Promotion approvedAt is invalid');
+  if (Number.isNaN(Date.parse(approvedAt))) throw new Error("Promotion approvedAt is invalid");
 
   return value;
 }
@@ -274,29 +320,29 @@ export function parseEvaluationArgs(argv) {
   const output = {
     beamRun: null,
     greedyRun: null,
-    document: 'catalog-classification-evaluation',
+    document: "catalog-classification-evaluation",
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
 
-    if (!['--beam-run', '--greedy-run', '--document'].includes(flag)) {
+    if (!["--beam-run", "--greedy-run", "--document"].includes(flag)) {
       throw new Error(`Unknown argument: ${flag}`);
     }
 
     const value = argv[++index];
 
-    if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
+    if (!value || value.startsWith("--")) throw new Error(`Missing value for ${flag}`);
 
-    if (flag === '--beam-run') output.beamRun = value;
-    else if (flag === '--greedy-run') output.greedyRun = value;
+    if (flag === "--beam-run") output.beamRun = value;
+    else if (flag === "--greedy-run") output.greedyRun = value;
     else output.document = value;
   }
 
-  if (!output.beamRun) throw new Error('Missing required --beam-run');
+  if (!output.beamRun) throw new Error("Missing required --beam-run");
 
   if (!/^[a-z0-9][a-z0-9._:-]{0,119}$/i.test(output.document)) {
-    throw new Error('Evaluation document name is invalid');
+    throw new Error("Evaluation document name is invalid");
   }
 
   return output;
@@ -307,9 +353,9 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const database = openAtlasCoreDatabase(cwd);
 
   try {
-    const gold = await readDocument(database, 'catalog-gold-set');
+    const gold = await readDocument(database, "catalog-gold-set");
 
-    if (!gold) throw new Error('Catalog gold set is missing from the Atlas database');
+    if (!gold) throw new Error("Catalog gold set is missing from the Atlas database");
     const beamRun = await readClassificationRun(database, options.beamRun);
 
     if (!beamRun) throw new Error(`Unknown beam classification run: ${options.beamRun}`);
@@ -319,21 +365,21 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       ? await readClassificationRunItems(database, options.greedyRun)
       : null;
 
-    if (options.greedyRun && !await readClassificationRun(database, options.greedyRun)) {
+    if (options.greedyRun && !(await readClassificationRun(database, options.greedyRun))) {
       throw new Error(`Unknown greedy classification run: ${options.greedyRun}`);
     }
 
     const report = (() => {
-  const result = {};
-  Object.assign(result, evaluateCatalogClassifications({ gold, beamItems, greedyItems }));
-  result.beamRunId = options.beamRun;
+      const result = {};
+      Object.assign(result, evaluateCatalogClassifications({ gold, beamItems, greedyItems }));
+      result.beamRunId = options.beamRun;
 
-  if (options.greedyRun) Object.assign(result, { greedyRunId: options.greedyRun });
+      if (options.greedyRun) Object.assign(result, { greedyRunId: options.greedyRun });
 
-  return result;
-})();
+      return result;
+    })();
 
-    await putDocument(database, options.document, 'taxonomy-evaluation', report);
+    await putDocument(database, options.document, "taxonomy-evaluation", report);
 
     return report;
   } finally {
@@ -342,8 +388,10 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().then(result => console.log(JSON.stringify(result, null, 2))).catch(error => {
-    console.error(String(error?.message ?? error));
-    process.exitCode = 1;
-  });
+  main()
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => {
+      console.error(String(error?.message ?? error));
+      process.exitCode = 1;
+    });
 }

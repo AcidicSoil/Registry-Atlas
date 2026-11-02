@@ -16,7 +16,8 @@
   --space-4: 16px;
   --space-5: 20px;
   --space-6: 24px;
-  --font-sans: inter, ui-sans-serif, system-ui, -apple-system, blinkmacsystemfont, "Segoe UI", sans-serif;
+  --font-sans:
+    inter, ui-sans-serif, system-ui, -apple-system, blinkmacsystemfont, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, sfmono-regular, menlo, monaco, consolas, "Liberation Mono", monospace;
 }
 
@@ -90,7 +91,7 @@ a:focus-visible,
 input:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #4EA1FF;
+  outline: 2px solid #4ea1ff;
   outline-offset: 3px;
 }
 
@@ -188,7 +189,6 @@ h2 {
   text-transform: uppercase;
 }
 
-
 .header-right {
   display: flex;
   min-width: 0;
@@ -252,7 +252,10 @@ h2 {
   cursor: pointer;
   line-height: 1.25;
   text-decoration: none;
-  transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease;
 }
 
 .nav-item {
@@ -677,7 +680,6 @@ aside {
   flex-direction: column;
   overflow: hidden;
 }
-
 
 .discovery-specimen {
   display: grid;
@@ -1409,7 +1411,6 @@ aside {
   padding-top: var(--space-3);
   border-top: 1px solid var(--border);
 }
-
 
 .component-peek-title {
   margin-bottom: var(--space-2);

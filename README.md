@@ -4,7 +4,6 @@ A component-first explorer for the [shadcn/ui community registry](https://ui.sha
 
 Registry Atlas mirrors real upstream registry catalogs into a local, evidence-backed index so you can browse exact component identities, inspect registry libraries, open canonical item routes, compare coverage, and distinguish missing evidence from unavailable data without synthesized fallback components.
 
-
 ## Features
 
 - **Components**: Search real catalog items, select multiple registries and common categories as chips, sort by name or registry in either direction, and share filtered URLs.

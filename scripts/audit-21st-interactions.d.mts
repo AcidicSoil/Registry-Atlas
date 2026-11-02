@@ -1,4 +1,4 @@
-export type ReferenceScenario = 'filter-open' | 'sort-newest';
+export type ReferenceScenario = "filter-open" | "sort-newest";
 
 export interface ReferenceAction {
   ref: string;
@@ -27,4 +27,4 @@ export function assessReferenceTransition(
   scenario: ReferenceScenario | string,
   before: ReferenceState,
   after: ReferenceState,
-): { status: 'interaction-verified' | 'unverified'; evidence?: unknown };
+): { status: "interaction-verified" | "unverified"; evidence?: unknown };

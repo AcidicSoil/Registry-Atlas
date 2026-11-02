@@ -2,11 +2,10 @@
 
 > **Superseded for the current visual-reference requirement (2026-10-02).** The user clarified that previews are images of the actual official component demo, not locally executed copies of upstream code. See `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The build-host, source-license, and interactive-runtime tasks below are historical; they are not prerequisites for the requested visual-reference rollout.
 
-
 **Date:** 2026-10-01
 **Status:** User-directed implementation contract; staged delivery, not a claim that every indexed component is executable.
 **Repository:** Registry Atlas. Supersedes earlier screenshot-first and external-link frontend proposals where they conflict.
-**Related:** ``docs/superpowers/specs/2026-10-01-browser-decision-action-loop.md``, ``docs/superpowers/specs/2026-09-29-catalog-presentation-enrichment-design.md``, ``docs/registry-explorer-data.md``.
+**Related:** `docs/superpowers/specs/2026-10-01-browser-decision-action-loop.md`, `docs/superpowers/specs/2026-09-29-catalog-presentation-enrichment-design.md`, `docs/registry-explorer-data.md`.
 
 ## Product contract
 
@@ -27,9 +26,9 @@ The observed catalog contains 408 source registries in the raw directory, 366 ca
 
 ## Identity, source and verification
 
-The canonical key is ``namespace + '/' + exact item.name`` from the registry catalog. The same visible title in two registries or two source paths does not imply identity. A registry can publish slash-containing item names; never silently split or truncate the slug. The official raw directory is authoritative for registry presence and the compact index for current catalog membership; reviewed manifest entries not in either source are rejected.
+The canonical key is `namespace + '/' + exact item.name` from the registry catalog. The same visible title in two registries or two source paths does not imply identity. A registry can publish slash-containing item names; never silently split or truncate the slug. The official raw directory is authoritative for registry presence and the compact index for current catalog membership; reviewed manifest entries not in either source are rejected.
 
-Manifest schema: ``registry-atlas-component-demos/v1``. Each reviewed entry contains ``namespace``, ``slug``, ``kind`` (``upstream-built`` or ``source-informed-fixture``), ``path`` (same-origin relative fixed prefix), ``source`` (official documentation link and raw registry item URL where confirmed), ``reviewedAt``, ``verifiedAt``, ``status`` (``interaction-verified``), and optional ``sourceSha256`` / ``demoComposition``. The collector must never mark a candidate reviewed automatically; evidence and a reviewer-approved, version-bound build are separate decisions.
+Manifest schema: `registry-atlas-component-demos/v1`. Each reviewed entry contains `namespace`, `slug`, `kind` (`upstream-built` or `source-informed-fixture`), `path` (same-origin relative fixed prefix), `source` (official documentation link and raw registry item URL where confirmed), `reviewedAt`, `verifiedAt`, `status` (`interaction-verified`), and optional `sourceSha256` / `demoComposition`. The collector must never mark a candidate reviewed automatically; evidence and a reviewer-approved, version-bound build are separate decisions.
 
 An entry is renderable only when its exact manifest identity is approved, its local path matches the allowlisted demo-host prefix, and its built asset exists. Schema errors, stale checksums, missing assets, unsupported framework dependencies, no license, unsafe scripts, ambiguous same-title routes, and browser timeouts produce explicit non-renderable outcomes. A failure must not degrade to a screenshot or external URL action.
 
@@ -51,7 +50,7 @@ Production allows only approved manifests/assets; no user-entered URL, raw regis
 
 ## Resumable work and acceptance
 
-Coverage uses a stable lexicographic registry/item order, raw registry count, distinct and duplicate item totals, reviewed counts broken down by kind, eligible/pending and outcome codes. ``--registry`` and ``--limit`` bound each run; ``--cursor`` resumes after the last emitted token. The read-only planner writes to stdout or an explicitly chosen report path and never changes curated source files or claims completion based on batch size.
+Coverage uses a stable lexicographic registry/item order, raw registry count, distinct and duplicate item totals, reviewed counts broken down by kind, eligible/pending and outcome codes. `--registry` and `--limit` bound each run; `--cursor` resumes after the last emitted token. The read-only planner writes to stdout or an explicitly chosen report path and never changes curated source files or claims completion based on batch size.
 
 Each component is finished **only when** the official homepage/listing/item route and raw source identity are independently verified; source/demo composition and license are recorded; the pinned preview build executes inside the isolated host; its representative input/hover/keyboard action works in the managed browser; card click opens the Atlas detail route; and the detail runs the same demo without console/network/CSP errors. A `source-informed-fixture` is functional example coverage but not upstream-built coverage. A registry-wide milestone requires all its items to be accounted for, not all pretending to be supported.
 
@@ -59,7 +58,7 @@ Track separate milestones: (A) reviewed manifest and honest coverage planner, (B
 
 ## Project coordination and open product decisions
 
-Use ``pinchtab-project-work`` PAO run/claims, the mandated PPM frontend guide, user’s Webcmd Design UX laws and existing Atlas design tokens. Preserve the inherited dirty data/crawler/item-detail changes; claim any overlapping file before modifying it. The installed PPM verifier remains quarantined, not completion evidence.
+Use `pinchtab-project-work` PAO run/claims, the mandated PPM frontend guide, user’s Webcmd Design UX laws and existing Atlas design tokens. Preserve the inherited dirty data/crawler/item-detail changes; claim any overlapping file before modifying it. The installed PPM verifier remains quarantined, not completion evidence.
 
 **Explicit decision seams before unrestricted rollout:** which upstream licenses permit serving repackaged code; whether public preview pages may connect to external APIs; whether server-rendered/authenticated components can ever be previewed with synthetic data; supported dependency sources/framework versions; budgets per build; policies for malicious-package scanning and legal review. Default safely to blocked/unverified until a documented decision. No automatic broad remote-code execution is authorized solely by the user's request for functional previews.
 

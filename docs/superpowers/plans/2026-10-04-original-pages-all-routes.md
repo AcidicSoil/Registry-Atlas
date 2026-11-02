@@ -4,7 +4,7 @@
 
 ## Problem and verified baseline
 
-The component catalog contains about 84k identities. The existing traversal inventory records 17,295 exact official-sitemap URL candidates across 130 source registries, but only five individually verified live page observations. More than 66k indexed identities have no official sitemap match in this snapshot. Treat official sitemap publication as an independently useful but *non-verified* navigation source. A sitemap listing is not an assurance that a component is still available or safe.
+The component catalog contains about 84k identities. The existing traversal inventory records 17,295 exact official-sitemap URL candidates across 130 source registries, but only five individually verified live page observations. More than 66k indexed identities have no official sitemap match in this snapshot. Treat official sitemap publication as an independently useful but _non-verified_ navigation source. A sitemap listing is not an assurance that a component is still available or safe.
 
 Currently only reviewed summary URLs, visual references, and selected demo records reach the UI. Browse cards share one renderer, but Compare is a separate item renderer. Some nested detail links use existing summaries rather than a centralized source-page lookup.
 
@@ -13,11 +13,11 @@ Currently only reviewed summary URLs, visual references, and selected demo recor
 - Keys are **exact namespace + full slug**, never final slug alone.
 - An exact, currently sourced URL is eligible for navigation, but its label discloses its evidence tier. `reviewed` means an independently reviewed component page; `sitemap` means an official-sitemap listing that may be stale.
 - Do not derive an undocumented URL from a namespace, slug, route template or homepage. Do not promote sitemap-only candidates to verified without a destination-page identity check.
-- Only public HTTPS URLs on the registry's *actual official origin* are eligible. Reject homepage-only targets, raw JSON/assets, protocol tricks, credentials, ports, path traversal and multiple competing URLs. Reject stale/rebound sitemap snapshots and unknown catalog identities.
+- Only public HTTPS URLs on the registry's _actual official origin_ are eligible. Reject homepage-only targets, raw JSON/assets, protocol tricks, credentials, ports, path traversal and multiple competing URLs. Reject stale/rebound sitemap snapshots and unknown catalog identities.
 - Existing reviewed URLs, image references, installable JSON routes and live demos remain distinct. If sitemap and independently reviewed URLs disagree, do not silently replace the reviewed URL; record the conflict.
 - Keep raw catalog rows unchanged; only publish a compact, build-generated URL-evidence index.
 - One optional same-origin URL manifest is the catalog's common source. Its absence or failure cannot break browsing. All applicable routes project from this index, including Home, Components/search/explore/authors, registry profiles, templates, themes, icon listings/families/categories, details, related items and Compare.
-- Registry directory and Compare registry picker show *registry homepages* when relevant; there is no component item identity for a generic registry-only or unavailable route.
+- Registry directory and Compare registry picker show _registry homepages_ when relevant; there is no component item identity for a generic registry-only or unavailable route.
 
 ## Implementation steps
 
@@ -30,7 +30,7 @@ Currently only reviewed summary URLs, visual references, and selected demo recor
 
 ## Release definition
 
-The shipped browser exposes all eligible source-page links on all routes and calls sitemap-only URLs *provisional*. The remaining unmatched identities and unverified sitemap targets are visible in an auditable coverage report for subsequent bounded discovery/verification. This does not imply the entirety of the larger preview or visual-parity plan is complete.
+The shipped browser exposes all eligible source-page links on all routes and calls sitemap-only URLs _provisional_. The remaining unmatched identities and unverified sitemap targets are visible in an auditable coverage report for subsequent bounded discovery/verification. This does not imply the entirety of the larger preview or visual-parity plan is complete.
 
 ## Implemented checkpoint — source-page recovery
 
@@ -38,7 +38,7 @@ The source-evidence generator is `scripts/build-source-page-index.mjs`. Run `mis
 
 At the 2026-10-04 local check, the output contained **17,330** published exact source pages over **84,133** distinct compact catalog identities: **38 reviewed** and **17,292 official-sitemap-listed** links. **66,803** identities remain unmatched in this snapshot. The 30-day sitemap validity policy is checked at index generation and at runtime. These figures count destination evidence, not successful live destination-page visits.
 
-The already-configured `registry-atlas-source-audit` profile supplies the authorized upstream browser. Run `scripts/crawl-component-links.mjs` with its *currently resolved* manager instance URL and explicit owned tab ID, a registry name, a bounded `--max-items`, and a durable per-batch journal. First run without `--apply`, inspect every verified/unresolved record, then invoke `--apply` against the same snapshot only after verified evidence is accepted. Never infer manager ports/tab IDs from old documents. The existing crawler checks matching source identity and final destination before promotion. Rebuild the public page index and rerun tests after approved changes.
+The already-configured `registry-atlas-source-audit` profile supplies the authorized upstream browser. Run `scripts/crawl-component-links.mjs` with its _currently resolved_ manager instance URL and explicit owned tab ID, a registry name, a bounded `--max-items`, and a durable per-batch journal. First run without `--apply`, inspect every verified/unresolved record, then invoke `--apply` against the same snapshot only after verified evidence is accepted. Never infer manager ports/tab IDs from old documents. The existing crawler checks matching source identity and final destination before promotion. Rebuild the public page index and rerun tests after approved changes.
 
 A bounded live crawl confirmed `@8bitcn/input-otp` at `https://www.8bitcn.com/docs/components/input-otp` and applied only that verified record. The rest of the missing identity backlog requires further authorized, rate-limited discovery in separate batches.
 

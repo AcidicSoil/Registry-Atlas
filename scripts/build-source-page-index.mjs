@@ -1,16 +1,18 @@
-import { isInputString } from './lib/input-guards.mjs';
-import { isIP } from 'node:net';
-import { pathToFileURL } from 'node:url';
-import { exportPatternLinkSnapshot } from './verify-registry-patterns.mjs';
-import { catalogFingerprint } from './lib/registry-discovery.mjs';
+import { isInputString } from "./lib/input-guards.mjs";
+import { isIP } from "node:net";
+import { pathToFileURL } from "node:url";
+import { exportPatternLinkSnapshot } from "./verify-registry-patterns.mjs";
+import { catalogFingerprint } from "./lib/registry-discovery.mjs";
 import {
   openAtlasCoreDatabase,
   putDocument,
-  readRawRegistries, readCatalogSnapshot, readCuratedItemSummaries,
+  readRawRegistries,
+  readCatalogSnapshot,
+  readCuratedItemSummaries,
   replaceSourcePages,
-} from './lib/atlas-storage.mjs';
+} from "./lib/atlas-storage.mjs";
 
-export const SOURCE_PAGE_SCHEMA = 'registry-atlas-source-page-index/v1';
+export const SOURCE_PAGE_SCHEMA = "registry-atlas-source-page-index/v1";
 
 const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
 
@@ -19,73 +21,114 @@ export function exactOfficialPage(url, homepage) {
     const home = new URL(homepage);
     const target = new URL(url);
 
-    if (home.protocol !== 'https:' || target.protocol !== 'https:'
-      || home.origin !== target.origin || home.port || target.port
-      || home.username || home.password || target.username || target.password
-      || target.hash || target.searchParams.has('redirect')
-      || !home.hostname.includes('.') || isIP(home.hostname)
-      || /(?:^localhost$|\.local$|\.internal$|\.localhost$)/.test(home.hostname)
-      || target.pathname.replace(/\/+$/, '') === home.pathname.replace(/\/+$/, '')
-      || /\.(?:json|js|map|png|jpe?g|webp|svg|css|pdf|woff2?)\/?$/i.test(target.pathname)
-      || /%2f|%5c|%00|\.\./i.test(target.pathname)) return null;
+    if (
+      home.protocol !== "https:" ||
+      target.protocol !== "https:" ||
+      home.origin !== target.origin ||
+      home.port ||
+      target.port ||
+      home.username ||
+      home.password ||
+      target.username ||
+      target.password ||
+      target.hash ||
+      target.searchParams.has("redirect") ||
+      !home.hostname.includes(".") ||
+      isIP(home.hostname) ||
+      /(?:^localhost$|\.local$|\.internal$|\.localhost$)/.test(home.hostname) ||
+      target.pathname.replace(/\/+$/, "") === home.pathname.replace(/\/+$/, "") ||
+      /\.(?:json|js|map|png|jpe?g|webp|svg|css|pdf|woff2?)\/?$/i.test(target.pathname) ||
+      /%2f|%5c|%00|\.\./i.test(target.pathname)
+    )
+      return null;
 
     return target.href;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
-export function buildSourcePageIndex({ raw, catalog, curated, traversal, patternLinks, now = new Date().toISOString() }) {
-  const databaseSitemaps = patternLinks?.schema === 'registry-atlas-pattern-links/v1'
-    && Array.isArray(patternLinks.sitemapLinks);
+export function buildSourcePageIndex({
+  raw,
+  catalog,
+  curated,
+  traversal,
+  patternLinks,
+  now = new Date().toISOString(),
+}) {
+  const databaseSitemaps =
+    patternLinks?.schema === "registry-atlas-pattern-links/v1" &&
+    Array.isArray(patternLinks.sitemapLinks);
 
-  if ((!databaseSitemaps && (traversal?.schema !== 'registry-atlas-traversal-inventory/v1'
-      || !Array.isArray(traversal.registries)))
-    || !Array.isArray(raw) || !catalog?.registries)
-    throw new Error('Unsupported source inventory');
+  if (
+    (!databaseSitemaps &&
+      (traversal?.schema !== "registry-atlas-traversal-inventory/v1" ||
+        !Array.isArray(traversal.registries))) ||
+    !Array.isArray(raw) ||
+    !catalog?.registries
+  )
+    throw new Error("Unsupported source inventory");
   const nowMs = Date.parse(now);
 
-  if (!Number.isFinite(nowMs)) throw new Error('Invalid observation time');
-  const known = new Map(raw.map(reg => [reg.name, reg]));
+  if (!Number.isFinite(nowMs)) throw new Error("Invalid observation time");
+  const known = new Map(raw.map((reg) => [reg.name, reg]));
 
-  const names = new Map(Object.entries(catalog.registries).map(([namespace, items]) =>
-    [namespace, new Set(items.map(item => item.name))]));
+  const names = new Map(
+    Object.entries(catalog.registries).map(([namespace, items]) => [
+      namespace,
+      new Set(items.map((item) => item.name)),
+    ]),
+  );
 
   const candidatePages = new Map();
 
-  const rejected = { stale: 0, ambiguous: 0, 'unknown-item': 0,
-    'invalid-url': 0, 'reviewed-conflict': 0, 'fingerprint-mismatch': 0,
-    'sitemap-review-disagreement': 0, 'confirmed-missing': 0 };
+  const rejected = {
+    stale: 0,
+    ambiguous: 0,
+    "unknown-item": 0,
+    "invalid-url": 0,
+    "reviewed-conflict": 0,
+    "fingerprint-mismatch": 0,
+    "sitemap-review-disagreement": 0,
+    "confirmed-missing": 0,
+  };
 
-  const missingPages = new Map((patternLinks?.missingPages ?? []).map(row => [
-    row.namespace + '/' + row.slug, row.url,
-  ]));
+  const missingPages = new Map(
+    (patternLinks?.missingPages ?? []).map((row) => [row.namespace + "/" + row.slug, row.url]),
+  );
 
   const offer = (token, page) => {
     const saved = candidatePages.get(token);
 
-    if (!saved) { candidatePages.set(token, [page]);
+    if (!saved) {
+      candidatePages.set(token, [page]);
 
- return; }
+      return;
+    }
 
-    if (!saved.some(entry => entry.url === page.url && entry.level === page.level))
+    if (!saved.some((entry) => entry.url === page.url && entry.level === page.level))
       saved.push(page);
   };
 
   const databaseGroups = new Map();
 
-  if (databaseSitemaps) for (const page of patternLinks.sitemapLinks) {
-    if (!isInputString(page?.namespace) || !isInputString(page?.observedAt)) continue;
-    const key = page.namespace + '\\0' + page.observedAt;
+  if (databaseSitemaps)
+    for (const page of patternLinks.sitemapLinks) {
+      if (!isInputString(page?.namespace) || !isInputString(page?.observedAt)) continue;
+      const key = page.namespace + "\\0" + page.observedAt;
 
-    if (!databaseGroups.has(key)) databaseGroups.set(key,{
-      namespace:page.namespace,
-      homepage:known.get(page.namespace)?.homepage,
-      catalogFingerprint:patternLinks.sitemapFingerprints?.[page.namespace]
-        ?? patternLinks.fingerprints?.[page.namespace],
-      sitemapSurveyedAt:page.observedAt,
-      sitemapPages:[],
-    });
-    databaseGroups.get(key).sitemapPages.push({slug:page.slug,url:page.url});
-  }
+      if (!databaseGroups.has(key))
+        databaseGroups.set(key, {
+          namespace: page.namespace,
+          homepage: known.get(page.namespace)?.homepage,
+          catalogFingerprint:
+            patternLinks.sitemapFingerprints?.[page.namespace] ??
+            patternLinks.fingerprints?.[page.namespace],
+          sitemapSurveyedAt: page.observedAt,
+          sitemapPages: [],
+        });
+      databaseGroups.get(key).sitemapPages.push({ slug: page.slug, url: page.url });
+    }
 
   const sitemapRows = databaseSitemaps ? [...databaseGroups.values()] : traversal.registries;
 
@@ -94,20 +137,21 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
 
     if (!registry || row.homepage !== registry.homepage) continue;
 
-    const slugs = [...new Set([
-      ...(catalog.registries[row.namespace] ?? []).map(item => item.name),
-      ...(curated[row.namespace] ?? []).map(item => item.slug),
-    ])].sort();
+    const slugs = [
+      ...new Set([
+        ...(catalog.registries[row.namespace] ?? []).map((item) => item.name),
+        ...(curated[row.namespace] ?? []).map((item) => item.slug),
+      ]),
+    ].sort();
 
     if (row.catalogFingerprint !== catalogFingerprint(registry, slugs)) {
-      rejected['fingerprint-mismatch'] += row.sitemapPages?.length ?? 0;
+      rejected["fingerprint-mismatch"] += row.sitemapPages?.length ?? 0;
       continue;
     }
 
-    const surveyedMs = Date.parse(row.sitemapSurveyedAt ?? '');
+    const surveyedMs = Date.parse(row.sitemapSurveyedAt ?? "");
 
-    if (!Number.isFinite(surveyedMs) || surveyedMs > nowMs
-      || nowMs - surveyedMs > MAX_AGE_MS) {
+    if (!Number.isFinite(surveyedMs) || surveyedMs > nowMs || nowMs - surveyedMs > MAX_AGE_MS) {
       rejected.stale += row.sitemapPages?.length ?? 0;
       continue;
     }
@@ -115,16 +159,19 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
     const matches = new Map();
 
     for (const candidate of row.sitemapPages ?? []) {
-      const token = row.namespace + '/' + candidate.slug;
+      const token = row.namespace + "/" + candidate.slug;
 
       if (!names.get(row.namespace)?.has(candidate.slug)) {
-        rejected['unknown-item']++;
+        rejected["unknown-item"]++;
         continue;
       }
 
       const url = exactOfficialPage(candidate.url, registry.homepage);
 
-      if (!url) { rejected['invalid-url']++; continue; }
+      if (!url) {
+        rejected["invalid-url"]++;
+        continue;
+      }
 
       const possible = matches.get(token) ?? new Set();
       possible.add(url);
@@ -132,24 +179,35 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
     }
 
     for (const [token, urls] of matches) {
-      if (urls.size !== 1) { rejected.ambiguous++; candidatePages.set(token, []); continue; }
-
-      offer(token, { url: [...urls][0], level: 'sitemap', source: 'official-sitemap', observedAt: row.sitemapSurveyedAt });
-    }
-  }
-
-  if (patternLinks?.schema === 'registry-atlas-pattern-links/v1'
-    && Array.isArray(patternLinks.links)) {
-    for (const row of patternLinks.links) {
-      if (!['pattern-observed','pattern-inferred'].includes(row.status)) continue;
-      const registry = known.get(row.namespace);
-
-      if (!registry || !names.get(row.namespace)?.has(row.slug)) {
-        rejected['unknown-item']++;
+      if (urls.size !== 1) {
+        rejected.ambiguous++;
+        candidatePages.set(token, []);
         continue;
       }
 
-      const checked = Date.parse(row.checkedAt ?? '');
+      offer(token, {
+        url: [...urls][0],
+        level: "sitemap",
+        source: "official-sitemap",
+        observedAt: row.sitemapSurveyedAt,
+      });
+    }
+  }
+
+  if (
+    patternLinks?.schema === "registry-atlas-pattern-links/v1" &&
+    Array.isArray(patternLinks.links)
+  ) {
+    for (const row of patternLinks.links) {
+      if (!["pattern-observed", "pattern-inferred"].includes(row.status)) continue;
+      const registry = known.get(row.namespace);
+
+      if (!registry || !names.get(row.namespace)?.has(row.slug)) {
+        rejected["unknown-item"]++;
+        continue;
+      }
+
+      const checked = Date.parse(row.checkedAt ?? "");
 
       if (!Number.isFinite(checked) || checked > nowMs || nowMs - checked > MAX_AGE_MS) {
         rejected.stale++;
@@ -158,25 +216,33 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
 
       const url = exactOfficialPage(row.source_url, registry.homepage);
 
-      if (!url) { rejected['invalid-url']++; continue; }
+      if (!url) {
+        rejected["invalid-url"]++;
+        continue;
+      }
 
-      offer(row.namespace+'/'+row.slug,{
-        url,level:'pattern',source:'verified-route-pattern',observedAt:row.checkedAt,
+      offer(row.namespace + "/" + row.slug, {
+        url,
+        level: "pattern",
+        source: "verified-route-pattern",
+        observedAt: row.checkedAt,
       });
     }
   }
 
-  if (patternLinks?.schema === 'registry-atlas-pattern-links/v1'
-    && Array.isArray(patternLinks.verifiedPages)) {
+  if (
+    patternLinks?.schema === "registry-atlas-pattern-links/v1" &&
+    Array.isArray(patternLinks.verifiedPages)
+  ) {
     for (const row of patternLinks.verifiedPages) {
       const registry = known.get(row.namespace);
 
       if (!registry || !names.get(row.namespace)?.has(row.slug)) {
-        rejected['unknown-item']++;
+        rejected["unknown-item"]++;
         continue;
       }
 
-      const checked = Date.parse(row.checkedAt ?? '');
+      const checked = Date.parse(row.checkedAt ?? "");
 
       if (!Number.isFinite(checked) || checked > nowMs || nowMs - checked > MAX_AGE_MS) {
         rejected.stale++;
@@ -185,10 +251,16 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
 
       const url = exactOfficialPage(row.url, registry.homepage);
 
-      if (!url) { rejected['invalid-url']++; continue; }
+      if (!url) {
+        rejected["invalid-url"]++;
+        continue;
+      }
 
-      offer(row.namespace + '/' + row.slug, {
-        url, level:'reviewed',source:'component-page-verified',observedAt:row.checkedAt,
+      offer(row.namespace + "/" + row.slug, {
+        url,
+        level: "reviewed",
+        source: "component-page-verified",
+        observedAt: row.checkedAt,
       });
     }
   }
@@ -205,9 +277,9 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
       if (!candidate) continue;
       const url = exactOfficialPage(candidate, registry.homepage);
 
-      if (url) offer(namespace + '/' + item.slug,
-        { url, level: 'reviewed', source: 'reviewed-summary' });
-      else rejected['invalid-url']++;
+      if (url)
+        offer(namespace + "/" + item.slug, { url, level: "reviewed", source: "reviewed-summary" });
+      else rejected["invalid-url"]++;
     }
   }
 
@@ -215,26 +287,28 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
 
   for (const token of [...candidatePages.keys()].sort()) {
     const entries = candidatePages.get(token);
-    const reviewed = entries.filter(entry => entry.level === 'reviewed');
-    const sitemap = entries.filter(entry => entry.level === 'sitemap');
+    const reviewed = entries.filter((entry) => entry.level === "reviewed");
+    const sitemap = entries.filter((entry) => entry.level === "sitemap");
     const choices = reviewed.length ? reviewed : sitemap.length ? sitemap : entries;
 
     if (!choices.length) continue;
 
-    if (new Set(choices.map(entry => entry.url)).size !== 1) {
-      rejected[reviewed.length ? 'reviewed-conflict' : 'ambiguous']++;
+    if (new Set(choices.map((entry) => entry.url)).size !== 1) {
+      rejected[reviewed.length ? "reviewed-conflict" : "ambiguous"]++;
       continue;
     }
 
     if (missingPages.get(token) === choices[0].url) {
-      rejected['confirmed-missing']++;
+      rejected["confirmed-missing"]++;
       continue;
     }
 
     // Keep independently reviewed URLs authoritative, but surface discrepancies.
-    if (reviewed.length && entries.some(entry =>
-      entry.level === 'sitemap' && entry.url !== choices[0].url)) {
-      rejected['sitemap-review-disagreement']++;
+    if (
+      reviewed.length &&
+      entries.some((entry) => entry.level === "sitemap" && entry.url !== choices[0].url)
+    ) {
+      rejected["sitemap-review-disagreement"]++;
     }
 
     pages[token] = choices[0];
@@ -246,13 +320,14 @@ export function buildSourcePageIndex({ raw, catalog, curated, traversal, pattern
   return {
     schema: SOURCE_PAGE_SCHEMA,
     sourceSnapshotAt: databaseSitemaps
-      ? patternLinks.sourceSnapshotAt ?? null : traversal.generatedAt ?? null,
+      ? (patternLinks.sourceSnapshotAt ?? null)
+      : (traversal.generatedAt ?? null),
     coverage: {
       distinctIndexed: indexedCount,
       published: levels.length,
-      reviewed: levels.filter(entry => entry.level === 'reviewed').length,
-      sitemap: levels.filter(entry => entry.level === 'sitemap').length,
-      pattern: levels.filter(entry => entry.level === 'pattern').length,
+      reviewed: levels.filter((entry) => entry.level === "reviewed").length,
+      sitemap: levels.filter((entry) => entry.level === "sitemap").length,
+      pattern: levels.filter((entry) => entry.level === "pattern").length,
       missing: indexedCount - levels.length,
       rejections: rejected,
     },
@@ -264,12 +339,13 @@ async function main() {
   const database = openAtlasCoreDatabase();
 
   try {
-    const [rawRegistries,catalog,curated] = await Promise.all([
-      readRawRegistries(database),readCatalogSnapshot(database),
+    const [rawRegistries, catalog, curated] = await Promise.all([
+      readRawRegistries(database),
+      readCatalogSnapshot(database),
       readCuratedItemSummaries(database),
     ]);
 
-    const patternLinks = (await exportPatternLinkSnapshot(database));
+    const patternLinks = await exportPatternLinkSnapshot(database);
 
     const result = buildSourcePageIndex({
       raw: rawRegistries,
@@ -280,16 +356,16 @@ async function main() {
     });
 
     await replaceSourcePages(database, result.pages);
-    await putDocument(database, 'source-page-index-meta', 'runtime-meta', {
+    await putDocument(database, "source-page-index-meta", "runtime-meta", {
       schema: result.schema,
       sourceSnapshotAt: result.sourceSnapshotAt,
       coverage: result.coverage,
     });
-    await putDocument(database, 'source-page-coverage', 'sync-report', {
+    await putDocument(database, "source-page-coverage", "sync-report", {
       schema: SOURCE_PAGE_SCHEMA,
       sourceSnapshotAt: result.sourceSnapshotAt,
       ...result.coverage,
-      note: 'Sitemap and pattern-derived links have not all been individually page-verified',
+      note: "Sitemap and pattern-derived links have not all been individually page-verified",
     });
     console.log(JSON.stringify(result.coverage));
   } finally {
@@ -298,4 +374,7 @@ async function main() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)
-  main(process.argv.slice(2)).catch(error => { console.error(error); process.exitCode = 1; });
+  main(process.argv.slice(2)).catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

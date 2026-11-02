@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export interface BrowseSnapshot {
   pages: number;
@@ -11,7 +11,7 @@ const snapshotSchema = z.strictObject({
 });
 
 export function browseSnapshotKey(route: string): string {
-  return 'registry-atlas.browse.v1:' + route;
+  return "registry-atlas.browse.v1:" + route;
 }
 
 /** Only restore bounded, non-executable values from session storage. */

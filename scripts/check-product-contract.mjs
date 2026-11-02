@@ -1,39 +1,36 @@
-import { isInputString } from './lib/input-guards.mjs';
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import path from 'node:path';
-import { validateCatalogRuntimeContract } from './lib/catalog-runtime-contract.mjs';
-import {
-  openAtlasCoreDatabase,
-  readAtlasState,
-} from './lib/atlas-storage.mjs';
+import { isInputString } from "./lib/input-guards.mjs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { validateCatalogRuntimeContract } from "./lib/catalog-runtime-contract.mjs";
+import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
 
 const root = process.cwd();
 
 const failures = [];
 
 function read(relative) {
-  return readFileSync(path.join(root, relative), 'utf8');
+  return readFileSync(path.join(root, relative), "utf8");
 }
 
 function assert(condition, message) {
   if (!condition) failures.push(message);
 }
 
-const routeSource = read('src/registry-explorer/core/catalogRoutes.ts');
+const routeSource = read("src/registry-explorer/core/catalogRoutes.ts");
 
-const shellSource = read('src/registry-explorer/ui/shell.ts');
+const shellSource = read("src/registry-explorer/ui/shell.ts");
 
-const componentViewSource = read('src/registry-explorer/ui/catalogComponentsView.ts');
+const componentViewSource = read("src/registry-explorer/ui/catalogComponentsView.ts");
 
-const sidebarNavigationSource = read('src/registry-explorer/ui/catalogSidebarNavigation.ts');
+const sidebarNavigationSource = read("src/registry-explorer/ui/catalogSidebarNavigation.ts");
 
-const registryDirectorySource = read('src/registry-explorer/ui/registryDirectoryView.ts');
+const registryDirectorySource = read("src/registry-explorer/ui/registryDirectoryView.ts");
 
-const detailViewSource = read('src/registry-explorer/ui/itemDetailView.ts');
+const detailViewSource = read("src/registry-explorer/ui/itemDetailView.ts");
 
-const promptSource = read('src/registry-explorer/core/itemPrompts.ts');
+const promptSource = read("src/registry-explorer/core/itemPrompts.ts");
 
-const indexSource = read('index.html');
+const indexSource = read("index.html");
 
 for (const token of [
   'kind: "home"',
@@ -59,147 +56,185 @@ for (const token of [
   assert(routeSource.includes(token), `canonical route contract is missing ${token}`);
 }
 
-assert(shellSource.includes("kind: 'not-found'"),
-  'shell must preserve unsupported paths as not-found state');
+assert(
+  shellSource.includes("kind: 'not-found'"),
+  "shell must preserve unsupported paths as not-found state",
+);
 
-assert(!/parseCatalogRoute[\s\S]{0,500}\?\?\s*\{\s*kind:\s*['"]components['"]/.test(shellSource),
-  'unsupported canonical paths must not default to Components');
+assert(
+  !/parseCatalogRoute[\s\S]{0,500}\?\?\s*\{\s*kind:\s*['"]components['"]/.test(shellSource),
+  "unsupported canonical paths must not default to Components",
+);
 
-assert(indexSource.includes('id="searchInput"')
-    && indexSource.includes('placeholder="Search catalog"'),
-  'Catalog browse must expose one persistent global search input');
+assert(
+  indexSource.includes('id="searchInput"') && indexSource.includes('placeholder="Search catalog"'),
+  "Catalog browse must expose one persistent global search input",
+);
 
-assert(sidebarNavigationSource.includes('data-catalog-sort-value')
-    && sidebarNavigationSource.includes('data-catalog-canonical-value')
-    && sidebarNavigationSource.includes('sidebar-nav-row')
-    && sidebarNavigationSource.includes('sidebar-nav-section-label'),
-  'Catalog browse controls must use the exemplar-style persistent navigation-row rail');
+assert(
+  sidebarNavigationSource.includes("data-catalog-sort-value") &&
+    sidebarNavigationSource.includes("data-catalog-canonical-value") &&
+    sidebarNavigationSource.includes("sidebar-nav-row") &&
+    sidebarNavigationSource.includes("sidebar-nav-section-label"),
+  "Catalog browse controls must use the exemplar-style persistent navigation-row rail",
+);
 
-assert(!sidebarNavigationSource.includes('data-catalog-registry-checkbox')
-    && !sidebarNavigationSource.includes('data-sidebar-registry-search')
-    && !sidebarNavigationSource.includes('data-sidebar-search-root')
-    && !sidebarNavigationSource.includes('type="checkbox"')
-    && !sidebarNavigationSource.includes('type="radio"')
-    && !sidebarNavigationSource.includes('<select'),
-  'Catalog browse must not reintroduce checkbox/radio/select walls or a second sidebar search input');
+assert(
+  !sidebarNavigationSource.includes("data-catalog-registry-checkbox") &&
+    !sidebarNavigationSource.includes("data-sidebar-registry-search") &&
+    !sidebarNavigationSource.includes("data-sidebar-search-root") &&
+    !sidebarNavigationSource.includes('type="checkbox"') &&
+    !sidebarNavigationSource.includes('type="radio"') &&
+    !sidebarNavigationSource.includes("<select"),
+  "Catalog browse must not reintroduce checkbox/radio/select walls or a second sidebar search input",
+);
 
-assert(registryDirectorySource.includes('data-registry-sort-value')
-    && registryDirectorySource.includes('data-registry-asset-value')
-    && registryDirectorySource.includes('sidebar-nav-row')
-    && !registryDirectorySource.includes('type="checkbox"')
-    && !registryDirectorySource.includes('type="radio"'),
-  'Registry directory controls must use the same exemplar-style navigation-row rail');
+assert(
+  registryDirectorySource.includes("data-registry-sort-value") &&
+    registryDirectorySource.includes("data-registry-asset-value") &&
+    registryDirectorySource.includes("sidebar-nav-row") &&
+    !registryDirectorySource.includes('type="checkbox"') &&
+    !registryDirectorySource.includes('type="radio"'),
+  "Registry directory controls must use the same exemplar-style navigation-row rail",
+);
 
-assert(componentViewSource.includes('catalog-results-context')
-    && componentViewSource.includes('catalog-applied-filter'),
-  'Results may expose applied-filter context without duplicating selection controls');
+assert(
+  componentViewSource.includes("catalog-results-context") &&
+    componentViewSource.includes("catalog-applied-filter"),
+  "Results may expose applied-filter context without duplicating selection controls",
+);
 
-assert(!componentViewSource.includes('data-catalog-search')
-    && !componentViewSource.includes('data-catalog-registry-select')
-    && !componentViewSource.includes('data-catalog-access-select')
-    && !componentViewSource.includes('data-catalog-sort')
-    && !componentViewSource.includes('<select')
-    && !componentViewSource.includes('catalog-filter-menu')
-    && !componentViewSource.includes('<summary>Filters'),
-  'Catalog result panes must not duplicate search/filter/sort controls or custom disclosures');
+assert(
+  !componentViewSource.includes("data-catalog-search") &&
+    !componentViewSource.includes("data-catalog-registry-select") &&
+    !componentViewSource.includes("data-catalog-access-select") &&
+    !componentViewSource.includes("data-catalog-sort") &&
+    !componentViewSource.includes("<select") &&
+    !componentViewSource.includes("catalog-filter-menu") &&
+    !componentViewSource.includes("<summary>Filters"),
+  "Catalog result panes must not duplicate search/filter/sort controls or custom disclosures",
+);
 
-assert(!componentViewSource.includes('Preview not published'),
-  'browse cards must not expose preview placeholders');
+assert(
+  !componentViewSource.includes("Preview not published"),
+  "browse cards must not expose preview placeholders",
+);
 
-assert(!componentViewSource.includes('catalog-component-preview')
-    && !componentViewSource.includes('data-component-demo')
-    && !componentViewSource.includes('<iframe'),
-  'browse cards must not render fake/local component preview surfaces');
+assert(
+  !componentViewSource.includes("catalog-component-preview") &&
+    !componentViewSource.includes("data-component-demo") &&
+    !componentViewSource.includes("<iframe"),
+  "browse cards must not render fake/local component preview surfaces",
+);
 
-assert(!detailViewSource.includes('data-source-sandbox')
-    && !detailViewSource.includes('data-local-build-preview')
-    && !detailViewSource.includes('<iframe'),
-  'item detail must not expose fake/local component previews');
+assert(
+  !detailViewSource.includes("data-source-sandbox") &&
+    !detailViewSource.includes("data-local-build-preview") &&
+    !detailViewSource.includes("<iframe"),
+  "item detail must not expose fake/local component previews",
+);
 
-assert(componentViewSource.includes('sourcePageNavigation')
-    && componentViewSource.includes('catalog-component-open')
-    && componentViewSource.includes('renderCardRegistryHomepage(registryHomepage')
-    && componentViewSource.includes('Source ↗')
-    && !componentViewSource.includes('catalog-component-deeplink')
-    && !componentViewSource.includes('View item JSON'),
-  'catalog cards retain their internal card link and only one external homepage action, keeping upstream Source links independent');
+assert(
+  componentViewSource.includes("sourcePageNavigation") &&
+    componentViewSource.includes("catalog-component-open") &&
+    componentViewSource.includes("renderCardRegistryHomepage(registryHomepage") &&
+    componentViewSource.includes("Source ↗") &&
+    !componentViewSource.includes("catalog-component-deeplink") &&
+    !componentViewSource.includes("View item JSON"),
+  "catalog cards retain their internal card link and only one external homepage action, keeping upstream Source links independent",
+);
 
-assert(detailViewSource.includes('sourcePageNavigationForItem')
-    && detailViewSource.includes('verifiedRegistryHomepage')
-    && detailViewSource.includes('item-origin-line')
-    && !detailViewSource.includes('View item JSON')
-    && !detailViewSource.includes('Item JSON')
-    && !detailViewSource.includes('registryItemSourceUrl'),
-  'item detail identity links must open official registry and source pages, without exposing item JSON links');
+assert(
+  detailViewSource.includes("sourcePageNavigationForItem") &&
+    detailViewSource.includes("verifiedRegistryHomepage") &&
+    detailViewSource.includes("item-origin-line") &&
+    !detailViewSource.includes("View item JSON") &&
+    !detailViewSource.includes("Item JSON") &&
+    !detailViewSource.includes("registryItemSourceUrl"),
+  "item detail identity links must open official registry and source pages, without exposing item JSON links",
+);
 
-assert(read('src/registry-explorer/ui/catalogBreadcrumbs.ts').includes('aria-label="Breadcrumb"')
-    && routeSource.includes('"registry-assets"')
-    && shellSource.includes('renderCatalogBreadcrumbs'),
-  'registry and component routes must preserve parent-library breadcrumb navigation');
+assert(
+  read("src/registry-explorer/ui/catalogBreadcrumbs.ts").includes('aria-label="Breadcrumb"') &&
+    routeSource.includes('"registry-assets"') &&
+    shellSource.includes("renderCatalogBreadcrumbs"),
+  "registry and component routes must preserve parent-library breadcrumb navigation",
+);
 
-assert(componentViewSource.includes('renderRegistryIcon')
-    && detailViewSource.includes('renderRegistryIcon'),
-  'catalog and item detail surfaces must render registry identity icons');
+assert(
+  componentViewSource.includes("renderRegistryIcon") &&
+    detailViewSource.includes("renderRegistryIcon"),
+  "catalog and item detail surfaces must render registry identity icons",
+);
 
-assert(promptSource.includes('buildSetupPrompt')
-    && promptSource.includes('Install command:')
-    && !promptSource.includes('buildInspectionPrompt'),
-  'setup instructions must be generated from selected install commands, without inspection prompts');
+assert(
+  promptSource.includes("buildSetupPrompt") &&
+    promptSource.includes("Install command:") &&
+    !promptSource.includes("buildInspectionPrompt"),
+  "setup instructions must be generated from selected install commands, without inspection prompts",
+);
 
 for (const [view, path, label] of [
-  ['home', '/Registry-Atlas/', 'Featured'],
-  ['authors', '/Registry-Atlas/authors', 'Authors'],
-  ['registries', '/Registry-Atlas/registries', 'Libraries'],
-  ['discover', '/Registry-Atlas/components', 'Components'],
-  ['blocks', '/Registry-Atlas/blocks', 'Blocks'],
-  ['pages', '/Registry-Atlas/pages', 'Pages'],
-  ['templates', '/Registry-Atlas/templates', 'Templates'],
-  ['themes', '/Registry-Atlas/themes', 'Themes'],
-  ['icons', '/Registry-Atlas/icons', 'Icons'],
-  ['compare', '/Registry-Atlas/compare', 'Compare'],
+  ["home", "/Registry-Atlas/", "Featured"],
+  ["authors", "/Registry-Atlas/authors", "Authors"],
+  ["registries", "/Registry-Atlas/registries", "Libraries"],
+  ["discover", "/Registry-Atlas/components", "Components"],
+  ["blocks", "/Registry-Atlas/blocks", "Blocks"],
+  ["pages", "/Registry-Atlas/pages", "Pages"],
+  ["templates", "/Registry-Atlas/templates", "Templates"],
+  ["themes", "/Registry-Atlas/themes", "Themes"],
+  ["icons", "/Registry-Atlas/icons", "Icons"],
+  ["compare", "/Registry-Atlas/compare", "Compare"],
 ]) {
-  assert(indexSource.includes(`data-view="${view}" href="${path}">${label}</a>`),
-    `primary navigation is missing its ${label} route link`);
+  assert(
+    indexSource.includes(`data-view="${view}" href="${path}">${label}</a>`),
+    `primary navigation is missing its ${label} route link`,
+  );
 }
 
-assert(!componentViewSource.includes('data-catalog-type-select')
-    && !componentViewSource.includes('data-catalog-category-select')
-    && !componentViewSource.includes('data-catalog-reviewed'),
-  'Results must not expose legacy or route-local browse controls');
+assert(
+  !componentViewSource.includes("data-catalog-type-select") &&
+    !componentViewSource.includes("data-catalog-category-select") &&
+    !componentViewSource.includes("data-catalog-reviewed"),
+  "Results must not expose legacy or route-local browse controls",
+);
 
 const retiredFiles = [
-  'src/registry-explorer/core/catalogFacets.ts',
-  'src/registry-explorer/core/catalogSort.ts',
-  'src/registry-explorer/core/compare.ts',
-  'src/registry-explorer/core/componentEvidence.ts',
-  'src/registry-explorer/core/componentFilters.ts',
-  'src/registry-explorer/core/componentPeek.ts',
-  'src/registry-explorer/core/componentTaxonomy.ts',
-  'src/registry-explorer/core/discovery.ts',
-  'src/registry-explorer/core/grouping.ts',
-  'src/registry-explorer/core/labels.ts',
-  'src/registry-explorer/core/matrixColumns.ts',
-  'src/registry-explorer/core/registryBrowse.ts',
-  'src/registry-explorer/core/registryProfile.ts',
-  'src/registry-explorer/core/urlState.ts',
-  'src/registry-explorer/ui/compareView.ts',
-  'src/registry-explorer/ui/componentPeekView.ts',
-  'src/registry-explorer/ui/discoveryView.ts',
-  'src/registry-explorer/ui/registriesView.ts',
-  'src/registry-explorer/ui/registryProfileView.ts',
-  'src/registry-explorer/ui/componentPreview.ts',
-  'src/registry-explorer/ui/liveRegistryPreview.ts',
-  'src/registry-explorer/ui/sourcePreviewStatus.ts',
-  'src/registry-explorer/ui/visualReference.ts',
-  'src/registry-explorer/data/component-demo-manifest.json',
-  'public/data/component-previews.json',
-  'public/data/previews',
-  'public/component-demos',
-  'tools/component-preview-host',
+  "src/registry-explorer/core/catalogFacets.ts",
+  "src/registry-explorer/core/catalogSort.ts",
+  "src/registry-explorer/core/compare.ts",
+  "src/registry-explorer/core/componentEvidence.ts",
+  "src/registry-explorer/core/componentFilters.ts",
+  "src/registry-explorer/core/componentPeek.ts",
+  "src/registry-explorer/core/componentTaxonomy.ts",
+  "src/registry-explorer/core/discovery.ts",
+  "src/registry-explorer/core/grouping.ts",
+  "src/registry-explorer/core/labels.ts",
+  "src/registry-explorer/core/matrixColumns.ts",
+  "src/registry-explorer/core/registryBrowse.ts",
+  "src/registry-explorer/core/registryProfile.ts",
+  "src/registry-explorer/core/urlState.ts",
+  "src/registry-explorer/ui/compareView.ts",
+  "src/registry-explorer/ui/componentPeekView.ts",
+  "src/registry-explorer/ui/discoveryView.ts",
+  "src/registry-explorer/ui/registriesView.ts",
+  "src/registry-explorer/ui/registryProfileView.ts",
+  "src/registry-explorer/ui/componentPreview.ts",
+  "src/registry-explorer/ui/liveRegistryPreview.ts",
+  "src/registry-explorer/ui/sourcePreviewStatus.ts",
+  "src/registry-explorer/ui/visualReference.ts",
+  "src/registry-explorer/data/component-demo-manifest.json",
+  "public/data/component-previews.json",
+  "public/data/previews",
+  "public/component-demos",
+  "tools/component-preview-host",
 ];
 
 for (const file of retiredFiles) {
-  assert(!existsSync(path.join(root, file)), `retired inferred/preview system still exists: ${file}`);
+  assert(
+    !existsSync(path.join(root, file)),
+    `retired inferred/preview system still exists: ${file}`,
+  );
 }
 
 const sourceFiles = [];
@@ -217,29 +252,32 @@ function walk(relative) {
   }
 }
 
-walk('src');
+walk("src");
 
-walk('scripts');
+walk("scripts");
 
-const retiredModulePattern = /(?:componentTaxonomy|componentEvidence|componentFilters|componentPeek|catalogFacets|matrixColumns|registryBrowse|registryProfile|componentPreview|liveRegistryPreview|sourcePreviewStatus|visualReference|\/discovery|\/grouping|\/urlState)(?:['".]|$)/;
+const retiredModulePattern =
+  /(?:componentTaxonomy|componentEvidence|componentFilters|componentPeek|catalogFacets|matrixColumns|registryBrowse|registryProfile|componentPreview|liveRegistryPreview|sourcePreviewStatus|visualReference|\/discovery|\/grouping|\/urlState)(?:['".]|$)/;
 
 for (const file of sourceFiles) {
-  if (file === 'scripts/check-product-contract.mjs') continue;
+  if (file === "scripts/check-product-contract.mjs") continue;
   const text = read(file);
-  assert(!retiredModulePattern.test(text),
-    `active source references a retired inferred/preview module: ${file}`);
+  assert(
+    !retiredModulePattern.test(text),
+    `active source references a retired inferred/preview module: ${file}`,
+  );
 }
 
-const schema = read('src/registry-explorer/core/registry.schema.ts');
+const schema = read("src/registry-explorer/core/registry.schema.ts");
 
 for (const token of [
-  'component_tags',
-  'primary_focus',
-  'ComponentTag',
-  'PrimaryFocus',
-  'MatrixRow',
-  'ComponentCandidate',
-  'RegistryVisualReference',
+  "component_tags",
+  "primary_focus",
+  "ComponentTag",
+  "PrimaryFocus",
+  "MatrixRow",
+  "ComponentCandidate",
+  "RegistryVisualReference",
 ]) {
   assert(!schema.includes(token), `runtime schema still exposes retired token: ${token}`);
 }
@@ -255,10 +293,12 @@ let enrichmentCoverage = {
 };
 
 try {
-  const state = (await readAtlasState(core));
-  assert(Boolean(state.taxonomy), 'catalog taxonomy is missing from the Atlas database');
-  assert(Boolean(state.classificationOverlay),
-    'reviewed canonical classification overlay is missing from the Atlas database');
+  const state = await readAtlasState(core);
+  assert(Boolean(state.taxonomy), "catalog taxonomy is missing from the Atlas database");
+  assert(
+    Boolean(state.classificationOverlay),
+    "reviewed canonical classification overlay is missing from the Atlas database",
+  );
 
   if (state.taxonomy && state.classificationOverlay) {
     const canonicalContract = validateCatalogRuntimeContract({
@@ -275,7 +315,13 @@ try {
   }
 
   const allowedThemeSwatches = new Set([
-    'background', 'foreground', 'primary', 'secondary', 'accent', 'muted', 'card',
+    "background",
+    "foreground",
+    "primary",
+    "secondary",
+    "accent",
+    "muted",
+    "card",
   ]);
 
   for (const [namespace, items] of Object.entries(state.catalog?.registries ?? {})) {
@@ -288,32 +334,42 @@ try {
 
       if (isInputString(item.description)) {
         enrichmentCoverage.description += 1;
-        assert(Array.from(item.description).length <= 280,
-          `compact description exceeds 280 code points: ${namespace}/${item.name}`);
+        assert(
+          Array.from(item.description).length <= 280,
+          `compact description exceeds 280 code points: ${namespace}/${item.name}`,
+        );
       }
 
       if (isInputString(item.author)) {
         enrichmentCoverage.author += 1;
-        assert(Array.from(item.author).length <= 120,
-          `compact author exceeds 120 code points: ${namespace}/${item.name}`);
+        assert(
+          Array.from(item.author).length <= 120,
+          `compact author exceeds 120 code points: ${namespace}/${item.name}`,
+        );
       }
 
       if (item.fileCount !== undefined) {
         enrichmentCoverage.fileCount += 1;
-        assert(Number.isInteger(item.fileCount) && item.fileCount >= 0,
-          `compact fileCount is invalid: ${namespace}/${item.name}`);
+        assert(
+          Number.isInteger(item.fileCount) && item.fileCount >= 0,
+          `compact fileCount is invalid: ${namespace}/${item.name}`,
+        );
       }
 
       if (item.themePreview !== undefined) {
         enrichmentCoverage.themePreview += 1;
 
         for (const mode of Object.keys(item.themePreview)) {
-          assert(mode === 'light' || mode === 'dark',
-            `compact themePreview mode is unsupported: ${namespace}/${item.name}/${mode}`);
+          assert(
+            mode === "light" || mode === "dark",
+            `compact themePreview mode is unsupported: ${namespace}/${item.name}/${mode}`,
+          );
 
           for (const swatch of Object.keys(item.themePreview[mode] ?? {})) {
-            assert(allowedThemeSwatches.has(swatch),
-              `compact themePreview swatch is unsupported: ${namespace}/${item.name}/${swatch}`);
+            assert(
+              allowedThemeSwatches.has(swatch),
+              `compact themePreview swatch is unsupported: ${namespace}/${item.name}/${swatch}`,
+            );
           }
         }
       }
@@ -333,68 +389,82 @@ try {
     '"component_tags_existing"',
     '"component_tags_proposed"',
   ]) {
-    assert(!serializedCanonicalState.includes(key),
-      `Atlas database still persists retired inferred taxonomy key ${key}`);
+    assert(
+      !serializedCanonicalState.includes(key),
+      `Atlas database still persists retired inferred taxonomy key ${key}`,
+    );
   }
 
   // Validate every JSON document inside PostgreSQL. Transferring the full
   // detail table solely to inspect one prohibited key wastes bandwidth.
-  const detailSummary = await core.prepare(`
+  const detailSummary = await core
+    .prepare(`
     SELECT COUNT(*)::integer AS n,
       COUNT(*) FILTER (
         WHERE jsonb_exists(payload_json::jsonb, 'content')
       )::integer AS source_code_items
     FROM atlas_item_details
-  `).get();
+  `)
+    .get();
 
-  assert(detailSummary.n > 0, 'Atlas detail database is empty');
+  assert(detailSummary.n > 0, "Atlas detail database is empty");
 
   if (detailSummary.source_code_items > 0) {
-    const examples = await core.prepare(`
+    const examples = await core
+      .prepare(`
       SELECT namespace,name FROM atlas_item_details
       WHERE jsonb_exists(payload_json::jsonb, 'content')
       ORDER BY namespace,name LIMIT 20
-    `).all();
+    `)
+      .all();
 
     for (const row of examples) {
-      assert(false,
-        `detail database must not persist source-code content: ${row.namespace}/${row.name}`);
+      assert(
+        false,
+        `detail database must not persist source-code content: ${row.namespace}/${row.name}`,
+      );
     }
 
     if (detailSummary.source_code_items > examples.length) {
-      assert(false,
-        `${detailSummary.source_code_items - examples.length} additional detail records contain source-code content`);
+      assert(
+        false,
+        `${detailSummary.source_code_items - examples.length} additional detail records contain source-code content`,
+      );
     }
   }
 
-  const catalogNamespaceCount = Number((await core.prepare(
-    'SELECT COUNT(*) AS n FROM atlas_catalog_namespaces',
-  ).get()).n);
+  const catalogNamespaceCount = Number(
+    (await core.prepare("SELECT COUNT(*) AS n FROM atlas_catalog_namespaces").get()).n,
+  );
 
-  const catalogItemCount = Number((await core.prepare(
-    'SELECT COUNT(*) AS n FROM atlas_catalog_items',
-  ).get()).n);
+  const catalogItemCount = Number(
+    (await core.prepare("SELECT COUNT(*) AS n FROM atlas_catalog_items").get()).n,
+  );
 
-  assert(catalogNamespaceCount === state.catalog.meta.registry_count,
-    'catalog namespace metadata must match persisted database namespaces');
-  assert(catalogItemCount === state.catalog.meta.item_count,
-    'catalog item metadata must match persisted database identities');
+  assert(
+    catalogNamespaceCount === state.catalog.meta.registry_count,
+    "catalog namespace metadata must match persisted database namespaces",
+  );
+  assert(
+    catalogItemCount === state.catalog.meta.item_count,
+    "catalog item metadata must match persisted database identities",
+  );
 } finally {
-  (await core.close());
+  await core.close();
 }
 
 if (failures.length > 0) {
-  console.error('Registry Atlas product contract failed:');
+  console.error("Registry Atlas product contract failed:");
 
   for (const failure of failures) console.error(`- ${failure}`);
   process.exit(1);
 }
 
-console.log('Registry Atlas product contract passed.');
+console.log("Registry Atlas product contract passed.");
 
 console.log(
-  `Catalog enrichment coverage: ${enrichmentCoverage.description}/${enrichmentCoverage.total} descriptions, `
-  + `${enrichmentCoverage.author}/${enrichmentCoverage.total} authors, `
-  + `${enrichmentCoverage.fileCount}/${enrichmentCoverage.total} file counts, `
-  + `${enrichmentCoverage.themePreview}/${enrichmentCoverage.total} theme previews.`,
+  `Catalog enrichment coverage: ${enrichmentCoverage.description}/${enrichmentCoverage.total} descriptions, ` +
+    `${enrichmentCoverage.author}/${enrichmentCoverage.total} authors, ` +
+    `${enrichmentCoverage.fileCount}/${enrichmentCoverage.total} file counts, ` +
+    `${enrichmentCoverage.themePreview}/${enrichmentCoverage.total} theme previews.`,
 );

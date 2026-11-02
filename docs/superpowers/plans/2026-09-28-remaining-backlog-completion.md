@@ -35,11 +35,13 @@
 ### Task 1: Align project toolchain and CI
 
 **Files:**
+
 - Add: mise.toml
 - Modify: package.json
 - Modify: .github/workflows/deploy.yml
 
 **Interfaces:**
+
 - Produces: mise tasks install, dev, test, typecheck, validate:data, verify, build, preview, import/sync tasks.
 - Produces: packageManager pin pnpm@11.24.0.
 - Produces: Pages verification executed through project-owned mise configuration.
@@ -53,6 +55,7 @@
 ### Task 2: Generate and preserve the compact catalog index
 
 **Files:**
+
 - Modify: scripts/sync-registry-catalog-evidence.mjs
 - Modify: scripts/sync-shadcn-registries.mjs
 - Test: tests/registry-explorer/registryCatalogEvidence.test.ts
@@ -60,6 +63,7 @@
 - Modify: data/shadcn/registry-catalog-evidence-report.json when sync is run.
 
 **Interfaces:**
+
 - Produces: DISCOVERABLE_REGISTRY_ITEM_TYPES.
 - Produces: buildCompactCatalogItems(namespace, template, catalog).
 - Produces: syncCatalogEvidenceForRegistries(...).itemsByNamespace and report.discoverable_item_count.
@@ -75,6 +79,7 @@
 ### Task 3: Load and search open-vocabulary catalog items
 
 **Files:**
+
 - Create: src/registry-explorer/core/registryCatalogIndex.ts
 - Modify: src/registry-explorer/core/registry.schema.ts
 - Modify: src/registry-explorer/data/loadRegistries.ts
@@ -85,6 +90,7 @@
 - Test: tests/registry-explorer/registryItemDetail.test.ts
 
 **Interfaces:**
+
 - Produces: RegistryCatalogItem, RegistryCatalogIndex, RegistryCatalogSearchResult.
 - Produces: searchRegistryCatalog(index, query, componentValues, limit=1000).
 - Produces: compactCatalogItemToSummary(registry, item).
@@ -102,6 +108,7 @@
 ### Task 4: Wire open-vocabulary facets and truthful result rendering
 
 **Files:**
+
 - Modify: src/registry-explorer/core/catalogFacets.ts
 - Modify: src/registry-explorer/core/registryBrowse.ts
 - Modify: src/registry-explorer/ui/shell.ts
@@ -112,6 +119,7 @@
 - Test: tests/registry-explorer/shell.test.ts
 
 **Interfaces:**
+
 - Component facet values become strings, not a closed ComponentTag-only gate.
 - Facet option lookup can append compact-index name matches only when the local Component facet search is non-empty.
 - Discover renderer receives indexed total/truncation metadata.
@@ -128,6 +136,7 @@
 ### Task 5: Reconcile backlog documentation and generated data
 
 **Files:**
+
 - Modify: TODO.md
 - Delete: docs/todo/00_github_workflow_pages.md
 - Delete: docs/todo/00_verification-step.md
@@ -137,6 +146,7 @@
 - Generate/update: public/data/registry-catalog-items.json and sync reports.
 
 **Interfaces:**
+
 - Maintainer docs name mise as the preferred task entrypoint while preserving package-script equivalence.
 - TODO contains only active/deferred work, with issue #3 explicitly separate.
 

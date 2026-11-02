@@ -3,6 +3,7 @@
 Date: 2026-09-29
 
 Research basis:
+
 - `docs/research/2026-09-29-catalog-presentation-reuse-research.md`
 - `docs/research/2026-09-29-21st-layout-exemplar-audit.md`
 
@@ -127,13 +128,13 @@ export interface RegistryThemePreview {
 }
 
 export type RegistryThemeSwatch =
-  | 'background'
-  | 'foreground'
-  | 'primary'
-  | 'secondary'
-  | 'accent'
-  | 'muted'
-  | 'card';
+  | "background"
+  | "foreground"
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "muted"
+  | "card";
 ```
 
 Rules:
@@ -151,6 +152,7 @@ Rules:
   explicit timestamp field.
 
 The full same-origin detail bundle additionally preserves:
+
 - author;
 - structured `cssVars` when present;
 - existing description/categories/dependency/file metadata.
@@ -162,6 +164,7 @@ It must continue to exclude source file contents.
 Keep `queryCatalogComponents` and its deterministic local filtering.
 
 Search includes:
+
 - exact item name;
 - explicit title;
 - explicit description;
@@ -192,14 +195,11 @@ Refactor the existing `renderCatalogComponentCard` into one shared card primitiv
 presentation variants:
 
 ```ts
-type CatalogCardVariant =
-  | 'component'
-  | 'template'
-  | 'theme'
-  | 'icon-related';
+type CatalogCardVariant = "component" | "template" | "theme" | "icon-related";
 ```
 
 Common information:
+
 - display label;
 - namespace;
 - exact slug when different from display label;
@@ -254,6 +254,7 @@ single canonical catalog text-search control.
 Use the shared card in `template` mode.
 
 Emphasize:
+
 - title/display label;
 - description;
 - categories;
@@ -292,6 +293,7 @@ Remove `data-catalog-search` from route-specific browse controls and their dupli
 handling. Route controls contain facets/sort only.
 
 Requirements:
+
 - desktop and mobile expose one text-search intent;
 - existing path/query URL behavior remains shareable;
 - search still moves Home into Components as today;
@@ -302,6 +304,7 @@ Requirements:
 The existing user-facing `Reviewed` label is not a quality, security, or compatibility review. It only means an exact catalog item also has a Registry Atlas `itemSummaries` enrichment overlay. Presenting that as a primary browse destination, filter, or ranking signal overstates what the data proves.
 
 For this pass:
+
 - remove the `Reviewed` top-level browse destination and reviewed-first sort from user-facing navigation;
 - do not use reviewed/enrichment presence as the landing-page definition of “featured”;
 - preserve the overlay internally as optional factual metadata/provenance where it adds description, preview, docs, or exact display copy;
@@ -317,6 +320,7 @@ Raise interactive/card boundary contrast through existing design tokens, not rou
 border overrides.
 
 Acceptance:
+
 - relevant component boundaries intended to communicate shape target at least 3:1
   non-text contrast against adjacent backgrounds where WCAG 1.4.11 applies;
 - focus-visible states remain distinct from static borders;
@@ -347,6 +351,7 @@ Shared data/card primitives do **not** require identical route geometry.
 The root route must not render as the Components application content with a hero attached.
 
 At desktop it should use:
+
 - the shared approximately 240px primary navigation sidebar;
 - no route-specific component facet controls on Home;
 - a left-aligned hero/copy region rather than a centered dashboard card;
@@ -360,6 +365,7 @@ direct evidence.
 #### 9.2 Desktop shared-sidebar shell
 
 At a 1920×1080 reference viewport:
+
 - persistent primary sidebar target: approximately 240px;
 - content begins immediately after the sidebar with a compact inset;
 - content uses the full remaining viewport width rather than a centered max-width page;
@@ -379,12 +385,14 @@ Components uses two complementary browse modes:
 2. **dense catalog grid** for full browsing.
 
 Discovery-band contract:
+
 - small section heading;
 - optional right-aligned "View all" route link;
 - horizontally scrollable preview row;
 - no custom carousel runtime is required.
 
 Dense-grid contract at wide desktop:
+
 - 4 columns in the remaining collection canvas;
 - border-connected cells with hairline boundaries rather than widely separated floating
   cards;
@@ -402,6 +410,7 @@ Templates uses the collection shell but a spacious specimen grid rather than the
 border-connected Components grid.
 
 Wide-desktop target:
+
 - 4 columns;
 - approximately 24px horizontal gap;
 - approximately 32px vertical gap;
@@ -422,6 +431,7 @@ Themes uses the same 4-column / 24px-by-32px grid rhythm as Templates, but its s
 theme-specific.
 
 When native structured theme data exists:
+
 - large theme-colored specimen surface;
 - compact swatch row near the upper-left;
 - theme name inside or directly adjacent to the specimen;
@@ -437,6 +447,7 @@ CSS source in the base pass.
 The Registries route adapts the exemplar Libraries information-density pattern.
 
 Desktop target:
+
 - shared primary sidebar remains available;
 - registry-directory search/status/sort controls live compactly in the content canvas;
 - 3-column metadata-card grid in the content canvas;
@@ -458,6 +469,7 @@ component records. Keep the current route honestly labeled/reframed as icon-rela
 and use shared evidence-backed cards.
 
 If a true glyph source is approved later, the exemplar target is:
+
 - desktop family/category rail;
 - dense border-connected glyph matrix;
 - mobile centered 4-column matrix with ~80px cells;
@@ -471,6 +483,7 @@ Exact component/template/theme detail routes keep the shared primary sidebar but
 collection-grid composition and use a centered dossier in the content canvas.
 
 Wide-desktop target:
+
 - primary dossier max-width approximately 800px;
 - at 1920px, centered around the measured ~798px exemplar column;
 - title/description/provenance first;
@@ -480,6 +493,7 @@ Wide-desktop target:
 - related/evidence-backed items later.
 
 Component-detail exemplar measurements:
+
 - outer specimen ~798px;
 - inner preview ~782px;
 - factual metadata uses a two-column desktop grid with roughly 40px column gap.
@@ -510,6 +524,7 @@ values.
 A registry profile uses a distinct two-pane shell rather than the generic collection page.
 
 Wide-desktop target:
+
 - shared primary sidebar remains persistent;
 - sticky registry summary column approximately 320px wide;
 - summary begins near the left page gutter;
@@ -529,6 +544,7 @@ At 390×844, the desktop sidebar becomes one off-canvas navigation drawer rather
 squeezed into the content canvas.
 
 Mobile shell:
+
 - compact top bar with a menu trigger and Registry Atlas Home link;
 - no unsupported sign-in/account affordance;
 - the drawer contains the same single catalog search, grouped primary navigation, and
@@ -540,12 +556,14 @@ Mobile shell:
 - collection content uses roughly 12–20px side gutters depending on route.
 
 Components mobile:
+
 - one-column, border-connected component cells;
 - Registry filtering remains available in the shared drawer;
 - sort remains a compact content control;
 - roughly 12px outer gutters.
 
 Templates/Themes mobile:
+
 - one-column specimen list;
 - roughly 20px outer gutters;
 - preserve the desktop grid's visual rhythm with approximately 32px vertical spacing.
@@ -556,6 +574,7 @@ Reuse the shared sidebar DOM as the mobile off-canvas drawer rather than maintai
 second navigation or filter subsystem.
 
 Required behavior:
+
 - dimmed backdrop;
 - compact brand/Home, Close, search, navigation, and route-specific facet stack;
 - only supported Registry Atlas controls appear;
@@ -569,6 +588,7 @@ or other controls unless Registry Atlas has explicit data and a reviewed product
 #### 9.13 Responsive invariants
 
 Across these shells:
+
 - no horizontal document overflow at 390px or 1920px;
 - the off-canvas drawer does not alter document width;
 - sticky/fixed desktop regions collapse cleanly on mobile;
@@ -585,6 +605,7 @@ separately approves them.
 ### A. Live arbitrary component/page previews
 
 Existing reuse candidates:
+
 - CodeSandbox Sandpack for browser-side sandbox execution;
 - the current shadcn v4 `registry-template` as a build-time preview-host scaffold.
 
@@ -592,6 +613,7 @@ Do not build a custom preview runtime or preview-host application from scratch b
 evaluating those existing implementations.
 
 Approval is still required because either approach:
+
 - executes third-party registry code;
 - needs dependency/materialization rules;
 - needs build/browser isolation, caching, timeouts, networking, and failure policies;
@@ -642,6 +664,7 @@ not need a custom registry-server protocol if this source class is added later.
 
 This expansion is approval-gated because it changes the source universe beyond the official
 shadcn directory and requires explicit decisions about:
+
 - opt-in versus curated versus discoverable GitHub sources;
 - exact identity/deduplication against official namespace registries;
 - refresh and caching behavior;
@@ -655,6 +678,7 @@ If approved, use documented shadcn source-registry semantics and the stable
 Extend the existing rerunnable product-contract approach rather than rely on hand review.
 
 Add one small local coverage report/check that can answer:
+
 - compact items with description;
 - compact items with author;
 - theme/style items with native structured theme swatches;
@@ -665,6 +689,7 @@ Add one small local coverage report/check that can answer:
 The check reads generated local artifacts only; it performs no network requests.
 
 Extend the product contract so regressions fail when:
+
 - compact description/author values violate bounds;
 - `themePreview` contains non-allowlisted keys;
 - browse search stops considering description/author;
@@ -720,6 +745,7 @@ specimen, not a guessed color.
 ### Data contract
 
 Extend registry catalog evidence tests for:
+
 - compact description/author preservation;
 - description bounds;
 - fileCount derivation;
@@ -732,6 +758,7 @@ Extend schema/index tests for the new optional fields.
 ### Query
 
 Extend catalog query tests for:
+
 - description/author search;
 - explicit title precedence;
 - path-leaf display fallback while route slug stays exact;
@@ -740,6 +767,7 @@ Extend catalog query tests for:
 ### Views and layout contracts
 
 Extend catalog/view tests for:
+
 - explicit preview URL precedence;
 - theme swatches only from native structured `themePreview`;
 - metadata specimen replacing the large no-preview placeholder;
@@ -757,6 +785,7 @@ Extend catalog/view tests for:
 
 Extend `visualContract.test.ts` (or the existing equivalent visual-contract test) with
 token/geometry contracts rather than exact screenshot hashes:
+
 - desktop primary-sidebar token near 240px;
 - compact mobile-header token near 52px;
 - four-column wide collection grid breakpoint;
@@ -771,6 +800,7 @@ token/geometry contracts rather than exact screenshot hashes:
 ### Accessibility
 
 Add deterministic assertions for:
+
 - changed boundary-token contrast;
 - focus-visible contrast remaining distinct from static borders;
 - mobile drawer accessible naming, `aria-expanded`, open/close focus transfer, and focus return;
@@ -782,6 +812,7 @@ Use only the managed `registry-atlas` project profile and its exact instance for
 verification. Use the separate design/reference profile only for exemplar comparison.
 
 At 1920×1080 verify:
+
 - the shared primary sidebar is approximately 240px and remains present on Home and content routes;
 - Home has distinct discovery content without route-specific component facets;
 - Components uses the shared sidebar plus its bounded Registry facet and reaches four-column
@@ -795,6 +826,7 @@ At 1920×1080 verify:
 - no fabricated preview media appears.
 
 At 390×844 verify:
+
 - the desktop sidebar is off-canvas until the menu trigger opens it;
 - compact mobile header remains visible;
 - the drawer exposes the shared Home link, catalog search, grouped primary navigation, and
@@ -806,6 +838,7 @@ At 390×844 verify:
 - focus moves to Close when the drawer opens and returns to the menu trigger when it closes.
 
 Across all checked routes:
+
 - stable exact routes and history behavior;
 - no browser exceptions;
 - no unexpected 5xx responses;

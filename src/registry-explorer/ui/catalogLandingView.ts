@@ -51,9 +51,11 @@ export function renderCatalogLanding(
         </div>
         <button type="button" class="link-button" data-catalog-route="${escapeHtml(componentsPath)}">View all</button>
       </div>
-      ${options.featured.items.length
-        ? `<div class="catalog-component-grid landing-grid">${options.featured.items.map(item => renderCatalogComponentCard(item)).join("")}</div>`
-        : '<div class="empty-state"><h2>No components are available yet.</h2><p>Components will appear here when a registry provides them.</p></div>'}
+      ${
+        options.featured.items.length
+          ? `<div class="catalog-component-grid landing-grid">${options.featured.items.map((item) => renderCatalogComponentCard(item)).join("")}</div>`
+          : '<div class="empty-state"><h2>No components are available yet.</h2><p>Components will appear here when a registry provides them.</p></div>'
+      }
     </section>
   `;
 }

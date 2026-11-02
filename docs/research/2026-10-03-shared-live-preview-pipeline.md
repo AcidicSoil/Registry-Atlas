@@ -44,10 +44,10 @@ A build without the isolated dependency install should first use the host's exac
 
 The Atlas-managed browser (profile `registry-atlas`, PinchTab port 9887) exercised the **actual upstream React TSX**, not a recreated example:
 
-| Official identity | Source SHA-256 | Verified action |
-|---|---|---|
-| `@8bitcn/button` | `228196f5b295e9db209ba6506145acfd3033a6ddfe32eecf4903aa1709a5f770` | Click incremented count 0 → 1; disabled blocked further click; upstream button-decorations present |
-| `@8bitcn/input` | `63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8` | Typing “hello world” updated the upstream input and controlled character count to 11; disabled state applied |
+| Official identity | Source SHA-256                                                     | Verified action                                                                                              |
+| ----------------- | ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `@8bitcn/button`  | `228196f5b295e9db209ba6506145acfd3033a6ddfe32eecf4903aa1709a5f770` | Click incremented count 0 → 1; disabled blocked further click; upstream button-decorations present           |
+| `@8bitcn/input`   | `63e2d2f3473995547f88ac322edc31cb967d8e1bb0c489a1d6f69d38976eccb8` | Typing “hello world” updated the upstream input and controlled character count to 11; disabled state applied |
 
 Both generated artifacts load as sandboxed iframes on their exact Registry Atlas detail pages. Their bundle URLs include content hashes and the manifest records the matching original source hashes. No JavaScript errors were reported during the manual interaction checks.
 
@@ -89,7 +89,7 @@ The full approved `@8bitcn` component intake observed **56 component entries**, 
 
 The standalone local service is `tools/component-preview-host/preview-server.mjs` (`pnpm preview:serve`). It binds only `127.0.0.1:5198`. For a locally served Atlas component page with no interaction-verified manifest preview, `@8bitcn` pages offer **Build source preview locally**. Activating that control inserts an isolated iframe pointed at `http://127.0.0.1:5198/preview/@8bitcn/<slug>`. Published GitHub Pages pages do **not** show the local-control path.
 
-The service discovers allowed namespace names from approved per-registry policies. A request checks its official cached JSON identity, source hash, reviewed registry policy hash, and pinned package lock hash. Missing or unapproved identities are not compiled. For an admitted source revision, an isolated process executes the shared esbuild runner with no network, read-only source/dependencies and a single private writeable cache under `~/.local/state/registry-atlas/previews/cache`; concurrent requests for the same revision share the same build, and subsequent requests hit the memory cache. The browser receives a content-security-policy-constrained HTML iframe; the server does not add results to the verified manifest. The runtime is deliberately a *local development service*, not a public build API or a production CDN. Use a separately reviewed deployment, input quotas, authentication, and stronger filesystem restrictions before exposing any compiler to the internet.
+The service discovers allowed namespace names from approved per-registry policies. A request checks its official cached JSON identity, source hash, reviewed registry policy hash, and pinned package lock hash. Missing or unapproved identities are not compiled. For an admitted source revision, an isolated process executes the shared esbuild runner with no network, read-only source/dependencies and a single private writeable cache under `~/.local/state/registry-atlas/previews/cache`; concurrent requests for the same revision share the same build, and subsequent requests hit the memory cache. The browser receives a content-security-policy-constrained HTML iframe; the server does not add results to the verified manifest. The runtime is deliberately a _local development service_, not a public build API or a production CDN. Use a separately reviewed deployment, input quotas, authentication, and stronger filesystem restrictions before exposing any compiler to the internet.
 
 Quick checks while the server is running:
 

@@ -59,28 +59,39 @@ export function buildRegistryDirectory(
   const assetFilter = new Set(options.assetKinds ?? []);
   const sort = options.sort ?? "name";
 
-  const entries = registries.flatMap(registry => {
-    if (query && ![
-      registry.name, registry.description, registry.url,
-      ...(registry.atlas?.aliases ?? []),
-    ].some(value => value.toLocaleLowerCase().includes(query))) return [];
+  const entries = registries
+    .flatMap((registry) => {
+      if (
+        query &&
+        ![
+          registry.name,
+          registry.description,
+          registry.url,
+          ...(registry.atlas?.aliases ?? []),
+        ].some((value) => value.toLocaleLowerCase().includes(query))
+      )
+        return [];
 
-    const entry = {
-      registry,
-      itemCount: catalogItemCountForRegistry(index, registry.name),
-      coverage: registryCatalogCoverage(registry, index),
-    };
+      const entry = {
+        registry,
+        itemCount: catalogItemCountForRegistry(index, registry.name),
+        coverage: registryCatalogCoverage(registry, index),
+      };
 
-    if (coverageFilter.size && !coverageFilter.has(entry.coverage)) return [];
+      if (coverageFilter.size && !coverageFilter.has(entry.coverage)) return [];
 
-    if (assetFilter.size && !(index.registries[registry.name] ?? []).some(item => {
-      const kind = assetKindForCatalogItem(item);
+      if (
+        assetFilter.size &&
+        !(index.registries[registry.name] ?? []).some((item) => {
+          const kind = assetKindForCatalogItem(item);
 
-      return kind !== null && assetFilter.has(kind);
-    })) return [];
+          return kind !== null && assetFilter.has(kind);
+        })
+      )
+        return [];
 
-    return [entry];
-  })
+      return [entry];
+    })
     .sort((a, b) => compareEntries(a, b, sort));
 
   const coverageCounts: Record<RegistryCatalogCoverage, number> = {
@@ -90,7 +101,7 @@ export function buildRegistryDirectory(
     failed: 0,
   };
 
-  entries.forEach(entry => {
+  entries.forEach((entry) => {
     coverageCounts[entry.coverage] += 1;
   });
 

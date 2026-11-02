@@ -1,5 +1,5 @@
-import type { RawJsonInput } from './jsonInput';
-import { isInputObject, isInputString } from './inputChecks';
+import type { RawJsonInput } from "./jsonInput";
+import { isInputObject, isInputString } from "./inputChecks";
 
 export interface CatalogTaxonomyNode {
   id: string;
@@ -28,21 +28,27 @@ function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
 }
 
 function nonEmptyString(value: RawJsonInput, field: string): string {
-  if (!isInputString(value) || !value.trim()) throw new Error(`Catalog taxonomy ${field} must be a non-empty string`);
+  if (!isInputString(value) || !value.trim())
+    throw new Error(`Catalog taxonomy ${field} must be a non-empty string`);
 
   return value.trim();
 }
 
 function stringArray(value: RawJsonInput, field: string, id: string): string[] {
-  if (!Array.isArray(value) || value.some(entry => !isInputString(entry))) {
+  if (!Array.isArray(value) || value.some((entry) => !isInputString(entry))) {
     throw new Error(`Catalog taxonomy ${id} ${field} must be an array of strings`);
   }
 
-  return value.map(entry => entry.trim()).filter(Boolean);
+  return value.map((entry) => entry.trim()).filter(Boolean);
 }
 
 function aliasKey(value: string): string {
-  return value.trim().toLocaleLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' ');
+  return value
+    .trim()
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
 }
 
 function validateChildTaxonomyId(id: string, parentId: string | null, ids: Set<string>): void {
@@ -52,13 +58,13 @@ function validateChildTaxonomyId(id: string, parentId: string | null, ids: Set<s
   ids.add(id);
 
   if (parentId === null) {
-    if (id.includes('/')) throw new Error(`Catalog taxonomy root id must have one segment: ${id}`);
+    if (id.includes("/")) throw new Error(`Catalog taxonomy root id must have one segment: ${id}`);
 
     return;
   }
 
-  const direct = id.startsWith(`${parentId}/`)
-    && id.split('/').length === parentId.split('/').length + 1;
+  const direct =
+    id.startsWith(`${parentId}/`) && id.split("/").length === parentId.split("/").length + 1;
 
   if (!direct) throw new Error(`Catalog taxonomy child ${id} is not a direct child of ${parentId}`);
 }
@@ -74,10 +80,11 @@ function registerTaxonomyAliases(aliases: Map<string, string>, names: string[], 
 }
 
 export function parseCatalogTaxonomy(value: RawJsonInput): CatalogTaxonomy {
-  if (!isRecord(value)) throw new Error('Catalog taxonomy must be an object');
-  const version = nonEmptyString(value.version, 'version');
+  if (!isRecord(value)) throw new Error("Catalog taxonomy must be an object");
+  const version = nonEmptyString(value.version, "version");
 
-  if (!Array.isArray(value.roots) || value.roots.length === 0) throw new Error('Catalog taxonomy roots must be a non-empty array');
+  if (!Array.isArray(value.roots) || value.roots.length === 0)
+    throw new Error("Catalog taxonomy roots must be a non-empty array");
 
   const ids = new Set<string>();
   const aliases = new Map<string, string>();
@@ -85,34 +92,35 @@ export function parseCatalogTaxonomy(value: RawJsonInput): CatalogTaxonomy {
   const ancestors = new Set<object>();
 
   const visit = (raw: RawJsonInput, parentId: string | null): CatalogTaxonomyNode => {
-    if (!isRecord(raw)) throw new Error('Catalog taxonomy node must be an object');
+    if (!isRecord(raw)) throw new Error("Catalog taxonomy node must be an object");
 
-    if (ancestors.has(raw)) throw new Error('Catalog taxonomy contains a cycle');
+    if (ancestors.has(raw)) throw new Error("Catalog taxonomy contains a cycle");
 
-    if (seenObjects.has(raw)) throw new Error('Catalog taxonomy reuses a node object');
+    if (seenObjects.has(raw)) throw new Error("Catalog taxonomy reuses a node object");
     seenObjects.add(raw);
     ancestors.add(raw);
 
-    const id = nonEmptyString(raw.id, 'id');
+    const id = nonEmptyString(raw.id, "id");
     validateChildTaxonomyId(id, parentId, ids);
 
     const label = nonEmptyString(raw.label, `${id} label`);
     const what = nonEmptyString(raw.what, `${id} what`);
-    const nodeAliases = stringArray(raw.aliases, 'aliases', id);
-    const notFor = stringArray(raw.notFor, 'notFor', id);
-    const examples = stringArray(raw.examples, 'examples', id);
+    const nodeAliases = stringArray(raw.aliases, "aliases", id);
+    const notFor = stringArray(raw.notFor, "notFor", id);
+    const examples = stringArray(raw.examples, "examples", id);
 
-    if (!Array.isArray(raw.children)) throw new Error(`Catalog taxonomy ${id} children must be an array`);
+    if (!Array.isArray(raw.children))
+      throw new Error(`Catalog taxonomy ${id} children must be an array`);
 
     registerTaxonomyAliases(aliases, nodeAliases, id);
 
-    const children = raw.children.map(child => visit(child, id));
+    const children = raw.children.map((child) => visit(child, id));
     ancestors.delete(raw);
 
     return { id, label, aliases: nodeAliases, what, notFor, examples, children };
   };
 
-  return { version, roots: value.roots.map(root => visit(root, null)) };
+  return { version, roots: value.roots.map((root) => visit(root, null)) };
 }
 
 function flattenCatalogTaxonomy(taxonomy: CatalogTaxonomy): CatalogTaxonomyRecord[] {
@@ -120,16 +128,18 @@ function flattenCatalogTaxonomy(taxonomy: CatalogTaxonomy): CatalogTaxonomyRecor
 
   const walk = (node: CatalogTaxonomyNode, parentId: string | null, depth: number): void => {
     records.push({ ...node, parentId, depth });
-    node.children.forEach(child => walk(child, node.id, depth + 1));
+    node.children.forEach((child) => walk(child, node.id, depth + 1));
   };
 
-  taxonomy.roots.forEach(root => walk(root, null, 0));
+  taxonomy.roots.forEach((root) => walk(root, null, 0));
 
   return records;
 }
 
-export function catalogTaxonomyNodeMap(taxonomy: CatalogTaxonomy): ReadonlyMap<string, CatalogTaxonomyRecord> {
-  return new Map(flattenCatalogTaxonomy(taxonomy).map(record => [record.id, record]));
+export function catalogTaxonomyNodeMap(
+  taxonomy: CatalogTaxonomy,
+): ReadonlyMap<string, CatalogTaxonomyRecord> {
+  return new Map(flattenCatalogTaxonomy(taxonomy).map((record) => [record.id, record]));
 }
 
 export function catalogTaxonomyDescendantIds(taxonomy: CatalogTaxonomy, id: string): string[] {
@@ -151,7 +161,10 @@ export function catalogTaxonomyDescendantIds(taxonomy: CatalogTaxonomy, id: stri
   return output;
 }
 
-export function catalogTaxonomySearchValues(taxonomy: CatalogTaxonomy, ids: readonly string[]): string[] {
+export function catalogTaxonomySearchValues(
+  taxonomy: CatalogTaxonomy,
+  ids: readonly string[],
+): string[] {
   const map = catalogTaxonomyNodeMap(taxonomy);
   const output: string[] = [];
 

@@ -2,7 +2,6 @@
 
 > **Superseded for the current visual-reference requirement (2026-10-02).** The user clarified that previews are images of the actual official component demo, not locally executed copies of upstream code. See `docs/superpowers/specs/2026-10-02-component-visual-references.md`. The build-host, source-license, and interactive-runtime tasks below are historical; they are not prerequisites for the requested visual-reference rollout.
 
-
 > **For agentic workers:** Use the host's available task-by-task implementation workflow. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Turn the three existing isolated examples into a safe, auditable pipeline for progressively making the remaining Registry Atlas items functionally previewable in both cards and detail pages.
@@ -13,7 +12,7 @@
 
 ## Global Constraints
 
-- See ``docs/superpowers/specs/2026-10-01-authentic-component-previews-and-coverage.md``. It is the authoritative contract.
+- See `docs/superpowers/specs/2026-10-01-authentic-component-previews-and-coverage.md`. It is the authoritative contract.
 - Do **not** treat the three current 8bitcn interaction fixtures as real upstream React execution. Label them accurately in the manifest and preserve their observed working controls. Only manifest-reviewed local source-built demos may count as authentic upstream-built coverage.
 - Every catalog card is a keyboard-accessible internal Atlas route, including unsupported items. Its preview controls remain independently operable. The detail page shows the **same approved demo identity**. Never replace working components with screenshots, small Open buttons, raw JSON or external-site links.
 - The 408 raw registry names include registries with zero compact items; the 84,153 compact rows include repeats. Report raw, populated, distinct, duplicates and per-runtime states separately. The user-facing list must not collapse to the previewed subset.
@@ -26,42 +25,46 @@
 ### Task 1: Reviewed manifest as the single iframe allowlist (first implementation slice)
 
 **Files:**
-- Create: ``src/registry-explorer/data/component-demo-manifest.json``
-- Modify: ``src/registry-explorer/ui/componentPreview.ts``
-- Test: ``tests/registry-explorer/componentPreview.test.ts``
+
+- Create: `src/registry-explorer/data/component-demo-manifest.json`
+- Modify: `src/registry-explorer/ui/componentPreview.ts`
+- Test: `tests/registry-explorer/componentPreview.test.ts`
 
 **Interfaces:**
-- Manifest: ``{schema:'registry-atlas-component-demos/v1',items:Array<{namespace,slug,kind:'source-informed-fixture'|'upstream-built',path,status:'interaction-verified',source:{docsUrl,registryItemUrl},reviewedAt,verifiedAt,sourceSha256?}>}``.
-- Produces: ``verifiedComponentDemo(namespace:string,slug:string): ReviewedDemo | null``; ``renderComponentPreview(namespace:string,slug:string,mode:'card'|'detail'): string|null``.
+
+- Manifest: `{schema:'registry-atlas-component-demos/v1',items:Array<{namespace,slug,kind:'source-informed-fixture'|'upstream-built',path,status:'interaction-verified',source:{docsUrl,registryItemUrl},reviewedAt,verifiedAt,sourceSha256?}>}`.
+- Produces: `verifiedComponentDemo(namespace:string,slug:string): ReviewedDemo | null`; `renderComponentPreview(namespace:string,slug:string,mode:'card'|'detail'): string|null`.
 
 - [x] **Step 1: Add failing tests:** check that three current @8bitcn identities exist in the reviewed manifest, are `source-informed-fixture`, and use one same-origin allowlisted static path for card/detail. Unknown identity, malicious path, duplicate identity, non-verified status and unsupported runtime return null, even when a preview URL exists.
-- [x] **Step 2: Verify red:** ``mise exec -- pnpm exec vitest run tests/registry-explorer/componentPreview.test.ts`` must fail on the new manifest lookup behavior, not on imports.
-- [x] **Step 3: Implement:** move the three literal IDs from the renderer into version-controlled JSON. Parse a small reviewed allowlist once at module startup; require exact identity, fixed prefix ``/Registry-Atlas/component-demos/``, no credentials, traversal, URLs, fragments, query in manifest path, and exact `interaction-verified` status. Keep iframe ``sandbox="allow-scripts"``, no same-origin, referrer and lazy/eager split.
+- [x] **Step 2: Verify red:** `mise exec -- pnpm exec vitest run tests/registry-explorer/componentPreview.test.ts` must fail on the new manifest lookup behavior, not on imports.
+- [x] **Step 3: Implement:** move the three literal IDs from the renderer into version-controlled JSON. Parse a small reviewed allowlist once at module startup; require exact identity, fixed prefix `/Registry-Atlas/component-demos/`, no credentials, traversal, URLs, fragments, query in manifest path, and exact `interaction-verified` status. Keep iframe `sandbox="allow-scripts"`, no same-origin, referrer and lazy/eager split.
 - [x] **Step 4: Verify green:** identical command passes; `renderCatalogComponentCard` continues to separate iframe from the navigation anchor, and unknown entries retain a navigable fact card.
-- [x] **Step 5: Integration:** ``mise exec -- pnpm typecheck``, ``mise exec -- pnpm typecheck:test``, plus ``catalogComponentsView.test.ts`` and ``shell.test.ts``. Verify loaded @8bitcn Button iframe at actual Atlas detail URL in managed browser; its interactive action works. Inspect console/errors.
+- [x] **Step 5: Integration:** `mise exec -- pnpm typecheck`, `mise exec -- pnpm typecheck:test`, plus `catalogComponentsView.test.ts` and `shell.test.ts`. Verify loaded @8bitcn Button iframe at actual Atlas detail URL in managed browser; its interactive action works. Inspect console/errors.
 - [x] **Step 6: Commit:** selectively stage only Task 1 files after checking overlapping PAO claims, diff and inherited dirty changes.
 
 ### Task 2: Honest, resumable 408-registry coverage inventory (first implementation slice)
 
 **Files:**
-- Create: ``scripts/plan-component-previews.mjs``
-- Create: ``tests/registry-explorer/planComponentPreviews.test.ts``
+
+- Create: `scripts/plan-component-previews.mjs`
+- Create: `tests/registry-explorer/planComponentPreviews.test.ts`
 
 **Interfaces:**
-- ``planPreviewCoverage(rawRegistries,catalog,manifest,{registry?,cursor?,limit?}) -> {summary,registries,batch,nextCursor}``.
-- CLI reads ``data/shadcn/registries.raw.json``, ``public/data/registry-catalog-items.json`` and ``src/registry-explorer/data/component-demo-manifest.json``, prints report JSON to stdout or writes only an explicit ``--report /absolute/path.json``. No external HTTP, browser navigation or other file writes.
+
+- `planPreviewCoverage(rawRegistries,catalog,manifest,{registry?,cursor?,limit?}) -> {summary,registries,batch,nextCursor}`.
+- CLI reads `data/shadcn/registries.raw.json`, `public/data/registry-catalog-items.json` and `src/registry-explorer/data/component-demo-manifest.json`, prints report JSON to stdout or writes only an explicit `--report /absolute/path.json`. No external HTTP, browser navigation or other file writes.
 
 - [x] **Step 1: Add failing tests:** raw empty registry is retained; duplicate same-identity index rows are not double-counted; two namespaces with identical slug remain distinct; manifest entries omitted from catalog or invalid render status are unresolved errors; snapshot counts are not multiplied by page limits. Stable `--limit` and exclusive `--cursor` split work deterministically, including slash-containing slugs.
-- [x] **Step 2: Verify red:** ``mise exec -- pnpm exec vitest run tests/registry-explorer/planComponentPreviews.test.ts`` fails with missing planner.
+- [x] **Step 2: Verify red:** `mise exec -- pnpm exec vitest run tests/registry-explorer/planComponentPreviews.test.ts` fails with missing planner.
 - [x] **Step 3: Implement:** deterministically sort exact keys, validate manifests and registry names, emit per-registry stats, `fixture` vs `upstream-built` vs `pending`, duplicate counters, empty registries, a bounded batch, and an opaque lexicographic exclusive next cursor. Reject unknown CLI flags, negative/noninteger limits, unknown registry and nonexistent cursor with explicit nonzero exit. Use no raw source URL in output intended for the frontend.
-- [x] **Step 4: Verify green:** focused tests pass. Run full planner in read-only mode and assert `summary.complete===false` and exact base registry/index coverage. Sample ``--registry @8bitcn --limit 4`` then resume its `nextCursor` with no overlap.
-- [x] **Step 5: Integration:** ``mise run verify`` succeeds; confirm no edits to source catalogs or inherited files; commit Task 2 only.
+- [x] **Step 4: Verify green:** focused tests pass. Run full planner in read-only mode and assert `summary.complete===false` and exact base registry/index coverage. Sample `--registry @8bitcn --limit 4` then resume its `nextCursor` with no overlap.
+- [x] **Step 5: Integration:** `mise run verify` succeeds; confirm no edits to source catalogs or inherited files; commit Task 2 only.
 
 ### Task 3: Real upstream component build host (separate reviewable slice)
 
-**Files (proposed new files):** ``tools/component-preview-host/`` for a pinned, isolated shadcn-template/Sandpack-compatible React build; ``scripts/build-reviewed-component-demo.mjs``; ``tests/registry-explorer/buildReviewedComponentDemo.test.ts``; reviewed build output under ``public/component-demos/upstream/<content-hash>/``.
+**Files (proposed new files):** `tools/component-preview-host/` for a pinned, isolated shadcn-template/Sandpack-compatible React build; `scripts/build-reviewed-component-demo.mjs`; `tests/registry-explorer/buildReviewedComponentDemo.test.ts`; reviewed build output under `public/component-demos/upstream/<content-hash>/`.
 
-**Interfaces:** ``buildReviewedComponentDemo({registry,slug,rawItemUrl,expectedSha256,approvedDependencies,licenseDecision,fixtureFile,budget}) -> {status,artifactPath,artifactSha256,evidence}``. Input always comes from a reviewed manifest/source fact, never a UI-supplied URL. Output emits immutable locally hosted HTML/assets only after successful build and browser checks.
+**Interfaces:** `buildReviewedComponentDemo({registry,slug,rawItemUrl,expectedSha256,approvedDependencies,licenseDecision,fixtureFile,budget}) -> {status,artifactPath,artifactSha256,evidence}`. Input always comes from a reviewed manifest/source fact, never a UI-supplied URL. Output emits immutable locally hosted HTML/assets only after successful build and browser checks.
 
 - [ ] **Step 1:** add failing locked-source tests: source drift, license absent, dependencies not on the approved lockfile, cross-origin import, missing demo composition, SSR-only feature, build time/bundle budget exceeded, and successful source-exact reference; the first failing test proves no build path exists.
 - [ ] **Step 2:** evaluate official shadcn registry-template and Sandpack against the current runtime; record a security/compatibility decision without installing packages in the browsing process.
@@ -71,9 +74,9 @@
 
 ### Task 4: Official-site route/source evidence and per-item QA (separate reviewable slice)
 
-**Files (proposed):** ``scripts/review-component-preview-candidate.mjs``, ``data/shadcn/component-demo-evidence-ledger.jsonl``, ``tests/registry-explorer/reviewComponentPreviewCandidate.test.ts``; reuse current ``scripts/crawl-component-links.mjs`` only after its owning workstream hands it off.
+**Files (proposed):** `scripts/review-component-preview-candidate.mjs`, `data/shadcn/component-demo-evidence-ledger.jsonl`, `tests/registry-explorer/reviewComponentPreviewCandidate.test.ts`; reuse current `scripts/crawl-component-links.mjs` only after its owning workstream hands it off.
 
-**Interfaces:** ``reviewCandidate({registry,slug,browser,sourceProbe,approvedOrigins}) -> observed evidence``; ``verifyDemo({manifestEntry,previewBrowser,cardRoute,detailRoute}) -> {cardInteraction,detailInteraction,route,console,network,status}``.
+**Interfaces:** `reviewCandidate({registry,slug,browser,sourceProbe,approvedOrigins}) -> observed evidence`; `verifyDemo({manifestEntry,previewBrowser,cardRoute,detailRoute}) -> {cardInteraction,detailInteraction,route,console,network,status}`.
 
 - [ ] **Step 1:** red tests for reused stale browser refs, same-title collisions, missing source JSON, fake 200 pages, path traversal and HTTP-only links; distinguish `unresolved` from `blocked`.
 - [ ] **Step 2:** browser: official homepage → actual listing → actual item → raw item JSON. Record observed final URL, title/slug and source hash. Do not capture screenshots as an evidence requirement.
@@ -93,11 +96,11 @@
 
 ### Task 6: Full program reconciliation
 
-**Files (proposed):** ``scripts/reconcile-component-preview-coverage.mjs``, ``tests/registry-explorer/reconcileComponentPreviewCoverage.test.ts`` and documented verified coverage report.
+**Files (proposed):** `scripts/reconcile-component-preview-coverage.mjs`, `tests/registry-explorer/reconcileComponentPreviewCoverage.test.ts` and documented verified coverage report.
 
 - [ ] **Step 1:** fail when a raw registry is omitted, identity duplicated without accounting, reviewed manifest entry is missing/broken, or a source-built label lacks an audited build hash.
 - [ ] **Step 2:** independently sample browser routes across registry families, verify no unapproved source URL or screenshot actions, and require explicit pending/blocked buckets.
-- [ ] **Step 3:** report ``rawRegistries``, ``populatedRegistries``, ``distinctItems``, ``fixtureVerified``, ``upstreamBuiltVerified``, ``blocked``, ``unreviewed`` and full per-registry completion. Do not call all-registry work complete while any accepted identity lacks a supported disposition.
+- [ ] **Step 3:** report `rawRegistries`, `populatedRegistries`, `distinctItems`, `fixtureVerified`, `upstreamBuiltVerified`, `blocked`, `unreviewed` and full per-registry completion. Do not call all-registry work complete while any accepted identity lacks a supported disposition.
 
 ## Execution status and decisions
 

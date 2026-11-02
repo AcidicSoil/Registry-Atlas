@@ -1,34 +1,42 @@
-import { isInputCallable, isInputString } from './lib/input-guards.mjs';
-import { execFileSync } from 'node:child_process';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { isAbsolute, join } from 'node:path';
-import { setTimeout as sleep } from 'node:timers/promises';
-import { pathToFileURL } from 'node:url';
-import { catalogFingerprint } from './lib/registry-discovery.mjs';
+import { isInputCallable, isInputString } from "./lib/input-guards.mjs";
+import { execFileSync } from "node:child_process";
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { isAbsolute, join } from "node:path";
+import { setTimeout as sleep } from "node:timers/promises";
+import { pathToFileURL } from "node:url";
+import { catalogFingerprint } from "./lib/registry-discovery.mjs";
 import {
   CATALOG_STRUCTURE_SURVEY_SCHEMA,
   planCatalogStructureSurvey,
   surveyRegistryCatalogStructure,
   writeRegistrySurveyArtifact,
-} from './lib/catalog-structure-survey.mjs';
-import { chooseObservedGroup } from './lib/systemone-group.mjs';
-import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
+} from "./lib/catalog-structure-survey.mjs";
+import { chooseObservedGroup } from "./lib/systemone-group.mjs";
+import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
 
-const DEFAULT_DECISION_URL = 'http://127.0.0.1:18080/v1/systemone';
+const DEFAULT_DECISION_URL = "http://127.0.0.1:18080/v1/systemone";
 
 const VALUE_FLAGS = new Set([
-  '--profile', '--server', '--tab', '--output-dir', '--cursor',
-  '--max-registries', '--max-surfaces', '--max-links', '--delay-ms', '--decision-url',
+  "--profile",
+  "--server",
+  "--tab",
+  "--output-dir",
+  "--cursor",
+  "--max-registries",
+  "--max-surfaces",
+  "--max-links",
+  "--delay-ms",
+  "--decision-url",
 ]);
 
-const BOOLEAN_FLAGS = new Set(['--dry-run', '--no-clef', '--all-batches', '--resume']);
+const BOOLEAN_FLAGS = new Set(["--dry-run", "--no-clef", "--all-batches", "--resume"]);
 
 function boundedInteger(raw, flag, fallback, min, max) {
   if (raw === undefined) return fallback;
   const value = Number(raw);
 
   if (!Number.isSafeInteger(value) || value < min || value > max)
-    throw new Error('Invalid ' + flag);
+    throw new Error("Invalid " + flag);
 
   return value;
 }
@@ -42,69 +50,73 @@ export function parseCatalogStructureSurveyArgs(argv) {
 
     if (BOOLEAN_FLAGS.has(flag)) {
       if (booleans.has(flag) || Object.hasOwn(values, flag))
-        throw new Error('Repeated argument: ' + flag);
+        throw new Error("Repeated argument: " + flag);
       booleans.add(flag);
       continue;
     }
 
-    if (!VALUE_FLAGS.has(flag)) throw new Error('Unknown argument: ' + flag);
+    if (!VALUE_FLAGS.has(flag)) throw new Error("Unknown argument: " + flag);
 
     if (Object.hasOwn(values, flag) || booleans.has(flag))
-      throw new Error('Repeated argument: ' + flag);
+      throw new Error("Repeated argument: " + flag);
     const value = argv[++i];
 
-    if (!value || value.startsWith('--')) throw new Error('Missing value for ' + flag);
+    if (!value || value.startsWith("--")) throw new Error("Missing value for " + flag);
     values[flag] = value;
   }
 
-  const dryRun = booleans.has('--dry-run');
+  const dryRun = booleans.has("--dry-run");
 
   const result = (() => {
-  const result = {};
+    const result = {};
 
-  if (values['--profile']) Object.assign(result, { profile: values['--profile'] });
+    if (values["--profile"]) Object.assign(result, { profile: values["--profile"] });
 
-  if (values['--server']) Object.assign(result, { server: values['--server'] });
+    if (values["--server"]) Object.assign(result, { server: values["--server"] });
 
-  if (values['--tab']) Object.assign(result, { tab: values['--tab'] });
+    if (values["--tab"]) Object.assign(result, { tab: values["--tab"] });
 
-  if (values['--output-dir']) Object.assign(result, { outputDir: values['--output-dir'] });
+    if (values["--output-dir"]) Object.assign(result, { outputDir: values["--output-dir"] });
 
-  if (values['--cursor']) Object.assign(result, { cursor: values['--cursor'] });
-  result.maxRegistries = boundedInteger(values['--max-registries'], '--max-registries', 20, 1, 10000);
-  result.maxSurfaces = boundedInteger(values['--max-surfaces'], '--max-surfaces', 4, 1, 20);
-  result.maxLinks = boundedInteger(values['--max-links'], '--max-links', 1500, 1, 10000);
-  result.delayMs = boundedInteger(values['--delay-ms'], '--delay-ms', 1000, 0, 60000);
-  result.decisionUrl = values['--decision-url'] ?? DEFAULT_DECISION_URL;
-  result.dryRun = dryRun;
-  result.useClef = !booleans.has('--no-clef');
+    if (values["--cursor"]) Object.assign(result, { cursor: values["--cursor"] });
+    result.maxRegistries = boundedInteger(
+      values["--max-registries"],
+      "--max-registries",
+      20,
+      1,
+      10000,
+    );
+    result.maxSurfaces = boundedInteger(values["--max-surfaces"], "--max-surfaces", 4, 1, 20);
+    result.maxLinks = boundedInteger(values["--max-links"], "--max-links", 1500, 1, 10000);
+    result.delayMs = boundedInteger(values["--delay-ms"], "--delay-ms", 1000, 0, 60000);
+    result.decisionUrl = values["--decision-url"] ?? DEFAULT_DECISION_URL;
+    result.dryRun = dryRun;
+    result.useClef = !booleans.has("--no-clef");
 
-  if (booleans.has('--all-batches')) Object.assign(result, { allBatches: true });
+    if (booleans.has("--all-batches")) Object.assign(result, { allBatches: true });
 
-  if (booleans.has('--resume')) Object.assign(result, { resume: true });
+    if (booleans.has("--resume")) Object.assign(result, { resume: true });
 
-  return result;
-})();
+    return result;
+  })();
 
-  if (result.resume && !result.allBatches)
-    throw new Error('--resume requires --all-batches');
+  if (result.resume && !result.allBatches) throw new Error("--resume requires --all-batches");
 
   if (!dryRun) {
-    for (const flag of ['--profile', '--server', '--tab', '--output-dir']) {
+    for (const flag of ["--profile", "--server", "--tab", "--output-dir"]) {
       const key = {
-        '--profile': 'profile',
-        '--server': 'server',
-        '--tab': 'tab',
-        '--output-dir': 'outputDir',
+        "--profile": "profile",
+        "--server": "server",
+        "--tab": "tab",
+        "--output-dir": "outputDir",
       }[flag];
 
-      if (!result[key]) throw new Error('Missing required ' + flag);
+      if (!result[key]) throw new Error("Missing required " + flag);
     }
 
-    if (!isAbsolute(result.outputDir))
-      throw new Error('Survey output directory must be absolute');
+    if (!isAbsolute(result.outputDir)) throw new Error("Survey output directory must be absolute");
   } else if (result.outputDir && !isAbsolute(result.outputDir)) {
-    throw new Error('Survey output directory must be absolute');
+    throw new Error("Survey output directory must be absolute");
   }
 
   return result;
@@ -112,7 +124,7 @@ export function parseCatalogStructureSurveyArgs(argv) {
 
 function runJson(command, args, timeout = 30000) {
   const raw = execFileSync(command, args, {
-    encoding: 'utf8',
+    encoding: "utf8",
     timeout,
     maxBuffer: 32 * 1024 * 1024,
   });
@@ -121,39 +133,57 @@ function runJson(command, args, timeout = 30000) {
 }
 
 function validateManagedBrowser({ profile, server, tab }) {
-  const status = runJson('pinchtab-profile-manager', [profile, 'status', '--json'], 15000);
+  const status = runJson("pinchtab-profile-manager", [profile, "status", "--json"], 15000);
 
-  if (!status?.ok || !status.data?.instances?.some(instance =>
-    instance.status === 'running' && instance.url === server))
-    throw new Error('Managed source profile is not running on the supplied server');
-  const tabs = runJson('pinchtab', ['--server', server, 'tab', '--json'], 15000);
+  if (
+    !status?.ok ||
+    !status.data?.instances?.some(
+      (instance) => instance.status === "running" && instance.url === server,
+    )
+  )
+    throw new Error("Managed source profile is not running on the supplied server");
+  const tabs = runJson("pinchtab", ["--server", server, "tab", "--json"], 15000);
 
-  if (!tabs?.tabs?.some(candidate => candidate.id === tab))
-    throw new Error('Supplied tab does not belong to the managed source server');
+  if (!tabs?.tabs?.some((candidate) => candidate.id === tab))
+    throw new Error("Supplied tab does not belong to the managed source server");
 }
 
 async function evidenceFromDatabase(db) {
   const evidence = {};
 
-  const row = namespace => evidence[namespace] ??= {
-    routePatterns: [], examples: [], itemRoutes: [], sitemapLinks: [],
-  };
+  const row = (namespace) =>
+    (evidence[namespace] ??= {
+      routePatterns: [],
+      examples: [],
+      itemRoutes: [],
+      sitemapLinks: [],
+    });
 
-  for (const pattern of (await db.prepare(
-    'SELECT id, namespace, template, prefix, source, status, checked_at, failure FROM route_patterns'
-  ).all())) row(pattern.namespace).routePatterns.push(pattern);
+  for (const pattern of await db
+    .prepare(
+      "SELECT id, namespace, template, prefix, source, status, checked_at, failure FROM route_patterns",
+    )
+    .all())
+    row(pattern.namespace).routePatterns.push(pattern);
 
-  for (const example of (await db.prepare(
-    'SELECT p.namespace, e.slug, e.url, p.status AS pattern_status FROM examples e JOIN route_patterns p ON p.id=e.pattern_id'
-  ).all())) row(example.namespace).examples.push(example);
+  for (const example of await db
+    .prepare(
+      "SELECT p.namespace, e.slug, e.url, p.status AS pattern_status FROM examples e JOIN route_patterns p ON p.id=e.pattern_id",
+    )
+    .all())
+    row(example.namespace).examples.push(example);
 
-  for (const route of (await db.prepare(
-    'SELECT i.namespace, i.slug, i.source_url, i.status, i.pattern_id, p.status AS pattern_status FROM item_routes i LEFT JOIN route_patterns p ON p.id=i.pattern_id'
-  ).all())) row(route.namespace).itemRoutes.push(route);
+  for (const route of await db
+    .prepare(
+      "SELECT i.namespace, i.slug, i.source_url, i.status, i.pattern_id, p.status AS pattern_status FROM item_routes i LEFT JOIN route_patterns p ON p.id=i.pattern_id",
+    )
+    .all())
+    row(route.namespace).itemRoutes.push(route);
 
-  for (const link of (await db.prepare(
-    'SELECT namespace, slug, url, observed_at FROM sitemap_links'
-  ).all())) row(link.namespace).sitemapLinks.push(link);
+  for (const link of await db
+    .prepare("SELECT namespace, slug, url, observed_at FROM sitemap_links")
+    .all())
+    row(link.namespace).sitemapLinks.push(link);
 
   return evidence;
 }
@@ -165,13 +195,12 @@ function mergeItems(catalogItems = [], curatedItems = []) {
     if (!item || !isInputString(item.name) || !item.name.trim()) continue;
 
     if (!byName.has(item.name))
-      byName.set(item.name, { name: item.name, type: item.type ?? 'registry:item' });
+      byName.set(item.name, { name: item.name, type: item.type ?? "registry:item" });
   }
 
   for (const item of curatedItems) {
-    if (!item || !isInputString(item.slug) || !item.slug.trim() || byName.has(item.slug))
-      continue;
-    byName.set(item.slug, { name: item.slug, type: item.type ?? 'registry:item' });
+    if (!item || !isInputString(item.slug) || !item.slug.trim() || byName.has(item.slug)) continue;
+    byName.set(item.slug, { name: item.slug, type: item.type ?? "registry:item" });
   }
 
   return [...byName.values()];
@@ -243,24 +272,38 @@ function createPinchTabObserver({ server, tab, delayMs }) {
     const elapsed = Date.now() - lastNavigationAt;
 
     if (lastNavigationAt && elapsed < delayMs) await sleep(delayMs - elapsed);
-    runJson('pinchtab', ['--server', server, 'nav', url, '--tab', tab, '--json'], 45000);
+    runJson("pinchtab", ["--server", server, "nav", url, "--tab", tab, "--json"], 45000);
     lastNavigationAt = Date.now();
 
     try {
-      runJson('pinchtab', [
-        '--server', server, 'wait', '--tab', tab, '--load', 'networkidle',
-        '--timeout', '15000', '--json',
-      ], 20000);
+      runJson(
+        "pinchtab",
+        [
+          "--server",
+          server,
+          "wait",
+          "--tab",
+          tab,
+          "--load",
+          "networkidle",
+          "--timeout",
+          "15000",
+          "--json",
+        ],
+        20000,
+      );
     } catch {
       // Some sites keep background connections alive. DOM observation below is authoritative.
     }
 
-    const result = runJson('pinchtab', [
-      '--server', server, 'eval', domExpression(maxLinks), '--tab', tab, '--json',
-    ], 30000);
+    const result = runJson(
+      "pinchtab",
+      ["--server", server, "eval", domExpression(maxLinks), "--tab", tab, "--json"],
+      30000,
+    );
 
     if (!isInputString(result?.result))
-      throw new Error('PinchTab DOM evaluation returned no result');
+      throw new Error("PinchTab DOM evaluation returned no result");
 
     return JSON.parse(result.result);
   };
@@ -283,18 +326,17 @@ async function loadInputs(cwd) {
   }
 }
 
-
 async function writeJsonAtomic(path, value) {
-  const tmp = path + '.tmp';
-  await writeFile(tmp, JSON.stringify(value, null, 2) + '\n', 'utf8');
+  const tmp = path + ".tmp";
+  await writeFile(tmp, JSON.stringify(value, null, 2) + "\n", "utf8");
   await rename(tmp, path);
 }
 
 async function readBatchState(outputDir) {
   try {
-    return JSON.parse(await readFile(join(outputDir, '_state.json'), 'utf8'));
+    return JSON.parse(await readFile(join(outputDir, "_state.json"), "utf8"));
   } catch (error) {
-    if (error?.code === 'ENOENT') return null;
+    if (error?.code === "ENOENT") return null;
     throw error;
   }
 }
@@ -306,22 +348,22 @@ export async function runCatalogStructureSurveyBatches({
   executeBatch,
   stopAfterBatches = Number.POSITIVE_INFINITY,
 } = {}) {
-  if (!isAbsolute(outputDir ?? '')) throw new Error('Batch output directory must be absolute');
+  if (!isAbsolute(outputDir ?? "")) throw new Error("Batch output directory must be absolute");
 
-  if (!isInputCallable(executeBatch)) throw new Error('executeBatch is required');
+  if (!isInputCallable(executeBatch)) throw new Error("executeBatch is required");
 
-  if (!(stopAfterBatches > 0)) throw new Error('stopAfterBatches must be positive');
+  if (!(stopAfterBatches > 0)) throw new Error("stopAfterBatches must be positive");
 
-  const batchesDir = join(outputDir, '_batches');
+  const batchesDir = join(outputDir, "_batches");
   await mkdir(batchesDir, { recursive: true });
 
   const previous = resume ? await readBatchState(outputDir) : null;
 
-  if (resume && !previous) throw new Error('No resumable survey state found');
+  if (resume && !previous) throw new Error("No resumable survey state found");
 
-  if (previous?.status === 'completed') return previous;
+  if (previous?.status === "completed") return previous;
 
-  let cursor = resume ? previous.nextCursor ?? initialCursor : initialCursor;
+  let cursor = resume ? (previous.nextCursor ?? initialCursor) : initialCursor;
   let batches = previous?.batches ?? 0;
   let completed = previous?.completed ?? 0;
   let failed = previous?.failed ?? 0;
@@ -344,10 +386,13 @@ export async function runCatalogStructureSurveyBatches({
       nextCursor,
     };
 
-    await writeJsonAtomic(join(batchesDir, 'batch-' + String(batches).padStart(4, '0') + '.json'), batchRecord);
+    await writeJsonAtomic(
+      join(batchesDir, "batch-" + String(batches).padStart(4, "0") + ".json"),
+      batchRecord,
+    );
 
-    const status = nextCursor === null ? 'completed'
-      : executed >= stopAfterBatches ? 'paused' : 'running';
+    const status =
+      nextCursor === null ? "completed" : executed >= stopAfterBatches ? "paused" : "running";
 
     const state = {
       schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
@@ -361,17 +406,23 @@ export async function runCatalogStructureSurveyBatches({
       updatedAt: new Date().toISOString(),
     };
 
-    await writeJsonAtomic(join(outputDir, '_state.json'), state);
-    console.error('[catalog-structure] batch ' + batches
-      + ': completed=' + (batch.completed ?? 0)
-      + ' failed=' + (batch.failed ?? 0)
-      + ' next=' + (nextCursor ?? 'done'));
+    await writeJsonAtomic(join(outputDir, "_state.json"), state);
+    console.error(
+      "[catalog-structure] batch " +
+        batches +
+        ": completed=" +
+        (batch.completed ?? 0) +
+        " failed=" +
+        (batch.failed ?? 0) +
+        " next=" +
+        (nextCursor ?? "done"),
+    );
 
     if (nextCursor === null || executed >= stopAfterBatches) return state;
     cursor = nextCursor;
   }
 
-  throw new Error('Batch runner stopped unexpectedly');
+  throw new Error("Batch runner stopped unexpectedly");
 }
 
 export async function main(argv, cwd = process.cwd()) {
@@ -390,7 +441,7 @@ export async function main(argv, cwd = process.cwd()) {
       totalRegistries: plan.totalRegistries,
       batchSize: plan.batch.length,
       nextCursor: plan.nextCursor,
-      registries: plan.registries.map(row => ({
+      registries: plan.registries.map((row) => ({
         namespace: row.namespace,
         itemCount: row.itemCount,
         surfaceCount: row.surfaces.length,
@@ -401,7 +452,7 @@ export async function main(argv, cwd = process.cwd()) {
   validateManagedBrowser(options);
   const observePage = createPinchTabObserver(options);
 
-  const executeBatch = async cursor => {
+  const executeBatch = async (cursor) => {
     const plan = planCatalogStructureSurvey(raw, catalog, curated, evidence, {
       cursor,
       maxRegistries: options.maxRegistries,
@@ -410,10 +461,14 @@ export async function main(argv, cwd = process.cwd()) {
     const results = [];
 
     for (const job of plan.batch) {
-      const registry = raw.find(candidate => candidate.name === job.namespace);
+      const registry = raw.find((candidate) => candidate.name === job.namespace);
 
       if (!registry) continue;
-      const items = mergeItems(catalog.registries[job.namespace] ?? [], curated[job.namespace] ?? []);
+
+      const items = mergeItems(
+        catalog.registries[job.namespace] ?? [],
+        curated[job.namespace] ?? [],
+      );
 
       try {
         const artifact = await surveyRegistryCatalogStructure({
@@ -424,18 +479,22 @@ export async function main(argv, cwd = process.cwd()) {
           maxLinks: options.maxLinks,
           observePage,
           chooseGroup: options.useClef
-            ? request => chooseObservedGroup({
-              ...request,
-              endpoint: options.decisionUrl,
-            })
+            ? (request) =>
+                chooseObservedGroup({
+                  ...request,
+                  endpoint: options.decisionUrl,
+                })
             : undefined,
-          catalogFingerprint: catalogFingerprint(registry, items.map(item => item.name)),
+          catalogFingerprint: catalogFingerprint(
+            registry,
+            items.map((item) => item.name),
+          ),
         });
 
         const output = await writeRegistrySurveyArtifact(options.outputDir, artifact);
         results.push({
           namespace: job.namespace,
-          outcome: 'completed',
+          outcome: "completed",
           status: artifact.status,
           groups: artifact.summary.groups,
           observedItems: artifact.summary.observedItems,
@@ -448,7 +507,7 @@ export async function main(argv, cwd = process.cwd()) {
       } catch (error) {
         results.push({
           namespace: job.namespace,
-          outcome: 'failed',
+          outcome: "failed",
           reason: String(error?.message ?? error).slice(0, 250),
         });
       }
@@ -458,8 +517,8 @@ export async function main(argv, cwd = process.cwd()) {
       schema: CATALOG_STRUCTURE_SURVEY_SCHEMA,
       dryRun: false,
       totalRegistries: plan.totalRegistries,
-      completed: results.filter(row => row.outcome === 'completed').length,
-      failed: results.filter(row => row.outcome === 'failed').length,
+      completed: results.filter((row) => row.outcome === "completed").length,
+      failed: results.filter((row) => row.outcome === "failed").length,
       nextCursor: plan.nextCursor,
       results,
     };
@@ -479,9 +538,9 @@ export async function main(argv, cwd = process.cwd()) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main(process.argv.slice(2))
-    .then(result => console.log(JSON.stringify(result, null, 2)))
-    .catch(error => {
-      console.error('Catalog structure survey failed: ' + String(error?.message ?? error));
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => {
+      console.error("Catalog structure survey failed: " + String(error?.message ?? error));
       process.exitCode = 1;
     });
 }

@@ -1,19 +1,23 @@
-import { spawnSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { openAtlasCoreDatabase, readAtlasState } from './lib/atlas-storage.mjs';
+import { spawnSync } from "node:child_process";
+import { mkdirSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
 
 const server = process.env.PINCHTAB_SERVER;
 
 const tab = process.env.PINCHTAB_TAB;
 
-const baseUrl = (process.env.REGISTRY_ATLAS_URL ?? 'http://127.0.0.1:5189/Registry-Atlas').replace(/\/$/, '');
+const baseUrl = (process.env.REGISTRY_ATLAS_URL ?? "http://127.0.0.1:5189/Registry-Atlas").replace(
+  /\/$/,
+  "",
+);
 
-const outputDir = process.env.REGISTRY_ATLAS_ACCEPTANCE_DIR
-  ?? path.join('/tmp', `registry-atlas-acceptance-${new Date().toISOString().replace(/[:.]/g, '-')}`);
+const outputDir =
+  process.env.REGISTRY_ATLAS_ACCEPTANCE_DIR ??
+  path.join("/tmp", `registry-atlas-acceptance-${new Date().toISOString().replace(/[:.]/g, "-")}`);
 
 if (!server || !tab) {
-  console.error('PINCHTAB_SERVER and PINCHTAB_TAB are required.');
+  console.error("PINCHTAB_SERVER and PINCHTAB_TAB are required.");
   process.exit(2);
 }
 
@@ -30,56 +34,71 @@ const kindDefaults = atlasState.kindOverrides?.registryDefaults ?? {};
 const entries = Object.entries(catalog.registries);
 
 const flat = entries.flatMap(([namespace, items]) =>
-  items.map(item => ({ namespace, ...item, assetKind: assetKind(item, namespace) })));
+  items.map((item) => ({ namespace, ...item, assetKind: assetKind(item, namespace) })),
+);
 
 function assetKind(item, namespace) {
-  const categories = (item.categories ?? []).map(value => String(value).trim().toLowerCase());
+  const categories = (item.categories ?? []).map((value) => String(value).trim().toLowerCase());
 
-  if (categories.some(value => value === 'template' || value === 'templates')) return 'template';
+  if (categories.some((value) => value === "template" || value === "templates")) return "template";
 
   if (item.kind) return item.kind;
 
   if (kindDefaults[namespace]) return kindDefaults[namespace];
 
-  if (item.type === 'registry:icon'
-    || categories.some(value => ['icon', 'icons', 'icon-stack', 'morph-icon'].includes(value))) {
-    return 'icon';
+  if (
+    item.type === "registry:icon" ||
+    categories.some((value) => ["icon", "icons", "icon-stack", "morph-icon"].includes(value))
+  ) {
+    return "icon";
   }
 
-  if (item.type === 'registry:block') return 'block';
+  if (item.type === "registry:block") return "block";
 
-  if (item.type === 'registry:page') return 'page';
+  if (item.type === "registry:page") return "page";
 
-  if (item.type === 'registry:style' || item.type === 'registry:theme') return 'theme';
+  if (item.type === "registry:style" || item.type === "registry:theme") return "theme";
 
-  if (['registry:component', 'registry:ui', 'registry:item'].includes(item.type)) return 'component';
+  if (["registry:component", "registry:ui", "registry:item"].includes(item.type))
+    return "component";
 
-  return 'other';
+  return "other";
 }
 
-const simple = flat.find(item => item.name === 'button' && item.assetKind === 'component')
-  ?? flat.find(item => item.assetKind === 'component');
+const simple =
+  flat.find((item) => item.name === "button" && item.assetKind === "component") ??
+  flat.find((item) => item.assetKind === "component");
 
-const nested = flat.find(item => item.assetKind === 'component' && item.name.includes('/'));
+const nested = flat.find((item) => item.assetKind === "component" && item.name.includes("/"));
 
-const block = flat.find(item => item.assetKind === 'block');
+const block = flat.find((item) => item.assetKind === "block");
 
-const page = flat.find(item => item.assetKind === 'page');
+const page = flat.find((item) => item.assetKind === "page");
 
-const template = flat.find(item => item.assetKind === 'template');
+const template = flat.find((item) => item.assetKind === "template");
 
-const theme = flat.find(item => item.assetKind === 'theme');
+const theme = flat.find((item) => item.assetKind === "theme");
 
-const icon = flat.find(item => item.assetKind === 'icon');
+const icon = flat.find((item) => item.assetKind === "icon");
 
 const largeRegistry = entries
   .map(([namespace, items]) => ({ namespace, count: items.length }))
   .sort((a, b) => b.count - a.count)[0];
 
-const comparisonRegistry = entries.find(([namespace]) => namespace !== largeRegistry?.namespace)?.[0];
+const comparisonRegistry = entries.find(
+  ([namespace]) => namespace !== largeRegistry?.namespace,
+)?.[0];
 
 for (const [label, value] of Object.entries({
-  simple, nested, block, page, template, theme, icon, largeRegistry, comparisonRegistry,
+  simple,
+  nested,
+  block,
+  page,
+  template,
+  theme,
+  icon,
+  largeRegistry,
+  comparisonRegistry,
 })) {
   if (!value) {
     console.error(`Unable to derive real acceptance identity: ${label}`);
@@ -87,64 +106,64 @@ for (const [label, value] of Object.entries({
   }
 }
 
-const nsPath = namespace => namespace;
+const nsPath = (namespace) => namespace;
 
-const itemPath = item => item.name.split('/').map(encodeURIComponent).join('/');
+const itemPath = (item) => item.name.split("/").map(encodeURIComponent).join("/");
 
 const routes = [
-  { name: 'home', path: '/' },
-  { name: 'components', path: '/components', requireItems: true },
-  { name: 'components-search-button', path: '/components/s/button', requireItems: true },
-  { name: 'blocks', path: '/blocks', requireItems: true },
-  { name: 'pages', path: '/pages', requireItems: true },
-  { name: 'explore-forms', path: '/components/explore/forms', requireItems: true },
-  { name: 'authors-attribution', path: '/authors', expectAuthors: true },
-  { name: 'retired-newest', path: '/components/newest', expectUnavailable: true },
-  { name: 'retired-reviewed', path: '/components/featured', expectUnavailable: true },
+  { name: "home", path: "/" },
+  { name: "components", path: "/components", requireItems: true },
+  { name: "components-search-button", path: "/components/s/button", requireItems: true },
+  { name: "blocks", path: "/blocks", requireItems: true },
+  { name: "pages", path: "/pages", requireItems: true },
+  { name: "explore-forms", path: "/components/explore/forms", requireItems: true },
+  { name: "authors-attribution", path: "/authors", expectAuthors: true },
+  { name: "retired-newest", path: "/components/newest", expectUnavailable: true },
+  { name: "retired-reviewed", path: "/components/featured", expectUnavailable: true },
   {
-    name: 'registries-filtered',
-    path: '/registries?asset=template&registrySort=item-count-desc',
+    name: "registries-filtered",
+    path: "/registries?asset=template&registrySort=item-count-desc",
   },
-  { name: 'registry-large', path: `/${nsPath(largeRegistry.namespace)}`, requireItems: true },
+  { name: "registry-large", path: `/${nsPath(largeRegistry.namespace)}`, requireItems: true },
   {
-    name: 'component-simple',
+    name: "component-simple",
     path: `/${nsPath(simple.namespace)}/components/${itemPath(simple)}`,
   },
   {
-    name: 'component-nested',
+    name: "component-nested",
     path: `/${nsPath(nested.namespace)}/components/${itemPath(nested)}`,
   },
   {
-    name: 'block-detail',
+    name: "block-detail",
     path: `/${nsPath(block.namespace)}/blocks/${itemPath(block)}`,
   },
   {
-    name: 'page-detail',
+    name: "page-detail",
     path: `/${nsPath(page.namespace)}/pages/${itemPath(page)}`,
   },
-  { name: 'templates', path: '/templates', requireItems: true },
+  { name: "templates", path: "/templates", requireItems: true },
   {
-    name: 'template-detail',
+    name: "template-detail",
     path: `/${nsPath(template.namespace)}/templates/${itemPath(template)}`,
   },
-  { name: 'themes', path: '/themes', requireItems: true },
-  { name: 'theme-editor', path: '/themes/editor', expectUnavailable: true },
+  { name: "themes", path: "/themes", requireItems: true },
+  { name: "theme-editor", path: "/themes/editor", expectUnavailable: true },
   {
-    name: 'theme-detail',
+    name: "theme-detail",
     path: `/${nsPath(theme.namespace)}/themes/${itemPath(theme)}`,
   },
-  { name: 'icons', path: '/icons', requireItems: true },
-  { name: 'icon-family', path: `/icons/${icon.namespace.slice(1)}` },
-  { name: 'icon-category', path: '/icons/c/icons' },
+  { name: "icons", path: "/icons", requireItems: true },
+  { name: "icon-family", path: `/icons/${icon.namespace.slice(1)}` },
+  { name: "icon-category", path: "/icons/c/icons" },
   {
-    name: 'compare',
+    name: "compare",
     path: `/compare?compareRegistry=${encodeURIComponent(largeRegistry.namespace)}&compareRegistry=${encodeURIComponent(comparisonRegistry)}`,
   },
 ];
 
 const viewports = [
-  { name: 'desktop', width: 1920, height: 1080, mobile: false },
-  { name: 'mobile', width: 390, height: 844, mobile: true },
+  { name: "desktop", width: 1920, height: 1080, mobile: false },
+  { name: "mobile", width: 390, height: 844, mobile: true },
 ];
 
 mkdirSync(outputDir, { recursive: true });
@@ -154,19 +173,19 @@ const results = [];
 const failures = [];
 
 function run(args, { allowFailure = false } = {}) {
-  const result = spawnSync('pinchtab', ['--server', server, ...args], {
-    encoding: 'utf8',
+  const result = spawnSync("pinchtab", ["--server", server, ...args], {
+    encoding: "utf8",
     maxBuffer: 8 * 1024 * 1024,
   });
 
   if (result.status !== 0 && !allowFailure) {
-    throw new Error(`pinchtab ${args.join(' ')} failed: ${result.stderr || result.stdout}`);
+    throw new Error(`pinchtab ${args.join(" ")} failed: ${result.stderr || result.stdout}`);
   }
 
   return {
     status: result.status ?? 1,
-    stdout: (result.stdout ?? '').trim(),
-    stderr: (result.stderr ?? '').trim(),
+    stdout: (result.stdout ?? "").trim(),
+    stderr: (result.stderr ?? "").trim(),
   };
 }
 
@@ -210,19 +229,24 @@ function pageState() {
     });
   })()`;
 
-  const raw = run(['eval', '--tab', tab, expression]).stdout;
+  const raw = run(["eval", "--tab", tab, expression]).stdout;
 
   return JSON.parse(raw);
 }
 
 function expectedPathname(routePath) {
-  const url = new URL(baseUrl + (routePath === '/' ? '/' : routePath));
+  const url = new URL(baseUrl + (routePath === "/" ? "/" : routePath));
 
   return url.pathname;
 }
 
 function mobileSidebarFocusState() {
-  const openResult = JSON.parse(run(['eval', '--tab', tab, `(() => {
+  const openResult = JSON.parse(
+    run([
+      "eval",
+      "--tab",
+      tab,
+      `(() => {
     const sidebar = document.querySelector('#appSidebar');
     const toggle = document.querySelector('#sidebarToggle');
     const close = document.querySelector('#sidebarClose');
@@ -234,17 +258,31 @@ function mobileSidebarFocusState() {
     toggle.focus();
     toggle.click();
     return JSON.stringify({ available: true });
-  })()`]).stdout);
+  })()`,
+    ]).stdout,
+  );
 
   if (!openResult.available) return openResult;
 
-  const opened = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
+  const opened = JSON.parse(
+    run([
+      "eval",
+      "--tab",
+      tab,
+      `JSON.stringify({
     open: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'true',
     expanded: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'true',
     focusMovedInside: document.activeElement?.id === 'sidebarClose'
-  })`]).stdout);
+  })`,
+    ]).stdout,
+  );
 
-  const focusLoop = JSON.parse(run(['eval', '--tab', tab, `(() => {
+  const focusLoop = JSON.parse(
+    run([
+      "eval",
+      "--tab",
+      tab,
+      `(() => {
     const drawer = document.querySelector('#appSidebar');
     const focusable = [...drawer.querySelectorAll(
       'a[href], button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])'
@@ -263,15 +301,24 @@ function mobileSidebarFocusState() {
       backwardsWrapped, forwardsWrapped,
       modalSemantics: drawer.getAttribute('role') === 'dialog' && drawer.getAttribute('aria-modal') === 'true',
     });
-  })()`]).stdout);
+  })()`,
+    ]).stdout,
+  );
 
-  run(['eval', '--tab', tab, `document.querySelector('#sidebarClose')?.click(); 'clicked'`]);
+  run(["eval", "--tab", tab, `document.querySelector('#sidebarClose')?.click(); 'clicked'`]);
 
-  const closed = JSON.parse(run(['eval', '--tab', tab, `JSON.stringify({
+  const closed = JSON.parse(
+    run([
+      "eval",
+      "--tab",
+      tab,
+      `JSON.stringify({
     closed: document.querySelector('#appSidebar')?.getAttribute('data-open') === 'false',
     collapsed: document.querySelector('#sidebarToggle')?.getAttribute('aria-expanded') === 'false',
     focusReturned: document.activeElement?.id === 'sidebarToggle'
-  })`]).stdout);
+  })`,
+    ]).stdout,
+  );
 
   return {
     available: true,
@@ -286,9 +333,7 @@ function mobileSidebarFocusState() {
 }
 
 function readNetwork5xx() {
-  const raw = run([
-    'network', '--tab', tab, '--status', '5xx', '--limit', '100', '--json',
-  ]).stdout;
+  const raw = run(["network", "--tab", tab, "--status", "5xx", "--limit", "100", "--json"]).stdout;
 
   const parsed = JSON.parse(raw || '{"count":0,"entries":[]}');
 
@@ -300,8 +345,17 @@ function networkEntryKey(entry) {
 }
 
 function capturePairedScreenshot(screenshot, expectedUrl) {
-  const args = ['capture', '--tab', tab, '--require-pair',
-    '--beyond-viewport', '--format', 'png', '--output', screenshot];
+  const args = [
+    "capture",
+    "--tab",
+    tab,
+    "--require-pair",
+    "--beyond-viewport",
+    "--format",
+    "png",
+    "--output",
+    screenshot,
+  ];
 
   for (let attempt = 0; attempt < 3; attempt++) {
     const capture = run(args, { allowFailure: true });
@@ -309,45 +363,59 @@ function capturePairedScreenshot(screenshot, expectedUrl) {
     if (capture.status === 0) return;
     const error = capture.stderr || capture.stdout;
 
-    if (!/pairing broken: navigation observed during capture window/.test(error)
-      || run(['url', '--tab', tab]).stdout !== expectedUrl) {
-      throw new Error('Paired capture failed: ' + error);
+    if (
+      !/pairing broken: navigation observed during capture window/.test(error) ||
+      run(["url", "--tab", tab]).stdout !== expectedUrl
+    ) {
+      throw new Error("Paired capture failed: " + error);
     }
 
     // The page moved during capture. Reobserve the current page and retry
     // a bounded number of times without accepting an unpaired screenshot.
-    run(['snap', '--tab', tab, '--max-tokens', '300']);
+    run(["snap", "--tab", tab, "--max-tokens", "300"]);
   }
 
-  throw new Error('Could not obtain a stable paired screenshot after 3 attempts');
+  throw new Error("Could not obtain a stable paired screenshot after 3 attempts");
 }
 
 const selectedRoute = process.env.REGISTRY_ATLAS_ACCEPTANCE_ROUTE;
 
 const selectedViewport = process.env.REGISTRY_ATLAS_ACCEPTANCE_VIEWPORT;
 
-for (const viewport of viewports.filter(item => !selectedViewport || item.name === selectedViewport)) {
-  const viewportArgs = ['set', 'viewport', String(viewport.width), String(viewport.height), '--tab', tab];
+for (const viewport of viewports.filter(
+  (item) => !selectedViewport || item.name === selectedViewport,
+)) {
+  const viewportArgs = [
+    "set",
+    "viewport",
+    String(viewport.width),
+    String(viewport.height),
+    "--tab",
+    tab,
+  ];
 
-  if (viewport.mobile) viewportArgs.push('--mobile');
+  if (viewport.mobile) viewportArgs.push("--mobile");
   run(viewportArgs);
 
-  for (const route of routes.filter(item => !selectedRoute || item.name === selectedRoute)) {
-    run(['errors', '--tab', tab, '--clear']);
-    run(['console', '--tab', tab, '--clear']);
+  for (const route of routes.filter((item) => !selectedRoute || item.name === selectedRoute)) {
+    run(["errors", "--tab", tab, "--clear"]);
+    run(["console", "--tab", tab, "--clear"]);
     const networkBefore = new Set(readNetwork5xx().map(networkEntryKey));
 
-    const url = baseUrl + (route.path === '/' ? '/' : route.path);
-    run(['nav', url, '--tab', tab, '--timeout', '30']);
+    const url = baseUrl + (route.path === "/" ? "/" : route.path);
+    run(["nav", url, "--tab", tab, "--timeout", "30"]);
 
     const screenshot = path.join(outputDir, `${viewport.name}-${route.name}.png`);
     capturePairedScreenshot(screenshot, url);
 
     const state = pageState();
-    const errors = run(['errors', '--tab', tab, '--limit', '50']).stdout;
-    const consoleOutput = run(['console', '--tab', tab, '--limit', '100']).stdout;
+    const errors = run(["errors", "--tab", tab, "--limit", "50"]).stdout;
+    const consoleOutput = run(["console", "--tab", tab, "--limit", "100"]).stdout;
     const networkEntries = readNetwork5xx();
-    const newNetwork5xx = networkEntries.filter(entry => !networkBefore.has(networkEntryKey(entry)));
+
+    const newNetwork5xx = networkEntries.filter(
+      (entry) => !networkBefore.has(networkEntryKey(entry)),
+    );
 
     const routeFailures = [];
 
@@ -355,62 +423,75 @@ for (const viewport of viewports.filter(item => !selectedViewport || item.name =
       routeFailures.push(`pathname ${state.pathname} != ${expectedPathname(route.path)}`);
     }
 
-    if (state.overflow) routeFailures.push(`horizontal overflow ${state.scrollWidth} > ${state.width}`);
+    if (state.overflow)
+      routeFailures.push(`horizontal overflow ${state.scrollWidth} > ${state.width}`);
 
-    if (errors !== 'No errors') routeFailures.push(`browser errors: ${errors}`);
+    if (errors !== "No errors") routeFailures.push(`browser errors: ${errors}`);
 
-    if (newNetwork5xx.length > 0) routeFailures.push('unexpected 5xx network response');
+    if (newNetwork5xx.length > 0) routeFailures.push("unexpected 5xx network response");
 
-    if (/\[ERROR\]/.test(consoleOutput)) routeFailures.push('console contains ERROR');
+    if (/\[ERROR\]/.test(consoleOutput)) routeFailures.push("console contains ERROR");
 
     if (route.expectUnavailable && !state.evidenceUnavailable) {
-      routeFailures.push('expected evidence-unavailable state was not rendered');
+      routeFailures.push("expected evidence-unavailable state was not rendered");
     }
 
     if (!route.expectUnavailable && state.evidenceUnavailable) {
-      routeFailures.push('unexpected evidence-unavailable state');
+      routeFailures.push("unexpected evidence-unavailable state");
     }
 
     if (route.requireItems && state.visibleCatalogItems === 0) {
-      routeFailures.push('expected exact catalog items but none were rendered');
+      routeFailures.push("expected exact catalog items but none were rendered");
     }
 
-    if (route.expectAuthors && (state.heading !== 'Authors' || state.attributedAuthors === 0)) {
-      routeFailures.push('expected source-backed author directory but none was rendered');
+    if (route.expectAuthors && (state.heading !== "Authors" || state.attributedAuthors === 0)) {
+      routeFailures.push("expected source-backed author directory but none was rendered");
     }
 
-    if (!state.heading) routeFailures.push('missing h1');
+    if (!state.heading) routeFailures.push("missing h1");
 
     if (state.h1Count !== 1) routeFailures.push(`expected one h1, found ${state.h1Count}`);
 
-    if (state.unlabeledButtons > 0) routeFailures.push(`${state.unlabeledButtons} visible button(s) lack an accessible name`);
+    if (state.unlabeledButtons > 0)
+      routeFailures.push(`${state.unlabeledButtons} visible button(s) lack an accessible name`);
 
-    if (state.unlabeledLinks > 0) routeFailures.push(`${state.unlabeledLinks} visible link(s) lack an accessible name`);
+    if (state.unlabeledLinks > 0)
+      routeFailures.push(`${state.unlabeledLinks} visible link(s) lack an accessible name`);
 
-    if (state.unlabeledFields > 0) routeFailures.push(`${state.unlabeledFields} visible form field(s) lack a label`);
+    if (state.unlabeledFields > 0)
+      routeFailures.push(`${state.unlabeledFields} visible form field(s) lack a label`);
 
-    if (state.imagesMissingAlt > 0) routeFailures.push(`${state.imagesMissingAlt} visible image(s) lack alt text`);
+    if (state.imagesMissingAlt > 0)
+      routeFailures.push(`${state.imagesMissingAlt} visible image(s) lack alt text`);
 
-    if (state.duplicateIdCount > 0) routeFailures.push(`${state.duplicateIdCount} duplicate DOM id(s)`);
+    if (state.duplicateIdCount > 0)
+      routeFailures.push(`${state.duplicateIdCount} duplicate DOM id(s)`);
 
-    if (viewport.mobile && route.name === 'components') {
+    if (viewport.mobile && route.name === "components") {
       const sidebarFocus = mobileSidebarFocusState();
 
-      if (!sidebarFocus.available) routeFailures.push('mobile sidebar is unavailable');
+      if (!sidebarFocus.available) routeFailures.push("mobile sidebar is unavailable");
 
-      if (sidebarFocus.available && !sidebarFocus.opened) routeFailures.push('mobile sidebar did not open');
+      if (sidebarFocus.available && !sidebarFocus.opened)
+        routeFailures.push("mobile sidebar did not open");
 
-      if (sidebarFocus.available && !sidebarFocus.focusMovedInside) routeFailures.push('mobile sidebar did not move focus to Close');
+      if (sidebarFocus.available && !sidebarFocus.focusMovedInside)
+        routeFailures.push("mobile sidebar did not move focus to Close");
 
-      if (sidebarFocus.available && !sidebarFocus.modalSemantics) routeFailures.push('mobile sidebar did not declare modal dialog semantics');
+      if (sidebarFocus.available && !sidebarFocus.modalSemantics)
+        routeFailures.push("mobile sidebar did not declare modal dialog semantics");
 
-      if (sidebarFocus.available && !sidebarFocus.backwardsWrapped) routeFailures.push('Shift+Tab escaped the first sidebar control');
+      if (sidebarFocus.available && !sidebarFocus.backwardsWrapped)
+        routeFailures.push("Shift+Tab escaped the first sidebar control");
 
-      if (sidebarFocus.available && !sidebarFocus.forwardsWrapped) routeFailures.push('Tab escaped the final sidebar control');
+      if (sidebarFocus.available && !sidebarFocus.forwardsWrapped)
+        routeFailures.push("Tab escaped the final sidebar control");
 
-      if (sidebarFocus.available && !sidebarFocus.closed) routeFailures.push('mobile sidebar did not close');
+      if (sidebarFocus.available && !sidebarFocus.closed)
+        routeFailures.push("mobile sidebar did not close");
 
-      if (sidebarFocus.available && !sidebarFocus.focusReturned) routeFailures.push('mobile sidebar did not return focus to the menu button');
+      if (sidebarFocus.available && !sidebarFocus.focusReturned)
+        routeFailures.push("mobile sidebar did not return focus to the menu button");
     }
 
     const record = {
@@ -419,7 +500,7 @@ for (const viewport of viewports.filter(item => !selectedViewport || item.name =
       requested: route.path,
       screenshot,
       state,
-      errorCount: errors === 'No errors' ? 0 : errors.split('\n').length,
+      errorCount: errors === "No errors" ? 0 : errors.split("\n").length,
       network5xxCount: newNetwork5xx.length,
       failures: routeFailures,
     };
@@ -433,14 +514,22 @@ for (const viewport of viewports.filter(item => !selectedViewport || item.name =
 }
 
 const report = {
-  schemaVersion: 'registry-atlas-browser-acceptance/v1',
+  schemaVersion: "registry-atlas-browser-acceptance/v1",
   generatedAt: new Date().toISOString(),
   server,
   tab,
   baseUrl,
   outputDir,
   identities: {
-    simple, nested, block, page, template, theme, icon, largeRegistry, comparisonRegistry,
+    simple,
+    nested,
+    block,
+    page,
+    template,
+    theme,
+    icon,
+    largeRegistry,
+    comparisonRegistry,
   },
   resultCount: results.length,
   failureCount: failures.length,
@@ -448,9 +537,9 @@ const report = {
   results,
 };
 
-const reportPath = path.join(outputDir, 'report.json');
+const reportPath = path.join(outputDir, "report.json");
 
-writeFileSync(reportPath, JSON.stringify(report, null, 2) + '\n');
+writeFileSync(reportPath, JSON.stringify(report, null, 2) + "\n");
 
 if (failures.length) {
   console.error(`Registry Atlas browser acceptance failed (${failures.length}):`);

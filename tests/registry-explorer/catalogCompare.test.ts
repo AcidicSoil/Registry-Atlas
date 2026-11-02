@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { buildCatalogComparison } from "../../src/registry-explorer/core/catalogCompare";
-import type { Registry, RegistryCatalogIndex } from "../../src/registry-explorer/core/registry.schema";
+import type {
+  Registry,
+  RegistryCatalogIndex,
+} from "../../src/registry-explorer/core/registry.schema";
 
 function registry(name: string): Registry {
   return {
@@ -30,18 +33,33 @@ function index(registries: RegistryCatalogIndex["registries"]): RegistryCatalogI
 }
 
 describe("buildCatalogComparison", () => {
-  it('preserves exact source-page evidence separately for every present cell',()=>{
-    const r=buildCatalogComparison(
-      [registry('@a'),registry('@b')],
-      {...index({'@a':[{name:'button',type:'registry:ui'}],
-                 '@b':[{name:'button',type:'registry:ui'}]}),
-       sourcePages:{'@a/button':{url:'https://example.test/docs/a-button',level:'sitemap',source:'official-sitemap'},
-                    '@b/button':{url:'https://example.test/docs/b-button',level:'reviewed',source:'reviewed-summary'}}},
-      ['@a','@b']);
+  it("preserves exact source-page evidence separately for every present cell", () => {
+    const r = buildCatalogComparison(
+      [registry("@a"), registry("@b")],
+      {
+        ...index({
+          "@a": [{ name: "button", type: "registry:ui" }],
+          "@b": [{ name: "button", type: "registry:ui" }],
+        }),
+        sourcePages: {
+          "@a/button": {
+            url: "https://example.test/docs/a-button",
+            level: "sitemap",
+            source: "official-sitemap",
+          },
+          "@b/button": {
+            url: "https://example.test/docs/b-button",
+            level: "reviewed",
+            source: "reviewed-summary",
+          },
+        },
+      },
+      ["@a", "@b"],
+    );
 
-    expect(r.rows[0].cells[0].sourcePage?.url).toBe('https://example.test/docs/a-button');
-    expect(r.rows[0].cells[1].sourcePage?.url).toBe('https://example.test/docs/b-button');
-    expect(r.rows[0].cells[0].registryHomepage).toBe('https://example.test');
+    expect(r.rows[0].cells[0].sourcePage?.url).toBe("https://example.test/docs/a-button");
+    expect(r.rows[0].cells[1].sourcePage?.url).toBe("https://example.test/docs/b-button");
+    expect(r.rows[0].cells[0].registryHomepage).toBe("https://example.test");
   });
   it("builds union/intersection rows from real item identities only", () => {
     const result = buildCatalogComparison(
@@ -61,7 +79,7 @@ describe("buildCatalogComparison", () => {
 
     expect(result.unionCount).toBe(3);
     expect(result.intersectionCount).toBe(1);
-    expect(result.rows.map(row => [row.slug, row.presentIn])).toEqual([
+    expect(result.rows.map((row) => [row.slug, row.presentIn])).toEqual([
       ["button", ["@a", "@b"]],
       ["card", ["@a"]],
       ["dialog", ["@b"]],
@@ -110,11 +128,18 @@ describe("buildCatalogComparison", () => {
     const catalog = index({ "@a": items, "@b": items.slice(20) });
     const registries = [registry("@a"), registry("@b")];
 
-    const page = buildCatalogComparison(registries, catalog, ["@a", "@b"], { page: 3, pageSize: 20 });
+    const page = buildCatalogComparison(registries, catalog, ["@a", "@b"], {
+      page: 3,
+      pageSize: 20,
+    });
+
     expect(page.total).toBe(70);
     expect(page.rows[0]?.slug).toBe("item-40");
 
-    const searched = buildCatalogComparison(registries, catalog, ["@a", "@b"], { search: "item-69" });
-    expect(searched.rows.map(row => row.slug)).toEqual(["item-69"]);
+    const searched = buildCatalogComparison(registries, catalog, ["@a", "@b"], {
+      search: "item-69",
+    });
+
+    expect(searched.rows.map((row) => row.slug)).toEqual(["item-69"]);
   });
 });

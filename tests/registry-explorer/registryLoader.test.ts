@@ -1,188 +1,220 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
-import { gzipSync, gunzipSync } from 'node:zlib';
-import { loadRegistries } from '../../src/registry-explorer/data/loadRegistries';
-import { resetRuntimeDataCachesForTests } from '../../src/registry-explorer/data/runtimeJson';
+import { afterEach, describe, expect, it } from "vitest";
+import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { gzipSync, gunzipSync } from "node:zlib";
+import { loadRegistries } from "../../src/registry-explorer/data/loadRegistries";
+import { resetRuntimeDataCachesForTests } from "../../src/registry-explorer/data/runtimeJson";
 
 afterEach(() => resetRuntimeDataCachesForTests());
 
-describe('loadRegistries PostgreSQL static JSON runtime', () => {
-  it('fetches one runtime database from the Vite base path and maps registry state', async () => {
+describe("loadRegistries PostgreSQL static JSON runtime", () => {
+  it("fetches one runtime database from the Vite base path and maps registry state", async () => {
     const fixture = await runtimeFixture();
     const calls: string[] = [];
 
-    const data = await loadRegistries(async input => {
+    const data = await loadRegistries(async (input) => {
       calls.push(String(input));
 
       return gzipResponse(fixture.coreGzipPath);
     });
 
-    expect(calls).toEqual(['/data/registry-atlas.json.gz']);
-    expect(data.meta.source_url).toBe('https://ui.shadcn.com/r/registries.json');
-    expect(data.taxonomy.version).toBe('v1');
-    expect(data.taxonomy.roots[0]?.id).toBe('application');
+    expect(calls).toEqual(["/data/registry-atlas.json.gz"]);
+    expect(data.meta.source_url).toBe("https://ui.shadcn.com/r/registries.json");
+    expect(data.taxonomy.version).toBe("v1");
+    expect(data.taxonomy.roots[0]?.id).toBe("application");
     expect(data.registries).toEqual([
       expect.objectContaining({
-        name: '@example',
-        url: 'https://example.com',
-        description: 'Example registry.',
+        name: "@example",
+        url: "https://example.com",
+        description: "Example registry.",
         atlas: expect.objectContaining({
-          aliases: ['example-ui'],
-          coverageStatus: 'inferred',
-          confidence: 'medium',
-          catalogStatus: 'partial',
+          aliases: ["example-ui"],
+          coverageStatus: "inferred",
+          confidence: "medium",
+          catalogStatus: "partial",
           catalogItemCount: 1,
         }),
         itemSummaries: [
           expect.objectContaining({
-            slug: 'button',
-            rawItemUrl: 'https://example.com/r/button.json',
-            docsUrl: 'https://example.com/components/button',
+            slug: "button",
+            rawItemUrl: "https://example.com/r/button.json",
+            docsUrl: "https://example.com/components/button",
           }),
         ],
       }),
     ]);
-    expect(data.catalogIndex.registries['@example']?.[0]).toMatchObject({
-      name: 'button',
-      type: 'registry:ui',
+    expect(data.catalogIndex.registries["@example"]?.[0]).toMatchObject({
+      name: "button",
+      type: "registry:ui",
     });
-    expect(data.catalogIndex.sourcePages?.['@example/button']).toMatchObject({
-      url: 'https://example.com/components/button',
-      level: 'reviewed',
-      source: 'component-page-verified',
+    expect(data.catalogIndex.sourcePages?.["@example/button"]).toMatchObject({
+      url: "https://example.com/components/button",
+      level: "reviewed",
+      source: "component-page-verified",
     });
   }, 30_000);
 
-  it('accepts a gzip transport response whose body was already decoded by fetch', async () => {
+  it("accepts a gzip transport response whose body was already decoded by fetch", async () => {
     const fixture = await runtimeFixture();
     const compressed = await readFile(fixture.coreGzipPath);
 
-    const data = await loadRegistries(async () => new Response(gunzipSync(compressed), {
-      status: 200,
-      headers: {
-        'content-encoding': 'gzip',
-        'content-type': 'application/octet-stream',
-      },
-    }));
+    const data = await loadRegistries(
+      async () =>
+        new Response(gunzipSync(compressed), {
+          status: 200,
+          headers: {
+            "content-encoding": "gzip",
+            "content-type": "application/octet-stream",
+          },
+        }),
+    );
 
-    expect(data.registries[0]?.name).toBe('@example');
-    expect(data.catalogIndex.registries['@example']?.[0]?.name).toBe('button');
+    expect(data.registries[0]?.name).toBe("@example");
+    expect(data.catalogIndex.registries["@example"]?.[0]?.name).toBe("button");
   }, 30_000);
 
-  it('preserves valid empty catalog namespaces from the database', async () => {
+  it("preserves valid empty catalog namespaces from the database", async () => {
     const fixture = await runtimeFixture({ includeEmptyNamespace: true });
     const data = await loadRegistries(async () => gzipResponse(fixture.coreGzipPath));
 
     expect(data.catalogIndex.meta.registry_count).toBe(2);
-    expect(data.catalogIndex.registries['@empty']).toEqual([]);
+    expect(data.catalogIndex.registries["@empty"]).toEqual([]);
   }, 30_000);
 
-  it('surfaces mirror validation warnings from database-backed records', async () => {
-    const fixture = await runtimeFixture({ homepage: 'http://example.com' });
+  it("surfaces mirror validation warnings from database-backed records", async () => {
+    const fixture = await runtimeFixture({ homepage: "http://example.com" });
     const data = await loadRegistries(async () => gzipResponse(fixture.coreGzipPath));
 
-    expect(data.warnings.map(warning => warning.code)).toContain('url-http');
+    expect(data.warnings.map((warning) => warning.code)).toContain("url-http");
   }, 30_000);
 
-  it('fails when the runtime database cannot be fetched', async () => {
-    await expect(loadRegistries(async () => new Response('', {
-      status: 404,
-      statusText: 'Not Found',
-    }))).rejects.toThrow('Runtime data fetch failed');
+  it("fails when the runtime database cannot be fetched", async () => {
+    await expect(
+      loadRegistries(
+        async () =>
+          new Response("", {
+            status: 404,
+            statusText: "Not Found",
+          }),
+      ),
+    ).rejects.toThrow("Runtime data fetch failed");
   });
 });
 
-async function runtimeFixture(options: {
-  homepage?: string;
-  includeEmptyNamespace?: boolean;
-} = {}) {
-  const dir = await mkdtemp(join(tmpdir(), 'registry-atlas-loader-'));
-  const coreGzipPath = join(dir, 'registry-atlas.json.gz');
+async function runtimeFixture(
+  options: {
+    homepage?: string;
+    includeEmptyNamespace?: boolean;
+  } = {},
+) {
+  const dir = await mkdtemp(join(tmpdir(), "registry-atlas-loader-"));
+  const coreGzipPath = join(dir, "registry-atlas.json.gz");
 
   const mirror = {
     meta: {
-      source_url: 'https://ui.shadcn.com/r/registries.json',
-      synced_at: '2026-10-07T00:00:00.000Z',
-      upstream_count: 1, registry_count: 1, local_count: 1,
-      validation_status: 'not_run', report_path: 'database:registry-sync-report',
+      source_url: "https://ui.shadcn.com/r/registries.json",
+      synced_at: "2026-10-07T00:00:00.000Z",
+      upstream_count: 1,
+      registry_count: 1,
+      local_count: 1,
+      validation_status: "not_run",
+      report_path: "database:registry-sync-report",
     },
-    registries: [{
-      official: {
-        name: '@example',
-        homepage: options.homepage ?? 'https://example.com',
-        registry_url_template: 'https://example.com/r/{name}.json',
-        description: 'Example registry.',
+    registries: [
+      {
+        official: {
+          name: "@example",
+          homepage: options.homepage ?? "https://example.com",
+          registry_url_template: "https://example.com/r/{name}.json",
+          description: "Example registry.",
+        },
+        atlas: {
+          aliases: ["example-ui"],
+          coverage_status: "inferred",
+          confidence: "medium",
+          notes: "Fixture notes",
+          catalog_status: "partial",
+          comparison_evidence: "catalog",
+          catalog_item_count: 1,
+          catalog_evidence_url: "https://example.com/r/registry.json",
+          item_summaries: [
+            {
+              name: "Button",
+              slug: "button",
+              source: "known-catalog",
+              provenance: "fixture",
+              catalog_status: "available",
+              route_eligible: true,
+              raw_item_url: "https://example.com/r/button.json",
+              docs_url: "https://example.com/components/button",
+              evidence_url: "https://example.com/r/registry.json",
+            },
+          ],
+        },
+        status: { warnings: [] },
       },
-      atlas: {
-        aliases: ['example-ui'], coverage_status: 'inferred', confidence: 'medium',
-        notes: 'Fixture notes', catalog_status: 'partial',
-        comparison_evidence: 'catalog', catalog_item_count: 1,
-        catalog_evidence_url: 'https://example.com/r/registry.json',
-        item_summaries: [{
-          name: 'Button', slug: 'button', source: 'known-catalog',
-          provenance: 'fixture', catalog_status: 'available', route_eligible: true,
-          raw_item_url: 'https://example.com/r/button.json',
-          docs_url: 'https://example.com/components/button',
-          evidence_url: 'https://example.com/r/registry.json',
-        }],
-      },
-      status: {warnings: []},
-    }],
+    ],
   };
 
   const payload = {
     mirror,
     catalog: {
       meta: {
-        source_url: 'https://ui.shadcn.com/r/registries.json',
-        registry_count: options.includeEmptyNamespace ? 2 : 1, item_count: 1,
+        source_url: "https://ui.shadcn.com/r/registries.json",
+        registry_count: options.includeEmptyNamespace ? 2 : 1,
+        item_count: 1,
       },
       registries: {
-        '@example': [{name:'button',type:'registry:ui',categories:['controls']}],
-        ...Object.fromEntries(options.includeEmptyNamespace ? [['@empty', []]] : []),
+        "@example": [{ name: "button", type: "registry:ui", categories: ["controls"] }],
+        ...Object.fromEntries(options.includeEmptyNamespace ? [["@empty", []]] : []),
       },
     },
     taxonomy: taxonomyFixture(),
-    kindOverrides: {registryDefaults: {}},
+    kindOverrides: { registryDefaults: {} },
     registryIcons: null,
     sourcePageManifest: {
-      schema: 'registry-atlas-source-page-index/v1',
-      sourceSnapshotAt: '2026-10-07T00:00:00.000Z',
+      schema: "registry-atlas-source-page-index/v1",
+      sourceSnapshotAt: "2026-10-07T00:00:00.000Z",
       coverage: {},
-      pages: {'@example/button': {
-        url:'https://example.com/components/button',level:'reviewed',
-        source:'component-page-verified',observedAt:'2026-10-07T00:00:00.000Z'
-      }},
+      pages: {
+        "@example/button": {
+          url: "https://example.com/components/button",
+          level: "reviewed",
+          source: "component-page-verified",
+          observedAt: "2026-10-07T00:00:00.000Z",
+        },
+      },
     },
-    itemRoutes:{},
-    routePatterns:{},
+    itemRoutes: {},
+    routePatterns: {},
   };
 
-  await writeFile(coreGzipPath,gzipSync(JSON.stringify(payload)));
+  await writeFile(coreGzipPath, gzipSync(JSON.stringify(payload)));
 
-  return {coreGzipPath};
+  return { coreGzipPath };
 }
 
 function taxonomyFixture() {
   return {
-    version: 'v1',
-    roots: [{
-      id: 'application',
-      label: 'Application',
-      aliases: ['app'],
-      what: 'Application surfaces',
-      notFor: [],
-      examples: [],
-      children: [],
-    }],
+    version: "v1",
+    roots: [
+      {
+        id: "application",
+        label: "Application",
+        aliases: ["app"],
+        what: "Application surfaces",
+        notFor: [],
+        examples: [],
+        children: [],
+      },
+    ],
   };
 }
 
 async function gzipResponse(path: string): Promise<Response> {
   return new Response(await readFile(path), {
     status: 200,
-    headers: { 'content-type': 'application/gzip' },
+    headers: { "content-type": "application/gzip" },
   });
 }

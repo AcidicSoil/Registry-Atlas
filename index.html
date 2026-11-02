@@ -1,130 +1,202 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <script type="module">
-    if (import.meta.env.DEV) import("react-grab");
-  </script>
-  <meta charset="UTF-8" />
-  <title>Registry Atlas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Explore and assemble open-source component libraries in Registry Atlas." />
-  <meta name="theme-color" content="#0b0c0e" />
-  <link rel="icon" type="image/png" sizes="32x32" href="/registry-atlas/favicon-32x32.png" />
-  <link rel="icon" type="image/png" sizes="16x16" href="/registry-atlas/favicon-16x16.png" />
-  <link rel="shortcut icon" href="/registry-atlas/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/registry-atlas/apple-touch-icon.png" />
-  <link rel="stylesheet" href="/styles/registry-explorer.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-reference.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-hierarchy.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/app-shell-core.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-browse.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-item-detail.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-library-cards.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-browse-rail.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/registry-directory-navigation.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-exemplar-rail.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/setup-workflow.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-link-preview.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/mobile-sidebar-dialog.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/progressive-results.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/split-panels.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-taxonomy.css" />
-  <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-component-provenance.css" />
-</head>
-<body>
-  <a class="skip-link" href="#contentHeader">Skip to main content</a>
-  <div id="app">
-    <div class="app-inner">
-      <header class="mobile-app-header">
-        <button
-          id="sidebarToggle"
-          class="sidebar-toggle"
-          type="button"
-          aria-controls="appSidebar"
-          aria-expanded="false"
-          aria-label="Open navigation">☰</button>
-        <a class="brand brand-home-link" href="/Registry-Atlas/" aria-label="Registry Atlas home">
-          <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
-          <span class="brand-title">Registry Atlas</span>
-        </a>
-        <a class="setup-header-link" href="/Registry-Atlas/setup">Setup</a>
-      </header>
+  <head>
+    <script type="module">
+      if (import.meta.env.DEV) import("react-grab");
+    </script>
+    <meta charset="UTF-8" />
+    <title>Registry Atlas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Explore and assemble open-source component libraries in Registry Atlas."
+    />
+    <meta name="theme-color" content="#0b0c0e" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/registry-atlas/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/registry-atlas/favicon-16x16.png" />
+    <link rel="shortcut icon" href="/registry-atlas/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/registry-atlas/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/styles/registry-explorer.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-reference.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-hierarchy.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/app-shell-core.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-browse.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-item-detail.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-library-cards.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-browse-rail.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/registry-directory-navigation.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-exemplar-rail.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/setup-workflow.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-link-preview.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/mobile-sidebar-dialog.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/progressive-results.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/split-panels.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-taxonomy.css" />
+    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-component-provenance.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#contentHeader">Skip to main content</a>
+    <div id="app">
+      <div class="app-inner">
+        <header class="mobile-app-header">
+          <button
+            id="sidebarToggle"
+            class="sidebar-toggle"
+            type="button"
+            aria-controls="appSidebar"
+            aria-expanded="false"
+            aria-label="Open navigation"
+          >
+            ☰
+          </button>
+          <a class="brand brand-home-link" href="/Registry-Atlas/" aria-label="Registry Atlas home">
+            <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
+            <span class="brand-title">Registry Atlas</span>
+          </a>
+          <a class="setup-header-link" href="/Registry-Atlas/setup">Setup</a>
+        </header>
 
-      <dialog id="mobileSidebarDialog" class="mobile-sidebar-dialog" aria-label="Registry Atlas navigation"></dialog>
+        <dialog
+          id="mobileSidebarDialog"
+          class="mobile-sidebar-dialog"
+          aria-label="Registry Atlas navigation"
+        ></dialog>
 
-      <main id="app-main">
-        <aside id="appSidebar" class="app-sidebar" data-open="false" aria-label="Registry Atlas navigation">
-          <div class="sidebar-topbar">
-            <a class="brand brand-home-link" href="/Registry-Atlas/" aria-label="Registry Atlas home">
-              <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
-              <span class="brand-title">Registry Atlas</span>
-            </a>
-            <a class="setup-header-link" href="/Registry-Atlas/setup">
-              Setup <span id="setupCount" class="setup-header-count">0</span>
-            </a>
-            <button id="sidebarClose" class="sidebar-close" type="button" aria-label="Close navigation">×</button>
+        <main id="app-main">
+          <aside
+            id="appSidebar"
+            class="app-sidebar"
+            data-open="false"
+            aria-label="Registry Atlas navigation"
+          >
+            <div class="sidebar-topbar">
+              <a
+                class="brand brand-home-link"
+                href="/Registry-Atlas/"
+                aria-label="Registry Atlas home"
+              >
+                <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
+                <span class="brand-title">Registry Atlas</span>
+              </a>
+              <a class="setup-header-link" href="/Registry-Atlas/setup">
+                Setup <span id="setupCount" class="setup-header-count">0</span>
+              </a>
+              <button
+                id="sidebarClose"
+                class="sidebar-close"
+                type="button"
+                aria-label="Close navigation"
+              >
+                ×
+              </button>
+            </div>
+
+            <div class="sidebar-context" id="sidebarContext"></div>
+
+            <div class="search-bar">
+              <span class="search-icon" aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
+                  <circle cx="7" cy="7" r="4" stroke="currentColor"></circle>
+                  <path d="m10 10 3 3" stroke="currentColor" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <input
+                id="searchInput"
+                type="search"
+                class="search-input"
+                placeholder="Search catalog"
+                aria-label="Search catalog"
+              />
+              <kbd class="search-shortcut" aria-hidden="true">/</kbd>
+            </div>
+
+            <div class="sidebar-layout-slot" id="sidebarLayout"></div>
+            <div class="sidebar-body-scroll">
+              <nav class="primary-nav" aria-label="Catalog navigation">
+                <a class="nav-item" data-view="home" href="/Registry-Atlas/">Featured</a>
+                <a class="nav-item" data-view="authors" href="/Registry-Atlas/authors">Authors</a>
+                <a class="nav-item" data-view="registries" href="/Registry-Atlas/registries"
+                  >Libraries</a
+                >
+                <details class="sidebar-collections">
+                  <summary>
+                    Collections
+                    <span class="sidebar-collection-current" id="sidebarCollectionCurrent"></span>
+                  </summary>
+                  <div class="sidebar-collection-links">
+                    <a class="nav-item" data-view="discover" href="/Registry-Atlas/components"
+                      >Components</a
+                    >
+                    <a class="nav-item" data-view="blocks" href="/Registry-Atlas/blocks">Blocks</a>
+                    <a class="nav-item" data-view="pages" href="/Registry-Atlas/pages">Pages</a>
+                    <a class="nav-item" data-view="templates" href="/Registry-Atlas/templates"
+                      >Templates</a
+                    >
+                    <a class="nav-item" data-view="themes" href="/Registry-Atlas/themes">Themes</a>
+                    <a class="nav-item" data-view="icons" href="/Registry-Atlas/icons">Icons</a>
+                  </div>
+                </details>
+                <a class="nav-item" data-view="compare" href="/Registry-Atlas/compare">Compare</a>
+              </nav>
+
+              <div class="aside-inner" id="aside"></div>
+            </div>
+          </aside>
+
+          <div class="app-panel-boundary" aria-label="Panel controls">
+            <button
+              id="toggleSidebarPanel"
+              class="panel-collapse-toggle"
+              type="button"
+              aria-label="Collapse navigation panel"
+              aria-controls="appSidebar"
+              aria-expanded="true"
+              title="Toggle navigation panel"
+            >
+              ◂
+            </button>
+            <div
+              id="appPanelResize"
+              class="panel-resize-handle"
+              role="separator"
+              tabindex="0"
+              aria-label="Resize navigation and content panels"
+              aria-orientation="vertical"
+              aria-controls="appSidebar appContent"
+              aria-valuemin="190"
+              aria-valuemax="440"
+              aria-valuenow="240"
+            ></div>
+            <button
+              id="toggleContentPanel"
+              class="panel-collapse-toggle"
+              type="button"
+              aria-label="Collapse content panel"
+              aria-controls="appContent"
+              aria-expanded="true"
+              title="Toggle content panel"
+            >
+              ▸
+            </button>
           </div>
 
-          <div class="sidebar-context" id="sidebarContext"></div>
-
-          <div class="search-bar">
-            <span class="search-icon" aria-hidden="true">
-              <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
-                <circle cx="7" cy="7" r="4" stroke="currentColor"></circle>
-                <path d="m10 10 3 3" stroke="currentColor" stroke-linecap="round"></path>
-              </svg>
-            </span>
-            <input
-              id="searchInput"
-              type="search"
-              class="search-input"
-              placeholder="Search catalog"
-              aria-label="Search catalog"
-            />
-            <kbd class="search-shortcut" aria-hidden="true">/</kbd>
-          </div>
-
-          <div class="sidebar-layout-slot" id="sidebarLayout"></div>
-          <div class="sidebar-body-scroll">
-            <nav class="primary-nav" aria-label="Catalog navigation">
-              <a class="nav-item" data-view="home" href="/Registry-Atlas/">Featured</a>
-              <a class="nav-item" data-view="authors" href="/Registry-Atlas/authors">Authors</a>
-              <a class="nav-item" data-view="registries" href="/Registry-Atlas/registries">Libraries</a>
-              <details class="sidebar-collections">
-                <summary>Collections <span class="sidebar-collection-current" id="sidebarCollectionCurrent"></span></summary>
-                <div class="sidebar-collection-links">
-                  <a class="nav-item" data-view="discover" href="/Registry-Atlas/components">Components</a>
-                  <a class="nav-item" data-view="blocks" href="/Registry-Atlas/blocks">Blocks</a>
-                  <a class="nav-item" data-view="pages" href="/Registry-Atlas/pages">Pages</a>
-                  <a class="nav-item" data-view="templates" href="/Registry-Atlas/templates">Templates</a>
-                  <a class="nav-item" data-view="themes" href="/Registry-Atlas/themes">Themes</a>
-                  <a class="nav-item" data-view="icons" href="/Registry-Atlas/icons">Icons</a>
-                </div>
-              </details>
-              <a class="nav-item" data-view="compare" href="/Registry-Atlas/compare">Compare</a>
-            </nav>
-
-            <div class="aside-inner" id="aside"></div>
-          </div>
-        </aside>
-
-        <div class="app-panel-boundary" aria-label="Panel controls">
-          <button id="toggleSidebarPanel" class="panel-collapse-toggle" type="button" aria-label="Collapse navigation panel" aria-controls="appSidebar" aria-expanded="true" title="Toggle navigation panel">◂</button>
-          <div id="appPanelResize" class="panel-resize-handle" role="separator" tabindex="0" aria-label="Resize navigation and content panels" aria-orientation="vertical" aria-controls="appSidebar appContent" aria-valuemin="190" aria-valuemax="440" aria-valuenow="240"></div>
-          <button id="toggleContentPanel" class="panel-collapse-toggle" type="button" aria-label="Collapse content panel" aria-controls="appContent" aria-expanded="true" title="Toggle content panel">▸</button>
-        </div>
-
-        <section id="appContent" class="content">
-          <div class="content-header" id="contentHeader" tabindex="-1"></div>
-          <div class="content-body">
-            <div class="scroll-region" id="contentBody"></div>
-            <div id="catalogScrollStatus" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
-          </div>
-        </section>
-      </main>
+          <section id="appContent" class="content">
+            <div class="content-header" id="contentHeader" tabindex="-1"></div>
+            <div class="content-body">
+              <div class="scroll-region" id="contentBody"></div>
+              <div
+                id="catalogScrollStatus"
+                class="sr-only"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+              ></div>
+            </div>
+          </section>
+        </main>
+      </div>
     </div>
-  </div>
 
-  <script type="module" src="/src/registry-explorer/entry.ts"></script>
-</body>
+    <script type="module" src="/src/registry-explorer/entry.ts"></script>
+  </body>
 </html>

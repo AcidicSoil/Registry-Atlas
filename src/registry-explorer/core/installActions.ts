@@ -1,5 +1,5 @@
-import { isSafeRegistryItemName, resolveRegistryItemRoute } from './itemRoutes.ts';
-import type { BatchInstallCommandState, InstallActionState } from './registry.schema.ts';
+import { isSafeRegistryItemName, resolveRegistryItemRoute } from "./itemRoutes.ts";
+import type { BatchInstallCommandState, InstallActionState } from "./registry.schema.ts";
 
 const NAMESPACE_PATTERN = /^@?[a-z0-9][a-z0-9_-]*$/;
 
@@ -37,22 +37,22 @@ export function buildInspectCommand(token: string): string | null {
 }
 
 function invalidInstallIdentity(namespace: string, slug: string): string | null {
-  if (!namespace) return 'Missing registry namespace.';
+  if (!namespace) return "Missing registry namespace.";
 
-  if (!normalizeNamespace(namespace)) return 'Invalid registry namespace.';
+  if (!normalizeNamespace(namespace)) return "Invalid registry namespace.";
 
-  if (!slug) return 'Missing item slug.';
+  if (!slug) return "Missing item slug.";
 
-  if (!isSafeRegistryItemName(slug)) return 'Invalid item slug.';
+  if (!isSafeRegistryItemName(slug)) return "Invalid item slug.";
 
   return null;
 }
 
 function missingRegistryRouteReason(input: InstallActionInput): string | null {
-  if (!input.routeEligible) return 'Item is not route eligible in the validated registry catalog.';
+  if (!input.routeEligible) return "Item is not route eligible in the validated registry catalog.";
 
   if (!input.registryUrlTemplate?.trim() && !input.rawItemUrl?.trim()) {
-    return 'Registry mirror/template is unavailable.';
+    return "Registry mirror/template is unavailable.";
   }
 
   return null;
@@ -60,11 +60,13 @@ function missingRegistryRouteReason(input: InstallActionInput): string | null {
 
 function unavailableInstallReason(input: InstallActionInput): string | null {
   if (input.isFallbackCandidate) {
-    return input.fallbackReason ?? 'Inferred/fallback candidate; install command unavailable.';
+    return input.fallbackReason ?? "Inferred/fallback candidate; install command unavailable.";
   }
 
-  return invalidInstallIdentity(input.namespace?.trim() ?? '', input.itemSlug?.trim() ?? '')
-    ?? missingRegistryRouteReason(input);
+  return (
+    invalidInstallIdentity(input.namespace?.trim() ?? "", input.itemSlug?.trim() ?? "") ??
+    missingRegistryRouteReason(input)
+  );
 }
 
 export function getInstallActionState(input: InstallActionInput): InstallActionState {
@@ -73,15 +75,20 @@ export function getInstallActionState(input: InstallActionInput): InstallActionS
   if (unavailable) return disabled(unavailable);
   const namespace = input.namespace!.trim();
   const slug = input.itemSlug!.trim();
-  const template = input.registryUrlTemplate?.trim() ?? '';
+  const template = input.registryUrlTemplate?.trim() ?? "";
 
   const token = buildInstallToken(namespace, slug);
 
-  if (!token) return disabled('Invalid install token.');
+  if (!token) return disabled("Invalid install token.");
 
-  const route = resolveRegistryItemRoute(normalizeNamespace(namespace) ?? '', template, slug, input.rawItemUrl);
+  const route = resolveRegistryItemRoute(
+    normalizeNamespace(namespace) ?? "",
+    template,
+    slug,
+    input.rawItemUrl,
+  );
 
-  if (route.status !== 'available') {
+  if (route.status !== "available") {
     return disabled(disabledReasonForRoute(route.status));
   }
 
@@ -89,11 +96,11 @@ export function getInstallActionState(input: InstallActionInput): InstallActionS
   const inspectCommand = buildInspectCommand(token);
 
   if (!installCommand || !inspectCommand) {
-    return disabled('Invalid install token.');
+    return disabled("Invalid install token.");
   }
 
   return {
-    status: 'enabled',
+    status: "enabled",
     token,
     installCommand,
     inspectCommand,
@@ -107,7 +114,7 @@ export function buildBatchInstallCommand(tokens: readonly string[]): string | nu
 
   if (deduped.length === 0) return null;
 
-  return `npx shadcn@latest add ${deduped.join(' ')}`;
+  return `npx shadcn@latest add ${deduped.join(" ")}`;
 }
 
 export function buildBatchInstallCommandState(tokens: readonly string[]): BatchInstallCommandState {
@@ -115,9 +122,9 @@ export function buildBatchInstallCommandState(tokens: readonly string[]): BatchI
   const command = buildBatchInstallCommand(deduped);
 
   return {
-    status: command ? 'enabled' : 'disabled',
+    status: command ? "enabled" : "disabled",
     command,
-    disabledReason: command ? null : 'Queue is empty or contains no eligible install tokens.',
+    disabledReason: command ? null : "Queue is empty or contains no eligible install tokens.",
     tokens: deduped,
   };
 }
@@ -126,7 +133,7 @@ function dedupeInstallTokens(tokens: readonly string[]): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
 
-  tokens.forEach(token => {
+  tokens.forEach((token) => {
     const normalized = normalizeInstallToken(token);
 
     if (!normalized || seen.has(normalized)) return;
@@ -139,16 +146,18 @@ function dedupeInstallTokens(tokens: readonly string[]): string[] {
 
 export function isValidInstallToken(token: string): boolean {
   const trimmed = token.trim();
-  const separator = trimmed.indexOf('/');
+  const separator = trimmed.indexOf("/");
 
   if (separator <= 1) return false;
 
   const namespace = trimmed.slice(0, separator);
   const itemName = trimmed.slice(separator + 1);
 
-  return namespace.startsWith('@')
-    && normalizeNamespace(namespace) === namespace
-    && isSafeRegistryItemName(itemName);
+  return (
+    namespace.startsWith("@") &&
+    normalizeNamespace(namespace) === namespace &&
+    isSafeRegistryItemName(itemName)
+  );
 }
 
 function normalizeInstallToken(token: string): string | null {
@@ -164,7 +173,7 @@ function normalizeNamespace(namespace: string): string | null {
 
   if (!NAMESPACE_PATTERN.test(trimmed)) return null;
 
-  const withoutAt = trimmed.replace(/^@+/, '');
+  const withoutAt = trimmed.replace(/^@+/, "");
 
   if (!withoutAt || !/^[a-z0-9][a-z0-9_-]*$/.test(withoutAt)) return null;
 
@@ -173,7 +182,7 @@ function normalizeNamespace(namespace: string): string | null {
 
 function disabled(disabledReason: string): InstallActionState {
   return {
-    status: 'disabled',
+    status: "disabled",
     token: null,
     installCommand: null,
     inspectCommand: null,
@@ -183,17 +192,18 @@ function disabled(disabledReason: string): InstallActionState {
 }
 
 function disabledReasonForRoute(status: string): string {
-  if (status === 'invalid-template') return 'Registry route template is invalid.';
+  if (status === "invalid-template") return "Registry route template is invalid.";
 
-  if (status === 'invalid-url') return 'Resolved item route URL is invalid.';
+  if (status === "invalid-url") return "Resolved item route URL is invalid.";
 
-  if (status === 'catalog-not-verified') return 'Catalog is not verified.';
+  if (status === "catalog-not-verified") return "Catalog is not verified.";
 
-  if (status === 'unresolved-template') return 'Registry route template has unresolved placeholders.';
+  if (status === "unresolved-template")
+    return "Registry route template has unresolved placeholders.";
 
-  if (status === 'missing-item-slug') return 'Missing item slug.';
+  if (status === "missing-item-slug") return "Missing item slug.";
 
-  if (status === 'invalid-item-slug') return 'Invalid item slug.';
+  if (status === "invalid-item-slug") return "Invalid item slug.";
 
-  return 'Item route unavailable.';
+  return "Item route unavailable.";
 }

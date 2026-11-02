@@ -14,26 +14,26 @@ This re-audit follows the local PostgreSQL migration, changed Vite UI, source-pr
 
 ## Measured outcome
 
-| Standard disposition | Count | Meaning |
-| --- | ---: | --- |
-| Not applicable, previous rationale preserved | 379 | Not a compliance claim |
-| Applicable, compliant with existing evidence | 7 | Previously assessed controls; rechecked core app tests |
-| Applicable, still unevaluated | 277 | Needs distinct rule-by-rule verification |
-| Applicable, remediation required | 4 | Confirmed issues listed below |
-| Applicable, approval pending | 0 | Four required tooling policies are compliant without PAO approvals |
-| Stale review evidence | **0** | Reconciled |
-| New app-shell applicability reviews | **4** | Not yet reviewed |
+| Standard disposition                         | Count | Meaning                                                            |
+| -------------------------------------------- | ----: | ------------------------------------------------------------------ |
+| Not applicable, previous rationale preserved |   379 | Not a compliance claim                                             |
+| Applicable, compliant with existing evidence |     7 | Previously assessed controls; rechecked core app tests             |
+| Applicable, still unevaluated                |   277 | Needs distinct rule-by-rule verification                           |
+| Applicable, remediation required             |     4 | Confirmed issues listed below                                      |
+| Applicable, approval pending                 |     0 | Four required tooling policies are compliant without PAO approvals |
+| Stale review evidence                        | **0** | Reconciled                                                         |
+| New app-shell applicability reviews          | **4** | Not yet reviewed                                                   |
 
 **Current result after correcting the PAO interpretation:** `project_standards.py check` reports **285 blockers**: 277 unevaluated rules, four remediations, and four newly introduced app-shell applicability reviews. The four tooling approval blockers are gone. No stale source hashes, stack fingerprints or `DESIGN.md` fingerprints remain in the current structural check. This is **not** a passing certification.
 
 ## Confirmed remediation requirements
 
-| Existing standard | Current evidence | Disposition |
-| --- | --- | --- |
-| `accessibility/rules/wcag-native-html-first.md` | Mobile navigation still gives an `aside` `role="dialog"` and manually traps focus; the recorded native-`dialog` proposal remains open | Needs user-approved replacement and browser verification |
-| `interaction-patterns/rules/interaction-infinite-scroll.md` | Six catalog views still render numbered Previous/Next links via `catalog-pagination` and `data-discovery-page` | Implement the existing incremental-scroll requirement and verify accessible load more |
-| `security-patterns/rules/supply-chain.md` | Configured dependency audit passes its moderate threshold, but the low-severity advisory and release SBOM/provenance work remain | Evaluate provenance and the advisory, do not waive |
-| `commit/rules/conventional-format.md` | Earlier history contains nonconventional subjects; never rewrite shared history | Gate future commits without rewriting previous ones |
+| Existing standard                                           | Current evidence                                                                                                                      | Disposition                                                                           |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `accessibility/rules/wcag-native-html-first.md`             | Mobile navigation still gives an `aside` `role="dialog"` and manually traps focus; the recorded native-`dialog` proposal remains open | Needs user-approved replacement and browser verification                              |
+| `interaction-patterns/rules/interaction-infinite-scroll.md` | Six catalog views still render numbered Previous/Next links via `catalog-pagination` and `data-discovery-page`                        | Implement the existing incremental-scroll requirement and verify accessible load more |
+| `security-patterns/rules/supply-chain.md`                   | Configured dependency audit passes its moderate threshold, but the low-severity advisory and release SBOM/provenance work remain      | Evaluate provenance and the advisory, do not waive                                    |
+| `commit/rules/conventional-format.md`                       | Earlier history contains nonconventional subjects; never rewrite shared history                                                       | Gate future commits without rewriting previous ones                                   |
 
 The proposals are already present in `.design/standards.json`. No migration approval was fabricated, no tooling replaced as part of this audit, and no remediation was silently marked complete.
 

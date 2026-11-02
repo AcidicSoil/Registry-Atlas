@@ -1,6 +1,6 @@
 # Per-identity source, visual and runnable-preview evidence — 2026-10-03
 
-Registry Atlas must never count a component image or a functioning *source-informed fixture* as proof that the upstream component itself has been built and verified. This research artifact specifies the implemented identity ledger and the observed coverage at the time of this run.
+Registry Atlas must never count a component image or a functioning _source-informed fixture_ as proof that the upstream component itself has been built and verified. This research artifact specifies the implemented identity ledger and the observed coverage at the time of this run.
 
 ## Reproduce
 
@@ -26,21 +26,21 @@ The report's `complete` flag cannot become true while any identity lacks an obse
 
 Report `~/.local/state/registry-atlas/research/item-evidence-20261003-run74ab-final-v2.json` was generated during this run.
 
-| Metric | Observed |
-|---|---:|
-| Official directory registry records | 408 |
-| Indexed rows | 84,153 |
-| Distinct indexed identities | 84,133 |
-| Additional curated-only identities | 12 |
-| Total distinct identities | 84,145 |
-| Duplicate indexed rows / affected keys | 20 / 18 |
-| Fresh source-item pages | 7 |
-| Source-item pages pending / unresolved | 84,125 / 13 |
-| Verified visual records / visual records blocked | 3 / 4 |
-| Reviewed functional fixtures / reviewed upstream builds | 3 / 0 |
-| Functional preview identities pending | 84,142 |
-| Ledger integrity findings | 18 |
-| Full catalog upstream functionality | **Not complete** |
+| Metric                                                  |         Observed |
+| ------------------------------------------------------- | ---------------: |
+| Official directory registry records                     |              408 |
+| Indexed rows                                            |           84,153 |
+| Distinct indexed identities                             |           84,133 |
+| Additional curated-only identities                      |               12 |
+| Total distinct identities                               |           84,145 |
+| Duplicate indexed rows / affected keys                  |          20 / 18 |
+| Fresh source-item pages                                 |                7 |
+| Source-item pages pending / unresolved                  |      84,125 / 13 |
+| Verified visual records / visual records blocked        |            3 / 4 |
+| Reviewed functional fixtures / reviewed upstream builds |            3 / 0 |
+| Functional preview identities pending                   |           84,142 |
+| Ledger integrity findings                               |               18 |
+| Full catalog upstream functionality                     | **Not complete** |
 
 The **separate** 21st.dev reference-route journal is not a registry-item source journal. A page observed in that site does not verify an arbitrary Registry Atlas component; the two counts must never be added together.
 

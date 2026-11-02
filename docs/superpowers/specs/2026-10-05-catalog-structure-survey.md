@@ -111,7 +111,7 @@ Membership resolution is ordered:
    - at most eight exact group labels discovered from the same source surface;
    - compact facts per candidate: structural pattern code, path affinity, lexical-overlap score, and at most two observed sample IDs;
    - `NONE`.
-   When a surface exposes more than eight groups, narrow the allowed choices deterministically using path affinity and lexical overlap. This step may only remove choices; it may not rename or create a label. If no defensible shortlist remains, do not call Clef. Do not send page dumps, URLs, explanatory prose, or duplicated evidence in Choice criteria.
+     When a surface exposes more than eight groups, narrow the allowed choices deterministically using path affinity and lexical overlap. This step may only remove choices; it may not rename or create a label. If no defensible shortlist remains, do not call Clef. Do not send page dumps, URLs, explanatory prose, or duplicated evidence in Choice criteria.
 4. **Unresolved.** If the candidate set is too broad to shortlist, Clef is disabled/unavailable/invalid, or Clef chooses `NONE`, preserve the item as unresolved rather than inventing a group.
 
 Clef may select an observed label. Clef may not create, normalize, merge, or rename a label.

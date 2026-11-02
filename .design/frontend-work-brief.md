@@ -4,11 +4,11 @@ Status: Implementation verified in scripted browser; final policy certification 
 
 ## Shell surfaces
 
-| Surface | Route/view | Scroll | Resize | Collapse | Narrow-screen behavior |
-| --- | --- | --- | --- | --- | --- |
-| Primary left navigation | All catalog routes | `.sidebar-body-scroll` independently scrolls beyond viewport | Shared `#appPanelResize`, pointer and keyboard 190–440 px | `#toggleSidebarPanel` on the sidebar boundary | Native `#mobileSidebarDialog` with open/close and Escape |
-| Main content | All catalog routes | `#appContent .content-body` scrolls independently, clipped to viewport | Shared boundary changes available content width | `#toggleContentPanel` on its boundary | Main content remains readable without the desktop separator |
-| Registry summary auxiliary panel | `/@logoforge` and other registry collection routes | Summary owns overflow when long | `[data-profile-rail-resize]`, pointer and keyboard 200–400 px | `[data-profile-rail-toggle]` on summary boundary | Summary stacks above inventory; desktop controls hidden |
+| Surface                          | Route/view                                         | Scroll                                                                 | Resize                                                        | Collapse                                         | Narrow-screen behavior                                      |
+| -------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------------ | ----------------------------------------------------------- |
+| Primary left navigation          | All catalog routes                                 | `.sidebar-body-scroll` independently scrolls beyond viewport           | Shared `#appPanelResize`, pointer and keyboard 190–440 px     | `#toggleSidebarPanel` on the sidebar boundary    | Native `#mobileSidebarDialog` with open/close and Escape    |
+| Main content                     | All catalog routes                                 | `#appContent .content-body` scrolls independently, clipped to viewport | Shared boundary changes available content width               | `#toggleContentPanel` on its boundary            | Main content remains readable without the desktop separator |
+| Registry summary auxiliary panel | `/@logoforge` and other registry collection routes | Summary owns overflow when long                                        | `[data-profile-rail-resize]`, pointer and keyboard 200–400 px | `[data-profile-rail-toggle]` on summary boundary | Summary stacks above inventory; desktop controls hidden     |
 
 No separate bottom navigation panel exists in the inspected HTML shell. The nested sidebar **Collections** disclosure is a real `<details>/<summary>` that does not navigate on expand and retains six actual destination links. Search and Grid/List browse controls remain above the scrollable navigation region.
 

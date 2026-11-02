@@ -46,18 +46,18 @@ Keep independent evidence statuses: `route-candidate` → `page-observed` → `v
 
 ## R4. Route, contents and interaction acceptance
 
-| Site area | Required Atlas behavior |
-| --- | --- |
-| Home | Own discovery/marketing shell, sectioned visual bands, correct supported links, search and meaningful actions. |
-| Components / categories | Full supported category tree with group/count/active state, compact rail, filters, search, sorts, dense working preview cards, URL state, list/browse transitions. |
-| Featured / Newest | Working routes and layouts, factual ordering, accurate data and hover/cards; no invented popularity or recency. |
-| Templates / Themes | Distinct large specimen grids, classification, true previews, theme modes and palettes, relevant detail/preview/editor interactions. |
-| Icons / shader / gradient / ASCII | Separate genuine glyph/specimen types, copy formats, motion, editing and category controls where real underlying asset data exists. |
-| Library / registry directory and detail | Source-backed metadata, searchable/sortable dense cards, route hierarchy, registry component inventory and prominent official homepage. |
-| Authors / profiles | Actual owner identities, contributions, profile paths and actions, without invented social/commerce statistics. |
-| Component and other asset detail | Large **functional** specimen, variants, Preview/Code/Info, supported copy/prompt/install and source facts, related items, keyboard and history. |
-| Shared overlays / accounts / bookmarks | Functional sidebar, filter panels, search, keyboard shortcuts, saved state, sign-in gating and error/retry states. Real account-dependent features need persisted services. |
-| Atlas-specific compare/other routes | Preserve their real existing purpose while meeting the same accessible/usable UI quality bar. |
+| Site area                               | Required Atlas behavior                                                                                                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Home                                    | Own discovery/marketing shell, sectioned visual bands, correct supported links, search and meaningful actions.                                                              |
+| Components / categories                 | Full supported category tree with group/count/active state, compact rail, filters, search, sorts, dense working preview cards, URL state, list/browse transitions.          |
+| Featured / Newest                       | Working routes and layouts, factual ordering, accurate data and hover/cards; no invented popularity or recency.                                                             |
+| Templates / Themes                      | Distinct large specimen grids, classification, true previews, theme modes and palettes, relevant detail/preview/editor interactions.                                        |
+| Icons / shader / gradient / ASCII       | Separate genuine glyph/specimen types, copy formats, motion, editing and category controls where real underlying asset data exists.                                         |
+| Library / registry directory and detail | Source-backed metadata, searchable/sortable dense cards, route hierarchy, registry component inventory and prominent official homepage.                                     |
+| Authors / profiles                      | Actual owner identities, contributions, profile paths and actions, without invented social/commerce statistics.                                                             |
+| Component and other asset detail        | Large **functional** specimen, variants, Preview/Code/Info, supported copy/prompt/install and source facts, related items, keyboard and history.                            |
+| Shared overlays / accounts / bookmarks  | Functional sidebar, filter panels, search, keyboard shortcuts, saved state, sign-in gating and error/retry states. Real account-dependent features need persisted services. |
+| Atlas-specific compare/other routes     | Preserve their real existing purpose while meeting the same accessible/usable UI quality bar.                                                                               |
 
 The benchmark includes filter/sidebar **contents**, layout, metadata, card click targets, details and every transition between them, not just the top-level pages. Implement all equivalent capabilities that the actual Atlas source and services can support. For unsupported reference features, maintain a visible parity gap ledger and a separately testable implementation task.
 
@@ -65,7 +65,7 @@ The benchmark includes filter/sidebar **contents**, layout, metadata, card click
 
 - Refresh the live 21st.dev reference through the PPM `design-ui-ux` profile; browse source registries through `registry-atlas-source-audit`; test Atlas through its dedicated frontend profile. Do not invent a second browser or restart the shared daemon.
 - Define user journeys per route: initial, hover, action, error/empty, recovery, keyboard, mobile, direct reload and browser Back/Forward. Test responsive layouts at 390px and 1920px and intermediate width.
-- Each interactive-demo claim requires before/after evidence of a component-specific gesture, correct upstream identity, sandbox/origin checks and no unexpected browser errors. A screenshot, a 200 or a functional *different* example does not pass.
+- Each interactive-demo claim requires before/after evidence of a component-specific gesture, correct upstream identity, sandbox/origin checks and no unexpected browser errors. A screenshot, a 200 or a functional _different_ example does not pass.
 - Complete reference census, Atlas route/feature census, full registry identity accounting, functional-preview ledger and parity-diff report; if any sampled/full inventory item or feature remains unverified, say so rather than claiming “everything” complete.
 - Apply `pinchtab-project-work` canonical PAO check-in and nonoverlapping worker claims; read `pinchtab-profile-manager-frontend` and applicable installed PPM skills and Webcmd Design. Run focused red/green tests, `mise run verify` and `mise run browser:acceptance` plus live comparative checks. Push verified separately owned slices.
 
@@ -79,7 +79,6 @@ Raw observation snapshot: `~/.local/state/registry-atlas/research/21st-dev-20261
 
 A literal copy of third-party protected source/assets, fake popularity counts or unreviewed arbitrary package execution would be brittle and unsafe. Meet the user's requested **functional/visual quality bar** with Atlas's own implementation, source-backed data and isolated allowed demos. Account/commerce/publishing/editor features require real service/data/permission decisions; record their work instead of silently omitting them.
 
-
 ## R6. Implementation selection and execution gates — research reconciliation (2026-10-04)
 
 This section converts the preview-runtime and migration decisions in the associated October 3 plan into testable design requirements. It extends R1–R5 rather than claiming those route, identity, feature or catalog acceptance criteria have been met. The source research is `/mnt/c/Users/user/Downloads/21stdev-deepresearch.md` (external to the repo), the current project research is `docs/research/2026-10-03-shared-live-preview-pipeline.md`, and the handoff conversation is `6ac08e9a-56f4-83e9-b9ef-411ae11f6589`.
@@ -88,7 +87,7 @@ This section converts the preview-runtime and migration decisions in the associa
 
 - Current 21st.dev publishing conventions support an authored React/TSX demo, an approved cover and optional video. The historical public 21st application used Sandpack; an observed current component used a versioned CDN iframe. The internal current compiler/bundler is **not verified** by either observation. Do not infer Sandpack or Next.js version from a historical fork.
 - The shadcn `getRegistryItems` and `resolveRegistryItems` APIs provide item files, declared dependencies and styling metadata. They do **not** provide a universal executable demo, a license decision or a browser interaction proof. `addRegistryItems` modifies a project and may run only in an explicitly disposable installation test.
-- The research's Next.js + React + Sandpack suggestion is a *greenfield option*, not a reason to rewrite Atlas's functioning Vite/TypeScript catalog. Preserve the existing shell, routes, registry identity model, discovery jobs, image manifest, existing preview host and published reviewed fixtures.
+- The research's Next.js + React + Sandpack suggestion is a _greenfield option_, not a reason to rewrite Atlas's functioning Vite/TypeScript catalog. Preserve the existing shell, routes, registry identity model, discovery jobs, image manifest, existing preview host and published reviewed fixtures.
 - The existing three historical feature-worktree heads are not competing implementations: `feat/frontend-reference-navigation` and `feat/visual-reference-previews` are ancestors of `main`; `feat/registry-traversal-patterns` has its content integrated on main by `0efe4a8`. Preserve their worktrees for provenance. Before any future edits, check current worktree/claim state rather than assuming a previous owner is active.
 
 ### Chosen runtime order
@@ -109,14 +108,14 @@ This section converts the preview-runtime and migration decisions in the associa
 
 ### Verification matrix and completion definition
 
-| Layer | Passing evidence | Failure remains visible |
-|---|---|---|
-| Registry discovery | All current raw registries accounted for, exact item keys, bounded stable cursor, independently observed page identity | candidate-only, stale, blocked and unresolved |
-| Visual references | Exact official component surface/image, source URL and current capture evidence | absent/wrong banner never promoted |
-| Source preview | Actual `shadcn` resolved files, authored-demo preference, unambiguous entry, tested pinned dependencies, no unsafe destination | unsupported exports, unreviewed packages, inconsistent source |
-| Runtime interaction | A real browser action changes the **same** upstream component's state, sandbox/network reviewed, matching card/detail identity | built-only, loaded iframe and rendered-only never promoted |
-| Navigation and controls | Per-route feature ledger, all observed sidebar groups, valid source-backed sorts/filters, keyboard/mobile/reload/back behavior | unavailable data and services explicitly open |
-| Publication | `mise run verify`, browser acceptance, exact source manifest, changes reviewed, no active PAO claims after check-out | do not report the 408-registry/entire reference scope complete |
+| Layer                   | Passing evidence                                                                                                               | Failure remains visible                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Registry discovery      | All current raw registries accounted for, exact item keys, bounded stable cursor, independently observed page identity         | candidate-only, stale, blocked and unresolved                  |
+| Visual references       | Exact official component surface/image, source URL and current capture evidence                                                | absent/wrong banner never promoted                             |
+| Source preview          | Actual `shadcn` resolved files, authored-demo preference, unambiguous entry, tested pinned dependencies, no unsafe destination | unsupported exports, unreviewed packages, inconsistent source  |
+| Runtime interaction     | A real browser action changes the **same** upstream component's state, sandbox/network reviewed, matching card/detail identity | built-only, loaded iframe and rendered-only never promoted     |
+| Navigation and controls | Per-route feature ledger, all observed sidebar groups, valid source-backed sorts/filters, keyboard/mobile/reload/back behavior | unavailable data and services explicitly open                  |
+| Publication             | `mise run verify`, browser acceptance, exact source manifest, changes reviewed, no active PAO claims after check-out           | do not report the 408-registry/entire reference scope complete |
 
 **Current task slice:** fix source-preview export selection and unpinned dependency fallbacks with failing tests first; do not rewrite the application framework, touch worker-owned source without reconciliation or introduce a second preview-resolver service. Next tasks are a real two-registry source/demo runtime trial, per-item visual/interaction evidence, and measured extension to compatible reviewed dependency families. Sitewide parity and the full inventory remain tracked open until separately proved.
 
@@ -404,7 +403,7 @@ Import groups overlap: in the unresolved-import class, 510 source records
 reference base-ui, 279 motion libraries and 293 react-icons. The next broad
 source-compatibility improvements must review those package and framework
 families instead of blindly permitting unreviewed code or substituting other
-libraries. The initial 73-artifact *isolated build stage* preceded any browser
+libraries. The initial 73-artifact _isolated build stage_ preceded any browser
 check; browser-proven promotion is separately recorded below when available.
 
 The complete managed-browser pass over all 73 isolated builds recorded **four

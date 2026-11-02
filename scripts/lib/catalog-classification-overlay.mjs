@@ -1,13 +1,13 @@
-import { isInputObject, isInputString } from './input-guards.mjs';
-import { buildCatalogClassificationState } from './catalog-classification-state.mjs';
-import { catalogClassificationInputFingerprint } from './catalog-classifier.mjs';
-import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from './catalog-taxonomy.mjs';
+import { isInputObject, isInputString } from "./input-guards.mjs";
+import { buildCatalogClassificationState } from "./catalog-classification-state.mjs";
+import { catalogClassificationInputFingerprint } from "./catalog-classifier.mjs";
+import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "./catalog-taxonomy.mjs";
 
-const SCHEMA = 'registry-atlas.catalog-classification-overlay.v1';
+const SCHEMA = "registry-atlas.catalog-classification-overlay.v1";
 
 const FINGERPRINT = /^sha256:[a-f0-9]{64}$/;
 
-const KINDS = new Set(['component', 'block', 'page', 'template', 'theme', 'icon', 'other']);
+const KINDS = new Set(["component", "block", "page", "template", "theme", "icon", "other"]);
 
 function isRecord(value) {
   return isInputObject(value) && value !== null && !Array.isArray(value);
@@ -19,7 +19,7 @@ function identity(namespace, name) {
 
 function expectedPathMap(taxonomy) {
   const records = flattenCatalogTaxonomy(taxonomy);
-  const byId = new Map(records.map(record => [record.id, record]));
+  const byId = new Map(records.map((record) => [record.id, record]));
   const paths = new Map();
 
   for (const record of records) {
@@ -40,54 +40,76 @@ function expectedPathMap(taxonomy) {
 export function validateCatalogClassificationOverlay(value, taxonomy) {
   const reviewedTaxonomy = validateCatalogTaxonomy(taxonomy);
 
-  if (!isRecord(value) || value.schema !== SCHEMA) throw new Error('Classification overlay schema is invalid');
+  if (!isRecord(value) || value.schema !== SCHEMA)
+    throw new Error("Classification overlay schema is invalid");
 
-  if (value.taxonomyVersion !== reviewedTaxonomy.version) throw new Error('Classification overlay taxonomy version mismatch');
+  if (value.taxonomyVersion !== reviewedTaxonomy.version)
+    throw new Error("Classification overlay taxonomy version mismatch");
 
-  for (const field of ['taxonomyFingerprint', 'classificationRunFingerprint', 'evaluationReportFingerprint']) {
-    if (!FINGERPRINT.test(value[field] ?? '')) throw new Error(`Classification overlay ${field} is invalid`);
+  for (const field of [
+    "taxonomyFingerprint",
+    "classificationRunFingerprint",
+    "evaluationReportFingerprint",
+  ]) {
+    if (!FINGERPRINT.test(value[field] ?? ""))
+      throw new Error(`Classification overlay ${field} is invalid`);
   }
 
-  if (!isInputString(value.approvedBy) || !value.approvedBy.trim()) throw new Error('Classification overlay approvedBy is required');
+  if (!isInputString(value.approvedBy) || !value.approvedBy.trim())
+    throw new Error("Classification overlay approvedBy is required");
 
-  if (!isInputString(value.approvedAt) || Number.isNaN(Date.parse(value.approvedAt))) throw new Error('Classification overlay approvedAt is invalid');
+  if (!isInputString(value.approvedAt) || Number.isNaN(Date.parse(value.approvedAt)))
+    throw new Error("Classification overlay approvedAt is invalid");
 
-  if (!Array.isArray(value.items)) throw new Error('Classification overlay items must be an array');
+  if (!Array.isArray(value.items)) throw new Error("Classification overlay items must be an array");
 
   const paths = expectedPathMap(reviewedTaxonomy);
   const seen = new Set();
 
   for (const item of value.items) {
-    if (!isRecord(item) || !isInputString(item.namespace) || !item.namespace.startsWith('@')
-      || !isInputString(item.name) || !item.name.trim()) {
-      throw new Error('Classification overlay item identity is invalid');
+    if (
+      !isRecord(item) ||
+      !isInputString(item.namespace) ||
+      !item.namespace.startsWith("@") ||
+      !isInputString(item.name) ||
+      !item.name.trim()
+    ) {
+      throw new Error("Classification overlay item identity is invalid");
     }
 
     const key = identity(item.namespace, item.name);
 
-    if (seen.has(key)) throw new Error(`Duplicate classification overlay item: ${item.namespace}/${item.name}`);
+    if (seen.has(key))
+      throw new Error(`Duplicate classification overlay item: ${item.namespace}/${item.name}`);
     seen.add(key);
 
-    if (!KINDS.has(item.kind)) throw new Error('Classification overlay item kind is invalid');
+    if (!KINDS.has(item.kind)) throw new Error("Classification overlay item kind is invalid");
 
-    if (!FINGERPRINT.test(item.inputFingerprint ?? '')) throw new Error('Classification overlay item input fingerprint is invalid');
+    if (!FINGERPRINT.test(item.inputFingerprint ?? ""))
+      throw new Error("Classification overlay item input fingerprint is invalid");
 
-    if (!isRecord(item.canonical) || !Array.isArray(item.canonical.path)) throw new Error('Classification overlay canonical value is invalid');
+    if (!isRecord(item.canonical) || !Array.isArray(item.canonical.path))
+      throw new Error("Classification overlay canonical value is invalid");
 
     if (item.canonical.primary === null) {
-      if (item.canonical.path.length !== 0) throw new Error('Classification overlay unclassified canonical path must be empty');
+      if (item.canonical.path.length !== 0)
+        throw new Error("Classification overlay unclassified canonical path must be empty");
     } else {
       const expected = paths.get(item.canonical.primary);
 
       if (!expected || JSON.stringify(expected) !== JSON.stringify(item.canonical.path)) {
-        throw new Error(`Classification overlay canonical path is outside taxonomy: ${item.canonical.primary}`);
+        throw new Error(
+          `Classification overlay canonical path is outside taxonomy: ${item.canonical.primary}`,
+        );
       }
     }
 
-    if (item.sourceGroups !== undefined
-      && (!Array.isArray(item.sourceGroups)
-        || item.sourceGroups.some(group => !isInputString(group) || !group.trim()))) {
-      throw new Error('Classification overlay sourceGroups must be non-empty strings');
+    if (
+      item.sourceGroups !== undefined &&
+      (!Array.isArray(item.sourceGroups) ||
+        item.sourceGroups.some((group) => !isInputString(group) || !group.trim()))
+    ) {
+      throw new Error("Classification overlay sourceGroups must be non-empty strings");
     }
   }
 
@@ -97,29 +119,33 @@ export function validateCatalogClassificationOverlay(value, taxonomy) {
 function currentInputFingerprint(namespace, rawItem, overlayItem) {
   const sourceHints = {};
 
-  if (Array.isArray(rawItem.categories) && rawItem.categories.length) sourceHints.categories = rawItem.categories;
+  if (Array.isArray(rawItem.categories) && rawItem.categories.length)
+    sourceHints.categories = rawItem.categories;
 
-  if (Array.isArray(rawItem.sourceGroups) && rawItem.sourceGroups.length) sourceHints.verifiedGroups = rawItem.sourceGroups;
+  if (Array.isArray(rawItem.sourceGroups) && rawItem.sourceGroups.length)
+    sourceHints.verifiedGroups = rawItem.sourceGroups;
 
-  const state = buildCatalogClassificationState((() => {
-  const result = {};
-  result.namespace = namespace;
-  result.item = (() => {
-  const result = {};
-  result.name = rawItem.name;
+  const state = buildCatalogClassificationState(
+    (() => {
+      const result = {};
+      result.namespace = namespace;
+      result.item = (() => {
+        const result = {};
+        result.name = rawItem.name;
 
-  if (rawItem.title) Object.assign(result, { title: rawItem.title });
+        if (rawItem.title) Object.assign(result, { title: rawItem.title });
 
-  if (rawItem.description) Object.assign(result, { description: rawItem.description });
-  result.kind = overlayItem.kind;
+        if (rawItem.description) Object.assign(result, { description: rawItem.description });
+        result.kind = overlayItem.kind;
 
-  return result;
-})();
+        return result;
+      })();
 
-  if (Object.keys(sourceHints).length) Object.assign(result, { sourceHints });
+      if (Object.keys(sourceHints).length) Object.assign(result, { sourceHints });
 
-  return result;
-})());
+      return result;
+    })(),
+  );
 
   return catalogClassificationInputFingerprint(state);
 }
@@ -127,9 +153,15 @@ function currentInputFingerprint(namespace, rawItem, overlayItem) {
 function explicitAccess(namespace, labels, accessRules) {
   const registryRules = accessRules?.registries?.[namespace];
 
-  const normalizedRules = registryRules && isInputObject(registryRules) && !Array.isArray(registryRules)
-    ? new Map(Object.entries(registryRules).map(([label, normalized]) => [label.trim().toLowerCase(), normalized]))
-    : new Map();
+  const normalizedRules =
+    registryRules && isInputObject(registryRules) && !Array.isArray(registryRules)
+      ? new Map(
+          Object.entries(registryRules).map(([label, normalized]) => [
+            label.trim().toLowerCase(),
+            normalized,
+          ]),
+        )
+      : new Map();
 
   const matches = [];
 
@@ -137,12 +169,14 @@ function explicitAccess(namespace, labels, accessRules) {
     if (!isInputString(label) || !label.trim()) continue;
     const normalized = normalizedRules.get(label.trim().toLowerCase());
 
-    if (normalized === 'free' || normalized === 'paid') matches.push({ normalized, sourceLabel: label.trim() });
+    if (normalized === "free" || normalized === "paid")
+      matches.push({ normalized, sourceLabel: label.trim() });
   }
 
-  const normalizedValues = new Set(matches.map(match => match.normalized));
+  const normalizedValues = new Set(matches.map((match) => match.normalized));
 
-  if (normalizedValues.size > 1) throw new Error(`Conflicting explicit access labels for ${namespace}`);
+  if (normalizedValues.size > 1)
+    throw new Error(`Conflicting explicit access labels for ${namespace}`);
 
   if (matches[0]) return matches[0];
 
@@ -150,8 +184,11 @@ function explicitAccess(namespace, labels, accessRules) {
 
   if (!fallback || !isInputObject(fallback) || Array.isArray(fallback)) return undefined;
 
-  if ((fallback.normalized !== 'free' && fallback.normalized !== 'paid')
-    || !isInputString(fallback.sourceLabel) || !fallback.sourceLabel.trim()) {
+  if (
+    (fallback.normalized !== "free" && fallback.normalized !== "paid") ||
+    !isInputString(fallback.sourceLabel) ||
+    !fallback.sourceLabel.trim()
+  ) {
     throw new Error(`Invalid registry-level access rule for ${namespace}`);
   }
 
@@ -163,36 +200,54 @@ function explicitAccess(namespace, labels, accessRules) {
 
 export function stripCatalogClassificationFields(itemsByNamespace) {
   if (!itemsByNamespace || !isInputObject(itemsByNamespace) || Array.isArray(itemsByNamespace)) {
-    throw new Error('Catalog overlay input must be registry item buckets');
+    throw new Error("Catalog overlay input must be registry item buckets");
   }
 
-  return Object.fromEntries(Object.entries(itemsByNamespace).map(([namespace, items]) => {
-    if (!Array.isArray(items)) throw new Error(`Catalog overlay registry bucket ${namespace} must be an array`);
+  return Object.fromEntries(
+    Object.entries(itemsByNamespace).map(([namespace, items]) => {
+      if (!Array.isArray(items))
+        throw new Error(`Catalog overlay registry bucket ${namespace} must be an array`);
 
-    return [namespace, items.map(item => {
-      if (!item || !isInputObject(item) || Array.isArray(item)) return item;
-      const { kind: _kind, canonical: _canonical, sourceGroups: _sourceGroups, access: _access, ...raw } = item;
+      return [
+        namespace,
+        items.map((item) => {
+          if (!item || !isInputObject(item) || Array.isArray(item)) return item;
 
-      return raw;
-    })];
-  }));
+          const {
+            kind: _kind,
+            canonical: _canonical,
+            sourceGroups: _sourceGroups,
+            access: _access,
+            ...raw
+          } = item;
+
+          return raw;
+        }),
+      ];
+    }),
+  );
 }
 
 export function applyCatalogClassificationOverlay(itemsByNamespace, overlay, accessRules = {}) {
   if (!itemsByNamespace || !isInputObject(itemsByNamespace) || Array.isArray(itemsByNamespace)) {
-    throw new Error('Catalog overlay input must be registry item buckets');
+    throw new Error("Catalog overlay input must be registry item buckets");
   }
 
   const stripped = stripCatalogClassificationFields(itemsByNamespace);
-  const overlayByIdentity = new Map(overlay.items.map(item => [identity(item.namespace, item.name), item]));
+
+  const overlayByIdentity = new Map(
+    overlay.items.map((item) => [identity(item.namespace, item.name), item]),
+  );
+
   const matchedOverlay = new Set();
   let applied = 0;
   let stale = 0;
   const output = {};
 
   for (const [namespace, items] of Object.entries(stripped)) {
-    if (!Array.isArray(items)) throw new Error(`Catalog overlay registry bucket ${namespace} must be an array`);
-    output[namespace] = items.map(rawItem => {
+    if (!Array.isArray(items))
+      throw new Error(`Catalog overlay registry bucket ${namespace} must be an array`);
+    output[namespace] = items.map((rawItem) => {
       if (!rawItem || !isInputString(rawItem.name)) return rawItem;
       const key = identity(namespace, rawItem.name);
       const reviewed = overlayByIdentity.get(key);
@@ -215,21 +270,22 @@ export function applyCatalogClassificationOverlay(itemsByNamespace, overlay, acc
       applied += 1;
 
       return (() => {
-  const result = {};
-  Object.assign(result, rawItem);
-  result.kind = reviewed.kind;
-  result.canonical = {
+        const result = {};
+        Object.assign(result, rawItem);
+        result.kind = reviewed.kind;
+        result.canonical = {
           taxonomyVersion: overlay.taxonomyVersion,
           primary: reviewed.canonical.primary,
           path: [...reviewed.canonical.path],
         };
 
-  if (reviewed.sourceGroups?.length) Object.assign(result, { sourceGroups: [...reviewed.sourceGroups] });
+        if (reviewed.sourceGroups?.length)
+          Object.assign(result, { sourceGroups: [...reviewed.sourceGroups] });
 
-  if (access) Object.assign(result, { access });
+        if (access) Object.assign(result, { access });
 
-  return result;
-})();
+        return result;
+      })();
     });
   }
 
@@ -238,7 +294,7 @@ export function applyCatalogClassificationOverlay(itemsByNamespace, overlay, acc
     report: {
       applied,
       stale,
-      missing: [...overlayByIdentity.keys()].filter(key => !matchedOverlay.has(key)).length,
+      missing: [...overlayByIdentity.keys()].filter((key) => !matchedOverlay.has(key)).length,
     },
   };
 }

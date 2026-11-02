@@ -1,4 +1,4 @@
-import { renderInfiniteScrollControl } from './infiniteScrollControl';
+import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogCompareResult } from "../core/catalogCompare";
 import { escapeHtml } from "./renderSafety";
 import { sourcePageNavigationForItem } from "./sourcePageLink";
@@ -22,9 +22,11 @@ export function renderCatalogCompare(
 
   bodyRoot.innerHTML = `
     ${renderRegistryPicker(result.selectedRegistryNames, availableRegistryNames, registrySearch)}
-    ${result.selectedRegistryNames.length >= 2
-      ? `${renderSummary(result)}${renderTable(result)}${renderInfiniteScrollControl(result.page, result.pageCount)}`
-      : renderEmpty(result.selectedRegistryNames.length)}
+    ${
+      result.selectedRegistryNames.length >= 2
+        ? `${renderSummary(result)}${renderTable(result)}${renderInfiniteScrollControl(result.page, result.pageCount)}`
+        : renderEmpty(result.selectedRegistryNames.length)
+    }
   `;
 }
 
@@ -37,7 +39,7 @@ function renderRegistryPicker(
   const query = search.trim().toLocaleLowerCase();
 
   const candidates = availableRegistryNames
-    .filter(name => !selected.has(name) && (!query || name.toLocaleLowerCase().includes(query)))
+    .filter((name) => !selected.has(name) && (!query || name.toLocaleLowerCase().includes(query)))
     .slice(0, REGISTRY_PICKER_LIMIT);
 
   const full = selected.size >= 4;
@@ -50,34 +52,51 @@ function renderRegistryPicker(
           <p>${selected.size} of 4 selected. Choose at least 2.</p>
         </div>
       </div>
-      ${selectedNames.length ? `
+      ${
+        selectedNames.length
+          ? `
         <div class="compare-selected-list" aria-label="Selected registries">
-          ${selectedNames.map(name => `
+          ${selectedNames
+            .map(
+              (name) => `
             <button class="compare-selected-chip" type="button" data-compare-registry="${escapeHtml(name)}" aria-pressed="true" aria-label="Remove ${escapeHtml(name)} from comparison">
               ${escapeHtml(name)} <span aria-hidden="true">×</span>
             </button>
-          `).join("")}
+          `,
+            )
+            .join("")}
         </div>
-      ` : ""}
+      `
+          : ""
+      }
       <label class="compare-search-label">
         <span>Find a registry</span>
         <input type="search" data-compare-search="registry" value="${escapeHtml(search)}" placeholder="Search registry names">
       </label>
       <div class="compare-picker-results" aria-label="Registry search results">
-        ${candidates.length
-          ? candidates.map(name => `
+        ${
+          candidates.length
+            ? candidates
+                .map(
+                  (name) => `
               <button class="compare-picker-result" type="button" data-compare-registry="${escapeHtml(name)}" aria-pressed="false" ${full ? "disabled" : ""}>
                 <span>${escapeHtml(name)}</span><span aria-hidden="true">+</span>
               </button>
-            `).join("")
-          : `<span class="muted">${full ? "Remove a registry to choose another." : "No registries match this search."}</span>`}
+            `,
+                )
+                .join("")
+            : `<span class="muted">${full ? "Remove a registry to choose another." : "No registries match this search."}</span>`
+        }
       </div>
     </section>
   `;
 }
 
 function renderSummary(result: CatalogCompareResult): string {
-  const shared = result.intersectionCount === 1 ? "1 shared component" : `${result.intersectionCount.toLocaleString()} shared components`;
+  const shared =
+    result.intersectionCount === 1
+      ? "1 shared component"
+      : `${result.intersectionCount.toLocaleString()} shared components`;
 
   return `
     <div class="catalog-compare-summary">
@@ -94,30 +113,49 @@ function renderTable(result: CatalogCompareResult): string {
   }
 
   const headers = result.selectedRegistryNames
-    .map(name => `<th scope="col">${escapeHtml(name)}</th>`)
+    .map((name) => `<th scope="col">${escapeHtml(name)}</th>`)
     .join("");
 
-  const rows = result.rows.map(row => `
+  const rows = result.rows
+    .map(
+      (row) => `
     <tr>
       <th scope="row"><code>${escapeHtml(row.slug)}</code></th>
-      ${row.cells.map(cell => {
-        if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
+      ${row.cells
+        .map((cell) => {
+          if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
 
-        const original = sourcePageNavigationForItem(cell.namespace, row.slug, cell.registryHomepage ?? '', {
-          docsUrl: cell.docsUrl,
-          sourcePage: cell.sourcePage,
-        });
+          const original = sourcePageNavigationForItem(
+            cell.namespace,
+            row.slug,
+            cell.registryHomepage ?? "",
+            {
+              docsUrl: cell.docsUrl,
+              sourcePage: cell.sourcePage,
+            },
+          );
 
-        return `<td>${cell.routePath ? `<a class="compare-presence-link" href="${escapeHtml(cell.routePath)}"
+          return `<td>${
+            cell.routePath
+              ? `<a class="compare-presence-link" href="${escapeHtml(cell.routePath)}"
           data-view-item-registry="${escapeHtml(cell.namespace)}" data-view-item-slug="${escapeHtml(row.slug)}"
-          data-view-item-kind="${escapeHtml(cell.routeKind ?? 'component')}">Present</a>` : '<span>Present</span>'}
-          ${original ? `<a class="compare-source-link" href="${escapeHtml(original.url)}"
+          data-view-item-kind="${escapeHtml(cell.routeKind ?? "component")}">Present</a>`
+              : "<span>Present</span>"
+          }
+          ${
+            original
+              ? `<a class="compare-source-link" href="${escapeHtml(original.url)}"
             data-source-level="${escapeHtml(original.level)}"
-            target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>` : ''}
+            target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>`
+              : ""
+          }
           </td>`;
-      }).join("")}
+        })
+        .join("")}
     </tr>
-  `).join("");
+  `,
+    )
+    .join("");
 
   return `
     <div class="compare-table-scroll" tabindex="0" role="region" aria-label="Component comparison">

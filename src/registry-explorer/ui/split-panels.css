@@ -193,7 +193,7 @@
   height: 28px;
   border-radius: 4px;
   background: var(--muted-foreground);
-  content: '';
+  content: "";
   opacity: 0.5;
 }
 

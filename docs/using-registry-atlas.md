@@ -65,14 +65,14 @@ For data refresh and validation details, see [`registry-explorer-data.md`](./reg
 
 ## Choose the right surface
 
-| Goal | Start here |
-| --- | --- |
-| Find a component from a rough description | **Discover** |
-| Narrow results by category, component type, or registry | **Discover** + facets |
-| Inspect one registry and its known items | **Registries** |
-| Compare known component coverage across registries | **Compare** |
-| Review an individual mirrored item | Item detail from Discover or a registry profile |
-| Collect commands for several items | Install queue |
+| Goal                                                    | Start here                                      |
+| ------------------------------------------------------- | ----------------------------------------------- |
+| Find a component from a rough description               | **Discover**                                    |
+| Narrow results by category, component type, or registry | **Discover** + facets                           |
+| Inspect one registry and its known items                | **Registries**                                  |
+| Compare known component coverage across registries      | **Compare**                                     |
+| Review an individual mirrored item                      | Item detail from Discover or a registry profile |
+| Collect commands for several items                      | Install queue                                   |
 
 ## Limits to keep in mind
 

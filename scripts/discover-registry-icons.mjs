@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-import { isInputObject, isInputString } from './lib/input-guards.mjs';
+import { isInputObject, isInputString } from "./lib/input-guards.mjs";
 
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL } from "node:url";
 import {
   openAtlasCoreDatabase,
   putDocument,
   readAtlasState,
   readDocument,
-} from './lib/atlas-storage.mjs';
+} from "./lib/atlas-storage.mjs";
 
-const SCHEMA = 'registry-atlas-registry-icons/v1';
+const SCHEMA = "registry-atlas-registry-icons/v1";
 
 const DEFAULT_CONCURRENCY = 12;
 
@@ -18,12 +18,22 @@ const DEFAULT_TIMEOUT_MS = 7000;
 export function extractHtmlIconCandidates(html, baseUrl) {
   const candidates = [];
 
-  for (const tag of String(html ?? '').match(/<link\b[^>]*>/gi) ?? []) {
+  for (const tag of String(html ?? "").match(/<link\b[^>]*>/gi) ?? []) {
     const attrs = parseAttributes(tag);
-    const rel = String(attrs.rel ?? '').toLowerCase().split(/\s+/).filter(Boolean);
+
+    const rel = String(attrs.rel ?? "")
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+
     const href = attrs.href;
 
-    if (!href || !rel.some(token => token === 'icon' || token === 'apple-touch-icon' || token === 'mask-icon')) {
+    if (
+      !href ||
+      !rel.some(
+        (token) => token === "icon" || token === "apple-touch-icon" || token === "mask-icon",
+      )
+    ) {
       continue;
     }
 
@@ -32,10 +42,10 @@ export function extractHtmlIconCandidates(html, baseUrl) {
     if (!url) continue;
     candidates.push({
       url,
-      source: 'html-link',
+      source: "html-link",
       score: iconScore({
         url,
-        rel: rel.join(' '),
+        rel: rel.join(" "),
         sizes: attrs.sizes,
         type: attrs.type,
       }),
@@ -56,10 +66,10 @@ export function extractManifestIconCandidates(manifest, baseUrl) {
     if (!url) continue;
     candidates.push({
       url,
-      source: 'manifest',
+      source: "manifest",
       score: iconScore({
         url,
-        rel: 'manifest-icon',
+        rel: "manifest-icon",
         sizes: isInputString(icon.sizes) ? icon.sizes : undefined,
         type: isInputString(icon.type) ? icon.type : undefined,
       }),
@@ -81,11 +91,11 @@ export async function discoverRegistryIcon({
   if (!safeHomepage) {
     return {
       namespace,
-      homepage: homepage ?? '',
+      homepage: homepage ?? "",
       url: null,
-      source: 'none',
+      source: "none",
       observedAt,
-      reason: 'invalid-homepage',
+      reason: "invalid-homepage",
     };
   }
 
@@ -94,17 +104,17 @@ export async function discoverRegistryIcon({
   try {
     response = await fetchWithTimeout(fetchImpl, safeHomepage, timeoutMs, {
       headers: {
-        accept: 'text/html,application/xhtml+xml',
-        'user-agent': 'RegistryAtlas/1.0 registry-icon-discovery',
+        accept: "text/html,application/xhtml+xml",
+        "user-agent": "RegistryAtlas/1.0 registry-icon-discovery",
       },
-      redirect: 'follow',
+      redirect: "follow",
     });
   } catch (error) {
     return {
       namespace,
       homepage: safeHomepage,
       url: null,
-      source: 'none',
+      source: "none",
       observedAt,
       reason: error instanceof Error ? error.message : String(error),
     };
@@ -115,7 +125,7 @@ export async function discoverRegistryIcon({
       namespace,
       homepage: safeHomepage,
       url: null,
-      source: 'none',
+      source: "none",
       observedAt,
       reason: `homepage-http-${response.status}`,
     };
@@ -130,7 +140,7 @@ export async function discoverRegistryIcon({
       namespace,
       homepage: pageUrl,
       url: htmlCandidates[0].url,
-      source: 'html-link',
+      source: "html-link",
       observedAt,
     };
   }
@@ -141,10 +151,10 @@ export async function discoverRegistryIcon({
     try {
       const manifestResponse = await fetchWithTimeout(fetchImpl, manifestUrl, timeoutMs, {
         headers: {
-          accept: 'application/manifest+json,application/json',
-          'user-agent': 'RegistryAtlas/1.0 registry-icon-discovery',
+          accept: "application/manifest+json,application/json",
+          "user-agent": "RegistryAtlas/1.0 registry-icon-discovery",
         },
-        redirect: 'follow',
+        redirect: "follow",
       });
 
       if (!manifestResponse.ok) continue;
@@ -157,7 +167,7 @@ export async function discoverRegistryIcon({
         namespace,
         homepage: pageUrl,
         url: candidates[0].url,
-        source: 'manifest',
+        source: "manifest",
         observedAt,
       };
     } catch {
@@ -169,7 +179,7 @@ export async function discoverRegistryIcon({
     namespace,
     homepage: pageUrl,
     url: null,
-    source: 'none',
+    source: "none",
     observedAt,
   };
 }
@@ -201,7 +211,10 @@ export async function discoverRegistryIcons({
   }
 
   await Promise.all(
-    Array.from({ length: Math.min(Math.max(1, concurrency), Math.max(1, registries.length)) }, worker),
+    Array.from(
+      { length: Math.min(Math.max(1, concurrency), Math.max(1, registries.length)) },
+      worker,
+    ),
   );
 
   const icons = {};
@@ -219,7 +232,7 @@ export async function discoverRegistryIcons({
       missing.push({
         namespace: result.namespace,
         homepage: result.homepage,
-        reason: result.reason ?? 'no-explicit-icon',
+        reason: result.reason ?? "no-explicit-icon",
       });
     }
   }
@@ -242,7 +255,7 @@ function parseAttributes(tag) {
   const pattern = /([:\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>\x60]+))/g;
 
   for (const match of tag.matchAll(pattern)) {
-    attrs[match[1].toLowerCase()] = match[2] ?? match[3] ?? match[4] ?? '';
+    attrs[match[1].toLowerCase()] = match[2] ?? match[3] ?? match[4] ?? "";
   }
 
   return attrs;
@@ -251,11 +264,15 @@ function parseAttributes(tag) {
 function extractManifestUrls(html, baseUrl) {
   const urls = [];
 
-  for (const tag of String(html ?? '').match(/<link\b[^>]*>/gi) ?? []) {
+  for (const tag of String(html ?? "").match(/<link\b[^>]*>/gi) ?? []) {
     const attrs = parseAttributes(tag);
-    const rel = String(attrs.rel ?? '').toLowerCase().split(/\s+/).filter(Boolean);
 
-    if (!rel.includes('manifest') || !attrs.href) continue;
+    const rel = String(attrs.rel ?? "")
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (!rel.includes("manifest") || !attrs.href) continue;
     const url = safePageUrl(attrs.href, baseUrl);
 
     if (url && !urls.includes(url)) urls.push(url);
@@ -264,7 +281,7 @@ function extractManifestUrls(html, baseUrl) {
   return urls;
 }
 
-function iconScore({ url, rel = '', sizes = '', type = '' }) {
+function iconScore({ url, rel = "", sizes = "", type = "" }) {
   let score = 0;
 
   if (/svg/i.test(type) || /\.svg(?:$|[?#])/i.test(url)) score += 1_000_000;
@@ -296,17 +313,23 @@ function uniqueRanked(candidates) {
 }
 
 function safePageUrl(value, base) {
-  if (!isInputString(value) || !value.trim() || value.trim().startsWith('//')) return null;
+  if (!isInputString(value) || !value.trim() || value.trim().startsWith("//")) return null;
 
   try {
     const url = base ? new URL(value, base) : new URL(value);
 
-    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password) return null;
-    const host = url.hostname.toLowerCase().replace(/\.$/, '');
+    if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) return null;
+    const host = url.hostname.toLowerCase().replace(/\.$/, "");
 
-    if (!host || host === 'localhost' || host.endsWith('.localhost')
-      || host.endsWith('.local') || host.endsWith('.internal')
-      || /^\d+(?:\.\d+){3}$/.test(host)) return null;
+    if (
+      !host ||
+      host === "localhost" ||
+      host.endsWith(".localhost") ||
+      host.endsWith(".local") ||
+      host.endsWith(".internal") ||
+      /^\d+(?:\.\d+){3}$/.test(host)
+    )
+      return null;
 
     return url.href;
   } catch {
@@ -328,7 +351,7 @@ function safeIconUrl(value, base) {
   if (!url) return null;
 
   try {
-    return new URL(url).protocol === 'https:' ? url : null;
+    return new URL(url).protocol === "https:" ? url : null;
   } catch {
     return null;
   }
@@ -357,27 +380,28 @@ function parseArgs(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
 
-    if (flag === '--dry-run') {
+    if (flag === "--dry-run") {
       options.dryRun = true;
       continue;
     }
 
-    if (!['--concurrency', '--timeout-ms', '--max-registries', '--registry'].includes(flag)) {
+    if (!["--concurrency", "--timeout-ms", "--max-registries", "--registry"].includes(flag)) {
       throw new Error(`Unknown argument: ${flag}`);
     }
 
     const value = argv[++index];
 
-    if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
+    if (!value || value.startsWith("--")) throw new Error(`Missing value for ${flag}`);
 
-    if (flag === '--registry') options.registry = value;
+    if (flag === "--registry") options.registry = value;
     else {
       const parsed = Number(value);
 
-      if (!Number.isInteger(parsed) || parsed < 1) throw new Error(`Invalid value for ${flag}: ${value}`);
+      if (!Number.isInteger(parsed) || parsed < 1)
+        throw new Error(`Invalid value for ${flag}: ${value}`);
 
-      if (flag === '--concurrency') options.concurrency = parsed;
-      else if (flag === '--timeout-ms') options.timeoutMs = parsed;
+      if (flag === "--concurrency") options.concurrency = parsed;
+      else if (flag === "--timeout-ms") options.timeoutMs = parsed;
       else options.maxRegistries = parsed;
     }
   }
@@ -395,8 +419,8 @@ export function mergeRegistryIconDocument(current, previous) {
   for (const entry of current.missing ?? []) {
     const prior = previous.icons[entry.namespace];
 
-    const transient = entry.reason
-      && !['no-explicit-icon', 'invalid-homepage'].includes(entry.reason);
+    const transient =
+      entry.reason && !["no-explicit-icon", "invalid-homepage"].includes(entry.reason);
 
     if (prior && transient && sameOrigin(entry.homepage, prior.homepage)) {
       icons[entry.namespace] = {
@@ -429,18 +453,19 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const options = parseArgs(argv);
   const database = openAtlasCoreDatabase(cwd, { readOnly: true });
   const state = await readAtlasState(database);
-  const previousIcons = await readDocument(database, 'registry-icons');
+  const previousIcons = await readDocument(database, "registry-icons");
   await database.close();
 
   let registries = state.rawRegistries
-    .map(registry => ({ name: registry.name, homepage: registry.homepage }))
-    .filter(registry => registry.name && registry.homepage);
+    .map((registry) => ({ name: registry.name, homepage: registry.homepage }))
+    .filter((registry) => registry.name && registry.homepage);
 
-  if (options.registry) registries = registries.filter(registry => registry.name === options.registry);
+  if (options.registry)
+    registries = registries.filter((registry) => registry.name === options.registry);
 
   if (options.maxRegistries) registries = registries.slice(0, options.maxRegistries);
 
-  if (!registries.length) throw new Error('No matching registries to inspect');
+  if (!registries.length) throw new Error("No matching registries to inspect");
 
   const discovered = await discoverRegistryIcons({
     registries,
@@ -454,7 +479,7 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
     const writeDatabase = openAtlasCoreDatabase(cwd);
 
     try {
-      await putDocument(writeDatabase, 'registry-icons', 'registry-enrichment', document);
+      await putDocument(writeDatabase, "registry-icons", "registry-enrichment", document);
     } finally {
       await writeDatabase.close();
     }
@@ -466,8 +491,8 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(error => {
-    console.error(error instanceof Error ? error.stack ?? error.message : error);
+  main().catch((error) => {
+    console.error(error instanceof Error ? (error.stack ?? error.message) : error);
     process.exitCode = 1;
   });
 }

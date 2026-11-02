@@ -1,4 +1,4 @@
-import { renderInfiniteScrollControl } from './infiniteScrollControl';
+import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type {
   RegistryCatalogCoverage,
   RegistryDirectoryEntry,
@@ -67,12 +67,11 @@ export function renderRegistryDirectory(
     : '<div class="empty-state"><h2>No registries match this view.</h2><p>Try another search or category.</p></div>';
 }
 
-export function renderRegistryDirectorySidebar(
-  options: RegistryDirectorySidebarOptions,
-): string {
+export function renderRegistryDirectorySidebar(options: RegistryDirectorySidebarOptions): string {
   // SAFETY: The keys come directly from the typed asset label table, which lists only supported asset kinds.
-  const assetKinds = (Object.keys(ASSET_LABELS) as CatalogAssetKind[])
-    .filter(kind => options.assetCounts[kind] > 0);
+  const assetKinds = (Object.keys(ASSET_LABELS) as CatalogAssetKind[]).filter(
+    (kind) => options.assetCounts[kind] > 0,
+  );
 
   const selectedKind = options.selectedAssetKinds[0] ?? "";
 
@@ -86,12 +85,11 @@ export function renderRegistryDirectorySidebar(
 
       <section class="sidebar-nav-section" aria-labelledby="registry-categories-heading">
         <p class="sidebar-nav-section-label" id="registry-categories-heading">Asset types</p>
-        ${assetKinds.map(kind => assetRow(
-          kind,
-          ASSET_LABELS[kind],
-          options.assetCounts[kind],
-          selectedKind === kind,
-        )).join("")}
+        ${assetKinds
+          .map((kind) =>
+            assetRow(kind, ASSET_LABELS[kind], options.assetCounts[kind], selectedKind === kind),
+          )
+          .join("")}
       </section>
 
 
@@ -126,10 +124,17 @@ function assetRow(
 
 function renderEntry(entry: RegistryDirectoryEntry): string {
   const count = entry.itemCount === 1 ? "1 item" : `${entry.itemCount.toLocaleString()} items`;
-  const homepage = renderRegistryHomepageLink(entry.registry.url, "registry-directory-homepage", "Homepage ↗");
 
-  const route = catalogRoutePath({kind:"registry",namespace:entry.registry.name},
-    "/Registry-Atlas/");
+  const homepage = renderRegistryHomepageLink(
+    entry.registry.url,
+    "registry-directory-homepage",
+    "Homepage ↗",
+  );
+
+  const route = catalogRoutePath(
+    { kind: "registry", namespace: entry.registry.name },
+    "/Registry-Atlas/",
+  );
 
   return `
     <article class="registry-directory-card">
@@ -138,7 +143,7 @@ function renderEntry(entry: RegistryDirectoryEntry): string {
         aria-label="Open registry ${escapeHtml(entry.registry.name)}">
         <div class="registry-directory-heading">
           <div class="registry-directory-identity">
-            ${renderRegistryIcon(entry.registry, 'registry-icon registry-icon-directory')}
+            ${renderRegistryIcon(entry.registry, "registry-icon registry-icon-directory")}
             <div>
               <h2>${escapeHtml(entry.registry.name)}</h2>
               <span class="registry-directory-item-count">${escapeHtml(count)}</span>
@@ -161,4 +166,3 @@ function renderMeta(result: RegistryDirectoryResult): string {
 
   return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()} registries</div>`;
 }
-

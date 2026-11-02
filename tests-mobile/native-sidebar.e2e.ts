@@ -1,64 +1,81 @@
-import { test } from '@e2e-dev/web';
-import { expect } from 'e2e';
+import { test } from "@e2e-dev/web";
+import { expect } from "e2e";
 
-test('mobile menu is native modal, dismissible, and preserves routes', async ({ app, screen, browser }) => {
+test("mobile menu is native modal, dismissible, and preserves routes", async ({
+  app,
+  screen,
+  browser,
+}) => {
   await app.open();
 
-  const opener = screen.getByRole('button', 'Open navigation');
+  const opener = screen.getByRole("button", "Open navigation");
 
   await expect(opener).toBeVisible();
   await opener.tap();
 
-  const modal = screen.getByRole('dialog', 'Registry Atlas navigation');
+  const modal = screen.getByRole("dialog", "Registry Atlas navigation");
 
   await expect(modal).toBeVisible();
-  await expect(opener).toHaveAttribute('aria-expanded', 'true');
-  await expect.poll(() => browser.evaluate(() => {
-    const dialog = document.getElementById('mobileSidebarDialog');
+  await expect(opener).toHaveAttribute("aria-expanded", "true");
+  await expect
+    .poll(() =>
+      browser.evaluate(() => {
+        const dialog = document.getElementById("mobileSidebarDialog");
 
-    return dialog instanceof HTMLDialogElement && dialog.open && dialog.matches(':modal');
-  })).toBe(true);
+        return dialog instanceof HTMLDialogElement && dialog.open && dialog.matches(":modal");
+      }),
+    )
+    .toBe(true);
 
-  await app.screenshot('mobile-navigation-modal');
-  await screen.getByRole('button', 'Close navigation').tap();
+  await app.screenshot("mobile-navigation-modal");
+  await screen.getByRole("button", "Close navigation").tap();
   await expect(modal).not.toBeVisible();
-  await expect(opener).toHaveAttribute('aria-expanded', 'false');
+  await expect(opener).toHaveAttribute("aria-expanded", "false");
 
   await opener.tap();
-  await screen.getByRole('link', 'Libraries').tap();
-  await expect(browser).toHaveURL('/Registry-Atlas/registries');
+  await screen.getByRole("link", "Libraries").tap();
+  await expect(browser).toHaveURL("/Registry-Atlas/registries");
   await expect(modal).not.toBeVisible();
 });
 
-test('mobile backdrop dismisses navigation without dismissing inside clicks', async ({ app, screen, browser }) => {
+test("mobile backdrop dismisses navigation without dismissing inside clicks", async ({
+  app,
+  screen,
+  browser,
+}) => {
   await app.open();
 
-  const opener = screen.getByRole('button', 'Open navigation');
-  const modal = screen.getByRole('dialog', 'Registry Atlas navigation');
+  const opener = screen.getByRole("button", "Open navigation");
+  const modal = screen.getByRole("dialog", "Registry Atlas navigation");
 
   await opener.tap();
   await expect(modal).toBeVisible();
 
   await browser.evaluate(() => {
-    const dialog = document.getElementById('mobileSidebarDialog');
-    const sidebar = document.getElementById('appSidebar');
+    const dialog = document.getElementById("mobileSidebarDialog");
+    const sidebar = document.getElementById("appSidebar");
 
-    if (!(dialog instanceof HTMLDialogElement) || !sidebar) throw new Error('Missing mobile dialog/sidebar');
+    if (!(dialog instanceof HTMLDialogElement) || !sidebar)
+      throw new Error("Missing mobile dialog/sidebar");
 
-    sidebar.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    sidebar.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   await expect(modal).toBeVisible();
 
   await browser.evaluate(() => {
-    const dialog = document.getElementById('mobileSidebarDialog');
+    const dialog = document.getElementById("mobileSidebarDialog");
 
-    if (!(dialog instanceof HTMLDialogElement)) throw new Error('Missing mobile dialog');
+    if (!(dialog instanceof HTMLDialogElement)) throw new Error("Missing mobile dialog");
 
-    dialog.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    dialog.dispatchEvent(new MouseEvent("click", { bubbles: true }));
   });
   await expect(modal).not.toBeVisible();
-  await expect(opener).toHaveAttribute('aria-expanded', 'false');
-  await expect.poll(() => browser.evaluate(() =>
-    document.activeElement === document.querySelector('[aria-label="Open navigation"]'),
-  )).toBe(true);
+  await expect(opener).toHaveAttribute("aria-expanded", "false");
+  await expect
+    .poll(() =>
+      browser.evaluate(
+        () => document.activeElement === document.querySelector('[aria-label="Open navigation"]'),
+      ),
+    )
+    .toBe(true);
 });

@@ -1,4 +1,4 @@
-import { renderInfiniteScrollControl } from './infiniteScrollControl';
+import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
 import { escapeHtml } from "./renderSafety";
@@ -7,9 +7,9 @@ export interface CatalogCollectionViewOptions {
   eyebrow: string;
   title: string;
   description: string;
-  routeKind?: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon';
+  routeKind?: "component" | "block" | "page" | "template" | "theme" | "icon";
   controls?: string;
-  layout?: 'grid' | 'list';
+  layout?: "grid" | "list";
   emptyTitle?: string;
   emptyBody?: string;
 }
@@ -46,7 +46,7 @@ export function renderCatalogCollection(
     ${options.controls ?? ""}
     <div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>
     <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-${options.routeKind ?? "component"}">
-      ${result.items.map(item => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
+      ${result.items.map((item) => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
     </div>
     ${renderInfiniteScrollControl(result.page, result.pageCount)}
   `;

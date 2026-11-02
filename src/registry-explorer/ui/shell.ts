@@ -7,36 +7,36 @@ type KindLookupContract = Readonly<Record<string, string>>;
 /** Named map contract for dynamic keys in this module. */
 type SectionsLookupContract = Readonly<Record<string, { label: string; route: CatalogRoute }>>;
 
-import { isInputString } from '../core/inputChecks';
-import type {
-  InstallQueueEntry,
-  Registry,
-  RegistryCatalogIndex,
-} from '../core/registry.schema';
-import type { MirrorValidationIssue } from '../core/registryMirror';
-import type { RegistryMirrorMeta } from '../data/loadRegistries';
+import { isInputString } from "../core/inputChecks";
+import type { InstallQueueEntry, Registry, RegistryCatalogIndex } from "../core/registry.schema";
+import type { MirrorValidationIssue } from "../core/registryMirror";
+import type { RegistryMirrorMeta } from "../data/loadRegistries";
 import {
   resolveRegistryItemDetailFromCatalogIndex,
   type RegistryItemDetailResult,
-} from '../core/registryItemDetail';
-import { loadRegistryItemDetailFromCatalogIndex } from '../data/loadRegistryItemDetail';
+} from "../core/registryItemDetail";
+import { loadRegistryItemDetailFromCatalogIndex } from "../data/loadRegistryItemDetail";
 import {
   addToInstallQueue,
   buildInstallQueueBatchState,
   removeFromInstallQueue,
-} from '../core/installQueue';
-import { renderItemDetailView } from './itemDetailView';
-import { renderSetupView } from './setupView';
-import { SETUP_DRAFT_STORAGE_KEY, parseSetupDraft, serializeSetupDraft } from '../core/setupDraft';
-import { escapeHtml, renderRegistryHomepageLink } from './renderSafety';
-import { buildCatalogFacetSummary, catalogDistinctItemCount, queryCatalogComponents } from '../core/catalogQuery';
+} from "../core/installQueue";
+import { renderItemDetailView } from "./itemDetailView";
+import { renderSetupView } from "./setupView";
+import { SETUP_DRAFT_STORAGE_KEY, parseSetupDraft, serializeSetupDraft } from "../core/setupDraft";
+import { escapeHtml, renderRegistryHomepageLink } from "./renderSafety";
+import {
+  buildCatalogFacetSummary,
+  catalogDistinctItemCount,
+  queryCatalogComponents,
+} from "../core/catalogQuery";
 import {
   buildRegistryDirectory,
   registryCatalogCoverage,
   type RegistryCatalogCoverage,
   type RegistryDirectorySort,
-} from '../core/registryDirectory';
-import { buildCatalogComparison } from '../core/catalogCompare';
+} from "../core/registryDirectory";
+import { buildCatalogComparison } from "../core/catalogCompare";
 import {
   catalogRoutePath,
   parseCatalogBrowseQuery,
@@ -46,31 +46,39 @@ import {
   type CatalogReviewedFilter,
   type CatalogRoute,
   type CatalogSort,
-} from '../core/catalogRoutes';
+} from "../core/catalogRoutes";
 import {
   assetKindForCatalogItem,
   exploreCollectionBySlug,
   type CatalogAssetKind,
-} from '../core/catalogCollections';
-import { configureDefaultCatalogTaxonomy, catalogTaxonomyNodeMap, type CatalogTaxonomy } from '../core/catalogTaxonomy';
-import { findRegistryCatalogItem } from '../core/registryCatalogIndex';
-import { renderCatalogComponents, renderCatalogBrowseControls, type AssetKindToken } from './catalogComponentsView';
-import { markAccessibleFeed } from './infiniteScrollControl';
-import { browseSnapshotKey, parseBrowseSnapshot, type BrowseSnapshot } from './browseHistory';
-import { renderCatalogLanding } from './catalogLandingView';
-import { renderCatalogCollection, renderEvidenceUnavailable } from './catalogCollectionView';
+} from "../core/catalogCollections";
+import {
+  configureDefaultCatalogTaxonomy,
+  catalogTaxonomyNodeMap,
+  type CatalogTaxonomy,
+} from "../core/catalogTaxonomy";
+import { findRegistryCatalogItem } from "../core/registryCatalogIndex";
+import {
+  renderCatalogComponents,
+  renderCatalogBrowseControls,
+  type AssetKindToken,
+} from "./catalogComponentsView";
+import { markAccessibleFeed } from "./infiniteScrollControl";
+import { browseSnapshotKey, parseBrowseSnapshot, type BrowseSnapshot } from "./browseHistory";
+import { renderCatalogLanding } from "./catalogLandingView";
+import { renderCatalogCollection, renderEvidenceUnavailable } from "./catalogCollectionView";
 import {
   renderRegistryDirectory,
   renderRegistryDirectorySidebar,
   type RegistryDirectoryLayout,
-} from './registryDirectoryView';
-import { renderRegistryCollection } from './registryCollectionView';
-import { renderCatalogBreadcrumbs } from './catalogBreadcrumbs';
-import { renderCatalogCompare } from './catalogCompareView';
-import { renderCatalogSidebarNavigation } from './catalogSidebarNavigation';
-import { nextRegistryIconCandidate } from './registryIdentity';
-import { buildAuthorDirectory } from '../core/catalogAuthors';
-import { renderCatalogAuthors } from './catalogAuthorsView';
+} from "./registryDirectoryView";
+import { renderRegistryCollection } from "./registryCollectionView";
+import { renderCatalogBreadcrumbs } from "./catalogBreadcrumbs";
+import { renderCatalogCompare } from "./catalogCompareView";
+import { renderCatalogSidebarNavigation } from "./catalogSidebarNavigation";
+import { nextRegistryIconCandidate } from "./registryIdentity";
+import { buildAuthorDirectory } from "../core/catalogAuthors";
+import { renderCatalogAuthors } from "./catalogAuthorsView";
 
 export interface ShellOptions {
   registries: readonly Registry[];
@@ -93,7 +101,7 @@ export interface ShellOptions {
 }
 
 interface CopyFeedback {
-  status: 'success' | 'error';
+  status: "success" | "error";
   message: string;
   command?: string;
 }
@@ -115,7 +123,7 @@ interface AppState {
   catalogCategories: string[];
   catalogAssetKinds: CatalogAssetKind[];
   catalogCanonicalIds: string[];
-  catalogAccess: Array<'free' | 'paid'>;
+  catalogAccess: Array<"free" | "paid">;
   catalogReviewed: CatalogReviewedFilter;
   registryCoverage: RegistryCatalogCoverage[];
   registrySort: RegistryDirectorySort;
@@ -131,12 +139,12 @@ interface FocusIdentity {
 function catalogBasePath(): string {
   const configured = import.meta.env.BASE_URL;
 
-  if (configured && configured !== '/') return configured;
+  if (configured && configured !== "/") return configured;
 
-  return window.location.pathname === '/Registry-Atlas'
-    || window.location.pathname.startsWith('/Registry-Atlas/')
-    ? '/Registry-Atlas/'
-    : (configured || '/');
+  return window.location.pathname === "/Registry-Atlas" ||
+    window.location.pathname.startsWith("/Registry-Atlas/")
+    ? "/Registry-Atlas/"
+    : configured || "/";
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
@@ -146,7 +154,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   const fetchImpl = options.fetchImpl ?? fetch;
 
   const emptyAssetCounts = (): Record<AssetKindToken, number> => ({
-    component: 0, block: 0, page: 0, template: 0, theme: 0, icon: 0, other: 0,
+    component: 0,
+    block: 0,
+    page: 0,
+    template: 0,
+    theme: 0,
+    icon: 0,
+    other: 0,
   });
 
   const directoryAssetCounts = emptyAssetCounts();
@@ -164,7 +178,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     registryAssetCounts.set(namespace, counts);
 
-    for (const kind of ['component', 'block', 'page', 'template', 'theme', 'icon', 'other'] as const) {
+    for (const kind of [
+      "component",
+      "block",
+      "page",
+      "template",
+      "theme",
+      "icon",
+      "other",
+    ] as const) {
       if (counts[kind] > 0) directoryAssetCounts[kind] += 1;
     }
   }
@@ -211,17 +233,19 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   const setState = (
     partial: Partial<AppState>,
-    historyMode: 'push' | 'replace' = 'replace',
+    historyMode: "push" | "replace" = "replace",
     focusIdentity: FocusIdentity | null = null,
   ) => {
-    const routeChanged = partial.route !== undefined
-      && catalogRouteIdentity(partial.route) !== catalogRouteIdentity(state.route);
+    const routeChanged =
+      partial.route !== undefined &&
+      catalogRouteIdentity(partial.route) !== catalogRouteIdentity(state.route);
 
     if (routeChanged) rememberBrowseRoute();
 
     state = { ...state, ...partial };
 
-    if (partial.installQueue !== undefined || partial.setupInstructions !== undefined) saveSetupDraft();
+    if (partial.installQueue !== undefined || partial.setupInstructions !== undefined)
+      saveSetupDraft();
 
     if (routeChanged && partial.copyFeedback === undefined) state.copyFeedback = null;
     syncUrlState(state, historyMode);
@@ -230,13 +254,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (focusIdentity) restoreControlFocus(focusIdentity);
   };
 
-  const replacementStorageKey = 'registry-atlas.setup.pending-replacement.v1';
+  const replacementStorageKey = "registry-atlas.setup.pending-replacement.v1";
 
   function readPendingReplacement(items: readonly InstallQueueEntry[]): string | null {
     try {
-      const token = window.sessionStorage?.getItem('registry-atlas.setup.pending-replacement.v1');
+      const token = window.sessionStorage?.getItem("registry-atlas.setup.pending-replacement.v1");
 
-      return items.some(item => item.token === token) ? token : null;
+      return items.some((item) => item.token === token) ? token : null;
     } catch {
       return null;
     }
@@ -255,8 +279,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function saveSetupDraft(): void {
     try {
-      window.localStorage?.setItem(SETUP_DRAFT_STORAGE_KEY,
-        serializeSetupDraft({ items: state.installQueue, instructions: state.setupInstructions }));
+      window.localStorage?.setItem(
+        SETUP_DRAFT_STORAGE_KEY,
+        serializeSetupDraft({ items: state.installQueue, instructions: state.setupInstructions }),
+      );
     } catch {
       // Persistence may be blocked; the current session remains usable.
     }
@@ -272,15 +298,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function navigate(
     route: CatalogRoute,
-    historyMode: 'push' | 'replace' = 'push',
+    historyMode: "push" | "replace" = "push",
     extra: Partial<AppState> = {},
   ): void {
-    setState({
-      route,
-      discoveryPage: 1,
-      copyFeedback: null,
-      ...extra,
-    }, historyMode);
+    setState(
+      {
+        route,
+        discoveryPage: 1,
+        copyFeedback: null,
+        ...extra,
+      },
+      historyMode,
+    );
   }
 
   function catalogBrowseState(): CatalogBrowseQueryState {
@@ -293,7 +322,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       assetKinds: state.catalogAssetKinds,
       canonicalIds: state.catalogCanonicalIds,
       access: state.catalogAccess,
-      reviewed: 'all',
+      reviewed: "all",
     };
   }
 
@@ -320,7 +349,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       itemDetailLoading.delete(key);
     }
 
-    if (isDetailRoute(state.route) && itemDetailKey(state.route.namespace, state.route.slug) === key) {
+    if (
+      isDetailRoute(state.route) &&
+      itemDetailKey(state.route.namespace, state.route.slug) === key
+    ) {
       render();
     }
   }
@@ -331,7 +363,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       ...Array.from(roots.aside.querySelectorAll<HTMLElement>(identity.selector)),
     ];
 
-    const equivalent = candidates.find(candidate =>
+    const equivalent = candidates.find((candidate) =>
       identity.attributes.every(([name, value]) => candidate.getAttribute(name) === value),
     );
 
@@ -343,13 +375,23 @@ export function initRegistryExplorer(options: ShellOptions): void {
   function routeAssetKinds(): CatalogAssetKind[] {
     const route = state.route;
 
-    if (route.kind === 'registry-assets') return [route.assetKind];
+    if (route.kind === "registry-assets") return [route.assetKind];
 
-    const byKind: Partial<Record<CatalogRoute['kind'], CatalogAssetKind>> = {
-      components: 'component', component: 'component', explore: 'component',
-      blocks: 'block', block: 'block', pages: 'page', page: 'page',
-      templates: 'template', template: 'template', themes: 'theme', theme: 'theme',
-      icons: 'icon', 'icon-category': 'icon', 'icon-family': 'icon',
+    const byKind: Partial<Record<CatalogRoute["kind"], CatalogAssetKind>> = {
+      components: "component",
+      component: "component",
+      explore: "component",
+      blocks: "block",
+      block: "block",
+      pages: "page",
+      page: "page",
+      templates: "template",
+      template: "template",
+      themes: "theme",
+      theme: "theme",
+      icons: "icon",
+      "icon-category": "icon",
+      "icon-family": "icon",
     };
 
     const assetKind = byKind[route.kind];
@@ -359,7 +401,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function facetsForSidebar(): ReturnType<typeof buildCatalogFacetSummary> {
     const route = state.route;
-    const namespace = route.kind === 'registry' || route.kind === 'registry-assets' ? route.namespace : null;
+
+    const namespace =
+      route.kind === "registry" || route.kind === "registry-assets" ? route.namespace : null;
 
     return buildCatalogFacetSummary(registries, catalogIndex, {
       search: state.searchTerm,
@@ -371,25 +415,36 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function sidebarContextForRoute(route: CatalogRoute): { label: string; route: CatalogRoute } {
     const sections = {
-      components: { label: 'Components', route: { kind: 'components' } },
-      blocks: { label: 'Blocks', route: { kind: 'blocks' } },
-      pages: { label: 'Pages', route: { kind: 'pages' } },
-      templates: { label: 'Templates', route: { kind: 'templates' } },
-      themes: { label: 'Themes', route: { kind: 'themes' } },
-      icons: { label: 'Icons', route: { kind: 'icons' } },
-      registries: { label: 'Registries', route: { kind: 'registries' } },
-      authors: { label: 'Authors', route: { kind: 'authors' } },
-      compare: { label: 'Compare', route: { kind: 'compare' } },
+      components: { label: "Components", route: { kind: "components" } },
+      blocks: { label: "Blocks", route: { kind: "blocks" } },
+      pages: { label: "Pages", route: { kind: "pages" } },
+      templates: { label: "Templates", route: { kind: "templates" } },
+      themes: { label: "Themes", route: { kind: "themes" } },
+      icons: { label: "Icons", route: { kind: "icons" } },
+      registries: { label: "Registries", route: { kind: "registries" } },
+      authors: { label: "Authors", route: { kind: "authors" } },
+      compare: { label: "Compare", route: { kind: "compare" } },
     } satisfies SectionsLookupContract;
 
     const kind = {
-      component: 'components', explore: 'components', block: 'blocks', page: 'pages',
-      template: 'templates', theme: 'themes', 'theme-editor': 'themes',
-      'icon-category': 'icons', 'icon-family': 'icons',
-      registry: 'registries', 'registry-assets': 'registries',
+      component: "components",
+      explore: "components",
+      block: "blocks",
+      page: "pages",
+      template: "templates",
+      theme: "themes",
+      "theme-editor": "themes",
+      "icon-category": "icons",
+      "icon-family": "icons",
+      registry: "registries",
+      "registry-assets": "registries",
     } satisfies KindLookupContract;
 
-    return new Map(Object.entries(sections)).get(new Map(Object.entries(kind)).get(route.kind) ?? route.kind) ?? { label: 'Home', route: { kind: 'home' } };
+    return (
+      new Map(Object.entries(sections)).get(
+        new Map(Object.entries(kind)).get(route.kind) ?? route.kind,
+      ) ?? { label: "Home", route: { kind: "home" } }
+    );
   }
 
   function renderSidebarContext(): void {
@@ -397,40 +452,62 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const context = sidebarContextForRoute(state.route);
     const href = catalogRoutePath(context.route, catalogBasePath());
     roots.sidebarContext.innerHTML =
-      '<a class="sidebar-context-link" href="' + escapeHtml(href) + '" data-catalog-route="' + escapeHtml(href) + '">' +
-        '<span class="sidebar-context-icon" aria-hidden="true">' +
-          '<svg viewBox="0 0 16 16" width="14" height="14" fill="none">' +
-            '<rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
-            '<rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
-            '<rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
-            '<rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
-          '</svg>' +
-        '</span>' +
-        '<span class="sidebar-context-label">' + escapeHtml(context.label) + '</span>' +
-        '<span class="sidebar-context-end" aria-hidden="true"></span>' +
-      '</a>';
+      '<a class="sidebar-context-link" href="' +
+      escapeHtml(href) +
+      '" data-catalog-route="' +
+      escapeHtml(href) +
+      '">' +
+      '<span class="sidebar-context-icon" aria-hidden="true">' +
+      '<svg viewBox="0 0 16 16" width="14" height="14" fill="none">' +
+      '<rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
+      '<rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
+      '<rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
+      '<rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
+      "</svg>" +
+      "</span>" +
+      '<span class="sidebar-context-label">' +
+      escapeHtml(context.label) +
+      "</span>" +
+      '<span class="sidebar-context-end" aria-hidden="true"></span>' +
+      "</a>";
   }
 
   function supportsBrowseLayout(route: CatalogRoute): boolean {
     return [
-      'components','blocks','pages','templates','themes','icons','explore',
-      'registries','registry','registry-assets','icon-category','icon-family',
+      "components",
+      "blocks",
+      "pages",
+      "templates",
+      "themes",
+      "icons",
+      "explore",
+      "registries",
+      "registry",
+      "registry-assets",
+      "icon-category",
+      "icon-family",
     ].includes(route.kind);
   }
 
   function renderBrowseLayoutToggle(layout: RegistryDirectoryLayout): string {
-    return '<div class="sidebar-layout-strip">' +
+    return (
+      '<div class="sidebar-layout-strip">' +
       '<div class="sidebar-layout-toggle" role="group" aria-label="Result layout">' +
-        '<button type="button" data-browse-layout="grid" aria-pressed="' + String(layout === 'grid') + '">Grid</button>' +
-        '<button type="button" data-browse-layout="list" aria-pressed="' + String(layout === 'list') + '">List</button>' +
-      '</div>' +
-    '</div>';
+      '<button type="button" data-browse-layout="grid" aria-pressed="' +
+      String(layout === "grid") +
+      '">Grid</button>' +
+      '<button type="button" data-browse-layout="list" aria-pressed="' +
+      String(layout === "list") +
+      '">List</button>' +
+      "</div>" +
+      "</div>"
+    );
   }
 
   function fixedSidebarNamespace(route: CatalogRoute): string | null {
-    if (route.kind === 'registry' || route.kind === 'registry-assets') return route.namespace;
+    if (route.kind === "registry" || route.kind === "registry-assets") return route.namespace;
 
-    if (route.kind === 'icon-family') return '@' + route.family;
+    if (route.kind === "icon-family") return "@" + route.family;
 
     return null;
   }
@@ -443,27 +520,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const fixedNamespace = fixedSidebarNamespace(route);
     const fixedRegistry = fixedNamespace !== null;
 
-    return renderCatalogSidebarNavigation({
-      ...contextFacets,
-      registries: globalFacets.registries,
-    }, {
-      kind: route.kind,
-      canonicalIds: state.catalogCanonicalIds,
-      registryNames: fixedRegistry ? [] : state.catalogRegistryNames,
-      sort: state.catalogSort,
-      access: state.catalogAccess,
-      assetKinds: state.catalogAssetKinds,
-    }, taxonomy, {
-      showRegistrySort: !fixedRegistry,
-      expandedCategoryIds: [...expandedCategoryIds],
-      collapsedCategoryIds: [...collapsedCategoryIds],
-      assetCounts: route.kind === 'registry' || route.kind === 'registry-assets'
-        ? registryAssetCounts.get(route.namespace) : undefined,
-    });
+    return renderCatalogSidebarNavigation(
+      {
+        ...contextFacets,
+        registries: globalFacets.registries,
+      },
+      {
+        kind: route.kind,
+        canonicalIds: state.catalogCanonicalIds,
+        registryNames: fixedRegistry ? [] : state.catalogRegistryNames,
+        sort: state.catalogSort,
+        access: state.catalogAccess,
+        assetKinds: state.catalogAssetKinds,
+      },
+      taxonomy,
+      {
+        showRegistrySort: !fixedRegistry,
+        expandedCategoryIds: [...expandedCategoryIds],
+        collapsedCategoryIds: [...collapsedCategoryIds],
+        assetCounts:
+          route.kind === "registry" || route.kind === "registry-assets"
+            ? registryAssetCounts.get(route.namespace)
+            : undefined,
+      },
+    );
   }
 
   function sidebarNavigation(): string {
-    if (state.route.kind === 'registries') {
+    if (state.route.kind === "registries") {
       return renderRegistryDirectorySidebar({
         layout: state.registryLayout,
         sort: state.registrySort,
@@ -473,17 +557,29 @@ export function initRegistryExplorer(options: ShellOptions): void {
       });
     }
 
-    if (![
-      'components', 'blocks', 'pages', 'templates', 'themes', 'icons',
-      'explore', 'registry', 'registry-assets', 'icon-category', 'icon-family',
-    ].includes(state.route.kind)) return '';
+    if (
+      ![
+        "components",
+        "blocks",
+        "pages",
+        "templates",
+        "themes",
+        "icons",
+        "explore",
+        "registry",
+        "registry-assets",
+        "icon-category",
+        "icon-family",
+      ].includes(state.route.kind)
+    )
+      return "";
 
     const contextFacets = facetsForSidebar();
-    let globalFacets = sidebarFacetCache.get('all:registries');
+    let globalFacets = sidebarFacetCache.get("all:registries");
 
     if (!globalFacets) {
       globalFacets = buildCatalogFacetSummary(registries, catalogIndex);
-      sidebarFacetCache.set('all:registries', globalFacets);
+      sidebarFacetCache.set("all:registries", globalFacets);
     }
 
     return filteredSidebarNavigation(contextFacets, globalFacets);
@@ -496,121 +592,161 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     const navigation = sidebarNavigation();
 
-    const layout = state.route.kind === 'registries'
-      ? state.registryLayout
-      : state.catalogLayout;
+    const layout = state.route.kind === "registries" ? state.registryLayout : state.catalogLayout;
 
-    const layoutMarkup = supportsBrowseLayout(state.route)
-      ? renderBrowseLayoutToggle(layout)
-      : '';
+    const layoutMarkup = supportsBrowseLayout(state.route) ? renderBrowseLayoutToggle(layout) : "";
 
     if (roots.sidebarLayout) roots.sidebarLayout.innerHTML = layoutMarkup;
-    roots.aside.innerHTML = (roots.sidebarLayout ? '' : layoutMarkup) +
+    roots.aside.innerHTML =
+      (roots.sidebarLayout ? "" : layoutMarkup) +
       '<div class="sidebar-scroll-pane"><div class="desktop-browse-rail">' +
       navigation +
-      '</div></div>';
+      "</div></div>";
   }
 
   function renderLandingRoute(): boolean {
     switch (state.route.kind) {
-      case 'home': renderHome();
-
- return true;
-      case 'components': renderComponentsRoute();
-
- return true;
-      case 'blocks':
-        renderTypedCollection('block', 'Blocks', 'Composed blocks published by registries.', 'block');
+      case "home":
+        renderHome();
 
         return true;
-      case 'pages':
-        renderTypedCollection('page', 'Pages', 'Full-page compositions published by registries.', 'page');
+      case "components":
+        renderComponentsRoute();
 
         return true;
-      case 'explore': renderExploreRoute();
+      case "blocks":
+        renderTypedCollection(
+          "block",
+          "Blocks",
+          "Composed blocks published by registries.",
+          "block",
+        );
 
- return true;
-      case 'authors': renderAuthorsRoute();
+        return true;
+      case "pages":
+        renderTypedCollection(
+          "page",
+          "Pages",
+          "Full-page compositions published by registries.",
+          "page",
+        );
 
- return true;
-      case 'registries': renderRegistries();
+        return true;
+      case "explore":
+        renderExploreRoute();
 
- return true;
-      case 'registry': renderRegistryProfile(state.route.namespace);
+        return true;
+      case "authors":
+        renderAuthorsRoute();
 
- return true;
-      case 'registry-assets': renderRegistryProfile(state.route.namespace, state.route.assetKind);
+        return true;
+      case "registries":
+        renderRegistries();
 
- return true;
-      default: return false;
+        return true;
+      case "registry":
+        renderRegistryProfile(state.route.namespace);
+
+        return true;
+      case "registry-assets":
+        renderRegistryProfile(state.route.namespace, state.route.assetKind);
+
+        return true;
+      default:
+        return false;
     }
   }
 
   function renderDetailsAndThemes(queued: ReadonlySet<string>): boolean {
     switch (state.route.kind) {
-      case 'component':
-      case 'block':
-      case 'page':
-      case 'template':
-      case 'theme':
+      case "component":
+      case "block":
+      case "page":
+      case "template":
+      case "theme":
         renderDetail(state.route, queued);
 
         return true;
-      case 'templates':
-        renderTypedCollection('template', 'Templates', 'Templates published by registries.', 'template');
-
-        return true;
-      case 'themes':
-        renderTypedCollection('theme', 'Themes', 'Themes and styles published by registries.', 'theme');
-
-        return true;
-      case 'theme-editor':
-        renderEvidenceUnavailable(
-          roots.contentHeader, roots.contentBody, 'Theme editor',
-          "Theme editor isn't available because registries use different token formats.",
-          'Editing will stay disabled until Registry Atlas can read those formats consistently.',
+      case "templates":
+        renderTypedCollection(
+          "template",
+          "Templates",
+          "Templates published by registries.",
+          "template",
         );
 
         return true;
-      default: return false;
+      case "themes":
+        renderTypedCollection(
+          "theme",
+          "Themes",
+          "Themes and styles published by registries.",
+          "theme",
+        );
+
+        return true;
+      case "theme-editor":
+        renderEvidenceUnavailable(
+          roots.contentHeader,
+          roots.contentBody,
+          "Theme editor",
+          "Theme editor isn't available because registries use different token formats.",
+          "Editing will stay disabled until Registry Atlas can read those formats consistently.",
+        );
+
+        return true;
+      default:
+        return false;
     }
   }
 
   function renderIconAndOtherRoute(): boolean {
     switch (state.route.kind) {
-      case 'icons':
+      case "icons":
         renderTypedCollection(
-          'icon', 'Icons',
-          'Items identified as icons or grouped in icon categories. This is not a searchable glyph index.',
-          'icon',
+          "icon",
+          "Icons",
+          "Items identified as icons or grouped in icon categories. This is not a searchable glyph index.",
+          "icon",
         );
 
         return true;
-      case 'icon-category': renderIconCategory(state.route.category);
+      case "icon-category":
+        renderIconCategory(state.route.category);
 
- return true;
-      case 'icon-family': renderIconFamily(state.route.family);
+        return true;
+      case "icon-family":
+        renderIconFamily(state.route.family);
 
- return true;
-      case 'compare': renderCompare();
+        return true;
+      case "compare":
+        renderCompare();
 
- return true;
-      case 'not-found':
+        return true;
+      case "not-found":
         renderEvidenceUnavailable(
-          roots.contentHeader, roots.contentBody, 'Route not found',
+          roots.contentHeader,
+          roots.contentBody,
+          "Route not found",
           "This address doesn't match a Registry Atlas page.",
-          'Check the URL or return home.',
+          "Check the URL or return home.",
         );
 
         return true;
-      default: return false;
+      default:
+        return false;
     }
   }
 
   function renderRouteContent(queued: ReadonlySet<string>): void {
-    if (state.route.kind === 'setup' || state.route.kind === 'setup-review') {
-      renderSetupView(roots.contentHeader, roots.contentBody,
-        state.installQueue, state.setupInstructions, state.route.kind === 'setup-review');
+    if (state.route.kind === "setup" || state.route.kind === "setup-review") {
+      renderSetupView(
+        roots.contentHeader,
+        roots.contentBody,
+        state.installQueue,
+        state.setupInstructions,
+        state.route.kind === "setup-review",
+      );
 
       return;
     }
@@ -622,54 +758,64 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderHeaderDecorations(): void {
-      const breadcrumbTitle = 'namespace' in state.route && 'slug' in state.route
+    const breadcrumbTitle =
+      "namespace" in state.route && "slug" in state.route
         ? findRegistryCatalogItem(catalogIndex, state.route.namespace, state.route.slug)?.title
         : undefined;
 
-      roots.contentHeader.insertAdjacentHTML('afterbegin',
-        renderCatalogBreadcrumbs(state.route, catalogBasePath(), breadcrumbTitle));
+    roots.contentHeader.insertAdjacentHTML(
+      "afterbegin",
+      renderCatalogBreadcrumbs(state.route, catalogBasePath(), breadcrumbTitle),
+    );
 
-      // A registry homepage is one route-level action, not an item/source fallback.
-      // Include it even when a known registry's item route is unavailable.
-      const route = state.route;
+    // A registry homepage is one route-level action, not an item/source fallback.
+    // Include it even when a known registry's item route is unavailable.
+    const route = state.route;
 
-      const registryForHeader = route.kind === 'icon-family'
-        ? registries.find(registry => registry.name.slice(1) === route.family)
-        : 'namespace' in route
-          ? registries.find(registry => registry.name === route.namespace)
+    const registryForHeader =
+      route.kind === "icon-family"
+        ? registries.find((registry) => registry.name.slice(1) === route.family)
+        : "namespace" in route
+          ? registries.find((registry) => registry.name === route.namespace)
           : undefined;
 
-      const homepage = registryForHeader
-        ? renderRegistryHomepageLink(registryForHeader.url) : '';
+    const homepage = registryForHeader ? renderRegistryHomepageLink(registryForHeader.url) : "";
 
-      if (homepage && (!isDetailRoute(route) || !roots.contentHeader.innerHTML.includes("item-quick-links"))) {
-        roots.contentHeader.innerHTML += `<div class="registry-header-homepage-action">${homepage}</div>`;
-      }
+    if (
+      homepage &&
+      (!isDetailRoute(route) || !roots.contentHeader.innerHTML.includes("item-quick-links"))
+    ) {
+      roots.contentHeader.innerHTML += `<div class="registry-header-homepage-action">${homepage}</div>`;
+    }
 
-      roots.contentHeader.insertAdjacentHTML('beforeend', renderCopyFeedback(state.copyFeedback));
+    roots.contentHeader.insertAdjacentHTML("beforeend", renderCopyFeedback(state.copyFeedback));
 
-      renderReplacementNotice();
+    renderReplacementNotice();
   }
 
   function renderReplacementNotice(): void {
     if (!replacementToken) return;
 
-    roots.contentHeader.insertAdjacentHTML('beforeend',
+    roots.contentHeader.insertAdjacentHTML(
+      "beforeend",
       '<div class="setup-replacement-notice" role="status">Choose a replacement component.' +
-      '<button class="install-button" type="button" data-setup-cancel-replace>Cancel</button></div>');
+        '<button class="install-button" type="button" data-setup-cancel-replace>Cancel</button></div>',
+    );
   }
 
   let scrollObserver: IntersectionObserver | null = null;
   let expandingResults = false;
 
   function activeResultList(): Element | null {
-    return roots.contentBody.querySelector?.(
-      '.catalog-component-grid, .registry-directory-grid, .catalog-compare-table tbody',
-    ) ?? null;
+    return (
+      roots.contentBody.querySelector?.(
+        ".catalog-component-grid, .registry-directory-grid, .catalog-compare-table tbody",
+      ) ?? null
+    );
   }
 
   function loadNextPage(): void {
-    if (expandingResults || !roots.contentBody.querySelector?.('[data-scroll-load-more]')) return;
+    if (expandingResults || !roots.contentBody.querySelector?.("[data-scroll-load-more]")) return;
 
     const previousList = activeResultList();
 
@@ -679,7 +825,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const page = state.discoveryPage;
 
     expandingResults = true;
-    previousList.setAttribute('aria-busy', 'true');
+    previousList.setAttribute("aria-busy", "true");
     scrollObserver?.disconnect();
     state.discoveryPage = page + 1;
     render();
@@ -704,20 +850,23 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function announceVisibleResults(list: Element): void {
     const totalShown = list.children.length;
-    const meta = roots.contentBody.querySelector?.('.catalog-result-meta');
+    const meta = roots.contentBody.querySelector?.(".catalog-result-meta");
 
     if (meta?.textContent) {
-      meta.textContent = meta.textContent.replace(/^Showing [^]*? of /, `Showing 1–${totalShown.toLocaleString()} of `);
+      meta.textContent = meta.textContent.replace(
+        /^Showing [^]*? of /,
+        `Showing 1–${totalShown.toLocaleString()} of `,
+      );
     }
 
-    const status = document.getElementById?.('catalogScrollStatus');
+    const status = document.getElementById?.("catalogScrollStatus");
 
     if (status) status.textContent = `Showing ${totalShown.toLocaleString()} items`;
   }
 
   function updateFeedSemantics(): void {
     const list = activeResultList();
-    const label = roots.contentBody.querySelector?.('.catalog-result-meta')?.textContent ?? '';
+    const label = roots.contentBody.querySelector?.(".catalog-result-meta")?.textContent ?? "";
 
     markAccessibleFeed(list, label);
   }
@@ -725,20 +874,23 @@ export function initRegistryExplorer(options: ShellOptions): void {
   function observeNextPage(): void {
     scrollObserver?.disconnect();
 
-    const sentinel = roots.contentBody.querySelector?.('[data-scroll-sentinel]');
+    const sentinel = roots.contentBody.querySelector?.("[data-scroll-sentinel]");
 
-    if (!sentinel || !('IntersectionObserver' in window)) return;
+    if (!sentinel || !("IntersectionObserver" in window)) return;
 
-    scrollObserver = new IntersectionObserver(entries => {
-      if (entries.some(entry => entry.isIntersecting)) loadNextPage();
-    }, { rootMargin: '250px 0px' });
+    scrollObserver = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) loadNextPage();
+      },
+      { rootMargin: "250px 0px" },
+    );
     scrollObserver.observe(sentinel);
   }
 
   function render(): void {
     try {
       renderTabs();
-      const queued = new Set(state.installQueue.map(entry => entry.token));
+      const queued = new Set(state.installQueue.map((entry) => entry.token));
       const batch = buildInstallQueueBatchState(state.installQueue);
       renderSidebar(queued, batch.command);
 
@@ -748,8 +900,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
       updateFeedSemantics();
       observeNextPage();
     } catch (error) {
-      console.error('Registry Explorer: Render failed', error);
-      roots.contentBody.innerHTML = '<div class="empty-state">Something went wrong while rendering this view.</div>';
+      console.error("Registry Explorer: Render failed", error);
+      roots.contentBody.innerHTML =
+        '<div class="empty-state">Something went wrong while rendering this view.</div>';
     }
   }
 
@@ -757,27 +910,31 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const active = primaryViewForRoute(state.route);
 
     const collectionNames = new Map([
-      ['discover', 'Components'], ['blocks', 'Blocks'], ['pages', 'Pages'],
-      ['templates', 'Templates'], ['themes', 'Themes'], ['icons', 'Icons'],
+      ["discover", "Components"],
+      ["blocks", "Blocks"],
+      ["pages", "Pages"],
+      ["templates", "Templates"],
+      ["themes", "Themes"],
+      ["icons", "Icons"],
     ]);
 
     if (roots.sidebarCollectionCurrent) {
-      roots.sidebarCollectionCurrent.textContent = collectionNames.get(active ?? '') ?? '';
+      roots.sidebarCollectionCurrent.textContent = collectionNames.get(active ?? "") ?? "";
     }
 
-    roots.tabs.forEach(tab => {
-      const tabView = tab.getAttribute('data-view');
-      tab.classList.toggle('nav-item-active', tabView === active);
+    roots.tabs.forEach((tab) => {
+      const tabView = tab.getAttribute("data-view");
+      tab.classList.toggle("nav-item-active", tabView === active);
 
-      if (tabView === active) tab.setAttribute('aria-current', 'page');
-      else tab.removeAttribute('aria-current');
+      if (tabView === active) tab.setAttribute("aria-current", "page");
+      else tab.removeAttribute("aria-current");
     });
   }
 
   function renderHome(): void {
     const featured = queryCatalogComponents(registries, catalogIndex, {
-      assetKinds: ['component'],
-      sort: 'name',
+      assetKinds: ["component"],
+      sort: "name",
       pageSize: 8,
       basePath: catalogBasePath(),
     });
@@ -792,50 +949,60 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderAuthorsRoute(): void {
-    if (state.route.kind !== 'authors') return;
-    const author=state.authorIdentity;
+    if (state.route.kind !== "authors") return;
+    const author = state.authorIdentity;
 
     if (!author) {
-      renderCatalogAuthors(roots.contentHeader,roots.contentBody,authorRows,{
-        search:state.searchTerm,page:state.discoveryPage,
+      renderCatalogAuthors(roots.contentHeader, roots.contentBody, authorRows, {
+        search: state.searchTerm,
+        page: state.discoveryPage,
       });
 
       return;
     }
 
-    if (!authorRows.some(row=>row.name===author)) {
-      renderEvidenceUnavailable(roots.contentHeader,roots.contentBody,
-        'Author attribution unavailable','No exact author attribution matches this URL.',
-        'Return to Authors to browse the catalog records.');
+    if (!authorRows.some((row) => row.name === author)) {
+      renderEvidenceUnavailable(
+        roots.contentHeader,
+        roots.contentBody,
+        "Author attribution unavailable",
+        "No exact author attribution matches this URL.",
+        "Return to Authors to browse the catalog records.",
+      );
 
       return;
     }
 
-    const result=queryCatalogComponents(registries,catalogIndex,{
-      author,assetKinds:['component'],search:state.searchTerm,
-      page:state.discoveryPage,basePath:catalogBasePath(),
+    const result = queryCatalogComponents(registries, catalogIndex, {
+      author,
+      assetKinds: ["component"],
+      search: state.searchTerm,
+      page: state.discoveryPage,
+      basePath: catalogBasePath(),
     });
 
-    renderCatalogCollection(roots.contentHeader,roots.contentBody,result,{
-      eyebrow:'Registry Atlas · Catalog attribution',title:author,
-      description:'Original registry item metadata; this is not a verified 21st.dev account profile.',
-      controls:'<button type="button" class="link-button" data-author-clear>All authors</button>',
+    renderCatalogCollection(roots.contentHeader, roots.contentBody, result, {
+      eyebrow: "Registry Atlas · Catalog attribution",
+      title: author,
+      description:
+        "Original registry item metadata; this is not a verified 21st.dev account profile.",
+      controls: '<button type="button" class="link-button" data-author-clear>All authors</button>',
       layout: state.catalogLayout,
     });
   }
 
   function renderComponentsRoute(): void {
-    if (state.route.kind !== 'components') return;
+    if (state.route.kind !== "components") return;
 
     const result = queryCatalogComponents(registries, catalogIndex, {
       search: state.searchTerm,
       registryNames: state.catalogRegistryNames,
       itemTypes: state.catalogItemTypes,
       categories: state.catalogCategories,
-      assetKinds: ['component'],
+      assetKinds: ["component"],
       canonicalIds: state.catalogCanonicalIds,
       access: state.catalogAccess,
-      reviewed: 'all',
+      reviewed: "all",
       sort: state.catalogSort,
       page: state.discoveryPage,
       basePath: catalogBasePath(),
@@ -854,16 +1021,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderExploreRoute(): void {
-    if (state.route.kind !== 'explore') return;
+    if (state.route.kind !== "explore") return;
     const collection = exploreCollectionBySlug(state.route.collection);
 
     if (!collection) {
       renderEvidenceUnavailable(
         roots.contentHeader,
         roots.contentBody,
-        'Collection not found',
-        'This collection is not configured.',
-        'Return to Components and choose one of the available collections.',
+        "Collection not found",
+        "This collection is not configured.",
+        "Return to Components and choose one of the available collections.",
       );
 
       return;
@@ -872,7 +1039,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const result = queryCatalogComponents(registries, catalogIndex, {
       search: state.searchTerm,
       categories: collection.categories,
-      assetKinds: ['component'],
+      assetKinds: ["component"],
       registryNames: state.catalogRegistryNames,
       canonicalIds: state.catalogCanonicalIds,
       access: state.catalogAccess,
@@ -882,7 +1049,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
 
     renderCatalogCollection(roots.contentHeader, roots.contentBody, result, {
-      eyebrow: 'Explore',
+      eyebrow: "Explore",
       title: collection.label,
       description: `Components in the ${collection.label} category.`,
       controls: renderCatalogBrowseControls(catalogBrowseState(), {
@@ -911,10 +1078,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderRegistryProfile(namespace: string, scopedKind?: CatalogAssetKind): void {
-    const registry = registries.find(item => item.name === namespace);
+    const registry = registries.find((item) => item.name === namespace);
 
     if (!registry) {
-      renderEvidenceUnavailable(roots.contentHeader, roots.contentBody, 'Registry not found', namespace, 'No registry has this name.');
+      renderEvidenceUnavailable(
+        roots.contentHeader,
+        roots.contentBody,
+        "Registry not found",
+        namespace,
+        "No registry has this name.",
+      );
 
       return;
     }
@@ -948,10 +1121,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderTypedCollection(
-    kind: 'block' | 'page' | 'template' | 'theme' | 'icon',
+    kind: "block" | "page" | "template" | "theme" | "icon",
     title: string,
     description: string,
-    routeKind: 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon',
+    routeKind: "component" | "block" | "page" | "template" | "theme" | "icon",
   ): void {
     const result = queryCatalogComponents(registries, catalogIndex, {
       search: state.searchTerm,
@@ -966,7 +1139,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
 
     renderCatalogCollection(roots.contentHeader, roots.contentBody, result, {
-      eyebrow: 'Explore',
+      eyebrow: "Explore",
       title,
       description,
       routeKind,
@@ -982,7 +1155,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   function renderIconCategory(category: string): void {
     const result = queryCatalogComponents(registries, catalogIndex, {
       search: state.searchTerm,
-      assetKinds: ['icon'],
+      assetKinds: ["icon"],
       categories: [category],
       registryNames: state.catalogRegistryNames,
       canonicalIds: state.catalogCanonicalIds,
@@ -993,29 +1166,29 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
 
     renderCatalogCollection(roots.contentHeader, roots.contentBody, result, {
-      eyebrow: 'Icons / Category',
+      eyebrow: "Icons / Category",
       title: category,
-      description: 'Registry-published icons in this category.',
-      routeKind: 'icon',
+      description: "Registry-published icons in this category.",
+      routeKind: "icon",
       controls: renderCatalogBrowseControls(catalogBrowseState(), {
         taxonomy,
         searchTerm: state.searchTerm,
       }),
-      emptyTitle: 'No icons match this category.',
+      emptyTitle: "No icons match this category.",
       layout: state.catalogLayout,
     });
   }
 
   function renderIconFamily(family: string): void {
-    const registry = registries.find(item => item.name.slice(1) === family);
+    const registry = registries.find((item) => item.name.slice(1) === family);
 
     if (!registry) {
       renderEvidenceUnavailable(
         roots.contentHeader,
         roots.contentBody,
         `Icons · ${family}`,
-        'This icon collection does not match a registry.',
-        'Choose a registry or return to Icons.',
+        "This icon collection does not match a registry.",
+        "Choose a registry or return to Icons.",
       );
 
       return;
@@ -1023,7 +1196,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     const result = queryCatalogComponents(registries, catalogIndex, {
       search: state.searchTerm,
-      assetKinds: ['icon'],
+      assetKinds: ["icon"],
       registryNames: [registry.name],
       categories: state.catalogCategories,
       canonicalIds: state.catalogCanonicalIds,
@@ -1034,52 +1207,57 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
 
     renderCatalogCollection(roots.contentHeader, roots.contentBody, result, {
-      eyebrow: 'Icons / Registry',
+      eyebrow: "Icons / Registry",
       title: family,
       description: `Icons published by ${registry.name}.`,
-      routeKind: 'icon',
+      routeKind: "icon",
       controls: renderCatalogBrowseControls(catalogBrowseState(), {
         taxonomy,
         searchTerm: state.searchTerm,
       }),
-      emptyTitle: 'This registry has no icons.',
+      emptyTitle: "This registry has no icons.",
       layout: state.catalogLayout,
     });
   }
 
   function rejectInvalidAssetDetailRoute(
-    route: Extract<CatalogRoute, { kind: 'component' | 'block' | 'page' | 'template' | 'theme' }>,
+    route: Extract<CatalogRoute, { kind: "component" | "block" | "page" | "template" | "theme" }>,
     compact: ReturnType<typeof findRegistryCatalogItem>,
   ): boolean {
     if (compact) {
       const kind = assetKindForCatalogItem(compact, route.namespace);
 
-      const matches = route.kind === 'component'
-        ? kind === 'component' || kind === 'icon' || kind === 'other'
-        : kind === route.kind;
+      const matches =
+        route.kind === "component"
+          ? kind === "component" || kind === "icon" || kind === "other"
+          : kind === route.kind;
 
       if (matches) return false;
       renderEvidenceUnavailable(
-        roots.contentHeader, roots.contentBody, 'Asset route mismatch',
-        route.namespace + ' · ' + route.slug,
-        'This item belongs to ' + (kind ?? 'an unsupported type') + ', not ' + route.kind + '.',
+        roots.contentHeader,
+        roots.contentBody,
+        "Asset route mismatch",
+        route.namespace + " · " + route.slug,
+        "This item belongs to " + (kind ?? "an unsupported type") + ", not " + route.kind + ".",
       );
 
       return true;
     }
 
-    if (route.kind === 'component') return false;
+    if (route.kind === "component") return false;
     renderEvidenceUnavailable(
-      roots.contentHeader, roots.contentBody, 'Asset not found',
-      route.namespace + ' · ' + route.slug,
-      'This item is not available in the requested catalog section.',
+      roots.contentHeader,
+      roots.contentBody,
+      "Asset not found",
+      route.namespace + " · " + route.slug,
+      "This item is not available in the requested catalog section.",
     );
 
     return true;
   }
 
   function renderDetail(
-    route: Extract<CatalogRoute, { kind: 'component' | 'block' | 'page' | 'template' | 'theme' }>,
+    route: Extract<CatalogRoute, { kind: "component" | "block" | "page" | "template" | "theme" }>,
     queued: ReadonlySet<string>,
   ): void {
     const compact = findRegistryCatalogItem(catalogIndex, route.namespace, route.slug);
@@ -1096,43 +1274,49 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     const relatedKind = compact ? assetKindForCatalogItem(compact, route.namespace) : route.kind;
 
-    const related=queryCatalogComponents(registries,catalogIndex,{
-      registryNames:[route.namespace],
-      assetKinds:[relatedKind],
-      pageSize:9,sort:'name',basePath:catalogBasePath(),
-    }).items.filter(item=>item.slug!==route.slug).slice(0,8);
+    const related = queryCatalogComponents(registries, catalogIndex, {
+      registryNames: [route.namespace],
+      assetKinds: [relatedKind],
+      pageSize: 9,
+      sort: "name",
+      basePath: catalogBasePath(),
+    })
+      .items.filter((item) => item.slug !== route.slug)
+      .slice(0, 8);
 
     renderItemDetailView(
       roots.contentHeader,
       roots.contentBody,
-      key ? itemDetailCache.get(key) ?? summary : summary,
+      key ? (itemDetailCache.get(key) ?? summary) : summary,
       queued,
       related,
     );
 
-    if (key && !itemDetailCache.has(key) && summary.status === 'summary-only' && summary.detail.route.status === 'available') {
+    if (
+      key &&
+      !itemDetailCache.has(key) &&
+      summary.status === "summary-only" &&
+      summary.detail.route.status === "available"
+    ) {
       void ensureItemDetailLoaded(key, route.namespace, route.slug);
     }
   }
 
   function renderCompare(): void {
-    const registrySearch = state.facetSearchTerms['compare:registry'] ?? '';
+    const registrySearch = state.facetSearchTerms["compare:registry"] ?? "";
 
     const availableRegistryNames = registries
-      .filter(registry => Object.prototype.hasOwnProperty.call(catalogIndex.registries, registry.name))
-      .map(registry => registry.name)
+      .filter((registry) =>
+        Object.prototype.hasOwnProperty.call(catalogIndex.registries, registry.name),
+      )
+      .map((registry) => registry.name)
       .sort((a, b) => a.localeCompare(b));
 
-    const result = buildCatalogComparison(
-      registries,
-      catalogIndex,
-      state.compareRegistryNames,
-      {
-        search: state.searchTerm,
-        page: state.discoveryPage,
-        basePath: catalogBasePath(),
-      },
-    );
+    const result = buildCatalogComparison(registries, catalogIndex, state.compareRegistryNames, {
+      search: state.searchTerm,
+      page: state.discoveryPage,
+      basePath: catalogBasePath(),
+    });
 
     renderCatalogCompare(
       roots.contentHeader,
@@ -1143,64 +1327,67 @@ export function initRegistryExplorer(options: ShellOptions): void {
     );
   }
 
-  roots.tabs.forEach(tab => tab.addEventListener('click', event => {
-    // SAFETY: Navigation click events originate from DOM click listeners attached to anchor controls.
-    const click = event as MouseEvent;
+  roots.tabs.forEach((tab) =>
+    tab.addEventListener("click", (event) => {
+      // SAFETY: Navigation click events originate from DOM click listeners attached to anchor controls.
+      const click = event as MouseEvent;
 
-    if (click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey) return;
-    event.preventDefault();
-    const view = tab.getAttribute('data-view');
+      if (click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey)
+        return;
+      event.preventDefault();
+      const view = tab.getAttribute("data-view");
 
-    // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
-    const resetBrowse = {
-      searchTerm: '',
-      catalogRegistryNames: [],
-      catalogItemTypes: [],
-      catalogCategories: [],
-      catalogAssetKinds: [],
-      catalogCanonicalIds: [],
-      catalogAccess: [],
-      catalogSort: 'name' as CatalogSort,
-      registrySort: 'name' as RegistryDirectorySort,
-    };
+      // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
+      const resetBrowse = {
+        searchTerm: "",
+        catalogRegistryNames: [],
+        catalogItemTypes: [],
+        catalogCategories: [],
+        catalogAssetKinds: [],
+        catalogCanonicalIds: [],
+        catalogAccess: [],
+        catalogSort: "name" as CatalogSort,
+        registrySort: "name" as RegistryDirectorySort,
+      };
 
-    const route = new Map<string, CatalogRoute>([
-      ['home', { kind: 'home' }],
-      ['discover', { kind: 'components' }],
-      ['blocks', { kind: 'blocks' }],
-      ['pages', { kind: 'pages' }],
-      ['templates', { kind: 'templates' }],
-      ['themes', { kind: 'themes' }],
-      ['icons', { kind: 'icons' }],
-      ['registries', { kind: 'registries' }],
-      ['authors', { kind: 'authors' }],
-      ['compare', { kind: 'compare' }],
-    ]).get(view ?? '');
+      const route = new Map<string, CatalogRoute>([
+        ["home", { kind: "home" }],
+        ["discover", { kind: "components" }],
+        ["blocks", { kind: "blocks" }],
+        ["pages", { kind: "pages" }],
+        ["templates", { kind: "templates" }],
+        ["themes", { kind: "themes" }],
+        ["icons", { kind: "icons" }],
+        ["registries", { kind: "registries" }],
+        ["authors", { kind: "authors" }],
+        ["compare", { kind: "compare" }],
+      ]).get(view ?? "");
 
-    if (route) {
-      tab.closest?.('details')?.removeAttribute('open');
-      navigate(route, 'push', resetBrowse);
-    }
-  }));
+      if (route) {
+        tab.closest?.("details")?.removeAttribute("open");
+        navigate(route, "push", resetBrowse);
+      }
+    }),
+  );
 
   function routeForGlobalSearch(route: CatalogRoute): CatalogRoute {
     const replacements = {
-      home: { kind: 'components' },
-      'not-found': { kind: 'components' },
-      'theme-editor': { kind: 'components' },
-      component: { kind: 'components' },
-      block: { kind: 'blocks' },
-      page: { kind: 'pages' },
-      template: { kind: 'templates' },
-      theme: { kind: 'themes' },
-      'icon-category': { kind: 'icons' },
-      'icon-family': { kind: 'icons' },
+      home: { kind: "components" },
+      "not-found": { kind: "components" },
+      "theme-editor": { kind: "components" },
+      component: { kind: "components" },
+      block: { kind: "blocks" },
+      page: { kind: "pages" },
+      template: { kind: "templates" },
+      theme: { kind: "themes" },
+      "icon-category": { kind: "icons" },
+      "icon-family": { kind: "icons" },
     } satisfies ReplacementsLookupContract;
 
     return new Map(Object.entries(replacements)).get(route.kind) ?? route;
   }
 
-  roots.searchInput.addEventListener('input', () => {
+  roots.searchInput.addEventListener("input", () => {
     setState({
       route: routeForGlobalSearch(state.route),
       searchTerm: roots.searchInput.value,
@@ -1209,18 +1396,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
   });
 
-  roots.contentBody.addEventListener('click', event => {
+  roots.contentBody.addEventListener("click", (event) => {
     // SAFETY: This listener is attached to the owned content root; delegated clicks target its own controls.
     const target = event.target as HTMLElement | null;
 
-    if (target?.closest?.('[data-scroll-load-more]')) loadNextPage();
+    if (target?.closest?.("[data-scroll-load-more]")) loadNextPage();
   });
 
-  roots.contentBody.addEventListener('input', event => {
+  roots.contentBody.addEventListener("input", (event) => {
     // SAFETY: The current target belongs to the app-owned content surface.
     const edited = event.target as HTMLInputElement;
 
-    if (edited.hasAttribute?.('data-setup-instructions')) {
+    if (edited.hasAttribute?.("data-setup-instructions")) {
       state.setupInstructions = edited.value.slice(0, 2000);
       saveSetupDraft();
 
@@ -1229,25 +1416,33 @@ export function initRegistryExplorer(options: ShellOptions): void {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
 
     const target = event.target as HTMLInputElement;
-    const control = target.closest('[data-compare-search]');
-    const dimension = control?.getAttribute('data-compare-search');
+    const control = target.closest("[data-compare-search]");
+    const dimension = control?.getAttribute("data-compare-search");
 
     if (!control || !dimension) return;
     const key = `compare:${dimension}`;
     const value = target.value;
-    const focusIdentity = createFocusIdentity(control, '[data-compare-search]', ['data-compare-search']);
+
+    const focusIdentity = createFocusIdentity(control, "[data-compare-search]", [
+      "data-compare-search",
+    ]);
+
     setState(
       { facetSearchTerms: { ...state.facetSearchTerms, [key]: value }, discoveryPage: 1 },
-      'replace',
+      "replace",
       focusIdentity,
     );
   });
 
   function registryIconCandidates(image: HTMLImageElement): string[] {
     try {
-      const parsed: unknown = JSON.parse(image.getAttribute('data-registry-icon-candidates') ?? '[]');
+      const parsed: unknown = JSON.parse(
+        image.getAttribute("data-registry-icon-candidates") ?? "[]",
+      );
 
-      return Array.isArray(parsed) ? parsed.filter((value): value is string => isInputString(value)) : [];
+      return Array.isArray(parsed)
+        ? parsed.filter((value): value is string => isInputString(value))
+        : [];
     } catch {
       return [];
     }
@@ -1257,34 +1452,34 @@ export function initRegistryExplorer(options: ShellOptions): void {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const image = event.target as HTMLImageElement | null;
 
-    if (!image?.hasAttribute?.('data-registry-icon-image')) return;
+    if (!image?.hasAttribute?.("data-registry-icon-image")) return;
     const candidates = registryIconCandidates(image);
-    const current = Number.parseInt(image.getAttribute('data-registry-icon-index') ?? '0', 10);
+    const current = Number.parseInt(image.getAttribute("data-registry-icon-index") ?? "0", 10);
     const next = nextRegistryIconCandidate(candidates, Number.isFinite(current) ? current : 0);
 
     if (next) {
-      image.setAttribute('data-registry-icon-index', String(next.index));
+      image.setAttribute("data-registry-icon-index", String(next.index));
       image.src = next.src;
 
       return;
     }
 
     image.hidden = true;
-    image.closest('.registry-icon')?.setAttribute('data-registry-icon-failed', 'true');
+    image.closest(".registry-icon")?.setAttribute("data-registry-icon-failed", "true");
   }
 
   // Native details toggle events are asynchronous. Record intent synchronously
   // before a filter or sort action replaces the sidebar DOM.
-  roots.aside.addEventListener('click', event => {
+  roots.aside.addEventListener("click", (event) => {
     // SAFETY: The aside owns all interactive targets passed to handleClick.
     const target = event.target as HTMLElement;
-    const summary = target.closest('summary.sidebar-taxonomy-summary');
+    const summary = target.closest("summary.sidebar-taxonomy-summary");
 
     if (summary) {
       const group = summary.parentElement;
 
       if (group instanceof HTMLDetailsElement) {
-        const id = group.getAttribute('data-sidebar-taxonomy-group');
+        const id = group.getAttribute("data-sidebar-taxonomy-group");
 
         if (id) {
           if (group.open) {
@@ -1302,77 +1497,97 @@ export function initRegistryExplorer(options: ShellOptions): void {
     handleClick(event.target as HTMLElement);
   });
   // SAFETY: The controlled layout host contains the same trusted browse controls as the sidebar.
-  roots.sidebarLayout?.addEventListener('click', event => handleClick(event.target as HTMLElement));
-  roots.contentHeader.addEventListener('click', event => {
+  roots.sidebarLayout?.addEventListener("click", (event) =>
+    handleClick(event.target as HTMLElement),
+  );
+  roots.contentHeader.addEventListener("click", (event) => {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;
-    const link = target.closest<HTMLAnchorElement>('a[data-catalog-route],a[data-profile-registry]');
+
+    const link = target.closest<HTMLAnchorElement>(
+      "a[data-catalog-route],a[data-profile-registry]",
+    );
+
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const mouse = event as MouseEvent;
 
-    if (link && mouse.button === 0 && !mouse.ctrlKey && !mouse.metaKey && !mouse.shiftKey && !mouse.altKey) {
+    if (
+      link &&
+      mouse.button === 0 &&
+      !mouse.ctrlKey &&
+      !mouse.metaKey &&
+      !mouse.shiftKey &&
+      !mouse.altKey
+    ) {
       event.preventDefault();
     }
 
     handleClick(target);
   });
-  roots.contentHeader.addEventListener('error', handleRegistryIconError, true);
-  roots.contentBody.addEventListener('error', handleRegistryIconError, true);
-  roots.contentBody.addEventListener('click', event => {
+  roots.contentHeader.addEventListener("error", handleRegistryIconError, true);
+  roots.contentBody.addEventListener("error", handleRegistryIconError, true);
+  roots.contentBody.addEventListener("click", (event) => {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;
 
     const link = target.closest<HTMLAnchorElement>(
-      'a[data-view-item-registry],a[data-profile-registry],a[data-catalog-route]',
+      "a[data-view-item-registry],a[data-profile-registry],a[data-catalog-route]",
     );
 
     if (link) {
       // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
       const mouse = event as MouseEvent;
 
-      if (mouse.button === 1 || mouse.ctrlKey || mouse.metaKey || mouse.shiftKey || mouse.altKey) return;
+      if (mouse.button === 1 || mouse.ctrlKey || mouse.metaKey || mouse.shiftKey || mouse.altKey)
+        return;
       event.preventDefault?.();
     }
 
     handleClick(target);
   });
 
-
   function handleCatalogRouteClick(target: HTMLElement): boolean {
-    const directPath = target.closest('[data-catalog-route]')?.getAttribute('data-catalog-route');
+    const directPath = target.closest("[data-catalog-route]")?.getAttribute("data-catalog-route");
 
     if (directPath) {
-      const parsed = parseCatalogRoute(new URL(directPath, window.location.href).pathname, catalogBasePath());
+      const parsed = parseCatalogRoute(
+        new URL(directPath, window.location.href).pathname,
+        catalogBasePath(),
+      );
 
-      if (parsed) navigate(parsed, 'push', {
-        searchTerm: '',
-        catalogRegistryNames: [],
-        catalogItemTypes: [],
-        catalogCategories: [],
-        catalogAssetKinds: [],
-        catalogCanonicalIds: [],
-        catalogAccess: [],
-        catalogSort: 'name',
-        catalogReviewed: 'all',
-      });
+      if (parsed)
+        navigate(parsed, "push", {
+          searchTerm: "",
+          catalogRegistryNames: [],
+          catalogItemTypes: [],
+          catalogCategories: [],
+          catalogAssetKinds: [],
+          catalogCanonicalIds: [],
+          catalogAccess: [],
+          catalogSort: "name",
+          catalogReviewed: "all",
+        });
 
       return true;
     }
 
-    if (target.closest('[data-catalog-clear]')) {
-      roots.searchInput.value = '';
-      setState({
-        searchTerm: '',
-        catalogRegistryNames: [],
-        catalogItemTypes: [],
-        catalogCategories: [],
-        catalogAssetKinds: [],
-        catalogCanonicalIds: [],
-        catalogAccess: [],
-        catalogReviewed: 'all',
-        catalogSort: 'name',
-        discoveryPage: 1,
-      }, 'push');
+    if (target.closest("[data-catalog-clear]")) {
+      roots.searchInput.value = "";
+      setState(
+        {
+          searchTerm: "",
+          catalogRegistryNames: [],
+          catalogItemTypes: [],
+          catalogCategories: [],
+          catalogAssetKinds: [],
+          catalogCanonicalIds: [],
+          catalogAccess: [],
+          catalogReviewed: "all",
+          catalogSort: "name",
+          discoveryPage: 1,
+        },
+        "push",
+      );
 
       return true;
     }
@@ -1381,30 +1596,40 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleCatalogFiltersClick(target: HTMLElement): boolean {
-    const registryControl = target.closest('[data-catalog-registry-value]');
+    const registryControl = target.closest("[data-catalog-registry-value]");
 
     if (registryControl) {
-      const value = registryControl.getAttribute('data-catalog-registry-value') ?? '';
-      setState({ catalogRegistryNames: value ? toggle(state.catalogRegistryNames, value) : [], discoveryPage: 1 }, 'push',
-        createFocusIdentity(registryControl, '[data-catalog-registry-value]', ['data-catalog-registry-value']));
+      const value = registryControl.getAttribute("data-catalog-registry-value") ?? "";
+      setState(
+        {
+          catalogRegistryNames: value ? toggle(state.catalogRegistryNames, value) : [],
+          discoveryPage: 1,
+        },
+        "push",
+        createFocusIdentity(registryControl, "[data-catalog-registry-value]", [
+          "data-catalog-registry-value",
+        ]),
+      );
 
       return true;
     }
 
-    const canonicalControl = target.closest('[data-catalog-canonical-value]');
+    const canonicalControl = target.closest("[data-catalog-canonical-value]");
 
     if (canonicalControl) {
-      const value = canonicalControl.getAttribute('data-catalog-canonical-value') ?? '';
+      const value = canonicalControl.getAttribute("data-catalog-canonical-value") ?? "";
 
       if (value && !taxonomyIds.has(value)) return true;
-      setState({
-        catalogCanonicalIds: value && state.catalogCanonicalIds[0] !== value ? [value] : [],
-        discoveryPage: 1,
-      }, 'push', createFocusIdentity(
-        canonicalControl,
-        '[data-catalog-canonical-value]',
-        ['data-catalog-canonical-value'],
-      ));
+      setState(
+        {
+          catalogCanonicalIds: value && state.catalogCanonicalIds[0] !== value ? [value] : [],
+          discoveryPage: 1,
+        },
+        "push",
+        createFocusIdentity(canonicalControl, "[data-catalog-canonical-value]", [
+          "data-catalog-canonical-value",
+        ]),
+      );
 
       return true;
     }
@@ -1417,18 +1642,20 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleCategorySelection(target: HTMLElement): boolean {
-    const categoryControl = target.closest('[data-catalog-category-value]');
+    const categoryControl = target.closest("[data-catalog-category-value]");
 
     if (categoryControl) {
-      const value = categoryControl.getAttribute('data-catalog-category-value') ?? '';
-      setState({
-        catalogCategories: value ? toggle(state.catalogCategories, value) : [],
-        discoveryPage: 1,
-      }, 'push', createFocusIdentity(
-        categoryControl,
-        '[data-catalog-category-value]',
-        ['data-catalog-category-value'],
-      ));
+      const value = categoryControl.getAttribute("data-catalog-category-value") ?? "";
+      setState(
+        {
+          catalogCategories: value ? toggle(state.catalogCategories, value) : [],
+          discoveryPage: 1,
+        },
+        "push",
+        createFocusIdentity(categoryControl, "[data-catalog-category-value]", [
+          "data-catalog-category-value",
+        ]),
+      );
 
       return true;
     }
@@ -1437,23 +1664,24 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleAccessSelection(target: HTMLElement): boolean {
-    const accessControl = target.closest('[data-catalog-access-value]');
+    const accessControl = target.closest("[data-catalog-access-value]");
 
     if (accessControl) {
-      const value = accessControl.getAttribute('data-catalog-access-value') ?? '';
+      const value = accessControl.getAttribute("data-catalog-access-value") ?? "";
 
-      if (value && value !== 'free' && value !== 'paid') return true;
+      if (value && value !== "free" && value !== "paid") return true;
       // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
-      setState({
-        catalogAccess: value && state.catalogAccess[0] !== value
-          ? [value as 'free' | 'paid']
-          : [],
-        discoveryPage: 1,
-      }, 'push', createFocusIdentity(
-        accessControl,
-        '[data-catalog-access-value]',
-        ['data-catalog-access-value'],
-      ));
+      setState(
+        {
+          catalogAccess:
+            value && state.catalogAccess[0] !== value ? [value as "free" | "paid"] : [],
+          discoveryPage: 1,
+        },
+        "push",
+        createFocusIdentity(accessControl, "[data-catalog-access-value]", [
+          "data-catalog-access-value",
+        ]),
+      );
 
       return true;
     }
@@ -1462,55 +1690,57 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleCatalogLayoutClick(target: HTMLElement): boolean {
-    const browseLayoutControl = target.closest('[data-browse-layout]');
+    const browseLayoutControl = target.closest("[data-browse-layout]");
 
     if (browseLayoutControl) {
-      const value = browseLayoutControl.getAttribute('data-browse-layout');
+      const value = browseLayoutControl.getAttribute("data-browse-layout");
 
-      if (value === 'grid' || value === 'list') {
-        setState({
-          registryLayout: value,
-          catalogLayout: value,
-          discoveryPage: 1,
-        }, 'push', createFocusIdentity(
-          browseLayoutControl,
-          '[data-browse-layout]',
-          ['data-browse-layout'],
-        ));
+      if (value === "grid" || value === "list") {
+        setState(
+          {
+            registryLayout: value,
+            catalogLayout: value,
+            discoveryPage: 1,
+          },
+          "push",
+          createFocusIdentity(browseLayoutControl, "[data-browse-layout]", ["data-browse-layout"]),
+        );
       }
 
       return true;
     }
 
-    const catalogSortControl = target.closest('[data-catalog-sort-value]');
+    const catalogSortControl = target.closest("[data-catalog-sort-value]");
 
     if (catalogSortControl) {
-      const value = catalogSortControl.getAttribute('data-catalog-sort-value');
+      const value = catalogSortControl.getAttribute("data-catalog-sort-value");
 
-      if (value === 'name' || value === 'registry') {
-        setState({ catalogSort: value, discoveryPage: 1 }, 'push',
-          createFocusIdentity(
-            catalogSortControl,
-            '[data-catalog-sort-value]',
-            ['data-catalog-sort-value'],
-          ));
+      if (value === "name" || value === "registry") {
+        setState(
+          { catalogSort: value, discoveryPage: 1 },
+          "push",
+          createFocusIdentity(catalogSortControl, "[data-catalog-sort-value]", [
+            "data-catalog-sort-value",
+          ]),
+        );
       }
 
       return true;
     }
 
-    const registrySortControl = target.closest('[data-registry-sort-value]');
+    const registrySortControl = target.closest("[data-registry-sort-value]");
 
     if (registrySortControl) {
-      const value = registrySortControl.getAttribute('data-registry-sort-value');
+      const value = registrySortControl.getAttribute("data-registry-sort-value");
 
-      if (value === 'name' || value === 'item-count-desc') {
-        setState({ registrySort: value, discoveryPage: 1 }, 'push',
-          createFocusIdentity(
-            registrySortControl,
-            '[data-registry-sort-value]',
-            ['data-registry-sort-value'],
-          ));
+      if (value === "name" || value === "item-count-desc") {
+        setState(
+          { registrySort: value, discoveryPage: 1 },
+          "push",
+          createFocusIdentity(registrySortControl, "[data-registry-sort-value]", [
+            "data-registry-sort-value",
+          ]),
+        );
       }
 
       return true;
@@ -1521,23 +1751,31 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function handleCatalogAssetsClick(target: HTMLElement): boolean {
     const values: Array<[selector: string, attribute: string]> = [
-      ['[data-registry-asset-value]', 'data-registry-asset-value'],
-      ['[data-asset-kind-value]', 'data-asset-kind-value'],
+      ["[data-registry-asset-value]", "data-registry-asset-value"],
+      ["[data-asset-kind-value]", "data-asset-kind-value"],
     ];
 
     for (const [selector, attribute] of values) {
       const control = target.closest(selector);
 
       if (!control) continue;
-      const raw = control.getAttribute(attribute) ?? '';
+      const raw = control.getAttribute(attribute) ?? "";
 
-      if (raw && !['component', 'block', 'page', 'template', 'theme', 'icon', 'other'].includes(raw)) return true;
+      if (
+        raw &&
+        !["component", "block", "page", "template", "theme", "icon", "other"].includes(raw)
+      )
+        return true;
       // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
-      const value = raw as CatalogAssetKind | '';
-      setState({
-        catalogAssetKinds: value && state.catalogAssetKinds[0] !== value ? [value] : [],
-        discoveryPage: 1,
-      }, 'push', createFocusIdentity(control, selector, [attribute]));
+      const value = raw as CatalogAssetKind | "";
+      setState(
+        {
+          catalogAssetKinds: value && state.catalogAssetKinds[0] !== value ? [value] : [],
+          discoveryPage: 1,
+        },
+        "push",
+        createFocusIdentity(control, selector, [attribute]),
+      );
 
       return true;
     }
@@ -1546,26 +1784,29 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleCatalogAuthorClick(target: HTMLElement): boolean {
-    const authorSelected=target.closest('[data-author-select]')?.getAttribute('data-author-select');
+    const authorSelected = target
+      .closest("[data-author-select]")
+      ?.getAttribute("data-author-select");
 
-    if(authorSelected && authorRows.some(row=>row.name===authorSelected)){
-      setState({authorIdentity:authorSelected,searchTerm:'',discoveryPage:1},'push');
-
-      return true;
-    }
-
-    if(target.closest('[data-author-clear]')){
-      setState({authorIdentity:null,searchTerm:'',discoveryPage:1},'push');
+    if (authorSelected && authorRows.some((row) => row.name === authorSelected)) {
+      setState({ authorIdentity: authorSelected, searchTerm: "", discoveryPage: 1 }, "push");
 
       return true;
     }
 
-    const page = target.closest('[data-discovery-page]')?.getAttribute('data-discovery-page');
+    if (target.closest("[data-author-clear]")) {
+      setState({ authorIdentity: null, searchTerm: "", discoveryPage: 1 }, "push");
+
+      return true;
+    }
+
+    const page = target.closest("[data-discovery-page]")?.getAttribute("data-discovery-page");
 
     if (page) {
       const nextPage = Number(page);
 
-      if (Number.isInteger(nextPage) && nextPage > 0) setState({ discoveryPage: nextPage, copyFeedback: null }, 'push');
+      if (Number.isInteger(nextPage) && nextPage > 0)
+        setState({ discoveryPage: nextPage, copyFeedback: null }, "push");
 
       return true;
     }
@@ -1574,26 +1815,35 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleComparisonClick(target: HTMLElement): boolean {
-    const compareRegistry = target.closest('[data-compare-registry]')?.getAttribute('data-compare-registry');
+    const compareRegistry = target
+      .closest("[data-compare-registry]")
+      ?.getAttribute("data-compare-registry");
 
     if (compareRegistry) {
       const selected = state.compareRegistryNames.includes(compareRegistry);
 
       if (!selected && state.compareRegistryNames.length >= 4) return true;
       setState(
-        { compareRegistryNames: toggle(state.compareRegistryNames, compareRegistry), discoveryPage: 1 },
-        'push',
-        createFocusIdentity(target.closest('[data-compare-registry]'), '[data-compare-registry]', ['data-compare-registry']),
+        {
+          compareRegistryNames: toggle(state.compareRegistryNames, compareRegistry),
+          discoveryPage: 1,
+        },
+        "push",
+        createFocusIdentity(target.closest("[data-compare-registry]"), "[data-compare-registry]", [
+          "data-compare-registry",
+        ]),
       );
 
       return true;
     }
 
-    const profile = target.closest('[data-profile-registry]')?.getAttribute('data-profile-registry');
+    const profile = target
+      .closest("[data-profile-registry]")
+      ?.getAttribute("data-profile-registry");
 
     if (profile) {
-      navigate({ kind: 'registry', namespace: profile }, 'push', {
-        searchTerm: '',
+      navigate({ kind: "registry", namespace: profile }, "push", {
+        searchTerm: "",
         catalogCategories: [],
         catalogAssetKinds: [],
         catalogCanonicalIds: [],
@@ -1611,18 +1861,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleDetailSelection(target: HTMLElement): boolean {
-    const item = target.closest('[data-view-item-registry]');
+    const item = target.closest("[data-view-item-registry]");
 
     if (item) {
-      const namespace = item.getAttribute('data-view-item-registry');
-      const slug = item.getAttribute('data-view-item-slug');
-      const kind = item.getAttribute('data-view-item-kind');
+      const namespace = item.getAttribute("data-view-item-registry");
+      const slug = item.getAttribute("data-view-item-slug");
+      const kind = item.getAttribute("data-view-item-kind");
 
       if (!namespace || !slug) return true;
-      const knownKinds = ['block', 'page', 'template', 'theme'] as const;
-      const routeKind = knownKinds.find(value => value === kind) ?? 'component';
+      const knownKinds = ["block", "page", "template", "theme"] as const;
+      const routeKind = knownKinds.find((value) => value === kind) ?? "component";
       const route: CatalogRoute = { kind: routeKind, namespace, slug };
-      setState({ route, returnRoute: state.route, copyFeedback: null }, 'push');
+      setState({ route, returnRoute: state.route, copyFeedback: null }, "push");
 
       return true;
     }
@@ -1631,14 +1881,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleDetailReturn(target: HTMLElement): boolean {
-    if (target.closest('[data-back-from-item]')) {
-      navigate(state.returnRoute ?? { kind: 'components' }, 'push', { returnRoute: null });
+    if (target.closest("[data-back-from-item]")) {
+      navigate(state.returnRoute ?? { kind: "components" }, "push", { returnRoute: null });
 
       return true;
     }
 
-    if (target.closest('[data-back-to-results]')) {
-      navigate({ kind: 'registries' });
+    if (target.closest("[data-back-to-results]")) {
+      navigate({ kind: "registries" });
     }
 
     return false;
@@ -1665,32 +1915,32 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleSetupNavigation(target: HTMLElement): boolean {
-    if (target.closest('[data-setup-review]')) {
-      if (state.installQueue.length) navigate({ kind: 'setup-review' });
+    if (target.closest("[data-setup-review]")) {
+      if (state.installQueue.length) navigate({ kind: "setup-review" });
 
       return true;
     }
 
-    if (target.closest('[data-setup-edit]')) {
-      navigate({ kind: 'setup' });
+    if (target.closest("[data-setup-edit]")) {
+      navigate({ kind: "setup" });
 
       return true;
     }
 
-    const replace = target.closest('[data-setup-replace]');
+    const replace = target.closest("[data-setup-replace]");
 
     if (replace) {
-      const token = replace.getAttribute('data-setup-replace');
+      const token = replace.getAttribute("data-setup-replace");
 
-      if (!state.installQueue.some(item => item.token === token)) return true;
+      if (!state.installQueue.some((item) => item.token === token)) return true;
 
       setPendingReplacement(token);
-      navigate({ kind: 'components' });
+      navigate({ kind: "components" });
 
       return true;
     }
 
-    if (target.closest('[data-setup-cancel-replace]')) {
+    if (target.closest("[data-setup-cancel-replace]")) {
       setPendingReplacement(null);
       render();
 
@@ -1705,12 +1955,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleInstallCopy(target: HTMLElement): boolean {
-    const copy = target.closest('[data-copy-text], [data-copy-command]');
+    const copy = target.closest("[data-copy-text], [data-copy-command]");
 
     if (copy) {
-      const text = copy.getAttribute('data-copy-text') ?? copy.getAttribute('data-copy-command') ?? '';
+      const text =
+        copy.getAttribute("data-copy-text") ?? copy.getAttribute("data-copy-command") ?? "";
 
-      if (text) void copyText(text, copy.getAttribute('data-copy-label') ?? 'Copied.');
+      if (text) void copyText(text, copy.getAttribute("data-copy-label") ?? "Copied.");
 
       return true;
     }
@@ -1723,26 +1974,27 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleInstallQueueAdd(target: HTMLElement): boolean {
-    const add = target.closest('[data-queue-add]');
+    const add = target.closest("[data-queue-add]");
 
     if (add) {
       const remaining = replacementToken
-        ? removeFromInstallQueue(state.installQueue, replacementToken) : state.installQueue;
+        ? removeFromInstallQueue(state.installQueue, replacementToken)
+        : state.installQueue;
 
       setPendingReplacement(null);
       setState({
         installQueue: addToInstallQueue(remaining, {
           action: {
-            status: 'enabled',
-            token: add.getAttribute('data-queue-add') ?? '',
-            installCommand: add.getAttribute('data-queue-install') ?? '',
-            inspectCommand: add.getAttribute('data-queue-inspect') ?? '',
-            route: add.getAttribute('data-queue-route') ?? '',
+            status: "enabled",
+            token: add.getAttribute("data-queue-add") ?? "",
+            installCommand: add.getAttribute("data-queue-install") ?? "",
+            inspectCommand: add.getAttribute("data-queue-inspect") ?? "",
+            route: add.getAttribute("data-queue-route") ?? "",
             disabledReason: null,
           },
-          label: add.getAttribute('data-queue-label') ?? '',
-          registry: add.getAttribute('data-queue-registry') ?? '',
-          item: add.getAttribute('data-queue-item') ?? '',
+          label: add.getAttribute("data-queue-label") ?? "",
+          registry: add.getAttribute("data-queue-registry") ?? "",
+          item: add.getAttribute("data-queue-item") ?? "",
           path: window.location.pathname,
         }),
       });
@@ -1754,14 +2006,18 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleInstallQueueRemove(target: HTMLElement): boolean {
-    const remove = target.closest('[data-queue-remove]');
+    const remove = target.closest("[data-queue-remove]");
 
     if (remove) {
-      setState({ installQueue: removeFromInstallQueue(state.installQueue, remove.getAttribute('data-queue-remove') ?? '') });
+      setState({
+        installQueue: removeFromInstallQueue(
+          state.installQueue,
+          remove.getAttribute("data-queue-remove") ?? "",
+        ),
+      });
 
       return true;
     }
-
 
     return false;
   }
@@ -1770,12 +2026,12 @@ export function initRegistryExplorer(options: ShellOptions): void {
     try {
       if (!navigator.clipboard?.writeText) throw new Error();
       await navigator.clipboard.writeText(text);
-      setState({ copyFeedback: { status: 'success', message, command: text } });
+      setState({ copyFeedback: { status: "success", message, command: text } });
     } catch {
       setState({
         copyFeedback: {
-          status: 'error',
-          message: 'Clipboard unavailable. Select and copy the text manually.',
+          status: "error",
+          message: "Clipboard unavailable. Select and copy the text manually.",
           command: text,
         },
       });
@@ -1784,7 +2040,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function readPersistedBrowseState(): BrowseSnapshot | null {
     try {
-      return parseBrowseSnapshot(window.sessionStorage?.getItem(browseSnapshotKey(currentHistoryKey())) ?? null);
+      return parseBrowseSnapshot(
+        window.sessionStorage?.getItem(browseSnapshotKey(currentHistoryKey())) ?? null,
+      );
     } catch {
       // Private-browsing restrictions do not prevent in-memory restoration.
       return null;
@@ -1797,7 +2055,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (!snapshot || state.discoveryPage !== 1) return;
 
     for (let page = 1; page < snapshot.pages; page += 1) {
-      if (!roots.contentBody.querySelector?.('[data-scroll-load-more]')) break;
+      if (!roots.contentBody.querySelector?.("[data-scroll-load-more]")) break;
 
       loadNextPage();
     }
@@ -1806,11 +2064,11 @@ export function initRegistryExplorer(options: ShellOptions): void {
       const scrollContainer = roots.contentBody.parentElement;
 
       if (scrollContainer) scrollContainer.scrollTop = snapshot.scrollY;
-      else window.scrollTo?.({ top: snapshot.scrollY, behavior: 'instant' });
+      else window.scrollTo?.({ top: snapshot.scrollY, behavior: "instant" });
     });
   }
 
-  window.addEventListener('popstate', () => {
+  window.addEventListener("popstate", () => {
     state = {
       ...state,
       ...hydrateStateFromUrl(registries),
@@ -1827,59 +2085,70 @@ export function initRegistryExplorer(options: ShellOptions): void {
 }
 
 function routeFromLocation(params: URLSearchParams): CatalogRoute {
-  if (params.has('view')) return legacyRoute(params);
+  if (params.has("view")) return legacyRoute(params);
 
-  return parseCatalogRoute(window.location.pathname, catalogBasePath())
-    ?? { kind: 'not-found', path: window.location.pathname };
+  return (
+    parseCatalogRoute(window.location.pathname, catalogBasePath()) ?? {
+      kind: "not-found",
+      path: window.location.pathname,
+    }
+  );
 }
 
 function searchTermFromLocation(params: URLSearchParams, route: CatalogRoute): string {
-  const query = params.get('q')?.trim();
+  const query = params.get("q")?.trim();
 
   if (query) return query;
 
-  if (route.kind === 'components' && route.pathSearchTerm) return route.pathSearchTerm;
+  if (route.kind === "components" && route.pathSearchTerm) return route.pathSearchTerm;
 
-  if (params.has('view')) return params.get('component')?.trim() ?? '';
+  if (params.has("view")) return params.get("component")?.trim() ?? "";
 
-  return '';
+  return "";
 }
 
 function sortRegistriesFromLocation(params: URLSearchParams): RegistryDirectorySort {
-  const sort = params.get('registrySort');
+  const sort = params.get("registrySort");
 
-  return sort === 'item-count-desc' || sort === 'item-count-asc' ? 'item-count-desc' : 'name';
+  return sort === "item-count-desc" || sort === "item-count-asc" ? "item-count-desc" : "name";
 }
 
 function hydrateStateFromUrl(
   registries: readonly Registry[],
-): Omit<AppState, 'installQueue' | 'setupInstructions' | 'copyFeedback' | 'returnRoute' | 'facetSearchTerms'> {
+): Omit<
+  AppState,
+  "installQueue" | "setupInstructions" | "copyFeedback" | "returnRoute" | "facetSearchTerms"
+> {
   const params = new URLSearchParams(window.location.search);
   const browse = parseCatalogBrowseQuery(params);
   const route = routeFromLocation(params);
   const searchTerm = searchTermFromLocation(params, route);
 
-  const registryCoverage = params.getAll('coverage')
-    .filter((value): value is RegistryCatalogCoverage => ['current', 'stale', 'empty', 'failed'].includes(value));
+  const registryCoverage = params
+    .getAll("coverage")
+    .filter((value): value is RegistryCatalogCoverage =>
+      ["current", "stale", "empty", "failed"].includes(value),
+    );
 
   const registrySort = sortRegistriesFromLocation(params);
 
-  const browseLayout: RegistryDirectoryLayout = params.get('layout') === 'list'
-    ? 'list'
-    : 'grid';
+  const browseLayout: RegistryDirectoryLayout = params.get("layout") === "list" ? "list" : "grid";
 
-  const compareRegistryNames = [...new Set(params.getAll('compareRegistry'))]
-    .filter(name => registries.some(registry => registry.name === name))
+  const compareRegistryNames = [...new Set(params.getAll("compareRegistry"))]
+    .filter((name) => registries.some((registry) => registry.name === name))
     .slice(0, 4);
 
   return {
     route,
-    authorIdentity:route.kind==='authors' ? (params.get('author')?.trim().slice(0,256)||null) : null,
+    authorIdentity:
+      route.kind === "authors" ? params.get("author")?.trim().slice(0, 256) || null : null,
     compareRegistryNames,
     searchTerm,
     discoveryPage: browse.page,
     catalogSort: browse.sort,
-    catalogRegistryNames: browse.registryNames.filter(name => registries.some(registry => registry.name === name)),
+    catalogRegistryNames: browse.registryNames.filter((name) =>
+      registries.some((registry) => registry.name === name),
+    ),
     catalogItemTypes: browse.itemTypes,
     catalogCategories: browse.categories,
     catalogAssetKinds: browse.assetKinds,
@@ -1894,17 +2163,19 @@ function hydrateStateFromUrl(
 }
 
 function legacyRoute(params: URLSearchParams): CatalogRoute {
-  const view = params.get('view');
-  const registry = params.get('registry')?.trim();
-  const item = params.get('item')?.trim();
+  const view = params.get("view");
+  const registry = params.get("registry")?.trim();
+  const item = params.get("item")?.trim();
 
-  if (view === 'compare' || view === 'matrix') return { kind: 'compare' };
+  if (view === "compare" || view === "matrix") return { kind: "compare" };
 
-  if (view === 'registries') return registry ? { kind: 'registry', namespace: registry } : { kind: 'registries' };
+  if (view === "registries")
+    return registry ? { kind: "registry", namespace: registry } : { kind: "registries" };
 
-  if (view === 'item' && registry && item) return { kind: 'component', namespace: registry, slug: item };
+  if (view === "item" && registry && item)
+    return { kind: "component", namespace: registry, slug: item };
 
-  return { kind: 'components' };
+  return { kind: "components" };
 }
 
 function catalogBrowseStateForUrl(state: AppState): CatalogBrowseQueryState {
@@ -1917,40 +2188,46 @@ function catalogBrowseStateForUrl(state: AppState): CatalogBrowseQueryState {
     assetKinds: state.catalogAssetKinds,
     canonicalIds: state.catalogCanonicalIds,
     access: state.catalogAccess,
-    reviewed: 'all',
+    reviewed: "all",
   };
 }
 
-const CATALOG_BROWSE_ROUTE_KINDS = new Set<CatalogRoute['kind']>([
-  'explore', 'blocks', 'pages', 'templates', 'themes',
-  'icons', 'icon-family', 'icon-category',
+const CATALOG_BROWSE_ROUTE_KINDS = new Set<CatalogRoute["kind"]>([
+  "explore",
+  "blocks",
+  "pages",
+  "templates",
+  "themes",
+  "icons",
+  "icon-family",
+  "icon-category",
 ]);
 
 function searchAwareRoute(state: AppState): CatalogRoute {
   const route = state.route;
 
-  if (route.kind !== 'components') return route;
+  if (route.kind !== "components") return route;
   const search = state.searchTerm.trim();
 
-  if (!search || state.searchTerm.includes('/')) return route;
+  if (!search || state.searchTerm.includes("/")) return route;
 
-  return { kind: 'components', pathSearchTerm: search };
+  return { kind: "components", pathSearchTerm: search };
 }
 
 function paramsForBrowseRoute(route: CatalogRoute, state: AppState): URLSearchParams | null {
-  if (route.kind === 'components') {
+  if (route.kind === "components") {
     const params = serializeCatalogBrowseQuery({
       ...catalogBrowseStateForUrl(state),
       itemTypes: state.catalogItemTypes,
       reviewed: state.catalogReviewed,
     });
 
-    if (!route.pathSearchTerm && state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
+    if (!route.pathSearchTerm && state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
     return params;
   }
 
-  if (route.kind === 'registry' || route.kind === 'registry-assets') {
+  if (route.kind === "registry" || route.kind === "registry-assets") {
     const params = serializeCatalogBrowseQuery({
       ...catalogBrowseStateForUrl(state),
       registryNames: [],
@@ -1958,7 +2235,7 @@ function paramsForBrowseRoute(route: CatalogRoute, state: AppState): URLSearchPa
       reviewed: state.catalogReviewed,
     });
 
-    if (state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
+    if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
     return params;
   }
@@ -1966,64 +2243,92 @@ function paramsForBrowseRoute(route: CatalogRoute, state: AppState): URLSearchPa
   if (!CATALOG_BROWSE_ROUTE_KINDS.has(route.kind)) return null;
   const params = serializeCatalogBrowseQuery(catalogBrowseStateForUrl(state));
 
-  if (state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
+  if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
   return params;
 }
 
 function appendDirectoryQuery(params: URLSearchParams, state: AppState): void {
-  if (state.discoveryPage > 1) params.set('page', String(state.discoveryPage));
+  if (state.discoveryPage > 1) params.set("page", String(state.discoveryPage));
 
-  if (state.searchTerm.trim()) params.set('q', state.searchTerm.trim());
+  if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 }
 
 function paramsForOtherRoute(route: CatalogRoute, state: AppState): URLSearchParams {
   const params = new URLSearchParams();
 
-  if (route.kind === 'authors') {
-    if (state.authorIdentity) params.set('author', state.authorIdentity);
+  if (route.kind === "authors") {
+    if (state.authorIdentity) params.set("author", state.authorIdentity);
     appendDirectoryQuery(params, state);
-  } else if (route.kind === 'registries') {
+  } else if (route.kind === "registries") {
     appendDirectoryQuery(params, state);
-    state.catalogAssetKinds.forEach(value => params.append('asset', value));
+    state.catalogAssetKinds.forEach((value) => params.append("asset", value));
 
-    if (state.registrySort !== 'name') params.set('registrySort', state.registrySort);
+    if (state.registrySort !== "name") params.set("registrySort", state.registrySort);
 
-    if (state.registryLayout !== 'grid') params.set('layout', state.registryLayout);
-  } else if (route.kind === 'compare') {
+    if (state.registryLayout !== "grid") params.set("layout", state.registryLayout);
+  } else if (route.kind === "compare") {
     appendDirectoryQuery(params, state);
-    state.compareRegistryNames.forEach(name => params.append('compareRegistry', name));
+    state.compareRegistryNames.forEach((name) => params.append("compareRegistry", name));
   }
 
   return params;
 }
 
-function syncUrlState(state: AppState, historyMode: 'push' | 'replace' = 'replace'): void {
-  if (state.route.kind === 'not-found') return;
+function syncUrlState(state: AppState, historyMode: "push" | "replace" = "replace"): void {
+  if (state.route.kind === "not-found") return;
   const route = searchAwareRoute(state);
   const params = paramsForBrowseRoute(route, state) ?? paramsForOtherRoute(route, state);
 
-  if (state.catalogLayout === 'list' && route.kind !== 'registries' && [
-    'components', 'registry', 'registry-assets', 'explore', 'blocks', 'pages',
-    'templates', 'themes', 'icons', 'icon-family', 'icon-category',
-  ].includes(route.kind)) params.set('layout', 'list');
+  if (
+    state.catalogLayout === "list" &&
+    route.kind !== "registries" &&
+    [
+      "components",
+      "registry",
+      "registry-assets",
+      "explore",
+      "blocks",
+      "pages",
+      "templates",
+      "themes",
+      "icons",
+      "icon-family",
+      "icon-category",
+    ].includes(route.kind)
+  )
+    params.set("layout", "list");
   const pathname = catalogRoutePath(route, catalogBasePath());
   const query = params.toString();
-  const next = pathname + (query ? '?'+query : '') + window.location.hash;
+  const next = pathname + (query ? "?" + query : "") + window.location.hash;
 
   if (next === window.location.pathname + window.location.search + window.location.hash) return;
-  const history = historyMode === 'push' ? window.history.pushState : window.history.replaceState;
-  history.call(window.history, {}, '', next);
+  const history = historyMode === "push" ? window.history.pushState : window.history.replaceState;
+  history.call(window.history, {}, "", next);
 }
 
 const ROUTE_PRIMARY_VIEWS = {
-  home: 'home', authors: 'authors', components: 'discover', component: 'discover',
-  explore: 'discover', registries: 'registries', registry: 'registries',
-  'registry-assets': 'registries', blocks: 'blocks', block: 'blocks',
-  pages: 'pages', page: 'pages', templates: 'templates', template: 'templates',
-  themes: 'themes', theme: 'themes', 'theme-editor': 'themes',
-  icons: 'icons', 'icon-family': 'icons', 'icon-category': 'icons',
-  compare: 'compare',
+  home: "home",
+  authors: "authors",
+  components: "discover",
+  component: "discover",
+  explore: "discover",
+  registries: "registries",
+  registry: "registries",
+  "registry-assets": "registries",
+  blocks: "blocks",
+  block: "blocks",
+  pages: "pages",
+  page: "pages",
+  templates: "templates",
+  template: "templates",
+  themes: "themes",
+  theme: "themes",
+  "theme-editor": "themes",
+  icons: "icons",
+  "icon-family": "icons",
+  "icon-category": "icons",
+  compare: "compare",
 } satisfies KindLookupContract;
 
 function primaryViewForRoute(route: CatalogRoute): string | null {
@@ -2032,12 +2337,14 @@ function primaryViewForRoute(route: CatalogRoute): string | null {
 
 function isDetailRoute(
   route: CatalogRoute,
-): route is Extract<CatalogRoute, { kind: 'component' | 'block' | 'page' | 'template' | 'theme' }> {
-  return route.kind === 'component'
-    || route.kind === 'block'
-    || route.kind === 'page'
-    || route.kind === 'template'
-    || route.kind === 'theme';
+): route is Extract<CatalogRoute, { kind: "component" | "block" | "page" | "template" | "theme" }> {
+  return (
+    route.kind === "component" ||
+    route.kind === "block" ||
+    route.kind === "page" ||
+    route.kind === "template" ||
+    route.kind === "theme"
+  );
 }
 
 function catalogRouteIdentity(route: CatalogRoute): string {
@@ -2049,16 +2356,16 @@ function itemDetailKey(namespace: string, slug: string): string {
 }
 
 function toggle<T>(values: readonly T[], value: T): T[] {
-  return values.includes(value) ? values.filter(item => item !== value) : [...values, value];
+  return values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
 }
 
 function renderCopyFeedback(feedback: CopyFeedback | null): string {
-  if (!feedback) return '';
+  if (!feedback) return "";
 
   return `
     <div class="copy-feedback copy-feedback-${escapeHtml(feedback.status)}" role="status" aria-live="polite" aria-atomic="true">
       <span>${escapeHtml(feedback.message)}</span>
-      ${feedback.status === 'error' && feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ''}
+      ${feedback.status === "error" && feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ""}
     </div>
   `;
 }

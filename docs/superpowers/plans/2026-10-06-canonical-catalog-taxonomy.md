@@ -40,11 +40,13 @@
 ### Task 1: Add the versioned canonical taxonomy and validation contract
 
 **Files:**
+
 - Create: `data/catalog-taxonomy/v1.json`
 - Create: `scripts/lib/catalog-taxonomy.mjs`
 - Create: `tests/registry-explorer/catalogTaxonomy.test.ts`
 
 **Interfaces:**
+
 - Produces: `validateCatalogTaxonomy(value) -> CatalogTaxonomy`
 - Produces: `flattenCatalogTaxonomy(taxonomy) -> TaxonomyNodeRecord[]`
 - Produces: `taxonomyNodeMap(taxonomy) -> Map<string, TaxonomyNodeRecord>`
@@ -54,6 +56,7 @@
 - [ ] **Step 1: Write failing taxonomy validation tests**
 
 Cover:
+
 - unique path-like node IDs;
 - parent/child IDs form a valid hierarchy;
 - normalized aliases are unique unless they belong to the same node;
@@ -90,6 +93,7 @@ git commit -m "feat: add canonical catalog taxonomy"
 ### Task 2: Make structural kind a first-class, accurate catalog field
 
 **Files:**
+
 - Create: `data/catalog-taxonomy/kind-overrides.json`
 - Modify: `src/registry-explorer/core/registry.schema.ts`
 - Modify: `src/registry-explorer/core/catalogCollections.ts`
@@ -97,6 +101,7 @@ git commit -m "feat: add canonical catalog taxonomy"
 - Create: `tests/registry-explorer/registryCatalogIndex.test.ts`
 
 **Interfaces:**
+
 - Produces: `CatalogCanonicalKind = "component" | "block" | "page" | "template" | "theme" | "icon" | "other"`
 - Produces/updates: `assetKindForCatalogItem(item, namespace?) -> CatalogCanonicalKind`
 - `RegistryCatalogItem.kind?: CatalogCanonicalKind`
@@ -105,6 +110,7 @@ git commit -m "feat: add canonical catalog taxonomy"
 - [ ] **Step 1: Write failing kind tests**
 
 Assert:
+
 - `registry:block -> block`;
 - `registry:component|registry:ui|registry:item -> component`;
 - `registry:page -> page`;
@@ -146,11 +152,13 @@ git commit -m "feat: normalize catalog asset kinds"
 ### Task 3: Build compact classification state and deterministic alias classification
 
 **Files:**
+
 - Create: `scripts/lib/catalog-classification-state.mjs`
 - Create: `scripts/lib/catalog-classifier.mjs`
 - Create: `tests/registry-explorer/catalogClassifier.test.ts`
 
 **Interfaces:**
+
 - Produces: `buildCatalogClassificationState({ namespace, item, sourceHints? }) -> CatalogClassificationState`
 - Produces: `findDeterministicAliasClassification(state, taxonomy) -> ClassificationResult | null`
 - `ClassificationResult` includes `taxonomyVersion`, `primary`, `path`, `method`, `inputFingerprint`.
@@ -158,6 +166,7 @@ git commit -m "feat: normalize catalog asset kinds"
 - [ ] **Step 1: Write failing state/alias tests**
 
 Cover:
+
 - local `name/title/description/kind` is enough to build state with no browser evidence;
 - empty source hints are omitted;
 - text is whitespace-normalized and bounded;
@@ -196,12 +205,14 @@ git commit -m "feat: add deterministic catalog classification"
 ### Task 4: Implement hierarchical System One classification with beam width 2
 
 **Files:**
+
 - Create: `scripts/lib/systemone-taxonomy.mjs`
 - Modify: `scripts/lib/catalog-classifier.mjs`
 - Create: `tests/registry-explorer/systemOneTaxonomy.test.ts`
 - Modify: `tests/registry-explorer/catalogClassifier.test.ts`
 
 **Interfaces:**
+
 - Produces: `chooseTaxonomyOption({ state, node, options, endpoint, timeoutMs, fetchImpl })`
 - Produces: `classifyCatalogItem({ state, taxonomy, choose, beamWidth = 2 }) -> CatalogCanonicalClassification`
 - Choice options at root: direct root IDs + `UNCLASSIFIED`.
@@ -211,6 +222,7 @@ git commit -m "feat: add deterministic catalog classification"
 - [ ] **Step 1: Write failing adapter tests**
 
 Assert the request:
+
 - targets only local `/v1/systemone`;
 - sends compact item state once;
 - criteria are generated only from taxonomy-owned `what`, `notFor`, `examples`, and aliases;
@@ -220,6 +232,7 @@ Assert the request:
 - [ ] **Step 2: Write failing beam-search tests**
 
 Fixtures must prove:
+
 - deterministic alias bypasses `choose` entirely;
 - root `UNCLASSIFIED` yields `primary: null`;
 - `THIS_CATEGORY` stops at the current parent;
@@ -257,10 +270,12 @@ git commit -m "feat: classify catalog taxonomy with system one"
 ### Task 5: Add a browser-independent resumable classification runner
 
 **Files:**
+
 - Create: `scripts/classify-registry-catalog.mjs`
 - Create: `tests/registry-explorer/catalogClassificationCli.test.ts`
 
 **Interfaces:**
+
 - CLI inputs: taxonomy path, catalog path, output directory, registry cursor/batch size, decision URL, deterministic-only flag, all-batches/resume flags.
 - Output: one classification artifact per registry plus `_batches/batch-NNNN.json` and `_state.json`.
 - The runner reads local catalog data only; no PinchTab/profile/tab arguments exist.
@@ -268,6 +283,7 @@ git commit -m "feat: classify catalog taxonomy with system one"
 - [ ] **Step 1: Write failing CLI argument/batch tests**
 
 Cover:
+
 - dry planning enumerates all local catalog registries;
 - default batch size is bounded;
 - `--all-batches` follows cursors;
@@ -308,12 +324,14 @@ git commit -m "feat: batch canonical catalog classification"
 ### Task 6: Add the reviewed gold set, evaluation report, and explicit promotion gate
 
 **Files:**
+
 - Create: `data/catalog-taxonomy/gold.json`
 - Create: `scripts/evaluate-catalog-classifications.mjs`
 - Create: `data/catalog-taxonomy/promotion-review.example.json`
 - Create: `tests/registry-explorer/catalogClassificationEvaluation.test.ts`
 
 **Interfaces:**
+
 - Gold fixture records contain registry/item semantic state plus expected `kind` and expected canonical primary/path or explicit unclassified.
 - Evaluation output includes exact primary accuracy, top-family accuracy, ancestor-path accuracy, unclassified precision/recall, confusion pairs, by-kind/source breakdown, greedy-vs-beam comparison, and probability/separation distributions.
 - Promotion review schema references taxonomy version, classification-run fingerprint, evaluation-report fingerprint, reviewer identity, and approval timestamp.
@@ -321,6 +339,7 @@ git commit -m "feat: batch canonical catalog classification"
 - [ ] **Step 1: Create failing evaluation tests**
 
 Use fixtures proving:
+
 - differently named App Shell examples converge on `application/app-shell`;
 - reviewed AI Chat/Chat Starter gold rows with expected primary `ai/chat` classify to `ai/chat`, while at least one reviewed non-chat AI row proves there is no `AI* -> ai/chat` shortcut;
 - Button examples converge on `controls/button`;
@@ -355,6 +374,7 @@ git commit -m "feat: evaluate canonical catalog classifications"
 ### Task 7: Promote reviewed classifications as a durable sync overlay and normalize optional access
 
 **Files:**
+
 - Create: `data/catalog-taxonomy/access-rules.json`
 - Create: `scripts/lib/catalog-classification-overlay.mjs`
 - Create: `scripts/promote-catalog-classifications.mjs`
@@ -364,6 +384,7 @@ git commit -m "feat: evaluate canonical catalog classifications"
 - Modify: `tests/registry-explorer/registryCatalogIndex.test.ts`
 
 **Interfaces:**
+
 - Reviewed overlay source: `data/catalog-taxonomy/classifications.json`.
 - Runtime taxonomy copy: `public/data/catalog-taxonomy.json`.
 - `applyCatalogClassificationOverlay(itemsByNamespace, overlay, accessRules)` preserves raw item fields and adds only `kind`, `canonical`, optional `sourceGroups`, optional `access`.
@@ -372,6 +393,7 @@ git commit -m "feat: evaluate canonical catalog classifications"
 - [ ] **Step 1: Write failing promotion tests**
 
 Prove:
+
 - unreviewed classification runs cannot promote;
 - stale taxonomy/input/evaluation fingerprints cannot promote;
 - raw `type`, title, description, and `categories` are byte-equivalent after overlay application;
@@ -417,6 +439,7 @@ git commit -m "feat: promote reviewed catalog classifications"
 ### Task 8: Add canonical taxonomy and optional access to query, search, facets, and URL state
 
 **Files:**
+
 - Create: `src/registry-explorer/core/catalogTaxonomy.ts`
 - Modify: `src/registry-explorer/data/loadRegistries.ts`
 - Modify: `src/registry-explorer/core/catalogQuery.ts`
@@ -426,6 +449,7 @@ git commit -m "feat: promote reviewed catalog classifications"
 - Create: `tests/registry-explorer/catalogTaxonomyRuntime.test.ts`
 
 **Interfaces:**
+
 - `LoadedRegistryData.taxonomy` contains validated runtime taxonomy.
 - `CatalogQueryOptions.canonicalIds?: readonly string[]`
 - `CatalogQueryOptions.access?: readonly ("free" | "paid")[]`
@@ -439,6 +463,7 @@ Validate `public/data/catalog-taxonomy.json`, build ID/ancestor/descendant looku
 - [ ] **Step 2: Write query/filter tests**
 
 Cover:
+
 - `kind=block + canonical=application/app-shell` across multiple registries;
 - `canonical=ai/chat` independent of source category names;
 - `kind=component + canonical=controls/button`;
@@ -475,6 +500,7 @@ git commit -m "feat: query canonical catalog taxonomy"
 ### Task 9: Expose hierarchical canonical filtering in the UI
 
 **Files:**
+
 - Modify: `src/registry-explorer/ui/catalogComponentsView.ts`
 - Modify: `src/registry-explorer/ui/catalogSidebarNavigation.ts`
 - Modify: `src/registry-explorer/ui/registryCollectionView.ts`
@@ -486,6 +512,7 @@ git commit -m "feat: query canonical catalog taxonomy"
 - Modify: `tests/registry-explorer/shell.test.ts`
 
 **Interfaces:**
+
 - Global primary filters: Search, Registry, Kind, Canonical Category, conditional Access.
 - Canonical filter renders taxonomy hierarchy and uses node IDs as state; labels are presentation only.
 - Source categories/groups may remain registry-local metadata but are not the global semantic facet.
@@ -493,6 +520,7 @@ git commit -m "feat: query canonical catalog taxonomy"
 - [ ] **Step 1: Write failing UI rendering/state tests**
 
 Assert:
+
 - hierarchical families such as Application/AI/Controls render from taxonomy data;
 - selecting `Application > App Shell` writes the canonical node ID to state/URL;
 - parent selection shows descendant result counts;
@@ -528,6 +556,7 @@ git commit -m "feat: browse canonical catalog categories"
 ### Task 10: Retire source-group classification as the primary path and perform end-to-end verification
 
 **Files:**
+
 - Modify: `docs/superpowers/specs/2026-10-05-catalog-structure-survey.md`
 - Modify: `docs/superpowers/plans/2026-10-05-catalog-structure-survey.md`
 - Leave survey runtime behavior unchanged; migration is enforced by documentation plus product/data validation that rejects survey `groups[]` as canonical taxonomy input.
@@ -535,12 +564,14 @@ git commit -m "feat: browse canonical catalog categories"
 - Modify: `scripts/validate-registry-data.mjs` to validate taxonomy, reviewed overlay fingerprints, and runtime canonical paths.
 
 **Interfaces:**
+
 - Old survey output is evidence-only and cannot be promoted into global canonical categories.
 - Product-contract/data validation checks the reviewed taxonomy/overlay/runtime relationship.
 
 - [ ] **Step 1: Add migration/product-contract regressions**
 
 Prove:
+
 - old `groups[]` artifacts cannot be consumed as canonical classification input without explicit reviewed source-hint conversion;
 - site navigation labels such as Docs/Privacy/License cannot become canonical nodes;
 - browser/source failure does not make local canonical classification impossible;
@@ -565,6 +596,7 @@ Run promotion, then `pnpm sync:registries` or the repository-supported local syn
 - [ ] **Step 6: Browser-verify the core product queries**
 
 Verify through the normal Registry Atlas interface:
+
 - all `application/app-shell` blocks across registries;
 - all `ai/chat` items;
 - `controls/button` with `kind=component`;

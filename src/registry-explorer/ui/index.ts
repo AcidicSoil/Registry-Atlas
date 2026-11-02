@@ -1,17 +1,17 @@
-export * from './shell';
+export * from "./shell";
 
-export * from './catalogComponentsView';
+export * from "./catalogComponentsView";
 
-export * from './catalogCollectionView';
+export * from "./catalogCollectionView";
 
-export * from './catalogLandingView';
+export * from "./catalogLandingView";
 
-export * from './registryDirectoryView';
+export * from "./registryDirectoryView";
 
-export * from './registryCollectionView';
+export * from "./registryCollectionView";
 
-export * from './catalogCompareView';
+export * from "./catalogCompareView";
 
-export * from './itemDetailView';
+export * from "./itemDetailView";
 
-export * from './renderSafety';
+export * from "./renderSafety";

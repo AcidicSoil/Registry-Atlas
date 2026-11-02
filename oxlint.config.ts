@@ -21,9 +21,7 @@ export default defineConfig({
     "tools/stylelint/anti-slop-css/**",
     "tools/oxlint/shadcn-lint/**",
   ],
-  jsPlugins: [
-    { name: "anti-slop", specifier: "./tools/oxlint/anti-slop/index.ts" },
-  ],
+  jsPlugins: [{ name: "anti-slop", specifier: "./tools/oxlint/anti-slop/index.ts" }],
   rules: {
     "no-restricted-imports": ["error", { patterns: [{ regex: "^\\.\\./\\.\\./\\.\\./" }] }],
 

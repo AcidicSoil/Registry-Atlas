@@ -1,13 +1,16 @@
-import { renderInfiniteScrollControl } from './infiniteScrollControl';
-import type { CatalogAuthor } from '../core/catalogAuthors';
-import { escapeHtml } from './renderSafety';
+import { renderInfiniteScrollControl } from "./infiniteScrollControl";
+import type { CatalogAuthor } from "../core/catalogAuthors";
+import { escapeHtml } from "./renderSafety";
 
 export function renderCatalogAuthors(
-  headerRoot: HTMLElement, bodyRoot: HTMLElement, authors: readonly CatalogAuthor[],
-  {search = '', page = 1}: {search?: string; page?: number} = {},
+  headerRoot: HTMLElement,
+  bodyRoot: HTMLElement,
+  authors: readonly CatalogAuthor[],
+  { search = "", page = 1 }: { search?: string; page?: number } = {},
 ): void {
-  const found = authors.filter(row => row.name.toLocaleLowerCase()
-    .includes(search.trim().toLocaleLowerCase()));
+  const found = authors.filter((row) =>
+    row.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
+  );
 
   const pageCount = Math.max(1, Math.ceil(found.length / 24));
   const currentPage = Math.max(1, Math.min(page, pageCount));
@@ -20,20 +23,28 @@ export function renderCatalogAuthors(
         Not 21st.dev account profiles or popularity rankings.</p>
     </div>
   `;
-  bodyRoot.innerHTML = visible.length ? `
-    <div class="catalog-result-meta">Showing ${(currentPage - 1) * 24 + 1}–${Math.min(currentPage * 24,found.length)} of ${found.length} attributed names</div>
+  bodyRoot.innerHTML = visible.length
+    ? `
+    <div class="catalog-result-meta">Showing ${(currentPage - 1) * 24 + 1}–${Math.min(currentPage * 24, found.length)} of ${found.length} attributed names</div>
     <div class="catalog-component-grid catalog-author-grid">
-      ${visible.map(author=>`<article class="catalog-component-card"><button type="button" class="catalog-component-open"
+      ${visible
+        .map(
+          (
+            author,
+          ) => `<article class="catalog-component-card"><button type="button" class="catalog-component-open"
         data-author-select="${escapeHtml(author.name)}"
         aria-label="View catalog items attributed to ${escapeHtml(author.name)}">
         <div class="catalog-component-card-copy">
           <strong>${escapeHtml(author.name)}</strong>
           <span class="catalog-component-registry">${author.componentCount.toLocaleString()} attributed component items</span>
         </div>
-      </button></article>`).join('')}
+      </button></article>`,
+        )
+        .join("")}
     </div>
     ${renderInfiniteScrollControl(currentPage, pageCount)}
-  ` : `<div class="empty-state"><h2>No attributed components</h2><p>
-    ${search ? 'No named contributors match this search.' : 'This registry catalog provides no named component authors.'}
+  `
+    : `<div class="empty-state"><h2>No attributed components</h2><p>
+    ${search ? "No named contributors match this search." : "This registry catalog provides no named component authors."}
     </p></div>`;
 }

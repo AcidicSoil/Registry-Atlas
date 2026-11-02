@@ -26,6 +26,7 @@
 ### Task 1: Simplify result cards, profiles, and component details
 
 **Files:**
+
 - Modify: `src/registry-explorer/ui/discoveryView.ts`
 - Modify: `src/registry-explorer/ui/registryProfileView.ts`
 - Modify: `src/registry-explorer/ui/itemDetailView.ts`
@@ -45,6 +46,7 @@
 ### Task 2: Make filtering and Compare usable at catalog scale
 
 **Files:**
+
 - Modify: `src/registry-explorer/core/catalogFacets.ts`
 - Modify: `src/registry-explorer/ui/registriesView.ts`
 - Modify: `src/registry-explorer/ui/compareView.ts`
@@ -67,6 +69,7 @@
 ### Task 3: Recompose the interface for scanability and responsive use
 
 **Files:**
+
 - Modify: `index.html`
 - Modify: `src/registry-explorer/entry.ts`
 - Modify: `public/styles/registry-explorer.css`

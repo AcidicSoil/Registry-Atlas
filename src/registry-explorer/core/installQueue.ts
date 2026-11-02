@@ -1,14 +1,11 @@
-import {
-  buildBatchInstallCommandState,
-  isValidInstallToken,
-} from './installActions.ts';
+import { buildBatchInstallCommandState, isValidInstallToken } from "./installActions.ts";
 import type {
   BatchInstallCommandState,
   InstallActionState,
   InstallQueueEntry,
-} from './registry.schema.ts';
+} from "./registry.schema.ts";
 
-export type { InstallQueueEntry } from './registry.schema.ts';
+export type { InstallQueueEntry } from "./registry.schema.ts";
 
 export interface InstallQueueItemInput {
   action: InstallActionState;
@@ -22,7 +19,7 @@ export function addToInstallQueue(
   queue: readonly InstallQueueEntry[],
   item: InstallQueueItemInput,
 ): InstallQueueEntry[] {
-  if (item.action.status !== 'enabled') return [...queue];
+  if (item.action.status !== "enabled") return [...queue];
 
   const entry: InstallQueueEntry = {
     token: item.action.token,
@@ -33,7 +30,10 @@ export function addToInstallQueue(
 
   if (item.path) entry.path = item.path;
 
-  if (!isValidInstallToken(entry.token) || queue.some(existing => existing.token === entry.token)) {
+  if (
+    !isValidInstallToken(entry.token) ||
+    queue.some((existing) => existing.token === entry.token)
+  ) {
     return [...queue];
   }
 
@@ -44,7 +44,7 @@ export function removeFromInstallQueue(
   queue: readonly InstallQueueEntry[],
   token: string,
 ): InstallQueueEntry[] {
-  return queue.filter(entry => entry.token !== token);
+  return queue.filter((entry) => entry.token !== token);
 }
 
 export function clearInstallQueue(): InstallQueueEntry[] {
@@ -55,7 +55,7 @@ export function dedupeInstallTokens(tokens: readonly string[]): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
 
-  tokens.forEach(token => {
+  tokens.forEach((token) => {
     const normalized = token.trim();
 
     if (!isValidInstallToken(normalized) || seen.has(normalized)) return;
@@ -69,5 +69,5 @@ export function dedupeInstallTokens(tokens: readonly string[]): string[] {
 export function buildInstallQueueBatchState(
   queue: readonly InstallQueueEntry[],
 ): BatchInstallCommandState {
-  return buildBatchInstallCommandState(queue.map(entry => entry.token));
+  return buildBatchInstallCommandState(queue.map((entry) => entry.token));
 }

@@ -167,10 +167,10 @@ Each node has:
 
 ```ts
 interface CatalogTaxonomyNode {
-  id: string;                // stable path-like id, e.g. "application/app-shell"
-  label: string;             // display label
+  id: string; // stable path-like id, e.g. "application/app-shell"
+  label: string; // display label
   aliases: readonly string[];
-  what: string;              // positive definition
+  what: string; // positive definition
   notFor: readonly string[]; // contrastive exclusions
   examples: readonly string[];
   children: readonly CatalogTaxonomyNode[];

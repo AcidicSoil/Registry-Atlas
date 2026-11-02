@@ -23,15 +23,15 @@ describe("renderRegistryCollection", () => {
     expect(body.innerHTML).not.toContain("Catalog not verified");
     expect(body.innerHTML).not.toContain("Copy install");
     // The shell owns the single route-level homepage action, avoiding duplicate links.
-    expect(header.innerHTML).not.toContain('>Visit registry homepage</a>');
+    expect(header.innerHTML).not.toContain(">Visit registry homepage</a>");
   });
 
-  it('shows grounded library type links and no fabricated zero-count category', () => {
+  it("shows grounded library type links and no fabricated zero-count category", () => {
     const header = root();
     const body = root();
     renderRegistryCollection(header, body, registry(), result(), {
       assetCounts: { component: 12, block: 3, template: 0 },
-      selectedKind: 'block',
+      selectedKind: "block",
     });
     expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory"');
     expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/blocks"');
@@ -44,25 +44,27 @@ describe("renderRegistryCollection", () => {
     const header = root();
     const body = root();
     const promoted = result();
-    promoted.items = [{
-      ...promoted.items[0]!,
-      id: "@registrydirectory:app-shell",
-      slug: "app-shell",
-      displayName: "App Shell",
-      categories: [],
-      item: {
-        name: "app-shell",
-        title: "App Shell",
-        type: "registry:block",
-        kind: "block",
-        canonical: {
-          taxonomyVersion: "v1",
-          primary: "application/app-shell",
-          path: ["application", "application/app-shell"],
+    promoted.items = [
+      {
+        ...promoted.items[0]!,
+        id: "@registrydirectory:app-shell",
+        slug: "app-shell",
+        displayName: "App Shell",
+        categories: [],
+        item: {
+          name: "app-shell",
+          title: "App Shell",
+          type: "registry:block",
+          kind: "block",
+          canonical: {
+            taxonomyVersion: "v1",
+            primary: "application/app-shell",
+            path: ["application", "application/app-shell"],
+          },
         },
+        routePath: "/Registry-Atlas/@registrydirectory/components/app-shell",
       },
-      routePath: "/Registry-Atlas/@registrydirectory/components/app-shell",
-    }];
+    ];
     promoted.total = 1;
     promoted.pageCount = 1;
     promoted.hasNextPage = false;
@@ -74,7 +76,7 @@ describe("renderRegistryCollection", () => {
 
     expect(body.innerHTML).toContain('data-catalog-canonical-value="application/app-shell"');
     expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory/blocks/app-shell"');
-    expect(body.innerHTML).not.toContain('data-catalog-category-value');
+    expect(body.innerHTML).not.toContain("data-catalog-category-value");
   });
 });
 
@@ -103,18 +105,24 @@ function result(): CatalogQueryResult {
   const registryValue = registry();
 
   return {
-    items: [{
-      id: "@registrydirectory:tree/menu-navigation-tree",
-      namespace: "@registrydirectory",
-      registry: registryValue,
-      slug: "tree/menu-navigation-tree",
-      displayName: "Navigation tree",
-      type: "registry:component",
-      categories: ["navigation"],
-      reviewed: false,
-      item: { name: "tree/menu-navigation-tree", type: "registry:component", categories: ["navigation"] },
-      routePath: "/Registry-Atlas/@registrydirectory/components/tree/menu-navigation-tree",
-    }],
+    items: [
+      {
+        id: "@registrydirectory:tree/menu-navigation-tree",
+        namespace: "@registrydirectory",
+        registry: registryValue,
+        slug: "tree/menu-navigation-tree",
+        displayName: "Navigation tree",
+        type: "registry:component",
+        categories: ["navigation"],
+        reviewed: false,
+        item: {
+          name: "tree/menu-navigation-tree",
+          type: "registry:component",
+          categories: ["navigation"],
+        },
+        routePath: "/Registry-Atlas/@registrydirectory/components/tree/menu-navigation-tree",
+      },
+    ],
     total: 13544,
     page: 1,
     pageSize: 32,

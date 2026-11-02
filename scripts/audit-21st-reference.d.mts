@@ -44,7 +44,13 @@ export interface ReferenceObservation {
   viewport: { width: number; height: number };
   headings: string[];
   sidebarGroups: Array<{ heading: string; links: ReferenceLink[] }>;
-  controls: Array<{kind: string;label: string;expanded?: boolean;selected?: boolean;disabled?: boolean}>;
+  controls: Array<{
+    kind: string;
+    label: string;
+    expanded?: boolean;
+    selected?: boolean;
+    disabled?: boolean;
+  }>;
   links: ReferenceLink[];
 }
 
@@ -60,10 +66,15 @@ export interface ReferenceRoutePlan {
 export function normalized21stUrl(raw: string, from?: string): string | null;
 export function planReferenceRoutes(input: {
   queue?: readonly string[];
-  observations?: Readonly<Record<string, {
-    links?: readonly ReferenceCandidateLink[];
-    sidebarGroups?: readonly ReferenceSidebarGroupInput[];
-  }>>;
+  observations?: Readonly<
+    Record<
+      string,
+      {
+        links?: readonly ReferenceCandidateLink[];
+        sidebarGroups?: readonly ReferenceSidebarGroupInput[];
+      }
+    >
+  >;
   errors?: Readonly<Record<string, { checkedAt?: string; message?: string }>>;
   maxRoutes?: number;
   nowMs?: number;
@@ -71,7 +82,9 @@ export function planReferenceRoutes(input: {
   cursor?: string | null;
 }): ReferenceRoutePlan;
 export function summarizeReferencePage(
-  raw: ReferencePageInput, expectedUrl: string, observedAt?: string,
+  raw: ReferencePageInput,
+  expectedUrl: string,
+  observedAt?: string,
 ): ReferenceObservation;
 export function main(argv: string[]): Promise<{
   schema: string;

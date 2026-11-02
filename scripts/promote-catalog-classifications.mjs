@@ -1,16 +1,18 @@
-import { isInputObject } from './lib/input-guards.mjs';
-import { pathToFileURL } from 'node:url';
-import { validateCatalogClassificationOverlay } from './lib/catalog-classification-overlay.mjs';
+import { isInputObject } from "./lib/input-guards.mjs";
+import { pathToFileURL } from "node:url";
+import { validateCatalogClassificationOverlay } from "./lib/catalog-classification-overlay.mjs";
 import {
   openAtlasCoreDatabase,
   readClassificationRun,
   readClassificationRunItems,
   readDocument,
   replaceClassificationOverlay,
-} from './lib/atlas-storage.mjs';
-import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
-import { catalogArtifactFingerprint, validatePromotionReview } from './evaluate-catalog-classifications.mjs';
-
+} from "./lib/atlas-storage.mjs";
+import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
+import {
+  catalogArtifactFingerprint,
+  validatePromotionReview,
+} from "./evaluate-catalog-classifications.mjs";
 
 function evaluationFingerprint(value) {
   const base = { ...value };
@@ -19,59 +21,73 @@ function evaluationFingerprint(value) {
   return catalogArtifactFingerprint(base);
 }
 
-export function buildReviewedClassificationOverlay({ taxonomy, classifications, evaluation, review } = {}) {
+export function buildReviewedClassificationOverlay({
+  taxonomy,
+  classifications,
+  evaluation,
+  review,
+} = {}) {
   const reviewedTaxonomy = validateCatalogTaxonomy(taxonomy);
 
-  if (!Array.isArray(classifications)) throw new Error('Reviewed classifications must be an array');
+  if (!Array.isArray(classifications)) throw new Error("Reviewed classifications must be an array");
   const approved = validatePromotionReview(review);
 
-  if (approved.taxonomyVersion !== reviewedTaxonomy.version
-    || evaluation?.taxonomyVersion !== reviewedTaxonomy.version) {
-    throw new Error('Promotion taxonomy version does not match reviewed taxonomy');
+  if (
+    approved.taxonomyVersion !== reviewedTaxonomy.version ||
+    evaluation?.taxonomyVersion !== reviewedTaxonomy.version
+  ) {
+    throw new Error("Promotion taxonomy version does not match reviewed taxonomy");
   }
 
   const runFingerprint = catalogArtifactFingerprint(classifications);
 
-  if (evaluation?.classificationRunFingerprint !== runFingerprint
-    || approved.classificationRunFingerprint !== runFingerprint) {
-    throw new Error('Promotion classification run fingerprint mismatch');
+  if (
+    evaluation?.classificationRunFingerprint !== runFingerprint ||
+    approved.classificationRunFingerprint !== runFingerprint
+  ) {
+    throw new Error("Promotion classification run fingerprint mismatch");
   }
 
   const computedEvaluationFingerprint = evaluationFingerprint(evaluation ?? {});
 
-  if (evaluation?.evaluationReportFingerprint !== computedEvaluationFingerprint
-    || approved.evaluationReportFingerprint !== computedEvaluationFingerprint) {
-    throw new Error('Promotion evaluation report fingerprint mismatch');
+  if (
+    evaluation?.evaluationReportFingerprint !== computedEvaluationFingerprint ||
+    approved.evaluationReportFingerprint !== computedEvaluationFingerprint
+  ) {
+    throw new Error("Promotion evaluation report fingerprint mismatch");
   }
 
-  const items = classifications.map(item => {
-    if (!item || !isInputObject(item) || item.pendingDecision) {
-      throw new Error('Promotion cannot include pending or invalid classification items');
-    }
+  const items = classifications
+    .map((item) => {
+      if (!item || !isInputObject(item) || item.pendingDecision) {
+        throw new Error("Promotion cannot include pending or invalid classification items");
+      }
 
-    if (item.taxonomyVersion !== reviewedTaxonomy.version) {
-      throw new Error(`Promotion item taxonomy mismatch for ${item?.namespace}/${item?.name}`);
-    }
+      if (item.taxonomyVersion !== reviewedTaxonomy.version) {
+        throw new Error(`Promotion item taxonomy mismatch for ${item?.namespace}/${item?.name}`);
+      }
 
-    return (() => {
-  const result = {};
-  result.namespace = item.namespace;
-  result.name = item.name;
-  result.kind = item.kind;
-  result.canonical = {
-        primary: item.canonical?.primary ?? null,
-        path: [...(item.canonical?.path ?? [])],
-      };
-  result.inputFingerprint = item.inputFingerprint;
+      return (() => {
+        const result = {};
+        result.namespace = item.namespace;
+        result.name = item.name;
+        result.kind = item.kind;
+        result.canonical = {
+          primary: item.canonical?.primary ?? null,
+          path: [...(item.canonical?.path ?? [])],
+        };
+        result.inputFingerprint = item.inputFingerprint;
 
-  if (Array.isArray(item.sourceGroups) && item.sourceGroups.length) Object.assign(result, { sourceGroups: [...item.sourceGroups] });
+        if (Array.isArray(item.sourceGroups) && item.sourceGroups.length)
+          Object.assign(result, { sourceGroups: [...item.sourceGroups] });
 
-  return result;
-})();
-  }).sort((a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name));
+        return result;
+      })();
+    })
+    .sort((a, b) => a.namespace.localeCompare(b.namespace) || a.name.localeCompare(b.name));
 
   const overlay = {
-    schema: 'registry-atlas.catalog-classification-overlay.v1',
+    schema: "registry-atlas.catalog-classification-overlay.v1",
     taxonomyVersion: reviewedTaxonomy.version,
     taxonomyFingerprint: catalogArtifactFingerprint(reviewedTaxonomy),
     classificationRunFingerprint: runFingerprint,
@@ -87,27 +103,27 @@ export function buildReviewedClassificationOverlay({ taxonomy, classifications, 
 export function parsePromotionArgs(argv) {
   const options = {
     runId: null,
-    evaluationDocument: 'catalog-classification-evaluation',
-    reviewDocument: 'catalog-promotion-review',
+    evaluationDocument: "catalog-classification-evaluation",
+    reviewDocument: "catalog-promotion-review",
   };
 
   for (let index = 0; index < argv.length; index += 1) {
     const flag = argv[index];
 
-    if (!['--run-id', '--evaluation-document', '--review-document'].includes(flag)) {
+    if (!["--run-id", "--evaluation-document", "--review-document"].includes(flag)) {
       throw new Error(`Unknown argument: ${flag}`);
     }
 
     const value = argv[++index];
 
-    if (!value || value.startsWith('--')) throw new Error(`Missing value for ${flag}`);
+    if (!value || value.startsWith("--")) throw new Error(`Missing value for ${flag}`);
 
-    if (flag === '--run-id') options.runId = value;
-    else if (flag === '--evaluation-document') options.evaluationDocument = value;
+    if (flag === "--run-id") options.runId = value;
+    else if (flag === "--evaluation-document") options.evaluationDocument = value;
     else options.reviewDocument = value;
   }
 
-  if (!options.runId) throw new Error('Missing required --run-id');
+  if (!options.runId) throw new Error("Missing required --run-id");
 
   return options;
 }
@@ -117,12 +133,12 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
   const database = openAtlasCoreDatabase(cwd);
 
   try {
-    const taxonomyValue = await readDocument(database, 'catalog-taxonomy');
+    const taxonomyValue = await readDocument(database, "catalog-taxonomy");
 
-    if (!taxonomyValue) throw new Error('Catalog taxonomy is missing from the Atlas database');
+    if (!taxonomyValue) throw new Error("Catalog taxonomy is missing from the Atlas database");
     const run = await readClassificationRun(database, options.runId);
 
-    if (!run || run.status !== 'completed') {
+    if (!run || run.status !== "completed") {
       throw new Error(`Classification run is not complete: ${options.runId}`);
     }
 
@@ -130,12 +146,13 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
     const evaluation = await readDocument(database, options.evaluationDocument);
     const review = await readDocument(database, options.reviewDocument);
 
-    if (!evaluation) throw new Error(`Evaluation document is missing: ${options.evaluationDocument}`);
+    if (!evaluation)
+      throw new Error(`Evaluation document is missing: ${options.evaluationDocument}`);
 
     if (!review) throw new Error(`Promotion review document is missing: ${options.reviewDocument}`);
 
     if (evaluation.beamRunId && evaluation.beamRunId !== options.runId) {
-      throw new Error('Evaluation document belongs to a different classification run');
+      throw new Error("Evaluation document belongs to a different classification run");
     }
 
     const overlay = buildReviewedClassificationOverlay({
@@ -154,8 +171,10 @@ export async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().then(result => console.log(JSON.stringify(result, null, 2))).catch(error => {
-    console.error(String(error?.message ?? error));
-    process.exitCode = 1;
-  });
+  main()
+    .then((result) => console.log(JSON.stringify(result, null, 2)))
+    .catch((error) => {
+      console.error(String(error?.message ?? error));
+      process.exitCode = 1;
+    });
 }

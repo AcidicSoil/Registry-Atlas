@@ -11,6 +11,7 @@
 **Spec:** `docs/superpowers/specs/2026-09-29-catalog-presentation-enrichment-design.md`
 
 ## Global Constraints
+
 - The shared sidebar/drawer owns the single catalog text-search intent; route controls contain only supported facets/sort.
 - No fake previews or inferred marketplace semantics.
 - Preserve exact namespace + item-name route/install identity.
@@ -20,6 +21,7 @@
 - Use the managed `registry-atlas` profile for target-app browser verification.
 
 ## Review Focus
+
 - Registry facet populations remain bounded and usable without an unbounded control dominating the sidebar.
 - Missing optional metadata produces a compact factual specimen, not blank visual chrome.
 - Legacy `reviewed` query URLs degrade safely after user-facing review controls are removed.

@@ -1,4 +1,4 @@
-import { renderInfiniteScrollControl } from './infiniteScrollControl';
+import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
 import { catalogRoutePath } from "../core/catalogRoutes";
@@ -15,18 +15,25 @@ export function renderRegistryCollection(
   options: {
     coverage?: RegistryCatalogCoverage;
     controls?: string;
-    layout?: 'grid' | 'list';
+    layout?: "grid" | "list";
     assetCounts?: Partial<Record<CatalogAssetKind, number>>;
     selectedKind?: CatalogAssetKind;
     basePath?: string;
   } = {},
 ): void {
   const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
-  const basePath = options.basePath ?? '/Registry-Atlas/';
-  const rootRoute = catalogRoutePath({ kind: 'registry', namespace: registry.name }, basePath);
+  const basePath = options.basePath ?? "/Registry-Atlas/";
+  const rootRoute = catalogRoutePath({ kind: "registry", namespace: registry.name }, basePath);
 
-  const assetLabels: Array<[CatalogAssetKind, string]> = [['component', 'Components'], ['block','Blocks'],
-    ['page','Pages'], ['template','Templates'], ['theme','Themes'], ['icon','Icons'], ['other','Other']];
+  const assetLabels: Array<[CatalogAssetKind, string]> = [
+    ["component", "Components"],
+    ["block", "Blocks"],
+    ["page", "Pages"],
+    ["template", "Templates"],
+    ["theme", "Themes"],
+    ["icon", "Icons"],
+    ["other", "Other"],
+  ];
 
   headerRoot.innerHTML = `
     <div class="registry-collection-heading">
@@ -66,27 +73,37 @@ export function renderRegistryCollection(
           </div>
         </div>
         <nav class="registry-asset-navigation" aria-label="Browse library by type">
-          <a class="registry-asset-link${!options.selectedKind ? ' is-active' : ''}"
+          <a class="registry-asset-link${!options.selectedKind ? " is-active" : ""}"
             href="${escapeHtml(rootRoute)}" data-catalog-route="${escapeHtml(rootRoute)}"
-            ${!options.selectedKind ? 'aria-current="page"' : ''}>All items</a>
-          ${assetLabels.flatMap(([kind, label]) => {
-            if ((options.assetCounts?.[kind] ?? 0) <= 0) return [];
-            const path = catalogRoutePath({ kind: 'registry-assets', namespace: registry.name, assetKind: kind }, basePath);
+            ${!options.selectedKind ? 'aria-current="page"' : ""}>All items</a>
+          ${assetLabels
+            .flatMap(([kind, label]) => {
+              if ((options.assetCounts?.[kind] ?? 0) <= 0) return [];
 
-            return [`<a class="registry-asset-link${options.selectedKind === kind ? ' is-active' : ''}"
+              const path = catalogRoutePath(
+                { kind: "registry-assets", namespace: registry.name, assetKind: kind },
+                basePath,
+              );
+
+              return [
+                `<a class="registry-asset-link${options.selectedKind === kind ? " is-active" : ""}"
               href="${escapeHtml(path)}" data-catalog-route="${escapeHtml(path)}"
-              ${options.selectedKind === kind ? 'aria-current="page"' : ''}>${label} <span>${options.assetCounts?.[kind]?.toLocaleString()}</span></a>`];
-          }).join('')}
+              ${options.selectedKind === kind ? 'aria-current="page"' : ""}>${label} <span>${options.assetCounts?.[kind]?.toLocaleString()}</span></a>`,
+              ];
+            })
+            .join("")}
         </nav>
 
         ${options.controls ?? ""}
-        ${result.items.length
-          ? `
+        ${
+          result.items.length
+            ? `
             ${renderMeta(result)}
-            <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"}">${result.items.map(item => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
+            <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"}">${result.items.map((item) => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
             ${renderInfiniteScrollControl(result.page, result.pageCount)}
           `
-          : renderEmptyRegistryInventory(options.coverage)}
+            : renderEmptyRegistryInventory(options.coverage)
+        }
       </section>
     </div>
   `;
@@ -127,19 +144,19 @@ function renderMeta(result: CatalogQueryResult): string {
 }
 
 function legacyCardRouteKind(
-  item: CatalogQueryResult['items'][number],
-): 'component' | 'block' | 'page' | 'template' | 'theme' | 'icon' {
+  item: CatalogQueryResult["items"][number],
+): "component" | "block" | "page" | "template" | "theme" | "icon" {
   const kind = assetKindForCatalogItem(item.item, item.namespace);
 
-  if (kind === 'block') return 'block';
+  if (kind === "block") return "block";
 
-  if (kind === 'page') return 'page';
+  if (kind === "page") return "page";
 
-  if (kind === 'theme') return 'theme';
+  if (kind === "theme") return "theme";
 
-  if (kind === 'template') return 'template';
+  if (kind === "template") return "template";
 
-  if (kind === 'icon') return 'icon';
+  if (kind === "icon") return "icon";
 
-  return 'component';
+  return "component";
 }

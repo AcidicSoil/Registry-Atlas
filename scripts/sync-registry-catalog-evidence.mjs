@@ -1,11 +1,11 @@
-import { isInputObject, isInputString } from './lib/input-guards.mjs';
-import { pathToFileURL } from 'node:url';
+import { isInputObject, isInputString } from "./lib/input-guards.mjs";
+import { pathToFileURL } from "node:url";
 import {
   applyCatalogClassificationOverlay,
   stripCatalogClassificationFields,
   validateCatalogClassificationOverlay,
-} from './lib/catalog-classification-overlay.mjs';
-import { validateCatalogTaxonomy } from './lib/catalog-taxonomy.mjs';
+} from "./lib/catalog-classification-overlay.mjs";
+import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,
   transaction,
@@ -14,17 +14,17 @@ import {
   replaceCatalogEvidence,
   replaceCatalogSnapshot,
   replaceItemDetails,
-} from './lib/atlas-storage.mjs';
+} from "./lib/atlas-storage.mjs";
 
 export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
-  'registry:block',
-  'registry:component',
-  'registry:ui',
-  'registry:page',
-  'registry:item',
-  'registry:style',
-  'registry:theme',
-  'registry:icon',
+  "registry:block",
+  "registry:component",
+  "registry:ui",
+  "registry:page",
+  "registry:item",
+  "registry:style",
+  "registry:theme",
+  "registry:icon",
 ]);
 
 const COMPACT_DESCRIPTION_MAX = 280;
@@ -32,26 +32,26 @@ const COMPACT_DESCRIPTION_MAX = 280;
 const COMPACT_AUTHOR_MAX = 120;
 
 const THEME_SWATCH_KEYS = Object.freeze([
-  'background',
-  'foreground',
-  'primary',
-  'secondary',
-  'accent',
-  'muted',
-  'card',
+  "background",
+  "foreground",
+  "primary",
+  "secondary",
+  "accent",
+  "muted",
+  "card",
 ]);
 
 function deriveCatalogCandidates(template) {
-  if (!isInputString(template) || !template.includes('{name}')) return [];
+  if (!isInputString(template) || !template.includes("{name}")) return [];
 
   const itemTemplates = [];
 
-  if (template.includes('{style}')) {
+  if (template.includes("{style}")) {
     itemTemplates.push(
-      template.replace(/\/\{style\}(?=\/)/g, ''),
-      template.replaceAll('{style}', 'new-york-v4'),
-      template.replaceAll('{style}', 'new-york'),
-      template.replaceAll('{style}', 'default'),
+      template.replace(/\/\{style\}(?=\/)/g, ""),
+      template.replaceAll("{style}", "new-york-v4"),
+      template.replaceAll("{style}", "new-york"),
+      template.replaceAll("{style}", "default"),
     );
   } else {
     itemTemplates.push(template);
@@ -60,9 +60,13 @@ function deriveCatalogCandidates(template) {
   const candidates = [];
 
   for (const itemTemplate of itemTemplates) {
-    const catalogCandidate = resolveItemUrlFromTemplate(itemTemplate, 'registry');
+    const catalogCandidate = resolveItemUrlFromTemplate(itemTemplate, "registry");
 
-    if (!catalogCandidate || candidates.some(candidate => candidate.catalogUrl === catalogCandidate)) continue;
+    if (
+      !catalogCandidate ||
+      candidates.some((candidate) => candidate.catalogUrl === catalogCandidate)
+    )
+      continue;
     candidates.push({ catalogUrl: catalogCandidate, itemTemplate });
   }
 
@@ -70,7 +74,7 @@ function deriveCatalogCandidates(template) {
 }
 
 export function deriveCatalogUrls(template) {
-  return deriveCatalogCandidates(template).map(candidate => candidate.catalogUrl);
+  return deriveCatalogCandidates(template).map((candidate) => candidate.catalogUrl);
 }
 
 function resolveItemUrlFromTemplate(template, itemName) {
@@ -78,15 +82,20 @@ function resolveItemUrlFromTemplate(template, itemName) {
   const trimmedName = itemName.trim();
 
   if (!/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(trimmedName)) return null;
-  const encodedName = trimmedName.split('/').map(segment => encodeURIComponent(segment)).join('/');
-  const candidate = template.replaceAll('{name}', encodedName);
+
+  const encodedName = trimmedName
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+
+  const candidate = template.replaceAll("{name}", encodedName);
 
   if (/\{[^}]+\}/.test(candidate)) return null;
 
   try {
     const url = new URL(candidate);
 
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
   } catch {
     return null;
   }
@@ -111,7 +120,7 @@ export function buildCatalogEvidence(
     namespace,
     catalog_url: catalogUrl,
     item_count: catalog.items.length,
-    status: 'available',
+    status: "available",
     synced_at: syncedAt,
   };
 }
@@ -125,15 +134,20 @@ export function rawItemUrlFromCatalogUrl(catalogUrl, itemName) {
   try {
     const url = new URL(catalogUrl);
 
-    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
-    const lastSlash = url.pathname.lastIndexOf('/');
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    const lastSlash = url.pathname.lastIndexOf("/");
 
     if (lastSlash < 0) return null;
     const leaf = url.pathname.slice(lastSlash + 1);
 
-    if (leaf !== 'registry.json' && leaf !== 'registry') return null;
-    const encodedName = trimmedName.split('/').map(segment => encodeURIComponent(segment)).join('/');
-    url.pathname = `${url.pathname.slice(0, lastSlash + 1)}${encodedName}${leaf.endsWith('.json') ? '.json' : ''}`;
+    if (leaf !== "registry.json" && leaf !== "registry") return null;
+
+    const encodedName = trimmedName
+      .split("/")
+      .map((segment) => encodeURIComponent(segment))
+      .join("/");
+
+    url.pathname = `${url.pathname.slice(0, lastSlash + 1)}${encodedName}${leaf.endsWith(".json") ? ".json" : ""}`;
 
     return url.href;
   } catch {
@@ -147,8 +161,8 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
 
   for (const item of Array.isArray(catalog?.items) ? catalog.items : []) {
     if (!item || !isInputObject(item)) continue;
-    const name = isInputString(item.name) ? item.name.trim() : '';
-    const type = isInputString(item.type) ? item.type.trim() : '';
+    const name = isInputString(item.name) ? item.name.trim() : "";
+    const type = isInputString(item.type) ? item.type.trim() : "";
 
     if (!name || !allowedTypes.has(type)) continue;
 
@@ -173,7 +187,7 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
     const categories = [
       ...(Array.isArray(item.categories) ? item.categories : []),
       ...(isInputString(item.category) ? [item.category] : []),
-    ].flatMap(value => isInputString(value) && value.trim() ? [value.trim()] : []);
+    ].flatMap((value) => (isInputString(value) && value.trim() ? [value.trim()] : []));
 
     if (categories.length) compact.categories = [...new Set(categories)];
 
@@ -184,21 +198,21 @@ export function buildCompactCatalogItems(catalog, resolvedCatalogUrl = null) {
 }
 
 function boundedText(value, maxCodePoints) {
-  if (!isInputString(value)) return '';
+  if (!isInputString(value)) return "";
   const trimmed = value.trim();
 
-  if (!trimmed) return '';
+  if (!trimmed) return "";
 
-  return Array.from(trimmed).slice(0, maxCodePoints).join('');
+  return Array.from(trimmed).slice(0, maxCodePoints).join("");
 }
 
 function buildThemePreview(type, cssVars) {
-  if (type !== 'registry:theme' && type !== 'registry:style') return null;
+  if (type !== "registry:theme" && type !== "registry:style") return null;
 
   if (!cssVars || !isInputObject(cssVars) || Array.isArray(cssVars)) return null;
   const preview = {};
 
-  for (const mode of ['light', 'dark']) {
+  for (const mode of ["light", "dark"]) {
     const source = cssVars[mode];
 
     if (!source || !isInputObject(source) || Array.isArray(source)) continue;
@@ -220,7 +234,7 @@ function sanitizeCssVars(cssVars) {
   if (!cssVars || !isInputObject(cssVars) || Array.isArray(cssVars)) return null;
   const output = {};
 
-  for (const mode of ['theme', 'light', 'dark']) {
+  for (const mode of ["theme", "light", "dark"]) {
     const source = cssVars[mode];
 
     if (!source || !isInputObject(source) || Array.isArray(source)) continue;
@@ -241,8 +255,8 @@ export function buildRegistryItemDetailBundle(catalog) {
 
   for (const item of Array.isArray(catalog?.items) ? catalog.items : []) {
     if (!item || !isInputObject(item)) continue;
-    const name = isInputString(item.name) ? item.name.trim() : '';
-    const type = isInputString(item.type) ? item.type.trim() : '';
+    const name = isInputString(item.name) ? item.name.trim() : "";
+    const type = isInputString(item.type) ? item.type.trim() : "";
 
     if (!name || !allowedTypes.has(type)) continue;
 
@@ -250,7 +264,8 @@ export function buildRegistryItemDetailBundle(catalog) {
 
     if (isInputString(item.title) && item.title.trim()) detail.title = item.title.trim();
 
-    if (isInputString(item.description) && item.description.trim()) detail.description = item.description.trim();
+    if (isInputString(item.description) && item.description.trim())
+      detail.description = item.description.trim();
 
     if (isInputString(item.author) && item.author.trim()) detail.author = item.author.trim();
     const cssVars = sanitizeCssVars(item.cssVars);
@@ -260,13 +275,15 @@ export function buildRegistryItemDetailBundle(catalog) {
     const categories = [
       ...(Array.isArray(item.categories) ? item.categories : []),
       ...(isInputString(item.category) ? [item.category] : []),
-    ].flatMap(value => isInputString(value) && value.trim() ? [value.trim()] : []);
+    ].flatMap((value) => (isInputString(value) && value.trim() ? [value.trim()] : []));
 
     if (categories.length) detail.categories = [...new Set(categories)];
 
-    for (const field of ['dependencies', 'devDependencies', 'registryDependencies']) {
+    for (const field of ["dependencies", "devDependencies", "registryDependencies"]) {
       const values = Array.isArray(item[field])
-        ? item[field].filter(value => isInputString(value) && value.trim()).map(value => value.trim())
+        ? item[field]
+            .filter((value) => isInputString(value) && value.trim())
+            .map((value) => value.trim())
         : [];
 
       if (values.length) detail[field] = values;
@@ -274,11 +291,13 @@ export function buildRegistryItemDetailBundle(catalog) {
 
     const files = Array.isArray(item.files)
       ? item.files
-          .filter(file => file && isInputObject(file))
-          .map(file => {
-            const pathValue = isInputString(file.path) ? file.path.trim() : '';
-            const typeValue = isInputString(file.type) ? file.type.trim() : '';
-            const target = isInputString(file.target) && file.target.trim() ? file.target.trim() : null;
+          .filter((file) => file && isInputObject(file))
+          .map((file) => {
+            const pathValue = isInputString(file.path) ? file.path.trim() : "";
+            const typeValue = isInputString(file.type) ? file.type.trim() : "";
+
+            const target =
+              isInputString(file.target) && file.target.trim() ? file.target.trim() : null;
 
             if (!pathValue || !typeValue) return null;
 
@@ -312,28 +331,35 @@ export function mergeCatalogItems(previous = {}, fresh = {}, failures = []) {
 
 export function buildCatalogCoverageFacts(atlas = {}, itemSummaries = [], evidence = null) {
   const hasReviewedItems = Array.isArray(itemSummaries) && itemSummaries.length > 0;
-  const hasCatalogEvidence = evidence?.status === 'available' || evidence?.status === 'stale';
+  const hasCatalogEvidence = evidence?.status === "available" || evidence?.status === "stale";
 
-  const coverageStatus = hasReviewedItems || hasCatalogEvidence
-    ? 'verified'
-    : (isInputString(atlas.coverage_status) ? atlas.coverage_status : 'unverified');
+  const coverageStatus =
+    hasReviewedItems || hasCatalogEvidence
+      ? "verified"
+      : isInputString(atlas.coverage_status)
+        ? atlas.coverage_status
+        : "unverified";
 
-  const confidence = hasReviewedItems || hasCatalogEvidence
-    ? 'high'
-    : (isInputString(atlas.confidence) ? atlas.confidence : 'unknown');
+  const confidence =
+    hasReviewedItems || hasCatalogEvidence
+      ? "high"
+      : isInputString(atlas.confidence)
+        ? atlas.confidence
+        : "unknown";
 
-  const evidenceStatus = evidence?.status === 'available'
-    ? 'catalog'
-    : evidence?.status === 'stale'
-      ? 'stale-catalog'
-      : 'none';
+  const evidenceStatus =
+    evidence?.status === "available"
+      ? "catalog"
+      : evidence?.status === "stale"
+        ? "stale-catalog"
+        : "none";
 
   return {
     coverage_status: coverageStatus,
     confidence,
     comparison_evidence: evidenceStatus,
     catalog_item_count: Number.isFinite(evidence?.item_count) ? evidence.item_count : 0,
-    catalog_evidence_url: isInputString(evidence?.catalog_url) ? evidence.catalog_url : '',
+    catalog_evidence_url: isInputString(evidence?.catalog_url) ? evidence.catalog_url : "",
   };
 }
 
@@ -356,17 +382,17 @@ export function mergeCatalogEvidence(previous = {}, fresh = {}, failures = []) {
     const namespace = failure?.namespace;
 
     if (!namespace || fresh[namespace] || !output[namespace]) continue;
-    output[namespace] = { ...output[namespace], status: 'stale' };
+    output[namespace] = { ...output[namespace], status: "stale" };
   }
 
   return Object.fromEntries(Object.entries(output).sort(([a], [b]) => a.localeCompare(b)));
 }
 
 function normalizeNamespace(value) {
-  if (!isInputString(value) || !value.trim()) return '';
+  if (!isInputString(value) || !value.trim()) return "";
   const valueLower = value.trim().toLowerCase();
 
-  return valueLower.startsWith('@') ? valueLower : `@${valueLower}`;
+  return valueLower.startsWith("@") ? valueLower : `@${valueLower}`;
 }
 
 async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
@@ -374,10 +400,10 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
   const candidates = deriveCatalogCandidates(registry?.url);
 
   if (!namespace || candidates.length === 0) {
-    return { failure: { namespace, reason: 'unsupported-template' } };
+    return { failure: { namespace, reason: "unsupported-template" } };
   }
 
-  let lastFailure = { namespace, reason: 'fetch-error', catalog_url: candidates[0].catalogUrl };
+  let lastFailure = { namespace, reason: "fetch-error", catalog_url: candidates[0].catalogUrl };
 
   for (const candidate of candidates) {
     const { catalogUrl } = candidate;
@@ -394,7 +420,7 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
           };
 
           if ((response.status === 429 || response.status >= 500) && attempt === 0) {
-            await new Promise(resolve => setTimeout(resolve, 700));
+            await new Promise((resolve) => setTimeout(resolve, 700));
             continue;
           }
 
@@ -408,7 +434,7 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
         } catch {
           lastFailure = {
             namespace,
-            reason: 'invalid-json',
+            reason: "invalid-json",
             catalog_url: response.url || catalogUrl,
           };
           break;
@@ -417,7 +443,7 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
         if (!Array.isArray(catalog?.items)) {
           lastFailure = {
             namespace,
-            reason: 'invalid-registry-catalog',
+            reason: "invalid-registry-catalog",
             catalog_url: response.url || catalogUrl,
           };
           break;
@@ -437,13 +463,14 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
           details: buildRegistryItemDetailBundle(catalog),
         };
       } catch (error) {
-        const errorName = error?.name ?? 'fetch-error';
+        const errorName = error?.name ?? "fetch-error";
 
-        const reason = errorName === 'TimeoutError'
-          ? 'timeout'
-          : errorName === 'TypeError'
-            ? 'network-error'
-            : errorName;
+        const reason =
+          errorName === "TimeoutError"
+            ? "timeout"
+            : errorName === "TypeError"
+              ? "network-error"
+              : errorName;
 
         lastFailure = { namespace, reason, catalog_url: catalogUrl };
 
@@ -456,26 +483,31 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
 }
 
 export function classifyCatalogFailureReason(reason) {
-  if (reason === 'unsupported-template') return 'template-unsupported';
+  if (reason === "unsupported-template") return "template-unsupported";
 
-  if (reason === 'invalid-json' || reason === 'invalid-registry-catalog') return 'invalid-response';
+  if (reason === "invalid-json" || reason === "invalid-registry-catalog") return "invalid-response";
 
-  if (reason === 'http-403') return 'access-restricted';
+  if (reason === "http-403") return "access-restricted";
 
-  if (reason === 'http-429' || reason === 'timeout' || reason === 'network-error' || /^http-5\d\d$/.test(reason)) {
-    return 'transient-network';
+  if (
+    reason === "http-429" ||
+    reason === "timeout" ||
+    reason === "network-error" ||
+    /^http-5\d\d$/.test(reason)
+  ) {
+    return "transient-network";
   }
 
-  if (reason === 'http-400' || reason === 'http-404') return 'catalog-root-unavailable';
+  if (reason === "http-400" || reason === "http-404") return "catalog-root-unavailable";
 
-  return 'other';
+  return "other";
 }
 
 export async function syncCatalogEvidenceForRegistries(
   registries,
   { previous = {}, previousItems = {}, concurrency = 16, timeoutMs = 8000, fetchImpl = fetch } = {},
 ) {
-  if (!Array.isArray(registries)) throw new Error('Registry directory must be an array.');
+  if (!Array.isArray(registries)) throw new Error("Registry directory must be an array.");
   const queue = [...registries];
   const fresh = {};
   const freshItems = {};
@@ -500,13 +532,15 @@ export async function syncCatalogEvidenceForRegistries(
   await Promise.all(Array.from({ length: Math.min(concurrency, registries.length) }, worker));
   const evidence = mergeCatalogEvidence(previous, fresh, failures);
   const itemsByNamespace = mergeCatalogItems(previousItems, freshItems, failures);
-  const staleCount = Object.values(evidence).filter(item => item.status === 'stale').length;
+  const staleCount = Object.values(evidence).filter((item) => item.status === "stale").length;
 
-  const discoverableItemCount = Object.values(itemsByNamespace)
-    .reduce((count, items) => count + (Array.isArray(items) ? items.length : 0), 0);
+  const discoverableItemCount = Object.values(itemsByNamespace).reduce(
+    (count, items) => count + (Array.isArray(items) ? items.length : 0),
+    0,
+  );
 
   const sortedFailures = failures
-    .map(failure => ({
+    .map((failure) => ({
       ...failure,
       failure_class: classifyCatalogFailureReason(failure.reason),
     }))
@@ -515,7 +549,8 @@ export async function syncCatalogEvidenceForRegistries(
   const failureClassCounts = {};
 
   for (const failure of sortedFailures) {
-    failureClassCounts[failure.failure_class] = (failureClassCounts[failure.failure_class] ?? 0) + 1;
+    failureClassCounts[failure.failure_class] =
+      (failureClassCounts[failure.failure_class] ?? 0) + 1;
   }
 
   const report = {
@@ -540,8 +575,10 @@ function parseArgs(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
 
-    if (arg === '--concurrency') options.concurrency = Math.max(1, Number(argv[++index]) || options.concurrency);
-    else if (arg === '--timeout-ms') options.timeoutMs = Math.max(1000, Number(argv[++index]) || options.timeoutMs);
+    if (arg === "--concurrency")
+      options.concurrency = Math.max(1, Number(argv[++index]) || options.concurrency);
+    else if (arg === "--timeout-ms")
+      options.timeoutMs = Math.max(1000, Number(argv[++index]) || options.timeoutMs);
     else throw new Error(`Unknown argument: ${arg}`);
   }
 
@@ -557,7 +594,7 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
     const registries = state.rawRegistries;
 
     if (!Array.isArray(registries) || registries.length === 0) {
-      throw new Error('The Atlas database does not contain the official registry directory');
+      throw new Error("The Atlas database does not contain the official registry directory");
     }
 
     const result = await syncCatalogEvidenceForRegistries(registries, {
@@ -571,39 +608,51 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
     let projected = { itemsByNamespace: stripped, report: { applied: 0, stale: 0, missing: 0 } };
 
     if (state.classificationOverlay) {
-      if (!state.taxonomy) throw new Error('Catalog taxonomy is missing from the Atlas database');
+      if (!state.taxonomy) throw new Error("Catalog taxonomy is missing from the Atlas database");
       const taxonomy = validateCatalogTaxonomy(state.taxonomy);
       const overlay = validateCatalogClassificationOverlay(state.classificationOverlay, taxonomy);
       projected = applyCatalogClassificationOverlay(stripped, overlay, state.accessRules ?? {});
     }
 
-    await transaction(core, async tx => {
-    await replaceCatalogEvidence(tx, result.evidence);
-    await replaceCatalogSnapshot(tx, {
-      meta: {
-        source_url: state.runtime?.meta?.source_url ?? 'database:raw-registries',
-        generated_at: result.report.generated_at,
-        registry_count: Object.keys(projected.itemsByNamespace).length,
-        item_count: result.report.discoverable_item_count,
-      },
-      registries: projected.itemsByNamespace,
+    await transaction(core, async (tx) => {
+      await replaceCatalogEvidence(tx, result.evidence);
+      await replaceCatalogSnapshot(tx, {
+        meta: {
+          source_url: state.runtime?.meta?.source_url ?? "database:raw-registries",
+          generated_at: result.report.generated_at,
+          registry_count: Object.keys(projected.itemsByNamespace).length,
+          item_count: result.report.discoverable_item_count,
+        },
+        registries: projected.itemsByNamespace,
+      });
+
+      for (const [namespace, rows] of Object.entries(result.freshDetailsByNamespace)) {
+        await replaceItemDetails(tx, namespace, rows);
+      }
+
+      await putDocument(tx, "catalog-evidence-report", "sync-report", result.report);
+      await putDocument(
+        tx,
+        "catalog-classification-projection-report",
+        "sync-report",
+        projected.report,
+      );
     });
 
-    for (const [namespace, rows] of Object.entries(result.freshDetailsByNamespace)) {
-      await replaceItemDetails(tx, namespace, rows);
-    }
-
-    await putDocument(tx, 'catalog-evidence-report', 'sync-report', result.report);
-    await putDocument(tx, 'catalog-classification-projection-report', 'sync-report', projected.report);
-    });
-
-    console.log(`Fetched ${result.report.fetched_catalog_count}/${result.report.registry_count} registry catalogs (${result.report.fetched_item_count} items).`);
-    console.log(`Comparable evidence retained for ${result.report.evidence_registry_count} registries; stale: ${result.report.stale_registry_count}; failures: ${result.report.failure_count}.`);
+    console.log(
+      `Fetched ${result.report.fetched_catalog_count}/${result.report.registry_count} registry catalogs (${result.report.fetched_item_count} items).`,
+    );
+    console.log(
+      `Comparable evidence retained for ${result.report.evidence_registry_count} registries; stale: ${result.report.stale_registry_count}; failures: ${result.report.failure_count}.`,
+    );
   } finally {
     await core.close();
   }
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main().catch(error => { console.error(error instanceof Error ? error.message : error); process.exitCode = 1; });
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  });
 }

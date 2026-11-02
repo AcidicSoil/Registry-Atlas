@@ -1,8 +1,8 @@
-export type CoverageStatus = 'verified' | 'inferred' | 'partial' | 'unavailable' | 'unverified';
+export type CoverageStatus = "verified" | "inferred" | "partial" | "unavailable" | "unverified";
 
-export type CoverageConfidence = 'high' | 'medium' | 'low' | 'unknown';
+export type CoverageConfidence = "high" | "medium" | "low" | "unknown";
 
-export type ItemCatalogStatus = 'available' | 'partial' | 'unavailable' | 'unverified';
+export type ItemCatalogStatus = "available" | "partial" | "unavailable" | "unverified";
 
 export interface RegistryItemSummaryFile {
   path: string;
@@ -38,32 +38,31 @@ export interface RegistryItemSummary {
 }
 
 export type RegistryThemeSwatch =
-  | 'background'
-  | 'foreground'
-  | 'primary'
-  | 'secondary'
-  | 'accent'
-  | 'muted'
-  | 'card';
+  | "background"
+  | "foreground"
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "muted"
+  | "card";
 
 export interface RegistryThemePreview {
   light?: Readonly<Partial<Record<RegistryThemeSwatch, string>>>;
   dark?: Readonly<Partial<Record<RegistryThemeSwatch, string>>>;
 }
 
-export type RegistryCssVars = Readonly<Partial<Record<
-  'theme' | 'light' | 'dark',
-  Readonly<Record<string, string>>
->>>;
+export type RegistryCssVars = Readonly<
+  Partial<Record<"theme" | "light" | "dark", Readonly<Record<string, string>>>>
+>;
 
 export type CatalogCanonicalKind =
-  | 'component'
-  | 'block'
-  | 'page'
-  | 'template'
-  | 'theme'
-  | 'icon'
-  | 'other';
+  | "component"
+  | "block"
+  | "page"
+  | "template"
+  | "theme"
+  | "icon"
+  | "other";
 
 export interface RegistryCatalogCanonical {
   taxonomyVersion: string;
@@ -72,7 +71,7 @@ export interface RegistryCatalogCanonical {
 }
 
 export interface RegistryCatalogAccess {
-  normalized: 'free' | 'paid';
+  normalized: "free" | "paid";
   sourceLabel: string;
 }
 
@@ -104,8 +103,12 @@ interface RegistryCatalogIndexMeta {
 /** A sitemap listing is discoverable but not independently page-verified. */
 export interface RegistrySourcePage {
   url: string;
-  level: 'reviewed' | 'sitemap' | 'pattern';
-  source: 'reviewed-summary' | 'component-page-verified' | 'official-sitemap' | 'verified-route-pattern';
+  level: "reviewed" | "sitemap" | "pattern";
+  source:
+    | "reviewed-summary"
+    | "component-page-verified"
+    | "official-sitemap"
+    | "verified-route-pattern";
   observedAt?: string;
 }
 
@@ -113,16 +116,26 @@ export interface RegistryCatalogIndex {
   meta: RegistryCatalogIndexMeta;
   registries: Readonly<Record<string, readonly RegistryCatalogItem[]>>;
   sourcePages?: Readonly<Record<string, RegistrySourcePage>>;
-  itemRoutes?: Readonly<Record<string, {
-    url: string;
-    status: string;
-  }>>;
-  routePatterns?: Readonly<Record<string, readonly {
-    urlTemplate: string;
-    slugPrefix: string;
-    source: string;
-    checkedAt?: string;
-  }[]>>;
+  itemRoutes?: Readonly<
+    Record<
+      string,
+      {
+        url: string;
+        status: string;
+      }
+    >
+  >;
+  routePatterns?: Readonly<
+    Record<
+      string,
+      readonly {
+        urlTemplate: string;
+        slugPrefix: string;
+        source: string;
+        checkedAt?: string;
+      }[]
+    >
+  >;
 }
 
 export interface Registry {
@@ -138,7 +151,7 @@ export interface Registry {
     confidence: CoverageConfidence;
     notes: string;
     catalogStatus: ItemCatalogStatus;
-    comparisonEvidence?: 'catalog' | 'stale-catalog' | 'none';
+    comparisonEvidence?: "catalog" | "stale-catalog" | "none";
     catalogItemCount?: number;
     catalogEvidenceUrl?: string;
   };
@@ -154,10 +167,10 @@ export interface Registry {
   itemSummaries?: readonly RegistryItemSummary[];
 }
 
-type InstallActionStatus = 'enabled' | 'disabled';
+type InstallActionStatus = "enabled" | "disabled";
 
 interface EnabledInstallActionState {
-  status: 'enabled';
+  status: "enabled";
   token: string;
   installCommand: string;
   inspectCommand: string;
@@ -166,7 +179,7 @@ interface EnabledInstallActionState {
 }
 
 interface DisabledInstallActionState {
-  status: 'disabled';
+  status: "disabled";
   token: null;
   installCommand: null;
   inspectCommand: null;

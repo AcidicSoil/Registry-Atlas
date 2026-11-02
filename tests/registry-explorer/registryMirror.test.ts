@@ -1,185 +1,200 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 import {
   validateNamespace,
   validateRegistryMirror,
   validateRegistryUrlTemplate,
   validateUrlField,
-} from '../../src/registry-explorer/core/registryMirror';
+} from "../../src/registry-explorer/core/registryMirror";
 
-describe('registryMirror validation', () => {
-  it('accepts a valid normalized mirror', () => {
+describe("registryMirror validation", () => {
+  it("accepts a valid normalized mirror", () => {
     const result = validateRegistryMirror(createMirror());
 
     expect(result.errors).toEqual([]);
     expect(result.warnings).toEqual([]);
   });
 
-  it('fails duplicate namespaces case-insensitively', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({ name: '@example' }),
-      createRecord({ name: '@Example' }),
-    ]));
+  it("fails duplicate namespaces case-insensitively", () => {
+    const result = validateRegistryMirror(
+      createMirror([createRecord({ name: "@example" }), createRecord({ name: "@Example" })]),
+    );
 
-    expect(result.errors.map(error => error.code)).toContain('namespace-duplicate');
+    expect(result.errors.map((error) => error.code)).toContain("namespace-duplicate");
   });
 
-  it('fails de-prefixed namespaces', () => {
-    const result = validateNamespace('example');
+  it("fails de-prefixed namespaces", () => {
+    const result = validateNamespace("example");
 
-    expect(result.errors.map(error => error.code)).toContain('namespace-missing-prefix');
+    expect(result.errors.map((error) => error.code)).toContain("namespace-missing-prefix");
   });
 
-  it('fails missing homepage and registry URL fields', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({ homepage: '', registryUrlTemplate: '' }),
-    ]));
+  it("fails missing homepage and registry URL fields", () => {
+    const result = validateRegistryMirror(
+      createMirror([createRecord({ homepage: "", registryUrlTemplate: "" })]),
+    );
 
-    expect(result.errors.map(error => error.code)).toContain('url-missing');
+    expect(result.errors.map((error) => error.code)).toContain("url-missing");
   });
 
-  it('fails javascript URL protocols', () => {
-    const result = validateUrlField('javascript:alert(1)', 'official.homepage', '@example');
+  it("fails javascript URL protocols", () => {
+    const result = validateUrlField("javascript:alert(1)", "official.homepage", "@example");
 
-    expect(result.errors.map(error => error.code)).toContain('url-protocol-disallowed');
+    expect(result.errors.map((error) => error.code)).toContain("url-protocol-disallowed");
   });
 
-  it('fails data URL protocols', () => {
-    const result = validateRegistryUrlTemplate('data:text/plain,{name}', '@example');
+  it("fails data URL protocols", () => {
+    const result = validateRegistryUrlTemplate("data:text/plain,{name}", "@example");
 
-    expect(result.errors.map(error => error.code)).toContain('url-protocol-disallowed');
+    expect(result.errors.map((error) => error.code)).toContain("url-protocol-disallowed");
   });
 
-  it('warns on HTTP official fields without failing validation', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({
-        homepage: 'http://example.com',
-        registryUrlTemplate: 'http://example.com/r/{name}.json',
-      }),
-    ]));
+  it("warns on HTTP official fields without failing validation", () => {
+    const result = validateRegistryMirror(
+      createMirror([
+        createRecord({
+          homepage: "http://example.com",
+          registryUrlTemplate: "http://example.com/r/{name}.json",
+        }),
+      ]),
+    );
 
     expect(result.errors).toEqual([]);
-    expect(result.warnings.map(warning => warning.code)).toEqual(['url-http', 'url-http']);
+    expect(result.warnings.map((warning) => warning.code)).toEqual(["url-http", "url-http"]);
   });
 
-  it('fails registry URL templates without the name token', () => {
-    const result = validateRegistryUrlTemplate('https://example.com/r/button.json', '@example');
+  it("fails registry URL templates without the name token", () => {
+    const result = validateRegistryUrlTemplate("https://example.com/r/button.json", "@example");
 
-    expect(result.errors.map(error => error.code)).toContain('template-missing-token');
+    expect(result.errors.map((error) => error.code)).toContain("template-missing-token");
   });
 
-  it('ignores retired taxonomy enrichment fields from older mirror records', () => {
+  it("ignores retired taxonomy enrichment fields from older mirror records", () => {
     // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     const mirror = createMirror([createRecord()]) as any;
-    mirror.registries[0].atlas.primary_focus = ['unknown-focus'];
-    mirror.registries[0].atlas.component_tags = ['unknown-tag'];
+    mirror.registries[0].atlas.primary_focus = ["unknown-focus"];
+    mirror.registries[0].atlas.component_tags = ["unknown-tag"];
     const result = validateRegistryMirror(mirror);
 
     expect(result.errors).toEqual([]);
   });
 
-  it('fails invalid coverage, confidence, catalog status, and item summaries', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({
-        coverageStatus: 'approved',
-        confidence: 'certain',
-        catalogStatus: 'audited',
-        itemSummaries: [
-          {
-            name: '',
-            slug: 'Bad/Slug',
-            source: '',
-            provenance: '',
-            catalog_status: 'unknown',
-            route_eligible: true,
-          },
-        ],
-      }),
-    ]));
+  it("fails invalid coverage, confidence, catalog status, and item summaries", () => {
+    const result = validateRegistryMirror(
+      createMirror([
+        createRecord({
+          coverageStatus: "approved",
+          confidence: "certain",
+          catalogStatus: "audited",
+          itemSummaries: [
+            {
+              name: "",
+              slug: "Bad/Slug",
+              source: "",
+              provenance: "",
+              catalog_status: "unknown",
+              route_eligible: true,
+            },
+          ],
+        }),
+      ]),
+    );
 
-    const codes = result.errors.map(error => error.code);
-    expect(codes).toContain('atlas-invalid-coverage-status');
-    expect(codes).toContain('atlas-invalid-confidence');
-    expect(codes).toContain('atlas-invalid-catalog-status');
-    expect(codes).toContain('atlas-invalid-item-summary');
-    expect(codes).toContain('atlas-invalid-item-slug');
+    const codes = result.errors.map((error) => error.code);
+    expect(codes).toContain("atlas-invalid-coverage-status");
+    expect(codes).toContain("atlas-invalid-confidence");
+    expect(codes).toContain("atlas-invalid-catalog-status");
+    expect(codes).toContain("atlas-invalid-item-summary");
+    expect(codes).toContain("atlas-invalid-item-slug");
   });
 
-  it('accepts valid item summaries and route eligibility', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({
-        itemSummaries: [
-          {
-            name: 'Data Grid',
-            slug: 'data-grid',
-            source: 'known-catalog',
-            provenance: 'fixture',
-            catalog_status: 'available',
-            route_eligible: true,
-          },
-        ],
-      }),
-    ]));
+  it("accepts valid item summaries and route eligibility", () => {
+    const result = validateRegistryMirror(
+      createMirror([
+        createRecord({
+          itemSummaries: [
+            {
+              name: "Data Grid",
+              slug: "data-grid",
+              source: "known-catalog",
+              provenance: "fixture",
+              catalog_status: "available",
+              route_eligible: true,
+            },
+          ],
+        }),
+      ]),
+    );
 
     expect(result.errors).toEqual([]);
   });
 
-  it('accepts rich imported item summaries', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({
-        itemSummaries: [
-          {
-            name: 'Input OTP',
-            slug: 'input-otp',
-            title: 'Input OTP',
-            description: 'OTP input component.',
-            source: 'registry-json',
-            provenance: 'fixture',
-            catalog_status: 'available',
-            confidence: 'high',
-            route_eligible: true,
-            install_token: '@example/input-otp',
-            view_command: 'npx shadcn@latest view @example/input-otp',
-            install_command: 'npx shadcn@latest add @example/input-otp',
-            raw_item_url: 'https://example.com/r/input-otp.json',
-            evidence_url: 'https://example.com/r/registry.json',
-            dependencies: ['lucide-react'],
-            registryDependencies: ['button'],
-            files: [{ path: 'registry/input-otp.tsx', type: 'registry:ui', target: 'components/input-otp.tsx' }],
-          },
-        ],
-      }),
-    ]));
+  it("accepts rich imported item summaries", () => {
+    const result = validateRegistryMirror(
+      createMirror([
+        createRecord({
+          itemSummaries: [
+            {
+              name: "Input OTP",
+              slug: "input-otp",
+              title: "Input OTP",
+              description: "OTP input component.",
+              source: "registry-json",
+              provenance: "fixture",
+              catalog_status: "available",
+              confidence: "high",
+              route_eligible: true,
+              install_token: "@example/input-otp",
+              view_command: "npx shadcn@latest view @example/input-otp",
+              install_command: "npx shadcn@latest add @example/input-otp",
+              raw_item_url: "https://example.com/r/input-otp.json",
+              evidence_url: "https://example.com/r/registry.json",
+              dependencies: ["lucide-react"],
+              registryDependencies: ["button"],
+              files: [
+                {
+                  path: "registry/input-otp.tsx",
+                  type: "registry:ui",
+                  target: "components/input-otp.tsx",
+                },
+              ],
+            },
+          ],
+        }),
+      ]),
+    );
 
     expect(result.errors).toEqual([]);
   });
 
-  it('fails invalid rich imported item summary fields', () => {
-    const result = validateRegistryMirror(createMirror([
-      createRecord({
-        itemSummaries: [
-          {
-            name: 'Input OTP',
-            slug: 'input-otp',
-            source: 'registry-json',
-            provenance: 'fixture',
-            catalog_status: 'available',
-            route_eligible: true,
-            install_token: '@example/bad token',
-            view_command: 'npx shadcn@latest view https://example.com/r/input-otp.json',
-            raw_item_url: 'javascript:alert(1)',
-            dependencies: ['lucide-react', 42],
-            files: [{ path: '', type: 'registry:ui' }],
-          },
-        ],
-      }),
-    ]));
+  it("fails invalid rich imported item summary fields", () => {
+    const result = validateRegistryMirror(
+      createMirror([
+        createRecord({
+          itemSummaries: [
+            {
+              name: "Input OTP",
+              slug: "input-otp",
+              source: "registry-json",
+              provenance: "fixture",
+              catalog_status: "available",
+              route_eligible: true,
+              install_token: "@example/bad token",
+              view_command: "npx shadcn@latest view https://example.com/r/input-otp.json",
+              raw_item_url: "javascript:alert(1)",
+              dependencies: ["lucide-react", 42],
+              files: [{ path: "", type: "registry:ui" }],
+            },
+          ],
+        }),
+      ]),
+    );
 
-    const codes = result.errors.map(error => error.code);
-    expect(codes).toContain('atlas-invalid-item-token');
-    expect(codes).toContain('atlas-invalid-item-command');
-    expect(codes).toContain('atlas-invalid-item-url');
-    expect(codes).toContain('atlas-invalid-item-array');
-    expect(codes).toContain('atlas-invalid-item-file');
+    const codes = result.errors.map((error) => error.code);
+    expect(codes).toContain("atlas-invalid-item-token");
+    expect(codes).toContain("atlas-invalid-item-command");
+    expect(codes).toContain("atlas-invalid-item-url");
+    expect(codes).toContain("atlas-invalid-item-array");
+    expect(codes).toContain("atlas-invalid-item-file");
   });
 });
 
@@ -194,26 +209,28 @@ function createMirror(records = [createRecord()]) {
   };
 }
 
-function createRecord(options: {
-  name?: string;
-  homepage?: string;
-  registryUrlTemplate?: string;
-  coverageStatus?: string;
-  confidence?: string;
-  catalogStatus?: string;
-  itemSummaries?: unknown[];
-} = {}) {
+function createRecord(
+  options: {
+    name?: string;
+    homepage?: string;
+    registryUrlTemplate?: string;
+    coverageStatus?: string;
+    confidence?: string;
+    catalogStatus?: string;
+    itemSummaries?: unknown[];
+  } = {},
+) {
   return {
     official: {
-      name: options.name ?? '@example',
-      homepage: options.homepage ?? 'https://example.com',
-      registry_url_template: options.registryUrlTemplate ?? 'https://example.com/r/{name}.json',
-      description: 'Example registry.',
+      name: options.name ?? "@example",
+      homepage: options.homepage ?? "https://example.com",
+      registry_url_template: options.registryUrlTemplate ?? "https://example.com/r/{name}.json",
+      description: "Example registry.",
     },
     atlas: {
-      coverage_status: options.coverageStatus ?? 'inferred',
-      confidence: options.confidence ?? 'medium',
-      catalog_status: options.catalogStatus ?? 'unverified',
+      coverage_status: options.coverageStatus ?? "inferred",
+      confidence: options.confidence ?? "medium",
+      catalog_status: options.catalogStatus ?? "unverified",
       item_summaries: options.itemSummaries ?? [],
     },
     status: {

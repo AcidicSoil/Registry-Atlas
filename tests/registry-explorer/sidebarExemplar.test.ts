@@ -1,18 +1,21 @@
-import { readFileSync } from 'node:fs';
-import { describe, expect, it } from 'vitest';
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
 
-const html = readFileSync(new URL('../../index.html', import.meta.url), 'utf8');
+const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 
-const css = readFileSync(new URL('../../src/registry-explorer/ui/sidebar-exemplar-rail.css', import.meta.url), 'utf8');
+const css = readFileSync(
+  new URL("../../src/registry-explorer/ui/sidebar-exemplar-rail.css", import.meta.url),
+  "utf8",
+);
 
-describe('21st.dev-inspired sidebar shell', () => {
-  it('keeps browse routes as real links in the single desktop sidebar, not a top toolbar', () => {
+describe("21st.dev-inspired sidebar shell", () => {
+  it("keeps browse routes as real links in the single desktop sidebar, not a top toolbar", () => {
     for (const [view, href] of [
-      ['home', '/Registry-Atlas/'],
-      ['discover', '/Registry-Atlas/components'],
-      ['registries', '/Registry-Atlas/registries'],
-      ['authors', '/Registry-Atlas/authors'],
-      ['blocks', '/Registry-Atlas/blocks'],
+      ["home", "/Registry-Atlas/"],
+      ["discover", "/Registry-Atlas/components"],
+      ["registries", "/Registry-Atlas/registries"],
+      ["authors", "/Registry-Atlas/authors"],
+      ["blocks", "/Registry-Atlas/blocks"],
     ]) {
       expect(html).toContain(`data-view="${view}" href="${href}"`);
     }
@@ -27,7 +30,7 @@ describe('21st.dev-inspired sidebar shell', () => {
     expect(navigation).toBeLessThan(filters);
     expect(html).toContain('class="sidebar-body-scroll"');
     expect(css).toMatch(/\.sidebar-body-scroll\s*\{[^}]*overflow:\s*hidden auto/s);
-    expect(html).not.toContain('shadcn directory');
+    expect(html).not.toContain("shadcn directory");
     expect(html).toContain('<details class="sidebar-collections"');
     expect(html).toContain('id="sidebarCollectionCurrent"');
     const nav = html.slice(navigation, filters);

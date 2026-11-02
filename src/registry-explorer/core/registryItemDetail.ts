@@ -1,13 +1,17 @@
-import type { RawJsonInput } from './jsonInput';
+import type { RawJsonInput } from "./jsonInput";
 
 /** Named map contract for dynamic keys in this module. */
-type OutputLookupContract = { theme?: Record<string, string>; light?: Record<string, string>; dark?: Record<string, string> };
+type OutputLookupContract = {
+  theme?: Record<string, string>;
+  light?: Record<string, string>;
+  dark?: Record<string, string>;
+};
 
-import { isInputObject, isInputString } from './inputChecks';
-import { getInstallActionState } from './installActions.ts';
-import { resolveCatalogSourcePage } from './catalogSourcePage.ts';
-import { compactCatalogItemToSummary, findRegistryCatalogItem } from './registryCatalogIndex.ts';
-import { resolveRegistryItemRoute, type ResolvedItemRoute } from './itemRoutes.ts';
+import { isInputObject, isInputString } from "./inputChecks";
+import { getInstallActionState } from "./installActions.ts";
+import { resolveCatalogSourcePage } from "./catalogSourcePage.ts";
+import { compactCatalogItemToSummary, findRegistryCatalogItem } from "./registryCatalogIndex.ts";
+import { resolveRegistryItemRoute, type ResolvedItemRoute } from "./itemRoutes.ts";
 import type {
   InstallActionState,
   CoverageConfidence,
@@ -17,14 +21,14 @@ import type {
   RegistryItemSummary,
   RegistrySourcePage,
   RegistryItemSummaryFile,
-} from './registry.schema.ts';
+} from "./registry.schema.ts";
 
 type RegistryItemDetailErrorStatus =
-  | 'route-unavailable'
-  | 'not-found'
-  | 'fetch-error'
-  | 'invalid-json'
-  | 'invalid-schema';
+  | "route-unavailable"
+  | "not-found"
+  | "fetch-error"
+  | "invalid-json"
+  | "invalid-schema";
 
 export interface RegistryItemDetail {
   registry: Registry;
@@ -38,8 +42,8 @@ export interface RegistryItemDetail {
   cssVars: RegistryCssVars | null;
   type: string | null;
   category: string | null;
-  catalogStatus: RegistryItemSummary['catalogStatus'];
-  confidence: CoverageConfidence | 'unknown';
+  catalogStatus: RegistryItemSummary["catalogStatus"];
+  confidence: CoverageConfidence | "unknown";
   source: string;
   provenance: string;
   route: ResolvedItemRoute;
@@ -60,12 +64,12 @@ export interface RegistryItemDetail {
 
 export type RegistryItemDetailResult =
   | {
-      status: 'loaded';
+      status: "loaded";
       detail: RegistryItemDetail;
       message: null;
     }
   | {
-      status: 'summary-only';
+      status: "summary-only";
       detail: RegistryItemDetail;
       message: string;
     }
@@ -90,27 +94,43 @@ interface NormalizedRegistryItemDetailJson {
   files: readonly RegistryItemSummaryFile[];
 }
 
-function resolvedDetailPayload(base: RegistryItemDetail, sourceJson?: RawJsonInput): RegistryItemDetailResult {
-  if (base.route.status !== 'available') {
+function resolvedDetailPayload(
+  base: RegistryItemDetail,
+  sourceJson?: RawJsonInput,
+): RegistryItemDetailResult {
+  if (base.route.status !== "available") {
     return {
-      status: 'route-unavailable', detail: base,
-      message: 'Item route unavailable.', reason: base.route.status,
+      status: "route-unavailable",
+      detail: base,
+      message: "Item route unavailable.",
+      reason: base.route.status,
     };
   }
 
   if (sourceJson === undefined) {
-    return { status: 'summary-only', detail: base,
-      message: 'Full item JSON was not loaded; showing catalog summary details.' };
+    return {
+      status: "summary-only",
+      detail: base,
+      message: "Full item JSON was not loaded; showing catalog summary details.",
+    };
   }
 
   const normalized = normalizeRegistryItemDetailJson(sourceJson);
 
   if (!normalized.valid) {
-    return { status: 'invalid-schema', detail: base,
-      message: 'Registry item data did not match the expected safe shape.', reason: normalized.reason };
+    return {
+      status: "invalid-schema",
+      detail: base,
+      message: "Registry item data did not match the expected safe shape.",
+      reason: normalized.reason,
+    };
   }
 
-  return { status: 'loaded', detail: mergeDetailJson(base, normalized.item, sourceJson), message: null };
+  return {
+    status: "loaded",
+    detail: mergeDetailJson(base, normalized.item, sourceJson),
+    message: null,
+  };
 }
 
 export function resolveRegistryItemDetailFromSummary(
@@ -119,19 +139,19 @@ export function resolveRegistryItemDetailFromSummary(
   itemSlug: string | null | undefined,
   sourceJson?: RawJsonInput,
 ): RegistryItemDetailResult {
-  const registryName = namespace?.trim() ?? '';
-  const slug = itemSlug?.trim() ?? '';
+  const registryName = namespace?.trim() ?? "";
+  const slug = itemSlug?.trim() ?? "";
 
-  const registry = registries.find(item => item.name === registryName);
+  const registry = registries.find((item) => item.name === registryName);
 
   if (!registry) {
-    return notFound('Registry not found.', 'missing-registry');
+    return notFound("Registry not found.", "missing-registry");
   }
 
-  const summary = registry.itemSummaries?.find(item => item.slug === slug);
+  const summary = registry.itemSummaries?.find((item) => item.slug === slug);
 
   if (!summary) {
-    return notFound('Item not found in registry catalog.', 'missing-item');
+    return notFound("Item not found in registry catalog.", "missing-item");
   }
 
   return resolvedDetailPayload(buildBaseDetail(registry, summary), sourceJson);
@@ -146,7 +166,7 @@ function sourcePageForSummary(
 ): RegistrySourcePage | undefined {
   return compact
     ? resolveCatalogSourcePage(catalogIndex, registry, compact)
-    : catalogIndex.sourcePages?.[namespace + '/' + slug];
+    : catalogIndex.sourcePages?.[namespace + "/" + slug];
 }
 
 export function resolveRegistryItemDetailFromCatalogIndex(
@@ -156,22 +176,22 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   itemSlug: string | null | undefined,
   sourceJson?: RawJsonInput,
 ): RegistryItemDetailResult {
-  const registryName = namespace?.trim() ?? '';
-  const slug = itemSlug?.trim() ?? '';
-  const registry = registries.find(item => item.name === registryName);
+  const registryName = namespace?.trim() ?? "";
+  const slug = itemSlug?.trim() ?? "";
+  const registry = registries.find((item) => item.name === registryName);
 
-  if (!registry) return notFound('Registry not found.', 'missing-registry');
+  if (!registry) return notFound("Registry not found.", "missing-registry");
 
   const compactItem = findRegistryCatalogItem(catalogIndex, registryName, slug);
 
-  if (registry.itemSummaries?.some(item => item.slug === slug)) {
+  if (registry.itemSummaries?.some((item) => item.slug === slug)) {
     return withSourcePage(
       resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson),
       sourcePageForSummary(registry, compactItem, catalogIndex, registryName, slug),
     );
   }
 
-  if (!compactItem) return notFound('Item not found in registry catalog.', 'missing-item');
+  if (!compactItem) return notFound("Item not found in registry catalog.", "missing-item");
 
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
@@ -181,7 +201,8 @@ export function resolveRegistryItemDetailFromCatalogIndex(
 }
 
 function withSourcePage(
-  result: RegistryItemDetailResult, sourcePage: RegistrySourcePage | undefined,
+  result: RegistryItemDetailResult,
+  sourcePage: RegistrySourcePage | undefined,
 ): RegistryItemDetailResult {
   if (!sourcePage || !result.detail) return result;
 
@@ -191,12 +212,14 @@ function withSourcePage(
 function routeForSummary(registry: Registry, summary: RegistryItemSummary) {
   return summary.routeEligible
     ? resolveRegistryItemRoute(
-        registry.name, registry.mirror?.registryUrlTemplate ?? '',
-        summary.slug, summary.rawItemUrl,
+        registry.name,
+        registry.mirror?.registryUrlTemplate ?? "",
+        summary.slug,
+        summary.rawItemUrl,
       )
     : {
-        status: 'catalog-not-verified' as const,
-        label: 'Catalog not verified' as const,
+        status: "catalog-not-verified" as const,
+        label: "Catalog not verified" as const,
         url: null,
       };
 }
@@ -217,7 +240,7 @@ function summaryProvenanceAttributes(registry: Registry, summary: RegistryItemSu
 
   return {
     catalogStatus: summary.catalogStatus,
-    confidence: summary.confidence ?? registry.atlas?.confidence ?? 'unknown',
+    confidence: summary.confidence ?? registry.atlas?.confidence ?? "unknown",
     source: summary.source,
     provenance: summary.provenance,
     docsUrl,
@@ -262,26 +285,29 @@ function buildBaseDetail(registry: Registry, summary: RegistryItemSummary): Regi
   };
 }
 
-export function normalizeRegistryItemDetailJson(value: RawJsonInput):
-  | { valid: true; item: NormalizedRegistryItemDetailJson }
-  | { valid: false; reason: string } {
+export function normalizeRegistryItemDetailJson(
+  value: RawJsonInput,
+): { valid: true; item: NormalizedRegistryItemDetailJson } | { valid: false; reason: string } {
   if (!isRecord(value)) {
-    return { valid: false, reason: 'item-json-not-object' };
+    return { valid: false, reason: "item-json-not-object" };
   }
 
   const files = normalizeFiles(value.files);
 
   if (!files.valid) return { valid: false, reason: files.reason };
 
-  const dependencies = normalizeStringArray(value.dependencies, 'dependencies');
+  const dependencies = normalizeStringArray(value.dependencies, "dependencies");
 
   if (!dependencies.valid) return { valid: false, reason: dependencies.reason };
 
-  const devDependencies = normalizeStringArray(value.devDependencies, 'devDependencies');
+  const devDependencies = normalizeStringArray(value.devDependencies, "devDependencies");
 
   if (!devDependencies.valid) return { valid: false, reason: devDependencies.reason };
 
-  const registryDependencies = normalizeStringArray(value.registryDependencies, 'registryDependencies');
+  const registryDependencies = normalizeStringArray(
+    value.registryDependencies,
+    "registryDependencies",
+  );
 
   if (!registryDependencies.valid) return { valid: false, reason: registryDependencies.reason };
 
@@ -307,25 +333,35 @@ export function normalizeRegistryItemDetailJson(value: RawJsonInput):
   };
 }
 
-export function invalidJsonResult(detail: RegistryItemDetail | null, reason = 'invalid-json'): RegistryItemDetailResult {
+export function invalidJsonResult(
+  detail: RegistryItemDetail | null,
+  reason = "invalid-json",
+): RegistryItemDetailResult {
   return {
-    status: 'invalid-json',
+    status: "invalid-json",
     detail,
-    message: 'Registry item JSON could not be parsed safely.',
+    message: "Registry item JSON could not be parsed safely.",
     reason,
   };
 }
 
-export function fetchErrorResult(detail: RegistryItemDetail | null, reason = 'fetch-error'): RegistryItemDetailResult {
+export function fetchErrorResult(
+  detail: RegistryItemDetail | null,
+  reason = "fetch-error",
+): RegistryItemDetailResult {
   return {
-    status: 'fetch-error',
+    status: "fetch-error",
     detail,
-    message: 'Registry item could not be loaded from the network.',
+    message: "Registry item could not be loaded from the network.",
     reason,
   };
 }
 
-function mergeDetailJson(detail: RegistryItemDetail, item: NormalizedRegistryItemDetailJson, rawSource: RawJsonInput): RegistryItemDetail {
+function mergeDetailJson(
+  detail: RegistryItemDetail,
+  item: NormalizedRegistryItemDetailJson,
+  rawSource: RawJsonInput,
+): RegistryItemDetail {
   return {
     ...detail,
     name: item.name ?? detail.name,
@@ -346,35 +382,41 @@ function mergeDetailJson(detail: RegistryItemDetail, item: NormalizedRegistryIte
 
 function notFound(message: string, reason: string): RegistryItemDetailResult {
   return {
-    status: 'not-found',
+    status: "not-found",
     detail: null,
     message,
     reason,
   };
 }
 
-function normalizeStringArray(value: RawJsonInput, field: string): { valid: true; items: readonly string[] } | { valid: false; reason: string } {
+function normalizeStringArray(
+  value: RawJsonInput,
+  field: string,
+): { valid: true; items: readonly string[] } | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, items: [] };
 
   if (!Array.isArray(value)) return { valid: false, reason: `${field}-not-array` };
 
-  if (!value.every(item => isInputString(item))) return { valid: false, reason: `${field}-contains-non-string` };
+  if (!value.every((item) => isInputString(item)))
+    return { valid: false, reason: `${field}-contains-non-string` };
 
   return { valid: true, items: value };
 }
 
 function normalizedCssVarMode(
   source: RawJsonInput,
-  mode: 'theme' | 'light' | 'dark',
-): { valid: true; swatches: Record<string, string> | undefined } | { valid: false; reason: string } {
+  mode: "theme" | "light" | "dark",
+):
+  | { valid: true; swatches: Record<string, string> | undefined }
+  | { valid: false; reason: string } {
   if (source === undefined) return { valid: true, swatches: undefined };
 
-  if (!isRecord(source)) return { valid: false, reason: 'css-vars-' + mode + '-not-object' };
+  if (!isRecord(source)) return { valid: false, reason: "css-vars-" + mode + "-not-object" };
   const swatches: Record<string, string> = {};
 
   for (const [key, item] of Object.entries(source)) {
     if (!key.trim() || !isInputString(item) || !item.trim()) {
-      return { valid: false, reason: 'css-vars-' + mode + '-contains-invalid-value' };
+      return { valid: false, reason: "css-vars-" + mode + "-contains-invalid-value" };
     }
 
     swatches[key] = item.trim();
@@ -383,16 +425,16 @@ function normalizedCssVarMode(
   return { valid: true, swatches: Object.keys(swatches).length ? swatches : undefined };
 }
 
-function normalizeCssVars(value: RawJsonInput):
-  | { valid: true; value: RegistryCssVars | undefined }
-  | { valid: false; reason: string } {
+function normalizeCssVars(
+  value: RawJsonInput,
+): { valid: true; value: RegistryCssVars | undefined } | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, value: undefined };
 
-  if (!isRecord(value)) return { valid: false, reason: 'css-vars-not-object' };
+  if (!isRecord(value)) return { valid: false, reason: "css-vars-not-object" };
 
   const output: OutputLookupContract = {};
 
-  for (const mode of ['theme', 'light', 'dark'] as const) {
+  for (const mode of ["theme", "light", "dark"] as const) {
     const parsed = normalizedCssVarMode(value[mode], mode);
 
     if (!parsed.valid) return { valid: false, reason: parsed.reason };
@@ -403,20 +445,22 @@ function normalizeCssVars(value: RawJsonInput):
   return { valid: true, value: Object.keys(output).length ? output : undefined };
 }
 
-function normalizeFiles(value: RawJsonInput): { valid: true; items: readonly RegistryItemSummaryFile[] } | { valid: false; reason: string } {
+function normalizeFiles(
+  value: RawJsonInput,
+): { valid: true; items: readonly RegistryItemSummaryFile[] } | { valid: false; reason: string } {
   if (value === undefined) return { valid: true, items: [] };
 
-  if (!Array.isArray(value)) return { valid: false, reason: 'files-not-array' };
+  if (!Array.isArray(value)) return { valid: false, reason: "files-not-array" };
 
   const files: RegistryItemSummaryFile[] = [];
 
   for (const file of value) {
-    if (!isRecord(file)) return { valid: false, reason: 'files-contains-non-object' };
+    if (!isRecord(file)) return { valid: false, reason: "files-contains-non-object" };
     const path = optionalString(file.path);
     const type = optionalString(file.type);
     const target = optionalString(file.target);
 
-    if (!path || !type) return { valid: false, reason: 'file-missing-path-or-type' };
+    if (!path || !type) return { valid: false, reason: "file-missing-path-or-type" };
     files.push(target ? { path, type, target } : { path, type });
   }
 

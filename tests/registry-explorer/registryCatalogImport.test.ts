@@ -1,27 +1,45 @@
-import { describe, expect, it } from 'vitest';
-// @ts-expect-error The importer is an executable Node .mjs script with runtime exports tested here.
-import { buildImportReport, buildRegistryItemsByNamespace, normalizeImportedItem, normalizeNamespace, parseArgs } from '../../scripts/import-registry-catalog.mjs';
+import { describe, expect, it } from "vitest";
+import {
+  buildImportReport,
+  buildRegistryItemsByNamespace,
+  normalizeImportedItem,
+  normalizeNamespace,
+  parseArgs,
+  // @ts-expect-error The importer is an executable Node .mjs script with runtime exports tested here.
+} from "../../scripts/import-registry-catalog.mjs";
 
 const catalog = {
   registries: [
-    { name: 'delego', items: [{ name: 'delego-theme', type: 'registry:theme' }] },
-    { name: 'delta', items: [{
-      name: 'input-otp',
-      type: 'registry:ui',
-      route_eligible: true,
-      raw_item_url: 'https://deltacomponents.dev/r/input-otp.json',
-      evidence_url: 'https://deltacomponents.dev/r/registry.json',
-      dependencies: ['lucide-react'],
-      files: [{
-        path: 'registry/delta-ui/delta/input-otp.tsx',
-        type: 'registry:ui',
-        target: 'components/input-otp.tsx',
-      }],
-    }] },
-    { name: 'diceui', items: [{
-      name: 'action-bar',
-      registryDependencies: ['button', '@diceui/use-as-ref'],
-    }] },
+    { name: "delego", items: [{ name: "delego-theme", type: "registry:theme" }] },
+    {
+      name: "delta",
+      items: [
+        {
+          name: "input-otp",
+          type: "registry:ui",
+          route_eligible: true,
+          raw_item_url: "https://deltacomponents.dev/r/input-otp.json",
+          evidence_url: "https://deltacomponents.dev/r/registry.json",
+          dependencies: ["lucide-react"],
+          files: [
+            {
+              path: "registry/delta-ui/delta/input-otp.tsx",
+              type: "registry:ui",
+              target: "components/input-otp.tsx",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: "diceui",
+      items: [
+        {
+          name: "action-bar",
+          registryDependencies: ["button", "@diceui/use-as-ref"],
+        },
+      ],
+    },
   ],
 };
 
@@ -31,61 +49,79 @@ type ImportedItem = {
   registryDependencies?: string[];
 };
 
-describe('registry catalog import', () => {
-  it('normalizes namespaces with one leading @', () => {
-    expect(normalizeNamespace('delego')).toBe('@delego');
-    expect(normalizeNamespace('@Delta')).toBe('@delta');
+describe("registry catalog import", () => {
+  it("normalizes namespaces with one leading @", () => {
+    expect(normalizeNamespace("delego")).toBe("@delego");
+    expect(normalizeNamespace("@Delta")).toBe("@delta");
   });
 
-  it('requires an explicit import file instead of a deleted default artifact', () => {
-    expect(() => parseArgs([])).toThrow('Provide --source');
-    expect(() => parseArgs(['--dry-run'])).toThrow('Provide --source');
-    expect(() => parseArgs(['--source', '--dry-run'])).toThrow('Missing value');
-    expect(parseArgs(['--source', 'fixtures/registry-sample.json', '--dry-run']))
-      .toEqual({ source: 'fixtures/registry-sample.json', dryRun: true });
+  it("requires an explicit import file instead of a deleted default artifact", () => {
+    expect(() => parseArgs([])).toThrow("Provide --source");
+    expect(() => parseArgs(["--dry-run"])).toThrow("Provide --source");
+    expect(() => parseArgs(["--source", "--dry-run"])).toThrow("Missing value");
+    expect(parseArgs(["--source", "fixtures/registry-sample.json", "--dry-run"])).toEqual({
+      source: "fixtures/registry-sample.json",
+      dryRun: true,
+    });
   });
 
-  it('imports a focused catalog fixture by namespace', () => {
+  it("imports a focused catalog fixture by namespace", () => {
     const result = buildRegistryItemsByNamespace(catalog);
 
-    expect(Object.keys(result.itemsByNamespace)).toEqual(['@delego', '@delta', '@diceui']);
-    expect(result.itemsByNamespace['@delego']?.map((item: ImportedItem) => item.slug)).toContain('delego-theme');
-    expect(result.itemsByNamespace['@delta']?.map((item: ImportedItem) => item.slug)).toContain('input-otp');
-    expect(result.itemsByNamespace['@diceui']?.map((item: ImportedItem) => item.slug)).toContain('action-bar');
+    expect(Object.keys(result.itemsByNamespace)).toEqual(["@delego", "@delta", "@diceui"]);
+    expect(result.itemsByNamespace["@delego"]?.map((item: ImportedItem) => item.slug)).toContain(
+      "delego-theme",
+    );
+    expect(result.itemsByNamespace["@delta"]?.map((item: ImportedItem) => item.slug)).toContain(
+      "input-otp",
+    );
+    expect(result.itemsByNamespace["@diceui"]?.map((item: ImportedItem) => item.slug)).toContain(
+      "action-bar",
+    );
   });
 
-  it('preserves richer item metadata needed by Atlas discovery', () => {
+  it("preserves richer item metadata needed by Atlas discovery", () => {
     const result = buildRegistryItemsByNamespace(catalog);
-    const inputOtp = result.itemsByNamespace['@delta']?.find((item: ImportedItem) => item.slug === 'input-otp');
-    const actionBar = result.itemsByNamespace['@diceui']?.find((item: ImportedItem) => item.slug === 'action-bar');
 
-    expect(inputOtp).toEqual(expect.objectContaining({
-      install_token: '@delta/input-otp',
-      view_command: 'npx shadcn@latest view @delta/input-otp',
-      install_command: 'npx shadcn@latest add @delta/input-otp',
-      raw_item_url: 'https://deltacomponents.dev/r/input-otp.json',
-      evidence_url: 'https://deltacomponents.dev/r/registry.json',
-      dependencies: ['lucide-react'],
-    }));
+    const inputOtp = result.itemsByNamespace["@delta"]?.find(
+      (item: ImportedItem) => item.slug === "input-otp",
+    );
+
+    const actionBar = result.itemsByNamespace["@diceui"]?.find(
+      (item: ImportedItem) => item.slug === "action-bar",
+    );
+
+    expect(inputOtp).toEqual(
+      expect.objectContaining({
+        install_token: "@delta/input-otp",
+        view_command: "npx shadcn@latest view @delta/input-otp",
+        install_command: "npx shadcn@latest add @delta/input-otp",
+        raw_item_url: "https://deltacomponents.dev/r/input-otp.json",
+        evidence_url: "https://deltacomponents.dev/r/registry.json",
+        dependencies: ["lucide-react"],
+      }),
+    );
     expect(inputOtp?.files).toEqual([
       expect.objectContaining({
-        path: 'registry/delta-ui/delta/input-otp.tsx',
-        type: 'registry:ui',
-        target: 'components/input-otp.tsx',
+        path: "registry/delta-ui/delta/input-otp.tsx",
+        type: "registry:ui",
+        target: "components/input-otp.tsx",
       }),
     ]);
-    expect(actionBar?.registryDependencies).toEqual(expect.arrayContaining(['button', '@diceui/use-as-ref']));
+    expect(actionBar?.registryDependencies).toEqual(
+      expect.arrayContaining(["button", "@diceui/use-as-ref"]),
+    );
   });
 
-  it('merges imported registries with existing seeded item summaries', () => {
+  it("merges imported registries with existing seeded item summaries", () => {
     const existing = {
-      '@assistant-ui': [
+      "@assistant-ui": [
         {
-          name: 'Thread',
-          slug: 'thread',
-          source: 'known-catalog',
-          provenance: 'fixture',
-          catalog_status: 'available',
+          name: "Thread",
+          slug: "thread",
+          source: "known-catalog",
+          provenance: "fixture",
+          catalog_status: "available",
           route_eligible: true,
         },
       ],
@@ -93,50 +129,52 @@ describe('registry catalog import', () => {
 
     const result = buildRegistryItemsByNamespace(catalog, existing);
 
-    expect(result.itemsByNamespace['@assistant-ui']).toEqual(existing['@assistant-ui']);
-    expect(result.itemsByNamespace['@delta']?.length).toBeGreaterThan(0);
+    expect(result.itemsByNamespace["@assistant-ui"]).toEqual(existing["@assistant-ui"]);
+    expect(result.itemsByNamespace["@delta"]?.length).toBeGreaterThan(0);
   });
 
-  it('builds a reviewable import report', () => {
+  it("builds a reviewable import report", () => {
     const result = buildRegistryItemsByNamespace(catalog);
-    const report = buildImportReport(catalog, result, 'fixtures/registry-sample.json');
+    const report = buildImportReport(catalog, result, "fixtures/registry-sample.json");
 
-    expect(report.source_path).toBe('fixtures/registry-sample.json');
+    expect(report.source_path).toBe("fixtures/registry-sample.json");
 
     expect(report.registry_count).toBe(3);
     expect(report.item_count).toBe(3);
-    expect(report.namespaces).toEqual(['@delego', '@delta', '@diceui']);
-    expect(report.item_counts).toEqual(expect.objectContaining({
-      '@delego': 1,
-      '@delta': 1,
-      '@diceui': 1,
-    }));
+    expect(report.namespaces).toEqual(["@delego", "@delta", "@diceui"]);
+    expect(report.item_counts).toEqual(
+      expect.objectContaining({
+        "@delego": 1,
+        "@delta": 1,
+        "@diceui": 1,
+      }),
+    );
     expect(report.warnings).toEqual([]);
     expect(report.skipped).toEqual([]);
   });
 
-  it('drops obsolete preview URLs while preserving source-backed item metadata', () => {
-    const imported = normalizeImportedItem('@example', {
-      name: 'button',
+  it("drops obsolete preview URLs while preserving source-backed item metadata", () => {
+    const imported = normalizeImportedItem("@example", {
+      name: "button",
       route_eligible: true,
-      preview_url: 'https://example.com/previews/button.png',
-      docs_url: 'https://example.com/components/button',
-      raw_item_url: 'https://example.com/r/button.json',
-      evidence_url: 'https://example.com/r/registry.json',
+      preview_url: "https://example.com/previews/button.png",
+      docs_url: "https://example.com/components/button",
+      raw_item_url: "https://example.com/r/button.json",
+      evidence_url: "https://example.com/r/registry.json",
     });
 
-    expect(imported).not.toHaveProperty('preview_url');
+    expect(imported).not.toHaveProperty("preview_url");
     expect(imported).toMatchObject({
-      docs_url: 'https://example.com/components/button',
-      raw_item_url: 'https://example.com/r/button.json',
-      evidence_url: 'https://example.com/r/registry.json',
+      docs_url: "https://example.com/components/button",
+      raw_item_url: "https://example.com/r/button.json",
+      evidence_url: "https://example.com/r/registry.json",
     });
   });
 
-  it('skips invalid imported item slugs', () => {
+  it("skips invalid imported item slugs", () => {
     const warnings: string[] = [];
 
-    expect(normalizeImportedItem('@example', { name: 'Bad/Slug' }, warnings)).toBeNull();
-    expect(warnings[0]).toContain('@example');
+    expect(normalizeImportedItem("@example", { name: "Bad/Slug" }, warnings)).toBeNull();
+    expect(warnings[0]).toContain("@example");
   });
 });

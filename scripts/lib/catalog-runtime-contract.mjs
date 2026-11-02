@@ -1,13 +1,10 @@
-import { isInputObject, isInputString } from './input-guards.mjs';
+import { isInputObject, isInputString } from "./input-guards.mjs";
 import {
   applyCatalogClassificationOverlay,
   validateCatalogClassificationOverlay,
-} from './catalog-classification-overlay.mjs';
-import {
-  flattenCatalogTaxonomy,
-  validateCatalogTaxonomy,
-} from './catalog-taxonomy.mjs';
-import { catalogArtifactFingerprint } from '../evaluate-catalog-classifications.mjs';
+} from "./catalog-classification-overlay.mjs";
+import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "./catalog-taxonomy.mjs";
+import { catalogArtifactFingerprint } from "../evaluate-catalog-classifications.mjs";
 
 function identity(namespace, name) {
   return `${String(namespace).trim().toLowerCase()}\u0000${String(name).trim().toLowerCase()}`;
@@ -19,7 +16,7 @@ function sameJson(left, right) {
 
 function pathMap(taxonomy) {
   const records = flattenCatalogTaxonomy(taxonomy);
-  const byId = new Map(records.map(record => [record.id, record]));
+  const byId = new Map(records.map((record) => [record.id, record]));
   const output = new Map();
 
   for (const record of records) {
@@ -40,7 +37,7 @@ function pathMap(taxonomy) {
 function managedFields(item) {
   const output = {};
 
-  for (const key of ['kind', 'canonical', 'sourceGroups', 'access']) {
+  for (const key of ["kind", "canonical", "sourceGroups", "access"]) {
     if (item?.[key] !== undefined) output[key] = item[key];
   }
 
@@ -87,7 +84,7 @@ export function validateCatalogRuntimeContract({
   const runtimeFingerprint = catalogArtifactFingerprint(runtime);
 
   if (sourceFingerprint !== runtimeFingerprint) {
-    errors.push('runtime taxonomy does not match the source taxonomy');
+    errors.push("runtime taxonomy does not match the source taxonomy");
   }
 
   try {
@@ -100,19 +97,30 @@ export function validateCatalogRuntimeContract({
   }
 
   if (reviewedOverlay.taxonomyFingerprint !== sourceFingerprint) {
-    errors.push('reviewed classification overlay taxonomy fingerprint does not match the source taxonomy');
+    errors.push(
+      "reviewed classification overlay taxonomy fingerprint does not match the source taxonomy",
+    );
   }
 
-  if (!runtimeCatalog || !isInputObject(runtimeCatalog) || Array.isArray(runtimeCatalog)
-    || !runtimeCatalog.registries || !isInputObject(runtimeCatalog.registries)
-    || Array.isArray(runtimeCatalog.registries)) {
-    errors.push('runtime catalog must contain a registries object');
+  if (
+    !runtimeCatalog ||
+    !isInputObject(runtimeCatalog) ||
+    Array.isArray(runtimeCatalog) ||
+    !runtimeCatalog.registries ||
+    !isInputObject(runtimeCatalog.registries) ||
+    Array.isArray(runtimeCatalog.registries)
+  ) {
+    errors.push("runtime catalog must contain a registries object");
 
     return { errors, summary };
   }
 
   const expectedPaths = pathMap(source);
-  const overlayIds = new Set(reviewedOverlay.items.map(item => identity(item.namespace, item.name)));
+
+  const overlayIds = new Set(
+    reviewedOverlay.items.map((item) => identity(item.namespace, item.name)),
+  );
+
   const runtimeKeys = new Set();
 
   for (const [namespace, items] of Object.entries(runtimeCatalog.registries)) {
@@ -126,26 +134,36 @@ export function validateCatalogRuntimeContract({
       const key = identity(namespace, item.name);
       runtimeKeys.add(key);
 
-      const hasManaged = ['kind', 'canonical', 'sourceGroups', 'access']
-        .some(field => item[field] !== undefined);
+      const hasManaged = ["kind", "canonical", "sourceGroups", "access"].some(
+        (field) => item[field] !== undefined,
+      );
 
       if (hasManaged && !overlayIds.has(key)) {
-        errors.push(`runtime managed classification is not present in reviewed overlay: ${namespace}/${item.name}`);
+        errors.push(
+          `runtime managed classification is not present in reviewed overlay: ${namespace}/${item.name}`,
+        );
       }
 
       if (item.canonical !== undefined) {
         summary.runtimeCanonicalItems += 1;
         const canonical = item.canonical;
 
-        if (!canonical || !isInputObject(canonical) || Array.isArray(canonical)
-          || canonical.taxonomyVersion !== source.version || !Array.isArray(canonical.path)) {
+        if (
+          !canonical ||
+          !isInputObject(canonical) ||
+          Array.isArray(canonical) ||
+          canonical.taxonomyVersion !== source.version ||
+          !Array.isArray(canonical.path)
+        ) {
           errors.push(`runtime canonical value is malformed: ${namespace}/${item.name}`);
           continue;
         }
 
         if (canonical.primary === null) {
           if (canonical.path.length !== 0) {
-            errors.push(`runtime unclassified canonical path must be empty: ${namespace}/${item.name}`);
+            errors.push(
+              `runtime unclassified canonical path must be empty: ${namespace}/${item.name}`,
+            );
           }
 
           continue;
@@ -154,7 +172,9 @@ export function validateCatalogRuntimeContract({
         const expected = expectedPaths.get(canonical.primary);
 
         if (!expected || !sameJson(expected, canonical.path)) {
-          errors.push(`runtime canonical path is outside the approved taxonomy: ${namespace}/${item.name}`);
+          errors.push(
+            `runtime canonical path is outside the approved taxonomy: ${namespace}/${item.name}`,
+          );
         }
       }
     }
@@ -174,26 +194,32 @@ export function validateCatalogRuntimeContract({
       for (const item of items) {
         if (!item || !isInputObject(item) || !isInputString(item.name)) continue;
 
-        const hasManaged = ['kind', 'canonical', 'sourceGroups', 'access']
-          .some(field => item[field] !== undefined);
+        const hasManaged = ["kind", "canonical", "sourceGroups", "access"].some(
+          (field) => item[field] !== undefined,
+        );
 
         if (hasManaged) projectedManagedKeys.add(identity(namespace, item.name));
       }
     }
 
-    const missingOverlayIds = [...overlayIds].filter(key => !runtimeKeys.has(key));
+    const missingOverlayIds = [...overlayIds].filter((key) => !runtimeKeys.has(key));
 
-    const staleOverlayIds = [...overlayIds]
-      .filter(key => runtimeKeys.has(key) && !projectedManagedKeys.has(key));
+    const staleOverlayIds = [...overlayIds].filter(
+      (key) => runtimeKeys.has(key) && !projectedManagedKeys.has(key),
+    );
 
     summary.staleOverlayItems = staleOverlayIds.length;
     summary.missingOverlayItems = missingOverlayIds.length;
 
     if (staleOverlayIds.length > 0) {
-      errors.push(`reviewed overlay has ${staleOverlayIds.length} stale input fingerprint(s) and was not fully applied`);
+      errors.push(
+        `reviewed overlay has ${staleOverlayIds.length} stale input fingerprint(s) and was not fully applied`,
+      );
     }
   } catch (error) {
-    errors.push(`reviewed overlay cannot be projected onto runtime catalog: ${String(error?.message ?? error)}`);
+    errors.push(
+      `reviewed overlay cannot be projected onto runtime catalog: ${String(error?.message ?? error)}`,
+    );
 
     return { errors, summary };
   }

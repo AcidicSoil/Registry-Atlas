@@ -1,7 +1,7 @@
-import { publishedComponentAsset } from './upstreamVisualPatterns';
-import { escapeHtml } from './renderSafety';
+import { publishedComponentAsset } from "./upstreamVisualPatterns";
+import { escapeHtml } from "./renderSafety";
 
-const PREVIEW_ID = 'catalog-link-preview';
+const PREVIEW_ID = "catalog-link-preview";
 
 const POINTER_DELAY_MS = 250;
 
@@ -23,7 +23,7 @@ export function sourceLinkPreview(url: string): { src: string; hostname: string 
 }
 
 function parsePublicSourceUrl(url: string): URL | null {
-  if (url.trim().startsWith('//')) return null;
+  if (url.trim().startsWith("//")) return null;
 
   let parsed: URL;
 
@@ -33,7 +33,8 @@ function parsePublicSourceUrl(url: string): URL | null {
     return null;
   }
 
-  if (parsed.protocol !== 'https:' || parsed.username || parsed.password || parsed.port) return null;
+  if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port)
+    return null;
 
   const host = parsed.hostname.toLowerCase();
 
@@ -43,12 +44,14 @@ function parsePublicSourceUrl(url: string): URL | null {
 }
 
 function isPrivateHostname(host: string): boolean {
-  return !host.includes('.')
-    || host.includes(':')
-    || host === 'localhost'
-    || host.endsWith('.local')
-    || host.endsWith('.internal')
-    || /^\d+(?:\.\d+){3}$/.test(host);
+  return (
+    !host.includes(".") ||
+    host.includes(":") ||
+    host === "localhost" ||
+    host.endsWith(".local") ||
+    host.endsWith(".internal") ||
+    /^\d+(?:\.\d+){3}$/.test(host)
+  );
 }
 
 export function renderSourceLinkPreview(
@@ -79,8 +82,8 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
     pending = undefined;
 
     if (active) {
-      if (previousDescription) active.setAttribute('aria-describedby', previousDescription);
-      else active.removeAttribute('aria-describedby');
+      if (previousDescription) active.setAttribute("aria-describedby", previousDescription);
+      else active.removeAttribute("aria-describedby");
     }
 
     active = null;
@@ -90,12 +93,13 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
   }
 
   function canPreview(): boolean {
-    return window.innerWidth >= 640 && !window.matchMedia?.('(hover: none)').matches;
+    return window.innerWidth >= 640 && !window.matchMedia?.("(hover: none)").matches;
   }
 
   function previewFor(anchor: HTMLAnchorElement) {
-    const sourceUrl = anchor.getAttribute('data-preview-source-url')
-      || (anchor.matches('.catalog-component-original, .item-related-original') ? anchor.href : '');
+    const sourceUrl =
+      anchor.getAttribute("data-preview-source-url") ||
+      (anchor.matches(".catalog-component-original, .item-related-original") ? anchor.href : "");
 
     return sourceUrl ? sourceLinkPreview(sourceUrl) : null;
   }
@@ -109,28 +113,36 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
 
     close();
     active = anchor;
-    previousDescription = anchor.getAttribute('aria-describedby');
+    previousDescription = anchor.getAttribute("aria-describedby");
 
-    const element = document.createElement('div');
-    const card = anchor.closest('.catalog-component-card, .item-related-entry');
+    const element = document.createElement("div");
+    const card = anchor.closest(".catalog-component-card, .item-related-entry");
 
     const title = previewTitle(card, anchor);
 
     element.id = PREVIEW_ID;
-    element.className = immediate ? 'catalog-link-preview catalog-link-preview-instant' : 'catalog-link-preview';
-    element.setAttribute('role', 'tooltip');
+    element.className = immediate
+      ? "catalog-link-preview catalog-link-preview-instant"
+      : "catalog-link-preview";
+    element.setAttribute("role", "tooltip");
     element.innerHTML = renderSourceLinkPreview(data, title);
-    element.querySelector('img')?.addEventListener('error', close);
+    element.querySelector("img")?.addEventListener("error", close);
 
     document.body.append(element);
     preview = element;
-    anchor.setAttribute('aria-describedby', [previousDescription, PREVIEW_ID].filter(Boolean).join(' '));
+    anchor.setAttribute(
+      "aria-describedby",
+      [previousDescription, PREVIEW_ID].filter(Boolean).join(" "),
+    );
     position(anchor, element);
   }
 
   function previewTitle(card: Element | null, anchor: HTMLAnchorElement): string {
-    return card?.querySelector('strong, .item-related-title')?.textContent?.trim()
-      || anchor.getAttribute('aria-label') || 'Component';
+    return (
+      card?.querySelector("strong, .item-related-title")?.textContent?.trim() ||
+      anchor.getAttribute("aria-label") ||
+      "Component"
+    );
   }
 
   function trigger(event: Event): HTMLAnchorElement | null {
@@ -138,11 +150,11 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
 
     if (!(target instanceof Element)) return null;
 
-    return target.closest<HTMLAnchorElement>('a[href]');
+    return target.closest<HTMLAnchorElement>("a[href]");
   }
 
   function onPointerOver(event: PointerEvent): void {
-    if (event.pointerType === 'touch' || !canPreview()) return;
+    if (event.pointerType === "touch" || !canPreview()) return;
 
     const anchor = trigger(event);
 
@@ -177,22 +189,22 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
   }
 
   for (const root of roots) {
-    root.addEventListener('pointerover', onPointerOver);
-    root.addEventListener('pointerout', onPointerOut);
-    root.addEventListener('focusin', onFocusIn);
-    root.addEventListener('focusout', onFocusOut);
+    root.addEventListener("pointerover", onPointerOver);
+    root.addEventListener("pointerout", onPointerOut);
+    root.addEventListener("focusin", onFocusIn);
+    root.addEventListener("focusout", onFocusOut);
   }
 
   const observer = new MutationObserver(close);
 
   for (const root of roots) observer.observe(root, { childList: true });
 
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') close();
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") close();
   });
 
-  document.addEventListener('scroll', close, true);
-  window.addEventListener('resize', close);
+  document.addEventListener("scroll", close, true);
+  window.addEventListener("resize", close);
 }
 
 function position(anchor: HTMLAnchorElement, element: HTMLElement): void {
@@ -203,8 +215,10 @@ function position(anchor: HTMLAnchorElement, element: HTMLElement): void {
 
   const left = Math.max(margin, Math.min(rect.left, window.innerWidth - width - margin));
 
-  const top = window.innerHeight - rect.bottom >= height + margin
-    ? rect.bottom + margin : Math.max(margin, rect.top - height - margin);
+  const top =
+    window.innerHeight - rect.bottom >= height + margin
+      ? rect.bottom + margin
+      : Math.max(margin, rect.top - height - margin);
 
   element.style.left = `${left}px`;
   element.style.top = `${top}px`;
