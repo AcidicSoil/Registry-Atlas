@@ -226,30 +226,12 @@ aside:has(.aside-inner:empty) {
   text-align: center;
 }
 
-.catalog-component-card:hover .catalog-component-open {
-  color: var(--foreground);
-}
-
 @media (width <= 640px) {
   .catalog-component-unavailable {
     min-height: 140px;
   }
 }
 
-.catalog-component-source-actions {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding: 0 14px 13px;
-}
-
-.catalog-component-original {
-  text-underline-offset: 3px;
-}
-
-.catalog-component-card:has(.catalog-component-unavailable) .catalog-component-unavailable {
+[data-catalog-card]:has(.catalog-component-unavailable) .catalog-component-unavailable {
   min-height: 78px;
 }

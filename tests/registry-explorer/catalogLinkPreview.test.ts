@@ -19,6 +19,11 @@ describe("upstream source previews", () => {
 
     expect(html).toContain("logos/dotnet/icon.svg");
     expect(html).toContain("Component preview");
+    expect(html).toContain("data-preview-content");
+    expect(html).toContain("data-preview-visual");
+    expect(html).toContain("data-preview-attribution");
+    expect(html).not.toContain("catalog-link-preview-content");
+
     expect(html).not.toContain("Registry Atlas");
     expect(html).not.toContain("api.microlink.io");
     expect(html).not.toContain("<iframe");

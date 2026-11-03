@@ -17,18 +17,27 @@ test("catalog card uses one footer homepage link and retains internal card navig
   await expect(cardLink).toHaveAttribute("href", "/Registry-Atlas/@logoforge/components/dotnet");
 
   const layout = await browser.evaluate(() => {
-    const card = document.querySelector(".catalog-component-card");
-    const footer = card?.querySelector(".catalog-component-source-actions");
-    const homepageLink = footer?.querySelector<HTMLAnchorElement>(".catalog-component-homepage");
-    const sourceLink = footer?.querySelector<HTMLAnchorElement>(".catalog-component-original");
+    const card = document.querySelector("[data-catalog-card]");
+    const footer = card?.querySelector("[data-catalog-actions]");
+    const homepageLink = footer?.querySelector<HTMLAnchorElement>("[data-registry-homepage]");
+    const sourceLink = footer?.querySelector<HTMLAnchorElement>("[data-catalog-source]");
 
-    if (!card || !footer || !homepageLink) return null;
+    const open = card?.querySelector("[data-catalog-open]");
+    const description = card?.querySelector("[data-catalog-description]");
+
+    if (!card || !footer || !homepageLink || !open || !description) return null;
 
     const homepageRect = homepageLink.getBoundingClientRect();
     const footerRect = footer.getBoundingClientRect();
 
     return {
-      footerHomepageCount: footer.querySelectorAll(".catalog-component-homepage").length,
+      cardDisplay: getComputedStyle(card).display,
+      cardRadius: getComputedStyle(card).borderRadius,
+      openDisplay: getComputedStyle(open).display,
+      footerDisplay: getComputedStyle(footer).display,
+      descriptionClamp: getComputedStyle(description).getPropertyValue("-webkit-line-clamp"),
+      homepageFontSize: getComputedStyle(homepageLink).fontSize,
+      footerHomepageCount: footer.querySelectorAll("[data-registry-homepage]").length,
       homepageInFooter: homepageLink.parentElement === footer,
       homepageInsideFooterBounds:
         homepageRect.top >= footerRect.top - 2 && homepageRect.bottom <= footerRect.bottom + 2,
@@ -40,6 +49,12 @@ test("catalog card uses one footer homepage link and retains internal card navig
   });
 
   expect(layout).toEqual({
+    cardDisplay: "flex",
+    cardRadius: "0px",
+    openDisplay: "grid",
+    footerDisplay: "flex",
+    descriptionClamp: "2",
+    homepageFontSize: "11px",
     footerHomepageCount: 1,
     homepageInFooter: true,
     homepageInsideFooterBounds: true,

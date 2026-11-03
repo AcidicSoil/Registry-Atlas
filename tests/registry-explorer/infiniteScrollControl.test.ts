@@ -10,8 +10,11 @@ describe("accessible incremental results", () => {
   it("uses a load-more fallback and observer sentinel without numbered pagination", () => {
     const html = renderInfiniteScrollControl(1, 200);
 
+    expect(html).toContain("data-scroll-loader");
     expect(html).toContain("data-scroll-load-more");
     expect(html).toContain("data-scroll-sentinel");
+    expect(html).not.toContain('class="catalog-scroll-loader"');
+    expect(html).not.toContain('class="catalog-load-more"');
     expect(html).toContain("Load more");
     expect(html).not.toContain("data-discovery-page");
     expect(html).not.toContain("Page 1");

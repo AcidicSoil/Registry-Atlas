@@ -1,3 +1,4 @@
+import { renderCatalogGridAttributes } from "./catalogGrid";
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { catalogRoutePath } from "../core/catalogRoutes";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
@@ -53,7 +54,7 @@ export function renderCatalogLanding(
       </div>
       ${
         options.featured.items.length
-          ? `<div class="catalog-component-grid landing-grid">${options.featured.items.map((item) => renderCatalogComponentCard(item)).join("")}</div>`
+          ? `<div${renderCatalogGridAttributes()}>${options.featured.items.map((item) => renderCatalogComponentCard(item)).join("")}</div>`
           : '<div class="empty-state"><h2>No components are available yet.</h2><p>Components will appear here when a registry provides them.</p></div>'
       }
     </section>

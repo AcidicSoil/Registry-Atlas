@@ -248,9 +248,13 @@ describe("renderRelatedComponentLinks", () => {
 
     expect(html).toContain('href="/Registry-Atlas/@delta/blocks/app-shell"');
     expect(html).toContain('data-view-item-kind="block"');
+    expect(html).toContain("data-related-section");
+    expect(html).toContain("data-related-entry");
+    expect(html).toContain("data-related-title");
+    expect(html).not.toContain("item-related-entry");
     expect(html).not.toContain("Item JSON");
     expect(html).toContain('href="/Registry-Atlas/@delta"');
-    expect(html).toContain("registry-icon-related");
+    expect(html).toContain('data-registry-icon-kind="related"');
   });
 
   it("uses source-backed template categories for template detail routes", () => {

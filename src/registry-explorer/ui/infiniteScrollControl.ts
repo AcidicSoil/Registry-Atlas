@@ -1,11 +1,15 @@
+import * as stylex from "@stylexjs/stylex";
+import { progressiveStyles } from "./progressiveResults.stylex";
+import { renderStyleXAttributes } from "./renderSafety";
+
 /** A visible fallback remains usable when IntersectionObserver is unavailable. */
 export function renderInfiniteScrollControl(page: number, pageCount: number): string {
   if (page >= pageCount) return "";
 
   return `
-    <div class="catalog-scroll-loader">
-      <button type="button" class="catalog-load-more" data-scroll-load-more>Load more items</button>
-      <div data-scroll-sentinel aria-hidden="true"></div>
+    <div${renderStyleXAttributes(stylex.attrs(progressiveStyles.loader))} data-scroll-loader>
+      <button type="button"${renderStyleXAttributes(stylex.attrs(progressiveStyles.loadMore))} data-scroll-load-more>Load more items</button>
+      <div${renderStyleXAttributes(stylex.attrs(progressiveStyles.sentinel))} data-scroll-sentinel aria-hidden="true"></div>
     </div>
   `;
 }

@@ -299,7 +299,7 @@ describe("registry explorer shell interactions", () => {
 
     harness.aside.dispatch("click", target({ "data-browse-layout": "list" }));
     expect(harness.location.search).toContain("layout=list");
-    expect(harness.contentBody.innerHTML).toContain("registry-directory-grid-list");
+    expect(harness.contentBody.innerHTML).toContain('data-directory-layout="list"');
 
     harness.aside.dispatch("click", target({ "data-registry-sort-value": "item-count-desc" }));
     expect(harness.location.search).toContain("registrySort=item-count-desc");
@@ -319,7 +319,7 @@ describe("registry explorer shell interactions", () => {
     expect(reloaded.aside.innerHTML).toMatch(
       /data-registry-asset-value="component"[^>]*aria-pressed="true"/,
     );
-    expect(reloaded.contentBody.innerHTML).toContain("registry-directory-grid-list");
+    expect(reloaded.contentBody.innerHTML).toContain('data-directory-layout="list"');
   });
 
   it("opens a real author attribution, reloads its exact query and returns to authors", () => {

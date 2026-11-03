@@ -18,10 +18,15 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).toContain("Current");
     expect(body.innerHTML).toContain("data-registry-icon-image");
     expect(body.innerHTML).toContain('href="/Registry-Atlas/@registrydirectory"');
-    expect(body.innerHTML).toContain('class="registry-directory-copy registry-directory-open"');
+    expect(body.innerHTML).toContain("data-directory-open");
+    expect(body.innerHTML).not.toContain("registry-directory-open");
     expect(body.innerHTML).toContain('href="https://registry.directory/"');
     expect(body.innerHTML).toContain(">Homepage ↗</a>");
-    expect(body.innerHTML).toContain("registry-directory-grid-grid");
+    expect(body.innerHTML).toContain("data-directory-grid");
+    expect(body.innerHTML).toContain('data-directory-layout="grid"');
+    expect(body.innerHTML).toContain("data-directory-card");
+    expect(body.innerHTML).toContain("data-directory-copy");
+    expect(body.innerHTML).not.toContain("registry-directory-copy");
     expect(body.innerHTML).not.toContain("View registry");
     expect(body.innerHTML).not.toContain("registry-directory-controls");
   });

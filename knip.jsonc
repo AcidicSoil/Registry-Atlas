@@ -1,21 +1,15 @@
 {
   // Explicit external executables are installed by the workstation, not npm.
   // React Grab is imported from index.html in development; React is its peer.
-  // StyleX and Shadcn are managed anti-slop setups; no authored StyleX/Tailwind v4 yet.
+  // StyleX lint is active; Shadcn remains staged until Tailwind v4 is authored.
   // Bundled vendor type declarations are generated, not authored application code.
   "$schema": "https://unpkg.com/knip@6.44.0/schema.json",
   "entry": [
-    "src/registry-explorer/entry.ts",
     "scripts/*.mjs",
     "tests/**/*.{test,spec}.{ts,tsx,js,mjs}",
     "tests/**/*.e2e.ts",
     "tests-mobile/**/*.e2e.ts",
-    "vite.config.ts",
-    "vitest.config.ts",
     "e2e*.config.ts",
-    "oxlint.config.ts",
-    "stylelint.config.mjs",
-    "tools/oxlint/anti-slop/index.ts",
     "tools/eslint/anti-slop-stylex/index.mjs",
     "tools/stylelint/anti-slop-css/index.mjs",
     "tools/oxlint/anti-slop/**/*.test.ts",
@@ -31,12 +25,11 @@
     "*.config.ts",
     "!tools/oxlint/anti-slop/vendor/**",
     "*.config.mjs",
-    "index.html",
   ],
   // Exclude only exports from Stackforge's generated shared helper, not authored source.
   "ignoreIssues": {
     "tools/oxlint/anti-slop/shared/dictionary-types.ts": ["exports", "types"],
   },
   "ignoreBinaries": ["cccc", "pinchtab", "pinchtab-profile-manager"],
-  "ignoreDependencies": ["react", "react-grab", "@stylexjs/eslint-plugin", "@shadcn/lint"],
+  "ignoreDependencies": ["react", "react-grab", "@shadcn/lint"],
 }

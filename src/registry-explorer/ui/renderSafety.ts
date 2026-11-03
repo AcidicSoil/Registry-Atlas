@@ -9,6 +9,22 @@ export function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
+/** Serialize only compiler-provided StyleX DOM attributes into HTML strings. */
+export function renderStyleXAttributes(attributes: {
+  class?: string;
+  style?: string;
+  "data-style-src"?: string;
+}): string {
+  const classes = attributes.class ? ` class="${escapeHtml(attributes.class)}"` : "";
+  const inlineStyle = attributes.style ? ` style="${escapeHtml(attributes.style)}"` : "";
+
+  const source = attributes["data-style-src"]
+    ? ` data-style-src="${escapeHtml(attributes["data-style-src"])}"`
+    : "";
+
+  return classes + inlineStyle + source;
+}
+
 export function toSafeExternalUrl(value: string): URL | null {
   if (value.trim().startsWith("//")) {
     return null;

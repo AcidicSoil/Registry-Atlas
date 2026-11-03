@@ -136,7 +136,7 @@ assert(
 
 assert(
   componentViewSource.includes("sourcePageNavigation") &&
-    componentViewSource.includes("catalog-component-open") &&
+    componentViewSource.includes("data-catalog-open") &&
     componentViewSource.includes("renderCardRegistryHomepage(registryHomepage") &&
     componentViewSource.includes("Source ↗") &&
     !componentViewSource.includes("catalog-component-deeplink") &&

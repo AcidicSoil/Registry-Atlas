@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@stylexjs/stylex": "0.19.1",
     "postgres": "^3.4.9",
     "react": "18.3.1",
     "zod": "4.6.6"
@@ -9,9 +10,11 @@
     "@oxlint/plugins": "1.87.0",
     "@shadcn/lint": "file:tools/oxlint/shadcn-lint",
     "@stylexjs/eslint-plugin": "0.19.1",
+    "@stylexjs/unplugin": "0.19.1",
     "@types/node": "^26.6.4",
     "dependency-cruiser": "18.6.0",
     "e2e": "0.20.0",
+    "eslint": "9.39.1",
     "knip": "6.44.0",
     "oxfmt": "0.74.0",
     "oxlint": "1.87.0",
@@ -38,7 +41,7 @@
     "db": "node scripts/project-tasks.mjs db",
     "dev": "vite",
     "import:catalog": "node scripts/import-registry-catalog.mjs",
-    "lint": "pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:complexity && pnpm lint:styles && pnpm lint:unused",
+    "lint": "pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:complexity && pnpm lint:styles && pnpm run lint:stylex && pnpm lint:unused",
     "lint:anti-slop": "oxlint .",
     "lint:styles": "stylelint \"public/styles/**/*.css\" \"src/**/*.css\"",
     "lint:unused": "knip",
@@ -63,12 +66,13 @@
     "typecheck": "tsc --noEmit",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
     "validate:data": "node scripts/validate-registry-data.mjs",
-    "verify": "pnpm prepare:runtime-data && pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm lint:styles && pnpm lint:unused && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build",
-    "verify:local": "pnpm check:runtime-data && pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm lint:styles && pnpm lint:unused && pnpm typecheck && pnpm typecheck:test && pnpm test:local && pnpm build",
+    "verify": "pnpm prepare:runtime-data && pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm lint:styles && pnpm run lint:stylex && pnpm lint:unused && pnpm typecheck && pnpm typecheck:test && pnpm test && pnpm check:postgres && pnpm check:product-contract && pnpm validate:data && pnpm build",
+    "verify:local": "pnpm check:runtime-data && pnpm audit:dependencies && pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:react-doctor && pnpm lint:complexity && pnpm lint:styles && pnpm run lint:stylex && pnpm lint:unused && pnpm typecheck && pnpm typecheck:test && pnpm test:local && pnpm build",
     "format:check": "oxfmt --check .",
     "format:write": "oxfmt --write .",
-    "check": "pnpm -r --if-present run lint:anti-slop && pnpm run lint:anti-slop && pnpm run lint:styles && pnpm run lint:unused && pnpm run lint:boundaries && pnpm run lint:react-doctor && pnpm run lint:complexity && pnpm run format:check",
-    "lint:boundaries": "depcruise src"
+    "check": "pnpm -r --if-present run lint:anti-slop && pnpm run lint:anti-slop && pnpm run lint:styles && pnpm run lint:stylex && pnpm run lint:unused && pnpm run lint:boundaries && pnpm run lint:react-doctor && pnpm run lint:complexity && pnpm run format:check",
+    "lint:boundaries": "depcruise src",
+    "lint:stylex": "eslint \"src/**/*.stylex.ts\" --max-warnings 0"
   },
   "type": "module",
   "version": "0.0.0"

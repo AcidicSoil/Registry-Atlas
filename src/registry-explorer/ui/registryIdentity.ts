@@ -1,5 +1,7 @@
+import * as stylex from "@stylexjs/stylex";
+import { iconStyles } from "./registryIcon.stylex";
 import type { Registry } from "../core/registry.schema";
-import { escapeHtml } from "./renderSafety";
+import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 import { verifiedRegistryHomepage } from "./sourcePageLink";
 
 const REGISTRY_ICON_PATHS = [
@@ -34,18 +36,20 @@ export function nextRegistryIconCandidate(
 
 export function renderRegistryIcon(
   registry: Pick<Registry, "name" | "url" | "iconUrl">,
-  className = "registry-icon",
+  variant: "default" | "directory" | "detail" | "related" = "default",
 ): string {
   const fallback = registry.name.replace(/^@/, "").trim().charAt(0).toUpperCase() || "R";
   const candidates = registryIconCandidates(registry.url, registry.iconUrl);
   const favicon = candidates[0];
   const encodedCandidates = escapeHtml(JSON.stringify(candidates));
 
-  return `<span class="${escapeHtml(className)}" aria-hidden="true">
-    <span class="registry-icon-fallback">${escapeHtml(fallback)}</span>
+  return `<span${renderStyleXAttributes(
+    stylex.attrs(iconStyles.shell, variant !== "default" && iconStyles[variant]),
+  )} data-registry-icon data-registry-icon-kind="${variant}" aria-hidden="true">
+    <span${renderStyleXAttributes(stylex.attrs(iconStyles.media, iconStyles.fallback))} data-registry-icon-fallback>${escapeHtml(fallback)}</span>
     ${
       favicon
-        ? `<img src="${escapeHtml(favicon)}" alt="" data-registry-icon-image
+        ? `<img${renderStyleXAttributes(stylex.attrs(iconStyles.media, iconStyles.image))} src="${escapeHtml(favicon)}" alt="" data-registry-icon-image
       data-registry-icon-index="0" data-registry-icon-candidates="${encodedCandidates}"
       loading="lazy" decoding="async" referrerpolicy="no-referrer" />`
         : ""

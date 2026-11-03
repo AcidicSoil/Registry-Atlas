@@ -1,6 +1,9 @@
+import { renderCatalogGridAttributes } from "./catalogGrid";
+import * as stylex from "@stylexjs/stylex";
+import { cardMarker, cardStyles } from "./catalogCard.stylex";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogAuthor } from "../core/catalogAuthors";
-import { escapeHtml } from "./renderSafety";
+import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 
 export function renderCatalogAuthors(
   headerRoot: HTMLElement,
@@ -26,17 +29,18 @@ export function renderCatalogAuthors(
   bodyRoot.innerHTML = visible.length
     ? `
     <div class="catalog-result-meta">Showing ${(currentPage - 1) * 24 + 1}–${Math.min(currentPage * 24, found.length)} of ${found.length} attributed names</div>
-    <div class="catalog-component-grid catalog-author-grid">
+    <div${renderCatalogGridAttributes()}>
       ${visible
         .map(
           (
             author,
-          ) => `<article class="catalog-component-card"><button type="button" class="catalog-component-open"
+          ) => `<article${renderStyleXAttributes(stylex.attrs(cardStyles.card, cardMarker))} data-catalog-card>
+        <button${renderStyleXAttributes(stylex.attrs(cardStyles.open))} type="button" data-catalog-open
         data-author-select="${escapeHtml(author.name)}"
         aria-label="View catalog items attributed to ${escapeHtml(author.name)}">
-        <div class="catalog-component-card-copy">
-          <strong>${escapeHtml(author.name)}</strong>
-          <span class="catalog-component-registry">${author.componentCount.toLocaleString()} attributed component items</span>
+        <div${renderStyleXAttributes(stylex.attrs(cardStyles.copy))} data-catalog-copy>
+          <strong${renderStyleXAttributes(stylex.attrs(cardStyles.name))}>${escapeHtml(author.name)}</strong>
+          <span${renderStyleXAttributes(stylex.attrs(cardStyles.registry))} data-catalog-registry>${author.componentCount.toLocaleString()} attributed component items</span>
         </div>
       </button></article>`,
         )

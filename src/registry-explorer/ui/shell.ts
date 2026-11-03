@@ -809,7 +809,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   function activeResultList(): Element | null {
     return (
       roots.contentBody.querySelector?.(
-        ".catalog-component-grid, .registry-directory-grid, .catalog-compare-table tbody",
+        "[data-catalog-grid], [data-directory-grid], .catalog-compare-table tbody",
       ) ?? null
     );
   }
@@ -1465,7 +1465,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
 
     image.hidden = true;
-    image.closest(".registry-icon")?.setAttribute("data-registry-icon-failed", "true");
+    image.closest("[data-registry-icon]")?.setAttribute("data-registry-icon-failed", "true");
   }
 
   // Native details toggle events are asynchronous. Record intent synchronously

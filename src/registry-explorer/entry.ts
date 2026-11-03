@@ -1,3 +1,4 @@
+import "./ui/stylex.css";
 import { initRegistryExplorer } from "./ui";
 import { loadRegistries } from "./data/loadRegistries";
 import { attachCatalogLinkPreviews } from "./ui/catalogLinkPreview";

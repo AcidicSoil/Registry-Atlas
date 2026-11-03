@@ -9,7 +9,7 @@ test("catalog appends results without pagination or losing earlier cards", async
 
   const count = () =>
     browser.evaluate(
-      () => document.querySelectorAll(".catalog-component-grid > .catalog-component-card").length,
+      () => document.querySelectorAll("[data-catalog-grid] > [data-catalog-card]").length,
     );
 
   await expect.poll(count).toBeGreaterThan(0);
@@ -48,7 +48,9 @@ test("scrolling the registry directory automatically loads additional records", 
   await app.open("/Registry-Atlas/registries");
 
   const count = () =>
-    browser.evaluate(() => document.querySelectorAll(".registry-directory-grid > *").length);
+    browser.evaluate(
+      () => document.querySelectorAll("[data-directory-grid] > [data-directory-card]").length,
+    );
 
   await expect.poll(count).toBeGreaterThan(0);
 
@@ -69,7 +71,7 @@ test("back navigation restores previously appended catalog results", async ({ ap
 
   const count = () =>
     browser.evaluate(
-      () => document.querySelectorAll(".catalog-component-grid > .catalog-component-card").length,
+      () => document.querySelectorAll("[data-catalog-grid] > [data-catalog-card]").length,
     );
 
   await expect.poll(count).toBeGreaterThan(0);
@@ -83,7 +85,7 @@ test("back navigation restores previously appended catalog results", async ({ ap
   const expandedCount = await count();
 
   const feedIsAccessible = await browser.evaluate(() => {
-    const list = document.querySelector(".catalog-component-grid");
+    const list = document.querySelector("[data-catalog-grid]");
     const first = list?.firstElementChild;
 
     return (
@@ -101,9 +103,7 @@ test("back navigation restores previously appended catalog results", async ({ ap
 
     if (content) content.scrollTop = 260;
 
-    document
-      .querySelector<HTMLAnchorElement>(".catalog-component-grid .catalog-component-open")
-      ?.click();
+    document.querySelector<HTMLAnchorElement>("[data-catalog-grid] [data-catalog-open]")?.click();
 
     return true;
   });

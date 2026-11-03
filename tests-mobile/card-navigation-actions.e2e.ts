@@ -15,17 +15,22 @@ test("mobile card keeps one footer homepage link and clickable internal card", a
   await expect(homepage).toHaveAttribute("target", "_blank");
 
   const geometry = await browser.evaluate(() => {
-    const card = document.querySelector(".catalog-component-card");
-    const footer = card?.querySelector(".catalog-component-source-actions");
-    const link = footer?.querySelector(".catalog-component-homepage");
+    const card = document.querySelector("[data-catalog-card]");
+    const footer = card?.querySelector("[data-catalog-actions]");
+    const link = footer?.querySelector("[data-registry-homepage]");
 
-    if (!card || !footer || !link) return null;
+    const open = card?.querySelector("[data-catalog-open]");
+
+    if (!card || !footer || !link || !open) return null;
 
     const box = link.getBoundingClientRect();
     const footerBox = footer.getBoundingClientRect();
 
     return {
-      homepageCount: card.querySelectorAll(".catalog-component-homepage").length,
+      cardDisplay: getComputedStyle(card).display,
+      openDisplay: getComputedStyle(open).display,
+      footerDisplay: getComputedStyle(footer).display,
+      homepageCount: card.querySelectorAll("[data-registry-homepage]").length,
       homepageInFooter: link.parentElement === footer,
       homepageWithinViewport: box.right <= window.innerWidth,
       homepageBelowContent: box.top >= footerBox.top,
@@ -35,6 +40,9 @@ test("mobile card keeps one footer homepage link and clickable internal card", a
   });
 
   expect(geometry).toEqual({
+    cardDisplay: "flex",
+    openDisplay: "grid",
+    footerDisplay: "flex",
     homepageCount: 1,
     homepageInFooter: true,
     homepageWithinViewport: true,

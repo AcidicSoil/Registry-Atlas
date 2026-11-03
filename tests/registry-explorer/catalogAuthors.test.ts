@@ -35,8 +35,8 @@ describe("catalog author attribution", () => {
 
     renderCatalogAuthors(header, body, buildAuthorDirectory(index), { search: "script", page: 99 });
     expect(header.innerHTML).toContain("Not 21st.dev account profiles or popularity rankings");
-    expect(body.innerHTML).toContain('class="catalog-component-grid catalog-author-grid"');
-    expect(body.innerHTML).toContain('class="catalog-component-card"');
+    expect(body.innerHTML).toContain("data-catalog-grid");
+    expect(body.innerHTML).toContain("data-catalog-card");
     expect(body.innerHTML).toContain("&lt;script&gt;alert(1)&lt;/script&gt;");
     expect(body.innerHTML).not.toContain("<script>");
     expect(body.innerHTML).not.toContain("Bob");

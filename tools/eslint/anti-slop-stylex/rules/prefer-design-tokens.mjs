@@ -17,7 +17,14 @@ function propertyName(property) {
 
 function baseIdentifier(node) {
   if (node.type === "Identifier") return node.name;
-  if (node.type === "MemberExpression" && !node.computed) return baseIdentifier(node.object);
+  if (node.type === "MemberExpression") {
+    // StyleX defineVars supports CSS variable names such as tokens["--primary"].
+    // Reject computed identifiers: the property must remain statically known.
+    if (node.computed && !(node.property.type === "Literal" && typeof node.property.value === "string")) {
+      return null;
+    }
+    return baseIdentifier(node.object);
+  }
   return null;
 }
 

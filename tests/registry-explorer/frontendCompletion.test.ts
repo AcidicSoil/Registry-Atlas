@@ -62,7 +62,7 @@ describe("frontend completion contract", () => {
 
   it("renders a source-first card with library identity and no preview media", () => {
     const html = renderCatalogComponentCard(component(), "block");
-    expect(html).toContain('class="registry-icon');
+    expect(html).toContain("data-registry-icon");
     expect(html).toContain('src="https://delta.example/favicon.ico"');
     expect(html).toContain('href="/Registry-Atlas/@delta/blocks/dashboard"');
     expect(html).toContain('href="https://delta.example/components/dashboard"');

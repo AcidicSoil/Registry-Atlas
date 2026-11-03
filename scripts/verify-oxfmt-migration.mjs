@@ -16,7 +16,9 @@ const parseValue = require(
 );
 
 const baseRef = process.argv[2] ?? "HEAD";
+
 execFileSync("git", ["rev-parse", "--verify", baseRef], { stdio: "ignore" });
+
 const changed = execFileSync("git", ["diff", "--name-only", "--diff-filter=M", "-z", baseRef], {
   encoding: "utf8",
 })
@@ -105,6 +107,7 @@ const reviewedTestChanges = new Set([
 ]);
 
 const byType = {};
+
 const errors = [];
 
 for (const path of changed) {
@@ -120,6 +123,7 @@ for (const path of changed) {
   ) {
     continue; // Approved tooling changes and protected compliance metadata are not format-only.
   }
+
   if (reviewedTestChanges.has(path)) continue; // Regression-tested semantic assertion upgrades.
 
   if ([".ts", ".tsx", ".mts", ".js", ".mjs", ".cjs"].includes(ext)) {

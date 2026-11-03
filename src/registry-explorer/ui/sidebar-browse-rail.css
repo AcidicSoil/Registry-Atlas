@@ -304,33 +304,6 @@ main {
   padding-top: 58px;
 }
 
-.catalog-component-grid-list,
-.registry-directory-grid-list {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.catalog-component-grid-list {
-  gap: 0;
-  border-top: 1px solid var(--border);
-}
-
-.catalog-component-grid-list .catalog-component-card {
-  min-height: 104px;
-  border-width: 0 0 1px;
-  border-radius: 0;
-}
-
-.catalog-component-grid-list .catalog-component-open {
-  min-height: 72px;
-  grid-template-columns: minmax(220px, 0.36fr) minmax(0, 1fr);
-  align-items: center;
-  gap: 18px;
-}
-
-.catalog-component-grid-list .catalog-component-description {
-  min-height: 0;
-}
-
 @media (width <= 860px) {
   .app-sidebar {
     padding: 0 8px;
@@ -348,4 +321,13 @@ main {
   .content {
     padding-top: 18px;
   }
+}
+
+/* Keep the registry index reachable, even with hundreds of categories. */
+.sidebar-browse-section:not(details) .sidebar-browser-list {
+  max-height: 275px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--input) transparent;
 }

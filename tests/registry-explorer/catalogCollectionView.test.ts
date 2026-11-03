@@ -12,8 +12,8 @@ describe("renderCatalogCollection", () => {
       description: "Pages",
       routeKind: "template",
     });
-    expect(template.innerHTML).toContain("catalog-collection-grid-template");
-    expect(template.innerHTML).toContain("catalog-component-card-template");
+    expect(template.innerHTML).toContain('data-catalog-grid-kind="template"');
+    expect(template.innerHTML).toContain('data-card-kind="template"');
 
     const theme = root();
     renderCatalogCollection(root(), theme, result(), {
@@ -22,8 +22,8 @@ describe("renderCatalogCollection", () => {
       description: "Themes",
       routeKind: "theme",
     });
-    expect(theme.innerHTML).toContain("catalog-collection-grid-theme");
-    expect(theme.innerHTML).toContain("catalog-component-card-theme");
+    expect(theme.innerHTML).toContain('data-catalog-grid-kind="theme"');
+    expect(theme.innerHTML).toContain('data-card-kind="theme"');
   });
 });
 

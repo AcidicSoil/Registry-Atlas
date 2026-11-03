@@ -177,3 +177,7 @@ run = "pnpm run format:write"
 
 [tasks."lint:boundaries"]
 run = "pnpm run lint:boundaries"
+
+[tasks."lint:stylex"]
+description = "Validate authored component StyleX via official rules"
+run = "pnpm run lint:stylex"

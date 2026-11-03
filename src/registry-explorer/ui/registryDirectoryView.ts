@@ -1,3 +1,5 @@
+import * as stylex from "@stylexjs/stylex";
+import { directoryOpenMarker, directoryStyles } from "./registryDirectory.stylex";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type {
   RegistryCatalogCoverage,
@@ -6,7 +8,7 @@ import type {
   RegistryDirectorySort,
 } from "../core/registryDirectory";
 import type { CatalogAssetKind } from "../core/catalogCollections";
-import { escapeHtml, renderRegistryHomepageLink } from "./renderSafety";
+import { escapeHtml, renderRegistryHomepageLink, renderStyleXAttributes } from "./renderSafety";
 import { catalogRoutePath } from "../core/catalogRoutes";
 import { renderRegistryIcon } from "./registryIdentity";
 
@@ -60,8 +62,13 @@ export function renderRegistryDirectory(
   const controls = options.controls ?? "";
   bodyRoot.innerHTML = result.entries.length
     ? `${controls}${renderMeta(result)}
-      <div class="registry-directory-grid registry-directory-grid-${layout}">
-        ${result.entries.map(renderEntry).join("")}
+      <div${renderStyleXAttributes(
+        stylex.attrs(
+          directoryStyles.grid,
+          layout === "list" ? directoryStyles.gridList : directoryStyles.gridColumns,
+        ),
+      )} data-directory-grid data-directory-layout="${layout}">
+        ${result.entries.map((entry) => renderEntry(entry, layout)).join("")}
       </div>
       ${renderInfiniteScrollControl(result.page, result.pageCount)}`
     : '<div class="empty-state"><h2>No registries match this view.</h2><p>Try another search or category.</p></div>';
@@ -122,12 +129,12 @@ function assetRow(
   </button>`;
 }
 
-function renderEntry(entry: RegistryDirectoryEntry): string {
+function renderEntry(entry: RegistryDirectoryEntry, layout: RegistryDirectoryLayout): string {
   const count = entry.itemCount === 1 ? "1 item" : `${entry.itemCount.toLocaleString()} items`;
 
   const homepage = renderRegistryHomepageLink(
     entry.registry.url,
-    "registry-directory-homepage",
+    stylex.attrs(directoryStyles.homepage).class,
     "Homepage ↗",
   );
 
@@ -136,24 +143,34 @@ function renderEntry(entry: RegistryDirectoryEntry): string {
     "/Registry-Atlas/",
   );
 
+  const openAttributes = stylex.attrs(
+    directoryStyles.open,
+    directoryOpenMarker,
+    layout === "list" && directoryStyles.openList,
+  );
+
   return `
-    <article class="registry-directory-card">
-      <a class="registry-directory-copy registry-directory-open"
+    <article${renderStyleXAttributes(
+      stylex.attrs(directoryStyles.card, layout === "list" && directoryStyles.cardList),
+    )} data-directory-card>
+      <a${renderStyleXAttributes(openAttributes)} data-directory-open data-directory-copy
         href="${escapeHtml(route)}" data-profile-registry="${escapeHtml(entry.registry.name)}"
         aria-label="Open registry ${escapeHtml(entry.registry.name)}">
-        <div class="registry-directory-heading">
-          <div class="registry-directory-identity">
-            ${renderRegistryIcon(entry.registry, "registry-icon registry-icon-directory")}
-            <div>
-              <h2>${escapeHtml(entry.registry.name)}</h2>
-              <span class="registry-directory-item-count">${escapeHtml(count)}</span>
+        <div${renderStyleXAttributes(stylex.attrs(directoryStyles.heading))}>
+          <div${renderStyleXAttributes(stylex.attrs(directoryStyles.identity))}>
+            ${renderRegistryIcon(entry.registry, "directory")}
+            <div${renderStyleXAttributes(stylex.attrs(directoryStyles.identityCopy))}>
+              <h2${renderStyleXAttributes(stylex.attrs(directoryStyles.headingTitle))}>${escapeHtml(entry.registry.name)}</h2>
+              <span${renderStyleXAttributes(stylex.attrs(directoryStyles.itemCount))}>${escapeHtml(count)}</span>
             </div>
           </div>
         </div>
-        <p>${escapeHtml(entry.registry.description)}</p>
+        <p${renderStyleXAttributes(stylex.attrs(directoryStyles.description))}>${escapeHtml(entry.registry.description)}</p>
       </a>
-      <div class="registry-directory-meta">
-        <span class="registry-directory-status registry-directory-status-${escapeHtml(entry.coverage)}">${escapeHtml(COVERAGE_LABELS[entry.coverage])}</span>
+      <div${renderStyleXAttributes(
+        stylex.attrs(directoryStyles.meta, layout === "list" && directoryStyles.metaList),
+      )}>
+        <span${renderStyleXAttributes(stylex.attrs(directoryStyles.status))} data-directory-coverage="${escapeHtml(entry.coverage)}">${escapeHtml(COVERAGE_LABELS[entry.coverage])}</span>
         ${homepage}
       </div>
     </article>

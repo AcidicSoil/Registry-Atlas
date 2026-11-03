@@ -1,9 +1,11 @@
+import * as stylex from "@stylexjs/stylex";
+import { relatedStyles } from "./relatedItems.stylex";
 import type { RegistryItemDetailResult, RegistryItemDetail } from "../core/registryItemDetail.ts";
 import type { InstallActionState, RegistryItemSummaryFile } from "../core/registry.schema.ts";
 import type { CatalogComponent } from "../core/catalogQuery.ts";
 import { assetKindForCatalogItem } from "../core/catalogCollections.ts";
 import { catalogRoutePath } from "../core/catalogRoutes.ts";
-import { escapeHtml } from "./renderSafety.ts";
+import { escapeHtml, renderStyleXAttributes } from "./renderSafety.ts";
 import { sourcePageNavigationForItem, verifiedRegistryHomepage } from "./sourcePageLink.ts";
 import { renderRegistryIcon } from "./registryIdentity.ts";
 
@@ -58,7 +60,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
       </nav>
       <button class="link-button" type="button" data-back-from-item>← Back to results</button>
       <div class="item-detail-title-row">
-        ${renderRegistryIcon(detail.registry, "registry-icon registry-icon-detail")}
+        ${renderRegistryIcon(detail.registry, "detail")}
         <div>
           <h1>${escapeHtml(detail.title)}</h1>
           <p class="item-origin-line">
@@ -127,13 +129,13 @@ export function renderRelatedComponentLinks(
 
   if (!related.length) return "";
 
-  return `<section class="item-related-section" aria-label="More from the same registry">
-    <div class="item-related-heading">
-      <h2>More from <a class="item-library-link" href="${escapeHtml(catalogRoutePath({ kind: "registry", namespace }, "/Registry-Atlas/"))}"
+  return `<section${renderStyleXAttributes(stylex.attrs(relatedStyles.section))} data-related-section aria-label="More from the same registry">
+    <div${renderStyleXAttributes(stylex.attrs(relatedStyles.heading))}>
+      <h2${renderStyleXAttributes(stylex.attrs(relatedStyles.title))}>More from <a class="item-library-link" href="${escapeHtml(catalogRoutePath({ kind: "registry", namespace }, "/Registry-Atlas/"))}"
         data-profile-registry="${escapeHtml(namespace)}">${escapeHtml(namespace)}</a></h2>
-      <span>${related.length} items</span>
+      <span${renderStyleXAttributes(stylex.attrs(relatedStyles.count))}>${related.length} items</span>
     </div>
-    <div class="item-related-list">
+    <div${renderStyleXAttributes(stylex.attrs(relatedStyles.list))}>
       ${related
         .map((item) => {
           const routeKind = routeKindForItem(item);
@@ -157,21 +159,21 @@ export function renderRelatedComponentLinks(
             },
           );
 
-          return `<div class="item-related-entry">
-          <a class="item-related-link" href="${escapeHtml(routePath)}"
+          return `<div${renderStyleXAttributes(stylex.attrs(relatedStyles.entry))} data-related-entry>
+          <a${renderStyleXAttributes(stylex.attrs(relatedStyles.link))} href="${escapeHtml(routePath)}"
             ${original ? `data-preview-source-url="${escapeHtml(original.url)}"` : ""}
             data-view-item-registry="${escapeHtml(item.namespace)}"
             data-view-item-slug="${escapeHtml(item.slug)}"
             data-view-item-kind="${routeKind}"
             aria-label="View ${escapeHtml(item.displayName)} from ${escapeHtml(namespace)}">
-            ${renderRegistryIcon(item.registry, "registry-icon registry-icon-related")}
-            <span class="item-related-title">${escapeHtml(item.displayName)}</span>
-            <span class="item-related-arrow" aria-hidden="true">↗</span>
+            ${renderRegistryIcon(item.registry, "related")}
+            <span${renderStyleXAttributes(stylex.attrs(relatedStyles.titleText))} data-related-title>${escapeHtml(item.displayName)}</span>
+            <span${renderStyleXAttributes(stylex.attrs(relatedStyles.arrow))} aria-hidden="true">↗</span>
           </a>
-          <div class="item-related-source-actions">
+          <div data-related-source-actions>
             ${
               original
-                ? `<a class="item-related-original" href="${escapeHtml(original.url)}"
+                ? `<a${renderStyleXAttributes(stylex.attrs(relatedStyles.original))} data-related-source href="${escapeHtml(original.url)}"
               data-source-level="${escapeHtml(original.level)}"
               target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>`
                 : ""

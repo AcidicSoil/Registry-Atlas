@@ -1,5 +1,7 @@
+import * as stylex from "@stylexjs/stylex";
+import { previewStyles } from "./catalogLinkPreview.stylex";
 import { publishedComponentAsset } from "./upstreamVisualPatterns";
-import { escapeHtml } from "./renderSafety";
+import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 
 const PREVIEW_ID = "catalog-link-preview";
 
@@ -58,14 +60,14 @@ export function renderSourceLinkPreview(
   source: NonNullable<ReturnType<typeof sourceLinkPreview>>,
   title: string,
 ): string {
-  return `<div class="catalog-link-preview-content">
-    <div class="catalog-link-preview-visual">
-      <img src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} visual"
+  return `<div${renderStyleXAttributes(stylex.attrs(previewStyles.content))} data-preview-content>
+    <div${renderStyleXAttributes(stylex.attrs(previewStyles.visual))} data-preview-visual>
+      <img${renderStyleXAttributes(stylex.attrs(previewStyles.image))} src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} visual"
         decoding="async" referrerpolicy="no-referrer" />
     </div>
-    <div class="catalog-link-preview-attribution">
+    <div${renderStyleXAttributes(stylex.attrs(previewStyles.attribution))} data-preview-attribution>
       <span>Component preview</span>
-      <span>${escapeHtml(source.hostname)}</span>
+      <span${renderStyleXAttributes(stylex.attrs(previewStyles.hostname))}>${escapeHtml(source.hostname)}</span>
     </div>
   </div>`;
 }
@@ -99,7 +101,7 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
   function previewFor(anchor: HTMLAnchorElement) {
     const sourceUrl =
       anchor.getAttribute("data-preview-source-url") ||
-      (anchor.matches(".catalog-component-original, .item-related-original") ? anchor.href : "");
+      (anchor.matches("[data-catalog-source], [data-related-source]") ? anchor.href : "");
 
     return sourceUrl ? sourceLinkPreview(sourceUrl) : null;
   }
@@ -116,14 +118,16 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
     previousDescription = anchor.getAttribute("aria-describedby");
 
     const element = document.createElement("div");
-    const card = anchor.closest(".catalog-component-card, .item-related-entry");
+    const card = anchor.closest("[data-catalog-card], [data-related-entry]");
 
     const title = previewTitle(card, anchor);
 
     element.id = PREVIEW_ID;
-    element.className = immediate
-      ? "catalog-link-preview catalog-link-preview-instant"
-      : "catalog-link-preview";
+    const previewAttributes = stylex.attrs(previewStyles.root, immediate && previewStyles.instant);
+
+    if (previewAttributes.class) element.className = previewAttributes.class;
+
+    if (previewAttributes.style) element.style.cssText = previewAttributes.style;
     element.setAttribute("role", "tooltip");
     element.innerHTML = renderSourceLinkPreview(data, title);
     element.querySelector("img")?.addEventListener("error", close);
@@ -139,7 +143,7 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
 
   function previewTitle(card: Element | null, anchor: HTMLAnchorElement): string {
     return (
-      card?.querySelector("strong, .item-related-title")?.textContent?.trim() ||
+      card?.querySelector("strong, [data-related-title]")?.textContent?.trim() ||
       anchor.getAttribute("aria-label") ||
       "Component"
     );

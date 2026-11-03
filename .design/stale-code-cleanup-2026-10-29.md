@@ -103,3 +103,13 @@ User-approved card behavior is now documented in `DESIGN.md`: the internal card 
 - Auto-fixed 248 `anti-slop/require-readable-spacing` diagnostics and 31 CSS blank-line diagnostics using their existing safe fixers; Oxfmt preserves the resulting spacing. `pnpm typecheck`, `pnpm typecheck:test`, the production build, and all combined quality gates pass.
 - Targeted unit coverage: 603 tests in 84 registry-explorer files passed. Desktop/mobile card, panel, native sidebar, and grouped sidebar E2E verification provides runtime and interaction evidence.
 - Source-linked PPM policy compliance is not a design approval. Preserve existing decisions and review history; keep the independent design-baseline approval blocker open.
+
+## 2026-11-02 StyleX-first application refactor
+
+The historical anti-slop entry above correctly describes the **pre-migration** state. The subsequent user-approved first-principles architecture uses **official StyleX** as the authority (https://stylexjs.com/docs/llm-resources); this supersedes the earlier staged-only status without rewriting historical verification evidence.
+
+- Vite and Vitest compile StyleX `0.19.1` using the same official unplugin. `renderStyleXAttributes()` escapes output from `stylex.attrs()` without changing the vanilla TypeScript DOM rendering architecture.
+- `tokens.stylex.ts` owns canonical color/spacing/typography custom properties; migrated presentation belongs in feature-owned `*.stylex.ts` modules for catalog cards and grid containers, discovery scrolling, previews, progressive results, registry icons, related items, and registry-directory cards.
+- All legacy selectors for those migrated components are removed from the relevant global/feature CSS; `data-*` semantics replace behavior coupled to presentation classes. One or more remaining CSS feature sheets still own the unmigrated shell/sidebar/setup and shared global defaults.
+- The `lint:stylex` gate enforces official validation, shorthands, nonstandard rules and token policy locally and in `.github/workflows/deploy.yml`; matching runtime/compiler dependencies are pinned. Browser and focused unit tests validate published component navigation and desktop/mobile layout.
+- This migration does not assert formal visual-accessibility certification or independently approved design baseline; those remain governed by `.design/standards.json`.

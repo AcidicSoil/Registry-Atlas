@@ -1,10 +1,14 @@
+import { renderCatalogGridAttributes } from "./catalogGrid";
+import * as stylex from "@stylexjs/stylex";
+import { cardMarker, cardStyles } from "./catalogCard.stylex";
+import { discoveryStyles } from "./catalogDiscovery.stylex";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogComponent, CatalogQueryResult } from "../core/catalogQuery";
 import { catalogRoutePath, type CatalogBrowseQueryState } from "../core/catalogRoutes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
 import { catalogTaxonomyNodeMap, type CatalogTaxonomy } from "../core/catalogTaxonomy";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
-import { escapeHtml } from "./renderSafety";
+import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 import { sourcePageNavigationForItem, verifiedRegistryHomepage } from "./sourcePageLink";
 import { renderRegistryIcon } from "./registryIdentity";
 
@@ -52,8 +56,8 @@ export function renderCatalogComponents(
       result.items.length
         ? `
         ${renderResultMeta(result)}
-        <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-component">
-          ${result.items.map((item) => renderCatalogComponentCard(item)).join("")}
+        <div${renderCatalogGridAttributes({ layout: options.layout, kind: "component" })}>
+          ${result.items.map((item) => renderCatalogComponentCard(item, "component", { layout: options.layout, context: "collection" })).join("")}
         </div>
         ${renderInfiniteScrollControl(result.page, result.pageCount)}
       `
@@ -77,10 +81,12 @@ function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
             <h2>${escapeHtml(band.label)}</h2>
             <button type="button" class="link-button" data-catalog-route="${escapeHtml(band.routePath)}">View collection</button>
           </div>
-          <div class="catalog-discovery-row">
+          <div${renderStyleXAttributes(stylex.attrs(discoveryStyles.row))} data-catalog-discovery-row>
             ${band.items
               .slice(0, 6)
-              .map((item) => renderCatalogComponentCard(item))
+              .map((item) =>
+                renderCatalogComponentCard(item, "component", { context: "discovery" }),
+              )
               .join("")}
           </div>
         </section>
@@ -197,14 +203,49 @@ function catalogCardRoutePath(
 function renderCardRegistryHomepage(url: string | null, namespace: string): string {
   if (!url) return "";
 
-  return `<a class="catalog-component-homepage" href="${escapeHtml(url)}"
+  return `<a${renderStyleXAttributes(stylex.attrs(cardStyles.registryHomepage))}
+    data-registry-homepage href="${escapeHtml(url)}"
     target="_blank" rel="noreferrer noopener"
     aria-label="Open registry homepage for ${escapeHtml(namespace)}">Registry homepage ↗</a>`;
+}
+
+function cardLayoutAttributes(options: {
+  layout?: "grid" | "list";
+  context?: "collection" | "discovery";
+}): string {
+  return renderStyleXAttributes(
+    stylex.attrs(
+      cardStyles.card,
+      cardMarker,
+      options.context === "collection" && cardStyles.collectionCard,
+      options.layout === "list" && cardStyles.listCard,
+      options.context === "discovery" && cardStyles.discoveryCard,
+    ),
+  );
+}
+
+function renderCardSourceLink(
+  source: { url: string; level: string } | null,
+  namespace: string,
+): string {
+  if (!source) return "";
+
+  return `<a${renderStyleXAttributes(stylex.attrs(cardStyles.original))} data-catalog-source href="${escapeHtml(source.url)}"
+    data-source-level="${escapeHtml(source.level)}"
+    target="_blank" rel="noreferrer noopener"
+    aria-label="Open source page on ${escapeHtml(namespace)}">Source ↗</a>`;
+}
+
+function cardOpenAttributes(layout: "grid" | "list" | undefined): string {
+  return renderStyleXAttributes(
+    stylex.attrs(cardStyles.open, layout === "list" && cardStyles.listOpen),
+  );
 }
 
 export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: "component" | "block" | "page" | "template" | "theme" | "icon" = "component",
+  options: { layout?: "grid" | "list"; context?: "collection" | "discovery" } = {},
 ): string {
   const homepage = component.registry?.url ?? "";
   const registryHomepage = verifiedRegistryHomepage(homepage);
@@ -229,37 +270,35 @@ export function renderCatalogComponentCard(
   const sourcePreviewAttribute = renderSourcePreviewAttribute(original);
 
   return `
-    <article class="catalog-component-card catalog-component-card-${routeKind}">
-      <a class="catalog-component-open"
+    <article${cardLayoutAttributes(options)} data-catalog-card data-card-kind="${routeKind}">
+      <a${cardOpenAttributes(options.layout)} data-catalog-open
         href="${escapeHtml(routePath)}"
         ${sourcePreviewAttribute}
         data-view-item-registry="${escapeHtml(component.namespace)}"
         data-view-item-slug="${escapeHtml(component.slug)}"
         data-view-item-kind="${routeKind}"
         aria-label="Open ${escapeHtml(component.displayName)} from ${escapeHtml(component.namespace)}">
-        <div class="catalog-component-card-heading">
-          <div class="catalog-component-library">
+        <div${renderStyleXAttributes(stylex.attrs(cardStyles.heading))} data-catalog-heading>
+          <div${renderStyleXAttributes(stylex.attrs(cardStyles.library))} data-catalog-library>
             ${renderRegistryIcon(component.registry)}
-            <div class="catalog-component-card-copy">
-              <strong>${escapeHtml(component.displayName)}</strong>
-              <span class="catalog-component-registry">${escapeHtml(component.namespace)}</span>
+            <div${renderStyleXAttributes(stylex.attrs(cardStyles.copy))} data-catalog-copy>
+              <strong${renderStyleXAttributes(stylex.attrs(cardStyles.name))}>${escapeHtml(component.displayName)}</strong>
+              <span${renderStyleXAttributes(stylex.attrs(cardStyles.registry))} data-catalog-registry>${escapeHtml(component.namespace)}</span>
             </div>
           </div>
-          <span class="catalog-component-kind">${escapeHtml(kindLabel)}</span>
+          <span${renderStyleXAttributes(stylex.attrs(cardStyles.kind))} data-catalog-kind>${escapeHtml(kindLabel)}</span>
         </div>
-        <p class="catalog-component-description">${escapeHtml(supportingCopy)}</p>
+        <p${renderStyleXAttributes(
+          stylex.attrs(
+            cardStyles.description,
+            options.layout === "list" && cardStyles.listDescription,
+          ),
+        )} data-catalog-description>${escapeHtml(supportingCopy)}</p>
         ${themeData}
       </a>
-      <div class="catalog-component-source-actions" aria-label="Item links">
+      <div${renderStyleXAttributes(stylex.attrs(cardStyles.actions))} data-catalog-actions aria-label="Item links">
         ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
-        ${
-          original
-            ? `<a class="catalog-component-original" href="${escapeHtml(original.url)}"
-          data-source-level="${escapeHtml(original.level)}"
-          target="_blank" rel="noreferrer noopener"
-          aria-label="Open source page on ${escapeHtml(component.namespace)}">Source ↗</a>`
-            : ""
-        }
+        ${renderCardSourceLink(original, component.namespace)}
       </div>
     </article>
   `;
@@ -338,9 +377,9 @@ function renderCatalogMetadataSpecimen(component: CatalogComponent): string {
   ].filter(Boolean);
 
   return `
-    <div class="catalog-component-metadata-specimen">
-      <p>${escapeHtml(component.description ?? `From ${component.namespace}.`)}</p>
-      <div class="catalog-component-specimen-facts">
+    <div${renderStyleXAttributes(stylex.attrs(cardStyles.metadata))} data-catalog-metadata>
+      <p${renderStyleXAttributes(stylex.attrs(cardStyles.metadataText))}>${escapeHtml(component.description ?? `From ${component.namespace}.`)}</p>
+      <div${renderStyleXAttributes(stylex.attrs(cardStyles.metadataFacts))} data-catalog-facts>
         ${facts.map((fact) => `<span>${escapeHtml(fact)}</span>`).join("")}
       </div>
     </div>

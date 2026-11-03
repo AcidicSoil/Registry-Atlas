@@ -1,3 +1,4 @@
+import { renderCatalogGridAttributes } from "./catalogGrid";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { renderCatalogComponentCard } from "./catalogComponentsView";
@@ -45,8 +46,8 @@ export function renderCatalogCollection(
   bodyRoot.innerHTML = `
     ${options.controls ?? ""}
     <div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>
-    <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"} catalog-collection-grid-${options.routeKind ?? "component"}">
-      ${result.items.map((item) => renderCatalogComponentCard(item, options.routeKind ?? "component")).join("")}
+    <div${renderCatalogGridAttributes({ layout: options.layout, kind: options.routeKind ?? "component" })}>
+      ${result.items.map((item) => renderCatalogComponentCard(item, options.routeKind ?? "component", { layout: options.layout, context: (options.routeKind ?? "component") === "component" ? "collection" : undefined })).join("")}
     </div>
     ${renderInfiniteScrollControl(result.page, result.pageCount)}
   `;

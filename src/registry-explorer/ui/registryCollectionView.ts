@@ -1,3 +1,4 @@
+import { renderCatalogGridAttributes } from "./catalogGrid";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
@@ -99,7 +100,7 @@ export function renderRegistryCollection(
           result.items.length
             ? `
             ${renderMeta(result)}
-            <div class="catalog-component-grid catalog-component-grid-${options.layout ?? "grid"}">${result.items.map((item) => renderCatalogComponentCard(item, legacyCardRouteKind(item))).join("")}</div>
+            <div${renderCatalogGridAttributes({ layout: options.layout })}>${result.items.map((item) => renderCatalogComponentCard(item, legacyCardRouteKind(item), { layout: options.layout })).join("")}</div>
             ${renderInfiniteScrollControl(result.page, result.pageCount)}
           `
             : renderEmptyRegistryInventory(options.coverage)

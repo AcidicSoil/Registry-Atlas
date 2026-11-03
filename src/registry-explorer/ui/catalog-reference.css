@@ -34,41 +34,7 @@
   font-size: 13px;
 }
 
-.catalog-component-card {
-  transition:
-    border-color 140ms ease,
-    transform 140ms ease,
-    background-color 140ms ease;
-}
-
-.catalog-component-open {
-  width: 100%;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  text-align: left;
-}
-
-.catalog-component-card-copy {
-  display: grid;
-  min-width: 0;
-  gap: var(--space-1);
-  padding: var(--space-3);
-}
-
-.catalog-component-card-copy strong {
-  min-width: 0;
-  overflow-wrap: anywhere;
-}
-
-.catalog-component-registry {
-  color: var(--primary);
-  font-size: 12px;
-}
-
 .catalog-component-card-meta,
-.registry-directory-meta,
 .registry-collection-meta,
 .catalog-compare-summary {
   display: flex;
@@ -115,26 +81,6 @@
   opacity: 0.45;
 }
 
-.registry-directory-grid {
-  display: grid;
-}
-
-.registry-directory-card {
-  grid-template-rows: minmax(0, 1fr) auto;
-  border: 1px solid var(--border);
-}
-
-.registry-directory-copy p {
-  display: -webkit-box;
-  min-width: 0;
-  margin: 0;
-  overflow: hidden;
-  color: var(--muted-foreground);
-  -webkit-box-orient: vertical;
-}
-
-.registry-directory-heading,
-.registry-directory-actions,
 .registry-collection-meta,
 .section-heading-row {
   display: flex;
@@ -142,94 +88,6 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-}
-
-.registry-directory-heading {
-  align-items: flex-start;
-}
-
-.registry-directory-identity {
-  display: flex;
-  min-width: 0;
-  align-items: center;
-  gap: 10px;
-}
-
-.registry-directory-identity > div {
-  min-width: 0;
-}
-
-.registry-directory-heading h2 {
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-.registry-directory-actions {
-  min-width: 0;
-  align-self: end;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.registry-icon {
-  position: relative;
-  display: grid;
-  width: 36px;
-  height: 36px;
-  flex: 0 0 36px;
-  place-items: center;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 9px;
-  background: var(--background);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.registry-icon-directory {
-  width: 40px;
-  height: 40px;
-  flex-basis: 40px;
-  border-radius: 10px;
-}
-
-.registry-icon-detail {
-  width: 44px;
-  height: 44px;
-  flex-basis: 44px;
-  border-radius: 11px;
-}
-
-.registry-icon-related {
-  width: 28px;
-  height: 28px;
-  flex-basis: 28px;
-  border-radius: 7px;
-  font-size: 10px;
-}
-
-.registry-icon-fallback,
-.registry-icon > img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.registry-icon-fallback {
-  display: grid;
-  place-items: center;
-}
-
-.registry-icon > img {
-  z-index: 1;
-  object-fit: contain;
-}
-
-.registry-icon[data-registry-icon-failed="true"] > img {
-  display: none;
 }
 
 .catalog-coverage {
@@ -323,12 +181,6 @@
   outline-offset: 2px;
 }
 
-@media (width <= 1180px) {
-  .catalog-component-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
 @media (width <= 860px) {
   aside {
     order: 1;
@@ -337,29 +189,12 @@
   .content {
     order: 2;
   }
-
-  .catalog-component-grid,
-  .registry-directory-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (width <= 640px) {
-  .catalog-component-grid,
-  .registry-directory-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .registry-directory-card,
-  .registry-directory-heading,
-  .registry-directory-actions,
   .section-heading-row {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .registry-directory-actions {
-    min-width: 0;
   }
 }
 

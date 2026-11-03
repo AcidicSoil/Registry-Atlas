@@ -51,16 +51,35 @@ describe("renderCatalogComponents", () => {
     expect(html).toContain('data-preview-source-url="https://delta.example/docs/code-block"');
     expect(html).toContain("Source ↗");
     expect(html).toContain('data-source-level="sitemap"');
+    expect(html).toContain("data-catalog-source");
     expect(html).not.toContain('class="catalog-component-deeplink"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
     expect(html).not.toContain("View component");
     expect(html).not.toContain("View original ↗");
     expect(html).not.toContain("View item JSON");
   });
+  it("encodes card presentation as StyleX variants instead of ancestor class selectors", () => {
+    const base = renderCatalogComponentCard(component());
+    const list = renderCatalogComponentCard(component(), "component", { layout: "list" });
+
+    const collection = renderCatalogComponentCard(component(), "component", {
+      context: "collection",
+    });
+
+    expect(base).toContain("data-catalog-card");
+    expect(base).toContain("data-catalog-open");
+    expect(base).toContain("data-catalog-description");
+
+    expect(list).not.toEqual(base);
+    expect(collection).not.toEqual(base);
+    expect(base).not.toContain("catalog-component-card-");
+  });
+
   it("places a single registry homepage link in the footer, without View or Inspect", () => {
     const html = renderCatalogComponentCard(component());
 
-    expect(html).toContain('class="catalog-component-homepage"');
+    expect(html).toContain("data-registry-homepage");
+    expect(html).not.toContain("catalog-component-homepage");
     expect(html).toContain('href="https://delta.example/"');
     expect(html).toContain(">Registry homepage ↗</a>");
     expect(html).not.toContain('class="catalog-component-deeplink"');
@@ -70,10 +89,10 @@ describe("renderCatalogComponents", () => {
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
     expect(html).not.toContain("catalog-component-inspect");
     expect(html).not.toContain(">Inspect</a>");
-    expect(html.indexOf("catalog-component-homepage")).toBeGreaterThan(
-      html.indexOf("catalog-component-source-actions"),
+    expect(html.indexOf("data-registry-homepage")).toBeGreaterThan(
+      html.indexOf("data-catalog-actions"),
     );
-    expect((html.match(/catalog-component-homepage/g) ?? []).length).toBe(1);
+    expect((html.match(/data-registry-homepage/g) ?? []).length).toBe(1);
   });
 
   it("omits the homepage action if the upstream registry URL is not verified", () => {
@@ -82,7 +101,7 @@ describe("renderCatalogComponents", () => {
       registry: { ...registry(), url: "http://127.0.0.1:8080/" },
     });
 
-    expect(html).not.toContain('class="catalog-component-homepage"');
+    expect(html).not.toContain("data-registry-homepage");
     expect(html).not.toContain("catalog-component-inspect");
     expect(html).not.toContain('class="catalog-component-deeplink"');
   });
@@ -99,7 +118,7 @@ describe("renderCatalogComponents", () => {
       },
     });
 
-    expect(html).toContain('class="catalog-component-source-actions"');
+    expect(html).toContain("data-catalog-actions");
     expect(html).not.toContain('class="catalog-component-deeplink"');
     expect(html).toContain('href="/Registry-Atlas/@delta/components/code-block"');
     expect(html).not.toContain("View component");
@@ -147,7 +166,7 @@ describe("renderCatalogComponents", () => {
   it("keeps component records visible without fake preview surfaces", () => {
     const html = renderCatalogComponentCard(component());
     expect(html).toContain('data-view-item-registry="@delta"');
-    expect(html).toContain("catalog-component-open");
+    expect(html).toContain("data-catalog-open");
     expect(html).not.toContain("Visual reference");
     expect(html).toContain("data-registry-icon-image");
     expect(html).not.toContain("catalog-component-preview-image");
@@ -186,20 +205,22 @@ describe("renderCatalogComponents", () => {
     });
 
     expect(body.innerHTML).toContain('class="catalog-discovery-bands"');
+    expect(body.innerHTML).toContain("data-catalog-discovery-row");
+    expect(body.innerHTML).not.toContain('class="catalog-discovery-row"');
     expect(body.innerHTML).toContain('class="catalog-discovery-band"');
     expect(body.innerHTML).toContain(">Forms<");
     expect(body.innerHTML).toContain(
       'data-catalog-route="/Registry-Atlas/components/explore/forms"',
     );
     expect(body.innerHTML.indexOf("catalog-discovery-bands")).toBeLessThan(
-      body.innerHTML.indexOf("catalog-component-grid"),
+      body.innerHTML.indexOf("data-catalog-grid"),
     );
   });
 
   it("renders all catalog entries as metadata cards without preview placeholders", () => {
     const body = root();
     renderCatalogComponents(root(), body, result([component()]), { searchTerm: "" });
-    expect(body.innerHTML).toContain("catalog-component-open");
+    expect(body.innerHTML).toContain("data-catalog-open");
     expect(body.innerHTML).toContain("data-registry-icon-image");
     expect(body.innerHTML).not.toContain("catalog-component-preview-image");
     expect(body.innerHTML).not.toContain("Visual reference");
@@ -215,7 +236,7 @@ describe("renderCatalogComponents", () => {
     });
 
     const html = renderCatalogComponentCard(themed, "theme");
-    expect(html).toContain("catalog-component-card-theme");
+    expect(html).toContain('data-card-kind="theme"');
     expect(html).toContain("catalog-theme-swatches");
     expect(html).toContain("background-color:#ffffff");
     expect(html).toContain("background-color:#101010");

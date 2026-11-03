@@ -182,50 +182,8 @@
   padding: 24px 26px 56px;
 }
 
-.catalog-component-grid {
-  display: grid;
-}
-
-.catalog-component-card {
-  padding: 0;
-  box-shadow: none;
-}
-
-.catalog-component-card:hover {
-  box-shadow: none;
-  transform: none;
-}
-
-.catalog-component-open {
-  flex-direction: column;
-  text-decoration: none;
-}
-
-.catalog-component-open:focus-visible {
-  outline: none;
-}
-
-.catalog-component-card-copy,
-.catalog-component-card:has(.catalog-component-original) .catalog-component-card-copy {
-  display: grid;
-  align-content: start;
-  min-height: 0;
-}
-
-.catalog-component-card-copy strong {
-  overflow: hidden;
-  color: var(--foreground);
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.catalog-component-card-copy .catalog-component-registry {
-  font-size: 12px;
-}
-
 .catalog-component-unavailable,
-.catalog-component-card:has(.catalog-component-unavailable) .catalog-component-unavailable {
+[data-catalog-card]:has(.catalog-component-unavailable) .catalog-component-unavailable {
   display: grid;
   width: 100%;
   height: 100%;
@@ -248,25 +206,8 @@
   opacity: 0.43;
 }
 
-.catalog-component-original {
-  position: static;
-  align-self: start;
-  padding: 0;
-  color: var(--muted-foreground);
-  text-decoration: none;
-}
-
-.catalog-component-original:hover {
-  color: var(--primary);
-  text-decoration: underline;
-}
-
 .catalog-discovery-band-heading {
   margin-top: 8px;
-}
-
-.catalog-discovery-row {
-  gap: 18px;
 }
 
 .catalog-results-context {
@@ -346,16 +287,5 @@
 
   .sidebar-browse-navigation {
     padding-bottom: 22px;
-  }
-}
-
-@media (width <= 520px) {
-  .catalog-component-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 21px;
-  }
-
-  .catalog-component-card-copy strong {
-    font-size: 15px;
   }
 }

@@ -67,11 +67,13 @@ describe("registry identity", () => {
         name: "@animate-ui",
         url: "https://animate-ui.com",
       },
-      "registry-icon registry-icon-directory",
+      "directory",
     );
 
-    expect(html).toContain('class="registry-icon registry-icon-directory"');
-    expect(html).toContain('class="registry-icon-fallback">A</span>');
+    expect(html).toContain("data-registry-icon");
+    expect(html).toContain('data-registry-icon-kind="directory"');
+    expect(html).not.toContain("registry-icon-directory");
+    expect(html).toContain("data-registry-icon-fallback>A</span>");
     expect(html).toContain('src="https://animate-ui.com/favicon.ico"');
     expect(html).toContain("data-registry-icon-image");
     expect(html).toContain('data-registry-icon-index="0"');
@@ -85,7 +87,7 @@ describe("registry identity", () => {
         url: "https://components.auth0.com",
         iconUrl: "https://cdn.auth0.com/website/favicon.svg",
       },
-      "registry-icon registry-icon-directory",
+      "directory",
     );
 
     expect(html).toContain('src="https://cdn.auth0.com/website/favicon.svg"');

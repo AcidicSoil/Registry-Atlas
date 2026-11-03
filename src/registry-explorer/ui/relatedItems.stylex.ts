@@ -1,0 +1,92 @@
+import * as stylex from "@stylexjs/stylex";
+import { tokens } from "./tokens.stylex";
+
+export const relatedStyles = stylex.create({
+  section: {
+    display: "grid",
+    gap: 16,
+    paddingBlockStart: 22,
+  },
+  heading: {
+    display: "flex",
+    alignItems: "baseline",
+    justifyContent: "space-between",
+    gap: 12,
+    borderBottomWidth: 1,
+    borderBottomStyle: "solid",
+    borderBottomColor: tokens["--border"],
+    paddingBlockEnd: 12,
+  },
+  title: {
+    margin: 0,
+    color: tokens["--foreground"],
+    fontSize: 17,
+    fontWeight: 600,
+  },
+  count: {
+    color: tokens["--muted-foreground"],
+    fontSize: 12,
+  },
+  list: {
+    display: "grid",
+    gridTemplateColumns: {
+      default: "repeat(auto-fill, minmax(min(100%, 255px), 1fr))",
+      "@media (width <= 520px)": "minmax(0, 1fr)",
+    },
+    rowGap: 8,
+    columnGap: 14,
+  },
+  entry: {
+    display: "flex",
+    flexDirection: "column",
+    minWidth: 0,
+  },
+  link: {
+    display: "flex",
+    alignItems: "center",
+    minWidth: 0,
+    gap: 12,
+    paddingBlock: 8,
+    paddingInline: 10,
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: {
+      default: tokens["--border"],
+      ":hover": tokens["--input"],
+    },
+    borderRadius: 9,
+    color: tokens["--foreground"],
+    backgroundColor: { default: null, ":hover": tokens["--secondary"] },
+    textDecorationLine: "none",
+    outlineWidth: { default: null, ":focus-visible": 2 },
+    outlineStyle: { default: null, ":focus-visible": "solid" },
+    outlineColor: { default: null, ":focus-visible": tokens["--primary"] },
+    outlineOffset: { default: null, ":focus-visible": 2 },
+  },
+  titleText: {
+    overflow: "hidden",
+    minWidth: 0,
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: "0%",
+    fontSize: 12,
+    fontWeight: 550,
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+  },
+  arrow: {
+    color: tokens["--muted-foreground"],
+    fontSize: 13,
+  },
+  original: {
+    alignSelf: "flex-end",
+    paddingBlock: 4,
+    paddingInline: 8,
+    fontSize: 11,
+    color: tokens["--muted-foreground"],
+    outlineWidth: { default: null, ":focus-visible": 2 },
+    outlineStyle: { default: null, ":focus-visible": "solid" },
+    outlineColor: { default: null, ":focus-visible": tokens["--primary"] },
+    outlineOffset: { default: null, ":focus-visible": 2 },
+  },
+});

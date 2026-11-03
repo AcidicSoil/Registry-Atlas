@@ -14,7 +14,6 @@ describe("catalog stylesheet ownership", () => {
       "src/registry-explorer/ui/catalog-hierarchy.css",
       "src/registry-explorer/ui/app-shell-core.css",
       "src/registry-explorer/ui/catalog-browse.css",
-      "src/registry-explorer/ui/catalog-item-detail.css",
       "src/registry-explorer/ui/catalog-library-cards.css",
       "src/registry-explorer/ui/sidebar-browse-rail.css",
       "src/registry-explorer/ui/registry-directory-navigation.css",

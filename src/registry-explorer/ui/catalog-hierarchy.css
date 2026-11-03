@@ -124,31 +124,6 @@ body {
   gap: var(--space-5);
 }
 
-.catalog-component-metadata-specimen {
-  display: grid;
-  width: 100%;
-  height: 100%;
-  align-content: end;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: linear-gradient(180deg, rgb(255 255 255 / 1.2%), rgb(255 255 255 / 3.5%));
-}
-
-.catalog-component-metadata-specimen p {
-  margin: 0;
-  color: var(--foreground);
-  font-size: 13px;
-  line-height: 1.45;
-}
-
-.catalog-component-specimen-facts {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  color: var(--muted-foreground);
-  font-size: 10px;
-}
-
 .catalog-theme-swatches {
   display: grid;
   width: 100%;
@@ -188,17 +163,6 @@ body {
 
 .catalog-theme-swatch:last-child {
   border-right: 0;
-}
-
-.catalog-collection-grid-template,
-.catalog-collection-grid-theme {
-  gap: 32px 24px;
-}
-
-.catalog-component-card:has(.catalog-component-metadata-specimen)
-  .catalog-component-metadata-specimen {
-  height: auto;
-  min-height: 104px;
 }
 
 .item-detail-page {
@@ -279,16 +243,4 @@ body {
 
 .catalog-discovery-band-heading h2 {
   margin: 0;
-}
-
-.catalog-discovery-row {
-  overflow-x: auto;
-  padding-bottom: var(--space-2);
-  overscroll-behavior-inline: contain;
-}
-
-.catalog-collection-grid-component {
-  gap: 0;
-  border-top: 1px solid var(--border);
-  border-left: 1px solid var(--border);
 }

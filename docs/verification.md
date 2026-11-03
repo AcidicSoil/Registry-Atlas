@@ -20,7 +20,7 @@ The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is t
 
 ## Gradual quality cleanup
 
-`pnpm lint:styles` runs Stylelint with the source-backed CSS ownership/size rules; `pnpm lint:unused` runs Knip against the explicit project/CLI/test entrypoints. Both commands are part of `pnpm lint`, `pnpm verify`, `pnpm verify:local`, and deploy CI.
+`pnpm lint:styles` runs Stylelint on remaining authored CSS; `pnpm lint:stylex` runs the **official StyleX ESLint rules and token policy** against `src/**/*.stylex.ts`; `pnpm lint:unused` runs Knip on the project/CLI/test entrypoints. All three gates run in `pnpm lint`, `pnpm check`, `pnpm verify`, `pnpm verify:local`, and deploy CI (`.github/workflows/deploy.yml`). TypeScript/HTML renderers remain subject to Oxlint.
 
 `pnpm audit:dependencies` is also mandatory: the workspace pins patched `zod@4.6.6` and transitive `fast-uri@3.1.9` through `pnpm-workspace.yaml` overrides. This prevents vulnerable versions from resurfacing in E2E or CSS tooling dependency trees. Regenerate and audit `pnpm-lock.yaml` when those overrides change.
 
@@ -69,8 +69,18 @@ Automated verification does not replace the maintained browser/accessibility rel
 
 ## Updated PPM bootstrap (2026-11-02)
 
-`project_bootstrap.py --project . --write` applied the Stackforge TypeScript, CSS, StyleX and Shadcn setups, generated mise tasks and Oxfmt 0.74.0. Its next preview has zero failures and reports unchanged mise/Oxfmt setup. StyleX/Shadcn plugins are staged only; there is no authored StyleX or Tailwind-v4 UI code. React Doctor scans the application but excludes backend maintenance scripts via `doctor.config.json`; the strict anti-slop Oxlint gate still checks authored scripts.
+`project_bootstrap.py --project . --write` applied the Stackforge TypeScript, CSS, StyleX and Shadcn setups, generated mise tasks and Oxfmt 0.74.0. Its next preview has zero failures and reports unchanged mise/Oxfmt setup. StyleX is active through matching `@stylexjs/stylex@0.19.1` runtime and `@stylexjs/unplugin@0.19.1` Vite compiler, with native `*.stylex.ts` components and a first-party StyleX lint gate. Only Shadcn/Tailwind-v4 lint remains staged because the application does not use Tailwind. React Doctor scans the application but excludes backend maintenance scripts via `doctor.config.json`; the strict anti-slop Oxlint gate still checks authored scripts.
 
 The approved Oxfmt 0.74.0 migration resolved **288 formatting differences**. `pnpm format:check` and the combined `pnpm check` both pass. The deterministic `scripts/verify-oxfmt-migration.mjs` compares the changed code against the pre-migration commit using TypeScript AST nodes, CSS selectors/declarations, and parsed configuration values. Only five machine-owned historical evidence artifacts are excluded from formatting by explicit paths in `.oxfmtrc.json`; review approvals are not excluded. Oxlint's spacing autofixer and Stylelint's rule-spacing fixer restore mandatory readability without changing formatter settings or weakening rules. Source-linked PPM evidence hashes are refreshed only after their affected checks pass, without manufacturing new approvals.
 
 For a later replay, run `node scripts/verify-oxfmt-migration.mjs c81d56c` to compare current code with the pre-migration baseline.
+
+## StyleX-native UI verification
+
+**Authority:** https://stylexjs.com/docs/llm-resources. For this project, official StyleX APIs and compiler behavior override local skill examples or generic CSS-to-StyleX conventions. No Tailwind runtime or React rewrite is involved.
+
+- `src/registry-explorer/ui/tokens.stylex.ts` owns shared semantic values via `stylex.defineVars`, compiled into stable document-level custom properties so remaining global CSS consumes the same source of truth.
+- `vite.config.ts` applies `@stylexjs/unplugin` to the HTML-entry Vite build. `vitest.config.ts` shares the same plugin, and the Vite test-specific hook disables only unnecessary long-lived CSS-update middleware so the tests exit reliably.
+- Every migrated renderer uses official `stylex.attrs()` with `renderStyleXAttributes()` for escaped HTML-string output. Behavior uses `data-*`, ARIA and native element semantics, never generated atomic class names.
+- Converted component CSS is deleted as each owner migrates; remaining `*.css` is still checked by Stylelint. Source-tree tests `stylexArchitecture.test.ts`, `stylexAttributes.test.ts`, and `stylexTokenLint.test.mjs` plus browser tests `stylex-registry-icon.e2e.ts`, `stylex-directory-layout.e2e.ts`, and desktop/mobile `stylex-catalog-grid.e2e.ts` cover integration, token validation, layout variants and stable browser output.
+- **Not yet converted:** remaining global document/shell/navigation/setup CSS is intentionally still loaded until the corresponding markup/state ownership moves into StyleX. Migrated UI is not evidence that the entire application is StyleX-only. Historical design-review approval in `.design/standards.json` remains independently gated.
