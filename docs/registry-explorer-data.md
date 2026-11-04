@@ -101,3 +101,7 @@ Runtime source-page metadata is reconciled from the exported PostgreSQL source r
 ## Imported-catalog provenance atomicity (2026-11-04)
 
 `import-registry-catalog.mjs` persists the imported curated item summaries and `catalog-import-report` inside a single PostgreSQL transaction. If the report cannot be written, neither the imported records nor the report is committed. The isolated PostgreSQL rollback test in `registryCatalogImport.test.ts` verifies this contract. Existing `--dry-run` leaves the database unchanged. Other pipeline publishing and reconciliation issues are tracked in `docs/refactor/plan.md`; this importer fix does not assert their completion.
+
+## Consistent runtime export reads (2026-11-04)
+
+`build-runtime-data.mjs` obtains registry, catalog, detail, source-page, route and document rows under one PostgreSQL `REPEATABLE READ READ ONLY` transaction. The resulting `core` and `details` assets therefore describe the same committed database generation. Static files are still published separately; cross-file swap/recovery is outside the completed transaction fix and is tracked in `docs/refactor/plan.md`.

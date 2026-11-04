@@ -103,23 +103,17 @@ export function projectRuntimePayloads({
   };
 }
 
-export async function buildRuntimeData({
-  databaseUrl = process.env.DATABASE_URL,
-  outputDir = "public/data",
-} = {}) {
-  databaseUrl = localPostgresUrl(databaseUrl);
-
-  const sql = postgres(databaseUrl, { max: 1, connect_timeout: 20 });
-
-  try {
-    const [counts] = await sql.unsafe(
+/** Read one coherent database generation for both published runtime assets. */
+export async function readRuntimePayloads(sql) {
+  return sql.begin("isolation level repeatable read read only", async (tx) => {
+    const [counts] = await tx.unsafe(
       "SELECT (SELECT COUNT(*) FROM atlas.atlas_catalog_items)::int AS catalog, (SELECT COUNT(*) FROM atlas.atlas_item_details)::int AS details",
     );
 
     if (!counts.catalog || counts.catalog !== counts.details)
       throw new Error("PostgreSQL catalog/detail counts differ");
 
-    const meta = await sql.unsafe(
+    const meta = await tx.unsafe(
       "SELECT key,value FROM atlas.atlas_meta WHERE key IN ('registry_snapshot_meta','catalog_snapshot_meta')",
     );
 
@@ -128,33 +122,33 @@ export async function buildRuntimeData({
     if (!metadata.registry_snapshot_meta || !metadata.catalog_snapshot_meta)
       throw new Error("Missing PostgreSQL catalog metadata");
 
-    const registryRows = await sql.unsafe(
+    const registryRows = await tx.unsafe(
       "SELECT payload_json FROM atlas.atlas_registries ORDER BY namespace",
     );
 
-    const namespaceRows = await sql.unsafe(
+    const namespaceRows = await tx.unsafe(
       "SELECT namespace FROM atlas.atlas_catalog_namespaces ORDER BY namespace",
     );
 
-    const catalogRows = await sql.unsafe(
+    const catalogRows = await tx.unsafe(
       "SELECT namespace,payload_json FROM atlas.atlas_catalog_items ORDER BY namespace,name",
     );
 
-    const documents = await sql.unsafe("SELECT name,payload_json FROM atlas.atlas_documents");
+    const documents = await tx.unsafe("SELECT name,payload_json FROM atlas.atlas_documents");
 
-    const sourcePages = await sql.unsafe(
+    const sourcePages = await tx.unsafe(
       "SELECT namespace,slug,payload_json FROM atlas.atlas_source_pages ORDER BY namespace,slug",
     );
 
-    const routes = await sql.unsafe(
+    const routes = await tx.unsafe(
       "SELECT namespace,slug,source_url,status FROM atlas.item_routes WHERE source_url IS NOT NULL ORDER BY namespace,slug",
     );
 
-    const patterns = await sql.unsafe(
+    const patterns = await tx.unsafe(
       "SELECT namespace,template,prefix,source,checked_at FROM atlas.route_patterns WHERE status='verified' ORDER BY namespace,template,prefix",
     );
 
-    const details = await sql.unsafe(
+    const details = await tx.unsafe(
       "SELECT namespace,name,payload_json FROM atlas.atlas_item_details ORDER BY namespace,name",
     );
 
@@ -173,6 +167,21 @@ export async function buildRuntimeData({
       patterns,
       details,
     });
+
+    return { payloads, counts, documents };
+  });
+}
+
+export async function buildRuntimeData({
+  databaseUrl = process.env.DATABASE_URL,
+  outputDir = "public/data",
+} = {}) {
+  databaseUrl = localPostgresUrl(databaseUrl);
+
+  const sql = postgres(databaseUrl, { max: 1, connect_timeout: 20 });
+
+  try {
+    const { payloads, counts, documents } = await readRuntimePayloads(sql);
 
     const output = resolve(outputDir);
     await mkdir(output, { recursive: true });
