@@ -72,7 +72,8 @@
     "format:write": "oxfmt --write .",
     "check": "pnpm -r --if-present run lint:anti-slop && pnpm run lint:anti-slop && pnpm run lint:styles && pnpm run lint:stylex && pnpm run lint:unused && pnpm run lint:boundaries && pnpm run lint:react-doctor && pnpm run lint:complexity && pnpm run format:check",
     "lint:boundaries": "depcruise src",
-    "lint:stylex": "eslint \"src/**/*.stylex.ts\" --max-warnings 0"
+    "lint:stylex": "eslint \"src/**/*.stylex.ts\" --max-warnings 0",
+    "collect:source-media": "node scripts/collect-source-media.mjs"
   },
   "type": "module",
   "version": "0.0.0"

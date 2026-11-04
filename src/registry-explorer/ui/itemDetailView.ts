@@ -7,7 +7,7 @@ import { assetKindForCatalogItem } from "../core/catalogCollections.ts";
 import type { CatalogPolicy } from "../core/catalogPolicy";
 import { catalogRoutePath } from "../core/catalogRoutes.ts";
 import { escapeHtml, renderStyleXAttributes } from "./renderSafety.ts";
-import { sourcePageNavigationForItem, verifiedRegistryHomepage } from "./sourcePageLink.ts";
+import { sourcePageNavigation, verifiedRegistryHomepage } from "./sourcePageLink.ts";
 import { renderRegistryIcon } from "./registryIdentity.ts";
 
 export function renderItemDetailView(
@@ -43,7 +43,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
 
   const registryHomepage = verifiedRegistryHomepage(detail.registry.url);
 
-  const source = sourcePageNavigationForItem(detail.namespace, detail.slug, detail.registry.url, {
+  const source = sourcePageNavigation(detail.registry.url, {
     docsUrl: detail.componentPageUrl,
     sourcePage: detail.sourcePage,
   });
@@ -153,15 +153,10 @@ export function renderRelatedComponentLinks(
                   basePath,
                 );
 
-          const original = sourcePageNavigationForItem(
-            item.namespace,
-            item.slug,
-            item.registry.url,
-            {
-              docsUrl: item.docsUrl,
-              sourcePage: item.sourcePage,
-            },
-          );
+          const original = sourcePageNavigation(item.registry.url, {
+            docsUrl: item.docsUrl,
+            sourcePage: item.sourcePage,
+          });
 
           return `<div${renderStyleXAttributes(stylex.attrs(relatedStyles.entry))} data-related-entry>
           <a${renderStyleXAttributes(stylex.attrs(relatedStyles.link))} href="${escapeHtml(routePath)}"

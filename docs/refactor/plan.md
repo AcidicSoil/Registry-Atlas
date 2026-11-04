@@ -1,6 +1,6 @@
 # Registry Atlas refactor plan
 
-**Status:** Architecture approved; phase 4 baseline recorded; phases 5A and 5B implemented. Phases 5C–5E, independent design certification and stale stack/feature-map evidence remain outstanding.
+**Status:** Architecture approved; phase 4 baseline recorded; phases 5A and 5B implemented. An independently approved, provider-neutral source-media task is implemented; phases 5C–5E, independent design certification and stale stack/feature-map evidence remain outstanding.
 
 **Source revision:** `aa7893e` on `main`, checked 2026-11-03. The checkout was clean at inspection and two commits ahead of `origin/main`.
 
@@ -206,3 +206,9 @@ For browser E2E, **build first**: `e2e.config.ts:14-27` uses `vite preview`, so 
 **Blocking questions: 0 for the architecture plan.** Stage 4 was approved and its behavior evidence is recorded in `docs/refactor/baseline.md`. Phases 5A and 5B have implementation and focused verification evidence; phases 5C–5E have not begun. UI implementation and certification additionally require the project-standard design-review process to supply authentic independent evidence; approval of this technical plan is not a substitute.
 
 **Current verification:** read-only source/import/history inspection, payload-size inspection, `git status`, and PPM prework only. No code changes, agents, full test run, browser benchmark, database writes, or deployment occurred in stages 0–3. RepoWise CLI is installed but this checkout has no `.repowise/` index; no new index was initialized. A prior dependency-cruiser JSON export timed out, so the dependency observations above come from a separate read-only TypeScript-AST import scan. File-level claims are grounded in the checked-out sources; unverified runtime effects are labeled hypotheses.
+
+## Approved provider-neutral source-media work (2026-11-04)
+
+The preview-only data workflow was independently approved and is distinct from the pending comprehensive Phase 5E pipeline audit. Frontend provider rules and the Aceternity-only collector were removed; browser preview lookup now reads a versioned static manifest generated from offline source metadata and reviewed legacy evidence. An exact source URL is required and unsupported entries have no visual. The original-page resolver no longer embeds Space UI exceptions: seven source-page anchors are stored in PostgreSQL and exported via the existing runtime builder. See `docs/architecture/component-visual-previews.md`, `scripts/collect-source-media.mjs`, and `src/registry-explorer/ui/sourceMedia.ts`. These changes do not certify all remaining pipeline writers, styling, route ownership, or independent PPM design-review compliance.
+
+**Verification boundary:** The provider-neutral preview work passed 86 affected unit tests and 2 browser tests plus TypeScript, quality, and production-build gates. The separate product-contract script remains blocked by four unchanged shell/index.html checks and 432 pre-existing stale canonical-data fingerprints (five assertions total); `docs/verification.md` records the exact outstanding claims. The comprehensive Phases 5C–5E and independent design certification remain pending.

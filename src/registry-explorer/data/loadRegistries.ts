@@ -334,12 +334,17 @@ function isKnownSourceProvenance(record: Record<string, RawJsonInput>): boolean 
 
   const sitemap = record.level === "sitemap" && record.source === "official-sitemap";
   const pattern = record.level === "pattern" && record.source === "verified-route-pattern";
+  const observed = record.level === "observed" && record.source === "documented-anchor";
 
-  return reviewed || sitemap || pattern;
+  return reviewed || sitemap || pattern || observed;
 }
 
 function sourceProvenanceIsFresh(record: Record<string, RawJsonInput>): boolean {
-  if (record.level === "reviewed" && record.source !== "component-page-verified") return true;
+  if (
+    (record.level === "reviewed" && record.source !== "component-page-verified") ||
+    (record.level === "observed" && record.source === "documented-anchor")
+  )
+    return true;
   const observed = isInputString(record.observedAt) ? Date.parse(record.observedAt) : NaN;
   const age = Date.now() - observed;
 
@@ -397,7 +402,7 @@ function recognizedSourcePage(
   };
 
   if (
-    (record.level === "sitemap" || record.level === "pattern") &&
+    (record.level === "sitemap" || record.level === "pattern" || record.level === "observed") &&
     isInputString(record.observedAt)
   ) {
     return { ...page, observedAt: record.observedAt };

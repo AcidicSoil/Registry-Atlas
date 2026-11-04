@@ -2,51 +2,31 @@ import { describe, expect, it } from "vitest";
 import {
   verifiedRegistryHomepage,
   verifiedSourcePageUrl,
-  sourcePageNavigationForItem,
+  sourcePageNavigation,
 } from "../../src/registry-explorer/ui/sourcePageLink";
 
 describe("original registry page link policy", () => {
-  it.each([
-    ["demo-p-aspect-ratio-02", "example-43-standard-aspect-ratio"],
-    ["demo-p-aspect-ratio-03", "example-11-square-aspect-ratio"],
-    ["demo-p-aspect-ratio-04", "example-219-ultrawide-aspect-ratio"],
-    ["demo-p-aspect-ratio-05", "example-916-portrait-aspect-ratio"],
-    ["demo-p-aspect-ratio-06", "example-32-classic-photography-aspect-ratio"],
-    ["demo-p-aspect-ratio-07", "example-45-social-media-portrait-aspect-ratio"],
-    ["demo-p-aspect-ratio-08", "example-1610-computer-monitor-aspect-ratio"],
-  ])("links the observed Space UI demo %s to its original anchored example", (slug, anchor) => {
-    const result = sourcePageNavigationForItem("@spaceui", slug, "https://www.spaceui.one/", {});
-    expect(result?.url).toBe(`https://www.spaceui.one/primitives/aspect-ratio#${anchor}`);
-    expect(result?.url).not.toContain("/Registry-Atlas/");
-    expect(result?.level).toBe("observed");
+  const home = "https://example.org/";
+
+  it("keeps observed exact item anchors without registry-specific code", () => {
+    expect(
+      sourcePageNavigation(home, {
+        sourcePage: {
+          url: "https://example.org/primitives/aspect-ratio#documented-example",
+          level: "observed",
+          source: "documented-anchor",
+          observedAt: "2026-11-04T00:00:00Z",
+        },
+      }),
+    ).toEqual({
+      url: "https://example.org/primitives/aspect-ratio#documented-example",
+      label: "View documented example",
+      level: "observed",
+    });
   });
 
-  it("never infers an upstream page for an unobserved slug or another registry host", () => {
-    expect(
-      sourcePageNavigationForItem(
-        "@spaceui",
-        "demo-p-aspect-ratio-99",
-        "https://www.spaceui.one/",
-        {},
-      ),
-    ).toBeNull();
-    expect(
-      sourcePageNavigationForItem("@spaceui", "demo-p-aspect-ratio-03", "https://example.org/", {}),
-    ).toBeNull();
-    expect(
-      sourcePageNavigationForItem(
-        "@other",
-        "demo-p-aspect-ratio-03",
-        "https://www.spaceui.one/",
-        {},
-      ),
-    ).toBeNull();
-  });
-
-  it("distinguishes pattern-matched links from individually reviewed pages", async () => {
-    const { sourcePageNavigation } = await import("../../src/registry-explorer/ui/sourcePageLink");
-
-    const navigation = sourcePageNavigation("https://example.org/", {
+  it("distinguishes pattern-matched links from individually reviewed pages", () => {
+    const navigation = sourcePageNavigation(home, {
       sourcePage: {
         url: "https://example.org/docs/button",
         level: "pattern",
@@ -61,7 +41,7 @@ describe("original registry page link policy", () => {
       label: "View pattern-matched page",
     });
   });
-  const home = "https://example.org/";
+
   it("keeps exact observed nested documentation routes and query-based component pages", () => {
     expect(verifiedSourcePageUrl("https://example.org/docs/forms/button", home)).toBe(
       "https://example.org/docs/forms/button",
@@ -70,6 +50,7 @@ describe("original registry page link policy", () => {
       "https://example.org/?component=button",
     );
   });
+
   it.each([
     "https://example.org/",
     "https://example.org/r/button.json",
@@ -83,6 +64,7 @@ describe("original registry page link policy", () => {
   ])("does not claim unsafe or generic documentation: %s", (url) => {
     expect(verifiedSourcePageUrl(url, home)).toBeNull();
   });
+
   it("rejects private, malformed, and non-HTTPS registries", () => {
     for (const url of [
       "http://example.org/",
@@ -91,11 +73,11 @@ describe("original registry page link policy", () => {
       "https://internal.local/",
       "javascript:alert(1)",
       "https://example.org:8443/",
-    ]) {
+    ])
       expect(verifiedRegistryHomepage(url)).toBeNull();
-    }
   });
-  it("keeps safe source registry homepages separate from component pages", () => {
+
+  it("keeps safe registry homepages separate from item source pages", () => {
     expect(verifiedRegistryHomepage(home)).toBe(home);
     expect(verifiedSourcePageUrl(home, home)).toBeNull();
   });

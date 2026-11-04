@@ -103,12 +103,13 @@ interface RegistryCatalogIndexMeta {
 /** A sitemap listing is discoverable but not independently page-verified. */
 export interface RegistrySourcePage {
   url: string;
-  level: "reviewed" | "sitemap" | "pattern";
+  level: "reviewed" | "sitemap" | "pattern" | "observed";
   source:
     | "reviewed-summary"
     | "component-page-verified"
     | "official-sitemap"
-    | "verified-route-pattern";
+    | "verified-route-pattern"
+    | "documented-anchor";
   observedAt?: string;
 }
 

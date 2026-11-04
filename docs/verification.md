@@ -94,3 +94,23 @@ For a later replay, run `node scripts/verify-oxfmt-migration.mjs c81d56c` to com
 - Every migrated renderer uses official `stylex.attrs()` with `renderStyleXAttributes()` for escaped HTML-string output. Behavior uses `data-*`, ARIA and native element semantics, never generated atomic class names.
 - Converted component CSS is deleted as each owner migrates; remaining `*.css` is still checked by Stylelint. Source-tree tests `stylexArchitecture.test.ts`, `stylexAttributes.test.ts`, and `stylexTokenLint.test.mjs` plus browser tests `stylex-registry-icon.e2e.ts`, `stylex-directory-layout.e2e.ts`, and desktop/mobile `stylex-catalog-grid.e2e.ts` cover integration, token validation, layout variants and stable browser output.
 - **Not yet converted:** remaining global document/shell/navigation/setup CSS is intentionally still loaded until the corresponding markup/state ownership moves into StyleX. Migrated UI is not evidence that the entire application is StyleX-only. Historical design-review approval in `.design/standards.json` remains independently gated.
+
+## Provider-neutral source-media migration (2026-11-04)
+
+The preview reader is sourced from `public/data/source-media.json`; the generated manifest is validated at load, and missing/invalid media fails closed without blocking catalog rendering. The initial migration preserved 227 exact source/image records and nine verified legacy URL-rule fixtures (236 entries). The seven observed documentation anchors were migrated into the PostgreSQL source-page table and surfaced by a fresh runtime export. The first 12 generic collector requests produced zero accepted images and 12 `unreadable-page` rejections. Coverage numbers refer only to the published evidence, not the full catalog. Impact-scoped unit tests validate manifest boundaries, media metadata extraction, original-link provenance, component preview rendering and fallback; selected browser tests should run against a freshly built production bundle.
+
+```bash
+pnpm exec vitest run tests/registry-explorer/sourceMedia.test.ts tests/registry-explorer/sourceMediaCollector.test.ts tests/registry-explorer/sourcePageLink.test.ts tests/registry-explorer/catalogLinkPreview.test.ts
+pnpm typecheck
+pnpm typecheck:test
+pnpm check
+pnpm build
+```
+
+Do not infer successful visual verification from image URL patterns, HTTP status alone, or registry-wide counts. Independent source image rendering, broader provider coverage, and PPM design certification remain separate evidence gates.
+
+### Current evidence and outstanding baseline checks
+
+The affected source-media, loader, link, card, item-detail, compare, and PostgreSQL projection tests passed **86/86 across 10 files**. Both TypeScript checks, `pnpm check`, and `pnpm build` passed; the production build generated an SBOM for 653 pinned dependencies. `tests/catalog-link-preview.e2e.ts` and `tests/catalog-navigation.e2e.ts` passed **2/2** against a fresh production preview; the preview browser test also checks the actual upstream SVG image decodes.
+
+`pnpm check:product-contract` is **not green**: its original-page resolver assertion was updated for `sourcePageNavigation`, leaving five independently outstanding failures: unsupported route not-found state in `ui/shell.ts`; Libraries, Components, and Templates navigation link assertions in `index.html`; and 432 stale reviewed-overlay input fingerprints in the local canonical data. These unchanged files/data are outside this approved source-media task. No claim of a clean full product-contract gate or full test suite is made.

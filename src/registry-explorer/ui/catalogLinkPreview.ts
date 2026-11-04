@@ -1,6 +1,6 @@
 import * as stylex from "@stylexjs/stylex";
 import { previewStyles } from "./catalogLinkPreview.stylex";
-import { publishedComponentAsset } from "./upstreamVisualPatterns";
+import { publicMediaUrl, type SourceMedia } from "./sourceMedia";
 import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 
 const PREVIEW_ID = "catalog-link-preview";
@@ -8,13 +8,16 @@ const PREVIEW_ID = "catalog-link-preview";
 const POINTER_DELAY_MS = 250;
 
 /** Only verified upstream links attached by Atlas renderers qualify for previews. */
-export function sourceLinkPreview(url: string): { src: string; hostname: string } | null {
-  const parsed = parsePublicSourceUrl(url);
+export function sourceLinkPreview(
+  url: string,
+  media: SourceMedia = new Map(),
+): { src: string; hostname: string } | null {
+  const parsed = publicMediaUrl(url);
 
   if (!parsed) return null;
 
   const hostname = parsed.hostname.toLowerCase();
-  const publishedAsset = publishedComponentAsset(parsed);
+  const publishedAsset = media.get(parsed.href);
 
   if (publishedAsset) return { src: publishedAsset, hostname };
 
@@ -22,38 +25,6 @@ export function sourceLinkPreview(url: string): { src: string; hostname: string 
   return /\.(?:svg|png|jpe?g|webp|avif|gif)$/i.test(parsed.pathname)
     ? { src: parsed.href, hostname }
     : null;
-}
-
-function parsePublicSourceUrl(url: string): URL | null {
-  if (url.trim().startsWith("//")) return null;
-
-  let parsed: URL;
-
-  try {
-    parsed = new URL(url);
-  } catch {
-    return null;
-  }
-
-  if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port)
-    return null;
-
-  const host = parsed.hostname.toLowerCase();
-
-  if (isPrivateHostname(host)) return null;
-
-  return parsed;
-}
-
-function isPrivateHostname(host: string): boolean {
-  return (
-    !host.includes(".") ||
-    host.includes(":") ||
-    host === "localhost" ||
-    host.endsWith(".local") ||
-    host.endsWith(".internal") ||
-    /^\d+(?:\.\d+){3}$/.test(host)
-  );
 }
 
 export function renderSourceLinkPreview(
@@ -73,7 +44,7 @@ export function renderSourceLinkPreview(
 }
 
 /** Link previews never change the original href, click handler, or native navigation. */
-export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
+export function attachCatalogLinkPreviews(roots: readonly HTMLElement[], media: SourceMedia): void {
   let active: HTMLAnchorElement | null = null;
   let pending: number | undefined;
   let preview: HTMLElement | null = null;
@@ -103,7 +74,7 @@ export function attachCatalogLinkPreviews(roots: readonly HTMLElement[]): void {
       anchor.getAttribute("data-preview-source-url") ||
       (anchor.matches("[data-catalog-source], [data-related-source]") ? anchor.href : "");
 
-    return sourceUrl ? sourceLinkPreview(sourceUrl) : null;
+    return sourceUrl ? sourceLinkPreview(sourceUrl, media) : null;
   }
 
   function show(anchor: HTMLAnchorElement, immediate = false): void {

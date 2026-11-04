@@ -145,7 +145,7 @@ assert(
 );
 
 assert(
-  detailViewSource.includes("sourcePageNavigationForItem") &&
+  detailViewSource.includes("sourcePageNavigation") &&
     detailViewSource.includes("verifiedRegistryHomepage") &&
     detailViewSource.includes("item-origin-line") &&
     !detailViewSource.includes("View item JSON") &&

@@ -1,7 +1,7 @@
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogCompareResult } from "../core/catalogCompare";
 import { escapeHtml } from "./renderSafety";
-import { sourcePageNavigationForItem } from "./sourcePageLink";
+import { sourcePageNavigation } from "./sourcePageLink";
 
 const REGISTRY_PICKER_LIMIT = 10;
 
@@ -125,15 +125,10 @@ function renderTable(result: CatalogCompareResult): string {
         .map((cell) => {
           if (!cell.present) return '<td><span class="muted">Not listed</span></td>';
 
-          const original = sourcePageNavigationForItem(
-            cell.namespace,
-            row.slug,
-            cell.registryHomepage ?? "",
-            {
-              docsUrl: cell.docsUrl,
-              sourcePage: cell.sourcePage,
-            },
-          );
+          const original = sourcePageNavigation(cell.registryHomepage ?? "", {
+            docsUrl: cell.docsUrl,
+            sourcePage: cell.sourcePage,
+          });
 
           return `<td>${
             cell.routePath

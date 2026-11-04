@@ -3,122 +3,61 @@ import {
   renderSourceLinkPreview,
   sourceLinkPreview,
 } from "../../src/registry-explorer/ui/catalogLinkPreview";
+import { parseSourceMediaManifest } from "../../src/registry-explorer/ui/sourceMedia";
+
+const source = "https://components.example.org/blocks/alpha-card";
+
+const asset = "https://images.example.org/alpha-card.webp";
+
+const media = parseSourceMediaManifest({
+  schemaVersion: 1,
+  previews: {
+    [source]: { mediaUrl: asset, method: "page-metadata", checkedAt: "2026-11-04T00:00:00Z" },
+  },
+});
 
 describe("upstream source previews", () => {
-  it("shows the published SVG component, not a Registry Atlas page screenshot", () => {
-    const preview = sourceLinkPreview("https://logoforge.terravidhal.me/logos/dotnet");
-
-    expect(preview).toEqual({
-      src: "https://logoforge.terravidhal.me/logos/dotnet/icon.svg",
-      hostname: "logoforge.terravidhal.me",
-    });
+  it("renders the exact observed component image without substituting site screenshots", () => {
+    const preview = sourceLinkPreview(source, media);
+    expect(preview).toEqual({ src: asset, hostname: "components.example.org" });
 
     if (!preview) return;
-
-    const html = renderSourceLinkPreview(preview, ".NET logo");
-
-    expect(html).toContain("logos/dotnet/icon.svg");
-    expect(html).toContain("Component preview");
-    expect(html).toContain("data-preview-content");
+    const html = renderSourceLinkPreview(preview, "Alpha card");
+    expect(html).toContain(asset);
     expect(html).toContain("data-preview-visual");
     expect(html).toContain("data-preview-attribution");
-    expect(html).not.toContain("catalog-link-preview-content");
-
-    expect(html).not.toContain("Registry Atlas");
-    expect(html).not.toContain("api.microlink.io");
     expect(html).not.toContain("<iframe");
   });
 
-  it("does not mistake an upstream documentation page for a component visual", () => {
-    expect(sourceLinkPreview("https://example.com/components/clock")).toBeNull();
-    expect(
-      sourceLinkPreview(
-        "https://www.spaceui.one/primitives/aspect-ratio#example-11-square-aspect-ratio",
-      ),
-    ).toBeNull();
+  it("does not fabricate images for unmatched or unrelated pages", () => {
+    expect(sourceLinkPreview("https://components.example.org/blocks/another", media)).toBeNull();
+    expect(sourceLinkPreview("https://unknown.example.org/components/button", media)).toBeNull();
+    expect(sourceLinkPreview("https://components.example.org/", media)).toBeNull();
   });
 
-  it("uses only item-specific upstream visuals for tested source families", () => {
-    expect(sourceLinkPreview("https://keylineicons.com/icons/a-arrow-down")).toEqual({
-      src: "https://keylineicons.com/icons/a-arrow-down/opengraph-image/card",
-      hostname: "keylineicons.com",
-    });
-
-    expect(sourceLinkPreview("https://animateicons.in/icons/huge/activity")).toEqual({
-      src: "https://animateicons.in/icons/huge/activity/opengraph-image",
-      hostname: "animateicons.in",
-    });
-
-    expect(sourceLinkPreview("https://animateicons.in/icons/lucide/a-arrow-down")?.src).toBe(
-      "https://animateicons.in/icons/lucide/a-arrow-down/opengraph-image",
-    );
-
-    expect(sourceLinkPreview("https://shadcnblocks.com/block/about1")).toEqual({
-      src: "https://cdn.shadcnblocks.com/shadcnblocks/screenshots/block/about1-4x3.webp",
-      hostname: "shadcnblocks.com",
-    });
-
-    expect(
-      sourceLinkPreview("https://shadcnblocks.com/component/combobox/combobox-grouped-7")?.src,
-    ).toBe(
-      "https://cdn.shadcnblocks.com/shadcnblocks/screenshots/example/combobox/combobox-grouped-7-4x3.webp",
-    );
-
-    expect(sourceLinkPreview("https://reui.io/blocks/application/sheet/sheet-16")?.src).toBe(
-      "https://reui.io/thumbnails/blocks/sheet-16-light.webp",
-    );
-
-    expect(sourceLinkPreview("https://reui.io/components/button/c-button-22")?.src).toBe(
-      "https://reui.io/thumbnails/components/c-button-22-light.webp",
-    );
-
-    expect(sourceLinkPreview("https://reactframe.com/components/testimonial-pills")?.src).toBe(
-      "https://reactframe.com/components/testimonial-pills/opengraph-image",
+  it("retains verified direct image URLs", () => {
+    expect(sourceLinkPreview("https://assets.example.org/button.svg")?.src).toBe(
+      "https://assets.example.org/button.svg",
     );
   });
 
-  it("uses observed media for Aceternity, without guessing file locations", () => {
-    expect(sourceLinkPreview("https://ui.aceternity.com/components/hero-highlight")?.src).toBe(
-      "https://assets.aceternity.com/hero-highlight.webp",
-    );
-
-    expect(sourceLinkPreview("https://ui.aceternity.com/components/unknown-component")).toBeNull();
-    expect(sourceLinkPreview("https://ui.aceternity.com/categories/grid")).toBeNull();
+  it.each([
+    "javascript:alert(1)",
+    "http://example.com/components/button",
+    "https://localhost/secret",
+    "https://127.0.0.1/private",
+    "https://[::1]/private.svg",
+    "//evil.example.com",
+  ])("rejects non-public or unsafe links: %s", (url) => {
+    expect(sourceLinkPreview(url, media)).toBeNull();
   });
 
-  it("rejects generic marketing cards and unverified route families", () => {
-    expect(sourceLinkPreview("https://keylineicons.com/icons/sharp/accessibility")).toBeNull();
-    expect(sourceLinkPreview("https://shadcnblocks.com/blocks/hero/iphone")).toBeNull();
-    expect(sourceLinkPreview("https://uiable.com/components/button")).toBeNull();
-    expect(sourceLinkPreview("https://reui.io/docs/components/button")).toBeNull();
-    expect(sourceLinkPreview("https://reui.io/blocks")).toBeNull();
-    expect(sourceLinkPreview("https://animateicons.in/icons/unknown/activity")).toBeNull();
-  });
-
-  it("renders a verified direct image link without routing through Atlas", () => {
-    expect(sourceLinkPreview("https://assets.example.com/components/button.webp")).toEqual({
-      src: "https://assets.example.com/components/button.webp",
-      hostname: "assets.example.com",
-    });
-  });
-
-  it("rejects insecure and non-public source URLs", () => {
-    expect(sourceLinkPreview("javascript:alert(1)")).toBeNull();
-    expect(sourceLinkPreview("http://example.com/components/button")).toBeNull();
-    expect(sourceLinkPreview("https://localhost/secret")).toBeNull();
-    expect(sourceLinkPreview("https://127.0.0.1/private")).toBeNull();
-    expect(sourceLinkPreview("https://[::1]/private.svg")).toBeNull();
-    expect(sourceLinkPreview("//evil.example.com")).toBeNull();
-  });
-
-  it("escapes untrusted labels and does not insert executable markup", () => {
-    const preview = sourceLinkPreview("https://logoforge.terravidhal.me/logos/dotnet");
+  it("escapes untrusted labels", () => {
+    const preview = sourceLinkPreview(source, media);
 
     if (!preview) return;
-
     const html = renderSourceLinkPreview(preview, "<script>alert(1)</script>");
-
-    expect(html).toContain("&lt;script&gt;alert(1)&lt;/script&gt; visual");
+    expect(html).toContain("&lt;script&gt;");
     expect(html).not.toContain("<script>");
   });
 });

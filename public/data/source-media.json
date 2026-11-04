@@ -1,0 +1,1185 @@
+{
+  "schemaVersion": 1,
+  "previews": {
+    "https://animateicons.in/icons/huge/activity": {
+      "mediaUrl": "https://animateicons.in/icons/huge/activity/opengraph-image",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:44:34.787Z"
+    },
+    "https://animateicons.in/icons/lucide/a-arrow-down": {
+      "mediaUrl": "https://animateicons.in/icons/lucide/a-arrow-down/opengraph-image",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:44:35.608Z"
+    },
+    "https://keylineicons.com/icons/a-arrow-down": {
+      "mediaUrl": "https://keylineicons.com/icons/a-arrow-down/opengraph-image/card",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:43:50.519Z"
+    },
+    "https://logoforge.terravidhal.me/logos/dotnet": {
+      "mediaUrl": "https://logoforge.terravidhal.me/logos/dotnet/icon.svg",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:44:32.522Z"
+    },
+    "https://reactframe.com/components/testimonial-pills": {
+      "mediaUrl": "https://reactframe.com/components/testimonial-pills/opengraph-image",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:43:50.519Z"
+    },
+    "https://reui.io/blocks/application/sheet/sheet-16": {
+      "mediaUrl": "https://reui.io/thumbnails/blocks/sheet-16-light.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:43:50.519Z"
+    },
+    "https://reui.io/components/button/c-button-22": {
+      "mediaUrl": "https://reui.io/thumbnails/components/c-button-22-light.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:43:50.519Z"
+    },
+    "https://shadcnblocks.com/block/about1": {
+      "mediaUrl": "https://cdn.shadcnblocks.com/shadcnblocks/screenshots/block/about1-4x3.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:43:50.519Z"
+    },
+    "https://shadcnblocks.com/component/combobox/combobox-grouped-7": {
+      "mediaUrl": "https://cdn.shadcnblocks.com/shadcnblocks/screenshots/example/combobox/combobox-grouped-7-4x3.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:43:50.519Z"
+    },
+    "https://ui.aceternity.com/blocks/backgrounds/background-grid-with-dots": {
+      "mediaUrl": "https://assets.aceternity.com/components/background-grid-with-dots.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/backgrounds/background-grid-with-dots-and-animations": {
+      "mediaUrl": "https://assets.aceternity.com/components/background-grid-with-dots-and-animations.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/backgrounds/background-with-full-video": {
+      "mediaUrl": "https://assets.aceternity.com/explore/background-with-full-video.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/backgrounds/background-with-shooting-stars": {
+      "mediaUrl": "https://assets.aceternity.com/explore/background-with-shooting-stars.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/backgrounds/background-with-skewed-lines": {
+      "mediaUrl": "https://assets.aceternity.com/explore/background-with-skewed-lines.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/backgrounds/background-with-skewed-rectangles": {
+      "mediaUrl": "https://assets.aceternity.com/explore/background-with-skewed-rectangles.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/bento-grids/bento-grid-illustrations": {
+      "mediaUrl": "https://assets.aceternity.com/components/bento-grid-illustrations.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/bento-grids/bento-grid-with-skeletons": {
+      "mediaUrl": "https://assets.aceternity.com/explore/bento-grid-with-skeletons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/bento-grids/feature-grid-with-illustrations-and-bento": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-grid-with-illustrations-and-bento.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/bento-grids/masonry-bento-grid-with-images": {
+      "mediaUrl": "https://assets.aceternity.com/explore/masonry-bento-grid-with-images.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/bento-grids/three-column-bento-grid": {
+      "mediaUrl": "https://assets.aceternity.com/explore/three-column-bento-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/blog-content-sections/blog-content-centered": {
+      "mediaUrl": "https://assets.aceternity.com/explore/blog-content-centered.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/blog-content-sections/blog-content-with-toc": {
+      "mediaUrl": "https://assets.aceternity.com/explore/blog-content-with-toc.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/blog-sections/blog-with-search": {
+      "mediaUrl": "https://assets.aceternity.com/explore/blog-with-search.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/blog-sections/blog-with-search-magazine": {
+      "mediaUrl": "https://assets.aceternity.com/components/blog-with-search-magazine.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/blog-sections/simple-blog-with-grid": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-blog-with-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cards/expandable-card-on-click": {
+      "mediaUrl": "https://assets.aceternity.com/explore/expandable-card-on-click.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/contact-sections/contact-form-grid-with-details": {
+      "mediaUrl": "https://assets.aceternity.com/explore/contact-form-grid-with-details.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/contact-sections/contact-section-with-shader": {
+      "mediaUrl": "https://assets.aceternity.com/components/contact-section-with-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/contact-sections/contact-with-dither-image": {
+      "mediaUrl": "https://assets.aceternity.com/components/contact-with-dither-image.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/contact-sections/simple-centered-contact-form": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-centered-contact-form.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/cta-centered-masonry-gallery": {
+      "mediaUrl": "https://assets.aceternity.com/components/cta-centered-masonry-gallery.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/cta-with-background-noise": {
+      "mediaUrl": "https://assets.aceternity.com/explore/cta-with-background-noise.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/cta-with-centered-text": {
+      "mediaUrl": "https://assets.aceternity.com/components/cta-with-centered-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/cta-with-dashed-grid-lines": {
+      "mediaUrl": "https://assets.aceternity.com/explore/cta-with-dashed-grid-lines.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/cta-with-masonry-images": {
+      "mediaUrl": "https://assets.aceternity.com/components/cta-with-masonry-images.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/cta-with-right-gradient-and-animation": {
+      "mediaUrl": "https://assets.aceternity.com/components/cta-with-right-gradient-and-animation.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/cta-sections/simple-cta-with-images": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-cta-with-images.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/empty-states/empty-state-vertical-grid": {
+      "mediaUrl": "https://assets.aceternity.com/components/empty-state-vertical-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/empty-states/empty-state-with-draggable-cards": {
+      "mediaUrl": "https://assets.aceternity.com/components/empty-state-with-draggable-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/empty-states/empty-state-with-stacked-cards": {
+      "mediaUrl": "https://assets.aceternity.com/components/empty-state-with-stacked-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/faqs/faqs-with-dashed-lines": {
+      "mediaUrl": "https://assets.aceternity.com/components/faqs-with-dashed-lines.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/faqs/faqs-with-grid": {
+      "mediaUrl": "https://assets.aceternity.com/explore/faqs-with-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/faqs/simple-faqs-with-background": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-faqs-with-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/dither-features": {
+      "mediaUrl": "https://assets.aceternity.com/components/dither-features.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-grid-with-minimal-illustrations": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-grid-with-minimal-illustrations.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-grid-with-motion-and-tabs": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-grid-with-motion-and-tabs.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-section-with-centered-skeleton": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-section-with-centered-skeleton.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-section-with-horizontal-skeletons": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-section-with-horizontal-skeletons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-section-with-terminal": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-section-with-terminal.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-section-with-vertical-grids": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-section-with-vertical-grids.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/feature-with-inline-icons": {
+      "mediaUrl": "https://assets.aceternity.com/components/feature-with-inline-icons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-grid-with-large-skeletons": {
+      "mediaUrl": "https://assets.aceternity.com/explore/features-grid-with-large-skeletons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-section-with-skeletons": {
+      "mediaUrl": "https://assets.aceternity.com/explore/features-section-with-skeletons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-with-accordion-and-image": {
+      "mediaUrl": "https://assets.aceternity.com/components/features-with-accordion-and-image.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-with-hover-and-text-animation": {
+      "mediaUrl": "https://assets.aceternity.com/components/features-with-hover-and-text-animation.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-with-isometric-blocks": {
+      "mediaUrl": "https://assets.aceternity.com/components/features-with-isometric-blocks.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-with-square-edges": {
+      "mediaUrl": "https://assets.aceternity.com/components/features-with-square-edges.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-with-stacked-isometric-boxes": {
+      "mediaUrl": "https://assets.aceternity.com/components/features-with-stacked-isometric-boxes.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/features-with-sticky-scroll": {
+      "mediaUrl": "https://assets.aceternity.com/explore/features-with-sticky-scroll.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/multi-illustration-bento": {
+      "mediaUrl": "https://assets.aceternity.com/components/multi-illustration-bento.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/multi-level-features-with-illustrations": {
+      "mediaUrl": "https://assets.aceternity.com/components/multi-level-features-with-illustrations.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/multicolored-features": {
+      "mediaUrl": "https://assets.aceternity.com/components/multicolored-features.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/feature-sections/three-column-features-with-image": {
+      "mediaUrl": "https://assets.aceternity.com/components/three-column-features-with-image.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/footers/centered-with-logo": {
+      "mediaUrl": "https://assets.aceternity.com/explore/centered-with-logo.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/footers/footer-with-big-text": {
+      "mediaUrl": "https://assets.aceternity.com/components/footer-with-big-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/footers/simple-footer-with-four-grids": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-footer-with-four-grids.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/centered-around-testimonials": {
+      "mediaUrl": "https://assets.aceternity.com/explore/centered-around-testimonials.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/full-background-image-with-text": {
+      "mediaUrl": "https://assets.aceternity.com/explore/full-background-image-with-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-beams-and-grid": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-beams-and-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-dither-background": {
+      "mediaUrl": "https://assets.aceternity.com/components/hero-section-with-dither-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-flickering-lights": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-flickering-lights.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-hub": {
+      "mediaUrl": "https://assets.aceternity.com/components/hero-section-with-hub.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-images-grid-and-navbar": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-images-grid-and-navbar.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-infinite-scroll-cards": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-infinite-scroll-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-mesh-gradient": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-mesh-gradient.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-mousemove": {
+      "mediaUrl": "https://assets.aceternity.com/components/hero-section-with-mousemove.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-multi-color-background": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-multi-color-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-noise-background": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-noise-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-shadow-and-scales": {
+      "mediaUrl": "https://assets.aceternity.com/components/hero-section-with-shadow-and-scales.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-section-with-tabs": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-section-with-tabs.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-with-background-and-navbar": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-with-background-and-navbar.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-with-centered-image": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-with-centered-image.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-with-chat-input": {
+      "mediaUrl": "https://assets.aceternity.com/components/hero-with-chat-input.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-with-framed-image-and-logos": {
+      "mediaUrl": "https://assets.aceternity.com/components/hero-with-framed-image-and-logos.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/hero-with-image-and-scales": {
+      "mediaUrl": "https://assets.aceternity.com/explore/hero-with-image-and-scales.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/minimal-hero-section-with-parallax-images": {
+      "mediaUrl": "https://assets.aceternity.com/explore/minimal-hero-section-with-parallax-images.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/minimal-hero-with-huge-interactions": {
+      "mediaUrl": "https://assets.aceternity.com/components/minimal-hero-with-huge-interactions.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/modern-hero-with-gradients": {
+      "mediaUrl": "https://assets.aceternity.com/explore/modern-hero-with-gradients.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/playful-hero-section": {
+      "mediaUrl": "https://assets.aceternity.com/explore/playful-hero-section.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/hero-sections/two-column-with-image": {
+      "mediaUrl": "https://assets.aceternity.com/explore/two-column-with-image.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/box-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/box-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/chat-conversation": {
+      "mediaUrl": "https://assets.aceternity.com/explore/chat-conversation.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/collaborative-cursors": {
+      "mediaUrl": "https://assets.aceternity.com/explore/collaborative-cursors.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/draggable-cards": {
+      "mediaUrl": "https://assets.aceternity.com/components/draggable-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/dynamic-island": {
+      "mediaUrl": "https://assets.aceternity.com/components/dynamic-island.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/flipping-images-with-bar": {
+      "mediaUrl": "https://assets.aceternity.com/components/flipping-images-with-bar.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/folder-with-files": {
+      "mediaUrl": "https://assets.aceternity.com/explore/folder-with-files.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/inline-icon-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/inline-icon-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/ipad-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/ipad-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/iphone-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/iphone-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/isometric-box": {
+      "mediaUrl": "https://assets.aceternity.com/components/isometric-box.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/keyboard-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/keyboard-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/macbook-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/macbook-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/macbook-illustration-with-icons": {
+      "mediaUrl": "https://assets.aceternity.com/components/macbook-illustration-with-icons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/meeting-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/meeting-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/rotating-tabs-with-text": {
+      "mediaUrl": "https://assets.aceternity.com/components/rotating-tabs-with-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/slider-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/slider-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/testimonials-hover-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/testimonials-hover-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/text-highlight-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/text-highlight-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/uptime-status-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/uptime-status-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/illustrations/world-map-illustration": {
+      "mediaUrl": "https://assets.aceternity.com/components/world-map-illustration.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/login-and-signup-sections/login-form-with-gradient": {
+      "mediaUrl": "https://assets.aceternity.com/explore/login-form-with-gradient.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/login-and-signup-sections/login-signup-minimal": {
+      "mediaUrl": "https://assets.aceternity.com/components/login-signup-minimal.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/login-and-signup-sections/login-with-socials-and-email": {
+      "mediaUrl": "https://assets.aceternity.com/explore/login-with-socials-and-email.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/login-and-signup-sections/premium-auth-split": {
+      "mediaUrl": "https://assets.aceternity.com/components/premium-auth-split.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/login-and-signup-sections/registration-form-with-images": {
+      "mediaUrl": "https://assets.aceternity.com/explore/registration-form-with-images.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/login-and-signup-sections/simple-login-with-grid-lines": {
+      "mediaUrl": "https://assets.aceternity.com/components/simple-login-with-grid-lines.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/logo-cloud-marquee": {
+      "mediaUrl": "https://assets.aceternity.com/explore/logo-cloud-marquee.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/logo-cloud-multiple-rows": {
+      "mediaUrl": "https://assets.aceternity.com/components/logo-cloud-multiple-rows.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/logo-cloud-with-blur-animation": {
+      "mediaUrl": "https://assets.aceternity.com/explore/logo-cloud-with-blur-animation.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/logo-cloud-with-swap-animation": {
+      "mediaUrl": "https://assets.aceternity.com/components/logo-cloud-with-swap-animation.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/logos-with-blur-flip": {
+      "mediaUrl": "https://assets.aceternity.com/explore/logos-with-blur-flip.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/single-row-logo-cloud": {
+      "mediaUrl": "https://assets.aceternity.com/components/single-row-logo-cloud.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/logo-clouds/spotlight-logo-cloud": {
+      "mediaUrl": "https://assets.aceternity.com/explore/spotlight-logo-cloud.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/navbar-classic": {
+      "mediaUrl": "https://assets.aceternity.com/explore/navbar-classic.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/navbar-dark-shadow": {
+      "mediaUrl": "https://assets.aceternity.com/components/navbar-dark-shadows.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/navbar-mega": {
+      "mediaUrl": "https://assets.aceternity.com/explore/navbar-mega.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/navbar-pill": {
+      "mediaUrl": "https://assets.aceternity.com/explore/navbar-pill.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/navbar-underline": {
+      "mediaUrl": "https://assets.aceternity.com/explore/navbar-underline.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/navbar-with-children": {
+      "mediaUrl": "https://assets.aceternity.com/explore/navbar-with-children.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/navbars/simple-navbar-with-hover-effects": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-navbar-with-hover-effects.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/pricing-minimal": {
+      "mediaUrl": "https://assets.aceternity.com/components/pricing-minimal.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/pricing-page-with-featured-and-enterprise": {
+      "mediaUrl": "https://assets.aceternity.com/explore/pricing-page-with-featured-and-enterprise.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/pricing-with-header-and-icons": {
+      "mediaUrl": "https://assets.aceternity.com/components/pricing-with-header-and-icons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/pricing-with-icons": {
+      "mediaUrl": "https://assets.aceternity.com/components/pricing-with-icons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/pricing-with-switch": {
+      "mediaUrl": "https://assets.aceternity.com/explore/pricing-with-switch.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/pricing-with-switch-and-add-on": {
+      "mediaUrl": "https://assets.aceternity.com/explore/pricing-with-switch-and-add-on.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/pricing-sections/simple-pricing-with-three-tiers": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-pricing-with-three-tiers.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/shaders/dot-distortion-shader": {
+      "mediaUrl": "https://assets.aceternity.com/explore/dot-distortion-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/shaders/lines-gradient-shader": {
+      "mediaUrl": "https://assets.aceternity.com/explore/lines-gradient-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/shaders/ribbon-gradient-shader": {
+      "mediaUrl": "https://assets.aceternity.com/components/ribbon-gradient-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/shaders/spotlight-shader": {
+      "mediaUrl": "https://assets.aceternity.com/explore/spotlight-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/sidebars/collapsible-sidebar": {
+      "mediaUrl": "https://assets.aceternity.com/explore/collapsible-sidebar.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/sidebars/grouped-sidebar": {
+      "mediaUrl": "https://assets.aceternity.com/components/grouped-sidebar.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/sidebars/simple-sidebar-with-hover": {
+      "mediaUrl": "https://assets.aceternity.com/explore/simple-sidebar-with-hover.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/stats-sections/stats-for-changelog": {
+      "mediaUrl": "https://assets.aceternity.com/explore/stats-for-changelog.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/stats-sections/stats-with-gradient": {
+      "mediaUrl": "https://assets.aceternity.com/explore/stats-with-gradient.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/stats-sections/stats-with-grid-background": {
+      "mediaUrl": "https://assets.aceternity.com/explore/stats-with-grid-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/stats-sections/stats-with-number-ticker": {
+      "mediaUrl": "https://assets.aceternity.com/explore/stats-with-number-ticker.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/team-sections/about-us-section-with-cards": {
+      "mediaUrl": "https://assets.aceternity.com/components/about-us-section-with-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/team-sections/team-section-with-light-background": {
+      "mediaUrl": "https://assets.aceternity.com/components/team-section-with-light-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/team-sections/team-section-with-scales": {
+      "mediaUrl": "https://assets.aceternity.com/components/team-section-with-scales.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/team-sections/team-section-with-small-avatars": {
+      "mediaUrl": "https://assets.aceternity.com/components/team-section-with-small-avatars.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/team-sections/team-section-with-timeline-cards": {
+      "mediaUrl": "https://assets.aceternity.com/components/team-section-with-timeline-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-background-with-drag": {
+      "mediaUrl": "https://assets.aceternity.com/explore/testimonials-background-with-drag.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-grid-with-centered-carousel": {
+      "mediaUrl": "https://assets.aceternity.com/explore/testimonials-grid-with-centered-carousel.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-marquee-grid": {
+      "mediaUrl": "https://assets.aceternity.com/explore/testimonials-marquee-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-marquee-grid-boxed": {
+      "mediaUrl": "https://assets.aceternity.com/components/testimonials-marquee-grid-boxed.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-masonry-grid": {
+      "mediaUrl": "https://assets.aceternity.com/explore/testimonials-masonry-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-photo-carousel": {
+      "mediaUrl": "https://assets.aceternity.com/components/testimonials-photo-carousel.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-with-carousel": {
+      "mediaUrl": "https://assets.aceternity.com/explore/testimonials-with-carousel.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/testimonials/testimonials-with-centered-highlight": {
+      "mediaUrl": "https://assets.aceternity.com/components/testimonials-with-centered-highlight.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/blocks/text-animations/text-generate-typewriter": {
+      "mediaUrl": "https://assets.aceternity.com/components/text-generate-typewriter.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/3d-globe": {
+      "mediaUrl": "https://assets.aceternity.com/components/3d-globe.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/3d-marquee": {
+      "mediaUrl": "https://assets.aceternity.com/3d-marquee.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/animated-modal": {
+      "mediaUrl": "https://assets.aceternity.com/animated-modal.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/animated-testimonials": {
+      "mediaUrl": "https://assets.aceternity.com/animated-testimonials.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/apple-cards-carousel": {
+      "mediaUrl": "https://assets.aceternity.com/apple-cards-carousel.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/ascii-art": {
+      "mediaUrl": "https://assets.aceternity.com/components/ascii-art.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/aurora-background": {
+      "mediaUrl": "https://assets.aceternity.com/aurora-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/background-beams-with-collision": {
+      "mediaUrl": "https://assets.aceternity.com/background-beams-with-collision.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/background-gradient-animation": {
+      "mediaUrl": "https://assets.aceternity.com/background-gradient-animation.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/background-lines": {
+      "mediaUrl": "https://assets.aceternity.com/background-lines.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/background-ripple-effect": {
+      "mediaUrl": "https://assets.aceternity.com/background-ripple-effect.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/canvas-reveal-effect": {
+      "mediaUrl": "https://assets.aceternity.com/canvas-reveal-effect.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/canvas-text": {
+      "mediaUrl": "https://assets.aceternity.com/components/canvas-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/card-spotlight": {
+      "mediaUrl": "https://assets.aceternity.com/card-spotlight.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/chromatic-image": {
+      "mediaUrl": "https://assets.aceternity.com/components/chromatic-image.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/cloud-shader": {
+      "mediaUrl": "https://assets.aceternity.com/components/cloud-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/code-block": {
+      "mediaUrl": "https://assets.aceternity.com/code-block.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/colourful-text": {
+      "mediaUrl": "https://assets.aceternity.com/colourful-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/comet-card": {
+      "mediaUrl": "https://assets.aceternity.com/comet-card.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/compare": {
+      "mediaUrl": "https://assets.aceternity.com/compare.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/container-text-flip": {
+      "mediaUrl": "https://assets.aceternity.com/container-text-flip.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/direction-aware-hover": {
+      "mediaUrl": "https://assets.aceternity.com/cloudinary_bkp/direction-aware-hover.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/dither-shader": {
+      "mediaUrl": "https://assets.aceternity.com/dither-shader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/dotted-glow-background": {
+      "mediaUrl": "https://assets.aceternity.com/dotted-glow-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/draggable-card": {
+      "mediaUrl": "https://assets.aceternity.com/draggable-card.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/encrypted-text": {
+      "mediaUrl": "https://assets.aceternity.com/encrypted-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/file-upload": {
+      "mediaUrl": "https://assets.aceternity.com/file-upload.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/floating-dock": {
+      "mediaUrl": "https://assets.aceternity.com/floating-dock.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/focus-cards": {
+      "mediaUrl": "https://assets.aceternity.com/focus-cards.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/glare-card": {
+      "mediaUrl": "https://assets.aceternity.com/glare-card.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/glowing-effect": {
+      "mediaUrl": "https://assets.aceternity.com/glowing-effect.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/gooey-input": {
+      "mediaUrl": "https://assets.aceternity.com/components/gooey-input.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/hero-highlight": {
+      "mediaUrl": "https://assets.aceternity.com/hero-highlight.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/hero-parallax": {
+      "mediaUrl": "https://assets.aceternity.com/hero-parallax.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/hover-border-gradient": {
+      "mediaUrl": "https://assets.aceternity.com/hover-border-gradient.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/images-badge": {
+      "mediaUrl": "https://assets.aceternity.com/images-badge.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/images-slider": {
+      "mediaUrl": "https://assets.aceternity.com/cloudinary_bkp/images-slider.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/keyboard": {
+      "mediaUrl": "https://assets.aceternity.com/components/keyboard.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/layout-grid": {
+      "mediaUrl": "https://assets.aceternity.com/layout-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/layout-text-flip": {
+      "mediaUrl": "https://assets.aceternity.com/layout-text-flip.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/lens": {
+      "mediaUrl": "https://assets.aceternity.com/lens.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/link-preview": {
+      "mediaUrl": "https://assets.aceternity.com/link-preview.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/macbook-scroll": {
+      "mediaUrl": "https://assets.aceternity.com/macbook-scroll.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/magnetic-button": {
+      "mediaUrl": "https://assets.aceternity.com/components/magnetic-button.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/meteors": {
+      "mediaUrl": "https://assets.aceternity.com/cloudinary_bkp/Meteors_fye3ys.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/multi-step-loader": {
+      "mediaUrl": "https://assets.aceternity.com/multi-step-loader.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/noise-background": {
+      "mediaUrl": "https://assets.aceternity.com/noise-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/notch": {
+      "mediaUrl": "https://assets.aceternity.com/components/notch.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/parallax-hero-images": {
+      "mediaUrl": "https://assets.aceternity.com/components/parallax-hero-images-2.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/pixelated-canvas": {
+      "mediaUrl": "https://assets.aceternity.com/pixelated-canvas.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/placeholders-and-vanish-input": {
+      "mediaUrl": "https://assets.aceternity.com/placeholders-and-vanish-input.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/pointer-highlight": {
+      "mediaUrl": "https://assets.aceternity.com/pointer-highlight.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/resizable-navbar": {
+      "mediaUrl": "https://assets.aceternity.com/resizable-navbar.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/scales": {
+      "mediaUrl": "https://assets.aceternity.com/components/scales.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/spotlight": {
+      "mediaUrl": "https://assets.aceternity.com/cloudinary_bkp/Spotlight_ar5jpr.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/spotlight-new": {
+      "mediaUrl": "https://assets.aceternity.com/spotlight-new.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/squiggly-text": {
+      "mediaUrl": "https://assets.aceternity.com/components/squiggly-text.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/stateful-button": {
+      "mediaUrl": "https://assets.aceternity.com/stateful-button.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/sticky-banner": {
+      "mediaUrl": "https://assets.aceternity.com/sticky-banner.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/tabs": {
+      "mediaUrl": "https://assets.aceternity.com/tabs.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/tailwindcss-buttons": {
+      "mediaUrl": "https://assets.aceternity.com/cloudinary_bkp/tailwindcss-buttons.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/terminal": {
+      "mediaUrl": "https://assets.aceternity.com/components/terminal.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/text-flipping-board": {
+      "mediaUrl": "https://assets.aceternity.com/components/text-flipping-board.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/text-hover-effect": {
+      "mediaUrl": "https://assets.aceternity.com/text-hover-effect.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/timeline": {
+      "mediaUrl": "https://assets.aceternity.com/timeline.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/tooltip-card": {
+      "mediaUrl": "https://assets.aceternity.com/tooltip-card.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/typewriter-effect": {
+      "mediaUrl": "https://assets.aceternity.com/cloudinary_bkp/typewriter-effect.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/vortex": {
+      "mediaUrl": "https://assets.aceternity.com/vortex.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/wavy-background": {
+      "mediaUrl": "https://assets.aceternity.com/wavy-background.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/webcam-pixel-grid": {
+      "mediaUrl": "https://assets.aceternity.com/webcam-pixel-grid.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/wobble-card": {
+      "mediaUrl": "https://assets.aceternity.com/wobble-card.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/components/world-map": {
+      "mediaUrl": "https://assets.aceternity.com/world-map.webp",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    },
+    "https://ui.aceternity.com/pages/saas-landing-page": {
+      "mediaUrl": "https://assets.aceternity.com/components/saas-landing-page-og-1.jpg",
+      "method": "verified-legacy",
+      "checkedAt": "2026-11-04T18:42:45.825Z"
+    }
+  }
+}
