@@ -4,6 +4,7 @@ import type { RegistryItemDetailResult, RegistryItemDetail } from "../core/regis
 import type { InstallActionState, RegistryItemSummaryFile } from "../core/registry.schema.ts";
 import type { CatalogComponent } from "../core/catalogQuery.ts";
 import { assetKindForCatalogItem } from "../core/catalogCollections.ts";
+import type { CatalogPolicy } from "../core/catalogPolicy";
 import { catalogRoutePath } from "../core/catalogRoutes.ts";
 import { escapeHtml, renderStyleXAttributes } from "./renderSafety.ts";
 import { sourcePageNavigationForItem, verifiedRegistryHomepage } from "./sourcePageLink.ts";
@@ -14,12 +15,13 @@ export function renderItemDetailView(
   bodyRoot: HTMLElement,
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
+  policy: CatalogPolicy,
   relatedItems: readonly CatalogComponent[] = [],
 ): void {
   const detail = result.detail;
   headerRoot.innerHTML = renderHeader(detail);
   bodyRoot.innerHTML = detail
-    ? renderDetailBody(detail, result, queuedTokens, relatedItems)
+    ? renderDetailBody(detail, result, queuedTokens, policy, relatedItems)
     : renderMissingBody(result);
 }
 
@@ -90,6 +92,7 @@ function renderDetailBody(
   detail: RegistryItemDetail,
   result: RegistryItemDetailResult,
   queuedTokens: ReadonlySet<string>,
+  policy: CatalogPolicy,
   relatedItems: readonly CatalogComponent[],
 ): string {
   const fallback =
@@ -103,7 +106,7 @@ function renderDetailBody(
           ${fallback}
         </div>
       </section>
-      ${renderRelatedComponentLinks(relatedItems, detail.namespace, detail.slug)}
+      ${renderRelatedComponentLinks(relatedItems, detail.namespace, detail.slug, policy)}
       <details class="item-technical-disclosure">
         <summary>Technical details and provenance</summary>
         <div class="item-technical-content">
@@ -122,6 +125,7 @@ export function renderRelatedComponentLinks(
   items: readonly CatalogComponent[],
   namespace: string,
   currentSlug: string,
+  policy: CatalogPolicy,
 ): string {
   const related = items
     .filter((item) => item.namespace === namespace && item.slug !== currentSlug)
@@ -138,7 +142,7 @@ export function renderRelatedComponentLinks(
     <div${renderStyleXAttributes(stylex.attrs(relatedStyles.list))}>
       ${related
         .map((item) => {
-          const routeKind = routeKindForItem(item);
+          const routeKind = routeKindForItem(item, policy);
           const basePath = item.routePath.slice(0, item.routePath.indexOf(item.namespace));
 
           const routePath =
@@ -188,8 +192,9 @@ export function renderRelatedComponentLinks(
 
 function routeKindForItem(
   item: CatalogComponent,
+  policy: CatalogPolicy,
 ): "component" | "block" | "page" | "template" | "theme" {
-  const kind = assetKindForCatalogItem(item.item, item.namespace);
+  const kind = assetKindForCatalogItem(item.item, policy, item.namespace);
 
   if (kind === "block") return "block";
 

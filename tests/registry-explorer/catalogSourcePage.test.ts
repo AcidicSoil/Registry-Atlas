@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import { resolveCatalogSourcePage } from "../../src/registry-explorer/core/catalogSourcePage";
 import { queryCatalogComponents } from "../../src/registry-explorer/core/catalogQuery";
@@ -39,19 +40,19 @@ const catalog: RegistryCatalogIndex = {
 
 describe("source links across catalog surfaces", () => {
   it("retains exact known upstream pages with their evidence levels", () => {
-    expect(resolveCatalogSourcePage(catalog, hirael, akor)).toMatchObject({
+    expect(resolveCatalogSourcePage(catalog, hirael, akor, TEST_CATALOG_POLICY)).toMatchObject({
       url: "https://hirael.com/templates/akor",
       level: "pattern",
     });
     expect(
       sourcePageNavigation(hirael.url, {
-        sourcePage: resolveCatalogSourcePage(catalog, hirael, akor),
+        sourcePage: resolveCatalogSourcePage(catalog, hirael, akor, TEST_CATALOG_POLICY),
       })?.url,
     ).toBe("https://hirael.com/templates/akor");
   });
 
   it("never borrows a different item or registry source URL", () => {
-    expect(resolveCatalogSourcePage(catalog, other, akor)).toBeUndefined();
+    expect(resolveCatalogSourcePage(catalog, other, akor, TEST_CATALOG_POLICY)).toBeUndefined();
 
     const spaceui: Registry = {
       name: "@spaceui",
@@ -78,7 +79,7 @@ describe("source links across catalog surfaces", () => {
       },
     };
 
-    expect(resolveCatalogSourcePage(index, spaceui, demo)).toBeUndefined();
+    expect(resolveCatalogSourcePage(index, spaceui, demo, TEST_CATALOG_POLICY)).toBeUndefined();
   });
 
   it("prefers the exact source-page record over an alternative route pattern", () => {
@@ -95,13 +96,14 @@ describe("source links across catalog surfaces", () => {
       },
     };
 
-    expect(resolveCatalogSourcePage(index, hirael, akor)?.url).toBe(
+    expect(resolveCatalogSourcePage(index, hirael, akor, TEST_CATALOG_POLICY)?.url).toBe(
       "https://hirael.com/templates/akor",
     );
   });
 
   it("resolves the same source on listings, item details, and comparisons", () => {
     const components = queryCatalogComponents([hirael, other], catalog, {
+      policy: TEST_CATALOG_POLICY,
       registryNames: ["@hirael"],
     }).items;
 
@@ -110,10 +112,12 @@ describe("source links across catalog surfaces", () => {
       catalog,
       "@hirael",
       "akor",
+      TEST_CATALOG_POLICY,
     ).detail;
 
-    const cell = buildCatalogComparison([hirael, other], catalog, ["@hirael", "@other"]).rows[0]
-      ?.cells[0];
+    const cell = buildCatalogComparison([hirael, other], catalog, ["@hirael", "@other"], {
+      policy: TEST_CATALOG_POLICY,
+    }).rows[0]?.cells[0];
 
     expect(components[0]?.sourcePage?.url).toBe("https://hirael.com/templates/akor");
     expect(detail?.sourcePage?.url).toBe(components[0]?.sourcePage?.url);
@@ -134,7 +138,7 @@ describe("source links across catalog surfaces", () => {
       },
     };
 
-    expect(resolveCatalogSourcePage(index, other, akor)).toMatchObject({
+    expect(resolveCatalogSourcePage(index, other, akor, TEST_CATALOG_POLICY)).toMatchObject({
       url: "https://other.example/templates/akor",
       level: "pattern",
     });
@@ -146,7 +150,7 @@ describe("source links across catalog surfaces", () => {
       },
     };
 
-    expect(resolveCatalogSourcePage(invalid, other, akor)).toBeUndefined();
+    expect(resolveCatalogSourcePage(invalid, other, akor, TEST_CATALOG_POLICY)).toBeUndefined();
   });
 
   it("does not claim individual pages when only a source collection is known", () => {
@@ -171,6 +175,8 @@ describe("source links across catalog surfaces", () => {
       },
     };
 
-    expect(resolveCatalogSourcePage(index, seven, index.registries["@7ovr"]![0]!)).toBeUndefined();
+    expect(
+      resolveCatalogSourcePage(index, seven, index.registries["@7ovr"]![0]!, TEST_CATALOG_POLICY),
+    ).toBeUndefined();
   });
 });

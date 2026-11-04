@@ -63,6 +63,16 @@ mise run verify
 
 Review the generated reports and runtime mirror before accepting regenerated data. See `docs/registry-explorer-data.md` for the data authority and maintenance workflow.
 
+## Phase 5A catalog-policy verification (2026-11-04)
+
+`data/loadRegistries.ts` returns one validated `LoadedRegistryData.policy` which `entry.ts` passes into the application shell. All policy-dependent core queries, route/query serialization, registry comparisons, source-page resolution, item detail loads and renderers take explicit `CatalogPolicy`. Shared mutable catalog configuration APIs were removed. `tests/registry-explorer/testCatalogPolicy.ts` builds the test policy from the existing PostgreSQL-backed reference fixtures.
+
+The 14 directly affected unit-test files passed (148 tests). Source and test TypeScript checks, `pnpm check`, and a fresh `pnpm build` passed. Browser verification against that build passed 3/3 desktop navigation/grid/directory tests, 3/3 mobile sidebar/grid tests and 3/3 isolated infinite-scroll tests. The earlier combined-run infinite-scroll timing variance remains an open baseline risk; isolated green tests do not resolve it. Formal independent PPM design-review and stale stack/feature-map evidence remain separately outstanding. See `docs/refactor/plan.md` and `docs/refactor/baseline.md`.
+
+## Phase 5B runtime boundary verification (2026-11-04)
+
+`data/runtimeJson.ts` parses decoded JSON through a caller-supplied validating callback; the main snapshot loader checks required object envelopes and validates the mirror before traversing records. The lazy details loader checks for an object map and clears rejected cache promises. `registryLoader.test.ts` covers missing/malformed top-level data, malformed mirror registries, invalid route-map shapes, successful gzip loading, and recovery after invalid detail payloads. `registryItemDetail.test.ts` retains item-detail fallback coverage. The PostgreSQL and compressed asset formats are unchanged. The impact-scoped verification passed 170/170 unit tests across 17 files, both TypeScript checks, `pnpm check`, the production build, three desktop browser checks, and three mobile browser checks. No full test suite was run. See `docs/refactor/plan.md` for remaining phases and certification blockers.
+
 ## Browser release checks
 
 Automated verification does not replace the maintained browser/accessibility release smoke. Use `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md` when release-level browser behavior needs validation.

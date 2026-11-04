@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import {
   buildCatalogFacetSummary,
@@ -10,16 +11,6 @@ import type {
   RegistryCatalogIndex,
   RegistryItemSummary,
 } from "../../src/registry-explorer/core/registry.schema";
-import {
-  configureDefaultCatalogTaxonomy,
-  parseCatalogTaxonomy,
-} from "../../src/registry-explorer/core/catalogTaxonomy";
-import { configureCatalogKindOverrides } from "../../src/registry-explorer/core/catalogCollections";
-import { readRepositoryDocument } from "./testAtlasDatabase";
-
-configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy")));
-
-configureCatalogKindOverrides(readRepositoryDocument("catalog-kind-overrides"));
 
 function registry(name: string, itemSummaries: RegistryItemSummary[] = []): Registry {
   return {
@@ -70,17 +61,22 @@ describe("queryCatalogComponents", () => {
     });
 
     const registries = [registry("@alpha"), registry("@beta")];
-    const first = queryCatalogComponents(registries, catalog, { pageSize: 2 });
+
+    const first = queryCatalogComponents(registries, catalog, {
+      policy: TEST_CATALOG_POLICY,
+      pageSize: 2,
+    });
+
     expect(first.total).toBe(3);
     expect(first.pageCount).toBe(2);
     expect(
-      queryCatalogComponents(registries, catalog, { pageSize: 4 })
+      queryCatalogComponents(registries, catalog, { policy: TEST_CATALOG_POLICY, pageSize: 4 })
         .items.map((item) => item.id)
         .sort(),
     ).toEqual(["@alpha:button", "@alpha:forms/button", "@beta:button"]);
     expect(catalogItemCountForRegistry(catalog, "@alpha")).toBe(2);
     expect(catalogDistinctItemCount(catalog)).toBe(3);
-    const facets = buildCatalogFacetSummary(registries, catalog);
+    const facets = buildCatalogFacetSummary(registries, catalog, { policy: TEST_CATALOG_POLICY });
     expect(facets.registries).toEqual(
       expect.arrayContaining([
         { value: "@alpha", count: 2 },
@@ -94,11 +90,16 @@ describe("queryCatalogComponents", () => {
   it("routes source-backed icon registries into the icon gallery without preview data", () => {
     const idx = index({ "@svgl": [{ name: "mastra", type: "registry:component" }] });
 
-    const icons = queryCatalogComponents([registry("@svgl")], idx, { assetKinds: ["icon"] });
+    const icons = queryCatalogComponents([registry("@svgl")], idx, {
+      policy: TEST_CATALOG_POLICY,
+      assetKinds: ["icon"],
+    });
+
     expect(icons.total).toBe(1);
     expect(icons.items[0]?.slug).toBe("mastra");
 
     const components = queryCatalogComponents([registry("@svgl")], idx, {
+      policy: TEST_CATALOG_POLICY,
       assetKinds: ["component"],
     });
 
@@ -121,7 +122,7 @@ describe("queryCatalogComponents", () => {
           },
         ],
       }),
-      { pageSize: 10 },
+      { policy: TEST_CATALOG_POLICY, pageSize: 10 },
     );
 
     expect(result.total).toBe(3);
@@ -147,13 +148,15 @@ describe("queryCatalogComponents", () => {
 
     // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
     expect(
-      queryCatalogComponents(registries, idx, { author: "Alice", pageSize: 10 } as any).items.map(
-        (x) => x.slug,
-      ),
+      queryCatalogComponents(registries, idx, {
+        ...({ author: "Alice", pageSize: 10 } as any),
+        policy: TEST_CATALOG_POLICY,
+      }).items.map((x) => x.slug),
     ).toEqual(["owned-item"]);
   });
   it("never turns registry metadata into a component result", () => {
     const result = queryCatalogComponents([registry("@empty")], index({}), {
+      policy: TEST_CATALOG_POLICY,
       search: "chat",
       pageSize: 10,
     });
@@ -186,7 +189,7 @@ describe("queryCatalogComponents", () => {
     const result = queryCatalogComponents(
       [registry("@alpha", [reviewedButton, orphan])],
       index({ "@alpha": [{ name: "button", title: "Button", type: "registry:ui" }] }),
-      { pageSize: 10 },
+      { policy: TEST_CATALOG_POLICY, pageSize: 10 },
     );
 
     expect(result.items).toHaveLength(1);
@@ -215,14 +218,18 @@ describe("queryCatalogComponents", () => {
     });
 
     expect(
-      queryCatalogComponents(registries, catalog, { search: "forms", pageSize: 10 }).items.map(
-        (item) => item.id,
-      ),
+      queryCatalogComponents(registries, catalog, {
+        policy: TEST_CATALOG_POLICY,
+        search: "forms",
+        pageSize: 10,
+      }).items.map((item) => item.id),
     ).toEqual(["@beta:contact-form"]);
     expect(
-      queryCatalogComponents(registries, catalog, { search: "@alpha", pageSize: 10 }).items.map(
-        (item) => item.id,
-      ),
+      queryCatalogComponents(registries, catalog, {
+        policy: TEST_CATALOG_POLICY,
+        search: "@alpha",
+        pageSize: 10,
+      }).items.map((item) => item.id),
     ).toEqual(["@alpha:button"]);
   });
 
@@ -248,6 +255,7 @@ describe("queryCatalogComponents", () => {
 
     expect(
       queryCatalogComponents(registries, catalog, {
+        policy: TEST_CATALOG_POLICY,
         itemTypes: ["registry:ui"],
         categories: ["forms"],
         reviewed: "reviewed",
@@ -258,6 +266,7 @@ describe("queryCatalogComponents", () => {
 
     expect(
       queryCatalogComponents(registries, catalog, {
+        policy: TEST_CATALOG_POLICY,
         sort: "name",
         pageSize: 10,
       }).items.map((item) => item.id),
@@ -265,6 +274,7 @@ describe("queryCatalogComponents", () => {
 
     expect(
       queryCatalogComponents(registries, catalog, {
+        policy: TEST_CATALOG_POLICY,
         sort: "registry",
         pageSize: 10,
       }).items.map((item) => item.id),
@@ -287,7 +297,7 @@ describe("queryCatalogComponents", () => {
           },
         ],
       }),
-      { search: "ada example", pageSize: 10 },
+      { policy: TEST_CATALOG_POLICY, search: "ada example", pageSize: 10 },
     );
 
     expect(result.items).toHaveLength(1);
@@ -311,7 +321,7 @@ describe("queryCatalogComponents", () => {
             },
           ],
         }),
-        { search: "onboarding", pageSize: 10 },
+        { policy: TEST_CATALOG_POLICY, search: "onboarding", pageSize: 10 },
       ).total,
     ).toBe(1);
   });
@@ -323,6 +333,7 @@ describe("queryCatalogComponents", () => {
     }));
 
     const result = queryCatalogComponents([registry("@large")], index({ "@large": items }), {
+      policy: TEST_CATALOG_POLICY,
       page: 41,
       pageSize: 25,
     });
@@ -344,7 +355,7 @@ describe("queryCatalogComponents", () => {
       "@beta": [{ name: "hero", type: "registry:block", categories: ["marketing"] }],
     });
 
-    const facets = buildCatalogFacetSummary(registries, catalog);
+    const facets = buildCatalogFacetSummary(registries, catalog, { policy: TEST_CATALOG_POLICY });
     expect(facets.registries).toEqual([
       { value: "@alpha", count: 2 },
       { value: "@beta", count: 1 },
@@ -369,7 +380,7 @@ describe("queryCatalogComponents", () => {
         "@alpha": [{ name: "button", type: "registry:ui" }],
         "@beta": [{ name: "card", type: "registry:ui" }],
       }),
-      { registryNames: ["@beta"], pageSize: 10 },
+      { policy: TEST_CATALOG_POLICY, registryNames: ["@beta"], pageSize: 10 },
     );
 
     expect(result.total).toBe(1);
@@ -455,6 +466,7 @@ describe("canonical taxonomy catalog queries", () => {
   it("filters equivalent cross-registry items by canonical id and accurate kind", () => {
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         assetKinds: ["block"],
         canonicalIds: ["application/app-shell"],
         pageSize: 20,
@@ -463,6 +475,7 @@ describe("canonical taxonomy catalog queries", () => {
 
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         canonicalIds: ["ai/chat"],
         pageSize: 20,
       }).items.map((item) => item.id),
@@ -470,6 +483,7 @@ describe("canonical taxonomy catalog queries", () => {
 
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         assetKinds: ["component"],
         canonicalIds: ["controls/button"],
         pageSize: 20,
@@ -480,6 +494,7 @@ describe("canonical taxonomy catalog queries", () => {
   it("matches parent canonical nodes by descendant path and ORs canonical selections", () => {
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         canonicalIds: ["application"],
         pageSize: 20,
       })
@@ -488,6 +503,7 @@ describe("canonical taxonomy catalog queries", () => {
     ).toEqual(["@alpha:workspace-frame", "@beta:ops-overview", "@beta:product-frame"]);
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         canonicalIds: ["application/app-shell", "ai/chat"],
         pageSize: 20,
       })
@@ -499,6 +515,7 @@ describe("canonical taxonomy catalog queries", () => {
   it("ANDs registry, kind, canonical, and explicit access while keeping unclassified visible otherwise", () => {
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         registryNames: ["@alpha"],
         assetKinds: ["block"],
         canonicalIds: ["application/app-shell"],
@@ -508,18 +525,21 @@ describe("canonical taxonomy catalog queries", () => {
     ).toEqual(["@alpha:workspace-frame"]);
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         registryNames: ["@alpha"],
         access: ["paid"],
         pageSize: 20,
       }).total,
     ).toBe(0);
     expect(
-      queryCatalogComponents(canonicalRegistries, canonicalCatalog, { pageSize: 20 }).items.some(
-        (item) => item.id === "@alpha:mystery",
-      ),
+      queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
+        pageSize: 20,
+      }).items.some((item) => item.id === "@alpha:mystery"),
     ).toBe(true);
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         canonicalIds: ["application"],
         pageSize: 20,
       }).items.some((item) => item.id === "@alpha:mystery"),
@@ -529,6 +549,7 @@ describe("canonical taxonomy catalog queries", () => {
   it("searches canonical labels and aliases without removing source-field search", () => {
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         search: "workspace shell",
         pageSize: 20,
       })
@@ -537,6 +558,7 @@ describe("canonical taxonomy catalog queries", () => {
     ).toEqual(["@alpha:workspace-frame", "@beta:product-frame"]);
     expect(
       queryCatalogComponents(canonicalRegistries, canonicalCatalog, {
+        policy: TEST_CATALOG_POLICY,
         search: "assistant",
         pageSize: 20,
       }).items.map((item) => item.id),
@@ -544,7 +566,10 @@ describe("canonical taxonomy catalog queries", () => {
   });
 
   it("counts canonical ancestors and exposes access facets only when explicit metadata exists", () => {
-    const facets = buildCatalogFacetSummary(canonicalRegistries, canonicalCatalog);
+    const facets = buildCatalogFacetSummary(canonicalRegistries, canonicalCatalog, {
+      policy: TEST_CATALOG_POLICY,
+    });
+
     expect(facets.canonical).toEqual(
       expect.arrayContaining([
         { value: "application", count: 3 },
@@ -574,6 +599,7 @@ describe("canonical taxonomy catalog queries", () => {
           },
         ],
       }),
+      { policy: TEST_CATALOG_POLICY },
     );
 
     expect(noAccess.access).toBeUndefined();

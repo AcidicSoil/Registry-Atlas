@@ -1,5 +1,6 @@
 import type { Registry, RegistryCatalogIndex } from "./registry.schema";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
+import type { CatalogPolicy } from "./catalogPolicy";
 import { catalogItemCountForRegistry } from "./catalogQuery";
 
 export type RegistryCatalogCoverage = "current" | "stale" | "empty" | "failed";
@@ -13,6 +14,7 @@ export interface RegistryDirectoryEntry {
 }
 
 export interface RegistryDirectoryOptions {
+  policy: CatalogPolicy;
   search?: string;
   coverage?: readonly RegistryCatalogCoverage[];
   assetKinds?: readonly CatalogAssetKind[];
@@ -50,7 +52,7 @@ export function registryCatalogCoverage(
 export function buildRegistryDirectory(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
-  options: RegistryDirectoryOptions = {},
+  options: RegistryDirectoryOptions,
 ): RegistryDirectoryResult {
   const query = (options.search ?? "").trim().toLocaleLowerCase();
   const requestedPage = positiveInteger(options.page, 1);
@@ -83,7 +85,7 @@ export function buildRegistryDirectory(
       if (
         assetFilter.size &&
         !(index.registries[registry.name] ?? []).some((item) => {
-          const kind = assetKindForCatalogItem(item);
+          const kind = assetKindForCatalogItem(item, options.policy, registry.name);
 
           return kind !== null && assetFilter.has(kind);
         })

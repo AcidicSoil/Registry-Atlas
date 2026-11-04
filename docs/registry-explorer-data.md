@@ -11,6 +11,10 @@ The website is static. An explicit PostgreSQL export produces two compressed JSO
 
 These files are ignored by Git and contain no credentials. The builder also creates `.instance/atlas-test-documents.json` for tests. Browser routes do not connect to PostgreSQL.
 
+`loadRegistries()` parses a snapshot-local `CatalogPolicy` from the taxonomy and reviewed kind overrides, and returns it as `LoadedRegistryData.policy`. The catalog-index parser validates canonical taxonomy paths against this same policy. `entry.ts` passes it to `ui/shell.ts`, which passes it explicitly to query, routing, comparison, detail/source-page resolution and component renderers. No process-wide catalog configuration or fallback API remains. The static JSON format and PostgreSQL tables are unchanged. Coverage and version checks remain at their existing validation boundaries. See `docs/refactor/plan.md` for the verified migration and remaining independent design-certification work.
+
+The browser JSON reader now requires a parser callback before returning typed snapshot data, rather than asserting an unchecked generic JSON type. `loadRegistries()` validates the main envelope and mirror structure before accessing registry records. The lazy detail reader rejects non-object top-level payloads and resets failed cache promises so a later request can retry. The existing catalog, taxonomy, source-page, and individual item-detail validators retain ownership of their nested data. These checks do not modify the generated asset format.
+
 ## Common commands
 
 ```sh

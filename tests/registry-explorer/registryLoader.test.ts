@@ -4,7 +4,11 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gzipSync, gunzipSync } from "node:zlib";
 import { loadRegistries } from "../../src/registry-explorer/data/loadRegistries";
-import { resetRuntimeDataCachesForTests } from "../../src/registry-explorer/data/runtimeJson";
+import { assetKindForCatalogItem } from "../../src/registry-explorer/core/catalogCollections";
+import {
+  loadDetailRuntimeData,
+  resetRuntimeDataCachesForTests,
+} from "../../src/registry-explorer/data/runtimeJson";
 
 afterEach(() => resetRuntimeDataCachesForTests());
 
@@ -21,8 +25,8 @@ describe("loadRegistries PostgreSQL static JSON runtime", () => {
 
     expect(calls).toEqual(["/data/registry-atlas.json.gz"]);
     expect(data.meta.source_url).toBe("https://ui.shadcn.com/r/registries.json");
-    expect(data.taxonomy.version).toBe("v1");
-    expect(data.taxonomy.roots[0]?.id).toBe("application");
+    expect(data.policy.taxonomy.version).toBe("v1");
+    expect(data.policy.taxonomy.roots[0]?.id).toBe("application");
     expect(data.registries).toEqual([
       expect.objectContaining({
         name: "@example",
@@ -89,6 +93,76 @@ describe("loadRegistries PostgreSQL static JSON runtime", () => {
     expect(data.warnings.map((warning) => warning.code)).toContain("url-http");
   }, 30_000);
 
+  it("rejects an incomplete snapshot without mirror metadata", async () => {
+    const fixture = await runtimeFixture();
+    const payload = JSON.parse(gunzipSync(await readFile(fixture.coreGzipPath)).toString("utf8"));
+
+    delete payload.mirror;
+
+    await expect(loadRegistries(async () => new Response(JSON.stringify(payload)))).rejects.toThrow(
+      "Runtime snapshot validation failed",
+    );
+  });
+
+  it("rejects invalid top-level snapshots at the data boundary", async () => {
+    for (const payload of [null, [], "not-an-object"]) {
+      await expect(
+        loadRegistries(async () => new Response(JSON.stringify(payload))),
+      ).rejects.toThrow("Runtime snapshot validation failed");
+    }
+  });
+
+  it("validates mirror registries before reading them", async () => {
+    const fixture = await runtimeFixture();
+    const payload = JSON.parse(gunzipSync(await readFile(fixture.coreGzipPath)).toString("utf8"));
+
+    payload.mirror.registries = null;
+
+    await expect(loadRegistries(async () => new Response(JSON.stringify(payload)))).rejects.toThrow(
+      "Registry mirror validation failed",
+    );
+  });
+
+  it("rejects malformed route lookup maps in a snapshot", async () => {
+    const fixture = await runtimeFixture();
+    const payload = JSON.parse(gunzipSync(await readFile(fixture.coreGzipPath)).toString("utf8"));
+
+    payload.itemRoutes = [];
+
+    await expect(loadRegistries(async () => new Response(JSON.stringify(payload)))).rejects.toThrow(
+      "Runtime snapshot validation failed",
+    );
+  });
+
+  it("rejects invalid detail envelope shapes without caching them", async () => {
+    for (const payload of [null, [], "not-an-object"]) {
+      await expect(
+        loadDetailRuntimeData(async () => new Response(JSON.stringify(payload))),
+      ).rejects.toThrow("Runtime detail validation failed");
+    }
+
+    await expect(
+      loadDetailRuntimeData(
+        async () => new Response(JSON.stringify({ "@example/button": { name: "button" } })),
+      ),
+    ).resolves.toEqual({ "@example/button": { name: "button" } });
+  });
+
+  it("keeps loaded policies isolated after another snapshot is read", async () => {
+    const iconFixture = await runtimeFixture({ registryKind: "icon" });
+    const pageFixture = await runtimeFixture({ registryKind: "page" });
+    const icons = await loadRegistries(async () => gzipResponse(iconFixture.coreGzipPath));
+    const pages = await loadRegistries(async () => gzipResponse(pageFixture.coreGzipPath));
+    const item = icons.catalogIndex.registries["@example"]?.[0];
+
+    expect(item).toBeDefined();
+
+    if (!item) return;
+
+    expect(assetKindForCatalogItem(item, icons.policy, "@example")).toBe("icon");
+    expect(assetKindForCatalogItem(item, pages.policy, "@example")).toBe("page");
+  });
+
   it("fails when the runtime database cannot be fetched", async () => {
     await expect(
       loadRegistries(
@@ -106,6 +180,7 @@ async function runtimeFixture(
   options: {
     homepage?: string;
     includeEmptyNamespace?: boolean;
+    registryKind?: "icon" | "page";
   } = {},
 ) {
   const dir = await mkdtemp(join(tmpdir(), "registry-atlas-loader-"));
@@ -171,7 +246,9 @@ async function runtimeFixture(
       },
     },
     taxonomy: taxonomyFixture(),
-    kindOverrides: { registryDefaults: {} },
+    kindOverrides: {
+      registryDefaults: options.registryKind ? { "@example": options.registryKind } : {},
+    },
     registryIcons: null,
     sourcePageManifest: {
       schema: "registry-atlas-source-page-index/v1",

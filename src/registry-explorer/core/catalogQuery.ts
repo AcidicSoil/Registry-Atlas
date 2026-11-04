@@ -1,6 +1,7 @@
 import { catalogRoutePath, type CatalogReviewedFilter, type CatalogSort } from "./catalogRoutes";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
-import { defaultCatalogTaxonomySearchValues } from "./catalogTaxonomy";
+import { catalogTaxonomySearchValues } from "./catalogTaxonomy";
+import type { CatalogPolicy } from "./catalogPolicy";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import { resolveCatalogSourcePage } from "./catalogSourcePage";
 import type {
@@ -33,6 +34,7 @@ export interface CatalogComponent {
 }
 
 export interface CatalogQueryOptions {
+  policy: CatalogPolicy;
   search?: string;
   author?: string;
   registryNames?: readonly string[];
@@ -99,6 +101,7 @@ function* distinctCatalogItems(
 }
 
 type CatalogFilters = {
+  policy: CatalogPolicy;
   registryNames: ReadonlySet<string>;
   itemTypes: ReadonlySet<string>;
   categories: ReadonlySet<string>;
@@ -117,6 +120,7 @@ function normalizedValues(values: readonly string[] | undefined, lowercase = fal
 
 function queryFilters(options: CatalogQueryOptions): CatalogFilters {
   return {
+    policy: options.policy,
     registryNames: normalizedValues(options.registryNames),
     itemTypes: normalizedValues(options.itemTypes, true),
     categories: normalizedValues(options.categories, true),
@@ -176,7 +180,7 @@ function findCatalogMatches(
 export function queryCatalogComponents(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
-  options: CatalogQueryOptions = {},
+  options: CatalogQueryOptions,
 ): CatalogQueryResult {
   const requestedPage = positiveInteger(options.page, 1);
   const pageSize = Math.min(positiveInteger(options.pageSize, DEFAULT_PAGE_SIZE), MAX_PAGE_SIZE);
@@ -196,7 +200,7 @@ export function queryCatalogComponents(
         match.item,
         match.reviewed,
         options.basePath,
-        resolveCatalogSourcePage(index, match.registry, match.item),
+        resolveCatalogSourcePage(index, match.registry, match.item, options.policy),
       ),
     );
 
@@ -268,14 +272,17 @@ function includeCanonicalAndAccessFacet(
 function includeCatalogFacet(
   item: RegistryCatalogItem,
   namespace: string,
-  filters: Pick<CatalogFilters, "assetKinds" | "canonicalIds" | "access" | "search">,
+  filters: Pick<CatalogFilters, "assetKinds" | "canonicalIds" | "access" | "search" | "policy">,
 ): boolean {
-  if (filters.assetKinds.size && !filters.assetKinds.has(assetKindForCatalogItem(item, namespace)))
+  if (
+    filters.assetKinds.size &&
+    !filters.assetKinds.has(assetKindForCatalogItem(item, filters.policy, namespace))
+  )
     return false;
 
   if (!includeCanonicalAndAccessFacet(item, filters)) return false;
 
-  return !filters.search || matchesSearch(item, namespace, filters.search);
+  return !filters.search || matchesSearch(item, namespace, filters.search, filters.policy);
 }
 
 function facetSummaryFromCounts(counts: FacetCounts): CatalogFacetSummary {
@@ -298,8 +305,8 @@ export function buildCatalogFacetSummary(
   index: RegistryCatalogIndex,
   options: Pick<
     CatalogQueryOptions,
-    "search" | "registryNames" | "assetKinds" | "canonicalIds" | "access"
-  > = {},
+    "search" | "registryNames" | "assetKinds" | "canonicalIds" | "access" | "policy"
+  >,
 ): CatalogFacetSummary {
   const filters = queryFilters(options);
   const namespaces = new Map(registries.map((registry) => [registry.name, registry]));
@@ -474,19 +481,27 @@ function matchesFilters(
 ): boolean {
   if (filters.itemTypes.size && !filters.itemTypes.has(normalize(item.type))) return false;
 
-  if (filters.assetKinds.size && !filters.assetKinds.has(assetKindForCatalogItem(item, namespace)))
+  if (
+    filters.assetKinds.size &&
+    !filters.assetKinds.has(assetKindForCatalogItem(item, filters.policy, namespace))
+  )
     return false;
 
   if (!matchesCategoryAndAccess(item, filters)) return false;
 
   if (!matchesReviewStatus(filters.reviewed, isReviewed)) return false;
 
-  return !filters.search || matchesSearch(item, namespace, filters.search);
+  return !filters.search || matchesSearch(item, namespace, filters.search, filters.policy);
 }
 
-function matchesSearch(item: RegistryCatalogItem, namespace: string, query: string): boolean {
+function matchesSearch(
+  item: RegistryCatalogItem,
+  namespace: string,
+  query: string,
+  policy: CatalogPolicy,
+): boolean {
   const canonicalValues = item.canonical?.path?.length
-    ? defaultCatalogTaxonomySearchValues(item.canonical.path)
+    ? catalogTaxonomySearchValues(policy.taxonomy, item.canonical.path)
     : [];
 
   return [

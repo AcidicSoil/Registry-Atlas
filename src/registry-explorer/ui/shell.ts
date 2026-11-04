@@ -52,11 +52,8 @@ import {
   exploreCollectionBySlug,
   type CatalogAssetKind,
 } from "../core/catalogCollections";
-import {
-  configureDefaultCatalogTaxonomy,
-  catalogTaxonomyNodeMap,
-  type CatalogTaxonomy,
-} from "../core/catalogTaxonomy";
+import { catalogTaxonomyNodeMap } from "../core/catalogTaxonomy";
+import type { CatalogPolicy } from "../core/catalogPolicy";
 import { findRegistryCatalogItem } from "../core/registryCatalogIndex";
 import {
   renderCatalogComponents,
@@ -83,7 +80,7 @@ import { renderCatalogAuthors } from "./catalogAuthorsView";
 export interface ShellOptions {
   registries: readonly Registry[];
   catalogIndex: RegistryCatalogIndex;
-  taxonomy: CatalogTaxonomy;
+  policy: CatalogPolicy;
   mirrorMeta: RegistryMirrorMeta;
   mirrorWarnings: readonly MirrorValidationIssue[];
   fetchImpl?: typeof fetch;
@@ -148,8 +145,8 @@ function catalogBasePath(): string {
 }
 
 export function initRegistryExplorer(options: ShellOptions): void {
-  const { registries, catalogIndex, roots, taxonomy } = options;
-  configureDefaultCatalogTaxonomy(taxonomy);
+  const { registries, catalogIndex, roots, policy } = options;
+  const taxonomy = policy.taxonomy;
   const taxonomyIds = new Set(catalogTaxonomyNodeMap(taxonomy).keys());
   const fetchImpl = options.fetchImpl ?? fetch;
 
@@ -171,7 +168,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const counts = emptyAssetCounts();
 
     for (const item of items) {
-      const kind = assetKindForCatalogItem(item, namespace);
+      const kind = assetKindForCatalogItem(item, policy, namespace);
       counts[kind] += 1;
       catalogAssetItemCounts[kind] += 1;
     }
@@ -199,7 +196,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   let replacementToken = readPendingReplacement(setupDraft.items);
 
   let state: AppState = {
-    ...hydrateStateFromUrl(registries),
+    ...hydrateStateFromUrl(registries, policy),
     returnRoute: null,
     installQueue: setupDraft.items,
     setupInstructions: setupDraft.instructions,
@@ -248,7 +245,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       saveSetupDraft();
 
     if (routeChanged && partial.copyFeedback === undefined) state.copyFeedback = null;
-    syncUrlState(state, historyMode);
+    syncUrlState(state, policy, historyMode);
     render();
 
     if (focusIdentity) restoreControlFocus(focusIdentity);
@@ -342,6 +339,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
           catalogIndex,
           namespace,
           slug,
+          policy,
           fetchImpl,
         ),
       );
@@ -406,6 +404,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       route.kind === "registry" || route.kind === "registry-assets" ? route.namespace : null;
 
     return buildCatalogFacetSummary(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       registryNames: namespace ? [namespace] : state.catalogRegistryNames,
       assetKinds: routeAssetKinds(),
@@ -578,7 +577,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     let globalFacets = sidebarFacetCache.get("all:registries");
 
     if (!globalFacets) {
-      globalFacets = buildCatalogFacetSummary(registries, catalogIndex);
+      globalFacets = buildCatalogFacetSummary(registries, catalogIndex, { policy });
       sidebarFacetCache.set("all:registries", globalFacets);
     }
 
@@ -933,6 +932,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function renderHome(): void {
     const featured = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       assetKinds: ["component"],
       sort: "name",
       pageSize: 8,
@@ -974,6 +974,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
 
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       author,
       assetKinds: ["component"],
       search: state.searchTerm,
@@ -995,6 +996,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     if (state.route.kind !== "components") return;
 
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       registryNames: state.catalogRegistryNames,
       itemTypes: state.catalogItemTypes,
@@ -1037,6 +1039,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
 
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       categories: collection.categories,
       assetKinds: ["component"],
@@ -1062,6 +1065,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function renderRegistries(): void {
     const result = buildRegistryDirectory(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       assetKinds: state.catalogAssetKinds,
       sort: state.registrySort,
@@ -1093,6 +1097,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
 
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       registryNames: [registry.name],
       itemTypes: state.catalogItemTypes,
@@ -1111,6 +1116,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       assetCounts: registryAssetCounts.get(registry.name),
       selectedKind: scopedKind,
       basePath: catalogBasePath(),
+      policy,
       controls: renderCatalogBrowseControls(catalogBrowseState(), {
         taxonomy,
         searchTerm: state.searchTerm,
@@ -1127,6 +1133,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     routeKind: "component" | "block" | "page" | "template" | "theme" | "icon",
   ): void {
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       assetKinds: [kind],
       registryNames: state.catalogRegistryNames,
@@ -1154,6 +1161,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   function renderIconCategory(category: string): void {
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       assetKinds: ["icon"],
       categories: [category],
@@ -1195,6 +1203,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
 
     const result = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       search: state.searchTerm,
       assetKinds: ["icon"],
       registryNames: [registry.name],
@@ -1225,7 +1234,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     compact: ReturnType<typeof findRegistryCatalogItem>,
   ): boolean {
     if (compact) {
-      const kind = assetKindForCatalogItem(compact, route.namespace);
+      const kind = assetKindForCatalogItem(compact, policy, route.namespace);
 
       const matches =
         route.kind === "component"
@@ -1270,11 +1279,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
       catalogIndex,
       route.namespace,
       route.slug,
+      policy,
     );
 
-    const relatedKind = compact ? assetKindForCatalogItem(compact, route.namespace) : route.kind;
+    const relatedKind = compact
+      ? assetKindForCatalogItem(compact, policy, route.namespace)
+      : route.kind;
 
     const related = queryCatalogComponents(registries, catalogIndex, {
+      policy,
       registryNames: [route.namespace],
       assetKinds: [relatedKind],
       pageSize: 9,
@@ -1289,6 +1302,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       roots.contentBody,
       key ? (itemDetailCache.get(key) ?? summary) : summary,
       queued,
+      policy,
       related,
     );
 
@@ -1313,6 +1327,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       .sort((a, b) => a.localeCompare(b));
 
     const result = buildCatalogComparison(registries, catalogIndex, state.compareRegistryNames, {
+      policy,
       search: state.searchTerm,
       page: state.discoveryPage,
       basePath: catalogBasePath(),
@@ -2071,7 +2086,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   window.addEventListener("popstate", () => {
     state = {
       ...state,
-      ...hydrateStateFromUrl(registries),
+      ...hydrateStateFromUrl(registries, policy),
       returnRoute: null,
       copyFeedback: null,
     };
@@ -2080,7 +2095,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     restoreBrowseState();
   });
 
-  syncUrlState(state);
+  syncUrlState(state, policy);
   render();
 }
 
@@ -2115,12 +2130,13 @@ function sortRegistriesFromLocation(params: URLSearchParams): RegistryDirectoryS
 
 function hydrateStateFromUrl(
   registries: readonly Registry[],
+  policy: CatalogPolicy,
 ): Omit<
   AppState,
   "installQueue" | "setupInstructions" | "copyFeedback" | "returnRoute" | "facetSearchTerms"
 > {
   const params = new URLSearchParams(window.location.search);
-  const browse = parseCatalogBrowseQuery(params);
+  const browse = parseCatalogBrowseQuery(params, policy);
   const route = routeFromLocation(params);
   const searchTerm = searchTermFromLocation(params, route);
 
@@ -2214,13 +2230,20 @@ function searchAwareRoute(state: AppState): CatalogRoute {
   return { kind: "components", pathSearchTerm: search };
 }
 
-function paramsForBrowseRoute(route: CatalogRoute, state: AppState): URLSearchParams | null {
+function paramsForBrowseRoute(
+  route: CatalogRoute,
+  state: AppState,
+  policy: CatalogPolicy,
+): URLSearchParams | null {
   if (route.kind === "components") {
-    const params = serializeCatalogBrowseQuery({
-      ...catalogBrowseStateForUrl(state),
-      itemTypes: state.catalogItemTypes,
-      reviewed: state.catalogReviewed,
-    });
+    const params = serializeCatalogBrowseQuery(
+      {
+        ...catalogBrowseStateForUrl(state),
+        itemTypes: state.catalogItemTypes,
+        reviewed: state.catalogReviewed,
+      },
+      policy,
+    );
 
     if (!route.pathSearchTerm && state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
@@ -2228,12 +2251,15 @@ function paramsForBrowseRoute(route: CatalogRoute, state: AppState): URLSearchPa
   }
 
   if (route.kind === "registry" || route.kind === "registry-assets") {
-    const params = serializeCatalogBrowseQuery({
-      ...catalogBrowseStateForUrl(state),
-      registryNames: [],
-      itemTypes: state.catalogItemTypes,
-      reviewed: state.catalogReviewed,
-    });
+    const params = serializeCatalogBrowseQuery(
+      {
+        ...catalogBrowseStateForUrl(state),
+        registryNames: [],
+        itemTypes: state.catalogItemTypes,
+        reviewed: state.catalogReviewed,
+      },
+      policy,
+    );
 
     if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
@@ -2241,7 +2267,7 @@ function paramsForBrowseRoute(route: CatalogRoute, state: AppState): URLSearchPa
   }
 
   if (!CATALOG_BROWSE_ROUTE_KINDS.has(route.kind)) return null;
-  const params = serializeCatalogBrowseQuery(catalogBrowseStateForUrl(state));
+  const params = serializeCatalogBrowseQuery(catalogBrowseStateForUrl(state), policy);
 
   if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
@@ -2275,10 +2301,14 @@ function paramsForOtherRoute(route: CatalogRoute, state: AppState): URLSearchPar
   return params;
 }
 
-function syncUrlState(state: AppState, historyMode: "push" | "replace" = "replace"): void {
+function syncUrlState(
+  state: AppState,
+  policy: CatalogPolicy,
+  historyMode: "push" | "replace" = "replace",
+): void {
   if (state.route.kind === "not-found") return;
   const route = searchAwareRoute(state);
-  const params = paramsForBrowseRoute(route, state) ?? paramsForOtherRoute(route, state);
+  const params = paramsForBrowseRoute(route, state, policy) ?? paramsForOtherRoute(route, state);
 
   if (
     state.catalogLayout === "list" &&

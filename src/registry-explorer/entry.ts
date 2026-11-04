@@ -115,7 +115,7 @@ async function bootstrap() {
       initRegistryExplorer({
         registries: loadedData.registries,
         catalogIndex: loadedData.catalogIndex,
-        taxonomy: loadedData.taxonomy,
+        policy: loadedData.policy,
         mirrorMeta: loadedData.meta,
         mirrorWarnings: loadedData.warnings,
         roots: {

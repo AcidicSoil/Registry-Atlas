@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import { parseRegistryCatalogIndex } from "../../src/registry-explorer/core/registryCatalogIndex";
 import type { RegistryCatalogIndex } from "../../src/registry-explorer/core/registry.schema";
@@ -81,7 +82,7 @@ describe("registryData mirror artifact", () => {
   });
 
   it("validates the committed compact catalog index and its declared counts", () => {
-    const index = parseRegistryCatalogIndex(catalogIndexData);
+    const index = parseRegistryCatalogIndex(catalogIndexData, TEST_CATALOG_POLICY);
     const items = Object.values(index.registries).flat();
 
     expect(index.meta.registry_count).toBe(Object.keys(index.registries).length);

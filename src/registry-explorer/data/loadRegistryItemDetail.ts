@@ -8,6 +8,7 @@ import {
   type RegistryItemDetailResult,
 } from "../core/registryItemDetail.ts";
 import type { Registry, RegistryCatalogIndex } from "../core/registry.schema.ts";
+import type { CatalogPolicy } from "../core/catalogPolicy";
 import { loadDetailRuntimeData } from "./runtimeJson.ts";
 
 export async function loadRegistryItemDetail(
@@ -31,6 +32,7 @@ export async function loadRegistryItemDetailFromCatalogIndex(
   catalogIndex: RegistryCatalogIndex,
   namespace: string | null | undefined,
   itemSlug: string | null | undefined,
+  policy: CatalogPolicy,
   fetchImpl: typeof fetch = fetch,
 ): Promise<RegistryItemDetailResult> {
   const summaryResult = resolveRegistryItemDetailFromCatalogIndex(
@@ -38,6 +40,7 @@ export async function loadRegistryItemDetailFromCatalogIndex(
     catalogIndex,
     namespace,
     itemSlug,
+    policy,
   );
 
   return loadResolvedRegistryItemDetail(
@@ -48,6 +51,7 @@ export async function loadRegistryItemDetailFromCatalogIndex(
         catalogIndex,
         namespace,
         itemSlug,
+        policy,
         payload,
       ),
     namespace,

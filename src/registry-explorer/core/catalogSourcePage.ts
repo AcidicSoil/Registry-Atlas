@@ -1,4 +1,5 @@
 import { assetKindForCatalogItem } from "./catalogCollections";
+import type { CatalogPolicy } from "./catalogPolicy";
 import { resolveSourceItemRoute, type SourceItemKind } from "./sourceItemRoute";
 import type {
   Registry,
@@ -16,12 +17,13 @@ export function resolveCatalogSourcePage(
   index: RegistryCatalogIndex,
   registry: Registry,
   item: RegistryCatalogItem,
+  policy: CatalogPolicy,
 ): RegistrySourcePage | undefined {
   const direct = index.sourcePages?.[`${registry.name}/${item.name}`];
 
   if (direct) return direct;
 
-  const kind = assetKindForCatalogItem(item, registry.name);
+  const kind = assetKindForCatalogItem(item, policy, registry.name);
   const sourceKind: SourceItemKind = kind === "other" ? "component" : kind;
 
   const url = resolveSourceItemRoute({

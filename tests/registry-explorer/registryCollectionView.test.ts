@@ -1,14 +1,38 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
+import { parseCatalogPolicy } from "../../src/registry-explorer/core/catalogPolicy";
 import type { CatalogQueryResult } from "../../src/registry-explorer/core/catalogQuery";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
 import { renderRegistryCollection } from "../../src/registry-explorer/ui/registryCollectionView";
 
 describe("renderRegistryCollection", () => {
+  it("routes the same component according to its explicit registry policy", () => {
+    const iconPolicy = parseCatalogPolicy(taxonomy(), {
+      registryDefaults: { "@registrydirectory": "icon" },
+    });
+
+    const pagePolicy = parseCatalogPolicy(taxonomy(), {
+      registryDefaults: { "@registrydirectory": "page" },
+    });
+
+    const iconBody = root();
+    const pageBody = root();
+
+    renderRegistryCollection(root(), iconBody, registry(), result(), { policy: iconPolicy });
+    renderRegistryCollection(root(), pageBody, registry(), result(), { policy: pagePolicy });
+
+    expect(iconBody.innerHTML).toContain('data-view-item-kind="icon"');
+    expect(pageBody.innerHTML).toContain('data-view-item-kind="page"');
+  });
+
   it("puts the real component inventory before secondary registry diagnostics", () => {
     const header = root();
     const body = root();
 
-    renderRegistryCollection(header, body, registry(), result(), { coverage: "current" });
+    renderRegistryCollection(header, body, registry(), result(), {
+      policy: TEST_CATALOG_POLICY,
+      coverage: "current",
+    });
 
     expect(header.innerHTML).toContain("@registrydirectory");
     expect(header.innerHTML).toContain("13,544 items");
@@ -30,6 +54,7 @@ describe("renderRegistryCollection", () => {
     const header = root();
     const body = root();
     renderRegistryCollection(header, body, registry(), result(), {
+      policy: TEST_CATALOG_POLICY,
       assetCounts: { component: 12, block: 3, template: 0 },
       selectedKind: "block",
     });
@@ -70,6 +95,7 @@ describe("renderRegistryCollection", () => {
     promoted.hasNextPage = false;
 
     renderRegistryCollection(header, body, registry(), promoted, {
+      policy: TEST_CATALOG_POLICY,
       coverage: "current",
       controls: '<button data-catalog-canonical-value="application/app-shell">App Shell</button>',
     });
@@ -129,5 +155,22 @@ function result(): CatalogQueryResult {
     pageCount: 424,
     hasPreviousPage: false,
     hasNextPage: true,
+  };
+}
+
+function taxonomy() {
+  return {
+    version: "v1",
+    roots: [
+      {
+        id: "application",
+        label: "Application",
+        aliases: [],
+        what: "Application",
+        notFor: [],
+        examples: [],
+        children: [],
+      },
+    ],
   };
 }

@@ -10,6 +10,7 @@ type OutputLookupContract = {
 import { isInputObject, isInputString } from "./inputChecks";
 import { getInstallActionState } from "./installActions.ts";
 import { resolveCatalogSourcePage } from "./catalogSourcePage.ts";
+import type { CatalogPolicy } from "./catalogPolicy";
 import { compactCatalogItemToSummary, findRegistryCatalogItem } from "./registryCatalogIndex.ts";
 import { resolveRegistryItemRoute, type ResolvedItemRoute } from "./itemRoutes.ts";
 import type {
@@ -163,9 +164,10 @@ function sourcePageForSummary(
   catalogIndex: RegistryCatalogIndex,
   namespace: string,
   slug: string,
+  policy: CatalogPolicy,
 ): RegistrySourcePage | undefined {
   return compact
-    ? resolveCatalogSourcePage(catalogIndex, registry, compact)
+    ? resolveCatalogSourcePage(catalogIndex, registry, compact, policy)
     : catalogIndex.sourcePages?.[namespace + "/" + slug];
 }
 
@@ -174,6 +176,7 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   catalogIndex: RegistryCatalogIndex,
   namespace: string | null | undefined,
   itemSlug: string | null | undefined,
+  policy: CatalogPolicy,
   sourceJson?: RawJsonInput,
 ): RegistryItemDetailResult {
   const registryName = namespace?.trim() ?? "";
@@ -187,7 +190,7 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   if (registry.itemSummaries?.some((item) => item.slug === slug)) {
     return withSourcePage(
       resolveRegistryItemDetailFromSummary(registries, registryName, slug, sourceJson),
-      sourcePageForSummary(registry, compactItem, catalogIndex, registryName, slug),
+      sourcePageForSummary(registry, compactItem, catalogIndex, registryName, slug, policy),
     );
   }
 
@@ -195,7 +198,7 @@ export function resolveRegistryItemDetailFromCatalogIndex(
 
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
-  base.sourcePage = resolveCatalogSourcePage(catalogIndex, registry, compactItem);
+  base.sourcePage = resolveCatalogSourcePage(catalogIndex, registry, compactItem, policy);
 
   return resolvedDetailPayload(base, sourceJson);
 }

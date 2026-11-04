@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import {
   catalogRoutePath,
@@ -6,13 +7,6 @@ import {
   serializeCatalogBrowseQuery,
   type CatalogRoute,
 } from "../../src/registry-explorer/core/catalogRoutes";
-import {
-  configureDefaultCatalogTaxonomy,
-  parseCatalogTaxonomy,
-} from "../../src/registry-explorer/core/catalogTaxonomy";
-import { readRepositoryDocument } from "./testAtlasDatabase";
-
-configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy")));
 
 const BASE = "/Registry-Atlas/";
 
@@ -91,6 +85,7 @@ describe("catalogRoutes", () => {
       new URLSearchParams(
         "page=3&sort=type&type=registry%3Aui&category=forms&reviewed=reviewed&registry=%40alpha",
       ),
+      TEST_CATALOG_POLICY,
     );
 
     expect(parsed).toEqual({
@@ -105,10 +100,12 @@ describe("catalogRoutes", () => {
       registryNames: ["@alpha"],
     });
 
-    expect(serializeCatalogBrowseQuery(parsed).toString()).toBe(
+    expect(serializeCatalogBrowseQuery(parsed, TEST_CATALOG_POLICY).toString()).toBe(
       "page=3&registry=%40alpha&category=forms",
     );
-    expect(parseCatalogBrowseQuery(new URLSearchParams("sort=registry"))).toMatchObject({
+    expect(
+      parseCatalogBrowseQuery(new URLSearchParams("sort=registry"), TEST_CATALOG_POLICY),
+    ).toMatchObject({
       sort: "registry",
       reviewed: "all",
     });
@@ -165,6 +162,7 @@ describe("corrective route parity", () => {
       new URLSearchParams(
         "registry=%40alpha&registry=%40beta&category=forms&category=ai&sort=registry",
       ),
+      TEST_CATALOG_POLICY,
     );
 
     expect(state).toMatchObject({
@@ -172,7 +170,7 @@ describe("corrective route parity", () => {
       categories: ["forms", "ai"],
       sort: "registry",
     });
-    expect(serializeCatalogBrowseQuery(state).toString()).toBe(
+    expect(serializeCatalogBrowseQuery(state, TEST_CATALOG_POLICY).toString()).toBe(
       "sort=registry&registry=%40alpha&registry=%40beta&category=forms&category=ai",
     );
   });
@@ -196,6 +194,7 @@ describe("canonical catalog browse URL state", () => {
       new URLSearchParams(
         "registry=%40alpha&asset=block&asset=component&canonical=application%2Fapp-shell&canonical=ai%2Fchat&access=free&access=paid",
       ),
+      TEST_CATALOG_POLICY,
     );
 
     expect(state).toMatchObject({
@@ -204,7 +203,7 @@ describe("canonical catalog browse URL state", () => {
       canonicalIds: ["application/app-shell", "ai/chat"],
       access: ["free", "paid"],
     });
-    expect(serializeCatalogBrowseQuery(state).toString()).toBe(
+    expect(serializeCatalogBrowseQuery(state, TEST_CATALOG_POLICY).toString()).toBe(
       "registry=%40alpha&asset=block&asset=component&canonical=application%2Fapp-shell&canonical=ai%2Fchat&access=free&access=paid",
     );
   });
@@ -214,6 +213,7 @@ describe("canonical catalog browse URL state", () => {
       new URLSearchParams(
         "asset=widget&asset=block&canonical=application%2Fnot-real&canonical=application&access=unknown&access=free&canonical=%00bad",
       ),
+      TEST_CATALOG_POLICY,
     );
 
     expect(state.assetKinds).toEqual(["block"]);

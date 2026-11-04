@@ -1,7 +1,8 @@
 import type { RawJsonInput } from "./jsonInput";
 import { isInputNumber, isInputObject, isInputString } from "./inputChecks";
 import { resolveRegistryItemRoute } from "./itemRoutes";
-import { catalogTaxonomyNodeMap, getDefaultCatalogTaxonomy } from "./catalogTaxonomy";
+import { catalogTaxonomyNodeMap } from "./catalogTaxonomy";
+import type { CatalogPolicy } from "./catalogPolicy";
 import type {
   CatalogCanonicalKind,
   Registry,
@@ -49,7 +50,10 @@ const THEME_SWATCH_KEYS: readonly RegistryThemeSwatch[] = [
 
 type ParsedCatalogBuckets = Record<string, RegistryCatalogItem[]>;
 
-function parsedCatalogBuckets(raw: Record<string, RawJsonInput>): ParsedCatalogBuckets {
+function parsedCatalogBuckets(
+  raw: Record<string, RawJsonInput>,
+  policy: CatalogPolicy,
+): ParsedCatalogBuckets {
   const registries = new Map<string, RegistryCatalogItem[]>();
 
   for (const [namespace, rawItems] of Object.entries(raw)) {
@@ -59,14 +63,19 @@ function parsedCatalogBuckets(raw: Record<string, RawJsonInput>): ParsedCatalogB
 
     registries.set(
       namespace,
-      rawItems.map(parseCatalogItem).filter((item): item is RegistryCatalogItem => item !== null),
+      rawItems
+        .map((item) => parseCatalogItem(item, policy))
+        .filter((item): item is RegistryCatalogItem => item !== null),
     );
   }
 
   return Object.fromEntries(registries);
 }
 
-export function parseRegistryCatalogIndex(value: RawJsonInput): RegistryCatalogIndex {
+export function parseRegistryCatalogIndex(
+  value: RawJsonInput,
+  policy: CatalogPolicy,
+): RegistryCatalogIndex {
   if (!isRecord(value) || !isRecord(value.meta) || !isRecord(value.registries)) {
     throw new Error(
       "Registry catalog index validation failed: expected meta and registries objects",
@@ -80,7 +89,7 @@ export function parseRegistryCatalogIndex(value: RawJsonInput): RegistryCatalogI
     throw new Error("Registry catalog index validation failed: invalid counts");
   }
 
-  const registries = parsedCatalogBuckets(value.registries);
+  const registries = parsedCatalogBuckets(value.registries, policy);
   const parsedItemCount = Object.values(registries).reduce((sum, items) => sum + items.length, 0);
 
   if (Object.keys(registries).length !== registryCount || parsedItemCount !== itemCount) {
@@ -205,10 +214,13 @@ function optionalCatalogTextFields(
 
 function optionalTaxonomyFields(
   value: Record<string, RawJsonInput>,
+  policy: CatalogPolicy,
 ): Pick<RegistryCatalogItem, "categories" | "kind" | "canonical"> {
   const categories = parseStringArray(value.categories, "categories");
   const kind = value.kind === undefined ? undefined : parseCanonicalKind(value.kind);
-  const canonical = value.canonical === undefined ? undefined : parseCanonical(value.canonical);
+
+  const canonical =
+    value.canonical === undefined ? undefined : parseCanonical(value.canonical, policy);
 
   const fields: Pick<RegistryCatalogItem, "categories" | "kind" | "canonical"> = {};
 
@@ -236,8 +248,8 @@ function optionalSourceFields(
   return fields;
 }
 
-function optionalClassificationFields(value: Record<string, RawJsonInput>) {
-  return { ...optionalTaxonomyFields(value), ...optionalSourceFields(value) };
+function optionalClassificationFields(value: Record<string, RawJsonInput>, policy: CatalogPolicy) {
+  return { ...optionalTaxonomyFields(value, policy), ...optionalSourceFields(value) };
 }
 
 function optionalPreviewFields(
@@ -257,15 +269,15 @@ function optionalPreviewFields(
   return fields;
 }
 
-function optionalCatalogMetadataFields(value: Record<string, RawJsonInput>) {
-  return { ...optionalClassificationFields(value), ...optionalPreviewFields(value) };
+function optionalCatalogMetadataFields(value: Record<string, RawJsonInput>, policy: CatalogPolicy) {
+  return { ...optionalClassificationFields(value, policy), ...optionalPreviewFields(value) };
 }
 
-function optionalCatalogItemFields(value: Record<string, RawJsonInput>) {
-  return { ...optionalCatalogTextFields(value), ...optionalCatalogMetadataFields(value) };
+function optionalCatalogItemFields(value: Record<string, RawJsonInput>, policy: CatalogPolicy) {
+  return { ...optionalCatalogTextFields(value), ...optionalCatalogMetadataFields(value, policy) };
 }
 
-function parseCatalogItem(value: RawJsonInput): RegistryCatalogItem | null {
+function parseCatalogItem(value: RawJsonInput, policy: CatalogPolicy): RegistryCatalogItem | null {
   if (!isRecord(value)) {
     throw new Error("Registry catalog index validation failed: item is not an object");
   }
@@ -284,7 +296,7 @@ function parseCatalogItem(value: RawJsonInput): RegistryCatalogItem | null {
     throw new Error("Registry catalog index validation failed: discoverable item requires a name");
   }
 
-  return { name, type, ...optionalCatalogItemFields(value) };
+  return { name, type, ...optionalCatalogItemFields(value, policy) };
 }
 
 function isApprovedCanonicalKind(value: string): value is CatalogCanonicalKind {
@@ -363,8 +375,12 @@ function verifyCanonicalHierarchy(path: string[], primary: string | null): void 
   verifyCanonicalAncestors(path);
 }
 
-function verifyApprovedCanonicalPath(path: string[], primary: string | null): void {
-  const taxonomy = getDefaultCatalogTaxonomy();
+function verifyApprovedCanonicalPath(
+  path: string[],
+  primary: string | null,
+  policy: CatalogPolicy,
+): void {
+  const taxonomy = policy.taxonomy;
 
   if (!taxonomy || primary === null) return;
   const approved = catalogTaxonomyNodeMap(taxonomy).get(primary);
@@ -383,7 +399,7 @@ function verifyApprovedCanonicalPath(path: string[], primary: string | null): vo
   }
 }
 
-function parseCanonical(value: RawJsonInput): RegistryCatalogCanonical {
+function parseCanonical(value: RawJsonInput, policy: CatalogPolicy): RegistryCatalogCanonical {
   if (!isRecord(value)) {
     throw new Error("Registry catalog index validation failed: item canonical must be an object");
   }
@@ -396,7 +412,7 @@ function parseCanonical(value: RawJsonInput): RegistryCatalogCanonical {
     );
   }
 
-  const configuredTaxonomy = getDefaultCatalogTaxonomy();
+  const configuredTaxonomy = policy.taxonomy;
 
   if (configuredTaxonomy && taxonomyVersion !== configuredTaxonomy.version) {
     throw new Error(
@@ -407,7 +423,7 @@ function parseCanonical(value: RawJsonInput): RegistryCatalogCanonical {
   const primary = validatedCanonicalPrimary(value.primary);
   const path = validatedCanonicalPath(value.path);
   verifyCanonicalHierarchy(path, primary);
-  verifyApprovedCanonicalPath(path, primary);
+  verifyApprovedCanonicalPath(path, primary, policy);
 
   return { taxonomyVersion, primary, path };
 }

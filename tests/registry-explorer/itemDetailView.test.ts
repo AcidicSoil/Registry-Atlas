@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import {
   resolveRegistryItemDetailFromCatalogIndex,
@@ -21,7 +22,7 @@ describe("renderItemDetailView", () => {
     const header = root();
     const body = root();
 
-    renderItemDetailView(header, body, result, new Set());
+    renderItemDetailView(header, body, result, new Set(), TEST_CATALOG_POLICY);
 
     expect(header.innerHTML).toContain('href="https://delta.example/components/code-block"');
     expect(header.innerHTML).toContain("Original component");
@@ -52,7 +53,7 @@ describe("renderItemDetailView", () => {
 
       const result = resolveRegistryItemDetailFromSummary([fixture], "@delta", "code-block");
       const header = root();
-      renderItemDetailView(header, root(), result, new Set());
+      renderItemDetailView(header, root(), result, new Set(), TEST_CATALOG_POLICY);
       const identity = header.innerHTML.match(/<p class="item-origin-line">([\s\S]*?)<\/p>/)?.[1];
       expect(identity).toBeDefined();
       expect(identity).toContain('href="https://delta.example/"');
@@ -78,10 +79,11 @@ describe("renderItemDetailView", () => {
       },
       "@delta",
       "source-only",
+      TEST_CATALOG_POLICY,
     );
 
     const header = root();
-    renderItemDetailView(header, root(), result, new Set());
+    renderItemDetailView(header, root(), result, new Set(), TEST_CATALOG_POLICY);
     expect(header.innerHTML).toContain('href="https://delta.example/docs/source-only"');
     expect(header.innerHTML).toContain("View sitemap-listed page");
   });
@@ -95,10 +97,11 @@ describe("renderItemDetailView", () => {
       },
       "@delta",
       "unknown-original",
+      TEST_CATALOG_POLICY,
     );
 
     const header = root();
-    renderItemDetailView(header, root(), result, new Set());
+    renderItemDetailView(header, root(), result, new Set(), TEST_CATALOG_POLICY);
     expect(header.innerHTML).toContain('aria-label="Visit upstream registry homepage for @delta"');
     expect(header.innerHTML).toContain(
       '<span title="Upstream component page unavailable">unknown-original</span>',
@@ -116,6 +119,7 @@ describe("renderItemDetailView", () => {
       body,
       resolveRegistryItemDetailFromSummary([registryFixture()], "@delta", "code-block"),
       new Set(),
+      TEST_CATALOG_POLICY,
     );
 
     expect(body.innerHTML).not.toContain("<iframe");
@@ -133,6 +137,7 @@ describe("renderItemDetailView", () => {
       body,
       resolveRegistryItemDetailFromSummary([registryFixture()], "@delta", "code-block"),
       new Set(),
+      TEST_CATALOG_POLICY,
     );
     expect(body.innerHTML).toContain("+ Add to setup");
     expect(body.innerHTML).toContain("View setup");
@@ -151,6 +156,7 @@ describe("renderItemDetailView", () => {
       populated,
       resolveRegistryItemDetailFromSummary([registryFixture()], "@delta", "code-block"),
       new Set(),
+      TEST_CATALOG_POLICY,
     );
     expect(populated.innerHTML).toContain("<h2>Dependencies</h2>");
     expect(populated.innerHTML).toContain("lucide-react");
@@ -167,6 +173,7 @@ describe("renderItemDetailView", () => {
         "code-block",
       ),
       new Set(),
+      TEST_CATALOG_POLICY,
     );
     expect(empty.innerHTML).not.toContain("<h2>Dependencies</h2>");
     expect(empty.innerHTML).not.toContain("<h2>Files</h2>");
@@ -189,7 +196,7 @@ describe("renderItemDetailView", () => {
     const header = root();
     const body = root();
 
-    renderItemDetailView(header, body, result, new Set());
+    renderItemDetailView(header, body, result, new Set(), TEST_CATALOG_POLICY);
 
     expect(header.innerHTML).toContain("&lt;img src=x onerror=alert(1)&gt;");
     expect(header.innerHTML).toContain("A&amp;B &lt;script&gt;alert(1)&lt;/script&gt;");
@@ -208,6 +215,7 @@ describe("renderItemDetailView", () => {
       body,
       resolveRegistryItemDetailFromSummary([registryFixture({ docsUrl })], "@delta", "code-block"),
       new Set(),
+      TEST_CATALOG_POLICY,
     );
 
     expect(body.innerHTML).not.toContain('href="javascript:');
@@ -231,6 +239,7 @@ describe("renderItemDetailView", () => {
         reason: "network-error",
       },
       new Set(),
+      TEST_CATALOG_POLICY,
     );
 
     expect(body.innerHTML).toContain("Full item details could not be loaded");
@@ -244,6 +253,7 @@ describe("renderRelatedComponentLinks", () => {
       [catalogItem("current", "component"), catalogItem("app-shell", "block")],
       "@delta",
       "current",
+      TEST_CATALOG_POLICY,
     );
 
     expect(html).toContain('href="/Registry-Atlas/@delta/blocks/app-shell"');
@@ -270,6 +280,7 @@ describe("renderRelatedComponentLinks", () => {
       [catalogItem("current", "component"), template],
       "@delta",
       "current",
+      TEST_CATALOG_POLICY,
     );
 
     expect(html).toContain('href="/Registry-Atlas/@delta/templates/starter"');

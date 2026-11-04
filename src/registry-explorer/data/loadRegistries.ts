@@ -10,12 +10,7 @@ import type {
   RegistrySourcePage,
 } from "../core/registry.schema";
 import { parseRegistryCatalogIndex } from "../core/registryCatalogIndex";
-import {
-  configureDefaultCatalogTaxonomy,
-  parseCatalogTaxonomy,
-  type CatalogTaxonomy,
-} from "../core/catalogTaxonomy";
-import { configureCatalogKindOverrides } from "../core/catalogCollections";
+import { parseCatalogPolicy, type CatalogPolicy } from "../core/catalogPolicy";
 import { verifiedSourcePageUrl } from "../core/sourcePageValidation";
 import { type MirrorValidationIssue, validateRegistryMirror } from "../core/registryMirror";
 import { loadRuntimeJson } from "./runtimeJson";
@@ -33,7 +28,7 @@ export interface RegistryMirrorMeta {
 export interface LoadedRegistryData {
   registries: Registry[];
   catalogIndex: RegistryCatalogIndex;
-  taxonomy: CatalogTaxonomy;
+  policy: CatalogPolicy;
   meta: RegistryMirrorMeta;
   warnings: MirrorValidationIssue[];
 }
@@ -114,6 +109,50 @@ interface RegistryIconDocument {
 
 type FetchLike = typeof fetch;
 
+interface RuntimeSnapshot {
+  mirror: RawJsonInput;
+  catalog: RawJsonInput;
+  taxonomy: RawJsonInput;
+  kindOverrides: RawJsonInput;
+  registryIcons: RegistryIconDocument | null;
+  sourcePageManifest: RawJsonInput;
+  itemRoutes: NonNullable<RegistryCatalogIndex["itemRoutes"]>;
+  routePatterns: NonNullable<RegistryCatalogIndex["routePatterns"]>;
+}
+
+function parseRuntimeSnapshot(value: RawJsonInput): RuntimeSnapshot {
+  if (
+    !isRecord(value) ||
+    !isRecord(value.mirror) ||
+    !isRecord(value.catalog) ||
+    !isRecord(value.taxonomy) ||
+    !isRecord(value.kindOverrides) ||
+    !isRecord(value.sourcePageManifest) ||
+    !isRecord(value.itemRoutes) ||
+    !isRecord(value.routePatterns)
+  ) {
+    throw new Error("Runtime snapshot validation failed: invalid envelope");
+  }
+
+  // SAFETY: Envelope members are checked here; nested icon and route evidence is validated by its consumer.
+  return {
+    mirror: value.mirror,
+    catalog: value.catalog,
+    taxonomy: value.taxonomy,
+    kindOverrides: value.kindOverrides,
+    registryIcons: isRecord(value.registryIcons)
+      ? (value.registryIcons as RegistryIconDocument)
+      : null,
+    sourcePageManifest: value.sourcePageManifest,
+    itemRoutes: value.itemRoutes as NonNullable<RegistryCatalogIndex["itemRoutes"]>,
+    routePatterns: value.routePatterns as NonNullable<RegistryCatalogIndex["routePatterns"]>,
+  };
+}
+
+function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
+  return isInputObject(value) && value !== null && !Array.isArray(value);
+}
+
 function registryReviewMetadata(record: RegistryMirrorRecord) {
   return {
     coverageStatus: record.atlas?.coverage_status ?? "unverified",
@@ -176,57 +215,47 @@ function mapMirrorRegistry(
 }
 
 export async function loadRegistries(fetchImpl: FetchLike = fetch): Promise<LoadedRegistryData> {
-  const data = await loadRuntimeJson<{
-    mirror: RegistryMirrorData;
-    catalog: unknown;
-    taxonomy: unknown;
-    kindOverrides: unknown;
-    registryIcons: RegistryIconDocument | null;
-    sourcePageManifest: unknown;
-    itemRoutes: Record<string, { url: string; status: string }>;
-    routePatterns: Record<
-      string,
-      Array<{ urlTemplate: string; slugPrefix: string; source: string; checkedAt?: string }>
-    >;
-  }>("data/registry-atlas.json.gz", fetchImpl);
+  const snapshot = await loadRuntimeJson(
+    "data/registry-atlas.json.gz",
+    parseRuntimeSnapshot,
+    fetchImpl,
+  );
 
-  const mirrorData = data.mirror;
-  const catalogData = data.catalog;
-  const taxonomyData = data.taxonomy;
-  const kindOverridesData = data.kindOverrides;
-  const registryIcons = data.registryIcons;
-  const sourcePageManifest = data.sourcePageManifest;
-  const itemRoutes = data.itemRoutes;
-  const routePatterns = data.routePatterns;
-
-  const taxonomy = parseCatalogTaxonomy(taxonomyData);
-  configureDefaultCatalogTaxonomy(taxonomy);
-  configureCatalogKindOverrides(kindOverridesData);
-  const catalogIndex = parseRegistryCatalogIndex(catalogData);
-
-  const officialSites = mirrorData.registries.map((row) => ({
-    name: row.official?.name,
-    url: row.official?.homepage,
-  }));
-
-  const sourcePages = readSourcePageManifest(sourcePageManifest, catalogIndex, officialSites);
-  const validation = validateRegistryMirror(mirrorData);
+  const validation = validateRegistryMirror(snapshot.mirror);
 
   if (validation.errors.length > 0) {
     throw new Error(`Registry mirror validation failed: ${validation.errors.length} error(s)`);
   }
 
-  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
-  const typedMirror = mirrorData as RegistryMirrorData;
+  // SAFETY: validateRegistryMirror checked record array, metadata counts and nested record invariants.
+  const mirror = snapshot.mirror as RegistryMirrorData;
+  const policy = parseCatalogPolicy(snapshot.taxonomy, snapshot.kindOverrides);
+  const catalogIndex = parseRegistryCatalogIndex(snapshot.catalog, policy);
+
+  const officialSites = mirror.registries.map((row) => ({
+    name: row.official?.name,
+    url: row.official?.homepage,
+  }));
+
+  const sourcePages = readSourcePageManifest(
+    snapshot.sourcePageManifest,
+    catalogIndex,
+    officialSites,
+  );
+
   const warningsByNamespace = groupWarningsByNamespace(validation.warnings);
 
   return {
-    meta: typedMirror.meta,
-    catalogIndex: Object.assign(catalogIndex, { sourcePages, itemRoutes, routePatterns }),
-    taxonomy,
+    meta: mirror.meta,
+    catalogIndex: Object.assign(catalogIndex, {
+      sourcePages,
+      itemRoutes: snapshot.itemRoutes,
+      routePatterns: snapshot.routePatterns,
+    }),
+    policy,
     warnings: validation.warnings,
-    registries: typedMirror.registries.map((record) =>
-      mapMirrorRegistry(record, typedMirror.meta, registryIcons, warningsByNamespace),
+    registries: mirror.registries.map((record) =>
+      mapMirrorRegistry(record, mirror.meta, snapshot.registryIcons, warningsByNamespace),
     ),
   };
 }

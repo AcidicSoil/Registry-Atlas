@@ -1,13 +1,7 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import type { RawJsonInput } from "../../src/registry-explorer/core/jsonInput";
 import { describe, expect, it } from "vitest";
 import { parseRegistryCatalogIndex } from "../../src/registry-explorer/core/registryCatalogIndex";
-import {
-  configureDefaultCatalogTaxonomy,
-  parseCatalogTaxonomy,
-} from "../../src/registry-explorer/core/catalogTaxonomy";
-import { readRepositoryDocument } from "./testAtlasDatabase";
-
-configureDefaultCatalogTaxonomy(parseCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy")));
 
 function rawIndex(item: Record<string, RawJsonInput>) {
   return {
@@ -32,6 +26,7 @@ describe("registry catalog canonical fields", () => {
         sourceGroups: ["Controls"],
         access: { normalized: "free", sourceLabel: "Free" },
       }),
+      TEST_CATALOG_POLICY,
     );
 
     expect(parsed.registries["@demo"]?.[0]).toEqual({
@@ -50,7 +45,11 @@ describe("registry catalog canonical fields", () => {
   });
 
   it("keeps legacy catalog items backward-compatible when canonical fields are absent", () => {
-    const parsed = parseRegistryCatalogIndex(rawIndex({ name: "card", type: "registry:block" }));
+    const parsed = parseRegistryCatalogIndex(
+      rawIndex({ name: "card", type: "registry:block" }),
+      TEST_CATALOG_POLICY,
+    );
+
     expect(parsed.registries["@demo"]?.[0]).toEqual({ name: "card", type: "registry:block" });
   });
 
@@ -62,6 +61,7 @@ describe("registry catalog canonical fields", () => {
           type: "registry:block",
           kind: "widget",
         }),
+        TEST_CATALOG_POLICY,
       ),
     ).toThrow(/kind/i);
   });
@@ -78,6 +78,7 @@ describe("registry catalog canonical fields", () => {
             path: ["application", "application/not-real"],
           },
         }),
+        TEST_CATALOG_POLICY,
       ),
     ).toThrow(/canonical.*taxonomy|unknown canonical/i);
   });
@@ -94,6 +95,7 @@ describe("registry catalog canonical fields", () => {
             path: ["marketing", "content-media/card"],
           },
         }),
+        TEST_CATALOG_POLICY,
       ),
     ).toThrow(/canonical.*path/i);
 
@@ -104,6 +106,7 @@ describe("registry catalog canonical fields", () => {
           type: "registry:block",
           canonical: { taxonomyVersion: "v1", primary: null, path: ["content-media"] },
         }),
+        TEST_CATALOG_POLICY,
       ),
     ).toThrow(/canonical.*path/i);
   });
@@ -116,6 +119,7 @@ describe("registry catalog canonical fields", () => {
           type: "registry:block",
           access: { normalized: "unknown", sourceLabel: "Unknown" },
         }),
+        TEST_CATALOG_POLICY,
       ),
     ).toThrow(/access/i);
     expect(() =>
@@ -125,6 +129,7 @@ describe("registry catalog canonical fields", () => {
           type: "registry:block",
           sourceGroups: ["Blocks", 3],
         }),
+        TEST_CATALOG_POLICY,
       ),
     ).toThrow(/sourceGroups/i);
   });

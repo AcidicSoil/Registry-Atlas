@@ -1,0 +1,220 @@
+{
+  "baseline": "phase4-before-refactor",
+  "viewport": "desktop-1440x900",
+  "measuredAt": "2026-11-03T09:46:44.278Z",
+  "runnerOpenToObservedCatalogMs": 5914,
+  "screenshotArtifact": "screenshots/001-phase4-desktop-catalog.png",
+  "snapshot": {
+    "viewport": {
+      "width": 1440,
+      "height": 900,
+      "devicePixelRatio": 1,
+      "scrollWidth": 1440,
+      "clientWidth": 1440
+    },
+    "pathname": "/Registry-Atlas/components",
+    "query": "",
+    "catalogCardCount": 32,
+    "catalogGridColumns": 3,
+    "captureAfterNavigationMs": 5715,
+    "domContentLoadedEndMs": 2923,
+    "loadEventEndMs": 2924,
+    "paints": [
+      {
+        "name": "first-paint",
+        "startTimeMs": 2924
+      },
+      {
+        "name": "first-contentful-paint",
+        "startTimeMs": 2924
+      }
+    ],
+    "resources": [
+      {
+        "path": "/Registry-Atlas/data/registry-atlas.json.gz",
+        "durationMs": 82.3,
+        "responseEndMs": 3005.4,
+        "transferSizeBytes": 4095927,
+        "encodedBodySizeBytes": 4095627,
+        "decodedBodySizeBytes": 39864438
+      }
+    ],
+    "usedJSHeapSizeBytes": 109000000,
+    "totalJSHeapSizeBytes": 212000000,
+    "geometry": {
+      "document": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 900
+        },
+        "display": "block",
+        "gridTemplateColumns": "none",
+        "gap": "normal",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "backgroundColor": "rgb(11, 12, 14)",
+        "color": "rgb(0, 0, 0)",
+        "fontSize": "16px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(0, 0, 0)"
+      },
+      "application": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 900
+        },
+        "display": "grid",
+        "gridTemplateColumns": "240px 16px 1166px",
+        "gap": "0px",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "sidebar": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 240,
+          "height": 900
+        },
+        "display": "flex",
+        "gridTemplateColumns": "none",
+        "gap": "normal",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "backgroundColor": "rgb(11, 12, 14)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "header": {
+        "rect": {
+          "x": 274,
+          "y": 18,
+          "width": 1148,
+          "height": 142.55
+        },
+        "display": "flex",
+        "gridTemplateColumns": "none",
+        "gap": "16px",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "content": {
+        "rect": {
+          "x": 274,
+          "y": 160.55,
+          "width": 1148,
+          "height": 1775
+        },
+        "display": "block",
+        "gridTemplateColumns": "none",
+        "gap": "normal",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "catalogGrid": {
+        "rect": {
+          "x": 274,
+          "y": 190.55,
+          "width": 1148,
+          "height": 1651
+        },
+        "display": "grid",
+        "gridTemplateColumns": "382.328px 382.328px 382.344px",
+        "gap": "0px",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "catalogCard": {
+        "rect": {
+          "x": 275,
+          "y": 191.55,
+          "width": 382.33,
+          "height": 150
+        },
+        "display": "flex",
+        "gridTemplateColumns": "none",
+        "gap": "normal",
+        "overflowX": "hidden",
+        "overflowY": "hidden",
+        "backgroundColor": "rgb(18, 19, 22)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "cardLink": {
+        "rect": {
+          "x": 275,
+          "y": 191.55,
+          "width": 381.33,
+          "height": 119.5
+        },
+        "display": "grid",
+        "gridTemplateColumns": "353.328px",
+        "gap": "12px",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px",
+        "borderRadius": "0px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(237, 238, 240)"
+      },
+      "layoutToggle": {
+        "rect": {
+          "x": 120.5,
+          "y": 121,
+          "width": 107.5,
+          "height": 26
+        },
+        "display": "block",
+        "gridTemplateColumns": "none",
+        "gap": "normal",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "color": "rgb(138, 143, 152)",
+        "fontSize": "13px",
+        "borderRadius": "4px",
+        "outlineStyle": "none",
+        "outlineColor": "rgb(138, 143, 152)"
+      }
+    }
+  },
+  "gitRevision": "aa7893e",
+  "verifiedScreenshotEvidence": "desktop.png"
+}

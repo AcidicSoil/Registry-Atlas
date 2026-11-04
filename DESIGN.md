@@ -53,7 +53,7 @@ components:
 
 ## Overview
 
-Registry Atlas is a dense, dark catalog for finding registries and their published UI assets. Optimize for search, navigation, and source provenance, not promotional illustrations. The Vite and TypeScript entry uses DOM rendering through `src/registry-explorer/entry.ts` and `src/registry-explorer/ui/`. Keep the existing core/data/UI boundaries and vanilla TypeScript HTML-string renderer. StyleX is authoritative for component styling through the official Vite compiler and `stylex.attrs()`; retain global CSS only for document-level rules and components not yet migrated. Do not introduce React or Tailwind solely for styling.
+Registry Atlas is a dense, dark catalog for finding registries and their published UI assets. Optimize for search, navigation, and source provenance, not promotional illustrations. The Vite and TypeScript entry uses DOM rendering through `src/registry-explorer/entry.ts` and `src/registry-explorer/ui/`. Keep the existing core/data/UI boundaries and vanilla TypeScript HTML-string renderer. Catalog taxonomy and kind classification belong to a validated, snapshot-local `CatalogPolicy` passed from `data/loadRegistries.ts` through `entry.ts` into `ui/shell.ts`; renderers and queries receive that context explicitly rather than reading global defaults. StyleX is authoritative for component styling through the official Vite compiler and `stylex.attrs()`; retain global CSS only for document-level rules and components not yet migrated. Do not introduce React or Tailwind solely for styling.
 
 ## Colors
 

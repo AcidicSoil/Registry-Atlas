@@ -1,6 +1,5 @@
-import type { RawJsonInput } from "./jsonInput";
-import { isInputObject } from "./inputChecks";
 import type { CatalogCanonicalKind, RegistryCatalogItem } from "./registry.schema";
+import type { CatalogPolicy } from "./catalogPolicy";
 
 export type CatalogAssetKind = CatalogCanonicalKind;
 
@@ -24,8 +23,6 @@ const ICON_TYPES = new Set(["registry:icon"]);
 
 const ICON_CATEGORIES = new Set(["icon", "icons", "icon-stack", "morph-icon"]);
 
-let registryKindDefaults = new Map<string, CatalogCanonicalKind>();
-
 const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
   { slug: "ai", label: "AI", categories: ["ai"] },
   { slug: "forms", label: "Forms", categories: ["forms", "form"] },
@@ -34,16 +31,6 @@ const EXPLORE_COLLECTIONS: readonly ExploreCollectionOption[] = [
   { slug: "navigation", label: "Navigation", categories: ["navigation"] },
   { slug: "charts", label: "Charts", categories: ["charts"] },
 ];
-
-export function configureCatalogKindOverrides(value: RawJsonInput): void {
-  const record = isRecord(value) && isRecord(value.registryDefaults) ? value.registryDefaults : {};
-
-  registryKindDefaults = new Map(
-    Object.entries(record).flatMap(([namespace, kind]) =>
-      isCatalogCanonicalKind(kind) ? [[namespace, kind] as const] : [],
-    ),
-  );
-}
 
 function isTemplateCatalogItem(item: RegistryCatalogItem): boolean {
   return (item.categories ?? []).some((category) => TEMPLATE_CATEGORIES.has(normalize(category)));
@@ -66,6 +53,7 @@ function assetKindForItemType(type: string): CatalogCanonicalKind {
 
 export function assetKindForCatalogItem(
   item: RegistryCatalogItem,
+  policy: CatalogPolicy,
   namespace?: string,
 ): CatalogCanonicalKind {
   if (isTemplateCatalogItem(item)) return "template";
@@ -73,7 +61,7 @@ export function assetKindForCatalogItem(
   if (item.kind) return item.kind;
 
   if (namespace) {
-    const reviewed = registryKindDefaults.get(namespace);
+    const reviewed = policy.kindOverrides.get(namespace);
 
     if (reviewed) return reviewed;
   }
@@ -91,8 +79,10 @@ export function assetKindForCatalogItem(
 export function filterCatalogItemsByAssetKind(
   items: readonly RegistryCatalogItem[],
   kind: CatalogAssetKind,
+  policy: CatalogPolicy,
+  namespace?: string,
 ): RegistryCatalogItem[] {
-  return items.filter((item) => assetKindForCatalogItem(item) === kind);
+  return items.filter((item) => assetKindForCatalogItem(item, policy, namespace) === kind);
 }
 
 export function buildExploreCollectionOptions(
@@ -107,22 +97,6 @@ export function buildExploreCollectionOptions(
 
 export function exploreCollectionBySlug(slug: string): ExploreCollectionOption | null {
   return EXPLORE_COLLECTIONS.find((option) => option.slug === normalize(slug)) ?? null;
-}
-
-function isCatalogCanonicalKind(value: RawJsonInput): value is CatalogCanonicalKind {
-  return (
-    value === "component" ||
-    value === "block" ||
-    value === "page" ||
-    value === "template" ||
-    value === "theme" ||
-    value === "icon" ||
-    value === "other"
-  );
-}
-
-function isRecord(value: RawJsonInput): value is Record<string, RawJsonInput> {
-  return isInputObject(value) && value !== null && !Array.isArray(value);
 }
 
 function normalize(value: string): string {

@@ -2,6 +2,7 @@ import { renderCatalogGridAttributes } from "./catalogGrid";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogQueryResult } from "../core/catalogQuery";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
+import type { CatalogPolicy } from "../core/catalogPolicy";
 import { catalogRoutePath } from "../core/catalogRoutes";
 import type { RegistryCatalogCoverage } from "../core/registryDirectory";
 import type { Registry } from "../core/registry.schema";
@@ -14,13 +15,14 @@ export function renderRegistryCollection(
   registry: Registry,
   result: CatalogQueryResult,
   options: {
+    policy: CatalogPolicy;
     coverage?: RegistryCatalogCoverage;
     controls?: string;
     layout?: "grid" | "list";
     assetCounts?: Partial<Record<CatalogAssetKind, number>>;
     selectedKind?: CatalogAssetKind;
     basePath?: string;
-  } = {},
+  },
 ): void {
   const count = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
   const basePath = options.basePath ?? "/Registry-Atlas/";
@@ -100,7 +102,7 @@ export function renderRegistryCollection(
           result.items.length
             ? `
             ${renderMeta(result)}
-            <div${renderCatalogGridAttributes({ layout: options.layout })}>${result.items.map((item) => renderCatalogComponentCard(item, legacyCardRouteKind(item), { layout: options.layout })).join("")}</div>
+            <div${renderCatalogGridAttributes({ layout: options.layout })}>${result.items.map((item) => renderCatalogComponentCard(item, legacyCardRouteKind(item, options.policy), { layout: options.layout })).join("")}</div>
             ${renderInfiniteScrollControl(result.page, result.pageCount)}
           `
             : renderEmptyRegistryInventory(options.coverage)
@@ -146,8 +148,9 @@ function renderMeta(result: CatalogQueryResult): string {
 
 function legacyCardRouteKind(
   item: CatalogQueryResult["items"][number],
+  policy: CatalogPolicy,
 ): "component" | "block" | "page" | "template" | "theme" | "icon" {
-  const kind = assetKindForCatalogItem(item.item, item.namespace);
+  const kind = assetKindForCatalogItem(item.item, policy, item.namespace);
 
   if (kind === "block") return "block";
 

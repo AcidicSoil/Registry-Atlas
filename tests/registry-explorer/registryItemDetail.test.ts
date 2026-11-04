@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import type { RawJsonInput } from "../../src/registry-explorer/core/jsonInput";
 import { describe, expect, it } from "vitest";
 import {
@@ -53,6 +54,7 @@ describe("registry item detail", () => {
       },
       "@delta",
       "catalog-only",
+      TEST_CATALOG_POLICY,
     );
 
     expect(result.status).toBe("summary-only");
@@ -69,6 +71,7 @@ describe("registry item detail", () => {
       },
       "@delta",
       "catalog-only",
+      TEST_CATALOG_POLICY,
       async () =>
         jsonResponse({
           name: "catalog-only",
@@ -103,6 +106,7 @@ describe("registry item detail", () => {
       },
       "@delta",
       "catalog-only",
+      TEST_CATALOG_POLICY,
       async (input) => {
         const url = String(input);
         seen.push(url);
@@ -145,6 +149,7 @@ describe("registry item detail", () => {
       },
       "@delta",
       "midnight",
+      TEST_CATALOG_POLICY,
       async () =>
         jsonResponse({
           name: "midnight",

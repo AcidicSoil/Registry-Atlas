@@ -1,6 +1,7 @@
 import { catalogRoutePath } from "./catalogRoutes";
 import { resolveCatalogSourcePage } from "./catalogSourcePage";
 import { assetKindForCatalogItem } from "./catalogCollections";
+import type { CatalogPolicy } from "./catalogPolicy";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import type {
   Registry,
@@ -28,6 +29,7 @@ interface CatalogCompareRow {
 }
 
 export interface CatalogCompareOptions {
+  policy: CatalogPolicy;
   search?: string;
   page?: number;
   pageSize?: number;
@@ -85,9 +87,10 @@ function buildComparisonCell(
   registry: Registry | undefined,
   index: RegistryCatalogIndex,
   basePath: string,
+  policy: CatalogPolicy,
 ): CatalogCompareCell {
   if (!item) return { namespace, present: false };
-  const routeKind = comparisonRouteKind(item, namespace);
+  const routeKind = comparisonRouteKind(item, namespace, policy);
 
   return {
     namespace,
@@ -95,7 +98,7 @@ function buildComparisonCell(
     routeKind,
     routePath: catalogRoutePath({ kind: routeKind, namespace, slug: item.name }, basePath),
     registryHomepage: registry?.url,
-    sourcePage: registry ? resolveCatalogSourcePage(index, registry, item) : undefined,
+    sourcePage: registry ? resolveCatalogSourcePage(index, registry, item, policy) : undefined,
     docsUrl: registry?.itemSummaries?.find((summary) => summary.slug === item.name)?.docsUrl,
   };
 }
@@ -107,6 +110,7 @@ function buildComparisonRow(
   byName: ReadonlyMap<string, Registry>,
   index: RegistryCatalogIndex,
   basePath: string,
+  policy: CatalogPolicy,
 ): CatalogCompareRow {
   return {
     identity,
@@ -120,6 +124,7 @@ function buildComparisonRow(
         byName.get(namespace),
         index,
         basePath,
+        policy,
       ),
     ),
   };
@@ -129,7 +134,7 @@ export function buildCatalogComparison(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
   registryNames: readonly string[],
-  options: CatalogCompareOptions = {},
+  options: CatalogCompareOptions,
 ): CatalogCompareResult {
   const available = new Set(registries.map((registry) => registry.name));
   const registryByName = new Map(registries.map((registry) => [registry.name, registry]));
@@ -176,6 +181,7 @@ export function buildCatalogComparison(
         registryByName,
         index,
         options.basePath ?? "/Registry-Atlas/",
+        options.policy,
       ),
     );
 
@@ -194,8 +200,9 @@ export function buildCatalogComparison(
 function comparisonRouteKind(
   item: RegistryCatalogItem,
   namespace: string,
+  policy: CatalogPolicy,
 ): "component" | "block" | "page" | "template" | "theme" {
-  const kind = assetKindForCatalogItem(item, namespace);
+  const kind = assetKindForCatalogItem(item, policy, namespace);
 
   return kind === "block" || kind === "page" || kind === "template" || kind === "theme"
     ? kind

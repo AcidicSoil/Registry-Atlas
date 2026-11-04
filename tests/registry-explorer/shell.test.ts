@@ -782,7 +782,7 @@ function setup(
   // original fake node reference; the test exercises only its implemented members.
   initRegistryExplorer({
     registries: [registryFixture()],
-    taxonomy: TEST_TAXONOMY,
+    policy: { taxonomy: TEST_TAXONOMY, kindOverrides: new Map() },
     catalogIndex: {
       meta: { registry_count: 1, item_count: 1 },
       registries: {

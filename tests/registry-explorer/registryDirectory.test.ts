@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import {
   buildRegistryDirectory,
@@ -58,7 +59,10 @@ describe("registryDirectory", () => {
     });
 
     expect(catalog.meta.item_count).toBe(3);
-    expect(buildRegistryDirectory([registry("@alpha")], catalog).entries[0].itemCount).toBe(2);
+    expect(
+      buildRegistryDirectory([registry("@alpha")], catalog, { policy: TEST_CATALOG_POLICY })
+        .entries[0].itemCount,
+    ).toBe(2);
   });
 
   it("uses compact-index bucket counts instead of reviewed item summaries", () => {
@@ -69,7 +73,9 @@ describe("registryDirectory", () => {
       })),
     });
 
-    const result = buildRegistryDirectory([registry("@large")], catalog);
+    const result = buildRegistryDirectory([registry("@large")], catalog, {
+      policy: TEST_CATALOG_POLICY,
+    });
 
     expect(result.entries[0]).toMatchObject({
       itemCount: 125,
@@ -107,12 +113,21 @@ describe("registryDirectory", () => {
       ),
     );
 
-    const page = buildRegistryDirectory(registries, catalog, { page: 3, pageSize: 20 });
+    const page = buildRegistryDirectory(registries, catalog, {
+      policy: TEST_CATALOG_POLICY,
+      page: 3,
+      pageSize: 20,
+    });
+
     expect(page.total).toBe(65);
     expect(page.pageCount).toBe(4);
     expect(page.entries[0]?.registry.name).toBe("@registry-40");
 
-    const searched = buildRegistryDirectory(registries, catalog, { search: "registry-12" });
+    const searched = buildRegistryDirectory(registries, catalog, {
+      policy: TEST_CATALOG_POLICY,
+      search: "registry-12",
+    });
+
     expect(searched.entries.map((entry) => entry.registry.name)).toEqual(["@registry-12"]);
   });
 });
@@ -121,7 +136,10 @@ describe("registry asset-type filters", () => {
   it("ignores unsupported item types when filtering components", () => {
     const items = index({ "@unknown": [{ name: "unknown", type: "registry:unsupported" }] });
     expect(
-      buildRegistryDirectory([registry("@unknown")], items, { assetKinds: ["component"] }).total,
+      buildRegistryDirectory([registry("@unknown")], items, {
+        policy: TEST_CATALOG_POLICY,
+        assetKinds: ["component"],
+      }).total,
     ).toBe(0);
   });
 
@@ -144,6 +162,7 @@ describe("registry asset-type filters", () => {
     });
 
     const filtered = buildRegistryDirectory(regs, data, {
+      policy: TEST_CATALOG_POLICY,
       assetKinds: ["page", "theme"],
       sort: "name",
     });
@@ -176,6 +195,7 @@ describe("corrective registry controls", () => {
     });
 
     const current = buildRegistryDirectory(regs, catalog, {
+      policy: TEST_CATALOG_POLICY,
       coverage: ["current"],
       sort: "item-count-desc",
       pageSize: 1,
@@ -183,7 +203,12 @@ describe("corrective registry controls", () => {
 
     expect(current.total).toBe(2);
     expect(current.entries.map((entry) => entry.registry.name)).toEqual(["@large"]);
-    const unavailable = buildRegistryDirectory(regs, catalog, { coverage: ["failed"] });
+
+    const unavailable = buildRegistryDirectory(regs, catalog, {
+      policy: TEST_CATALOG_POLICY,
+      coverage: ["failed"],
+    });
+
     expect(unavailable.entries.map((entry) => entry.registry.name)).toEqual(["@failed"]);
   });
 });

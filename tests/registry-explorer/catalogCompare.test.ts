@@ -1,3 +1,4 @@
+import { TEST_CATALOG_POLICY } from "./testCatalogPolicy";
 import { describe, expect, it } from "vitest";
 import { buildCatalogComparison } from "../../src/registry-explorer/core/catalogCompare";
 import type {
@@ -55,6 +56,7 @@ describe("buildCatalogComparison", () => {
         },
       },
       ["@a", "@b"],
+      { policy: TEST_CATALOG_POLICY },
     );
 
     expect(r.rows[0].cells[0].sourcePage?.url).toBe("https://example.test/docs/a-button");
@@ -75,6 +77,7 @@ describe("buildCatalogComparison", () => {
         ],
       }),
       ["@a", "@b"],
+      { policy: TEST_CATALOG_POLICY },
     );
 
     expect(result.unionCount).toBe(3);
@@ -91,6 +94,7 @@ describe("buildCatalogComparison", () => {
       [registry("@a"), registry("@b")],
       index({ "@a": [], "@b": [] }),
       ["@a", "@b"],
+      { policy: TEST_CATALOG_POLICY },
     );
 
     expect(result.unionCount).toBe(0);
@@ -105,6 +109,7 @@ describe("buildCatalogComparison", () => {
         "@b": [],
       }),
       ["@a", "@b"],
+      { policy: TEST_CATALOG_POLICY },
     );
 
     expect(result.rows[0]?.slug).toBe("eve/browser-agent");
@@ -129,6 +134,7 @@ describe("buildCatalogComparison", () => {
     const registries = [registry("@a"), registry("@b")];
 
     const page = buildCatalogComparison(registries, catalog, ["@a", "@b"], {
+      policy: TEST_CATALOG_POLICY,
       page: 3,
       pageSize: 20,
     });
@@ -137,6 +143,7 @@ describe("buildCatalogComparison", () => {
     expect(page.rows[0]?.slug).toBe("item-40");
 
     const searched = buildCatalogComparison(registries, catalog, ["@a", "@b"], {
+      policy: TEST_CATALOG_POLICY,
       search: "item-69",
     });
 

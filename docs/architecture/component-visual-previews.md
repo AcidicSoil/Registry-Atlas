@@ -2,6 +2,15 @@
 
 **Status:** Architecture for the remaining preview work. No additional providers are approved or implemented by this document. The current uncommitted implementation remains untouched.
 
+## Current source ownership
+
+- `ui/sourcePageLink.ts` validates external original-page links, labels reviewed/sitemap/pattern evidence appropriately, and retains an exact documented Space UI anchor exception. It does **not** choose preview imagery.
+- `ui/upstreamVisualPatterns.ts` converts a supported official component page into an item-specific asset using approved hostname/path rules, or an exact upstream image entry for Aceternity. Unmatched pages return no asset.
+- `ui/aceternityVisualEvidence.ts` is a generated table of individual Aceternity source-page URLs and verified image URLs, produced by `scripts/collect-aceternity-visuals.mjs` from the local source-page manifest plus bounded upstream metadata/HEAD checks. It is currently imported into `ui/upstreamVisualPatterns.ts` and bundled into browser JavaScript.
+- `ui/catalogLinkPreview.ts` uses the asset lookup only for link hover/focus presentation. It does not rewrite original navigation destinations.
+
+The desired static manifest described below is a **future replacement**, not something currently in production. Do not delete the generated evidence or provider rules before verifying manifest parity.
+
 ## Caller contract
 
 Hovering or focusing a catalog item's internal link or its **Source ↗** link shows **that item**, not the Registry Atlas page, provider documentation chrome, a shared marketing banner, or its install token. Clicking either link follows its original destination. Unsupported components show no preview.

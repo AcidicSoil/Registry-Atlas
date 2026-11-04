@@ -7,7 +7,8 @@ type ITEMSEGMENTKINDSLookupContract = Readonly<
 type REGISTRYASSETSEGMENTSLookupContract = Readonly<Record<string, CatalogAssetKind>>;
 
 import type { CatalogAssetKind } from "./catalogCollections";
-import { isDefaultCatalogTaxonomyId } from "./catalogTaxonomy";
+import { catalogTaxonomyNodeMap } from "./catalogTaxonomy";
+import type { CatalogPolicy } from "./catalogPolicy";
 
 export type CatalogRoute =
   | { kind: "home" }
@@ -185,7 +186,14 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
   return routeForLongPath(decoded);
 }
 
-export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQueryState {
+function isCatalogTaxonomyFacet(id: string, policy: CatalogPolicy): boolean {
+  return catalogTaxonomyNodeMap(policy.taxonomy).has(id);
+}
+
+export function parseCatalogBrowseQuery(
+  params: URLSearchParams,
+  policy: CatalogPolicy,
+): CatalogBrowseQueryState {
   const pageValue = Number(params.get("page"));
   const sortValue = params.get("sort");
 
@@ -199,14 +207,17 @@ export function parseCatalogBrowseQuery(params: URLSearchParams): CatalogBrowseQ
     canonicalIds: uniqueValues(
       params
         .getAll("canonical")
-        .filter((value) => isSafeFacetValue(value) && isDefaultCatalogTaxonomyId(value)),
+        .filter((value) => isSafeFacetValue(value) && isCatalogTaxonomyFacet(value, policy)),
     ),
     access: uniqueValues(params.getAll("access").filter(isCatalogAccess)),
     reviewed: "all",
   };
 }
 
-export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URLSearchParams {
+export function serializeCatalogBrowseQuery(
+  state: CatalogBrowseQueryState,
+  policy: CatalogPolicy,
+): URLSearchParams {
   const params = new URLSearchParams();
 
   if (state.page > 1) params.set("page", String(state.page));
@@ -222,7 +233,7 @@ export function serializeCatalogBrowseQuery(state: CatalogBrowseQueryState): URL
     if (CATALOG_ASSET_KINDS.has(value)) params.append("asset", value);
   });
   state.canonicalIds.forEach((value) => {
-    if (isSafeFacetValue(value) && isDefaultCatalogTaxonomyId(value))
+    if (isSafeFacetValue(value) && isCatalogTaxonomyFacet(value, policy))
       params.append("canonical", value);
   });
   state.access.forEach((value) => {

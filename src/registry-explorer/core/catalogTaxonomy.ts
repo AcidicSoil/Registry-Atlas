@@ -177,25 +177,3 @@ export function catalogTaxonomySearchValues(
 
   return [...new Set(output)];
 }
-
-let defaultCatalogTaxonomy: CatalogTaxonomy | null = null;
-
-export function configureDefaultCatalogTaxonomy(taxonomy: CatalogTaxonomy): void {
-  defaultCatalogTaxonomy = taxonomy;
-}
-
-export function getDefaultCatalogTaxonomy(): CatalogTaxonomy | null {
-  return defaultCatalogTaxonomy;
-}
-
-export function isDefaultCatalogTaxonomyId(id: string): boolean {
-  if (!defaultCatalogTaxonomy) return true;
-
-  return catalogTaxonomyNodeMap(defaultCatalogTaxonomy).has(id);
-}
-
-export function defaultCatalogTaxonomySearchValues(ids: readonly string[]): string[] {
-  if (!defaultCatalogTaxonomy) return [...ids];
-
-  return catalogTaxonomySearchValues(defaultCatalogTaxonomy, ids);
-}
