@@ -95,28 +95,31 @@ For a later replay, run `node scripts/verify-oxfmt-migration.mjs c81d56c` to com
 - Converted component CSS is deleted as each owner migrates; remaining `*.css` is still checked by Stylelint. Source-tree tests `stylexArchitecture.test.ts`, `stylexAttributes.test.ts`, and `stylexTokenLint.test.mjs` plus browser tests `stylex-registry-icon.e2e.ts`, `stylex-directory-layout.e2e.ts`, and desktop/mobile `stylex-catalog-grid.e2e.ts` cover integration, token validation, layout variants and stable browser output.
 - **Not yet converted:** remaining global document/shell/navigation/setup CSS is intentionally still loaded until the corresponding markup/state ownership moves into StyleX. Migrated UI is not evidence that the entire application is StyleX-only. Historical design-review approval in `.design/standards.json` remains independently gated.
 
-## Provider-neutral source-media migration (2026-11-04)
+## Component-specific hover-preview redesign (2026-11-04)
 
-The preview reader is sourced from `public/data/source-media.json`; the generated manifest is validated at load, and missing/invalid media fails closed without blocking catalog rendering. The initial migration preserved 227 exact source/image records and nine verified legacy URL-rule fixtures (236 entries). The seven observed documentation anchors were migrated into the PostgreSQL source-page table and surfaced by a fresh runtime export. The first 12 generic collector requests produced zero accepted images and 12 `unreadable-page` rejections. Coverage numbers refer only to the published evidence, not the full catalog. Impact-scoped unit tests validate manifest boundaries, media metadata extraction, original-link provenance, component preview rendering and fallback; selected browser tests should run against a freshly built production bundle.
+The prior 236-entry URL image mapping is retired: 227 entries were from Aceternity, and the browser acceptance test only proved a .NET logo. The approved replacement uses three publisher-supplied component screenshots, manually reviewed for component-specific content and copied into `public/data/component-previews/`. The versioned `component-previews.json` records original item identity/source, publisher screenshot URL, verified timestamp and SHA-256. `componentPreviews.ts` accepts only local reviewed screenshots for exact source links; no icon/direct-image fallback, inferred OG image, iframe or new crawler remains. Missing evidence shows nothing. See `docs/architecture/component-visual-previews.md` for the actual data/provenance contract, pilot identities and limitations.
 
 ```bash
-pnpm exec vitest run tests/registry-explorer/sourceMedia.test.ts tests/registry-explorer/sourceMediaCollector.test.ts tests/registry-explorer/sourcePageLink.test.ts tests/registry-explorer/catalogLinkPreview.test.ts
+pnpm exec vitest run tests/registry-explorer/componentPreviews.test.ts tests/registry-explorer/catalogLinkPreview.test.ts
 pnpm typecheck
 pnpm typecheck:test
 pnpm check
 pnpm build
+pnpm exec e2e run tests/catalog-link-preview.e2e.ts
 ```
 
-Do not infer successful visual verification from image URL patterns, HTTP status alone, or registry-wide counts. Independent source image rendering, broader provider coverage, and PPM design certification remain separate evidence gates.
+### Current pilot verification
 
-### Current evidence and outstanding baseline checks
+The production build and both TypeScript checks passed. `pnpm check` passed anti-slop Oxlint, Stylelint, StyleX ESLint, Knip, dependency-cruiser, React Doctor, complexity and Oxfmt gates. Impact-scoped Vitest passed **26/26 tests** across `componentPreviews`, `catalogLinkPreview`, and `itemDetailView`. The production browser run passed **4/4 tests**: exact local previews for `@aceternity/animated-testimonials` (Components), `@reui/sheet-16` (Blocks), and `@shadcnblocks/about1` (item detail), plus a negative logo case. Each test checked the original source `href`, local image path, successful image decoding/visible paint and Escape dismissal. Screenshots were examined visually; they show actual UI specimens, not icons. Source identity and exact SHA-256 of all three tracked WebP files were checked against the runtime snapshot. This verifies the pilot, **not** broad catalog coverage or live interactive demonstrations.
 
-The affected source-media, loader, link, card, item-detail, compare, and PostgreSQL projection tests passed **86/86 across 10 files**. Both TypeScript checks, `pnpm check`, and `pnpm build` passed; the production build generated an SBOM for 653 pinned dependencies. `tests/catalog-link-preview.e2e.ts` and `tests/catalog-navigation.e2e.ts` passed **2/2** against a fresh production preview; the preview browser test also checks the actual upstream SVG image decodes.
+The independent PPM project-standards closing check is **not** globally compliant: it reports a stale project stack/feature-map baseline and a missing independent source-linked `designReview` assessment. Those approval/evidence tasks were not rewritten or bypassed by this pilot.
 
-`pnpm check:product-contract` is **not green**: its original-page resolver assertion was updated for `sourcePageNavigation`, leaving five independently outstanding failures: unsupported route not-found state in `ui/shell.ts`; Libraries, Components, and Templates navigation link assertions in `index.html`; and 432 stale reviewed-overlay input fingerprints in the local canonical data. These unchanged files/data are outside this approved source-media task. No claim of a clean full product-contract gate or full test suite is made.
+### Earlier baseline (not remediated in this preview change)
+
+The previous source navigation/database work passed 86 relevant unit tests and two browser tests, but those browser tests did **not** establish non-icon preview quality. `pnpm check:product-contract` had five outstanding failures: four brittle shell/navigation source-text assertions and 432 stale reviewed-overlay input fingerprints in local canonical data. They are not part of the current component-preview change. The project also already had 41 package scripts against an existing limit of 40; this change does not add scripts or alter that test limit. Do not claim either the product-contract gate or the full suite is green without new evidence.
 
 ### Runtime source-coverage reconciliation
 
 The local push hook opted into the full suite independently of this feature-scoped test plan. It uncovered a stale three-tier assertion in `sourcePageArtifact.test.ts`, now corrected for the new `observed` evidence level. `build-runtime-data.mjs` now recomputes source-page coverage from exported PostgreSQL rows and includes `observed` counts, rather than publishing the older coverage document unchanged after independently reviewed source-row additions. An impact-scoped projection test and generated-snapshot test pass.
 
-The hook also reported the existing `projectTasks.test.ts` package-script limit failure: the prior baseline already contained **41** scripts against a limit of **40**. This task removes its proposed additional package alias and documents direct `node scripts/collect-source-media.mjs --max-pages=50` invocation, preserving the pre-existing 41-script surface. Resolving that unrelated package-script baseline remains outstanding; do not weaken the cap or remove unrelated scripts as a silent side effect.
+The hook also reported the existing `projectTasks.test.ts` package-script limit failure: **41** scripts against a limit of **40**. The obsolete media collector is now removed, and no new package alias was introduced. Resolving this baseline remains separate.

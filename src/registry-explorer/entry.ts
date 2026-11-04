@@ -2,7 +2,7 @@ import "./ui/stylex.css";
 import { initRegistryExplorer } from "./ui";
 import { loadRegistries } from "./data/loadRegistries";
 import { attachCatalogLinkPreviews } from "./ui/catalogLinkPreview";
-import { loadSourceMedia } from "./ui/sourceMedia";
+import { loadComponentPreviews } from "./ui/componentPreviews";
 import { setupAppShellPanels } from "./ui/appShellPanels";
 import { setupRegistryProfilePanel } from "./ui/registryProfilePanel";
 
@@ -110,7 +110,7 @@ async function bootstrap() {
         </div>
       `;
 
-      const [loadedData, media] = await Promise.all([loadRegistries(), loadSourceMedia()]);
+      const [loadedData, media] = await Promise.all([loadRegistries(), loadComponentPreviews()]);
 
       setupRegistryProfilePanel(contentBody);
       initRegistryExplorer({

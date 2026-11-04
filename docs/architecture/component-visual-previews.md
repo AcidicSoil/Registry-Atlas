@@ -1,66 +1,60 @@
 # Component visual previews
 
-**Implementation:** Provider-neutral source media (2026-11-04). Visual evidence is an optional static artifact; it is not a source of navigation or catalog identity.
+**Current implementation (2026-11-04):** Small, visually reviewed, item-specific component screenshots, not opportunistic media extraction. The three initial specimens are deliberately a verification pilot, **not** catalog-wide visual coverage.
 
 ## Ownership
 
-| Source                                           | Responsibility                                                          |
-| ------------------------------------------------ | ----------------------------------------------------------------------- |
-| PostgreSQL `atlas_source_pages`, `item_routes`   | Authoritative item-specific original-page URLs                          |
-| `scripts/build-runtime-data.mjs`                 | Export PostgreSQL source evidence to `registry-atlas.json.gz`           |
-| `scripts/collect-source-media.mjs`               | Bounded offline retrieval and image validation from current source URLs |
-| `scripts/lib/source-media.mjs`                   | Provider-independent public URL, image metadata and response checks     |
-| `public/data/source-media.json`                  | Published, versioned, exact source URL → image evidence                 |
-| `src/registry-explorer/ui/sourceMedia.ts`        | Validate the media manifest and expose exact URL lookup                 |
-| `src/registry-explorer/ui/catalogLinkPreview.ts` | Responsive pointer/focus tooltip, with unchanged anchor navigation      |
-| `src/registry-explorer/ui/sourcePageLink.ts`     | Validated original-page navigation and truthful provenance labels       |
+| Source                                                                 | Responsibility                                                                     |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| PostgreSQL `atlas_source_pages` and runtime `sourcePageManifest.pages` | Authoritative item identity and original source URL                                |
+| `public/data/component-previews.json`                                  | Reviewed screenshot metadata and exact item/source identity                        |
+| `public/data/component-previews/*.webp`                                | Locally stored, visually reviewed component screenshots                            |
+| `src/registry-explorer/ui/componentPreviews.ts`                        | Validate manifest; return exact source-URL → local-image lookup                    |
+| `src/registry-explorer/ui/catalogLinkPreview.ts`                       | Pointer/focus popup without changing source navigation                             |
+| `tests/registry-explorer/componentPreviews.test.ts`                    | Verify source identities, bundled WebP files, SHA-256 digests, parser and fallback |
+| `tests/catalog-link-preview.e2e.ts`                                    | Verify each real specimen displays in the browser; icons do not                    |
 
-The old provider-specific `upstreamVisualPatterns.ts`, `aceternityVisualEvidence.ts`, and `collect-aceternity-visuals.mjs` have been removed. There is no hostname switch or provider-specific URL formula in the frontend or collector.
+The former `collect-source-media.mjs`, `scripts/lib/source-media.mjs`, `sourceMedia.ts`, and 236-entry `source-media.json` have been retired. Those records established image URLs, not that each image usefully depicted a component. No provider URL formulas, OG-image scraping, new crawler, iframe embedding, browser-side fetch to remote image hosts, or automatic discovery are part of the current preview path.
 
 ## Evidence flow
 
 ```text
-PostgreSQL source-page and route evidence
-    → explicit runtime snapshot export
-    → offline collector (bounded page requests)
-    → upstream og:image / twitter:image candidate
-    → exact item-slug comparison + image response checks
-    → deduplicate shared assets
-    → versioned source-media.json
-    → browser exact URL lookup
-    → verified image or no preview
+Upstream component source page (must exist in sourcePageManifest.pages)
+  → publisher's item-specific component screenshot
+  → inspect actual image pixels and match component identity
+  → save a WebP file under public/data/component-previews/
+  → record namespace, slug, exact sourceUrl, publisher captureSourceUrl,
+           imagePath, SHA-256, method and verifiedAt
+  → tests verify catalog identity, local bytes and SHA-256
+  → browser displays local screenshot only for exact source URL
 ```
 
-`source-media.json` has `schemaVersion: 1` and `previews` keyed by **canonical source URL**. Each entry stores `mediaUrl`, `method` (`page-metadata` or `verified-legacy`), and `checkedAt`. Invalid or duplicated image references are excluded at browser load. The browser only fetches the manifest and chosen image; it does not crawl upstream websites or call a database, model, or screenshot service on hover.
+The manifest has `schemaVersion: 1`, a `previews` array, and `method: "reviewed-publisher-screenshot"`. The frontend validates public HTTPS source identity, required fields and local-only image paths, and excludes duplicate sources/assets. The checked-in validation test verifies bytes and SHA-256; the browser trusts those built assets. A missing or invalid manifest, unmatched item, or failed image load displays no preview.
 
-## Refresh
+**Pilot specimens (three registries):**
 
-```bash
-pnpm prepare:runtime-data
-node scripts/collect-source-media.mjs --max-pages=50
-# To recheck previously accepted pages:
-node scripts/collect-source-media.mjs --max-pages=50 --refresh
-```
+- `@aceternity/animated-testimonials` — testimonial carousel specimen, `2048×1440` WebP.
+- `@reui/sheet-16` — application sheet with deployment activity, `1080×720` WebP.
+- `@shadcnblocks/about1` — About section layout, `1336×1002` WebP.
 
-The default budget is 50 source pages, six concurrent requests, ten seconds per page request and eight seconds per image check. The collector validates HTTPS public hostnames, refuses redirects, bounds HTML to 2 MiB and images to 5 MiB, verifies image MIME, rejects unmatched slugs and shared image URLs, and writes per-run rejection counts to ignored `.instance/source-media-audit.json`. It retains accepted evidence when a refresh fails and drops media entries whose source URLs no longer appear in the runtime snapshot. Passing slug and MIME checks is evidence of an item-specific _candidate_, not independent screenshot/pixel verification.
+These are publisher-supplied still screenshots reviewed visually and bundled locally; they are **not** captured interactive states, full behavioral demos or independently produced browser screenshots. Animations are represented by a static frame. The three upstream pages returned HTTP 200 during intake, but their live UI behavior and future changes are not automatically tracked. Any later expansion must review each actual specimen; an `og:image`, logo, icon, full site screenshot or generic thumbnail alone is insufficient.
 
-If `content-length` is absent, a bounded image GET is used to confirm actual bytes; unknown or oversized responses are rejected. Some upstream websites block metadata collection and some images may disappear later; absence or load failure must remain a normal no-preview state. The existing collector intentionally prioritizes correctness over coverage.
+## UX and boundaries
 
-## Preserved legacy evidence
-
-Migration retained 227 exact source/image records from the former Aceternity evidence table, and nine previously tested URL-rule examples after live image-response checks: **236 records** in the initial published manifest. The seven individually observed Space UI documentation anchors were added to `atlas_source_pages` in PostgreSQL as `level: observed`, `source: documented-anchor`; they are now resolved by the same generic source-navigation path as any other registry.
-
-Previously inferred image formulas do **not** automatically become verified rows. This intentionally reduces preview coverage until more source pages have been checked. The first 12 generic collection attempts returned `unreadable-page` and added zero images; this does not establish that those items have no images. The collector must be run explicitly when refreshing coverage, and its report must distinguish examined, accepted, rejected, deduplicated, and unexamined sources.
-
-## UI and security contracts
-
-- A source link keeps its original `href`; no media lookup rewrites navigation.
-- Unknown, missing, rejected, unsafe, duplicated, and failed-loading imagery produces no tooltip.
-- Focus and pointer hover share a visual; Escape, scroll, focus loss and mouseout dismiss it.
-- Narrow/touch layouts avoid floating pointer previews. The tooltip never intercepts link clicks.
-- Remote SVG content is loaded only through `<img>`, never injected as raw HTML.
-- Collector input is upstream, untrusted data. Its hostname checks are not a complete guarantee against DNS rebinding; the collector is an explicit local maintenance command, not a publicly reachable URL-fetch endpoint.
+- Hover or keyboard focus on a component card/source link displays the corresponding screenshot after the existing pointer delay; Escape, blur and scroll dismiss it.
+- Original source links and navigation remain unchanged.
+- Unsupported items, icon files, unknown images and narrow/touch layouts have **no preview popup**.
+- Image filenames and source URLs are not derived from provider hostname formulas. To add a verified specimen, place its reviewed WebP in the local directory, record the matching catalog identity/URL and SHA-256 in the manifest, then run the tests.
+- The screenshot UI is deliberately image-only: no redundant label, metadata strip, or false claims of interactivity. The image retains an accessible alt description.
 
 ## Verification
 
-Run the impact-scoped tests: `sourceMedia.test.ts`, `sourceMediaCollector.test.ts`, `catalogLinkPreview.test.ts`, `sourcePageLink.test.ts`, `sourcePageLoader.test.ts`, `catalogSourcePage.test.ts`, relevant catalog render tests and selected browser tests after a fresh production build. Inspect `source-media-audit.json` before stating coverage numbers. The complete provider corpus has **not** been independently visually verified.
+```bash
+pnpm exec vitest run tests/registry-explorer/componentPreviews.test.ts tests/registry-explorer/catalogLinkPreview.test.ts
+pnpm typecheck
+pnpm typecheck:test
+pnpm build
+pnpm exec e2e run tests/catalog-link-preview.e2e.ts
+```
+
+The browser assertions must decode all three local images on genuine catalog links and verify the original source `href`; the logo case must not open a popup. Other catalog behavior should remain unchanged. This pilot does not certify coverage for the remaining catalog or interactive component demonstrations.

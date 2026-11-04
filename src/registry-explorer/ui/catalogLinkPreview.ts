@@ -1,6 +1,7 @@
 import * as stylex from "@stylexjs/stylex";
 import { previewStyles } from "./catalogLinkPreview.stylex";
-import { publicMediaUrl, type SourceMedia } from "./sourceMedia";
+import { type ComponentPreviews } from "./componentPreviews";
+import { verifiedRegistryHomepage } from "../core/sourcePageValidation";
 import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 
 const PREVIEW_ID = "catalog-link-preview";
@@ -10,41 +11,28 @@ const POINTER_DELAY_MS = 250;
 /** Only verified upstream links attached by Atlas renderers qualify for previews. */
 export function sourceLinkPreview(
   url: string,
-  media: SourceMedia = new Map(),
+  previews: ComponentPreviews = new Map(),
 ): { src: string; hostname: string } | null {
-  const parsed = publicMediaUrl(url);
+  const source = verifiedRegistryHomepage(url);
 
-  if (!parsed) return null;
-
-  const hostname = parsed.hostname.toLowerCase();
-  const publishedAsset = media.get(parsed.href);
-
-  if (publishedAsset) return { src: publishedAsset, hostname };
-
-  // A supplied exact media URL is already the component asset; a documentation page is not.
-  return /\.(?:svg|png|jpe?g|webp|avif|gif)$/i.test(parsed.pathname)
-    ? { src: parsed.href, hostname }
-    : null;
+  return source ? (previews.get(source) ?? null) : null;
 }
 
 export function renderSourceLinkPreview(
   source: NonNullable<ReturnType<typeof sourceLinkPreview>>,
   title: string,
 ): string {
-  return `<div${renderStyleXAttributes(stylex.attrs(previewStyles.content))} data-preview-content>
-    <div${renderStyleXAttributes(stylex.attrs(previewStyles.visual))} data-preview-visual>
-      <img${renderStyleXAttributes(stylex.attrs(previewStyles.image))} src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} visual"
-        decoding="async" referrerpolicy="no-referrer" />
-    </div>
-    <div${renderStyleXAttributes(stylex.attrs(previewStyles.attribution))} data-preview-attribution>
-      <span>Component preview</span>
-      <span${renderStyleXAttributes(stylex.attrs(previewStyles.hostname))}>${escapeHtml(source.hostname)}</span>
-    </div>
+  return `<div${renderStyleXAttributes(stylex.attrs(previewStyles.visual))} data-preview-visual>
+    <img${renderStyleXAttributes(stylex.attrs(previewStyles.image))} src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} preview"
+      decoding="async" referrerpolicy="no-referrer" />
   </div>`;
 }
 
 /** Link previews never change the original href, click handler, or native navigation. */
-export function attachCatalogLinkPreviews(roots: readonly HTMLElement[], media: SourceMedia): void {
+export function attachCatalogLinkPreviews(
+  roots: readonly HTMLElement[],
+  media: ComponentPreviews,
+): void {
   let active: HTMLAnchorElement | null = null;
   let pending: number | undefined;
   let preview: HTMLElement | null = null;

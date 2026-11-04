@@ -3,57 +3,62 @@ import {
   renderSourceLinkPreview,
   sourceLinkPreview,
 } from "../../src/registry-explorer/ui/catalogLinkPreview";
-import { parseSourceMediaManifest } from "../../src/registry-explorer/ui/sourceMedia";
+import { parseComponentPreviewManifest } from "../../src/registry-explorer/ui/componentPreviews";
 
-const source = "https://components.example.org/blocks/alpha-card";
+const source = "https://reui.io/blocks/application/sheet/sheet-16";
 
-const asset = "https://images.example.org/alpha-card.webp";
-
-const media = parseSourceMediaManifest({
-  schemaVersion: 1,
-  previews: {
-    [source]: { mediaUrl: asset, method: "page-metadata", checkedAt: "2026-11-04T00:00:00Z" },
+const previews = parseComponentPreviewManifest(
+  {
+    schemaVersion: 1,
+    previews: [
+      {
+        namespace: "@reui",
+        slug: "sheet-16",
+        sourceUrl: source,
+        captureSourceUrl: "https://reui.io/thumbnails/blocks/sheet-16-light.webp",
+        imagePath: "data/component-previews/reui-sheet-16.webp",
+        sha256: "a".repeat(64),
+        verifiedAt: "2026-11-04T00:00:00Z",
+        method: "reviewed-publisher-screenshot",
+      },
+    ],
   },
-});
+  "/Registry-Atlas/",
+);
 
-describe("upstream source previews", () => {
-  it("renders the exact observed component image without substituting site screenshots", () => {
-    const preview = sourceLinkPreview(source, media);
-    expect(preview).toEqual({ src: asset, hostname: "components.example.org" });
+describe("component hover previews", () => {
+  it("renders a reviewed local component specimen", () => {
+    const preview = sourceLinkPreview(source, previews);
+    expect(preview).toEqual({
+      src: "/Registry-Atlas/data/component-previews/reui-sheet-16.webp",
+      hostname: "reui.io",
+    });
 
     if (!preview) return;
-    const html = renderSourceLinkPreview(preview, "Alpha card");
-    expect(html).toContain(asset);
-    expect(html).toContain("data-preview-visual");
-    expect(html).toContain("data-preview-attribution");
+    const html = renderSourceLinkPreview(preview, "Sheet 16");
+    expect(html).toContain("/Registry-Atlas/data/component-previews/reui-sheet-16.webp");
+    expect(html).toContain('alt="Sheet 16 preview"');
     expect(html).not.toContain("<iframe");
   });
 
-  it("does not fabricate images for unmatched or unrelated pages", () => {
-    expect(sourceLinkPreview("https://components.example.org/blocks/another", media)).toBeNull();
-    expect(sourceLinkPreview("https://unknown.example.org/components/button", media)).toBeNull();
-    expect(sourceLinkPreview("https://components.example.org/", media)).toBeNull();
+  it("does not show icons or unspecified remote imagery", () => {
+    expect(sourceLinkPreview("https://assets.example.org/button.svg", previews)).toBeNull();
+    expect(sourceLinkPreview("https://reui.io/components/button/c-button-22", previews)).toBeNull();
+    expect(sourceLinkPreview("https://reui.io/", previews)).toBeNull();
   });
 
-  it("retains verified direct image URLs", () => {
-    expect(sourceLinkPreview("https://assets.example.org/button.svg")?.src).toBe(
-      "https://assets.example.org/button.svg",
-    );
+  it("rejects unsafe source URLs", () => {
+    for (const url of [
+      "javascript:alert(1)",
+      "http://example.com",
+      "https://localhost/",
+      "//evil.example.com",
+    ])
+      expect(sourceLinkPreview(url, previews)).toBeNull();
   });
 
-  it.each([
-    "javascript:alert(1)",
-    "http://example.com/components/button",
-    "https://localhost/secret",
-    "https://127.0.0.1/private",
-    "https://[::1]/private.svg",
-    "//evil.example.com",
-  ])("rejects non-public or unsafe links: %s", (url) => {
-    expect(sourceLinkPreview(url, media)).toBeNull();
-  });
-
-  it("escapes untrusted labels", () => {
-    const preview = sourceLinkPreview(source, media);
+  it("escapes untrusted preview titles", () => {
+    const preview = sourceLinkPreview(source, previews);
 
     if (!preview) return;
     const html = renderSourceLinkPreview(preview, "<script>alert(1)</script>");

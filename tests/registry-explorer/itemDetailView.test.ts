@@ -26,6 +26,9 @@ describe("renderItemDetailView", () => {
 
     expect(header.innerHTML).toContain('href="https://delta.example/components/code-block"');
     expect(header.innerHTML).toContain("Original component");
+    expect(header.innerHTML).toContain(
+      'data-preview-source-url="https://delta.example/components/code-block"',
+    );
     expect(header.innerHTML).toContain('href="/Registry-Atlas/@delta"');
     expect(header.innerHTML).toContain('data-profile-registry="@delta"');
     expect(header.innerHTML).toContain('aria-label="Visit upstream registry homepage for @delta"');

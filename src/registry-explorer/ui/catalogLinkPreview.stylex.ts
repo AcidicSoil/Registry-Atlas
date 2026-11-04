@@ -10,7 +10,7 @@ export const previewStyles = stylex.create({
   root: {
     position: "fixed",
     zIndex: 1005,
-    width: "min(380px, calc(100vw - 24px))",
+    width: "min(440px, calc(100vw - 24px))",
     overflow: "hidden",
     pointerEvents: "none",
     borderWidth: 1,
@@ -36,17 +36,14 @@ export const previewStyles = stylex.create({
   instant: {
     animationName: "none",
   },
-  content: {
-    display: "grid",
-  },
   visual: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: 236,
+    height: 270,
     overflow: "hidden",
     backgroundColor: tokens["--preview-visual"],
-    padding: 38,
+    padding: 12,
   },
   image: {
     display: "block",
@@ -55,22 +52,5 @@ export const previewStyles = stylex.create({
     maxWidth: "100%",
     maxHeight: "100%",
     objectFit: "contain",
-  },
-  attribution: {
-    display: "flex",
-    justifyContent: "space-between",
-    gap: 12,
-    paddingBlock: 10,
-    paddingInline: 12,
-    borderTopWidth: 1,
-    borderTopStyle: "solid",
-    borderTopColor: tokens["--border"],
-    color: tokens["--muted-foreground"],
-    fontSize: 11,
-  },
-  hostname: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
   },
 });

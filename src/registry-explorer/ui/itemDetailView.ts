@@ -55,7 +55,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
         ${registryHomepage ? `<a href="${escapeHtml(registryHomepage)}" target="_blank" rel="noreferrer noopener">Registry homepage ↗</a>` : ""}
         ${
           source
-            ? `<a href="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
+            ? `<a href="${escapeHtml(source.url)}" data-preview-source-url="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
           target="_blank" rel="noreferrer noopener">${escapeHtml(source.level === "reviewed" ? "Original component" : source.label)} ↗</a>`
             : ""
         }
@@ -75,7 +75,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
             <span aria-hidden="true">·</span>
             ${
               source
-                ? `<a href="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
+                ? `<a href="${escapeHtml(source.url)}" data-preview-source-url="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
                 target="_blank" rel="noreferrer noopener"
                 aria-label="Open upstream component page for ${escapeHtml(detail.slug)}">${escapeHtml(detail.slug)} ↗</a>`
                 : `<span title="Upstream component page unavailable">${escapeHtml(detail.slug)}</span>`
