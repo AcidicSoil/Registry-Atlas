@@ -20,6 +20,8 @@ const routeSource = read("src/registry-explorer/core/catalogRoutes.ts");
 
 const shellSource = read("src/registry-explorer/ui/shell.ts");
 
+const browseRouteSource = read("src/registry-explorer/ui/browseRouteState.ts");
+
 const componentViewSource = read("src/registry-explorer/ui/catalogComponentsView.ts");
 
 const sidebarNavigationSource = read("src/registry-explorer/ui/catalogSidebarNavigation.ts");
@@ -57,12 +59,12 @@ for (const token of [
 }
 
 assert(
-  shellSource.includes("kind: 'not-found'"),
-  "shell must preserve unsupported paths as not-found state",
+  /\bkind:\s*["']not-found["']/.test(browseRouteSource),
+  "route hydration must preserve unsupported paths as not-found state",
 );
 
 assert(
-  !/parseCatalogRoute[\s\S]{0,500}\?\?\s*\{\s*kind:\s*['"]components['"]/.test(shellSource),
+  !/parseCatalogRoute[\s\S]{0,500}\?\?\s*\{\s*kind:\s*['"]components['"]/.test(browseRouteSource),
   "unsupported canonical paths must not default to Components",
 );
 
@@ -174,6 +176,13 @@ assert(
   "setup instructions must be generated from selected install commands, without inspection prompts",
 );
 
+const navigationMarkup =
+  indexSource.match(/<nav\b[^>]*class="primary-nav"[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? "";
+
+const navigationLinks = [...navigationMarkup.matchAll(/<a\b[^>]*>[\s\S]*?<\/a\s*>/g)].map(
+  ([link]) => link,
+);
+
 for (const [view, path, label] of [
   ["home", "/Registry-Atlas/", "Featured"],
   ["authors", "/Registry-Atlas/authors", "Authors"],
@@ -187,7 +196,12 @@ for (const [view, path, label] of [
   ["compare", "/Registry-Atlas/compare", "Compare"],
 ]) {
   assert(
-    indexSource.includes(`data-view="${view}" href="${path}">${label}</a>`),
+    navigationLinks.some(
+      (link) =>
+        link.includes(`data-view="${view}"`) &&
+        link.includes(`href="${path}"`) &&
+        new RegExp(`>\\s*${label}\\s*<\\/a\\s*>`).test(link),
+    ),
     `primary navigation is missing its ${label} route link`,
   );
 }
@@ -224,7 +238,6 @@ const retiredFiles = [
   "src/registry-explorer/ui/sourcePreviewStatus.ts",
   "src/registry-explorer/ui/visualReference.ts",
   "src/registry-explorer/data/component-demo-manifest.json",
-  "public/data/component-previews.json",
   "public/data/previews",
   "public/component-demos",
   "tools/component-preview-host",

@@ -97,3 +97,7 @@ There is no Git LFS file in the current tree and no canonical database in Git. P
 The current component-capture workflow is in `docs/architecture/component-visual-previews.md`. A prior 236-image legacy manifest and incremental OG-metadata crawler were retired after component-content verification proved insufficient. The new static manifest has three manually reviewed non-icon specimens from different registries, exact source identities and locally stored image hashes. No imagery is inferred from URL patterns or downloaded on hover.
 
 Runtime source-page metadata is reconciled from the exported PostgreSQL source rows at build time. Coverage reports now include the `observed` level; published, reviewed, sitemap, pattern, observed, and missing totals describe the same snapshot rather than an earlier source-index document.
+
+## Imported-catalog provenance atomicity (2026-11-04)
+
+`import-registry-catalog.mjs` persists the imported curated item summaries and `catalog-import-report` inside a single PostgreSQL transaction. If the report cannot be written, neither the imported records nor the report is committed. The isolated PostgreSQL rollback test in `registryCatalogImport.test.ts` verifies this contract. Existing `--dry-run` leaves the database unchanged. Other pipeline publishing and reconciliation issues are tracked in `docs/refactor/plan.md`; this importer fix does not assert their completion.

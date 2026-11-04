@@ -62,7 +62,6 @@
     "test:complexity-gate": "node scripts/verify-complexity-gate.mjs",
     "test:e2e": "pnpm build && e2e run",
     "test:local": "TMPDIR=${TMPDIR:-/tmp} vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts",
-    "test:watch": "TMPDIR=${TMPDIR:-/tmp} vitest",
     "typecheck": "tsc --noEmit",
     "typecheck:test": "tsc --noEmit -p tsconfig.test.json",
     "validate:data": "node scripts/validate-registry-data.mjs",

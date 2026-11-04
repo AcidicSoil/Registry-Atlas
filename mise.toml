@@ -19,7 +19,7 @@ run = "pnpm test"
 
 [tasks."test:watch"]
 description = "Run the test suite in watch mode"
-run = "pnpm test:watch"
+run = "pnpm exec vitest"
 
 [tasks.typecheck]
 description = "Type-check application source"

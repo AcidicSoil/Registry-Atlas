@@ -26,3 +26,29 @@ export function parseBrowseSnapshot(raw: string | null): BrowseSnapshot | null {
     return null;
   }
 }
+
+type BrowseStorage = Pick<Storage, "getItem" | "setItem">;
+
+/** Persistence is best-effort; failures never interrupt in-memory navigation. */
+export function saveBrowseSnapshot(
+  route: string,
+  snapshot: BrowseSnapshot,
+  storage: () => BrowseStorage | undefined,
+): void {
+  try {
+    storage()?.setItem(browseSnapshotKey(route), JSON.stringify(snapshot));
+  } catch {
+    // Browsing still works with the in-memory route snapshot.
+  }
+}
+
+export function readBrowseSnapshot(
+  route: string,
+  storage: () => BrowseStorage | undefined,
+): BrowseSnapshot | null {
+  try {
+    return parseBrowseSnapshot(storage()?.getItem(browseSnapshotKey(route)) ?? null);
+  } catch {
+    return null;
+  }
+}

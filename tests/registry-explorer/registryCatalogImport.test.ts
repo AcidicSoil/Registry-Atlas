@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
+import { testRouteDatabase } from "./postgresFixture";
+// @ts-ignore Standalone database adapter is an authored .mjs runtime module.
+import { readCuratedItemSummaries, readDocument } from "../../scripts/lib/atlas-storage.mjs";
 import {
   buildImportReport,
   buildRegistryItemsByNamespace,
   normalizeImportedItem,
   normalizeNamespace,
+  persistImportedCatalog,
   parseArgs,
   // @ts-expect-error The importer is an executable Node .mjs script with runtime exports tested here.
 } from "../../scripts/import-registry-catalog.mjs";
@@ -176,5 +180,24 @@ describe("registry catalog import", () => {
 
     expect(normalizeImportedItem("@example", { name: "Bad/Slug" }, warnings)).toBeNull();
     expect(warnings[0]).toContain("@example");
+  });
+
+  it("rolls back summaries when the import report cannot be stored", async () => {
+    const db = await testRouteDatabase();
+
+    try {
+      const imported = buildRegistryItemsByNamespace(catalog);
+      const report = buildImportReport(catalog, imported, "fixture.json");
+      const invalidReport = { ...report, invalid: BigInt(1) };
+
+      await expect(
+        persistImportedCatalog(db, imported.itemsByNamespace, invalidReport),
+      ).rejects.toThrow();
+
+      expect(await readCuratedItemSummaries(db)).toEqual({});
+      expect(await readDocument(db, "catalog-import-report")).toBeNull();
+    } finally {
+      await db.close();
+    }
   });
 });

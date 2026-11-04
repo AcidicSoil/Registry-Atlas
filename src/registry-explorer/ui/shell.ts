@@ -33,17 +33,13 @@ import {
 import {
   buildRegistryDirectory,
   registryCatalogCoverage,
-  type RegistryCatalogCoverage,
   type RegistryDirectorySort,
 } from "../core/registryDirectory";
 import { buildCatalogComparison } from "../core/catalogCompare";
 import {
   catalogRoutePath,
-  parseCatalogBrowseQuery,
   parseCatalogRoute,
-  serializeCatalogBrowseQuery,
   type CatalogBrowseQueryState,
-  type CatalogReviewedFilter,
   type CatalogRoute,
   type CatalogSort,
 } from "../core/catalogRoutes";
@@ -61,7 +57,12 @@ import {
   type AssetKindToken,
 } from "./catalogComponentsView";
 import { markAccessibleFeed } from "./infiniteScrollControl";
-import { browseSnapshotKey, parseBrowseSnapshot, type BrowseSnapshot } from "./browseHistory";
+import { readBrowseSnapshot, saveBrowseSnapshot, type BrowseSnapshot } from "./browseHistory";
+import {
+  formatBrowseRouteUrl,
+  hydrateBrowseRouteState,
+  type BrowseRouteState,
+} from "./browseRouteState";
 import { renderCatalogLanding } from "./catalogLandingView";
 import { renderCatalogCollection, renderEvidenceUnavailable } from "./catalogCollectionView";
 import {
@@ -103,29 +104,12 @@ interface CopyFeedback {
   command?: string;
 }
 
-interface AppState {
-  route: CatalogRoute;
-  authorIdentity: string | null;
+interface AppState extends BrowseRouteState {
   returnRoute: CatalogRoute | null;
-  compareRegistryNames: string[];
-  searchTerm: string;
   installQueue: InstallQueueEntry[];
   setupInstructions: string;
   copyFeedback: CopyFeedback | null;
   facetSearchTerms: Record<string, string>;
-  discoveryPage: number;
-  catalogSort: CatalogSort;
-  catalogRegistryNames: string[];
-  catalogItemTypes: string[];
-  catalogCategories: string[];
-  catalogAssetKinds: CatalogAssetKind[];
-  catalogCanonicalIds: string[];
-  catalogAccess: Array<"free" | "paid">;
-  catalogReviewed: CatalogReviewedFilter;
-  registryCoverage: RegistryCatalogCoverage[];
-  registrySort: RegistryDirectorySort;
-  registryLayout: RegistryDirectoryLayout;
-  catalogLayout: RegistryDirectoryLayout;
 }
 
 interface FocusIdentity {
@@ -196,7 +180,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   let replacementToken = readPendingReplacement(setupDraft.items);
 
   let state: AppState = {
-    ...hydrateStateFromUrl(registries, policy),
+    ...hydrateBrowseRouteState(
+      window.location.pathname,
+      window.location.search,
+      catalogBasePath(),
+      registries,
+      policy,
+    ),
     returnRoute: null,
     installQueue: setupDraft.items,
     setupInstructions: setupDraft.instructions,
@@ -221,11 +211,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     browsedHistory.set(route, snapshot);
 
-    try {
-      window.sessionStorage?.setItem(browseSnapshotKey(route), JSON.stringify(snapshot));
-    } catch {
-      // Session storage can be disabled; in-memory back navigation still works.
-    }
+    saveBrowseSnapshot(route, snapshot, () => window.sessionStorage);
   }
 
   const setState = (
@@ -2053,19 +2039,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
     }
   }
 
-  function readPersistedBrowseState(): BrowseSnapshot | null {
-    try {
-      return parseBrowseSnapshot(
-        window.sessionStorage?.getItem(browseSnapshotKey(currentHistoryKey())) ?? null,
-      );
-    } catch {
-      // Private-browsing restrictions do not prevent in-memory restoration.
-      return null;
-    }
-  }
-
   function restoreBrowseState(): void {
-    const snapshot = browsedHistory.get(currentHistoryKey()) ?? readPersistedBrowseState();
+    const snapshot =
+      browsedHistory.get(currentHistoryKey()) ??
+      readBrowseSnapshot(currentHistoryKey(), () => window.sessionStorage);
 
     if (!snapshot || state.discoveryPage !== 1) return;
 
@@ -2086,7 +2063,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   window.addEventListener("popstate", () => {
     state = {
       ...state,
-      ...hydrateStateFromUrl(registries, policy),
+      ...hydrateBrowseRouteState(
+        window.location.pathname,
+        window.location.search,
+        catalogBasePath(),
+        registries,
+        policy,
+      ),
       returnRoute: null,
       copyFeedback: null,
     };
@@ -2099,240 +2082,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
   render();
 }
 
-function routeFromLocation(params: URLSearchParams): CatalogRoute {
-  if (params.has("view")) return legacyRoute(params);
-
-  return (
-    parseCatalogRoute(window.location.pathname, catalogBasePath()) ?? {
-      kind: "not-found",
-      path: window.location.pathname,
-    }
-  );
-}
-
-function searchTermFromLocation(params: URLSearchParams, route: CatalogRoute): string {
-  const query = params.get("q")?.trim();
-
-  if (query) return query;
-
-  if (route.kind === "components" && route.pathSearchTerm) return route.pathSearchTerm;
-
-  if (params.has("view")) return params.get("component")?.trim() ?? "";
-
-  return "";
-}
-
-function sortRegistriesFromLocation(params: URLSearchParams): RegistryDirectorySort {
-  const sort = params.get("registrySort");
-
-  return sort === "item-count-desc" || sort === "item-count-asc" ? "item-count-desc" : "name";
-}
-
-function hydrateStateFromUrl(
-  registries: readonly Registry[],
-  policy: CatalogPolicy,
-): Omit<
-  AppState,
-  "installQueue" | "setupInstructions" | "copyFeedback" | "returnRoute" | "facetSearchTerms"
-> {
-  const params = new URLSearchParams(window.location.search);
-  const browse = parseCatalogBrowseQuery(params, policy);
-  const route = routeFromLocation(params);
-  const searchTerm = searchTermFromLocation(params, route);
-
-  const registryCoverage = params
-    .getAll("coverage")
-    .filter((value): value is RegistryCatalogCoverage =>
-      ["current", "stale", "empty", "failed"].includes(value),
-    );
-
-  const registrySort = sortRegistriesFromLocation(params);
-
-  const browseLayout: RegistryDirectoryLayout = params.get("layout") === "list" ? "list" : "grid";
-
-  const compareRegistryNames = [...new Set(params.getAll("compareRegistry"))]
-    .filter((name) => registries.some((registry) => registry.name === name))
-    .slice(0, 4);
-
-  return {
-    route,
-    authorIdentity:
-      route.kind === "authors" ? params.get("author")?.trim().slice(0, 256) || null : null,
-    compareRegistryNames,
-    searchTerm,
-    discoveryPage: browse.page,
-    catalogSort: browse.sort,
-    catalogRegistryNames: browse.registryNames.filter((name) =>
-      registries.some((registry) => registry.name === name),
-    ),
-    catalogItemTypes: browse.itemTypes,
-    catalogCategories: browse.categories,
-    catalogAssetKinds: browse.assetKinds,
-    catalogCanonicalIds: browse.canonicalIds,
-    catalogAccess: browse.access,
-    catalogReviewed: browse.reviewed,
-    registryCoverage,
-    registrySort,
-    registryLayout: browseLayout,
-    catalogLayout: browseLayout,
-  };
-}
-
-function legacyRoute(params: URLSearchParams): CatalogRoute {
-  const view = params.get("view");
-  const registry = params.get("registry")?.trim();
-  const item = params.get("item")?.trim();
-
-  if (view === "compare" || view === "matrix") return { kind: "compare" };
-
-  if (view === "registries")
-    return registry ? { kind: "registry", namespace: registry } : { kind: "registries" };
-
-  if (view === "item" && registry && item)
-    return { kind: "component", namespace: registry, slug: item };
-
-  return { kind: "components" };
-}
-
-function catalogBrowseStateForUrl(state: AppState): CatalogBrowseQueryState {
-  return {
-    page: state.discoveryPage,
-    sort: state.catalogSort,
-    registryNames: state.catalogRegistryNames,
-    itemTypes: [],
-    categories: state.catalogCategories,
-    assetKinds: state.catalogAssetKinds,
-    canonicalIds: state.catalogCanonicalIds,
-    access: state.catalogAccess,
-    reviewed: "all",
-  };
-}
-
-const CATALOG_BROWSE_ROUTE_KINDS = new Set<CatalogRoute["kind"]>([
-  "explore",
-  "blocks",
-  "pages",
-  "templates",
-  "themes",
-  "icons",
-  "icon-family",
-  "icon-category",
-]);
-
-function searchAwareRoute(state: AppState): CatalogRoute {
-  const route = state.route;
-
-  if (route.kind !== "components") return route;
-  const search = state.searchTerm.trim();
-
-  if (!search || state.searchTerm.includes("/")) return route;
-
-  return { kind: "components", pathSearchTerm: search };
-}
-
-function paramsForBrowseRoute(
-  route: CatalogRoute,
-  state: AppState,
-  policy: CatalogPolicy,
-): URLSearchParams | null {
-  if (route.kind === "components") {
-    const params = serializeCatalogBrowseQuery(
-      {
-        ...catalogBrowseStateForUrl(state),
-        itemTypes: state.catalogItemTypes,
-        reviewed: state.catalogReviewed,
-      },
-      policy,
-    );
-
-    if (!route.pathSearchTerm && state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
-
-    return params;
-  }
-
-  if (route.kind === "registry" || route.kind === "registry-assets") {
-    const params = serializeCatalogBrowseQuery(
-      {
-        ...catalogBrowseStateForUrl(state),
-        registryNames: [],
-        itemTypes: state.catalogItemTypes,
-        reviewed: state.catalogReviewed,
-      },
-      policy,
-    );
-
-    if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
-
-    return params;
-  }
-
-  if (!CATALOG_BROWSE_ROUTE_KINDS.has(route.kind)) return null;
-  const params = serializeCatalogBrowseQuery(catalogBrowseStateForUrl(state), policy);
-
-  if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
-
-  return params;
-}
-
-function appendDirectoryQuery(params: URLSearchParams, state: AppState): void {
-  if (state.discoveryPage > 1) params.set("page", String(state.discoveryPage));
-
-  if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
-}
-
-function paramsForOtherRoute(route: CatalogRoute, state: AppState): URLSearchParams {
-  const params = new URLSearchParams();
-
-  if (route.kind === "authors") {
-    if (state.authorIdentity) params.set("author", state.authorIdentity);
-    appendDirectoryQuery(params, state);
-  } else if (route.kind === "registries") {
-    appendDirectoryQuery(params, state);
-    state.catalogAssetKinds.forEach((value) => params.append("asset", value));
-
-    if (state.registrySort !== "name") params.set("registrySort", state.registrySort);
-
-    if (state.registryLayout !== "grid") params.set("layout", state.registryLayout);
-  } else if (route.kind === "compare") {
-    appendDirectoryQuery(params, state);
-    state.compareRegistryNames.forEach((name) => params.append("compareRegistry", name));
-  }
-
-  return params;
-}
-
 function syncUrlState(
   state: AppState,
   policy: CatalogPolicy,
   historyMode: "push" | "replace" = "replace",
 ): void {
-  if (state.route.kind === "not-found") return;
-  const route = searchAwareRoute(state);
-  const params = paramsForBrowseRoute(route, state, policy) ?? paramsForOtherRoute(route, state);
+  const next = formatBrowseRouteUrl(state, catalogBasePath(), window.location.hash, policy);
 
-  if (
-    state.catalogLayout === "list" &&
-    route.kind !== "registries" &&
-    [
-      "components",
-      "registry",
-      "registry-assets",
-      "explore",
-      "blocks",
-      "pages",
-      "templates",
-      "themes",
-      "icons",
-      "icon-family",
-      "icon-category",
-    ].includes(route.kind)
-  )
-    params.set("layout", "list");
-  const pathname = catalogRoutePath(route, catalogBasePath());
-  const query = params.toString();
-  const next = pathname + (query ? "?" + query : "") + window.location.hash;
+  if (!next || next === window.location.pathname + window.location.search + window.location.hash)
+    return;
 
-  if (next === window.location.pathname + window.location.search + window.location.hash) return;
   const history = historyMode === "push" ? window.history.pushState : window.history.replaceState;
   history.call(window.history, {}, "", next);
 }

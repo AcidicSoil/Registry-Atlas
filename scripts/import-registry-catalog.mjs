@@ -6,6 +6,7 @@ import {
   putDocument,
   readCuratedItemSummaries,
   replaceCuratedItemSummaries,
+  transaction,
 } from "./lib/atlas-storage.mjs";
 
 const ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -219,6 +220,14 @@ export function parseArgs(argv) {
   return options;
 }
 
+/** Commit imported summaries and their provenance as one PostgreSQL transaction. */
+export async function persistImportedCatalog(database, itemsByNamespace, report) {
+  await transaction(database, async (tx) => {
+    await replaceCuratedItemSummaries(tx, itemsByNamespace);
+    await putDocument(tx, "catalog-import-report", "sync-report", report);
+  });
+}
+
 async function main(argv = process.argv.slice(2)) {
   const options = parseArgs(argv);
   const catalog = await readJson(options.source);
@@ -229,10 +238,8 @@ async function main(argv = process.argv.slice(2)) {
     const importResult = buildRegistryItemsByNamespace(catalog, existing);
     const report = buildImportReport(catalog, importResult, options.source);
 
-    if (!options.dryRun) {
-      await replaceCuratedItemSummaries(database, importResult.itemsByNamespace);
-      await putDocument(database, "catalog-import-report", "sync-report", report);
-    }
+    if (!options.dryRun)
+      await persistImportedCatalog(database, importResult.itemsByNamespace, report);
 
     console.log(
       `Imported ${report.item_count} item summaries across ${report.registry_count} registries`,
