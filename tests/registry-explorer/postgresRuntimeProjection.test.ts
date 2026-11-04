@@ -20,10 +20,29 @@ describe("PostgreSQL static runtime projection", () => {
         { name: "catalog-kind-overrides", payload_json: "{}" },
         {
           name: "source-page-index-meta",
-          payload_json: JSON.stringify({ schema: "source-pages/v1" }),
+          payload_json: JSON.stringify({
+            schema: "source-pages/v1",
+            coverage: {
+              distinctIndexed: 2,
+              published: 1,
+              reviewed: 0,
+              sitemap: 1,
+              pattern: 0,
+              missing: 1,
+            },
+          }),
         },
       ],
       sourcePages: [
+        {
+          namespace: "@demo",
+          slug: "icon",
+          payload_json: JSON.stringify({
+            url: "https://demo.test/docs/icon#icon",
+            level: "observed",
+            source: "documented-anchor",
+          }),
+        },
         {
           namespace: "@demo",
           slug: "button",
@@ -56,6 +75,12 @@ describe("PostgreSQL static runtime projection", () => {
       ],
     });
 
+    expect(out.core.sourcePageManifest.coverage).toMatchObject({
+      distinctIndexed: 2,
+      published: 2,
+      observed: 1,
+      missing: 0,
+    });
     expect(out.core.catalog.registries["@demo"]).toEqual([{ name: "button", type: "registry:ui" }]);
     expect(out.core.catalog.registries["@empty"]).toEqual([]);
     expect(out.core.sourcePageManifest.pages["@demo/button"].url).toBe(

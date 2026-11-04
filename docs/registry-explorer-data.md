@@ -8,7 +8,7 @@ The website is static. An explicit PostgreSQL export produces two compressed JSO
 
 - `registry-atlas.json.gz` contains the registry mirror, catalog, taxonomy, and source-page evidence.
 - `registry-details.json.gz` contains exact item details, loaded lazily by the browser.
-- `source-media.json` contains optional, verified image URLs keyed by exact upstream source pages. It is produced by the bounded offline `pnpm collect:source-media --max-pages=50` command, not by the PostgreSQL exporter. The browser treats missing evidence as no preview.
+- `source-media.json` contains optional, verified image URLs keyed by exact upstream source pages. It is produced by the bounded offline `node scripts/collect-source-media.mjs --max-pages=50` command, not by the PostgreSQL exporter. The browser treats missing evidence as no preview.
 
 The two compressed PostgreSQL snapshots are ignored by Git and contain no credentials. The static image-evidence manifest is checked in for deployment and can be regenerated incrementally from public source metadata; it contains only public URLs and verification timestamps. The builder also creates `.instance/atlas-test-documents.json` for tests. Browser routes do not connect to PostgreSQL.
 
@@ -95,3 +95,5 @@ There is no Git LFS file in the current tree and no canonical database in Git. P
 `ui/sourcePageLink.ts` now selects labels using generic `reviewed`, `sitemap`, `pattern`, or `observed` evidence, rather than hardcoded registry namespaces. Seven previously observed documentation anchors were inserted into authoritative PostgreSQL source-page rows using `level=observed` and `source=documented-anchor` and the compressed runtime snapshot was exported afterward. The source-page provenance gate recognizes this level while retaining its existing source URL and identity checks. Other registries require no code additions for original-page links.
 
 The optional media workflow is in `docs/architecture/component-visual-previews.md`. Initial coverage was 236 retained exact images from legacy evidence; unverified provider URL formulas were removed. The first 12 new generic collection attempts were rejected as unreadable pages. No image is inferred from an unverified URL pattern at runtime. The local audit summary lives at `.instance/source-media-audit.json`.
+
+Runtime source-page metadata is reconciled from the exported PostgreSQL source rows at build time. Coverage reports now include the `observed` level; published, reviewed, sitemap, pattern, observed, and missing totals describe the same snapshot rather than an earlier source-index document.

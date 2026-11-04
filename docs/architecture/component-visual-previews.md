@@ -37,9 +37,9 @@ PostgreSQL source-page and route evidence
 
 ```bash
 pnpm prepare:runtime-data
-pnpm collect:source-media --max-pages=50
+node scripts/collect-source-media.mjs --max-pages=50
 # To recheck previously accepted pages:
-pnpm collect:source-media --max-pages=50 --refresh
+node scripts/collect-source-media.mjs --max-pages=50 --refresh
 ```
 
 The default budget is 50 source pages, six concurrent requests, ten seconds per page request and eight seconds per image check. The collector validates HTTPS public hostnames, refuses redirects, bounds HTML to 2 MiB and images to 5 MiB, verifies image MIME, rejects unmatched slugs and shared image URLs, and writes per-run rejection counts to ignored `.instance/source-media-audit.json`. It retains accepted evidence when a refresh fails and drops media entries whose source URLs no longer appear in the runtime snapshot. Passing slug and MIME checks is evidence of an item-specific _candidate_, not independent screenshot/pixel verification.

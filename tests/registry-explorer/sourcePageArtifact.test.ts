@@ -13,8 +13,16 @@ describe("PostgreSQL source-page projection", () => {
     expect(manifest.schema).toBe("registry-atlas-source-page-index/v1");
     expect(Object.keys(manifest.pages).length).toBeGreaterThan(1000);
     const coverage = manifest.coverage;
-    expect(coverage.published).toBe(coverage.reviewed + coverage.sitemap + coverage.pattern);
+    expect(coverage.published).toBe(
+      coverage.reviewed + coverage.sitemap + coverage.pattern + coverage.observed,
+    );
     expect(coverage.distinctIndexed).toBe(coverage.published + coverage.missing);
+    expect(coverage.observed).toBe(7);
+    expect(manifest.pages["@spaceui/demo-p-aspect-ratio-03"]).toMatchObject({
+      level: "observed",
+      source: "documented-anchor",
+      url: "https://www.spaceui.one/primitives/aspect-ratio#example-11-square-aspect-ratio",
+    });
     expect(manifest.pages["@8bitcn/input-otp"]).toMatchObject({
       url: "https://www.8bitcn.com/docs/components/input-otp",
       level: "reviewed",
@@ -22,7 +30,7 @@ describe("PostgreSQL source-page projection", () => {
 
     for (const page of Object.values(manifest.pages) as Array<{ url: string; level: string }>) {
       expect(page.url).toMatch(/^https:\/\//);
-      expect(page.level).toMatch(/^(reviewed|sitemap|pattern)$/);
+      expect(page.level).toMatch(/^(reviewed|sitemap|pattern|observed)$/);
     }
   });
 });

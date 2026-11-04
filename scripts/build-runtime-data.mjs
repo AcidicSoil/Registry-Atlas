@@ -65,6 +65,26 @@ export function projectRuntimePayloads({
     ]),
   );
 
+  const sourcePageMeta = docs["source-page-index-meta"];
+  const previousCoverage = sourcePageMeta?.coverage;
+  const levels = Object.values(pages);
+
+  const coverage = previousCoverage
+    ? {
+        ...previousCoverage,
+        published: levels.length,
+        reviewed: levels.filter((page) => page.level === "reviewed").length,
+        sitemap: levels.filter((page) => page.level === "sitemap").length,
+        pattern: levels.filter((page) => page.level === "pattern").length,
+        observed: levels.filter((page) => page.level === "observed").length,
+        missing: previousCoverage.distinctIndexed - levels.length,
+      }
+    : undefined;
+
+  const sourcePageManifest = { ...sourcePageMeta, pages };
+
+  if (coverage) sourcePageManifest.coverage = coverage;
+
   return {
     core: {
       mirror: {
@@ -75,7 +95,7 @@ export function projectRuntimePayloads({
       taxonomy: docs["catalog-taxonomy"],
       kindOverrides: docs["catalog-kind-overrides"],
       registryIcons: docs["registry-icons"] ?? null,
-      sourcePageManifest: { ...docs["source-page-index-meta"], pages },
+      sourcePageManifest,
       itemRoutes,
       routePatterns,
     },
