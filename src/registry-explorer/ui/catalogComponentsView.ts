@@ -296,9 +296,20 @@ export function renderCatalogComponentCard(
         )} data-catalog-description>${escapeHtml(supportingCopy)}</p>
         ${themeData}
       </a>
-      <div${renderStyleXAttributes(stylex.attrs(cardStyles.actions))} data-catalog-actions aria-label="Item links">
+      <div${renderStyleXAttributes(stylex.attrs(cardStyles.actions))} data-catalog-actions aria-label="Item actions">
         ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
         ${renderCardSourceLink(original, component.namespace)}
+        <button${renderStyleXAttributes(stylex.attrs(cardStyles.copyName))} type="button"
+          data-catalog-copy-name data-copy-text="${escapeHtml(component.displayName)}"
+          data-copy-label="Component name copied"
+          aria-label="Copy ${escapeHtml(component.displayName)} name"
+          title="Copy name">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+            stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="8" y="8" width="13" height="13" rx="2" />
+            <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
+          </svg>
+        </button>
       </div>
     </article>
   `;

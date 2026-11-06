@@ -402,6 +402,27 @@ describe("registry explorer shell interactions", () => {
     expect(harness.contentHeader.innerHTML).toContain('role="status"');
   });
 
+  it("copies the exact displayed card name through the shared clipboard handler", async () => {
+    const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
+    const harness = setup("", "/Registry-Atlas/components");
+    vi.stubGlobal("navigator", { clipboard });
+
+    harness.contentBody.dispatch(
+      "click",
+      target({
+        "data-catalog-copy-name": "",
+        "data-copy-text": "Code Block",
+        "data-copy-label": "Component name copied",
+      }),
+    );
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(clipboard.writeText).toHaveBeenCalledExactlyOnceWith("Code Block");
+    expect(harness.contentHeader.innerHTML).toContain("Component name copied");
+    expect(harness.location.pathname).toBe("/Registry-Atlas/components");
+  });
+
   it("announces clipboard denial on the item surface", async () => {
     const clipboard = { writeText: vi.fn().mockRejectedValue(new Error("denied")) };
     const harness = setup("?view=item&registry=%40delta&item=code-block");

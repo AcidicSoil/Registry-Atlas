@@ -37,6 +37,30 @@ const TEST_TAXONOMY = parseCatalogTaxonomy({
 });
 
 describe("renderCatalogComponents", () => {
+  it("renders an accessible copy-name action outside the card navigation link", () => {
+    const html = renderCatalogComponentCard(component());
+
+    expect(html).toContain("data-catalog-copy-name");
+    expect(html).toContain('data-copy-text="Code Block"');
+    expect(html).toContain('data-copy-label="Component name copied"');
+    expect(html).toContain('aria-label="Copy Code Block name"');
+    expect(html).toContain('type="button"');
+    expect(html.indexOf("data-catalog-copy-name")).toBeGreaterThan(html.indexOf("</a>"));
+    expect(html.indexOf("data-catalog-copy-name")).toBeGreaterThan(
+      html.indexOf("data-catalog-actions"),
+    );
+  });
+
+  it("escapes the displayed name used for the clipboard payload", () => {
+    const html = renderCatalogComponentCard({
+      ...component(),
+      displayName: 'Code "Block" <Preview>',
+    });
+
+    expect(html).toContain('data-copy-text="Code &quot;Block&quot; &lt;Preview&gt;"');
+    expect(html).toContain('aria-label="Copy Code &quot;Block&quot; &lt;Preview&gt; name"');
+  });
+
   it("deeplinks sitemap-backed component pages while preserving provenance metadata", () => {
     const html = renderCatalogComponentCard({
       ...component(),

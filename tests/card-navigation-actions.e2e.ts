@@ -1,6 +1,23 @@
 import { test } from "@e2e-dev/web";
 import { expect } from "e2e";
 
+test("catalog copy-name control reports feedback without navigating", async ({
+  app,
+  browser,
+  screen,
+}) => {
+  await app.open("/Registry-Atlas/components/s/.NET%20logo");
+
+  const copy = screen.getByRole("button", "Copy .NET logo name");
+  await expect(copy).toBeVisible();
+  await app.screenshot("catalog-copy-name");
+  await copy.tap();
+
+  await expect(browser).toHaveURL("/Registry-Atlas/components/s/.NET%20logo");
+  await expect(browser.locator(".copy-feedback")).toBeVisible();
+  await expect(screen.getByRole("link", "Open .NET logo from @logoforge")).toBeVisible();
+});
+
 test("catalog card uses one footer homepage link and retains internal card navigation", async ({
   app,
   browser,
