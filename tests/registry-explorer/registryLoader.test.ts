@@ -259,7 +259,8 @@ async function runtimeFixture(
           url: "https://example.com/components/button",
           level: "reviewed",
           source: "component-page-verified",
-          observedAt: "2026-10-07T00:00:00.000Z",
+          // Reviewed evidence expires after 30 days; fixtures must remain fresh.
+          observedAt: new Date().toISOString(),
         },
       },
     },
