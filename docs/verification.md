@@ -129,7 +129,7 @@ The hook also reported the existing `projectTasks.test.ts` package-script limit 
 - The 5C route codec and browser-history separation has focused tests in `browseRouteState.test.ts` and `browseHistory.test.ts`. Earlier in this session, routing/history/shell tests passed **56/56**, production navigation and infinite scrolling passed **4/4** browser tests against a fresh build, and TypeScript and project quality gates passed.
 - The approved 5E importer change was developed against a failing regression test and then passed **12/12** tests in `registryCatalogImport.test.ts` and `postgresStorage.test.ts`, including isolated PostgreSQL rollback on a failing provenance write; test TypeScript passed.
 - No production PostgreSQL writes, reviewer decision resets, classification-hash rewrites, schema migration, or full-suite run accompanied these changes. The original read-only source reconciliation reported 46,397 source pages and zero proposed changes.
-- The remaining 432 stale classifications and 131 missing review identities, 5D StyleX work, multi-asset atomic publication and stale-source reconciliation risks, and independent PPM design/standards review remain **open** until evidenced and verified separately.
+- The remaining 432 stale classifications and 131 missing review identities, 5D StyleX work, multi-asset atomic publication, and independent PPM design/standards review remain **open** until evidenced and verified separately. Source-evidence conflict protection was added separately on November 6.
 
 ## Phase 5E: read-only snapshot consistency verification (2026-11-04)
 

@@ -41,7 +41,7 @@ docker exec registry-atlas-local-database-1 pg_dump -U atlas -d atlas --schema=a
 
 ## Recovery and backups
 
-Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. The one-time SQLite importer accepts separate core and detail files in `.instance/legacy-recovery/` and refuses to overwrite an existing `atlas` schema. The local recovered PostgreSQL database was reconciled against the latest available runtime snapshot using `scripts/reconcile-runtime-source-evidence.mjs`, with a dry-run before `--apply`.
+Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. The one-time SQLite importer accepts separate core and detail files in `.instance/legacy-recovery/` and refuses to overwrite an existing `atlas` schema. The local recovered PostgreSQL database was reconciled against the latest available runtime snapshot using `scripts/reconcile-runtime-source-evidence.mjs`, with a dry-run before `--apply`. The current recovery policy treats PostgreSQL as authoritative: a dry-run reports missing/conflicting source pages and documents, while an apply inserts only missing records and aborts the whole transaction on any existing conflict. It never overwrites existing database evidence.
 
 The two regenerated compressed runtime files match the previous runtime files byte-for-byte. The recovered database contains 91,716 catalog/detail pairs and 46,390 source-page records. Historical operational records outside those runtime files cannot be independently compared with the former provider while it is unavailable.
 

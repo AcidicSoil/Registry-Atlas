@@ -3,17 +3,21 @@ import { testRouteDatabase } from "./postgresFixture";
 // @ts-expect-error Recovery CLI is a standalone authored ESM module.
 import { reconcileSourceEvidence } from "../../scripts/reconcile-runtime-source-evidence.mjs";
 // @ts-ignore Authored PostgreSQL storage JavaScript module.
-import { putDocument, readDocument, readSourcePages, replaceSourcePages } from "../../scripts/lib/atlas-storage.mjs";
+import { putDocument, readDocument, replaceSourcePages } from "../../scripts/lib/atlas-storage.mjs";
+// @ts-ignore Authored PostgreSQL adapter JavaScript module.
+import { readSourcePages } from "../../scripts/lib/atlas-postgres.mjs";
 
 const recovered = {
   "@demo/button": { url: "https://demo.test/components/button", level: "reviewed" },
   "@demo/card": { url: "https://demo.test/components/card", level: "sitemap" },
 };
+
 const documents = { "source-page-index-meta": { version: 2 } };
 
 describe("source evidence recovery", () => {
   it("rejects an entire apply when existing PostgreSQL evidence conflicts", async () => {
     const db = await testRouteDatabase();
+
     try {
       await replaceSourcePages(db, {
         "@demo/button": { url: "https://demo.test/newer", level: "reviewed" },
@@ -41,6 +45,7 @@ describe("source evidence recovery", () => {
 
   it("restores only missing records and is idempotent", async () => {
     const db = await testRouteDatabase();
+
     try {
       await replaceSourcePages(db, { "@demo/button": recovered["@demo/button"] });
       const first = await reconcileSourceEvidence(db, recovered, documents, true);
