@@ -621,6 +621,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
         renderExploreRoute();
 
         return true;
+      default:
+        return renderDirectoryLandingRoute();
+    }
+  }
+
+  function renderDirectoryLandingRoute(): boolean {
+    switch (state.route.kind) {
       case "authors":
         renderAuthorsRoute();
 
@@ -643,15 +650,13 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function renderDetailsAndThemes(queued: ReadonlySet<string>): boolean {
-    switch (state.route.kind) {
-      case "component":
-      case "block":
-      case "page":
-      case "template":
-      case "theme":
-        renderDetail(state.route, queued);
+    if (isDetailRoute(state.route)) {
+      renderDetail(state.route, queued);
 
-        return true;
+      return true;
+    }
+
+    switch (state.route.kind) {
       case "templates":
         renderTypedCollection(
           "template",
@@ -757,12 +762,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     // Include it even when a known registry's item route is unavailable.
     const route = state.route;
 
-    const registryForHeader =
-      route.kind === "icon-family"
-        ? registries.find((registry) => registry.name.slice(1) === route.family)
-        : "namespace" in route
-          ? registries.find((registry) => registry.name === route.namespace)
-          : undefined;
+    const registryForHeader = registryForHeaderRoute(route);
 
     const homepage = registryForHeader ? renderRegistryHomepageLink(registryForHeader.url) : "";
 
@@ -776,6 +776,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
     roots.contentHeader.insertAdjacentHTML("beforeend", renderCopyFeedback(state.copyFeedback));
 
     renderReplacementNotice();
+  }
+
+  function registryForHeaderRoute(route: CatalogRoute): Registry | undefined {
+    if (route.kind === "icon-family")
+      return registries.find((registry) => registry.name.slice(1) === route.family);
+
+    return "namespace" in route
+      ? registries.find((registry) => registry.name === route.namespace)
+      : undefined;
   }
 
   function renderReplacementNotice(): void {
@@ -1292,14 +1301,17 @@ export function initRegistryExplorer(options: ShellOptions): void {
       related,
     );
 
-    if (
-      key &&
+    if (key && needsItemDetailLoad(key, summary)) {
+      void ensureItemDetailLoaded(key, route.namespace, route.slug);
+    }
+  }
+
+  function needsItemDetailLoad(key: string, summary: RegistryItemDetailResult): boolean {
+    return (
       !itemDetailCache.has(key) &&
       summary.status === "summary-only" &&
       summary.detail.route.status === "available"
-    ) {
-      void ensureItemDetailLoaded(key, route.namespace, route.slug);
-    }
+    );
   }
 
   function renderCompare(): void {
@@ -1328,13 +1340,16 @@ export function initRegistryExplorer(options: ShellOptions): void {
     );
   }
 
+  function isModifiedNavigationClick(click: MouseEvent): boolean {
+    return click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey;
+  }
+
   roots.tabs.forEach((tab) =>
     tab.addEventListener("click", (event) => {
       // SAFETY: Navigation click events originate from DOM click listeners attached to anchor controls.
       const click = event as MouseEvent;
 
-      if (click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey)
-        return;
+      if (isModifiedNavigationClick(click)) return;
       event.preventDefault();
       const view = tab.getAttribute("data-view");
 
@@ -1469,30 +1484,31 @@ export function initRegistryExplorer(options: ShellOptions): void {
     image.closest("[data-registry-icon]")?.setAttribute("data-registry-icon-failed", "true");
   }
 
+  function rememberSidebarTaxonomyToggle(target: HTMLElement): void {
+    const group = target.closest("summary.sidebar-taxonomy-summary")?.parentElement;
+
+    if (!group) return;
+
+    if (!(group instanceof HTMLDetailsElement)) return;
+    const id = group.getAttribute("data-sidebar-taxonomy-group");
+
+    if (!id) return;
+
+    if (group.open) {
+      expandedCategoryIds.delete(id);
+      collapsedCategoryIds.add(id);
+    } else {
+      expandedCategoryIds.add(id);
+      collapsedCategoryIds.delete(id);
+    }
+  }
+
   // Native details toggle events are asynchronous. Record intent synchronously
   // before a filter or sort action replaces the sidebar DOM.
   roots.aside.addEventListener("click", (event) => {
     // SAFETY: The aside owns all interactive targets passed to handleClick.
     const target = event.target as HTMLElement;
-    const summary = target.closest("summary.sidebar-taxonomy-summary");
-
-    if (summary) {
-      const group = summary.parentElement;
-
-      if (group instanceof HTMLDetailsElement) {
-        const id = group.getAttribute("data-sidebar-taxonomy-group");
-
-        if (id) {
-          if (group.open) {
-            expandedCategoryIds.delete(id);
-            collapsedCategoryIds.add(id);
-          } else {
-            expandedCategoryIds.add(id);
-            collapsedCategoryIds.delete(id);
-          }
-        }
-      }
-    }
+    rememberSidebarTaxonomyToggle(target);
 
     // SAFETY: The app-owned sidebar dispatches clicks from its rendered controls.
     handleClick(event.target as HTMLElement);
@@ -1615,6 +1631,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return true;
     }
 
+    return handleCanonicalFilterClick(target);
+  }
+
+  function handleCanonicalFilterClick(target: HTMLElement): boolean {
     const canonicalControl = target.closest("[data-catalog-canonical-value]");
 
     if (canonicalControl) {
@@ -1691,6 +1711,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleCatalogLayoutClick(target: HTMLElement): boolean {
+    return (
+      handleBrowseLayoutClick(target) ||
+      handleCatalogSortClick(target) ||
+      handleRegistrySortClick(target)
+    );
+  }
+
+  function handleBrowseLayoutClick(target: HTMLElement): boolean {
     const browseLayoutControl = target.closest("[data-browse-layout]");
 
     if (browseLayoutControl) {
@@ -1711,6 +1739,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return true;
     }
 
+    return false;
+  }
+
+  function handleCatalogSortClick(target: HTMLElement): boolean {
     const catalogSortControl = target.closest("[data-catalog-sort-value]");
 
     if (catalogSortControl) {
@@ -1729,6 +1761,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return true;
     }
 
+    return false;
+  }
+
+  function handleRegistrySortClick(target: HTMLElement): boolean {
     const registrySortControl = target.closest("[data-registry-sort-value]");
 
     if (registrySortControl) {
@@ -1801,6 +1837,10 @@ export function initRegistryExplorer(options: ShellOptions): void {
       return true;
     }
 
+    return handleDiscoveryPageClick(target);
+  }
+
+  function handleDiscoveryPageClick(target: HTMLElement): boolean {
     const page = target.closest("[data-discovery-page]")?.getAttribute("data-discovery-page");
 
     if (page) {
@@ -1896,23 +1936,21 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   function handleClick(target: HTMLElement): void {
-    if (handleInstall(target)) return;
+    const handlers = [
+      handleInstall,
+      handleCatalogRouteClick,
+      handleCatalogFiltersClick,
+      handleCatalogCategoryClick,
+      handleCatalogLayoutClick,
+      handleCatalogAssetsClick,
+      handleCatalogAuthorClick,
+      handleComparisonClick,
+      handleCatalogItemClick,
+    ];
 
-    if (handleCatalogRouteClick(target)) return;
-
-    if (handleCatalogFiltersClick(target)) return;
-
-    if (handleCatalogCategoryClick(target)) return;
-
-    if (handleCatalogLayoutClick(target)) return;
-
-    if (handleCatalogAssetsClick(target)) return;
-
-    if (handleCatalogAuthorClick(target)) return;
-
-    if (handleComparisonClick(target)) return;
-
-    if (handleCatalogItemClick(target)) return;
+    for (const handler of handlers) {
+      if (handler(target)) return;
+    }
   }
 
   function handleSetupNavigation(target: HTMLElement): boolean {
@@ -1983,27 +2021,32 @@ export function initRegistryExplorer(options: ShellOptions): void {
         : state.installQueue;
 
       setPendingReplacement(null);
-      setState({
-        installQueue: addToInstallQueue(remaining, {
-          action: {
-            status: "enabled",
-            token: add.getAttribute("data-queue-add") ?? "",
-            installCommand: add.getAttribute("data-queue-install") ?? "",
-            inspectCommand: add.getAttribute("data-queue-inspect") ?? "",
-            route: add.getAttribute("data-queue-route") ?? "",
-            disabledReason: null,
-          },
-          label: add.getAttribute("data-queue-label") ?? "",
-          registry: add.getAttribute("data-queue-registry") ?? "",
-          item: add.getAttribute("data-queue-item") ?? "",
-          path: window.location.pathname,
-        }),
-      });
+      setState({ installQueue: queueWithAddedItem(remaining, add) });
 
       return true;
     }
 
     return false;
+  }
+
+  function queueWithAddedItem(
+    queue: readonly InstallQueueEntry[],
+    add: Element,
+  ): InstallQueueEntry[] {
+    return addToInstallQueue(queue, {
+      action: {
+        status: "enabled",
+        token: add.getAttribute("data-queue-add") ?? "",
+        installCommand: add.getAttribute("data-queue-install") ?? "",
+        inspectCommand: add.getAttribute("data-queue-inspect") ?? "",
+        route: add.getAttribute("data-queue-route") ?? "",
+        disabledReason: null,
+      },
+      label: add.getAttribute("data-queue-label") ?? "",
+      registry: add.getAttribute("data-queue-registry") ?? "",
+      item: add.getAttribute("data-queue-item") ?? "",
+      path: window.location.pathname,
+    });
   }
 
   function handleInstallQueueRemove(target: HTMLElement): boolean {

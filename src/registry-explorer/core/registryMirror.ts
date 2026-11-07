@@ -269,6 +269,20 @@ function validateMirrorRecord(
     "official.registry_url_template",
     result,
   );
+  validateAtlasReviewFields(record, label, result);
+  validateItemSummaries(
+    record.atlas?.item_summaries,
+    label,
+    record.official?.registry_url_template,
+    result,
+  );
+}
+
+function validateAtlasReviewFields(
+  record: MirrorRecord,
+  label: string,
+  result: MirrorValidationResult,
+): void {
   validateAtlasScalar(
     record.atlas?.coverage_status,
     COVERAGE_STATUS_SET,
@@ -291,12 +305,6 @@ function validateMirrorRecord(
     "atlas.catalog_status",
     "atlas-invalid-catalog-status",
     label,
-    result,
-  );
-  validateItemSummaries(
-    record.atlas?.item_summaries,
-    label,
-    record.official?.registry_url_template,
     result,
   );
 }
@@ -521,12 +529,7 @@ function validateItemSummaryIdentity(
     });
   }
 
-  if (
-    !isInputString(record.source) ||
-    record.source.trim() === "" ||
-    !isInputString(record.provenance) ||
-    record.provenance.trim() === ""
-  ) {
+  if (!hasSummaryAttribution(record)) {
     addIssue(result, {
       code: "atlas-invalid-item-summary",
       message: `${field} requires source and provenance.`,
@@ -546,6 +549,15 @@ function validateItemSummaryIdentity(
       value: isInputString(slug) ? slug : String(slug),
     });
   }
+}
+
+function hasSummaryAttribution(record: Record<string, RawJsonInput>): boolean {
+  return (
+    isInputString(record.source) &&
+    record.source.trim() !== "" &&
+    isInputString(record.provenance) &&
+    record.provenance.trim() !== ""
+  );
 }
 
 function isKnownCatalogStatus(value: string): value is ItemCatalogStatus {

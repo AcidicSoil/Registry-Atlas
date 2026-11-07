@@ -150,7 +150,7 @@ function renderCanonicalNode(
   }
 
   const active = selected === node.id || selected.startsWith(node.id + "/");
-  const expanded = !collapsedIds.includes(node.id) && (active || expandedIds.includes(node.id));
+  const expanded = isCanonicalNodeExpanded(node.id, active, expandedIds, collapsedIds);
 
   return `<details class="sidebar-taxonomy-group" data-sidebar-taxonomy-group="${escapeHtml(node.id)}"${expanded ? " open" : ""}>
     <summary class="sidebar-nav-row sidebar-taxonomy-summary${active ? " sidebar-taxonomy-active" : ""}">
@@ -169,6 +169,15 @@ function renderCanonicalNode(
       ${children.map((child) => renderCanonicalNode(child, counts, selected, expandedIds, collapsedIds)).join("")}
     </div>
   </details>`;
+}
+
+function isCanonicalNodeExpanded(
+  id: string,
+  active: boolean,
+  expandedIds: readonly string[],
+  collapsedIds: readonly string[],
+): boolean {
+  return !collapsedIds.includes(id) && (active || expandedIds.includes(id));
 }
 
 function renderCanonical(

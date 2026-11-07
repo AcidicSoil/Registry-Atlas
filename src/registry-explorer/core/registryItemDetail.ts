@@ -179,8 +179,8 @@ export function resolveRegistryItemDetailFromCatalogIndex(
   policy: CatalogPolicy,
   sourceJson?: RawJsonInput,
 ): RegistryItemDetailResult {
-  const registryName = namespace?.trim() ?? "";
-  const slug = itemSlug?.trim() ?? "";
+  const registryName = normalizedDetailIdentity(namespace);
+  const slug = normalizedDetailIdentity(itemSlug);
   const registry = registries.find((item) => item.name === registryName);
 
   if (!registry) return notFound("Registry not found.", "missing-registry");
@@ -196,6 +196,20 @@ export function resolveRegistryItemDetailFromCatalogIndex(
 
   if (!compactItem) return notFound("Item not found in registry catalog.", "missing-item");
 
+  return resolvedCompactCatalogDetail(registry, compactItem, catalogIndex, policy, sourceJson);
+}
+
+function normalizedDetailIdentity(value: string | null | undefined): string {
+  return value?.trim() ?? "";
+}
+
+function resolvedCompactCatalogDetail(
+  registry: Registry,
+  compactItem: NonNullable<ReturnType<typeof findRegistryCatalogItem>>,
+  catalogIndex: RegistryCatalogIndex,
+  policy: CatalogPolicy,
+  sourceJson?: RawJsonInput,
+): RegistryItemDetailResult {
   const summary = compactCatalogItemToSummary(registry, compactItem);
   const base = buildBaseDetail(registry, summary);
   base.sourcePage = resolveCatalogSourcePage(catalogIndex, registry, compactItem, policy);
@@ -367,19 +381,34 @@ function mergeDetailJson(
 ): RegistryItemDetail {
   return {
     ...detail,
-    name: item.name ?? detail.name,
-    title: item.title ?? item.name ?? detail.title,
-    description: item.description ?? detail.description,
-    author: item.author ?? detail.author,
-    cssVars: item.cssVars ?? detail.cssVars,
-    type: item.type ?? detail.type,
-    category: item.category ?? detail.category,
+    ...detailDisplayFields(detail, item),
+    ...detailClassificationFields(detail, item),
     dependencies: item.dependencies,
     devDependencies: item.devDependencies,
     registryDependencies: item.registryDependencies,
     files: item.files,
     loadedFromJson: true,
     rawSource,
+  };
+}
+
+function detailDisplayFields(detail: RegistryItemDetail, item: NormalizedRegistryItemDetailJson) {
+  return {
+    name: item.name ?? detail.name,
+    title: item.title ?? item.name ?? detail.title,
+    description: item.description ?? detail.description,
+    author: item.author ?? detail.author,
+  };
+}
+
+function detailClassificationFields(
+  detail: RegistryItemDetail,
+  item: NormalizedRegistryItemDetailJson,
+) {
+  return {
+    cssVars: item.cssVars ?? detail.cssVars,
+    type: item.type ?? detail.type,
+    category: item.category ?? detail.category,
   };
 }
 

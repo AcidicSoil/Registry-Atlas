@@ -1,10 +1,10 @@
 # cccc official config: https://github.com/moznion/cccc#configuration-file
 # These are strict per-function limits. Never grandfather exceptions.
 languages = ["es"]
-max-cognitive = 15
-max-cyclomatic = 10
+max-cognitive = 10
+max-cyclomatic = 8
 min = 1
-table = true
+table = false
 pretty = false
 jobs = 4
 cache = true

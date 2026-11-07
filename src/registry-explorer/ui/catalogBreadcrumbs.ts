@@ -70,10 +70,17 @@ function registryBreadcrumbs(route: RegistryRoute, itemTitle?: string): Crumb[] 
   }
 
   if (route.kind !== "registry-assets") {
-    crumbs.push({ label: itemTitle || route.slug.split("/").at(-1) || route.slug });
+    crumbs.push({ label: registryItemBreadcrumbTitle(route, itemTitle) });
   }
 
   return crumbs;
+}
+
+function registryItemBreadcrumbTitle(
+  route: Extract<RegistryRoute, { slug: string }>,
+  itemTitle?: string,
+): string {
+  return itemTitle || route.slug.split("/").at(-1) || route.slug;
 }
 
 function otherBreadcrumbs(route: Exclude<CatalogRoute, RegistryRoute>): Crumb[] {

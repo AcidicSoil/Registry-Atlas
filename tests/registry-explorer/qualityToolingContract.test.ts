@@ -37,8 +37,8 @@ describe("quality-tooling integration contract", () => {
     const mise = read("mise.toml");
     expect(mise).toContain('"github:moznion/cccc" = "1.8.0"');
     const config = read("cccc.toml");
-    expect(config).toContain("max-cognitive = 15");
-    expect(config).toContain("max-cyclomatic = 10");
+    expect(config).toContain("max-cognitive = 10");
+    expect(config).toContain("max-cyclomatic = 8");
   });
 
   it("enforces recorded architecture boundaries", () => {

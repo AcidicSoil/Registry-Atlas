@@ -97,6 +97,10 @@ function hasPublicSourcePath(page: URL, homepage: URL): boolean {
 export function safeSourcePage(raw: string | undefined, root: string): string | null {
   if (!raw || !root || raw.startsWith("//")) return null;
 
+  return validatedSourcePage(raw, root);
+}
+
+function validatedSourcePage(raw: string, root: string): string | null {
   try {
     const home = new URL(root);
     const page = new URL(raw);
@@ -148,13 +152,17 @@ function patternScore(
 
   const itemTokens = new Set([...tokenize(slug), ...categories.flatMap(tokenize)]);
 
-  for (const token of pathTokens) {
-    if (itemTokens.has(token)) score += 20;
+  for (const token of pathTokens) score += itemTokenScore(token, itemTokens);
 
-    if (token.endsWith("s") && itemTokens.has(token.slice(0, -1))) score += 12;
+  return score;
+}
 
-    if (!token.endsWith("s") && itemTokens.has(token + "s")) score += 12;
-  }
+function itemTokenScore(token: string, itemTokens: ReadonlySet<string>): number {
+  let score = itemTokens.has(token) ? 20 : 0;
+
+  if (token.endsWith("s") && itemTokens.has(token.slice(0, -1))) score += 12;
+
+  if (!token.endsWith("s") && itemTokens.has(token + "s")) score += 12;
 
   return score;
 }

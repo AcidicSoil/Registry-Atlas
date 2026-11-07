@@ -92,19 +92,21 @@ export function getInstallActionState(input: InstallActionInput): InstallActionS
     return disabled(disabledReasonForRoute(route.status));
   }
 
+  return availableInstallAction(token, route.url);
+}
+
+function availableInstallAction(token: string, url: string): InstallActionState {
   const installCommand = buildSingleInstallCommand(token);
   const inspectCommand = buildInspectCommand(token);
 
-  if (!installCommand || !inspectCommand) {
-    return disabled("Invalid install token.");
-  }
+  if (!installCommand || !inspectCommand) return disabled("Invalid install token.");
 
   return {
     status: "enabled",
     token,
     installCommand,
     inspectCommand,
-    route: route.url,
+    route: url,
     disabledReason: null,
   };
 }

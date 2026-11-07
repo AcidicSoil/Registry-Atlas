@@ -317,20 +317,30 @@ export function buildCatalogFacetSummary(
     const registry = namespaces.get(namespace);
 
     if (!registry) continue;
-    const reviewed = reviewedSummaryMap(registry);
-
-    for (const item of distinctCatalogItems(items)) {
-      if (!includeCatalogFacet(item, namespace, filters)) continue;
-      collectCatalogFacet(
-        counts,
-        namespace,
-        item,
-        reviewed.has(registryCatalogItemIdentity(item.name)),
-      );
-    }
+    collectRegistryFacets(counts, namespace, items, registry, filters);
   }
 
   return facetSummaryFromCounts(counts);
+}
+
+function collectRegistryFacets(
+  counts: FacetCounts,
+  namespace: string,
+  items: readonly RegistryCatalogItem[],
+  registry: Registry,
+  filters: CatalogFilters,
+): void {
+  const reviewed = reviewedSummaryMap(registry);
+
+  for (const item of distinctCatalogItems(items)) {
+    if (!includeCatalogFacet(item, namespace, filters)) continue;
+    collectCatalogFacet(
+      counts,
+      namespace,
+      item,
+      reviewed.has(registryCatalogItemIdentity(item.name)),
+    );
+  }
 }
 
 export function catalogDistinctItemCount(index: RegistryCatalogIndex): number {
@@ -450,19 +460,22 @@ function displayLabel(item: RegistryCatalogItem): string {
 }
 
 function matchesCategoryAndAccess(item: RegistryCatalogItem, filters: CatalogFilters): boolean {
-  if (
-    filters.categories.size &&
-    !(item.categories ?? []).map(normalize).some((category) => filters.categories.has(category))
-  )
-    return false;
+  return (
+    matchesCategoryFacet(item, filters.categories) &&
+    matchesCanonicalFacet(item, filters.canonicalIds) &&
+    (!filters.access.size || (!!item.access && filters.access.has(item.access.normalized)))
+  );
+}
 
-  if (
-    filters.canonicalIds.size &&
-    !(item.canonical?.path ?? []).some((id) => filters.canonicalIds.has(id))
-  )
-    return false;
+function matchesCategoryFacet(item: RegistryCatalogItem, selected: ReadonlySet<string>): boolean {
+  return (
+    !selected.size ||
+    (item.categories ?? []).map(normalize).some((category) => selected.has(category))
+  );
+}
 
-  return !filters.access.size || (!!item.access && filters.access.has(item.access.normalized));
+function matchesCanonicalFacet(item: RegistryCatalogItem, selected: ReadonlySet<string>): boolean {
+  return !selected.size || (item.canonical?.path ?? []).some((id) => selected.has(id));
 }
 
 function matchesReviewStatus(expected: CatalogReviewedFilter, actual: boolean): boolean {

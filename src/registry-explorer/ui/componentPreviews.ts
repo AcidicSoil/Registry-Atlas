@@ -36,14 +36,10 @@ export function parseComponentPreviewManifest(
     const parsed = captureSchema.safeParse(raw);
 
     if (!parsed.success) continue;
+    const reviewed = reviewedCapture(parsed.data);
 
-    const capture = parsed.data;
-    const source = verifiedRegistryHomepage(capture.sourceUrl);
-    const origin = verifiedRegistryHomepage(capture.captureSourceUrl);
-
-    if (!source || source !== capture.sourceUrl || !origin) continue;
-
-    if (!Number.isFinite(Date.parse(capture.verifiedAt))) continue;
+    if (!reviewed) continue;
+    const { source, capture } = reviewed;
 
     sourceUses.set(source, (sourceUses.get(source) ?? 0) + 1);
     imageUses.set(capture.imagePath, (imageUses.get(capture.imagePath) ?? 0) + 1);
@@ -60,6 +56,20 @@ export function parseComponentPreviewManifest(
       return sourceUses.get(source) === 1 && imageUses.get(imagePath) === 1;
     }),
   );
+}
+
+function reviewedCapture(capture: z.infer<typeof captureSchema>): {
+  source: string;
+  capture: z.infer<typeof captureSchema>;
+} | null {
+  const source = verifiedRegistryHomepage(capture.sourceUrl);
+  const origin = verifiedRegistryHomepage(capture.captureSourceUrl);
+
+  if (!source || source !== capture.sourceUrl || !origin) return null;
+
+  if (!Number.isFinite(Date.parse(capture.verifiedAt))) return null;
+
+  return { source, capture };
 }
 
 export async function loadComponentPreviews(

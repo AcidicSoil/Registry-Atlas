@@ -46,7 +46,7 @@ export function renderRegistryCollection(
       <p>${escapeHtml(registry.description)}</p>
       <div class="registry-collection-meta">
         <strong>${escapeHtml(count)}</strong>
-        ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
+        ${renderRegistryCoverageBadge(options.coverage)}
       </div>
     </div>
   `;
@@ -59,7 +59,7 @@ export function renderRegistryCollection(
         <p>${escapeHtml(registry.description)}</p>
         <div class="registry-profile-summary-facts">
           <span><strong>${result.total.toLocaleString()}</strong> items</span>
-          ${options.coverage ? `<span class="catalog-coverage catalog-coverage-${escapeHtml(options.coverage)}">${escapeHtml(coverageLabel(options.coverage))}</span>` : ""}
+          ${renderRegistryCoverageBadge(options.coverage)}
         </div>
       </section>
       <div class="registry-profile-divider" aria-label="Registry summary panel controls">
@@ -110,6 +110,12 @@ export function renderRegistryCollection(
       </section>
     </div>
   `;
+}
+
+function renderRegistryCoverageBadge(coverage: RegistryCatalogCoverage | undefined): string {
+  if (!coverage) return "";
+
+  return `<span class="catalog-coverage catalog-coverage-${escapeHtml(coverage)}">${escapeHtml(coverageLabel(coverage))}</span>`;
 }
 
 function coverageLabel(coverage: RegistryCatalogCoverage): string {

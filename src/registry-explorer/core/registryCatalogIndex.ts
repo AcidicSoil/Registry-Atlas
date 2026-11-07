@@ -127,15 +127,7 @@ export function compactCatalogItemToSummary(
   registry: Registry,
   item: RegistryCatalogItem,
 ): RegistryItemSummary {
-  const route = registry.mirror
-    ? resolveRegistryItemRoute(
-        registry.name,
-        registry.mirror.registryUrlTemplate,
-        item.name,
-        item.rawItemUrl,
-      )
-    : null;
-
+  const routeUrl = catalogItemRouteUrl(registry, item);
   const evidenceUrl = registry.atlas?.catalogEvidenceUrl;
   const pathLeaf = item.name.split("/").filter(Boolean).at(-1) ?? item.name;
 
@@ -151,10 +143,23 @@ export function compactCatalogItemToSummary(
     provenance: evidenceUrl ?? "machine-readable registry catalog",
     catalogStatus: "available",
     confidence: "high",
-    routeEligible: route?.status === "available",
-    rawItemUrl: route?.status === "available" ? route.url : undefined,
+    routeEligible: routeUrl !== undefined,
+    rawItemUrl: routeUrl,
     evidenceUrl,
   };
+}
+
+function catalogItemRouteUrl(registry: Registry, item: RegistryCatalogItem): string | undefined {
+  if (!registry.mirror) return undefined;
+
+  const route = resolveRegistryItemRoute(
+    registry.name,
+    registry.mirror.registryUrlTemplate,
+    item.name,
+    item.rawItemUrl,
+  );
+
+  return route.status === "available" ? route.url : undefined;
 }
 
 function parseStringArray(
@@ -335,25 +340,24 @@ function validatedCanonicalPath(value: RawJsonInput): string[] {
 
 function verifyCanonicalAncestors(path: string[]): void {
   for (let index = 0; index < path.length; index += 1) {
-    const id = path[index]!;
-    const segments = id.split("/");
-
-    if (index === 0) {
-      if (segments.length !== 1) {
-        throw new Error(
-          "Registry catalog index validation failed: item canonical path must start at a root",
-        );
-      }
-    } else {
-      const parent = path[index - 1]!;
-
-      if (!id.startsWith(parent + "/") || segments.length !== parent.split("/").length + 1) {
-        throw new Error(
-          "Registry catalog index validation failed: item canonical path must be hierarchical",
-        );
-      }
-    }
+    verifyCanonicalAncestor(path[index]!, path[index - 1]);
   }
+}
+
+function verifyCanonicalAncestor(id: string, parent: string | undefined): void {
+  if (parent === undefined) {
+    if (id.includes("/"))
+      throw new Error(
+        "Registry catalog index validation failed: item canonical path must start at a root",
+      );
+
+    return;
+  }
+
+  if (!id.startsWith(parent + "/") || id.split("/").length !== parent.split("/").length + 1)
+    throw new Error(
+      "Registry catalog index validation failed: item canonical path must be hierarchical",
+    );
 }
 
 function verifyCanonicalHierarchy(path: string[], primary: string | null): void {

@@ -121,18 +121,20 @@ interface RuntimeSnapshot {
 }
 
 function parseRuntimeSnapshot(value: RawJsonInput): RuntimeSnapshot {
+  if (!isRecord(value)) throw new Error("Runtime snapshot validation failed: invalid envelope");
+
   if (
-    !isRecord(value) ||
-    !isRecord(value.mirror) ||
-    !isRecord(value.catalog) ||
-    !isRecord(value.taxonomy) ||
-    !isRecord(value.kindOverrides) ||
-    !isRecord(value.sourcePageManifest) ||
-    !isRecord(value.itemRoutes) ||
-    !isRecord(value.routePatterns)
-  ) {
+    ![
+      value.mirror,
+      value.catalog,
+      value.taxonomy,
+      value.kindOverrides,
+      value.sourcePageManifest,
+      value.itemRoutes,
+      value.routePatterns,
+    ].every(isRecord)
+  )
     throw new Error("Runtime snapshot validation failed: invalid envelope");
-  }
 
   // SAFETY: Envelope members are checked here; nested icon and route evidence is validated by its consumer.
   return {
@@ -394,7 +396,14 @@ function recognizedSourcePage(
 
   if (!url || url !== record.url) return null;
 
-  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
+  return materializeSourcePage(url, record);
+}
+
+function materializeSourcePage(
+  url: string,
+  record: Record<string, RawJsonInput>,
+): RegistrySourcePage {
+  // SAFETY: The record was validated for provenance and URL origin by the caller.
   const page = {
     url,
     level: record.level as RegistrySourcePage["level"],
@@ -404,31 +413,28 @@ function recognizedSourcePage(
   if (
     (record.level === "sitemap" || record.level === "pattern" || record.level === "observed") &&
     isInputString(record.observedAt)
-  ) {
+  )
     return { ...page, observedAt: record.observedAt };
-  }
 
   return page;
 }
 
 type VerifiedSourcePages = Readonly<Record<string, RegistrySourcePage>>;
 
+function validatedSourceManifestPages(input: RawJsonInput): Record<string, RawJsonInput> | null {
+  if (!isRecord(input) || input.schema !== "registry-atlas-source-page-index/v1") return null;
+
+  return isRecord(input.pages) ? input.pages : null;
+}
+
 export function readSourcePageManifest(
   input: RawJsonInput,
   catalog: RegistryCatalogIndex,
   registries: readonly { name: string; url: string }[],
 ): VerifiedSourcePages {
-  if (!input || !isInputObject(input) || Array.isArray(input)) return {};
-  // SAFETY: The upstream manifest record was checked for ownership, enum provenance and URL validity before this projection.
-  const manifest = input as Record<string, RawJsonInput>;
+  const manifestPages = validatedSourceManifestPages(input);
 
-  if (
-    manifest.schema !== "registry-atlas-source-page-index/v1" ||
-    !manifest.pages ||
-    !isInputObject(manifest.pages) ||
-    Array.isArray(manifest.pages)
-  )
-    return {};
+  if (!manifestPages) return {};
   const roots = new Map(registries.map((registry) => [registry.name, registry.url]));
 
   const knownNames = new Map(
@@ -440,7 +446,7 @@ export function readSourcePageManifest(
 
   const pages = new Map<string, RegistrySourcePage>();
 
-  for (const [token, value] of Object.entries(manifest.pages)) {
+  for (const [token, value] of Object.entries(manifestPages)) {
     const page = recognizedSourcePage(token, value, knownNames, roots);
 
     if (page) pages.set(token, page);

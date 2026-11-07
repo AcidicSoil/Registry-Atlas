@@ -119,11 +119,17 @@ export function hydrateBrowseRouteState(
 
 function legacyRoute(params: URLSearchParams): CatalogRoute {
   const view = params.get("view");
-  const registry = params.get("registry")?.trim();
-  const item = params.get("item")?.trim();
 
   if (view === "compare" || view === "matrix") return { kind: "compare" };
 
+  return legacyRegistryRoute(view, params.get("registry")?.trim(), params.get("item")?.trim());
+}
+
+function legacyRegistryRoute(
+  view: string | null,
+  registry: string | undefined,
+  item: string | undefined,
+): CatalogRoute {
   if (view === "registries")
     return registry ? { kind: "registry", namespace: registry } : { kind: "registries" };
 
@@ -174,36 +180,10 @@ function paramsForBrowseRoute(
   state: BrowseRouteState,
   policy: CatalogPolicy,
 ): URLSearchParams | null {
-  if (route.kind === "components") {
-    const params = serializeCatalogBrowseQuery(
-      {
-        ...catalogBrowseStateForUrl(state),
-        itemTypes: state.catalogItemTypes,
-        reviewed: state.catalogReviewed,
-      },
-      policy,
-    );
+  if (route.kind === "components") return componentQueryParams(route, state, policy);
 
-    if (!route.pathSearchTerm && state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
-
-    return params;
-  }
-
-  if (route.kind === "registry" || route.kind === "registry-assets") {
-    const params = serializeCatalogBrowseQuery(
-      {
-        ...catalogBrowseStateForUrl(state),
-        registryNames: [],
-        itemTypes: state.catalogItemTypes,
-        reviewed: state.catalogReviewed,
-      },
-      policy,
-    );
-
-    if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
-
-    return params;
-  }
+  if (route.kind === "registry" || route.kind === "registry-assets")
+    return registryQueryParams(state, policy);
 
   if (!CATALOG_BROWSE_ROUTE_KINDS.has(route.kind)) return null;
   const params = serializeCatalogBrowseQuery(catalogBrowseStateForUrl(state), policy);
@@ -211,6 +191,42 @@ function paramsForBrowseRoute(
   if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
 
   return params;
+}
+
+function componentQueryParams(
+  route: Extract<CatalogRoute, { kind: "components" }>,
+  state: BrowseRouteState,
+  policy: CatalogPolicy,
+): URLSearchParams {
+  const params = paramsForFilteredRoute(state, policy, false);
+
+  if (!route.pathSearchTerm && state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
+
+  return params;
+}
+
+function registryQueryParams(state: BrowseRouteState, policy: CatalogPolicy): URLSearchParams {
+  const params = paramsForFilteredRoute(state, policy, true);
+
+  if (state.searchTerm.trim()) params.set("q", state.searchTerm.trim());
+
+  return params;
+}
+
+function paramsForFilteredRoute(
+  state: BrowseRouteState,
+  policy: CatalogPolicy,
+  clearRegistryFilter: boolean,
+): URLSearchParams {
+  return serializeCatalogBrowseQuery(
+    {
+      ...catalogBrowseStateForUrl(state),
+      registryNames: clearRegistryFilter ? [] : state.catalogRegistryNames,
+      itemTypes: state.catalogItemTypes,
+      reviewed: state.catalogReviewed,
+    },
+    policy,
+  );
 }
 
 function appendDirectoryQuery(params: URLSearchParams, state: BrowseRouteState): void {

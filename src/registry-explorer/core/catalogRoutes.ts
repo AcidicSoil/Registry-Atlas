@@ -88,17 +88,7 @@ type FlatRouteKind =
   | "compare";
 
 function isFlatRouteKind(value: string): value is FlatRouteKind {
-  return (
-    value === "components" ||
-    value === "blocks" ||
-    value === "pages" ||
-    value === "authors" ||
-    value === "registries" ||
-    value === "templates" ||
-    value === "themes" ||
-    value === "icons" ||
-    value === "compare"
-  );
+  return Object.hasOwn(FLAT_ROUTE_PATHS, value);
 }
 
 const ITEM_SEGMENT_KINDS = {
@@ -166,6 +156,21 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
   const relative = stripBasePath(pathname, basePath);
 
   if (relative === null) return null;
+  const decoded = decodeRouteSegments(relative);
+
+  if (!decoded) return null;
+
+  if (decoded.length === 0) return { kind: "home" };
+
+  if (decoded.length === 1)
+    return decoded[0] === "setup" ? { kind: "setup" } : routeForOneSegment(decoded[0]!);
+
+  if (decoded.length === 2) return routeForTwoSegments(decoded[0]!, decoded[1]!);
+
+  return routeForLongPath(decoded);
+}
+
+function decodeRouteSegments(relative: string): string[] | null {
   const decoded: string[] = [];
 
   for (const segment of relative.split("/")) {
@@ -176,14 +181,7 @@ export function parseCatalogRoute(pathname: string, basePath = "/"): CatalogRout
     decoded.push(value);
   }
 
-  if (decoded.length === 0) return { kind: "home" };
-
-  if (decoded.length === 1)
-    return decoded[0] === "setup" ? { kind: "setup" } : routeForOneSegment(decoded[0]!);
-
-  if (decoded.length === 2) return routeForTwoSegments(decoded[0]!, decoded[1]!);
-
-  return routeForLongPath(decoded);
+  return decoded;
 }
 
 function isCatalogTaxonomyFacet(id: string, policy: CatalogPolicy): boolean {
@@ -264,6 +262,10 @@ function relativeSimplePath(route: CatalogRoute): string | null {
     return FLAT_ROUTE_PATHS[route.kind] ?? null;
   }
 
+  return relativeSpecialPath(route);
+}
+
+function relativeSpecialPath(route: CatalogRoute): string | null {
   switch (route.kind) {
     case "explore":
       return `components/explore/${encodeSegment(route.collection)}`;
@@ -305,6 +307,13 @@ function relativeRegistryPath(route: CatalogRoute): string {
     return `${namespace}/${segment}`;
   }
 
+  return relativeRegistryItemPath(route, namespace);
+}
+
+function relativeRegistryItemPath(
+  route: Extract<CatalogRoute, { slug: string }>,
+  namespace: string,
+): string {
   const segments = route.slug.split("/");
 
   if (segments.length === 0 || !segments.every(isSafeItemSegment)) {

@@ -81,6 +81,13 @@ function setupMobileSidebarControls(): void {
   });
 }
 
+function optionalShellRoots(sidebarContext: HTMLElement | null, setupCount: HTMLElement | null) {
+  return {
+    sidebarContext: sidebarContext ?? undefined,
+    setupCount: setupCount ?? undefined,
+  };
+}
+
 async function bootstrap() {
   try {
     const aside = document.getElementById("aside");
@@ -125,10 +132,9 @@ async function bootstrap() {
           contentBody,
           tabs,
           searchInput,
-          ...Object.fromEntries(sidebarContext ? [["sidebarContext", sidebarContext]] : []),
+          ...optionalShellRoots(sidebarContext, setupCount),
           sidebarLayout,
           sidebarCollectionCurrent,
-          ...Object.fromEntries(setupCount ? [["setupCount", setupCount]] : []),
         },
       });
 

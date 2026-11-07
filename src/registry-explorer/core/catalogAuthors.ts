@@ -1,4 +1,4 @@
-import type { RegistryCatalogIndex } from "./registry.schema";
+import type { RegistryCatalogIndex, RegistryCatalogItem } from "./registry.schema";
 
 export interface CatalogAuthor {
   name: string;
@@ -20,18 +20,27 @@ export function buildAuthorDirectory(index: RegistryCatalogIndex): CatalogAuthor
 
   for (const [namespace, items] of Object.entries(index.registries)) {
     for (const item of items) {
-      const name = item.author?.trim();
-
-      if (!name || name.length > 256 || !COMPONENT_TYPES.has(item.type)) continue;
-      const identity = namespace + "/" + item.name;
-
-      if (seen.has(identity)) continue;
-      seen.add(identity);
-      counts.set(name, (counts.get(name) ?? 0) + 1);
+      countNamedAuthor(counts, seen, namespace, item);
     }
   }
 
   return [...counts]
     .map(([name, componentCount]) => ({ name, componentCount }))
     .sort((a, b) => b.componentCount - a.componentCount || a.name.localeCompare(b.name));
+}
+
+function countNamedAuthor(
+  counts: Map<string, number>,
+  seen: Set<string>,
+  namespace: string,
+  item: RegistryCatalogItem,
+): void {
+  const name = item.author?.trim();
+
+  if (!name || name.length > 256 || !COMPONENT_TYPES.has(item.type)) return;
+  const identity = namespace + "/" + item.name;
+
+  if (seen.has(identity)) return;
+  seen.add(identity);
+  counts.set(name, (counts.get(name) ?? 0) + 1);
 }

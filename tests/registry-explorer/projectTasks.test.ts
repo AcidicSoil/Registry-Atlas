@@ -56,6 +56,8 @@ describe("package script surface", () => {
     expect(scripts["lint:styles"]).toContain("stylelint ");
     expect(scripts["lint:unused"]).toBe("knip");
     expect(scripts.check).toContain("pnpm run format:check");
+    expect(scripts.lint).toBe("pnpm lint:deps && pnpm check");
+    expect(scripts.check).not.toMatch(/pnpm(?: run)? lint(?:\s|$)/);
     expect(scripts["lint:deps"]).toBe("depcruise src tests --config .dependency-cruiser.cjs");
   });
 

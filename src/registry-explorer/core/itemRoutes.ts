@@ -44,20 +44,20 @@ export function resolveRegistryItemRoute(
     return resolveAbsoluteRoute(rawItemUrl.trim());
   }
 
-  if (!registryUrlTemplate.includes("{name}")) {
-    return unavailable("invalid-template");
-  }
+  return resolveTemplatedItemRoute(registryUrlTemplate, slug);
+}
+
+function resolveTemplatedItemRoute(template: string, slug: string): ResolvedItemRoute {
+  if (!template.includes("{name}")) return unavailable("invalid-template");
 
   const encodedName = slug
     .split("/")
     .map((segment) => encodeURIComponent(segment))
     .join("/");
 
-  const resolved = registryUrlTemplate.replace("{name}", encodedName);
+  const resolved = template.replace("{name}", encodedName);
 
-  if (/\{[^}]+\}/.test(resolved)) {
-    return unavailable("unresolved-template");
-  }
+  if (/\{[^}]+\}/.test(resolved)) return unavailable("unresolved-template");
 
   return resolveAbsoluteRoute(resolved);
 }

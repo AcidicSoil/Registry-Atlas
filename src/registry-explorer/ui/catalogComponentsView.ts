@@ -242,6 +242,19 @@ function cardOpenAttributes(layout: "grid" | "list" | undefined): string {
   );
 }
 
+function catalogCardSupportingCopy(component: CatalogComponent, kindLabel: string): string {
+  return (
+    component.description?.trim() ||
+    (component.categories.length ? component.categories.slice(0, 3).join(" · ") : kindLabel)
+  );
+}
+
+function catalogCardThemeSpecimen(component: CatalogComponent, routeKind: string): string {
+  return routeKind === "theme" && component.themePreview
+    ? renderCatalogThemeSpecimen(component)
+    : "";
+}
+
 export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: "component" | "block" | "page" | "template" | "theme" | "icon" = "component",
@@ -260,12 +273,8 @@ export function renderCatalogComponentCard(
   const kindLabel =
     routeKind === "component" ? component.type.replace(/^registry:/, "") : routeKind;
 
-  const supportingCopy =
-    component.description?.trim() ||
-    (component.categories.length ? component.categories.slice(0, 3).join(" · ") : kindLabel);
-
-  const themeData =
-    routeKind === "theme" && component.themePreview ? renderCatalogThemeSpecimen(component) : "";
+  const supportingCopy = catalogCardSupportingCopy(component, kindLabel);
+  const themeData = catalogCardThemeSpecimen(component, routeKind);
 
   const sourcePreviewAttribute = renderSourcePreviewAttribute(original);
 

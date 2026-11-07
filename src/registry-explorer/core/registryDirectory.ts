@@ -49,6 +49,32 @@ export function registryCatalogCoverage(
   return (index.registries[registry.name]?.length ?? 0) > 0 ? "current" : "empty";
 }
 
+function registryMatchesSearch(registry: Registry, query: string): boolean {
+  if (!query) return true;
+
+  return [
+    registry.name,
+    registry.description,
+    registry.url,
+    ...(registry.atlas?.aliases ?? []),
+  ].some((value) => value.toLocaleLowerCase().includes(query));
+}
+
+function registryMatchesAssets(
+  registry: Registry,
+  index: RegistryCatalogIndex,
+  assetFilter: ReadonlySet<CatalogAssetKind>,
+  policy: CatalogPolicy,
+): boolean {
+  if (!assetFilter.size) return true;
+
+  return (index.registries[registry.name] ?? []).some((item) => {
+    const kind = assetKindForCatalogItem(item, policy, registry.name);
+
+    return kind !== null && assetFilter.has(kind);
+  });
+}
+
 export function buildRegistryDirectory(
   registries: readonly Registry[],
   index: RegistryCatalogIndex,
@@ -63,16 +89,7 @@ export function buildRegistryDirectory(
 
   const entries = registries
     .flatMap((registry) => {
-      if (
-        query &&
-        ![
-          registry.name,
-          registry.description,
-          registry.url,
-          ...(registry.atlas?.aliases ?? []),
-        ].some((value) => value.toLocaleLowerCase().includes(query))
-      )
-        return [];
+      if (!registryMatchesSearch(registry, query)) return [];
 
       const entry = {
         registry,
@@ -82,15 +99,7 @@ export function buildRegistryDirectory(
 
       if (coverageFilter.size && !coverageFilter.has(entry.coverage)) return [];
 
-      if (
-        assetFilter.size &&
-        !(index.registries[registry.name] ?? []).some((item) => {
-          const kind = assetKindForCatalogItem(item, options.policy, registry.name);
-
-          return kind !== null && assetFilter.has(kind);
-        })
-      )
-        return [];
+      if (!registryMatchesAssets(registry, index, assetFilter, options.policy)) return [];
 
       return [entry];
     })

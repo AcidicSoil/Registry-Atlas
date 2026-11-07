@@ -41,7 +41,7 @@
     "db": "node scripts/project-tasks.mjs db",
     "dev": "vite",
     "import:catalog": "node scripts/import-registry-catalog.mjs",
-    "lint": "pnpm lint:anti-slop && pnpm lint:deps && pnpm lint:complexity && pnpm lint:styles && pnpm run lint:stylex && pnpm lint:unused",
+    "lint": "pnpm lint:deps && pnpm check",
     "lint:anti-slop": "oxlint .",
     "lint:styles": "stylelint \"public/styles/**/*.css\" \"src/**/*.css\"",
     "lint:unused": "knip",

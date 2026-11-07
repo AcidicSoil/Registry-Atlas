@@ -84,36 +84,41 @@ async function loadResolvedRegistryItemDetail(
   try {
     const response = await fetchImpl(summaryResult.detail.route.url);
 
-    if (!response.ok) {
-      return fetchErrorResult(summaryResult.detail, `http-${response.status}`);
-    }
-
-    let payload: unknown;
-
-    try {
-      payload = await response.json();
-    } catch {
-      return invalidJsonResult(summaryResult.detail);
-    }
-
-    const normalized = normalizeRegistryItemDetailJson(payload);
-
-    if (!normalized.valid) {
-      return {
-        status: "invalid-schema",
-        detail: summaryResult.detail,
-        message: "Registry item data did not match the expected safe shape.",
-        reason: normalized.reason,
-      };
-    }
-
-    return resolveWithPayload(payload);
+    return parseFetchedRegistryDetail(response, summaryResult.detail, resolveWithPayload);
   } catch (error) {
     return fetchErrorResult(
       summaryResult.detail,
       error instanceof Error ? error.name : "network-error",
     );
   }
+}
+
+async function parseFetchedRegistryDetail(
+  response: Response,
+  detail: Extract<RegistryItemDetailResult, { status: "summary-only" }>["detail"],
+  resolveWithPayload: (payload: RawJsonInput) => RegistryItemDetailResult,
+): Promise<RegistryItemDetailResult> {
+  if (!response.ok) return fetchErrorResult(detail, `http-${response.status}`);
+
+  let payload: unknown;
+
+  try {
+    payload = await response.json();
+  } catch {
+    return invalidJsonResult(detail);
+  }
+
+  const normalized = normalizeRegistryItemDetailJson(payload);
+
+  if (!normalized.valid)
+    return {
+      status: "invalid-schema",
+      detail,
+      message: "Registry item data did not match the expected safe shape.",
+      reason: normalized.reason,
+    };
+
+  return resolveWithPayload(payload);
 }
 
 async function loadDatabaseDetail(

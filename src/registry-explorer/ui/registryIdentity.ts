@@ -71,15 +71,16 @@ function verifiedRegistryIconUrl(candidate?: string): string | null {
   if (!candidate || candidate.trim().startsWith("//")) return null;
 
   try {
-    const url = new URL(candidate);
-    const host = url.hostname.toLowerCase().replace(/\.$/, "");
-
-    if (url.protocol !== "https:") return null;
-
-    if (url.username || url.password || url.port) return null;
-
-    return isSafeIconHostname(host) ? url.href : null;
+    return validatedRegistryIconUrl(new URL(candidate));
   } catch {
     return null;
   }
+}
+
+function validatedRegistryIconUrl(url: URL): string | null {
+  if (url.protocol !== "https:") return null;
+
+  if (url.username || url.password || url.port) return null;
+
+  return isSafeIconHostname(url.hostname.toLowerCase().replace(/\.$/, "")) ? url.href : null;
 }
