@@ -33,6 +33,8 @@ venv/
 # Local git worktrees
 .repowise/
 .trigger-tree/
+AGENTS.md
+.github/copilot-instructions.md
 
 # Local agent/runtime state
 .instance/
