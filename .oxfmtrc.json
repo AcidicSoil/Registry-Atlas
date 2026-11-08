@@ -21,6 +21,8 @@
     "**/out/**",
     "**/target/**",
     "**/generated/**",
+    "AGENTS.md",
+    ".github/copilot-instructions.md",
     ".agents/**",
     ".stackforge/**",
     ".worktrees/**",

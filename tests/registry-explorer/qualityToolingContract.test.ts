@@ -33,6 +33,13 @@ describe("quality-tooling integration contract", () => {
     }
   });
 
+  it("keeps Repowise-generated agent guidance outside source formatting", () => {
+    const config = JSON.parse(read(".oxfmtrc.json"));
+
+    expect(config.ignorePatterns).toContain("AGENTS.md");
+    expect(config.ignorePatterns).toContain(".github/copilot-instructions.md");
+  });
+
   it("pins cccc to a prebuilt version and retains strict limits", () => {
     const mise = read("mise.toml");
     expect(mise).toContain('"github:moznion/cccc" = "1.8.0"');
