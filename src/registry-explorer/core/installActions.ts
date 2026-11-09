@@ -131,7 +131,7 @@ export function buildBatchInstallCommandState(tokens: readonly string[]): BatchI
   };
 }
 
-function dedupeInstallTokens(tokens: readonly string[]): string[] {
+export function dedupeInstallTokens(tokens: readonly string[]): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
 

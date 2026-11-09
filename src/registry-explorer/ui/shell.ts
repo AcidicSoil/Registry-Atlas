@@ -1450,7 +1450,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     );
   });
 
-  function registryIconCandidates(image: HTMLImageElement): string[] {
+  function readRegistryIconCandidates(image: HTMLImageElement): string[] {
     try {
       const parsed: unknown = JSON.parse(
         image.getAttribute("data-registry-icon-candidates") ?? "[]",
@@ -1469,7 +1469,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     const image = event.target as HTMLImageElement | null;
 
     if (!image?.hasAttribute?.("data-registry-icon-image")) return;
-    const candidates = registryIconCandidates(image);
+    const candidates = readRegistryIconCandidates(image);
     const current = Number.parseInt(image.getAttribute("data-registry-icon-index") ?? "0", 10);
     const next = nextRegistryIconCandidate(candidates, Number.isFinite(current) ? current : 0);
 

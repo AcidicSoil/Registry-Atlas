@@ -51,20 +51,7 @@ export function clearInstallQueue(): InstallQueueEntry[] {
   return [];
 }
 
-export function dedupeInstallTokens(tokens: readonly string[]): string[] {
-  const seen = new Set<string>();
-  const result: string[] = [];
-
-  tokens.forEach((token) => {
-    const normalized = token.trim();
-
-    if (!isValidInstallToken(normalized) || seen.has(normalized)) return;
-    seen.add(normalized);
-    result.push(normalized);
-  });
-
-  return result;
-}
+export { dedupeInstallTokens } from "./installActions.ts";
 
 export function buildInstallQueueBatchState(
   queue: readonly InstallQueueEntry[],

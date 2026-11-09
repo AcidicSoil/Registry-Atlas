@@ -75,6 +75,16 @@ describe("install queue", () => {
       ["@foo/button", "@bar/button"],
     );
   });
+
+  it("shares the install-action deduplication and normalization policy", async () => {
+    const actions = await import("../../src/registry-explorer/core/installActions");
+
+    expect(dedupeInstallTokens).toBe(actions.dedupeInstallTokens);
+    expect(dedupeInstallTokens([" @foo/button ", "@foo/button", " @bar/card "])).toEqual([
+      "@foo/button",
+      "@bar/card",
+    ]);
+  });
 });
 
 function queueInput(token: string) {
