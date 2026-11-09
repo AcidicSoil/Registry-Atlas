@@ -6,7 +6,6 @@ export const tokens = stylex.defineVars({
   "--background": "#0b0c0e",
   "--foreground": "#edeef0",
   "--card": "#121316",
-  "--registry-icon-surface": "color-mix(in srgb, var(--foreground) 32%, var(--background))",
   "--preview-visual": "#131519",
   "--popover": "#16181c",
   "--secondary": "#1a1c20",

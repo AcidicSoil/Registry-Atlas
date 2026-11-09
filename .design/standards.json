@@ -8,6 +8,7 @@
         "javascript",
         "react",
         "stylesheets",
+        "stylex",
         "typescript",
         "web-ui"
       ],
@@ -15,6 +16,7 @@
         ".dependency-cruiser.cjs",
         ".instance/compare-snapshots.mjs",
         "DESIGN.md",
+        "eslint.config.mjs",
         "index.html",
         "package.json",
         "pnpm-lock.yaml",
@@ -32,7 +34,6 @@
         "scripts/check-quality-debt.mjs",
         "scripts/check-runtime-data.mjs",
         "scripts/classify-registry-catalog.mjs",
-        "scripts/collect-aceternity-visuals.mjs",
         "scripts/collect-browser-link-evidence.mjs",
         "scripts/crawl-component-links.mjs",
         "scripts/create-pages-spa-fallback.mjs",
@@ -82,28 +83,26 @@
         "scripts/verify-registry-patterns.mjs",
         "src/registry-explorer/ui/app-shell-core.css",
         "src/registry-explorer/ui/catalog-browse.css",
-        "src/registry-explorer/ui/catalog-component-provenance.css",
         "src/registry-explorer/ui/catalog-hierarchy.css",
-        "src/registry-explorer/ui/catalog-item-detail.css",
         "src/registry-explorer/ui/catalog-library-cards.css",
-        "src/registry-explorer/ui/catalog-link-preview.css",
         "src/registry-explorer/ui/catalog-reference.css",
         "src/registry-explorer/ui/mobile-sidebar-dialog.css",
-        "src/registry-explorer/ui/progressive-results.css",
         "src/registry-explorer/ui/registry-directory-navigation.css",
         "src/registry-explorer/ui/setup-workflow.css",
         "src/registry-explorer/ui/sidebar-browse-rail.css",
         "src/registry-explorer/ui/sidebar-exemplar-rail.css",
         "src/registry-explorer/ui/sidebar-taxonomy.css",
         "src/registry-explorer/ui/split-panels.css",
+        "src/registry-explorer/ui/stylex.css",
         "stylelint.config.mjs",
+        "tests/registry-explorer/stylexTokenLint.test.mjs",
         "tools/eslint/anti-slop-stylex/index.mjs",
         "tools/oxlint/shadcn-lint/package.json",
         "tools/stylelint/anti-slop-css/index.mjs",
         "tsconfig.json",
         "vite.config.ts"
       ],
-      "fingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b"
+      "fingerprint": "5e2c98570616c0cbc32c4f4a0d8983203c84f4ae866214a10b094f1cca7af322"
     }
   },
   "catalog": {
@@ -666,769 +665,563 @@
     "expected": "required",
     "path": "DESIGN.md",
     "present": true,
-    "digest": "008bc2a3aa8d95630e1afd813134102ed34c45f72f2412a0e64173a21129bd16"
+    "digest": "68e0c70578b9f4e947cbf1f18ea5272491e429810b82b1f060fa8c29f9960fde"
   },
   "assessments": {
     "orchestkit:src/skills/accessibility/SKILL.md": {
       "domain": "frontend",
       "kind": "skill",
       "sourceDigest": "5faa2975ec134740318da4f6ff15ed246c2915a0e4b533995320b0dd17e5c3bd",
-      "applicability": "applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "This skill entrypoint covers more than a single grouped filter interaction; complete domain assessment remains open.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "5faa2975ec134740318da4f6ff15ed246c2915a0e4b533995320b0dd17e5c3bd",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/a11y-antipatterns-static.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "d34127ed9e1d122c0c0770448b219b9dc8029006c37c20e01e84df14853ba0cc",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Native semantic groups replace clickable noninteractive elements; anti-slop static gate passes.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "d34127ed9e1d122c0c0770448b219b9dc8029006c37c20e01e84df14853ba0cc",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/aria-components.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "8fcda5add4cda17224da0bb12ef45e289a4a85b0453df6e713a52264adbb481f",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "This feature uses native HTML details, summary and buttons, not a React Aria widget.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "8fcda5add4cda17224da0bb12ef45e289a4a85b0453df6e713a52264adbb481f",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/aria-forms.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "49c0910fb40bb50943fd8e855556069b1f8b200fc421dc95460e28b2fd564c19",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "This change has no React Aria form control; the existing catalog search is unchanged.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "49c0910fb40bb50943fd8e855556069b1f8b200fc421dc95460e28b2fd564c19",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/focus-keyboard-nav.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "462f4367f1e3f1054da6e57e26887ad237f149946cffabb54bd790722e496926",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Desktop production E2E exercises Enter on category summary, focus and retained selection.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "462f4367f1e3f1054da6e57e26887ad237f149946cffabb54bd790722e496926",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/pour-exit-criteria.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "b427b5f64ea9509f1384c0a656af3290d1949a015615801ec147e1817785ce14",
-      "applicability": "applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "Full WCAG POUR manual exit criteria were not independently verified.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "b427b5f64ea9509f1384c0a656af3290d1949a015615801ec147e1817785ce14",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/wcag-color-contrast.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "35ba7e8d59d79fb7485eed85ef42112b4138fdc2ec74a97feffb149a7531aff5",
-      "applicability": "applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No fresh contrast-ratio measurement was performed for nested row and selected states.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "35ba7e8d59d79fb7485eed85ef42112b4138fdc2ec74a97feffb149a7531aff5",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/wcag-native-html-first.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "1b9481a424ad4f8274bd6abb770f81ac2188ced505d3985fb0e3b3bb2f710271",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Native details/summary are used for category disclosure; mobile dialog uses native HTML showModal.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "1b9481a424ad4f8274bd6abb770f81ac2188ced505d3985fb0e3b3bb2f710271",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/wcag-semantic-html.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "7a9eaf1bd007dab07670c69f74634fd5fddce981edb53bb61a3cc79611c8ab3c",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Navigation uses nav/section/details/summary/buttons with labels, aria-pressed and visible focus ring.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "7a9eaf1bd007dab07670c69f74634fd5fddce981edb53bb61a3cc79611c8ab3c",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/wcag-testing.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "b3572d40141ca053a8bad2364f99ef86b40afb1b28a17ce52fd77816d6e0769e",
-      "applicability": "applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No fresh axe-core scan and manual screen-reader audit was performed on this change.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "b3572d40141ca053a8bad2364f99ef86b40afb1b28a17ce52fd77816d6e0769e",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/accessibility/rules/wcag-user-preferences.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "cdceecd1847306f93bf99a06668e38221d4718940d300ed4d0d516a81978f428",
-      "applicability": "applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "Reduced-motion handling exists, but high-contrast, zoom and forced-colors coverage is not fully verified.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "cdceecd1847306f93bf99a06668e38221d4718940d300ed4d0d516a81978f428",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/SKILL.md": {
+    "orchestkit:src/skills/design-system-tokens/SKILL.md": {
       "domain": "frontend",
       "kind": "skill",
-      "sourceDigest": "e91b3a9939ce407bab03685235f59fbe5daa5d5987deaf6abf67495cf30518b9",
-      "applicability": "applicable",
+      "sourceDigest": "cb5425acb681ae335316e1a291b6420b0116d72371a30e53935cd424916a89e5",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "This skill entrypoint covers more than a single grouped filter interaction; complete domain assessment remains open.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "e91b3a9939ce407bab03685235f59fbe5daa5d5987deaf6abf67495cf30518b9",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md": {
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-contrast-enforcement.md": {
       "domain": "frontend",
       "kind": "rule",
-      "sourceDigest": "be35f7a6c73b0fa2980e01a73f3892fa8e4d84e4da65faaf70aa57e7b472937e",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Only a root category is visible until expanded; filters present bounded nested matches.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "be35f7a6c73b0fa2980e01a73f3892fa8e4d84e4da65faaf70aa57e7b472937e",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "19732615f43231255821ac04f4749f272c32e050f23f06ef987d8b8160ec0669",
-      "applicability": "not-applicable",
+      "sourceDigest": "24f75facfbaba59c71ebe90cd63fc8a5fa728fb0a9167b15a0229cd1fada0b29",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No drag-and-drop control is part of grouped category selection.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "19732615f43231255821ac04f4749f272c32e050f23f06ef987d8b8160ec0669",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md": {
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-oklch-color.md": {
       "domain": "frontend",
       "kind": "rule",
-      "sourceDigest": "a055512616f06f5d5a2e19561cba53e1247c9d1459d77a35c1cefe6f14bf2934",
-      "applicability": "not-applicable",
+      "sourceDigest": "c4aee4980ab0972f2208cc03a0c69396db9430ab2bd20c96d0c4e2cdd312942b",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No form submission, validation or field workflow was changed.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "a055512616f06f5d5a2e19561cba53e1247c9d1459d77a35c1cefe6f14bf2934",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md": {
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-spacing-depth.md": {
       "domain": "frontend",
       "kind": "rule",
-      "sourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Existing incremental catalog results still work; full integration tests preserve sort/Back state.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "048949e1e5b01eb6828f312b20f38aa5ab9f08079574455591a9e29fc5f03422",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Mobile native navigation dialog closes after a filter selection or Escape, E2E verified.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "048949e1e5b01eb6828f312b20f38aa5ab9f08079574455591a9e29fc5f03422",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "42d19ed33347a086cd7d9e711c4bfb07c470109d240caacd3da733ba4ef4b6a7",
-      "applicability": "not-applicable",
+      "sourceDigest": "85d4aa553593cd839e64476849460ab4a8994ead8d4ee1ed26c3f3de2468860a",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "This filter change does not include persuasion, nudges or marketing conversions.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "42d19ed33347a086cd7d9e711c4bfb07c470109d240caacd3da733ba4ef4b6a7",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md": {
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-style-dictionary.md": {
       "domain": "frontend",
       "kind": "rule",
-      "sourceDigest": "e7b57fa80965b388b8a8b579304c7ab377ba35719b2fcb3cba34e43691ea0445",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Opening a family reveals only its relevant children and does not change query state.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "e7b57fa80965b388b8a8b579304c7ab377ba35719b2fcb3cba34e43691ea0445",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "cfb03f57a739c5574336f12de27ccd7efc84fec6e61a425438650901ee44923d",
-      "applicability": "not-applicable",
+      "sourceDigest": "caa5e9f70472aabbd325ddfd64b21c3e685004a212d16a31f656a28a76a88f3e",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "The new category disclosure is local and synchronous; no new pending network view was introduced.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "cfb03f57a739c5574336f12de27ccd7efc84fec6e61a425438650901ee44923d",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md": {
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-theming-darkmode.md": {
       "domain": "frontend",
       "kind": "rule",
-      "sourceDigest": "33a38d381db5a51fa4bf1c8c0b713883eb908f973fca1febbea538d9856991bc",
-      "applicability": "not-applicable",
+      "sourceDigest": "6b1ef378fdd334d7be814e4493cbccc6162acd76427e17b2f3013b6c9e3523f6",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "Category disclosures are not tabs; Grid/List uses an existing button group, not tab overflow.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "33a38d381db5a51fa4bf1c8c0b713883eb908f973fca1febbea538d9856991bc",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md": {
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-three-tier.md": {
       "domain": "frontend",
       "kind": "rule",
-      "sourceDigest": "38c059acd3aa45b1dafa7a7a231487d4a8f2713cbec5a1e7aa5fc3a6701fbe53",
-      "applicability": "not-applicable",
+      "sourceDigest": "c324e104f0302c58fdf092abd48e89e24d110fc0cf8dc8d2ab2e565cba06a477",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "Category selection does not show transient notifications.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "38c059acd3aa45b1dafa7a7a231487d4a8f2713cbec5a1e7aa5fc3a6701fbe53",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
+    },
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-versioning.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "b5c50728753bc3da7d92218ed5d3c344e7aa9259ef225eb1ed43cedc68f4ce90",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
+    },
+    "orchestkit:src/skills/design-system-tokens/rules/tokens-w3c-format.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "e1719e26fb8822e73d80c97225d41e2ecf278daa18a816d13304937f82b6ae15",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/SKILL.md": {
       "domain": "frontend",
       "kind": "skill",
       "sourceDigest": "b252ad9fc24ef8551a587ef4799daab6f169232f04056b3d24788dd8bb10a9c6",
-      "applicability": "applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "This skill entrypoint covers more than a single grouped filter interaction; complete domain assessment remains open.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "b252ad9fc24ef8551a587ef4799daab6f169232f04056b3d24788dd8bb10a9c6",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/animation-motion.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "c3337ce6c05d34d581649eaf1d4c9c8120e921d50df968795960c00015bc02a5",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Taxonomy disclosure chevron honors prefers-reduced-motion and uses a short transform only.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "c3337ce6c05d34d581649eaf1d4c9c8120e921d50df968795960c00015bc02a5",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/animation-scroll.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "50c3008c744ec0c7036c77612b912c21eb86722a6eeb0665de038bafc534fc8d",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No CSS scroll-driven animation is part of this disclosure.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "50c3008c744ec0c7036c77612b912c21eb86722a6eeb0665de038bafc534fc8d",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/css-intrinsic-responsive.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "24881032ffa48a5a116162dcb2b8cc0ac5100e4f434e1c4dfae1c48942dc10d4",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Nested category controls use flexible min-width grids within the existing responsive sidebar.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "24881032ffa48a5a116162dcb2b8cc0ac5100e4f434e1c4dfae1c48942dc10d4",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/css-patterns.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "935dada6ad4ee2a8f30a6233c534a6a52dfb79cc17524b2540850e073b6e9763",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Existing layout uses desktop and mobile breakpoints with responsive widths and overflow.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "935dada6ad4ee2a8f30a6233c534a6a52dfb79cc17524b2540850e073b6e9763",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/css-subgrid.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "35ddf68ba3dd9a77811bfe57eb65bb757a4b16f5b652a57b793183e3ebda4787",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "Nested categories use a simple indented grid; no subgrid alignment requirement exists.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "35ddf68ba3dd9a77811bfe57eb65bb757a4b16f5b652a57b793183e3ebda4787",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/pwa-offline.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "e6388c6fe1a46f202abe045d62b54293d1c9590c2b55b692b36e1cca43b55879",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No offline or app-install behavior changed for the new filters.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "e6388c6fe1a46f202abe045d62b54293d1c9590c2b55b692b36e1cca43b55879",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/pwa-service-worker.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "84cce32cba285ade978b64b240081ed4889198c297c17d0ee5206f1f8d8051ca",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "No caching, service-worker or offline feature was added.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "84cce32cba285ade978b64b240081ed4889198c297c17d0ee5206f1f8d8051ca",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/react-patterns.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "7d3c7462d1aec6e67644dcf0422907db76886fc17de637947b94af6cb34eabef",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "Registry Atlas category UI is native DOM rather than React component rendering.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "7d3c7462d1aec6e67644dcf0422907db76886fc17de637947b94af6cb34eabef",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/responsive-foldables.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "2231e847574012f64b856b55db89e104892c747c327eae2e26d7fda56f2c9074",
-      "applicability": "not-applicable",
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
       "compliance": "unevaluated",
-      "reason": "The user requested desktop and narrow mobile behavior; no foldable dual-screen layout exists.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "2231e847574012f64b856b55db89e104892c747c327eae2e26d7fda56f2c9074",
-      "candidate": "likely-relevant"
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
     "orchestkit:src/skills/responsive-patterns/rules/touch-interaction.md": {
       "domain": "frontend",
       "kind": "rule",
       "sourceDigest": "be8c3f6a0e05825e9f4e578701d498c66c6218289811f9f9b31580753b1fb279",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Native summary and button actions are usable by pointer/tap in mobile E2E tests.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "be8c3f6a0e05825e9f4e578701d498c66c6218289811f9f9b31580753b1fb279",
-      "candidate": "likely-relevant"
+      "stackFingerprint": "",
+      "candidate": "likely-relevant",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "policy:adaptive-panel-surfaces": {
+    "policy:anti-slop-bundle": {
+      "domain": "tooling",
+      "kind": "policy",
+      "sourceDigest": "a73d205b858d222fca5972d5e020302c053acce99f2d18f5cad723c32b4a706e",
+      "stackFingerprint": "",
+      "candidate": "candidate",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
+    },
+    "policy:anti-slop-css": {
+      "domain": "tooling",
+      "kind": "policy",
+      "sourceDigest": "b710d4c01cc87353a427f0862003dc3fb09662de597d5ccc683c0a4ab4e52ae8",
+      "stackFingerprint": "",
+      "candidate": "candidate",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
+    },
+    "policy:anti-slop-stylex": {
+      "domain": "tooling",
+      "kind": "policy",
+      "sourceDigest": "6474bd5f6f439da3ad8ab49eebeb77eb116dd7a07f567ef21f888c5e373c7dd2",
+      "stackFingerprint": "",
+      "candidate": "candidate",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
+    },
+    "policy:browser-favicon-metadata": {
       "domain": "frontend",
       "kind": "policy",
-      "sourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Existing shared resize/collapse panel controls remain unchanged and are covered by app-shell E2E.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
-      "candidate": "candidate"
+      "sourceDigest": "804512daba88a678a2c1b464eff6547ac589dc8f8c5c1874cecf3aee173d8dbb",
+      "stackFingerprint": "",
+      "candidate": "candidate",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "policy:collapsible-sidebar-navigation": {
+    "policy:css-architecture": {
       "domain": "frontend",
       "kind": "policy",
-      "sourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Navigation disclosures work with pointer and keyboard; parent sidebar remains collapsible.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
-      "candidate": "candidate"
+      "sourceDigest": "416b617aefab7697115e23e74d08a61ca0702e3c17d01182a184d30cde34d1fa",
+      "stackFingerprint": "",
+      "candidate": "candidate",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     },
-    "policy:light-dismiss": {
+    "policy:design-document": {
       "domain": "frontend",
       "kind": "policy",
-      "sourceDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "sourceDigest": "851e61a87ba0785a3e0ca86462c270e44b8978862ae3096ed7b2b6cef138d19f",
+      "stackFingerprint": "5e2c98570616c0cbc32c4f4a0d8983203c84f4ae866214a10b094f1cca7af322",
+      "candidate": "candidate",
       "applicability": "applicable",
       "compliance": "compliant",
-      "reason": "Current source-linked outside-pointer modal dismissal verified with real headed-browser backdrop click, focus restoration, nested-click containment, and targeted desktop/mobile E2E tests. No design baseline approval asserted.",
+      "reason": "Current live source-backed design review of the user-approved registry icon backing removal; no global certification claimed.",
       "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "src/registry-explorer/entry.ts",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts",
-        "tests-mobile/native-sidebar.e2e.ts"
+        "DESIGN.md",
+        "src/registry-explorer/ui/tokens.stylex.ts",
+        "public/styles/registry-explorer.css",
+        "src/registry-explorer/ui/catalogCard.stylex.ts",
+        ".design/evidence/registry-icon-card-2026-11-09.json",
+        ".design/evidence/registry-icon-card-before-2026-11-09.png",
+        ".design/evidence/registry-icon-card-after-2026-11-09.png"
       ],
       "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "src/registry-explorer/entry.ts": "49bbdc09bf9eeaf5633d12595382c2e6b6add2f3bb1ba3c490389f99264e5643",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07",
-        "tests-mobile/native-sidebar.e2e.ts": "828c3ea70f3c27fd97e523b8fc5ef6e099c20fdaf707d7f74d000d6bcc982dd4"
+        "DESIGN.md": "68e0c70578b9f4e947cbf1f18ea5272491e429810b82b1f060fa8c29f9960fde",
+        "src/registry-explorer/ui/tokens.stylex.ts": "4f1c871724624c70df53583f124d2884e683afbaa2f4056322c86976f67f0b3a",
+        "public/styles/registry-explorer.css": "a2eeb75f129bae74f3b9e2c24b111250922ca07fa60b9ee6b9c147ca43bc25a3",
+        "src/registry-explorer/ui/catalogCard.stylex.ts": "4096c77bfba08f81e4e1042f5e75c978f601c76c2a01fe5d76d37607c29ea4e2",
+        ".design/evidence/registry-icon-card-2026-11-09.json": "aef86eb7446f7005cefc802d5d00ab7054a847931c573343e3339d35074591a2",
+        ".design/evidence/registry-icon-card-before-2026-11-09.png": "75c1dff26ac220c70d5f5428f88ffc1036a103c087b952354e9b78a4b7d8c2d3",
+        ".design/evidence/registry-icon-card-after-2026-11-09.png": "6805bf18c4c2228386bd81333a6e12041a39b6bf297b2c4a0fb8578f8d049eee"
       },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
-      "candidate": "candidate"
+      "reviewedSourceDigest": "851e61a87ba0785a3e0ca86462c270e44b8978862ae3096ed7b2b6cef138d19f",
+      "decisionRef": "conversation:2026-11-09-user-approved-registry-card-icon-design-baseline-refresh",
+      "designReview": {
+        "status": "approved",
+        "decisionRef": "conversation:2026-11-09-user-approved-registry-card-icon-design-baseline-refresh",
+        "renderedEvidence": ".design/evidence/registry-icon-card-2026-11-09.json",
+        "claims": [
+          {
+            "token": "colors.card",
+            "value": "#121316",
+            "source": "src/registry-explorer/ui/tokens.stylex.ts",
+            "sourceExcerpt": "\"--card\": \"#121316\","
+          },
+          {
+            "token": "typography.body.fontSize",
+            "value": "14px",
+            "source": "public/styles/registry-explorer.css",
+            "sourceExcerpt": "font-size: 14px;"
+          },
+          {
+            "token": "spacing.small",
+            "value": "8px",
+            "source": "src/registry-explorer/ui/tokens.stylex.ts",
+            "sourceExcerpt": "\"--space-2\": \"8px\","
+          },
+          {
+            "token": "components.catalogCard.backgroundColor",
+            "value": "{colors.card}",
+            "source": "src/registry-explorer/ui/catalogCard.stylex.ts",
+            "sourceExcerpt": "backgroundColor: tokens[\"--card\"],"
+          }
+        ]
+      }
     },
     "policy:logo-home-navigation": {
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "f046b68e4d2839f781d09cd38b18d8964d5f50b3eca061404e427b15d01f0b67",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Existing branded home links are unchanged; app-shell E2E verifies home routing.",
-      "evidence": [
-        ".design/grouped-filter-navigation-2026-10-23.md",
-        "tests/grouped-sidebar.e2e.ts",
-        "tests-mobile/grouped-sidebar.e2e.ts"
-      ],
-      "evidenceDigests": {
-        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
-        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
-        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "f046b68e4d2839f781d09cd38b18d8964d5f50b3eca061404e427b15d01f0b67",
-      "candidate": "candidate"
-    },
-    "policy:shared-app-shell-interactions": {
-      "domain": "frontend",
-      "kind": "policy",
-      "sourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
-      "applicability": "not-applicable",
-      "compliance": "unevaluated",
-      "reason": "User explicitly excluded chat/model/workbench composition for this existing native-DOM catalog; related shell mechanics remain applicable under separate policies.",
-      "evidence": [
-        ".design/workbench-shell-scope-decision-2026-10-23.md",
-        "DESIGN.md",
-        "index.html"
-      ],
-      "evidenceDigests": {
-        ".design/workbench-shell-scope-decision-2026-10-23.md": "d357e330ddaa8fd2a0cb7d53c75aebba6e35e40ad5c33ae598aa858b2cfa8d5a",
-        "DESIGN.md": "008bc2a3aa8d95630e1afd813134102ed34c45f72f2412a0e64173a21129bd16",
-        "index.html": "e738c15d898d2679f04136da92b03759a498b40672c99f883cfe7261b8847ac0"
-      },
-      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
-      "reviewedSourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
+      "stackFingerprint": "",
       "candidate": "candidate",
-      "decisionRef": ".design/workbench-shell-scope-decision-2026-10-23.md"
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
+    },
+    "policy:stylelint": {
+      "domain": "tooling",
+      "kind": "policy",
+      "sourceDigest": "91549077ee0f855df3d7a5b9dea4bef8046b35c30b3e4e340e5ca9eed8ea448a",
+      "stackFingerprint": "",
+      "candidate": "candidate",
+      "applicability": "review-required",
+      "compliance": "unevaluated",
+      "reason": "",
+      "evidence": [],
+      "evidenceDigests": {},
+      "reviewedSourceDigest": ""
     }
   },
   "findings": [
@@ -1660,50 +1453,23 @@
       }
     }
   },
-  "updatedAt": "2026-11-02T20:47:11+00:00",
+  "updatedAt": "2026-11-09T08:42:59+00:00",
   "featureMap": {
     "schemaVersion": "ppm-feature-work-map/v1",
-    "objective": "Group canonical catalog navigation filters; preserve sidebar disclosure, keyboard, URL and mobile dismiss behavior",
+    "objective": "Remove gray registry icon backing while preserving original logos and fallback initials",
     "mode": "targeted",
     "features": [
-      "navigation",
-      "sidebars"
+      "branding",
+      "visual-styling"
     ],
     "dependencies": [],
     "paths": [
-      "src/registry-explorer/ui/catalogSidebarNavigation.ts",
-      "src/registry-explorer/ui/shell.ts",
-      "src/registry-explorer/entry.ts"
+      "src/registry-explorer/ui/registryIcon.stylex.ts",
+      "src/registry-explorer/ui/registryIdentity.ts"
     ],
-    "questions": [
-      {
-        "id": "registry-atlas-ai-slop-scope-2026-10-29",
-        "status": "answered",
-        "answer": "Scoped UI cleanup: consolidate repeated card CSS, simplify labels, preserve architecture and navigation",
-        "answerRef": "user-decision:review-7ca83c89882066a6",
-        "question": "What scope should the Registry Atlas AI-slop cleanup cover?",
-        "reason": "Read-only audit found 4,621 lines of layered global CSS, a 2,082-line UI shell, redundant card navigation, and avoidable copy. Preserve the existing visual identity, data flow, URLs, and functionality unless you choose broader redesign. Required tooling and standards repair are automatic, not approval choices.",
-        "options": [
-          "Scoped UI cleanup: consolidate repeated card CSS, simplify labels, preserve architecture and navigation",
-          "Broader behavior-preserving frontend cleanup: also refactor verified shell and UI duplication behind tests",
-          "Propose a separate visual redesign before any UI changes"
-        ]
-      },
-      {
-        "id": "registry-atlas-card-navigation-2026-10-29",
-        "status": "answered",
-        "answer": "keep only homepage deeplink and source and clicking the card with mouse",
-        "answerRef": "user-decision:review-7ca83c89882066a6",
-        "question": "Should Inspect replace the duplicate internal View item action on catalog cards?",
-        "reason": "catalogComponentsView.ts renders the clickable card, View item, and Inspect to the same internal detail route. Source and Registry homepage are different external destinations. Removing View item would simplify the action row while retaining Inspect and the card link.",
-        "options": [
-          "Keep Inspect and clickable card; remove duplicate View item action",
-          "Preserve both existing actions; only consolidate CSS and copy"
-        ]
-      }
-    ],
+    "questions": [],
     "featureRules": {
-      "navigation": [
+      "branding": [
         "orchestkit:src/skills/accessibility/SKILL.md",
         "orchestkit:src/skills/accessibility/rules/a11y-antipatterns-static.md",
         "orchestkit:src/skills/accessibility/rules/aria-components.md",
@@ -1715,45 +1481,29 @@
         "orchestkit:src/skills/accessibility/rules/wcag-semantic-html.md",
         "orchestkit:src/skills/accessibility/rules/wcag-testing.md",
         "orchestkit:src/skills/accessibility/rules/wcag-user-preferences.md",
-        "orchestkit:src/skills/interaction-patterns/SKILL.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md",
-        "policy:collapsible-sidebar-navigation",
-        "policy:light-dismiss",
-        "policy:logo-home-navigation",
-        "policy:shared-app-shell-interactions"
+        "orchestkit:src/skills/design-system-tokens/SKILL.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-contrast-enforcement.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-oklch-color.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-spacing-depth.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-style-dictionary.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-theming-darkmode.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-three-tier.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-versioning.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-w3c-format.md",
+        "policy:browser-favicon-metadata",
+        "policy:design-document",
+        "policy:logo-home-navigation"
       ],
-      "sidebars": [
-        "orchestkit:src/skills/accessibility/SKILL.md",
-        "orchestkit:src/skills/accessibility/rules/a11y-antipatterns-static.md",
-        "orchestkit:src/skills/accessibility/rules/aria-components.md",
-        "orchestkit:src/skills/accessibility/rules/aria-forms.md",
-        "orchestkit:src/skills/accessibility/rules/focus-keyboard-nav.md",
-        "orchestkit:src/skills/accessibility/rules/pour-exit-criteria.md",
-        "orchestkit:src/skills/accessibility/rules/wcag-color-contrast.md",
-        "orchestkit:src/skills/accessibility/rules/wcag-native-html-first.md",
-        "orchestkit:src/skills/accessibility/rules/wcag-semantic-html.md",
-        "orchestkit:src/skills/accessibility/rules/wcag-testing.md",
-        "orchestkit:src/skills/accessibility/rules/wcag-user-preferences.md",
-        "orchestkit:src/skills/interaction-patterns/SKILL.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md",
-        "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md",
+      "visual-styling": [
+        "orchestkit:src/skills/design-system-tokens/SKILL.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-contrast-enforcement.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-oklch-color.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-spacing-depth.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-style-dictionary.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-theming-darkmode.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-three-tier.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-versioning.md",
+        "orchestkit:src/skills/design-system-tokens/rules/tokens-w3c-format.md",
         "orchestkit:src/skills/responsive-patterns/SKILL.md",
         "orchestkit:src/skills/responsive-patterns/rules/animation-motion.md",
         "orchestkit:src/skills/responsive-patterns/rules/animation-scroll.md",
@@ -1765,10 +1515,12 @@
         "orchestkit:src/skills/responsive-patterns/rules/react-patterns.md",
         "orchestkit:src/skills/responsive-patterns/rules/responsive-foldables.md",
         "orchestkit:src/skills/responsive-patterns/rules/touch-interaction.md",
-        "policy:adaptive-panel-surfaces",
-        "policy:collapsible-sidebar-navigation",
-        "policy:light-dismiss",
-        "policy:shared-app-shell-interactions"
+        "policy:anti-slop-bundle",
+        "policy:anti-slop-css",
+        "policy:anti-slop-stylex",
+        "policy:css-architecture",
+        "policy:design-document",
+        "policy:stylelint"
       ]
     },
     "ruleIds": [
@@ -1783,17 +1535,15 @@
       "orchestkit:src/skills/accessibility/rules/wcag-semantic-html.md",
       "orchestkit:src/skills/accessibility/rules/wcag-testing.md",
       "orchestkit:src/skills/accessibility/rules/wcag-user-preferences.md",
-      "orchestkit:src/skills/interaction-patterns/SKILL.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md",
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md",
+      "orchestkit:src/skills/design-system-tokens/SKILL.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-contrast-enforcement.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-oklch-color.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-spacing-depth.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-style-dictionary.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-theming-darkmode.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-three-tier.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-versioning.md",
+      "orchestkit:src/skills/design-system-tokens/rules/tokens-w3c-format.md",
       "orchestkit:src/skills/responsive-patterns/SKILL.md",
       "orchestkit:src/skills/responsive-patterns/rules/animation-motion.md",
       "orchestkit:src/skills/responsive-patterns/rules/animation-scroll.md",
@@ -1805,194 +1555,35 @@
       "orchestkit:src/skills/responsive-patterns/rules/react-patterns.md",
       "orchestkit:src/skills/responsive-patterns/rules/responsive-foldables.md",
       "orchestkit:src/skills/responsive-patterns/rules/touch-interaction.md",
-      "policy:adaptive-panel-surfaces",
-      "policy:collapsible-sidebar-navigation",
-      "policy:light-dismiss",
+      "policy:anti-slop-bundle",
+      "policy:anti-slop-css",
+      "policy:anti-slop-stylex",
+      "policy:browser-favicon-metadata",
+      "policy:css-architecture",
+      "policy:design-document",
       "policy:logo-home-navigation",
-      "policy:shared-app-shell-interactions"
+      "policy:stylelint"
     ],
-    "ruleDigest": "4fe8270162bfa3028974ddeb310188c67958c8e2da813885c870561b82ca6ee7",
-    "taskEvidence": {
-      "orchestkit:src/skills/accessibility/SKILL.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/a11y-antipatterns-static.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/aria-components.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/aria-forms.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/focus-keyboard-nav.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/pour-exit-criteria.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/wcag-color-contrast.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/wcag-native-html-first.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/wcag-semantic-html.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/wcag-testing.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/accessibility/rules/wcag-user-preferences.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/SKILL.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/SKILL.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/animation-motion.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/animation-scroll.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/css-intrinsic-responsive.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/css-patterns.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/css-subgrid.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/pwa-offline.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/pwa-service-worker.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/react-patterns.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/responsive-foldables.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "orchestkit:src/skills/responsive-patterns/rules/touch-interaction.md": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "policy:adaptive-panel-surfaces": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "policy:collapsible-sidebar-navigation": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "policy:light-dismiss": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "policy:logo-home-navigation": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      },
-      "policy:shared-app-shell-interactions": {
-        "path": ".design/grouped-filter-rule-review-2026-10-23.md",
-        "sha256": "69d21c6839e24ca0c787715a2464c771e9077ac41d96bbf8ed690f1a53cb19a1"
-      }
-    }
+    "ruleDigest": "6b154896c6958ae38041fd5dfaffc754cd628135604cc68554a274f8e170f0d4",
+    "taskEvidence": {}
   },
   "retrofitCandidates": [
     {
       "policy": "policy:light-dismiss",
       "path": "index.html",
       "surface": "sidebar",
-      "line": 26,
-      "sourceDigest": "e738c15d898d2679f04136da92b03759a498b40672c99f883cfe7261b8847ac0",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "line": 25,
+      "sourceDigest": "31b3092f3f0aa25467f82833c115c4b3ce00b6e0e8e2ebfc0367665bc2be8fc1",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/core/catalogQuery.ts",
       "surface": "overlay",
-      "line": 142,
-      "sourceDigest": "29c76b1fc8162a7fe3a25f28743a074534f38ab0e24d453f0fb2059be45ca812",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
-      "status": "review-required"
-    },
-    {
-      "policy": "policy:light-dismiss",
-      "path": "src/registry-explorer/ui/aceternityVisualEvidence.ts",
-      "surface": "sidebar",
-      "line": 269,
-      "sourceDigest": "838f57f43f6e279efb694f38255bee8395a5a815f1df2e06f7b53409510402a6",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "line": 146,
+      "sourceDigest": "3e8b6a7101c6e879274b9a65fb40ae15597be1872e7374cdb7841ee0cd4139ca",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
@@ -2001,7 +1592,16 @@
       "surface": "sidebar",
       "line": 1,
       "sourceDigest": "8783eb9cf50c0176788f3cfad77ae92a33aeff9446f4c2d0ad1e4ce4d87bde29",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
+      "status": "review-required"
+    },
+    {
+      "policy": "policy:light-dismiss",
+      "path": "src/registry-explorer/ui/catalogLinkPreview.stylex.ts",
+      "surface": "popover",
+      "line": 20,
+      "sourceDigest": "57c6874560623264136fc3119747f78fbcc5cd6274c0043e6530244daee4ed12",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
@@ -2009,26 +1609,35 @@
       "path": "src/registry-explorer/ui/catalogSidebarNavigation.ts",
       "surface": "sidebar",
       "line": 75,
-      "sourceDigest": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "sourceDigest": "637a714a76f3d96bf3b84a4b51b7e9260583b4a7d6eb7bbf8af7ccd8a7804766",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/ui/registryDirectoryView.ts",
       "surface": "sidebar",
-      "line": 79,
-      "sourceDigest": "553fb477cf7aac0f3f185741cd4d3aeca8517e7560f39d14c4e3ebbd6b7c1346",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "line": 86,
+      "sourceDigest": "d5db457f58b5d5bc06eb9b0901a3ede16494eea53879ea396bdabb09c55c4bb9",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
       "policy": "policy:light-dismiss",
       "path": "src/registry-explorer/ui/shell.ts",
       "surface": "sidebar",
-      "line": 455,
-      "sourceDigest": "122e3b6276571b5a4fee3d9e0c60239f8f11274f6e7c1af41154bb73a26634c5",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "line": 440,
+      "sourceDigest": "3fc6309e1f8964e39315a2b5ae63d9c3b936b85501801265b7072de2b302ad6d",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
+      "status": "review-required"
+    },
+    {
+      "policy": "policy:light-dismiss",
+      "path": "src/registry-explorer/ui/tokens.stylex.ts",
+      "surface": "popover",
+      "line": 10,
+      "sourceDigest": "4f1c871724624c70df53583f124d2884e683afbaa2f4056322c86976f67f0b3a",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
@@ -2037,7 +1646,7 @@
       "surface": "sidebar",
       "line": 10,
       "sourceDigest": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     },
     {
@@ -2046,7 +1655,7 @@
       "surface": "sidebar",
       "line": 56,
       "sourceDigest": "828c3ea70f3c27fd97e523b8fc5ef6e099c20fdaf707d7f74d000d6bcc982dd4",
-      "policyDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "policyDigest": "52e6148c4d58c4d989a825221f29f3d778fbdd13ab893af8176188dcfdfa1652",
       "status": "review-required"
     }
   ],
@@ -5303,181 +4912,6 @@
       },
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "c8b640030eb1b81e03439e31fbb89879ec9ec6174198520bbc6789b88edeeaeb",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/SKILL.md": {
-      "domain": "frontend",
-      "kind": "skill",
-      "sourceDigest": "f17c8a95f1c2f4a43fc3d1e90714220dadbb5115ba32d3be8d5c7fa300bea91b",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed Design System Tokens: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "f17c8a95f1c2f4a43fc3d1e90714220dadbb5115ba32d3be8d5c7fa300bea91b",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-contrast-enforcement.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "24f75facfbaba59c71ebe90cd63fc8a5fa728fb0a9167b15a0229cd1fada0b29",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-contrast-enforcement: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "24f75facfbaba59c71ebe90cd63fc8a5fa728fb0a9167b15a0229cd1fada0b29",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-oklch-color.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "c4aee4980ab0972f2208cc03a0c69396db9430ab2bd20c96d0c4e2cdd312942b",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-oklch-color: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "c4aee4980ab0972f2208cc03a0c69396db9430ab2bd20c96d0c4e2cdd312942b",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-spacing-depth.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "85d4aa553593cd839e64476849460ab4a8994ead8d4ee1ed26c3f3de2468860a",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-spacing-depth: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "85d4aa553593cd839e64476849460ab4a8994ead8d4ee1ed26c3f3de2468860a",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-style-dictionary.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "caa5e9f70472aabbd325ddfd64b21c3e685004a212d16a31f656a28a76a88f3e",
-      "applicability": "not-applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-style-dictionary: CSS variables are authored directly; there is no Style Dictionary toolchain. Evidence: installed dependencies, entry and design contract.",
-      "evidence": [
-        "package.json",
-        "src/registry-explorer/entry.ts",
-        "index.html"
-      ],
-      "evidenceDigests": {
-        "package.json": "cae8ebe50f6a0e60662843c6a7f592db389451675f73b806f7126aed3b5b8d83",
-        "src/registry-explorer/entry.ts": "8c2178fde31b0306728825139eeff8c0729fdba7ea18b498d7159e81f4897462",
-        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "caa5e9f70472aabbd325ddfd64b21c3e685004a212d16a31f656a28a76a88f3e",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-theming-darkmode.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "6b1ef378fdd334d7be814e4493cbccc6162acd76427e17b2f3013b6c9e3523f6",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-theming-darkmode: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "6b1ef378fdd334d7be814e4493cbccc6162acd76427e17b2f3013b6c9e3523f6",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-three-tier.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "c324e104f0302c58fdf092abd48e89e24d110fc0cf8dc8d2ab2e565cba06a477",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-three-tier: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "c324e104f0302c58fdf092abd48e89e24d110fc0cf8dc8d2ab2e565cba06a477",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-versioning.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "b5c50728753bc3da7d92218ed5d3c344e7aa9259ef225eb1ed43cedc68f4ce90",
-      "applicability": "applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed Renaming \"brand\" to \"primary\" with no warning, no migration path: The product owns CSS variables for color, type and spacing; assess token discipline against existing CSS.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "b5c50728753bc3da7d92218ed5d3c344e7aa9259ef225eb1ed43cedc68f4ce90",
-      "candidate": "likely-relevant"
-    },
-    "orchestkit:src/skills/design-system-tokens/rules/tokens-w3c-format.md": {
-      "domain": "frontend",
-      "kind": "rule",
-      "sourceDigest": "e1719e26fb8822e73d80c97225d41e2ecf278daa18a816d13304937f82b6ae15",
-      "applicability": "not-applicable",
-      "compliance": "unevaluated",
-      "reason": "Reviewed tokens-w3c-format: Tokens are project-native CSS variables, not a W3C DTCG JSON token source. Evidence: installed dependencies, entry and design contract.",
-      "evidence": [
-        "package.json",
-        "src/registry-explorer/entry.ts",
-        "index.html"
-      ],
-      "evidenceDigests": {
-        "package.json": "cae8ebe50f6a0e60662843c6a7f592db389451675f73b806f7126aed3b5b8d83",
-        "src/registry-explorer/entry.ts": "8c2178fde31b0306728825139eeff8c0729fdba7ea18b498d7159e81f4897462",
-        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "e1719e26fb8822e73d80c97225d41e2ecf278daa18a816d13304937f82b6ae15",
       "candidate": "likely-relevant"
     },
     "orchestkit:src/skills/design-to-code/SKILL.md": {
@@ -15299,31 +14733,6 @@
       "reviewedSourceDigest": "013e5ccc451204864f99e81ff9e9a1b39ee912d230597b642d72727601979c90",
       "candidate": "candidate"
     },
-    "policy:browser-favicon-metadata": {
-      "domain": "frontend",
-      "kind": "policy",
-      "sourceDigest": "804512daba88a678a2c1b464eff6547ac589dc8f8c5c1874cecf3aee173d8dbb",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Project-owned favicon assets resolve under the production Vite base URL; actual managed Chromium tab capture shows application icon, metadata and MIME verified in E2E.",
-      "evidence": [
-        "index.html",
-        "public/registry-atlas/favicon-32x32.png",
-        "tests/app-shell-panels.e2e.ts",
-        ".design/evidence/app-shell/ppm-browser-tab-favicon.png",
-        ".design/standards-review-2026-10-17.md"
-      ],
-      "evidenceDigests": {
-        "index.html": "045655a7c0cfc1f4204d0ef6a89fe92a967040e9fe5dd4eb7ab638eabe390636",
-        "public/registry-atlas/favicon-32x32.png": "7ad50f4cd0e1e0a5eccd1190fe410f25cfea0bd7342c06ab5dd6aed986335be1",
-        "tests/app-shell-panels.e2e.ts": "1160c4650ce1d464bd951f42a21e605034a79b8814c53cb4a7bd72c4a5cd78d4",
-        ".design/evidence/app-shell/ppm-browser-tab-favicon.png": "180335487d1e0981a94e6116f83590c5ba41953b05a7b7a86b72ac6f296cad48",
-        ".design/standards-review-2026-10-17.md": "cd808e47adb34d6e2f83b1e8a6fd2d5c0572be0f59d03fde25b29ab5f9691fcf"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "804512daba88a678a2c1b464eff6547ac589dc8f8c5c1874cecf3aee173d8dbb",
-      "candidate": "candidate"
-    },
     "policy:cccc-complexity": {
       "domain": "tooling",
       "kind": "policy",
@@ -15382,27 +14791,6 @@
       },
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "ae876e535a88d93abab51c52ab1cad4677b45c83f6aac169ac70d8333be2ef30",
-      "candidate": "candidate"
-    },
-    "policy:design-document": {
-      "domain": "frontend",
-      "kind": "policy",
-      "sourceDigest": "93d0735a87309bd355984f17fce6ea60179a7bf7e2962bb92c1bfccf0adda492",
-      "applicability": "applicable",
-      "compliance": "compliant",
-      "reason": "Project UI implementation and tested conventions are documented in DESIGN.md, grounded in CSS and frontend source.",
-      "evidence": [
-        "DESIGN.md",
-        "public/styles/registry-explorer.css",
-        "src/registry-explorer/entry.ts"
-      ],
-      "evidenceDigests": {
-        "DESIGN.md": "2341bb69b4dd3b6ef386e50fce0f3ded280e63131eda577c8b6b39f40dd939e6",
-        "public/styles/registry-explorer.css": "1f0bb20d8513b7212ba5622dd1532fb3910ccfc688f990079bb778e5af742b82",
-        "src/registry-explorer/entry.ts": "8c2178fde31b0306728825139eeff8c0729fdba7ea18b498d7159e81f4897462"
-      },
-      "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
-      "reviewedSourceDigest": "93d0735a87309bd355984f17fce6ea60179a7bf7e2962bb92c1bfccf0adda492",
       "candidate": "candidate"
     },
     "policy:react-doctor": {
@@ -15471,6 +14859,312 @@
       "stackFingerprint": "a1a690ccfdd7399915a8cfba6762d348b1bef55a725ccb60d5b7f83c9a36a359",
       "reviewedSourceDigest": "18b468e26a5da5411aafe7d327cded17324dbe91c56f2dbd3f4b2485c5e8b575",
       "candidate": "candidate"
+    },
+    "orchestkit:src/skills/interaction-patterns/SKILL.md": {
+      "domain": "frontend",
+      "kind": "skill",
+      "sourceDigest": "e91b3a9939ce407bab03685235f59fbe5daa5d5987deaf6abf67495cf30518b9",
+      "applicability": "applicable",
+      "compliance": "unevaluated",
+      "reason": "This skill entrypoint covers more than a single grouped filter interaction; complete domain assessment remains open.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "e91b3a9939ce407bab03685235f59fbe5daa5d5987deaf6abf67495cf30518b9",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-cognitive-load-thresholds.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "be35f7a6c73b0fa2980e01a73f3892fa8e4d84e4da65faaf70aa57e7b472937e",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Only a root category is visible until expanded; filters present bounded nested matches.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "be35f7a6c73b0fa2980e01a73f3892fa8e4d84e4da65faaf70aa57e7b472937e",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-drag-drop.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "19732615f43231255821ac04f4749f272c32e050f23f06ef987d8b8160ec0669",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "No drag-and-drop control is part of grouped category selection.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "19732615f43231255821ac04f4749f272c32e050f23f06ef987d8b8160ec0669",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-form-ux.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "a055512616f06f5d5a2e19561cba53e1247c9d1459d77a35c1cefe6f14bf2934",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "No form submission, validation or field workflow was changed.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "a055512616f06f5d5a2e19561cba53e1247c9d1459d77a35c1cefe6f14bf2934",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-infinite-scroll.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Existing incremental catalog results still work; full integration tests preserve sort/Back state.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "ea90587703beb891aaba4ac03f809c71500a6cfa07079ad36ada75cb8291af9a",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-modal-drawer-inline.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "048949e1e5b01eb6828f312b20f38aa5ab9f08079574455591a9e29fc5f03422",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Mobile native navigation dialog closes after a filter selection or Escape, E2E verified.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "048949e1e5b01eb6828f312b20f38aa5ab9f08079574455591a9e29fc5f03422",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-persuasion-ethics.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "42d19ed33347a086cd7d9e711c4bfb07c470109d240caacd3da733ba4ef4b6a7",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "This filter change does not include persuasion, nudges or marketing conversions.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "42d19ed33347a086cd7d9e711c4bfb07c470109d240caacd3da733ba4ef4b6a7",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-progressive-disclosure.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "e7b57fa80965b388b8a8b579304c7ab377ba35719b2fcb3cba34e43691ea0445",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Opening a family reveals only its relevant children and does not change query state.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "e7b57fa80965b388b8a8b579304c7ab377ba35719b2fcb3cba34e43691ea0445",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-skeleton-loading.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "cfb03f57a739c5574336f12de27ccd7efc84fec6e61a425438650901ee44923d",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "The new category disclosure is local and synchronous; no new pending network view was introduced.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "cfb03f57a739c5574336f12de27ccd7efc84fec6e61a425438650901ee44923d",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-tabs-overflow.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "33a38d381db5a51fa4bf1c8c0b713883eb908f973fca1febbea538d9856991bc",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "Category disclosures are not tabs; Grid/List uses an existing button group, not tab overflow.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "33a38d381db5a51fa4bf1c8c0b713883eb908f973fca1febbea538d9856991bc",
+      "candidate": "likely-relevant"
+    },
+    "orchestkit:src/skills/interaction-patterns/rules/interaction-toast-notifications.md": {
+      "domain": "frontend",
+      "kind": "rule",
+      "sourceDigest": "38c059acd3aa45b1dafa7a7a231487d4a8f2713cbec5a1e7aa5fc3a6701fbe53",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "Category selection does not show transient notifications.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts": "67556e6526f385dad968234cf5dcc204b1c80c3c3e333630352d5c8ccff71992"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "38c059acd3aa45b1dafa7a7a231487d4a8f2713cbec5a1e7aa5fc3a6701fbe53",
+      "candidate": "likely-relevant"
+    },
+    "policy:adaptive-panel-surfaces": {
+      "domain": "frontend",
+      "kind": "policy",
+      "sourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Existing shared resize/collapse panel controls remain unchanged and are covered by app-shell E2E.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
+      "candidate": "candidate"
+    },
+    "policy:collapsible-sidebar-navigation": {
+      "domain": "frontend",
+      "kind": "policy",
+      "sourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Navigation disclosures work with pointer and keyboard; parent sidebar remains collapsible.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "453d91ea2b0fd78c2764cf773119e7cbca81727733dd780a337c50e85829a845",
+      "candidate": "candidate"
+    },
+    "policy:light-dismiss": {
+      "domain": "frontend",
+      "kind": "policy",
+      "sourceDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "applicability": "applicable",
+      "compliance": "compliant",
+      "reason": "Current source-linked outside-pointer modal dismissal verified with real headed-browser backdrop click, focus restoration, nested-click containment, and targeted desktop/mobile E2E tests. No design baseline approval asserted.",
+      "evidence": [
+        ".design/grouped-filter-navigation-2026-10-23.md",
+        "src/registry-explorer/entry.ts",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts",
+        "tests-mobile/native-sidebar.e2e.ts"
+      ],
+      "evidenceDigests": {
+        ".design/grouped-filter-navigation-2026-10-23.md": "acd7914bd60c621d4a5ba834e1b9f69ff902ea2ff448f2861ca7ea6132a2ba45",
+        "src/registry-explorer/entry.ts": "49bbdc09bf9eeaf5633d12595382c2e6b6add2f3bb1ba3c490389f99264e5643",
+        "tests/grouped-sidebar.e2e.ts": "c4ea3ea1ff7316d9389d2f28410ea39dbb7bf953cf98944fb925a44c9e95eb1c",
+        "tests-mobile/grouped-sidebar.e2e.ts": "0b72cc9bace250759bfa350d0983c68968fdae9776e3b6fa3d17b158ddca4b07",
+        "tests-mobile/native-sidebar.e2e.ts": "828c3ea70f3c27fd97e523b8fc5ef6e099c20fdaf707d7f74d000d6bcc982dd4"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "670f2a89006508fe82bda9967413f477050e10ab3b4f659196c7b487035d407a",
+      "candidate": "candidate"
+    },
+    "policy:shared-app-shell-interactions": {
+      "domain": "frontend",
+      "kind": "policy",
+      "sourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
+      "applicability": "not-applicable",
+      "compliance": "unevaluated",
+      "reason": "User explicitly excluded chat/model/workbench composition for this existing native-DOM catalog; related shell mechanics remain applicable under separate policies.",
+      "evidence": [
+        ".design/workbench-shell-scope-decision-2026-10-23.md",
+        "DESIGN.md",
+        "index.html"
+      ],
+      "evidenceDigests": {
+        ".design/workbench-shell-scope-decision-2026-10-23.md": "d357e330ddaa8fd2a0cb7d53c75aebba6e35e40ad5c33ae598aa858b2cfa8d5a",
+        "DESIGN.md": "008bc2a3aa8d95630e1afd813134102ed34c45f72f2412a0e64173a21129bd16",
+        "index.html": "e738c15d898d2679f04136da92b03759a498b40672c99f883cfe7261b8847ac0"
+      },
+      "stackFingerprint": "b4ba6d235234272fa0db8f6546ae96876e352056a84504232d5f6fe9bb3a3b0b",
+      "reviewedSourceDigest": "3cb897d50395e5fb9ac163ab931da6f1004139cd10cb8d074b48d5b11c9a835d",
+      "candidate": "candidate",
+      "decisionRef": ".design/workbench-shell-scope-decision-2026-10-23.md"
     }
   }
 }

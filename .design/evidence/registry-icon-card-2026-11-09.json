@@ -1,0 +1,93 @@
+{
+  "captureMethod": "Isolated headless Chrome via Chrome DevTools Protocol; live before/after getComputedStyle and DOM evaluation",
+  "capturedAt": "2026-11-09T08:42:08.136Z",
+  "route": "/Registry-Atlas/registries",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "checks": {
+    "registryIcon": {
+      "url": "http://127.0.0.1:5187/Registry-Atlas/registries",
+      "title": "Registry Atlas",
+      "iconCount": 32,
+      "icon": {
+        "backgroundColor": "rgba(0, 0, 0, 0)",
+        "borderWidth": "0px",
+        "borderStyle": "none",
+        "width": "40px",
+        "height": "40px",
+        "borderRadius": "10px"
+      },
+      "image": {
+        "exists": true,
+        "src": "https://000h.cojeev.com/icon.svg?icon.3mqfb_kphgvbk.svg",
+        "loaded": false
+      },
+      "fallback": {
+        "exists": true,
+        "text": "0",
+        "color": "rgb(237, 238, 240)"
+      },
+      "card": {
+        "backgroundColor": "rgb(18, 19, 22)"
+      },
+      "body": {
+        "backgroundColor": "rgb(11, 12, 14)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px"
+      }
+    },
+    "catalogCard": {
+      "backgroundColor": "rgb(18, 19, 22)"
+    },
+    "body": {
+      "backgroundColor": "rgb(11, 12, 14)",
+      "color": "rgb(237, 238, 240)",
+      "fontSize": "14px"
+    }
+  },
+  "projectRevision": "0d39e21c70b23eea8a956ca2b14c85a05cfcd810",
+  "captureState": "after approved icon-backing change",
+  "before": {
+    "registryIcon": {
+      "url": "http://127.0.0.1:5187/Registry-Atlas/registries",
+      "title": "Registry Atlas",
+      "iconCount": 32,
+      "icon": {
+        "backgroundColor": "color(srgb 0.326745 0.330667 0.33851)",
+        "borderWidth": "1px",
+        "borderStyle": "solid",
+        "width": "40px",
+        "height": "40px",
+        "borderRadius": "10px"
+      },
+      "image": {
+        "exists": true,
+        "src": "https://000h.cojeev.com/icon.svg?icon.3mqfb_kphgvbk.svg",
+        "loaded": false
+      },
+      "fallback": {
+        "exists": true,
+        "text": "0",
+        "color": "rgb(237, 238, 240)"
+      },
+      "card": {
+        "backgroundColor": "rgb(18, 19, 22)"
+      },
+      "body": {
+        "backgroundColor": "rgb(11, 12, 14)",
+        "color": "rgb(237, 238, 240)",
+        "fontSize": "14px"
+      }
+    }
+  },
+  "verifiedChange": {
+    "backgroundColor": ["color(srgb 0.326745 0.330667 0.33851)", "rgba(0, 0, 0, 0)"],
+    "borderWidth": ["1px", "0px"]
+  },
+  "screenshots": [
+    ".design/evidence/registry-icon-card-before-2026-11-09.png",
+    ".design/evidence/registry-icon-card-after-2026-11-09.png"
+  ]
+}
