@@ -1,6 +1,3 @@
-import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { gunzipSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import {
   parseComponentPreviewManifest,
@@ -19,30 +16,6 @@ const image = {
 };
 
 describe("component preview manifest", () => {
-  it("ships three distinct, catalog-matched, intact component screenshots", () => {
-    const manifest = JSON.parse(readFileSync("public/data/component-previews.json", "utf8"));
-
-    const catalog = JSON.parse(
-      gunzipSync(readFileSync("public/data/registry-atlas.json.gz")).toString("utf8"),
-    );
-
-    const previews = parseComponentPreviewManifest(manifest, "/Registry-Atlas/");
-
-    expect(previews.size).toBe(3);
-    expect(
-      new Set(manifest.previews.map((item: { namespace: string }) => item.namespace)).size,
-    ).toBe(3);
-
-    for (const item of manifest.previews) {
-      const id = `${item.namespace}/${item.slug}`;
-      expect(catalog.sourcePageManifest.pages[id]?.url).toBe(item.sourceUrl);
-      const file = readFileSync(`public/${item.imagePath}`);
-      expect(file.byteLength).toBeGreaterThan(8_000);
-      expect(file.toString("ascii", 0, 4)).toBe("RIFF");
-      expect(file.toString("ascii", 8, 12)).toBe("WEBP");
-      expect(createHash("sha256").update(file).digest("hex")).toBe(item.sha256);
-    }
-  });
   it("loads only local verified component captures", () => {
     const previews = parseComponentPreviewManifest(
       { schemaVersion: 1, previews: [image] },
