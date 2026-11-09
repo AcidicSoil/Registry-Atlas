@@ -4,11 +4,12 @@
 
 ## Runtime assets
 
-The website is static. An explicit PostgreSQL export produces two compressed JSON assets under `public/data/generations/<sha256>/`, selected by one atomically published `public/data/runtime-manifest.json`:
+`pnpm prepare:runtime-data` exports two compressed files from PostgreSQL to `public/data/generations/<sha256>/`. The publisher then replaces `public/data/runtime-manifest.json` to select that generation:
 
 - `registry-atlas.json.gz` contains the registry mirror, catalog, taxonomy, and source-page evidence.
-- `registry-details.json.gz` contains exact item details, loaded lazily by the browser.
-- `component-previews.json` contains three explicitly reviewed component screenshot records tied to exact upstream source pages and locally stored WebP files in `public/data/component-previews/`. There is no automatic image collector; unsupported components have no hover preview.
+- `registry-details.json.gz` contains item details, which the browser loads when needed.
+
+Separately, `public/data/component-previews.json` records three reviewed component screenshots. Their WebP files live in `public/data/component-previews/`. The app has no automatic image collector and shows no hover preview for unsupported components.
 
 The two compressed PostgreSQL snapshots are ignored by Git and contain no credentials. The static screenshot manifest and its three reviewed images are tracked in Git. Each manifest record includes the catalog identity, source and screenshot provenance, verified date and SHA-256. Adding another specimen requires image review and integrity tests; the data is not automatically regenerated. The builder also creates `.instance/atlas-test-documents.json` for tests. Browser routes do not connect to PostgreSQL.
 
@@ -102,6 +103,12 @@ Runtime source-page metadata is reconciled from the exported PostgreSQL source r
 
 `import-registry-catalog.mjs` persists the imported curated item summaries and `catalog-import-report` inside a single PostgreSQL transaction. If the report cannot be written, neither the imported records nor the report is committed. The isolated PostgreSQL rollback test in `registryCatalogImport.test.ts` verifies this contract. Existing `--dry-run` leaves the database unchanged. Other pipeline publishing and reconciliation issues are tracked in `docs/refactor/plan.md`; this importer fix does not assert their completion.
 
-## Consistent runtime export reads (2026-11-04)
+## Runtime snapshot publication
 
-`build-runtime-data.mjs` obtains registry, catalog, detail, source-page, route and document rows under one PostgreSQL `REPEATABLE READ READ ONLY` transaction. The resulting `core` and `details` assets therefore describe the same committed database generation. The runtime publisher now writes both compressed assets into an immutable `public/data/generations/<sha256>/` directory before atomically swapping `public/data/runtime-manifest.json`. The client caches that manifest's generation for its lifetime, including lazy detail requests; concurrent publication therefore cannot mix core/detail generations. The local validator verifies the selected pair's digest, matching catalog/detail counts and nonempty document export. Existing fixed-name gzip files are preserved for installations without a manifest but are no longer overwritten by new exports. A failed or interrupted publish leaves the old manifest and generation readable; abandoned staging data is not used. Previous immutable generations are not automatically deleted, because readers may still be pinned to them. A trusted deployment must retain all generations currently referenced by active clients (or arrange an atomic full-site release); never prune them during publication. No PostgreSQL schema, authoritative records, or release-asset publishing service is added. See `scripts/lib/runtime-publication.mjs`.
+`scripts/build-runtime-data.mjs` reads registry, catalog, detail, source-page, route, and document rows in one read-only PostgreSQL transaction with `REPEATABLE READ` isolation. Both gzip files therefore come from the same database state.
+
+`scripts/lib/runtime-publication.mjs` writes and verifies both files before replacing `public/data/runtime-manifest.json`. The manifest selects a SHA-256 generation directory. `src/registry-explorer/data/runtimeJson.ts` reads the manifest once per fetch function, so the catalog and later detail requests use the same generation.
+
+`pnpm check:runtime-data` checks the generation digest, catalog and detail counts, and exported documents. An HTTP 404 for the manifest selects the legacy fixed-name files. An invalid manifest or missing generation file causes an error instead of a fallback.
+
+The publisher keeps old generation directories for clients that have already selected them. A static host must retain those files or deploy the entire site atomically. The publisher does not change PostgreSQL records or schema.
