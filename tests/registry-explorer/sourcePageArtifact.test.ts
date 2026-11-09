@@ -1,12 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
+// @ts-ignore Standalone Node ESM publication module.
+import { runtimeAssetPath } from "../../scripts/lib/runtime-publication.mjs";
 
 describe("PostgreSQL source-page projection", () => {
   // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   it("publishes verified exact source page identities from the generated static data", () => {
     const data = JSON.parse(
-      gunzipSync(readFileSync("public/data/registry-atlas.json.gz")).toString("utf8"),
+      gunzipSync(
+        readFileSync(
+          runtimeAssetPath(
+            "public/data",
+            "core",
+            existsSync("public/data/runtime-manifest.json")
+              ? JSON.parse(readFileSync("public/data/runtime-manifest.json", "utf8"))
+              : null,
+          ),
+        ),
+      ).toString("utf8"),
     );
 
     const manifest = data.sourcePageManifest;

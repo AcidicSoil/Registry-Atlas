@@ -9,6 +9,7 @@ import { z } from "zod";
 import { exec } from "./lib/atlas-postgres.mjs";
 import { openAtlasCoreDatabase, transaction } from "./lib/atlas-storage.mjs";
 import { isInputString } from "./lib/input-guards.mjs";
+import { readRuntimeAssets } from "./lib/runtime-publication.mjs";
 
 const parsePayload = (value) => (isInputString(value) ? JSON.parse(value) : value);
 
@@ -101,7 +102,7 @@ export async function reconcileSourceEvidence(database, pages, documents, apply 
 
 async function main() {
   const source = JSON.parse(
-    gunzipSync(await readFile("public/data/registry-atlas.json.gz")).toString("utf8"),
+    gunzipSync((await readRuntimeAssets("public/data")).core).toString("utf8"),
   );
 
   const documents = z

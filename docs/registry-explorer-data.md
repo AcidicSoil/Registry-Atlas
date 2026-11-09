@@ -4,7 +4,7 @@
 
 ## Runtime assets
 
-The website is static. An explicit PostgreSQL export produces two compressed JSON files in `public/data/`:
+The website is static. An explicit PostgreSQL export produces two compressed JSON assets under `public/data/generations/<sha256>/`, selected by one atomically published `public/data/runtime-manifest.json`:
 
 - `registry-atlas.json.gz` contains the registry mirror, catalog, taxonomy, and source-page evidence.
 - `registry-details.json.gz` contains exact item details, loaded lazily by the browser.
@@ -104,4 +104,4 @@ Runtime source-page metadata is reconciled from the exported PostgreSQL source r
 
 ## Consistent runtime export reads (2026-11-04)
 
-`build-runtime-data.mjs` obtains registry, catalog, detail, source-page, route and document rows under one PostgreSQL `REPEATABLE READ READ ONLY` transaction. The resulting `core` and `details` assets therefore describe the same committed database generation. Static files are still published separately; cross-file swap/recovery is outside the completed transaction fix and is tracked in `docs/refactor/plan.md`.
+`build-runtime-data.mjs` obtains registry, catalog, detail, source-page, route and document rows under one PostgreSQL `REPEATABLE READ READ ONLY` transaction. The resulting `core` and `details` assets therefore describe the same committed database generation. The runtime publisher now writes both compressed assets into an immutable `public/data/generations/<sha256>/` directory before atomically swapping `public/data/runtime-manifest.json`. The client caches that manifest's generation for its lifetime, including lazy detail requests; concurrent publication therefore cannot mix core/detail generations. The local validator verifies the selected pair's digest, matching catalog/detail counts and nonempty document export. Existing fixed-name gzip files are preserved for installations without a manifest but are no longer overwritten by new exports. A failed or interrupted publish leaves the old manifest and generation readable; abandoned staging data is not used. Previous immutable generations are not automatically deleted, because readers may still be pinned to them. A trusted deployment must retain all generations currently referenced by active clients (or arrange an atomic full-site release); never prune them during publication. No PostgreSQL schema, authoritative records, or release-asset publishing service is added. See `scripts/lib/runtime-publication.mjs`.

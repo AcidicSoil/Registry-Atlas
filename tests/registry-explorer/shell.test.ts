@@ -683,15 +683,17 @@ describe("registry explorer shell interactions", () => {
   });
 
   it("lazily upgrades indexed-only detail from the upstream item JSON and caches it", async () => {
-    const fetchImpl = vi.fn(async (_input: RequestInfo | URL) =>
-      jsonResponse({
-        name: "catalog-only",
-        title: "Catalog Only Loaded",
-        description: "Loaded from the upstream registry item JSON.",
-        type: "registry:ui",
-        dependencies: ["react"],
-        files: [{ path: "registry/catalog-only.tsx", type: "registry:ui" }],
-      }),
+    const fetchImpl = vi.fn(async (input: RequestInfo | URL) =>
+      String(input).endsWith("/data/runtime-manifest.json")
+        ? new Response(null, { status: 404 })
+        : jsonResponse({
+            name: "catalog-only",
+            title: "Catalog Only Loaded",
+            description: "Loaded from the upstream registry item JSON.",
+            type: "registry:ui",
+            dependencies: ["react"],
+            files: [{ path: "registry/catalog-only.tsx", type: "registry:ui" }],
+          }),
     );
 
     // SAFETY: The explicit test fixture is constructed with the members used by this test, and no unchecked value leaves the test.
@@ -712,8 +714,9 @@ describe("registry explorer shell interactions", () => {
       );
       expect(harness.contentBody.innerHTML).toContain("<code>react</code>");
     });
-    expect(fetchImpl).toHaveBeenCalledTimes(2);
-    expect(String(fetchImpl.mock.calls[0]?.[0])).toContain("/data/registry-details.json.gz");
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
+    expect(String(fetchImpl.mock.calls[0]?.[0])).toContain("/data/runtime-manifest.json");
+    expect(String(fetchImpl.mock.calls[1]?.[0])).toContain("/data/registry-details.json.gz");
 
     harness.contentBody.dispatch("click", target({ "data-back-from-item": "" }));
     harness.contentBody.dispatch(
@@ -727,7 +730,7 @@ describe("registry explorer shell interactions", () => {
     await vi.waitFor(() => {
       expect(harness.contentHeader.innerHTML).toContain("Catalog Only Loaded");
     });
-    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(fetchImpl).toHaveBeenCalledTimes(3);
   });
 
   it("migrates a legacy registry deep link to the canonical registry path", () => {

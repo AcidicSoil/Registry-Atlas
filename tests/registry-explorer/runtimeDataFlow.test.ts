@@ -4,6 +4,8 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it } from "vitest";
 import { checkRuntimeData } from "../../scripts/check-runtime-data.mjs";
+// @ts-ignore Standalone Node ESM publication module.
+import { publishRuntimeSnapshots } from "../../scripts/lib/runtime-publication.mjs";
 
 const temporaryDirs: string[] = [];
 
@@ -49,6 +51,30 @@ describe("local-first runtime data", () => {
       catalogItems: 1,
       itemDetails: 1,
     });
+  });
+
+  it("checks the selected immutable generation instead of stale legacy files", async () => {
+    const root = await createSnapshot({}); // deliberately mismatched legacy pair.
+    await publishRuntimeSnapshots(join(root, "public/data"), {
+      core: { catalog: { registries: { "@test": [{ name: "current" }] } } },
+      details: { "@test/current": { name: "current" } },
+    });
+    await expect(checkRuntimeData(root)).resolves.toMatchObject({
+      catalogItems: 1,
+      itemDetails: 1,
+    });
+  });
+
+  it("detects tampering within a published generation", async () => {
+    const root = await createSnapshot();
+
+    const published = await publishRuntimeSnapshots(join(root, "public/data"), {
+      core: { catalog: { registries: { "@test": [{ name: "current" }] } } },
+      details: { "@test/current": { name: "current" } },
+    });
+
+    await writeFile(published.details.file, gzipSync(JSON.stringify({})));
+    await expect(checkRuntimeData(root)).rejects.toThrow(/integrity/i);
   });
 
   it("fails visibly if a local snapshot is missing", async () => {

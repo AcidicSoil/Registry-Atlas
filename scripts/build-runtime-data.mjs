@@ -1,8 +1,8 @@
 import { mkdir, writeFile, rm } from "node:fs/promises";
-import { gzipSync } from "node:zlib";
 import { join, resolve } from "node:path";
 import postgres from "postgres";
 import { localPostgresUrl } from "./lib/local-postgres-url.mjs";
+import { publishRuntimeSnapshots } from "./lib/runtime-publication.mjs";
 
 export function projectRuntimePayloads({
   registryMeta,
@@ -194,18 +194,7 @@ export async function buildRuntimeData({
         ),
       ),
     );
-    const result = {};
-
-    for (const [name, data] of Object.entries(payloads)) {
-      const file = join(
-        output,
-        name === "core" ? "registry-atlas.json.gz" : "registry-details.json.gz",
-      );
-
-      const zipped = gzipSync(JSON.stringify(data), { level: 9 });
-      await writeFile(file, zipped);
-      result[name] = { file, bytes: zipped.byteLength };
-    }
+    const result = await publishRuntimeSnapshots(output, payloads);
 
     // Remove legacy cache from the output directory, not from historical recovery files.
     for (const stale of [

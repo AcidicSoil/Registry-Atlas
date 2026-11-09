@@ -3,12 +3,28 @@ import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { gzipSync, gunzipSync } from "node:zlib";
-import { loadRegistries } from "../../src/registry-explorer/data/loadRegistries";
+import { loadRegistries as loadRegistriesFromRuntime } from "../../src/registry-explorer/data/loadRegistries";
 import { assetKindForCatalogItem } from "../../src/registry-explorer/core/catalogCollections";
 import {
-  loadDetailRuntimeData,
+  loadDetailRuntimeData as loadDetailsFromRuntime,
   resetRuntimeDataCachesForTests,
 } from "../../src/registry-explorer/data/runtimeJson";
+
+// Existing fixture cases cover the pre-manifest deployment contract.
+function legacySnapshotFetch(fetchImpl: typeof fetch): typeof fetch {
+  return (input, init) =>
+    String(input).endsWith("/data/runtime-manifest.json")
+      ? Promise.resolve(new Response(null, { status: 404 }))
+      : fetchImpl(input, init);
+}
+
+function loadRegistries(fetchImpl: typeof fetch) {
+  return loadRegistriesFromRuntime(legacySnapshotFetch(fetchImpl));
+}
+
+function loadDetailRuntimeData(fetchImpl: typeof fetch) {
+  return loadDetailsFromRuntime(legacySnapshotFetch(fetchImpl));
+}
 
 afterEach(() => resetRuntimeDataCachesForTests());
 

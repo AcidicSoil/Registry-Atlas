@@ -1,5 +1,7 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { gunzipSync } from "node:zlib";
+// @ts-ignore Standalone Node ESM publication module.
+import { runtimeAssetPath } from "../../scripts/lib/runtime-publication.mjs";
 
 type Reference = {
   mirror: unknown;
@@ -9,7 +11,17 @@ type Reference = {
 function runtimeReference(): Reference {
   // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   return JSON.parse(
-    gunzipSync(readFileSync("public/data/registry-atlas.json.gz")).toString("utf8"),
+    gunzipSync(
+      readFileSync(
+        runtimeAssetPath(
+          "public/data",
+          "core",
+          existsSync("public/data/runtime-manifest.json")
+            ? JSON.parse(readFileSync("public/data/runtime-manifest.json", "utf8"))
+            : null,
+        ),
+      ),
+    ).toString("utf8"),
   ) as Reference;
 }
 

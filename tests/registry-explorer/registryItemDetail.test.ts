@@ -111,6 +111,10 @@ describe("registry item detail", () => {
         const url = String(input);
         seen.push(url);
 
+        if (url.endsWith("/data/runtime-manifest.json")) {
+          return new Response(null, { status: 404 });
+        }
+
         if (url.includes("/data/registry-details.json.gz")) {
           return new Response("", { status: 404, statusText: "Not Found" });
         }

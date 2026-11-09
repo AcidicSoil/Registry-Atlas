@@ -4,22 +4,20 @@ import { readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { fileURLToPath } from "node:url";
-
-async function readJsonGzip(file) {
-  return JSON.parse(gunzipSync(await readFile(file)).toString("utf8"));
-}
+import { readRuntimeAssets } from "./lib/runtime-publication.mjs";
 
 export async function checkRuntimeData(projectRoot = process.cwd()) {
   const root = resolve(projectRoot);
   const dataDir = join(root, "public/data");
-  const catalog = await readJsonGzip(join(dataDir, "registry-atlas.json.gz"));
+  const assets = await readRuntimeAssets(dataDir);
+  const catalog = JSON.parse(gunzipSync(assets.core).toString("utf8"));
 
   const catalogItems = Object.values(catalog.catalog.registries).reduce(
     (count, items) => count + items.length,
     0,
   );
 
-  const details = await readJsonGzip(join(dataDir, "registry-details.json.gz"));
+  const details = JSON.parse(gunzipSync(assets.details).toString("utf8"));
   const itemDetails = Object.keys(details).length;
 
   const documents = JSON.parse(
