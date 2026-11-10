@@ -1,8 +1,8 @@
 # Registry Atlas refactor plan
 
-**Status:** Architecture approved; phase 4 baseline recorded; phases 5A and 5B implemented. The source-media workflow was superseded by a reviewed component-capture pilot; phases 5C–5E, independent design certification and stale stack/feature-map evidence remain outstanding.
+**Status (2026-11-09):** Phases 5A–5C and local 5E publication are implemented. The 5D StyleX ownership migration and independent design certification remain open. The restored three-item component-preview pilot does not establish catalog-wide coverage. The canonical classification overlay remains stale (432 changed inputs, 131 absent identities). See `TODO.md` for current priorities; the checkpoints below retain historical evidence.
 
-**Source revision:** `aa7893e` on `main`, checked 2026-11-03. The checkout was clean at inspection and two commits ahead of `origin/main`.
+**Historical planning baseline:** `aa7893e` on 2026-11-03. This is not the current checkout revision.
 
 **Scope:** Registry Atlas frontend, domain logic, offline PostgreSQL pipeline, generated browser data, tests, tooling, and source-backed documentation. No agents were spawned.
 

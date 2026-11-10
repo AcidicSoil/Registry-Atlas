@@ -150,6 +150,82 @@ function currentInputFingerprint(namespace, rawItem, overlayItem) {
   return catalogClassificationInputFingerprint(state);
 }
 
+function currentClassificationInputs(catalog) {
+  const records = new Map();
+
+  for (const [namespace, items] of Object.entries(catalog)) {
+    for (const item of items) {
+      if (!isInputString(item?.name)) continue;
+
+      const key = identity(namespace, item.name);
+      const matches = records.get(key) ?? [];
+      matches.push(item);
+      records.set(key, matches);
+    }
+  }
+
+  return records;
+}
+
+function changedClassificationRow(base, item, fingerprints, variantsCount) {
+  return {
+    ...base,
+    currentFingerprint: fingerprints[0],
+    currentTitle: item.title ?? null,
+    currentDescription: item.description ?? null,
+    currentCategories: item.categories ?? [],
+    sourceUrl: item.rawItemUrl ?? null,
+    variantCount: variantsCount,
+  };
+}
+
+/** Read-only evidence for changes requiring a fresh classification review. */
+export function catalogClassificationDriftReport(catalog, reviewedItems) {
+  const currentByIdentity = currentClassificationInputs(catalog);
+  const stale = [];
+  const missing = [];
+  let matched = 0;
+
+  for (const review of reviewedItems) {
+    const variants = currentByIdentity.get(identity(review.namespace, review.name)) ?? [];
+
+    const base = {
+      namespace: review.namespace,
+      name: review.name,
+      kind: review.kind,
+      approvedCanonicalPrimary: review.canonical.primary,
+      reviewedFingerprint: review.inputFingerprint,
+    };
+
+    if (!variants.length) {
+      missing.push(base);
+      continue;
+    }
+
+    const fingerprints = variants.map((item) =>
+      currentInputFingerprint(review.namespace, item, review),
+    );
+
+    if (fingerprints.includes(review.inputFingerprint)) {
+      matched += 1;
+      continue;
+    }
+
+    stale.push(changedClassificationRow(base, variants[0], fingerprints, variants.length));
+  }
+
+  return {
+    summary: {
+      reviewed: reviewedItems.length,
+      matched,
+      stale: stale.length,
+      missing: missing.length,
+    },
+    stale,
+    missing,
+  };
+}
+
 function explicitAccess(namespace, labels, accessRules) {
   const registryRules = accessRules?.registries?.[namespace];
 

@@ -75,7 +75,14 @@ The 14 directly affected unit-test files passed (148 tests). Source and test Typ
 
 ## Browser release checks
 
-Automated verification does not replace the maintained browser/accessibility release smoke. Use `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md` when release-level browser behavior needs validation.
+Automated verification does not replace a release browser/accessibility check. Build first, then run the existing desktop navigation, card actions, sidebar, setup-cart, and component-preview E2E tests:
+
+```bash
+pnpm build
+pnpm exec e2e run tests/catalog-navigation.e2e.ts tests/card-navigation-actions.e2e.ts tests/grouped-sidebar.e2e.ts tests/setup-cart.e2e.ts tests/catalog-link-preview.e2e.ts
+```
+
+For release acceptance, also inspect keyboard focus, narrow-width overflow, source links, and browser console errors. The previous `.planning/phases/04-install-actions-release-hardening/04-BROWSER-A11Y-SMOKE.md` reference pointed to a missing file and is no longer used.
 
 ## Updated PPM bootstrap (2026-11-02)
 
@@ -173,3 +180,11 @@ The manifest selects a complete local generation; it does not control the order 
 The stable CLI entrypoints remain `scripts/classify-registry-catalog.mjs` and `scripts/survey-registry-catalog-structure.mjs`. Unit tests stay in `tests/registry-explorer/` to match the project's test layout. Historical `docs/superpowers/` plans retain their original paths as records of the earlier implementation.
 
 The three adapter tests, shared endpoint tests, classifier tests, catalog CLI tests, runtime-contract tests, and survey tests passed **67/67** across eight files. A test targeting each new adapter path failed before the files moved; a dedicated shared-endpoint test failed before the common validator was implemented. The combined lint, TypeScript checks, and production build passed after the initial move. Scoped checks were rerun after endpoint-constant deduplication. The full test suite and live System One model tests were not run.
+
+## Reviewed preview recovery and classification-drift audit (2026-11-09)
+
+The November 8 removal of preview assets left `entry.ts` requesting a manifest that no longer existed. This change restores the three **previously reviewed** WebP captures and manifest from commit `3bda23b0`, plus the removed source-hover browser test. It does not capture new imagery or expand the three-item pilot. The regression test first failed with `ENOENT`, then passed after restoring the original assets. Each asset's bytes match its recorded SHA-256 and the source URL matches the currently generated source-page manifest. All four source-hover browser tests passed against a fresh production build, including the icon-negative case.
+
+The read-only `node scripts/audits/report-classification-drift.mjs` command now writes `.instance/reviews/catalog-classification-drift.json` with reviewed identities, current source metadata, old input fingerprints and computed current fingerprints. The resulting queue has **26,603 reviewed identities: 26,040 matched, 432 stale, and 131 absent**. A regression test covers stale, missing, matching and duplicate-variant cases. The original classification-run rows are no longer present in PostgreSQL; the reporter does **not** reapprove classifications, rewrite fingerprints or mutate database records. `pnpm check:product-contract` and `pnpm validate:data` must continue to fail until the changed inputs are reviewed and the approved classifications are promoted through the existing gate.
+
+The obsolete `.planning/` browser-smoke link was replaced with runnable desktop E2E commands. `TODO.md` now records current PostgreSQL-era tasks instead of the superseded SQLite worktree. Hosted publication and complete CSS/StyleX ownership remain outside this recovery.
