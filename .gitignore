@@ -29,6 +29,7 @@ venv/
 *.sqlite-shm
 /public/data/*.sqlite
 /public/data/*.sqlite.gz
+tools/
 
 # Local git worktrees
 .repowise/
