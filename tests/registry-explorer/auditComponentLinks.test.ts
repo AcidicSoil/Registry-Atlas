@@ -5,7 +5,7 @@ import {
   recheckLivePages,
   summarizeAuditCoverage,
   // @ts-ignore Standalone Node ESM script.
-} from "../../scripts/audit-component-links.mjs";
+} from "../../scripts/audits/audit-component-links.mjs";
 
 const registries = [
   { name: "@delta", homepage: "https://delta.example", url: "https://delta.example/r/{name}.json" },

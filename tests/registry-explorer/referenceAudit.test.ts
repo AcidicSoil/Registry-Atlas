@@ -3,7 +3,7 @@ import {
   normalized21stUrl,
   planReferenceRoutes,
   summarizeReferencePage,
-} from "../../scripts/audit-21st-reference.mjs";
+} from "../../scripts/audits/audit-21st-reference.mjs";
 
 const origin = "https://21st.dev/";
 

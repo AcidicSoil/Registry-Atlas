@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   selectReferenceAction,
   assessReferenceTransition,
-} from "../../scripts/audit-21st-interactions.mjs";
+} from "../../scripts/audits/audit-21st-interactions.mjs";
 
 const category = "https://21st.dev/community/components/s/button";
 

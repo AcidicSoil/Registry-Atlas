@@ -1,15 +1,15 @@
-import { isInputString } from "./lib/input-guards.mjs";
+import { isInputString } from "../lib/input-guards.mjs";
 import { readFile, writeFile, stat } from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { pathToFileURL } from "node:url";
-import { PinchTabBrowser } from "./collect-browser-link-evidence.mjs";
+import { PinchTabBrowser } from "../collect-browser-link-evidence.mjs";
 import {
   openAtlasCoreDatabase,
   putDocument,
   readAtlasState,
   readCuratedItemSummaries,
   replaceCuratedItemSummaries,
-} from "./lib/atlas-storage.mjs";
+} from "../lib/atlas-storage.mjs";
 
 const SCHEMA = "registry-atlas-component-link-evidence/v1";
 

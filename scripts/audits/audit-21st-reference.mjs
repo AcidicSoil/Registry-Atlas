@@ -1,5 +1,5 @@
-import { isInputBoolean } from "./lib/input-guards.mjs";
-import { isInputString } from "./lib/input-guards.mjs";
+import { isInputBoolean } from "../lib/input-guards.mjs";
+import { isInputString } from "../lib/input-guards.mjs";
 import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
 import { open, readFile, mkdir, rename, writeFile, unlink } from "node:fs/promises";
