@@ -167,6 +167,77 @@ function currentClassificationInputs(catalog) {
   return records;
 }
 
+/**
+ * Remove approvals for identities absent from a successfully fetched catalog.
+ * Failed fetches leave historical approvals untouched. The current index alone
+ * determines which items are active; fingerprints still protect present items.
+ */
+export function retireMissingCatalogApprovals(catalog, reviews, refreshedNamespaces) {
+  const current = new Map();
+  const reviewedNamespaces = new Set(reviews.map((review) => review.namespace.toLowerCase()));
+
+  for (const namespace of refreshedNamespaces) {
+    if (!reviewedNamespaces.has(namespace.toLowerCase())) continue;
+    const items = catalog[namespace];
+
+    if (!Array.isArray(items)) throw new Error(`Refreshed catalog missing namespace: ${namespace}`);
+
+    if (!items.some((item) => isInputString(item?.name) && item.name.trim()))
+      throw new Error(`Refreshed catalog is empty: ${namespace}`);
+
+    current.set(
+      namespace.toLowerCase(),
+      new Set(
+        items
+          .filter((item) => isInputString(item?.name) && item.name.trim())
+          .map((item) => identity(namespace, item.name)),
+      ),
+    );
+  }
+
+  const active = [];
+  const retired = [];
+
+  for (const review of reviews) {
+    const available = current.get(review.namespace.toLowerCase());
+
+    if (available && !available.has(identity(review.namespace, review.name))) retired.push(review);
+    else active.push(review);
+  }
+
+  return { active, retired };
+}
+
+/** Apply approvals only to items in the current verified registry indexes. */
+export function projectReviewedCatalogClassifications(
+  itemsByNamespace,
+  { taxonomy, overlay = null, accessRules = {}, refreshedNamespaces = [] } = {},
+) {
+  const stripped = stripCatalogClassificationFields(itemsByNamespace);
+
+  if (!overlay) {
+    return {
+      itemsByNamespace: stripped,
+      report: { applied: 0, stale: 0, missing: 0 },
+      activeOverlay: null,
+      retired: [],
+    };
+  }
+
+  const reviewed = validateCatalogClassificationOverlay(overlay, taxonomy);
+
+  const { active, retired } = retireMissingCatalogApprovals(
+    stripped,
+    reviewed.items,
+    refreshedNamespaces,
+  );
+
+  const activeOverlay = retired.length ? { ...reviewed, items: active } : reviewed;
+  const projection = applyCatalogClassificationOverlay(stripped, activeOverlay, accessRules);
+
+  return { ...projection, activeOverlay, retired };
+}
+
 function changedClassificationRow(base, item, fingerprints, variantsCount) {
   return {
     ...base,
@@ -274,7 +345,7 @@ function explicitAccess(namespace, labels, accessRules) {
   };
 }
 
-export function stripCatalogClassificationFields(itemsByNamespace) {
+function stripCatalogClassificationFields(itemsByNamespace) {
   if (!itemsByNamespace || !isInputObject(itemsByNamespace) || Array.isArray(itemsByNamespace)) {
     throw new Error("Catalog overlay input must be registry item buckets");
   }

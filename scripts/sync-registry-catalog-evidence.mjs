@@ -1,11 +1,7 @@
 import { isInputObject, isInputString } from "./lib/input-guards.mjs";
 import { pathToFileURL } from "node:url";
-import {
-  applyCatalogClassificationOverlay,
-  stripCatalogClassificationFields,
-  validateCatalogClassificationOverlay,
-} from "./lib/catalog-classification-overlay.mjs";
-import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
+import { projectReviewedCatalogClassifications } from "./lib/catalog-classification-overlay.mjs";
+import { persistRetiredCatalogApprovals } from "./lib/catalog-approval-storage.mjs";
 import {
   openAtlasCoreDatabase,
   transaction,
@@ -604,15 +600,12 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       timeoutMs: options.timeoutMs,
     });
 
-    const stripped = stripCatalogClassificationFields(result.itemsByNamespace);
-    let projected = { itemsByNamespace: stripped, report: { applied: 0, stale: 0, missing: 0 } };
-
-    if (state.classificationOverlay) {
-      if (!state.taxonomy) throw new Error("Catalog taxonomy is missing from the Atlas database");
-      const taxonomy = validateCatalogTaxonomy(state.taxonomy);
-      const overlay = validateCatalogClassificationOverlay(state.classificationOverlay, taxonomy);
-      projected = applyCatalogClassificationOverlay(stripped, overlay, state.accessRules ?? {});
-    }
+    const projected = projectReviewedCatalogClassifications(result.itemsByNamespace, {
+      taxonomy: state.taxonomy,
+      overlay: state.classificationOverlay,
+      accessRules: state.accessRules ?? {},
+      refreshedNamespaces: Object.keys(result.freshDetailsByNamespace),
+    });
 
     await transaction(core, async (tx) => {
       await replaceCatalogEvidence(tx, result.evidence);
@@ -630,6 +623,7 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
         await replaceItemDetails(tx, namespace, rows);
       }
 
+      await persistRetiredCatalogApprovals(tx, projected.retired, result.evidence);
       await putDocument(tx, "catalog-evidence-report", "sync-report", result.report);
       await putDocument(
         tx,

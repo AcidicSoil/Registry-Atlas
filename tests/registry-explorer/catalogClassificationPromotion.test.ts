@@ -8,14 +8,13 @@ import { validateCatalogTaxonomy } from "../../scripts/lib/catalog-taxonomy.mjs"
 import {
   applyCatalogClassificationOverlay,
   validateCatalogClassificationOverlay,
+  projectReviewedCatalogClassifications,
   // @ts-ignore Standalone Node ESM modules.
 } from "../../scripts/lib/catalog-classification-overlay.mjs";
 // @ts-ignore Standalone Node ESM script.
 import { buildReviewedClassificationOverlay } from "../../scripts/promote-catalog-classifications.mjs";
 // @ts-ignore Standalone Node ESM script.
 import { catalogArtifactFingerprint } from "../../scripts/evaluate-catalog-classifications.mjs";
-// @ts-ignore Standalone Node ESM script.
-import { projectReviewedCatalogClassifications } from "../../scripts/sync-shadcn-registries.mjs";
 import { readRepositoryDocument } from "./testAtlasDatabase";
 
 const taxonomy = validateCatalogTaxonomy(readRepositoryDocument("catalog-taxonomy"));
@@ -320,6 +319,43 @@ describe("classification overlay application", () => {
 
     expect(result.itemsByNamespace["@7ovr"][0]).not.toHaveProperty("canonical");
     expect(result.report).toMatchObject({ applied: 0, stale: 1 });
+  });
+
+  it("retires approvals absent from a newly verified registry without changing existing approvals", () => {
+    const original = classification();
+    const obsolete = classification("@7ovr", "old-shell");
+    const { evaluation, review } = reviewedBundle([original, obsolete]);
+
+    const overlay = buildReviewedClassificationOverlay({
+      taxonomy,
+      classifications: [original, obsolete],
+      evaluation,
+      review,
+    });
+
+    const currentCatalog = {
+      "@7ovr": [
+        {
+          name: "app-shell-1",
+          title: "Sidebar Dashboard Shell",
+          description: "App shell with navigation.",
+          categories: ["app-shell"],
+          type: "registry:block",
+        },
+      ],
+    };
+
+    const result = projectReviewedCatalogClassifications(currentCatalog, {
+      taxonomy,
+      overlay,
+      accessRules,
+      refreshedNamespaces: ["@7ovr"],
+    });
+
+    expect(result.retired.map((item: { name: string }) => item.name)).toEqual(["old-shell"]);
+    expect(result.activeOverlay.items).toEqual([overlay.items[0]]);
+    expect(result.report).toEqual({ applied: 1, stale: 0, missing: 0 });
+    expect(result.itemsByNamespace["@7ovr"][0].canonical.primary).toBe("application/app-shell");
   });
 
   it("sync projection strips previously managed fields before reapplying the current reviewed overlay", () => {

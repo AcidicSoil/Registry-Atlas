@@ -1,6 +1,6 @@
 # Registry Atlas refactor plan
 
-**Status (2026-11-09):** Phases 5A–5C and local 5E publication are implemented. The 5D StyleX ownership migration and independent design certification remain open. The restored three-item component-preview pilot does not establish catalog-wide coverage. The canonical classification overlay remains stale (432 changed inputs, 131 absent identities). See `TODO.md` for current priorities; the checkpoints below retain historical evidence.
+**Status (updated 2026-11-10):** Phases 5A–5C and local 5E publication are implemented. The 5D StyleX ownership migration and independent design certification remain open. The restored three-item component-preview pilot does not establish catalog-wide coverage. The active classification overlay contains 432 changed inputs and 104 absent identities after retirement of 27 superseded Animate UI approvals. Older counts below are historical checkpoints. See `TODO.md` for current priorities; the checkpoints below retain historical evidence.
 
 **Historical planning baseline:** `aa7893e` on 2026-11-03. This is not the current checkout revision.
 

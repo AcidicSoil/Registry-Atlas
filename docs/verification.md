@@ -188,3 +188,13 @@ The November 8 removal of preview assets left `entry.ts` requesting a manifest t
 The read-only `node scripts/audits/report-classification-drift.mjs` command now writes `.instance/reviews/catalog-classification-drift.json` with reviewed identities, current source metadata, old input fingerprints and computed current fingerprints. The resulting queue has **26,603 reviewed identities: 26,040 matched, 432 stale, and 131 absent**. A regression test covers stale, missing, matching and duplicate-variant cases. The original classification-run rows are no longer present in PostgreSQL; the reporter does **not** reapprove classifications, rewrite fingerprints or mutate database records. `pnpm check:product-contract` and `pnpm validate:data` must continue to fail until the changed inputs are reviewed and the approved classifications are promoted through the existing gate.
 
 The obsolete `.planning/` browser-smoke link was replaced with runnable desktop E2E commands. `TODO.md` now records current PostgreSQL-era tasks instead of the superseded SQLite worktree. Hosted publication and complete CSS/StyleX ownership remain outside this recovery.
+
+## Current-index classification retirement (2026-11-10)
+
+The official Animate UI source at `https://animate-ui.com/r/registry.json` and PostgreSQL each contain 789 current items. Its old v1 registry is not imported. The 27 old reviewed identities are absent from the current index; their approvals were retired rather than resurrecting outdated components.
+
+`scripts/lib/catalog-classification-overlay.mjs` now uses each successfully refreshed source index to identify absent approvals. Both sync entrypoints use the same projector and record retirements in the catalog transaction. `scripts/audits/reconcile-catalog-approvals.mjs` confirms the upstream and local identity sets match before applying a targeted retirement. A read-only dry-run preceded the 27-row change. A repeated dry-run found no remaining Animate UI retirements.
+
+The retirement audit records prior identities and fingerprints but is not used as a fallback catalog. PostgreSQL still contains all 789 current Animate UI items and 118,643 matching catalog/detail pairs across 469 namespaces. The updated report has 26,576 active reviewed classifications: 26,040 matching, 432 input-changed, and 104 missing elsewhere. `pnpm check:product-contract` still fails on the 432 genuine input mismatches. No approval fingerprint was rewritten.
+
+Tests exercised failed and successful refreshes, empty-index rejection, source/database disagreement, idempotence, projection, and isolated PostgreSQL commit/rollback. Independent changes already staged or deleted under `.gitignore` and `tools/` were not modified.

@@ -37,7 +37,7 @@ export async function transaction(db, fn) {
 
 const json = (value) => JSON.stringify(value);
 
-const parseJson = (value) => (isInputString(value) ? JSON.parse(value) : value);
+export const parseJson = (value) => (isInputString(value) ? JSON.parse(value) : value);
 
 export const exec = (db, sql, params = []) =>
   db.unsafe(db.__atlasSchema ? sql.replace(/\batlas\./g, db.__atlasSchema + ".") : sql, params);

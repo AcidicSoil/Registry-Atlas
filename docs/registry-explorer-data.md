@@ -40,6 +40,21 @@ docker exec registry-atlas-local-database-1 createdb -U atlas -O atlas atlas_tes
 docker exec registry-atlas-local-database-1 pg_dump -U atlas -d atlas --schema=atlas --schema-only --no-owner | docker exec -i registry-atlas-local-database-1 psql -v ON_ERROR_STOP=1 -U atlas -d atlas_test
 ```
 
+## Current registry indexes and reviewed approvals
+
+The official registry directory's current `{name}` URL template determines the authoritative catalog index and item routes. Both sync commands use the shared classification projector in `scripts/lib/catalog-classification-overlay.mjs`. Following a successful nonempty index refresh, they retire approvals for items no longer listed within the same PostgreSQL transaction as the catalog update. Failed fetches retain the previous catalog and approvals. Items still present remain protected by SHA-256 input fingerprints.
+
+Do not ingest superseded version indexes to make older approvals valid. A targeted reconciliation verifies the current source before removing approvals:
+
+```sh
+node scripts/audits/reconcile-catalog-approvals.mjs --namespace @registry
+node scripts/audits/reconcile-catalog-approvals.mjs --namespace @registry --apply
+```
+
+The first command reads the source and database without modifying them. It requires both indexes to list the same item identities. `--apply` removes only absent approvals and saves their identity and fingerprint provenance in an audit document. This audit cannot supply catalog items or reapprove classifications. The remaining active approvals live only in `atlas_classifications`. Repeated application is idempotent.
+
+On November 10, the current Animate UI index and local catalog each contained 789 items. All 27 obsolete v1 approvals were retired, with no v1 item import or current catalog change. The review report now shows 26,040 matching entries, 432 changed fingerprints, and 104 absent identities elsewhere.
+
 ## Recovery and backups
 
 Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. The one-time SQLite importer accepts separate core and detail files in `.instance/legacy-recovery/` and refuses to overwrite an existing `atlas` schema. The local recovered PostgreSQL database was reconciled against the latest available runtime snapshot using `scripts/reconcile-runtime-source-evidence.mjs`, with a dry-run before `--apply`. The current recovery policy treats PostgreSQL as authoritative: a dry-run reports missing/conflicting source pages and documents, while an apply inserts only missing records and aborts the whole transaction on any existing conflict. It never overwrites existing database evidence.

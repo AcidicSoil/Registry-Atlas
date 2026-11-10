@@ -1,16 +1,17 @@
 # Registry Atlas — Current Work
 
-Verified against `main` and local read-only PostgreSQL on 2026-11-09.
+Current catalog and approval state checked on 2026-11-10.
 Earlier SQLite and `feat/clef-identity-decision` tasks are historical; see Git history.
 
 ## P0 — Review canonical classification drift
 
 - [ ] Review 432 changed classification inputs against current source evidence. Do **not** copy old input fingerprints or silently reapprove decisions.
-- [ ] Determine whether 131 absent reviewed identities were removed, renamed, or superseded. Preserve their review history until resolved.
+- [ ] Investigate 104 remaining absent reviewed identities against their authoritative current registry indexes. Retire confirmed removals; do not reimport superseded versions.
 - [ ] Promote approved classifications through the existing reviewed-run workflow, then verify `pnpm check:product-contract` and `pnpm validate:data` pass.
 - [x] Produce a read-only review queue: `node scripts/audits/report-classification-drift.mjs` writes `.instance/reviews/catalog-classification-drift.json`.
+- [x] Retire absent approvals only after a successful authoritative index refresh; keep approvals after fetch failure.
 
-The latest report contains 26,603 reviewed entries: 26,040 match, 432 are stale, 131 have no current catalog identity. Existing review records are **not** automatically rewritten.
+The current report contains 26,576 reviewed entries: 26,040 match, 432 have changed inputs, and 104 remain missing. On November 10, the current Animate UI index was verified and 27 obsolete v1 approvals were retired transactionally. No superseded items were reimported.
 
 ## P1 — Catalog metadata and frontend verification
 

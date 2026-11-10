@@ -3,11 +3,8 @@ import {
   buildCatalogCoverageFacts,
   syncCatalogEvidenceForRegistries,
 } from "./sync-registry-catalog-evidence.mjs";
-import {
-  applyCatalogClassificationOverlay,
-  stripCatalogClassificationFields,
-  validateCatalogClassificationOverlay,
-} from "./lib/catalog-classification-overlay.mjs";
+import { projectReviewedCatalogClassifications } from "./lib/catalog-classification-overlay.mjs";
+import { persistRetiredCatalogApprovals } from "./lib/catalog-approval-storage.mjs";
 import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,
@@ -154,25 +151,6 @@ function normalizeOfficialRegistry(
   };
 }
 
-export function projectReviewedCatalogClassifications(
-  itemsByNamespace,
-  { taxonomy, overlay = null, accessRules = {} } = {},
-) {
-  const reviewedTaxonomy = validateCatalogTaxonomy(taxonomy);
-  const stripped = stripCatalogClassificationFields(itemsByNamespace);
-
-  if (!overlay) {
-    return {
-      itemsByNamespace: stripped,
-      report: { applied: 0, stale: 0, missing: 0 },
-    };
-  }
-
-  const reviewedOverlay = validateCatalogClassificationOverlay(overlay, reviewedTaxonomy);
-
-  return applyCatalogClassificationOverlay(stripped, reviewedOverlay, accessRules);
-}
-
 export function projectCuratedSummaries(runtime, curated) {
   if (!Array.isArray(runtime?.registries)) throw new Error("Expected an official runtime mirror");
   const names = new Map(runtime.registries.map((entry, index) => [entry.official.name, index]));
@@ -283,6 +261,7 @@ async function main() {
         taxonomy,
         overlay: state.classificationOverlay,
         accessRules: state.accessRules ?? {},
+        refreshedNamespaces: Object.keys(catalogSync.freshDetailsByNamespace),
       },
     );
 
@@ -336,6 +315,11 @@ async function main() {
     await transaction(core, async (tx) => {
       await replaceRawRegistries(tx, upstream);
       await replaceCatalogEvidence(tx, catalogEvidenceByNamespace);
+      await persistRetiredCatalogApprovals(
+        tx,
+        classificationProjection.retired,
+        catalogEvidenceByNamespace,
+      );
       await putDocument(tx, "catalog-evidence-report", "sync-report", catalogSync.report);
       await replaceCatalogSnapshot(tx, {
         meta: {
