@@ -18,7 +18,7 @@ import {
   resetClassificationRun,
   upsertClassificationRunItems,
 } from "./lib/atlas-storage.mjs";
-import { chooseTaxonomyOption } from "./lib/systemone-taxonomy.mjs";
+import { chooseTaxonomyOption } from "./lib/systemone/taxonomy.mjs";
 
 const SCHEMA = "registry-atlas.catalog-classification.v1";
 

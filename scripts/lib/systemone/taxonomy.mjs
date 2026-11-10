@@ -1,33 +1,9 @@
-import { isInputObject, isInputString } from "./input-guards.mjs";
-
-const DEFAULT_ENDPOINT = "http://127.0.0.1:18080/v1/systemone";
+import { isInputObject, isInputString } from "../input-guards.mjs";
+import { DEFAULT_CATALOG_SYSTEMONE_ENDPOINT, validateLocalSystemOneEndpoint } from "./endpoint.mjs";
 
 const ROOT_SPECIAL = "UNCLASSIFIED";
 
 const CHILD_SPECIAL = "THIS_CATEGORY";
-
-function validateEndpoint(raw) {
-  let url;
-
-  try {
-    url = new URL(raw);
-  } catch {
-    throw new Error("Invalid System One endpoint");
-  }
-
-  if (
-    url.protocol !== "http:" ||
-    !["127.0.0.1", "localhost"].includes(url.hostname) ||
-    url.pathname !== "/v1/systemone" ||
-    url.username ||
-    url.password ||
-    url.hash
-  ) {
-    throw new Error("System One endpoint must be a local /v1/systemone URL");
-  }
-
-  return url.href;
-}
 
 function stringArray(value, field, id) {
   if (!Array.isArray(value) || value.some((entry) => !isInputString(entry))) {
@@ -146,7 +122,7 @@ export async function chooseTaxonomyOption({
   state,
   node = null,
   options,
-  endpoint = DEFAULT_ENDPOINT,
+  endpoint = DEFAULT_CATALOG_SYSTEMONE_ENDPOINT,
   timeoutMs = 15000,
   fetchImpl = fetch,
 } = {}) {
@@ -158,7 +134,7 @@ export async function chooseTaxonomyOption({
     throw new Error("System One taxonomy node must be null or a taxonomy node");
   }
 
-  const target = validateEndpoint(endpoint);
+  const target = validateLocalSystemOneEndpoint(endpoint);
   const normalized = validateOptions(options);
 
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 120000) {

@@ -11,7 +11,7 @@ import {
   surveyRegistryCatalogStructure,
   writeRegistrySurveyArtifact,
 } from "./lib/catalog-structure-survey.mjs";
-import { chooseObservedGroup } from "./lib/systemone-group.mjs";
+import { chooseObservedGroup } from "./lib/systemone/group.mjs";
 import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
 
 const DEFAULT_DECISION_URL = "http://127.0.0.1:18080/v1/systemone";

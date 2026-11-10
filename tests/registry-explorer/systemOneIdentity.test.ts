@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 // @ts-ignore Standalone Node ESM script.
-import { chooseRegistryIdentity } from "../../scripts/lib/systemone-identity.mjs";
+import { chooseRegistryIdentity } from "../../scripts/lib/systemone/identity.mjs";
 
 describe("System One registry identity decisions", () => {
   it("sends a bounded choice question and returns the selected catalog identity", async () => {

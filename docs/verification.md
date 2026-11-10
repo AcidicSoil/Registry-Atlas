@@ -165,3 +165,11 @@ The new publisher writes both gzip files before it replaces `runtime-manifest.js
 - Source and test TypeScript checks, dependency-cruiser, Oxlint, Knip, Oxfmt, CCCC, and the production build passed.
 
 The manifest selects a complete local generation; it does not control the order of concurrent exports. Older generations stay on disk for open clients. The hosting system must also retain those assets. This work did not deploy the site, run the full unit suite, or certify the entire project against PPM standards.
+
+## System One module organization (2026-11-09)
+
+`scripts/lib/systemone/` owns the three private decision adapters: `identity.mjs`, `group.mjs`, and `taxonomy.mjs`. `endpoint.mjs` owns their shared local-URL validation and the catalog decision endpoint used by group and taxonomy. The identity adapter keeps its separate port 8080 default; catalog decisions retain port 18080. There is no barrel file or old-path wrapper because these are internal modules with updated in-repository consumers.
+
+The stable CLI entrypoints remain `scripts/classify-registry-catalog.mjs` and `scripts/survey-registry-catalog-structure.mjs`. Unit tests stay in `tests/registry-explorer/` to match the project's test layout. Historical `docs/superpowers/` plans retain their original paths as records of the earlier implementation.
+
+The three adapter tests, shared endpoint tests, classifier tests, catalog CLI tests, runtime-contract tests, and survey tests passed **67/67** across eight files. A test targeting each new adapter path failed before the files moved; a dedicated shared-endpoint test failed before the common validator was implemented. The combined lint, TypeScript checks, and production build passed after the initial move. Scoped checks were rerun after endpoint-constant deduplication. The full test suite and live System One model tests were not run.

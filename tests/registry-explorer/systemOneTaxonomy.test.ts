@@ -1,7 +1,7 @@
 import type { RawJsonInput } from "../../src/registry-explorer/core/jsonInput";
 import { describe, expect, it } from "vitest";
 // @ts-ignore Standalone Node ESM module.
-import { chooseTaxonomyOption } from "../../scripts/lib/systemone-taxonomy.mjs";
+import { chooseTaxonomyOption } from "../../scripts/lib/systemone/taxonomy.mjs";
 
 const state = {
   item: { name: "workspace", title: "Workspace", kind: "block" },

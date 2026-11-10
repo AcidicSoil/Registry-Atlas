@@ -1,30 +1,9 @@
-import { isInputObject, isInputString } from "./input-guards.mjs";
+import { isInputObject, isInputString } from "../input-guards.mjs";
+import { validateLocalSystemOneEndpoint } from "./endpoint.mjs";
 
 const DEFAULT_ENDPOINT = "http://127.0.0.1:8080/v1/systemone";
 
 const NONE = "NONE";
-
-function validEndpoint(raw) {
-  let url;
-
-  try {
-    url = new URL(raw);
-  } catch {
-    throw new Error("Invalid System One endpoint");
-  }
-
-  if (
-    url.protocol !== "http:" ||
-    !["127.0.0.1", "localhost"].includes(url.hostname) ||
-    url.pathname !== "/v1/systemone" ||
-    url.username ||
-    url.password ||
-    url.hash
-  )
-    throw new Error("System One endpoint must be a local /v1/systemone URL");
-
-  return url.href;
-}
 
 function validateCandidates(candidates) {
   if (!Array.isArray(candidates) || candidates.length < 1 || candidates.length > 254)
@@ -79,7 +58,7 @@ export async function chooseRegistryIdentity({
   fetchImpl = fetch,
   timeoutMs = 15000,
 } = {}) {
-  const target = validEndpoint(endpoint);
+  const target = validateLocalSystemOneEndpoint(endpoint);
 
   if (!isInputString(registry) || !registry.trim())
     throw new Error("Registry namespace is required");

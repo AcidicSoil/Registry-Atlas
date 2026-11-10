@@ -1,30 +1,7 @@
-import { isInputObject, isInputString } from "./input-guards.mjs";
-
-const DEFAULT_ENDPOINT = "http://127.0.0.1:18080/v1/systemone";
+import { isInputObject, isInputString } from "../input-guards.mjs";
+import { DEFAULT_CATALOG_SYSTEMONE_ENDPOINT, validateLocalSystemOneEndpoint } from "./endpoint.mjs";
 
 const NONE = "NONE";
-
-function validateEndpoint(raw) {
-  let url;
-
-  try {
-    url = new URL(raw);
-  } catch {
-    throw new Error("Invalid System One endpoint");
-  }
-
-  if (
-    url.protocol !== "http:" ||
-    !["127.0.0.1", "localhost"].includes(url.hostname) ||
-    url.pathname !== "/v1/systemone" ||
-    url.username ||
-    url.password ||
-    url.hash
-  )
-    throw new Error("System One endpoint must be a local /v1/systemone URL");
-
-  return url.href;
-}
 
 function validateGroups(groups) {
   if (!Array.isArray(groups) || groups.length < 1 || groups.length > 8)
@@ -139,11 +116,11 @@ function validateAnswer(body, labels) {
 export async function chooseObservedGroup({
   state,
   groups,
-  endpoint = DEFAULT_ENDPOINT,
+  endpoint = DEFAULT_CATALOG_SYSTEMONE_ENDPOINT,
   timeoutMs = 15000,
   fetchImpl = fetch,
 } = {}) {
-  const target = validateEndpoint(endpoint);
+  const target = validateLocalSystemOneEndpoint(endpoint);
   const labels = validateGroups(groups);
   const decisionState = normalizeDecisionState(state, labels);
 

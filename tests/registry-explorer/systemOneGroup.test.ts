@@ -1,7 +1,7 @@
 import type { RawJsonInput } from "../../src/registry-explorer/core/jsonInput";
 import { describe, expect, it } from "vitest";
 // @ts-ignore Standalone Node ESM script.
-import { chooseObservedGroup } from "../../scripts/lib/systemone-group.mjs";
+import { chooseObservedGroup } from "../../scripts/lib/systemone/group.mjs";
 
 const stateFor = (...labels: string[]) => ({
   asset: { id: "button", text: "Button" },
@@ -30,11 +30,13 @@ function response(body: RawJsonInput, ok = true, status = 200) {
 describe("bounded SystemOne group choice", () => {
   it("sends only exact observed labels plus NONE and returns the selected probability", async () => {
     let sent: any;
+    let requestedEndpoint = "";
 
     const result = await chooseObservedGroup({
       state: stateFor("Free", "Actions"),
       groups: ["Free", "Actions"],
-      fetchImpl: async (_url: string, init: any) => {
+      fetchImpl: async (url: string, init: any) => {
+        requestedEndpoint = url;
         sent = JSON.parse(init.body);
 
         return response({
@@ -52,6 +54,7 @@ describe("bounded SystemOne group choice", () => {
       },
     });
 
+    expect(requestedEndpoint).toBe("http://127.0.0.1:18080/v1/systemone");
     expect(sent.state).toEqual(stateFor("Free", "Actions"));
     expect(Object.keys(sent.questions.group.criteria)).toEqual(["Free", "Actions", "NONE"]);
     expect(sent.questions.group.criteria).toEqual({ Free: null, Actions: null, NONE: null });

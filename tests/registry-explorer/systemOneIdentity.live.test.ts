@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 // @ts-ignore Standalone Node ESM script.
-import { chooseRegistryIdentity } from "../../scripts/lib/systemone-identity.mjs";
+import { chooseRegistryIdentity } from "../../scripts/lib/systemone/identity.mjs";
 
 // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
 const endpoint = (globalThis as any).process?.env?.REGISTRY_ATLAS_SYSTEMONE_URL;
