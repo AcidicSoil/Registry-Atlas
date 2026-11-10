@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 // @ts-ignore Standalone Node ESM modules.
-import { buildCatalogClassificationState } from "../../scripts/lib/catalog-classification-state.mjs";
+import { buildCatalogClassificationState } from "../../scripts/lib/classification/state.mjs";
 // @ts-ignore Standalone Node ESM modules.
-import { catalogClassificationInputFingerprint } from "../../scripts/lib/catalog-classifier.mjs";
+import { catalogClassificationInputFingerprint } from "../../scripts/lib/classification/classifier.mjs";
 // @ts-ignore Standalone Node ESM modules.
 import { validateCatalogTaxonomy } from "../../scripts/lib/catalog-taxonomy.mjs";
 import {
@@ -10,7 +10,7 @@ import {
   validateCatalogClassificationOverlay,
   projectReviewedCatalogClassifications,
   // @ts-ignore Standalone Node ESM modules.
-} from "../../scripts/lib/catalog-classification-overlay.mjs";
+} from "../../scripts/lib/classification/overlay.mjs";
 // @ts-ignore Standalone Node ESM script.
 import { buildReviewedClassificationOverlay } from "../../scripts/promote-catalog-classifications.mjs";
 // @ts-ignore Standalone Node ESM script.

@@ -1,7 +1,7 @@
-import { isInputObject, isInputString } from "./input-guards.mjs";
-import { buildCatalogClassificationState } from "./catalog-classification-state.mjs";
-import { catalogClassificationInputFingerprint } from "./catalog-classifier.mjs";
-import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "./catalog-taxonomy.mjs";
+import { isInputObject, isInputString } from "../input-guards.mjs";
+import { buildCatalogClassificationState } from "./state.mjs";
+import { catalogClassificationInputFingerprint } from "./classifier.mjs";
+import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "../catalog-taxonomy.mjs";
 
 const SCHEMA = "registry-atlas.catalog-classification-overlay.v1";
 

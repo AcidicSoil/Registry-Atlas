@@ -1,9 +1,9 @@
-import { currentCatalogClassificationEvidence } from "./catalog-classification-overlay.mjs";
-import { isInputString } from "./input-guards.mjs";
+import { currentCatalogClassificationEvidence } from "./overlay.mjs";
+import { isInputString } from "../input-guards.mjs";
 import {
   findDeterministicAliasClassification,
   findDeterministicKindClassification,
-} from "./catalog-classifier.mjs";
+} from "./classifier.mjs";
 
 const identity = (value) => value.trim().toLowerCase();
 

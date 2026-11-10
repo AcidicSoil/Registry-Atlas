@@ -1,4 +1,4 @@
-import { isInputObject, isInputString } from "./input-guards.mjs";
+import { isInputObject, isInputString } from "../input-guards.mjs";
 
 const KINDS = new Set(["component", "block", "page", "template", "theme", "icon", "other"]);
 

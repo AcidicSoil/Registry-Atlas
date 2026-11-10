@@ -42,7 +42,7 @@ docker exec registry-atlas-local-database-1 pg_dump -U atlas -d atlas --schema=a
 
 ## Current registry indexes and reviewed approvals
 
-The official registry directory's current `{name}` URL template determines the authoritative catalog index and item routes. Both sync commands use the shared classification projector in `scripts/lib/catalog-classification-overlay.mjs`. Following a successful nonempty index refresh, they retire approvals for items no longer listed within the same PostgreSQL transaction as the catalog update. Failed fetches retain the previous catalog and approvals. Items still present remain protected by SHA-256 input fingerprints.
+The official registry directory's current `{name}` URL template determines the authoritative catalog index and item routes. Both sync commands use the shared classification projector in `scripts/lib/classification/overlay.mjs`. Following a successful nonempty index refresh, they retire approvals for items no longer listed within the same PostgreSQL transaction as the catalog update. Failed fetches retain the previous catalog and approvals. Items still present remain protected by SHA-256 input fingerprints.
 
 Do not ingest superseded version indexes to make old approvals appear valid. The source-backed reconciliation command handles the entire changed/missing queue, preserving untouched namespaces and rejecting incomplete refreshes:
 

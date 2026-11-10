@@ -5,11 +5,11 @@ import {
   mergeRefreshedCatalog,
   planCatalogApprovalReconciliation,
   // @ts-ignore Standalone Node catalog planner.
-} from "../../scripts/lib/catalog-approval-reconciliation.mjs";
+} from "../../scripts/lib/classification/reconciliation.mjs";
 // @ts-ignore Standalone Node classifier.
-import { buildCatalogClassificationState } from "../../scripts/lib/catalog-classification-state.mjs";
+import { buildCatalogClassificationState } from "../../scripts/lib/classification/state.mjs";
 // @ts-ignore Standalone Node classifier.
-import { catalogClassificationInputFingerprint } from "../../scripts/lib/catalog-classifier.mjs";
+import { catalogClassificationInputFingerprint } from "../../scripts/lib/classification/classifier.mjs";
 
 const taxonomy = readRepositoryDocument("catalog-taxonomy");
 

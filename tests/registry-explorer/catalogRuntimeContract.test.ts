@@ -5,11 +5,11 @@ import { validateCatalogRuntimeContract } from "../../scripts/lib/catalog-runtim
 // @ts-ignore Standalone Node ESM modules.
 import { catalogArtifactFingerprint } from "../../scripts/evaluate-catalog-classifications.mjs";
 // @ts-ignore Standalone Node ESM modules.
-import { buildCatalogClassificationState } from "../../scripts/lib/catalog-classification-state.mjs";
+import { buildCatalogClassificationState } from "../../scripts/lib/classification/state.mjs";
 // @ts-ignore Standalone Node ESM modules.
 import { validateCatalogTaxonomy } from "../../scripts/lib/catalog-taxonomy.mjs";
 // @ts-ignore Standalone Node ESM modules.
-import { catalogClassificationInputFingerprint } from "../../scripts/lib/catalog-classifier.mjs";
+import { catalogClassificationInputFingerprint } from "../../scripts/lib/classification/classifier.mjs";
 
 const taxonomy = readRepositoryDocument<any>("catalog-taxonomy");
 

@@ -1,4 +1,4 @@
-import { exec, putDocument, readDocument } from "./atlas-postgres.mjs";
+import { exec, putDocument, readDocument } from "../atlas-postgres.mjs";
 
 const RETIREMENT_AUDIT = {
   name: "catalog-retired-classification-approvals",

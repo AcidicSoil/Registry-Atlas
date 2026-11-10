@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { openAtlasCoreDatabase, readAtlasState } from "../lib/atlas-storage.mjs";
-import { catalogClassificationDriftReport } from "../lib/catalog-classification-overlay.mjs";
+import { catalogClassificationDriftReport } from "../lib/classification/overlay.mjs";
 
 export { catalogClassificationDriftReport };
 

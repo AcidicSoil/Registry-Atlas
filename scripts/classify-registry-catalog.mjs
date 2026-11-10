@@ -1,13 +1,13 @@
 import { isInputCallable, isInputObject, isInputString } from "./lib/input-guards.mjs";
 import { createHash } from "node:crypto";
 import { pathToFileURL } from "node:url";
-import { buildCatalogClassificationState } from "./lib/catalog-classification-state.mjs";
+import { buildCatalogClassificationState } from "./lib/classification/state.mjs";
 import {
   catalogClassificationInputFingerprint,
   classifyCatalogItem,
   findDeterministicAliasClassification,
   findDeterministicKindClassification,
-} from "./lib/catalog-classifier.mjs";
+} from "./lib/classification/classifier.mjs";
 import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,

@@ -1,6 +1,6 @@
 import { isInputObject } from "./lib/input-guards.mjs";
 import { pathToFileURL } from "node:url";
-import { validateCatalogClassificationOverlay } from "./lib/catalog-classification-overlay.mjs";
+import { validateCatalogClassificationOverlay } from "./lib/classification/overlay.mjs";
 import {
   openAtlasCoreDatabase,
   readClassificationRun,

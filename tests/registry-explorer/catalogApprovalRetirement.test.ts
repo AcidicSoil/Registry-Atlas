@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 // @ts-ignore Node ESM domain module.
-import { retireMissingCatalogApprovals } from "../../scripts/lib/catalog-classification-overlay.mjs";
+import { retireMissingCatalogApprovals } from "../../scripts/lib/classification/overlay.mjs";
 // @ts-ignore Standalone Node PostgreSQL storage adapter.
 import {
   persistRetiredCatalogApprovals,
   persistRevalidatedCatalogApprovals,
   // @ts-ignore Standalone Node PostgreSQL storage adapter.
-} from "../../scripts/lib/catalog-approval-storage.mjs";
+} from "../../scripts/lib/classification/approval-storage.mjs";
 import {
   readClassifications,
   replaceClassifications,

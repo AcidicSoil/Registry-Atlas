@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 // @ts-ignore Standalone Node ESM audit module.
 import { catalogClassificationDriftReport } from "../../scripts/audits/report-classification-drift.mjs";
 // @ts-ignore Standalone Node ESM state module.
-import { buildCatalogClassificationState } from "../../scripts/lib/catalog-classification-state.mjs";
+import { buildCatalogClassificationState } from "../../scripts/lib/classification/state.mjs";
 // @ts-ignore Standalone Node ESM classifier module.
-import { catalogClassificationInputFingerprint } from "../../scripts/lib/catalog-classifier.mjs";
+import { catalogClassificationInputFingerprint } from "../../scripts/lib/classification/classifier.mjs";
 
 function fingerprint(name: string, title: string) {
   return catalogClassificationInputFingerprint(

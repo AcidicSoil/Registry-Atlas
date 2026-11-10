@@ -11,15 +11,15 @@ import {
 import {
   catalogClassificationDriftReport,
   projectReviewedCatalogClassifications,
-} from "../lib/catalog-classification-overlay.mjs";
+} from "../lib/classification/overlay.mjs";
 import {
   mergeRefreshedCatalog,
   planCatalogApprovalReconciliation,
-} from "../lib/catalog-approval-reconciliation.mjs";
+} from "../lib/classification/reconciliation.mjs";
 import {
   persistRetiredCatalogApprovals,
   persistRevalidatedCatalogApprovals,
-} from "../lib/catalog-approval-storage.mjs";
+} from "../lib/classification/approval-storage.mjs";
 import { syncCatalogEvidenceForRegistries } from "../sync-registry-catalog-evidence.mjs";
 
 function optionsFromArgs(args) {

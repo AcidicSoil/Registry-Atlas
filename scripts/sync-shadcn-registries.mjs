@@ -3,8 +3,8 @@ import {
   buildCatalogCoverageFacts,
   syncCatalogEvidenceForRegistries,
 } from "./sync-registry-catalog-evidence.mjs";
-import { projectReviewedCatalogClassifications } from "./lib/catalog-classification-overlay.mjs";
-import { persistRetiredCatalogApprovals } from "./lib/catalog-approval-storage.mjs";
+import { projectReviewedCatalogClassifications } from "./lib/classification/overlay.mjs";
+import { persistRetiredCatalogApprovals } from "./lib/classification/approval-storage.mjs";
 import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,

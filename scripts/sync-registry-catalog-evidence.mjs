@@ -1,7 +1,7 @@
 import { isInputObject, isInputString } from "./lib/input-guards.mjs";
 import { pathToFileURL } from "node:url";
-import { projectReviewedCatalogClassifications } from "./lib/catalog-classification-overlay.mjs";
-import { persistRetiredCatalogApprovals } from "./lib/catalog-approval-storage.mjs";
+import { projectReviewedCatalogClassifications } from "./lib/classification/overlay.mjs";
+import { persistRetiredCatalogApprovals } from "./lib/classification/approval-storage.mjs";
 import {
   openAtlasCoreDatabase,
   transaction,

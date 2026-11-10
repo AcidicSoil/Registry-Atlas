@@ -1,7 +1,7 @@
-import { isInputCallable, isInputObject, isInputString } from "./input-guards.mjs";
+import { isInputCallable, isInputObject, isInputString } from "../input-guards.mjs";
 import { createHash } from "node:crypto";
-import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "./catalog-taxonomy.mjs";
-import { chooseTaxonomyOption } from "./systemone/taxonomy.mjs";
+import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "../catalog-taxonomy.mjs";
+import { chooseTaxonomyOption } from "../systemone/taxonomy.mjs";
 
 const ROOT_SPECIAL = "UNCLASSIFIED";
 

@@ -2,7 +2,7 @@ import { isInputObject, isInputString } from "./input-guards.mjs";
 import {
   applyCatalogClassificationOverlay,
   validateCatalogClassificationOverlay,
-} from "./catalog-classification-overlay.mjs";
+} from "./classification/overlay.mjs";
 import { flattenCatalogTaxonomy, validateCatalogTaxonomy } from "./catalog-taxonomy.mjs";
 import { catalogArtifactFingerprint } from "../evaluate-catalog-classifications.mjs";
 

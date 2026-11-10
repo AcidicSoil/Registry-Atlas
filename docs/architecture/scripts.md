@@ -28,8 +28,14 @@ The source audits reuse the existing browser and persistence utilities from `scr
 
 The root-level discovery commands remain in place where package scripts, mise tasks, or operator documentation depend on their paths. Run the six moved commands under `scripts/discovery/` when invoking them directly. Tests remain in `tests/registry-explorer/`; no compatibility wrappers were added.
 
+## Classification implementation
+
+`scripts/lib/classification/` owns five private modules: `state.mjs` normalizes classification inputs, `classifier.mjs` resolves categories and fingerprints, `overlay.mjs` projects reviewed decisions, `reconciliation.mjs` plans current-source changes, and `approval-storage.mjs` persists retirement and revalidation evidence. The shared taxonomy and PostgreSQL adapter stay at their existing paths in `scripts/lib/`.
+
+Operational commands remain in `scripts/` and `scripts/audits/`. Existing `tests/registry-explorer/` placement is retained; there are no old-path re-export wrappers. Old historical planning files still describe the paths that existed when those plans were written.
+
 ## Remaining work
 
-Other operational entry points remain in `scripts/` until each domain group has a verified dependency map. Candidate groups include catalog classification, database maintenance, release generation, and quality checks. Moving a command requires updating its callers, its declaration file if present, import paths, documentation, and scoped tests in the same change.
+Other operational entry points remain in `scripts/` until each domain group has a verified dependency map. Candidate groups include database maintenance, release generation, and quality checks. Moving a command requires updating its callers, its declaration file if present, import paths, documentation, and scoped tests in the same change.
 
 This reorganization does not change the historical implementation plans in `docs/superpowers/` or the PPM standards inventory.
