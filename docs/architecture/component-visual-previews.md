@@ -1,6 +1,6 @@
 # Component visual previews
 
-**Current implementation (2026-11-04):** Small, visually reviewed, item-specific component screenshots, not opportunistic media extraction. The three initial specimens are deliberately a verification pilot, **not** catalog-wide visual coverage.
+**Current implementation (verified 2026-11-09):** Three previously reviewed, item-specific screenshot assets were restored from commit `3bda23b0` after their November 8 deletion. The manifest, SHA-256 asset checks and source-hover browser tests are restored. This is a verification pilot, **not** catalog-wide visual coverage.
 
 ## Ownership
 
