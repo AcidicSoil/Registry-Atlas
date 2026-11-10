@@ -3,7 +3,7 @@ type LedgersLookupContract = Record<string, Map<string, any>>;
 
 import { describe, expect, it } from "vitest";
 // @ts-expect-error Node ESM source script has no TS declarations.
-import { deriveTraversalInventory } from "../../scripts/derive-registry-traversal-patterns.mjs";
+import { deriveTraversalInventory } from "../../scripts/discovery/derive-registry-traversal-patterns.mjs";
 // @ts-expect-error Node ESM source script has no TS declarations.
 import { catalogFingerprint, DISCOVERY_REVISION } from "../../scripts/lib/registry-discovery.mjs";
 

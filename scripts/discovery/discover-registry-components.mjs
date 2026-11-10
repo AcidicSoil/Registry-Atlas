@@ -1,15 +1,15 @@
-import { isInputString } from "./lib/input-guards.mjs";
+import { isInputString } from "../lib/input-guards.mjs";
 import { execFileSync } from "node:child_process";
 import { readFile, open, unlink } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { isAbsolute } from "node:path";
-import { PinchTabBrowser } from "./collect-browser-link-evidence.mjs";
+import { PinchTabBrowser } from "../collect-browser-link-evidence.mjs";
 import {
   discoverRegistry,
   DiscoveryLedger,
   catalogFingerprint,
-} from "./lib/registry-discovery.mjs";
-import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
+} from "../lib/registry-discovery.mjs";
+import { openAtlasCoreDatabase, readAtlasState } from "../lib/atlas-storage.mjs";
 
 function args(argv) {
   const legal = new Set([

@@ -8,7 +8,7 @@ vi.setConfig({ testTimeout: 30000 });
 import { describe, expect, it } from "vitest";
 import { testRouteDatabase } from "./postgresFixture";
 // @ts-expect-error Standalone Node ESM helper.
-import { discoverRegistryIntoPostgres } from "../../scripts/discover-registry-routes.mjs";
+import { discoverRegistryIntoPostgres } from "../../scripts/discovery/discover-registry-routes.mjs";
 // @ts-expect-error Standalone Node ESM helper.
 import { reconcileRegistryCatalog } from "../../scripts/verify-registry-patterns.mjs";
 

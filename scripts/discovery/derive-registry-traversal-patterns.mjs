@@ -1,4 +1,4 @@
-import { isInputString } from "./lib/input-guards.mjs";
+import { isInputString } from "../lib/input-guards.mjs";
 import { readFile, writeFile } from "node:fs/promises";
 import { join, isAbsolute } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -6,8 +6,8 @@ import {
   DiscoveryLedger,
   catalogFingerprint,
   DISCOVERY_REVISION,
-} from "./lib/registry-discovery.mjs";
-import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
+} from "../lib/registry-discovery.mjs";
+import { openAtlasCoreDatabase, readAtlasState } from "../lib/atlas-storage.mjs";
 
 const SCHEMA = "registry-atlas-traversal-inventory/v1";
 

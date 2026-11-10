@@ -1,10 +1,10 @@
-import { isInputObject, isInputString } from "./lib/input-guards.mjs";
+import { isInputObject, isInputString } from "../lib/input-guards.mjs";
 import { pathToFileURL } from "node:url";
 import {
   openAtlasCoreDatabase,
   readAtlasState,
   replaceCuratedItemSummaries,
-} from "./lib/atlas-storage.mjs";
+} from "../lib/atlas-storage.mjs";
 
 const ITEM_TYPES = new Set([
   "registry:block",

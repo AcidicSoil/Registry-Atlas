@@ -20,8 +20,14 @@ Their `.d.mts` declarations remain beside their implementations. The tests in `t
 
 The source audits reuse the existing browser and persistence utilities from `scripts/` and `scripts/lib/`. Do not duplicate those utilities or introduce forwarding wrappers at the old script paths.
 
+## Registry discovery
+
+`scripts/discovery/` groups the six directly related discovery commands: `discover-registry-components.mjs`, `discover-registry-routes.mjs`, `schedule-registry-discovery.mjs`, `crawl-component-links.mjs`, `derive-registry-traversal-patterns.mjs`, and `recover-item-evidence.mjs`. Their shared browser and database utilities remain in `scripts/` and `scripts/lib/`.
+
+The root-level discovery commands remain in place where package scripts, mise tasks, or operator documentation depend on their paths. Run the six moved commands under `scripts/discovery/` when invoking them directly. Tests remain in `tests/registry-explorer/`; no compatibility wrappers were added.
+
 ## Remaining work
 
-Other operational entry points remain in `scripts/` until each domain group has a verified dependency map. Candidate groups include catalog classification, discovery, database maintenance, release generation, and quality checks. Moving a command requires updating its callers, its declaration file if present, import paths, documentation, and scoped tests in the same change.
+Other operational entry points remain in `scripts/` until each domain group has a verified dependency map. Candidate groups include catalog classification, database maintenance, release generation, and quality checks. Moving a command requires updating its callers, its declaration file if present, import paths, documentation, and scoped tests in the same change.
 
 This reorganization does not change the historical implementation plans in `docs/superpowers/` or the PPM standards inventory.

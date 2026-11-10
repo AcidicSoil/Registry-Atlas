@@ -1,8 +1,8 @@
-import { isInputString } from "./lib/input-guards.mjs";
+import { isInputString } from "../lib/input-guards.mjs";
 
 import { pathToFileURL } from "node:url";
-import { PinchTabBrowser } from "./collect-browser-link-evidence.mjs";
-import { discoverRegistry } from "./lib/registry-discovery.mjs";
+import { PinchTabBrowser } from "../collect-browser-link-evidence.mjs";
+import { discoverRegistry } from "../lib/registry-discovery.mjs";
 import { deriveTraversalInventory } from "./derive-registry-traversal-patterns.mjs";
 import {
   configureManagedSourceBrowser,
@@ -13,9 +13,9 @@ import {
   verifyRegistryPatterns,
   managedBrowserPatternProof,
   reconcileRegistryCatalog,
-} from "./verify-registry-patterns.mjs";
-import { seedComponentCandidates, verifyComponentCandidates } from "./verify-component-pages.mjs";
-import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
+} from "../verify-registry-patterns.mjs";
+import { seedComponentCandidates, verifyComponentCandidates } from "../verify-component-pages.mjs";
+import { openAtlasCoreDatabase, readAtlasState } from "../lib/atlas-storage.mjs";
 
 function memoryLedger(namespace) {
   const rows = new Map();

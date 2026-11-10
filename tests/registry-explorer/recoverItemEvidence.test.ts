@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
-// @ts-ignore Standalone Node script.
-import { verifyOfficialItem, recoverOfficialItem } from "../../scripts/recover-item-evidence.mjs";
+import {
+  verifyOfficialItem,
+  recoverOfficialItem,
+  // @ts-expect-error Standalone Node ESM module.
+} from "../../scripts/discovery/recover-item-evidence.mjs";
 
 describe("official item recovery", () => {
   const registry = {

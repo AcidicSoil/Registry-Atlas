@@ -9,7 +9,7 @@ import {
   proposeVerifiedLinkUpdates,
   collectDiscoveryLinkEvidence,
   // @ts-ignore standalone Node ESM.
-} from "../../scripts/crawl-component-links.mjs";
+} from "../../scripts/discovery/crawl-component-links.mjs";
 
 const registries = [
   { name: "@a", homepage: "https://a.example", url: "https://a.example/r/{name}.json" },

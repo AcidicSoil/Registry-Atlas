@@ -2,13 +2,13 @@ import { execFileSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { pathToFileURL } from "node:url";
-import { DiscoveryLedger } from "./lib/registry-discovery.mjs";
+import { DiscoveryLedger } from "../lib/registry-discovery.mjs";
 import {
   planRegistryDiscovery,
   executeDiscoveryBatch,
-} from "./lib/registry-discovery-schedule.mjs";
+} from "../lib/registry-discovery-schedule.mjs";
 import { main as runDiscovery } from "./discover-registry-components.mjs";
-import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
+import { openAtlasCoreDatabase, readAtlasState } from "../lib/atlas-storage.mjs";
 
 export function parseRegistryScheduleArgs(argv) {
   const flags = new Set([

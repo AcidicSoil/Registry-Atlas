@@ -7,6 +7,7 @@
   "entry": [
     "scripts/*.mjs",
     "scripts/audits/*.mjs",
+    "scripts/discovery/*.mjs",
     "tests/**/*.{test,spec}.{ts,tsx,js,mjs}",
     "tests/**/*.e2e.ts",
     "tests-mobile/**/*.e2e.ts",

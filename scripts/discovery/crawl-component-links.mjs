@@ -3,15 +3,15 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { resolve, dirname } from "node:path";
 import { pathToFileURL } from "node:url";
-import { PinchTabBrowser } from "./collect-browser-link-evidence.mjs";
-import { discoverRegistry } from "./lib/registry-discovery.mjs";
+import { PinchTabBrowser } from "../collect-browser-link-evidence.mjs";
+import { discoverRegistry } from "../lib/registry-discovery.mjs";
 import { configureManagedSourceBrowser } from "./discover-registry-components.mjs";
 import { recoverOfficialItem } from "./recover-item-evidence.mjs";
 import {
   openAtlasCoreDatabase,
   readAtlasState,
   replaceCuratedAndRegistrySnapshot,
-} from "./lib/atlas-storage.mjs";
+} from "../lib/atlas-storage.mjs";
 
 const VALID_SLUG = /^[a-z0-9][a-z0-9_-]*$/;
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 // @ts-ignore Standalone Node ESM CLI parser.
-import { parseRegistryScheduleArgs } from "../../scripts/schedule-registry-discovery.mjs";
+import { parseRegistryScheduleArgs } from "../../scripts/discovery/schedule-registry-discovery.mjs";
 
 const required = [
   "--profile",
