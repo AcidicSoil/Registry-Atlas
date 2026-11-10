@@ -391,6 +391,61 @@ function normalizeNamespace(value) {
   return valueLower.startsWith("@") ? valueLower : `@${valueLower}`;
 }
 
+/** Resolve duplicate index names against their single official item endpoint. */
+async function resolveDuplicateCatalogItems(catalog, catalogUrl, timeoutMs, fetchImpl) {
+  const supported = new Set(DISCOVERABLE_REGISTRY_ITEM_TYPES);
+  const byName = new Map();
+
+  for (const item of catalog.items) {
+    if (!isInputString(item?.name) || !supported.has(item.type)) continue;
+    const matches = byName.get(item.name) ?? [];
+
+    matches.push(item);
+    byName.set(item.name, matches);
+  }
+
+  const duplicates = [...byName].filter(([, items]) => items.length > 1);
+
+  if (!duplicates.length) return catalog;
+
+  const replacements = new Map();
+
+  for (const [name, candidates] of duplicates) {
+    const itemUrl = rawItemUrlFromCatalogUrl(catalogUrl, name);
+
+    if (!itemUrl) throw new Error("ambiguous-registry-identity");
+
+    const response = await fetchImpl(itemUrl, { signal: AbortSignal.timeout(timeoutMs) });
+
+    if (!response.ok) throw new Error("ambiguous-registry-identity");
+
+    const authoritative = await response.json();
+
+    if (
+      authoritative?.name !== name ||
+      !candidates.some((candidate) => candidate.type === authoritative.type)
+    ) {
+      throw new Error("ambiguous-registry-identity");
+    }
+
+    replacements.set(name, authoritative);
+  }
+
+  const kept = new Set();
+
+  const items = catalog.items.flatMap((item) => {
+    if (!replacements.has(item.name)) return [item];
+
+    if (kept.has(item.name)) return [];
+
+    kept.add(item.name);
+
+    return [replacements.get(item.name)];
+  });
+
+  return { ...catalog, items };
+}
+
 async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
   const namespace = normalizeNamespace(registry?.name);
   const candidates = deriveCatalogCandidates(registry?.url);
@@ -447,19 +502,29 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
 
         const resolvedCatalogUrl = response.url || catalogUrl;
 
+        const resolved = await resolveDuplicateCatalogItems(
+          catalog,
+          resolvedCatalogUrl,
+          timeoutMs,
+          fetchImpl,
+        );
+
         return {
           evidence: buildCatalogEvidence(
             namespace,
             registry.url,
-            catalog,
+            resolved,
             new Date().toISOString(),
             resolvedCatalogUrl,
           ),
-          items: buildCompactCatalogItems(catalog, resolvedCatalogUrl),
-          details: buildRegistryItemDetailBundle(catalog),
+          items: buildCompactCatalogItems(resolved, resolvedCatalogUrl),
+          details: buildRegistryItemDetailBundle(resolved),
         };
       } catch (error) {
-        const errorName = error?.name ?? "fetch-error";
+        const errorName =
+          error?.message === "ambiguous-registry-identity"
+            ? "ambiguous-registry-identity"
+            : (error?.name ?? "fetch-error");
 
         const reason =
           errorName === "TimeoutError"
@@ -481,7 +546,12 @@ async function fetchCatalog(registry, timeoutMs, fetchImpl = fetch) {
 export function classifyCatalogFailureReason(reason) {
   if (reason === "unsupported-template") return "template-unsupported";
 
-  if (reason === "invalid-json" || reason === "invalid-registry-catalog") return "invalid-response";
+  if (
+    reason === "invalid-json" ||
+    reason === "invalid-registry-catalog" ||
+    reason === "ambiguous-registry-identity"
+  )
+    return "invalid-response";
 
   if (reason === "http-403") return "access-restricted";
 

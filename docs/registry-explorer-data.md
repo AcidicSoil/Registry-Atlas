@@ -44,16 +44,16 @@ docker exec registry-atlas-local-database-1 pg_dump -U atlas -d atlas --schema=a
 
 The official registry directory's current `{name}` URL template determines the authoritative catalog index and item routes. Both sync commands use the shared classification projector in `scripts/lib/catalog-classification-overlay.mjs`. Following a successful nonempty index refresh, they retire approvals for items no longer listed within the same PostgreSQL transaction as the catalog update. Failed fetches retain the previous catalog and approvals. Items still present remain protected by SHA-256 input fingerprints.
 
-Do not ingest superseded version indexes to make older approvals valid. A targeted reconciliation verifies the current source before removing approvals:
+Do not ingest superseded version indexes to make old approvals appear valid. The source-backed reconciliation command handles the entire changed/missing queue, preserving untouched namespaces and rejecting incomplete refreshes:
 
 ```sh
-node scripts/audits/reconcile-catalog-approvals.mjs --namespace @registry
-node scripts/audits/reconcile-catalog-approvals.mjs --namespace @registry --apply
+node scripts/audits/reconcile-catalog-queue.mjs
+node scripts/audits/reconcile-catalog-queue.mjs --apply
 ```
 
-The first command reads the source and database without modifying them. It requires both indexes to list the same item identities. `--apply` removes only absent approvals and saves their identity and fingerprint provenance in an audit document. This audit cannot supply catalog items or reapprove classifications. The remaining active approvals live only in `atlas_classifications`. Repeated application is idempotent.
+The first command is read-only against PostgreSQL and writes its detailed plan to `.instance/reviews/catalog-queue-reconciliation.json`. The second requires all affected current indexes to be fetched successfully. Duplicate index identities are resolved from the exact official per-item JSON; an unresolved ambiguity blocks the refresh. In a single transaction, the command updates refreshed catalog/details, keeps independently reproduced classifications with new fingerprints, and retires absent or unverified approvals. Every renewal and retirement is recorded in audit documents. Those audit documents are historical evidence, not fallback catalogs or sources of active approvals.
 
-On November 10, the current Animate UI index and local catalog each contained 789 items. All 27 obsolete v1 approvals were retired, with no v1 item import or current catalog change. The review report now shows 26,040 matching entries, 432 changed fingerprints, and 104 absent identities elsewhere.
+On November 10 the atomic reconciliation fetched 31 registries, retained **429 independently validated category decisions**, and retired **149** obsolete or unverified approvals. Of those, 138 were missing from current indexes, six belonged to namespaces no longer in the official directory, and five had changed input without a verifiable deterministic classification. The original approvals for those five remain auditable but are not active. The result is **26,427 active approvals with zero stale and zero missing identities**, and 120,407 current catalog/detail pairs. The database backup preceded the update, and a repeated run returns `alreadyCurrent: true`.
 
 ## Recovery and backups
 

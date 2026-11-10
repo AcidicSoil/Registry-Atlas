@@ -116,7 +116,7 @@ export function validateCatalogClassificationOverlay(value, taxonomy) {
   return value;
 }
 
-function currentInputFingerprint(namespace, rawItem, overlayItem) {
+export function currentCatalogClassificationEvidence(namespace, rawItem, overlayItem) {
   const sourceHints = {};
 
   if (Array.isArray(rawItem.categories) && rawItem.categories.length)
@@ -147,7 +147,11 @@ function currentInputFingerprint(namespace, rawItem, overlayItem) {
     })(),
   );
 
-  return catalogClassificationInputFingerprint(state);
+  return { state, fingerprint: catalogClassificationInputFingerprint(state) };
+}
+
+function currentInputFingerprint(namespace, rawItem, overlayItem) {
+  return currentCatalogClassificationEvidence(namespace, rawItem, overlayItem).fingerprint;
 }
 
 function currentClassificationInputs(catalog) {

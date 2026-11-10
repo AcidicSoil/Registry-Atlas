@@ -1,6 +1,6 @@
 # Registry Atlas refactor plan
 
-**Status (updated 2026-11-10):** Phases 5A–5C and local 5E publication are implemented. The 5D StyleX ownership migration and independent design certification remain open. The restored three-item component-preview pilot does not establish catalog-wide coverage. The active classification overlay contains 432 changed inputs and 104 absent identities after retirement of 27 superseded Animate UI approvals. Older counts below are historical checkpoints. See `TODO.md` for current priorities; the checkpoints below retain historical evidence.
+**Status (updated 2026-11-10):** Phases 5A–5C and local 5E publication are implemented. The 5D StyleX ownership migration and independent design certification remain open. The restored three-item component-preview pilot does not establish catalog-wide coverage. The November 10 current-source reconciliation resolved all 432 changed and 104 previously missing identities, plus 40 additional upstream removals: zero active stale/missing approvals remain. Five unverified changed decisions were retired rather than reapproved. Older counts below are historical checkpoints. See `TODO.md` for current priorities; the checkpoints below retain historical evidence.
 
 **Historical planning baseline:** `aa7893e` on 2026-11-03. This is not the current checkout revision.
 
@@ -224,7 +224,7 @@ The previous provider-neutral image collector documented above was found insuffi
 - **5C implemented:** `src/registry-explorer/ui/browseRouteState.ts` now owns pure route hydration and URL formatting; `browseHistory.ts` owns best-effort session snapshot access. `shell.ts` remains the single browser history/DOM event owner. The existing URL and route contracts, legacy deep links, and setup state are preserved.
 - **Project contract improvements:** `scripts/check-product-contract.mjs` accepts equivalent formatting of valid links and `not-found` routes and no longer incorrectly declares the approved `component-previews.json` pilot retired. `test:watch` package-script alias was removed to return to the existing 40-script contract; the `mise` watch task invokes Vitest directly.
 - **5E verified repair:** `scripts/import-registry-catalog.mjs` now writes imported summaries and its provenance report within one PostgreSQL transaction. `registryCatalogImport.test.ts` uses an isolated test schema to prove rollback on report failure. No production catalog data was changed.
-- **Open, not silently remediated:** 432 stale reviewed fingerprints and 131 missing reviewed identities require source-backed re-review; remaining 5D CSS/StyleX ownership, snapshot publication/reconciliation concurrency, and independent PPM standards/design review remain.
+- **Historical checkpoint:** At this stage, 432 stale fingerprints and 131 missing identities remained. The later November 10 reconciliation resolved those active-reference defects; 5D CSS/StyleX ownership and independent PPM design review remain open.
 
 ## Phase 5E: consistent PostgreSQL runtime reads (2026-11-04)
 

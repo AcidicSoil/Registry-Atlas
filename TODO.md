@@ -3,15 +3,25 @@
 Current catalog and approval state checked on 2026-11-10.
 Earlier SQLite and `feat/clef-identity-decision` tasks are historical; see Git history.
 
-## P0 — Review canonical classification drift
+## P0 — Canonical classification reconciliation
 
-- [ ] Review 432 changed classification inputs against current source evidence. Do **not** copy old input fingerprints or silently reapprove decisions.
-- [ ] Investigate 104 remaining absent reviewed identities against their authoritative current registry indexes. Retire confirmed removals; do not reimport superseded versions.
-- [ ] Promote approved classifications through the existing reviewed-run workflow, then verify `pnpm check:product-contract` and `pnpm validate:data` pass.
-- [x] Produce a read-only review queue: `node scripts/audits/report-classification-drift.mjs` writes `.instance/reviews/catalog-classification-drift.json`.
-- [x] Retire absent approvals only after a successful authoritative index refresh; keep approvals after fetch failure.
+- [x] Reconcile the entire changed/missing approval queue against live official indexes.
+- [x] Independently revalidate 429 unchanged canonical decisions using current source metadata.
+- [x] Retire 149 obsolete or unproven approvals with transactional audit provenance.
+- [x] Restore the product-contract and data-validation gates; both pass.
+- [x] Export a generation-atomic runtime snapshot containing 120,407 catalog/detail pairs.
+- [x] Keep the five changed classifications without deterministic confirmation outside active approvals; retain their previous category and reason in the retirement audit.
 
-The current report contains 26,576 reviewed entries: 26,040 match, 432 have changed inputs, and 104 remain missing. On November 10, the current Animate UI index was verified and 27 obsolete v1 approvals were retired transactionally. No superseded items were reimported.
+Post-apply verification: **26,427 active approvals, 26,427 matching, zero stale, zero missing**. The current catalog is the only active item source. No legacy registry index is imported. Five retired entries require new source review before they can regain an approved category.
+
+The dry-run and application workflow:
+
+```bash
+node scripts/audits/reconcile-catalog-queue.mjs
+node scripts/audits/reconcile-catalog-queue.mjs --apply
+```
+
+Back up PostgreSQL before applying. This workflow rejects incomplete source refreshes and never automatically reapproves changes that cannot be independently verified.
 
 ## P1 — Catalog metadata and frontend verification
 
@@ -43,8 +53,8 @@ The current report contains 26,576 reviewed entries: 26,040 match, 432 have chan
 node scripts/audits/report-classification-drift.mjs  # read-only DB; local report
 pnpm check:postgres
 pnpm check:runtime-data
-pnpm check:product-contract  # currently fails on 432 stale fingerprints
-pnpm validate:data           # currently fails on the same 432 entries
+pnpm check:product-contract
+pnpm validate:data
 pnpm lint
 pnpm test
 pnpm build

@@ -16,7 +16,7 @@ Use package scripts for supported workflows, such as `pnpm build` and `pnpm prep
 - `audit-21st-interactions.mjs` verifies observed interactions against that evidence.
 - `audit-component-links.mjs` reviews component-link evidence before approved updates.
 - `report-classification-drift.mjs` lists changed and missing reviewed identities without updating the database.
-- `reconcile-catalog-approvals.mjs` checks one namespace against its current official index and optionally retires obsolete approvals. It defaults to dry-run.
+- `reconcile-catalog-queue.mjs` reconciles all affected current-source registries, verifies deterministic decisions, and retires obsolete or unverified approvals atomically. Dry-run is the default.
 
 The existing `.d.mts` declarations remain beside their matching implementations. The tests in `tests/registry-explorer/` import the modules directly. The commands are not exposed by `package.json` or CI; run them using their new `scripts/audits/` paths.
 

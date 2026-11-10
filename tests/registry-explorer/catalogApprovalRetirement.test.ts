@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 // @ts-ignore Node ESM domain module.
 import { retireMissingCatalogApprovals } from "../../scripts/lib/catalog-classification-overlay.mjs";
 // @ts-ignore Standalone Node PostgreSQL storage adapter.
-import { persistRetiredCatalogApprovals } from "../../scripts/lib/catalog-approval-storage.mjs";
+import {
+  persistRetiredCatalogApprovals,
+  persistRevalidatedCatalogApprovals,
+  // @ts-ignore Standalone Node PostgreSQL storage adapter.
+} from "../../scripts/lib/catalog-approval-storage.mjs";
 import {
   readClassifications,
   replaceClassifications,
@@ -132,6 +136,68 @@ describe("current catalog approval reconciliation", () => {
       ).rejects.toThrow(/changed during retirement/i);
 
       expect(await readDocument(db, "catalog-retired-classification-approvals")).toBeNull();
+    } finally {
+      await db.close();
+    }
+  });
+
+  it("revalidates one fingerprint with provenance and no changed category", async () => {
+    const db = await testRouteDatabase();
+    const prior = approved("@example", "button");
+    const changed = { ...prior, inputFingerprint: "sha256:" + "b".repeat(64) };
+
+    try {
+      await replaceClassifications(db, [prior]);
+      await transaction(db, async (tx: any) => {
+        await persistRevalidatedCatalogApprovals(tx, [
+          {
+            review: changed,
+            oldFingerprint: prior.inputFingerprint,
+            method: "deterministic-alias",
+            sourceUrl: "https://example.com/r/button.json",
+          },
+        ]);
+      });
+
+      expect(await readClassifications(db)).toEqual([changed]);
+      const audit = await readDocument(db, "catalog-revalidated-classification-approvals");
+
+      expect(audit.entries).toEqual([
+        expect.objectContaining({
+          namespace: "@example",
+          name: "button",
+          oldFingerprint: prior.inputFingerprint,
+          newFingerprint: changed.inputFingerprint,
+          verifiedCanonicalPrimary: "navigation/tabs",
+          method: "deterministic-alias",
+        }),
+      ]);
+    } finally {
+      await db.close();
+    }
+  });
+
+  it("rejects a stale revalidation and rolls back its audit", async () => {
+    const db = await testRouteDatabase();
+    const prior = approved("@example", "button");
+
+    try {
+      await replaceClassifications(db, [prior]);
+
+      await expect(
+        transaction(db, async (tx: any) => {
+          await persistRevalidatedCatalogApprovals(tx, [
+            {
+              review: { ...prior, inputFingerprint: "sha256:" + "b".repeat(64) },
+              oldFingerprint: "sha256:" + "c".repeat(64),
+              method: "deterministic-alias",
+            },
+          ]);
+        }),
+      ).rejects.toThrow(/changed during revalidation/i);
+
+      expect(await readClassifications(db)).toEqual([prior]);
+      expect(await readDocument(db, "catalog-revalidated-classification-approvals")).toBeNull();
     } finally {
       await db.close();
     }

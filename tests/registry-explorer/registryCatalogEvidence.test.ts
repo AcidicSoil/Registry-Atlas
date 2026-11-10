@@ -180,6 +180,75 @@ describe("registry catalog evidence sync", () => {
     expect(result.evidence["@beta"]).not.toHaveProperty("component_tags");
   });
 
+  it("resolves conflicting index identities through the official item JSON", async () => {
+    const urls: string[] = [];
+
+    const result = await syncCatalogEvidenceForRegistries(
+      [{ name: "@example", url: "https://example.com/r/{name}.json" }],
+      {
+        fetchImpl: async (url: string | URL | Request) => {
+          const location = String(url);
+
+          urls.push(location);
+
+          if (location.endsWith("registry.json")) {
+            return new Response(
+              JSON.stringify({
+                items: [
+                  { name: "watchlist", type: "registry:ui", title: "UI listing" },
+                  { name: "watchlist", type: "registry:block", title: "Paid listing" },
+                ],
+              }),
+              { status: 200 },
+            );
+          }
+
+          return new Response(
+            JSON.stringify({ name: "watchlist", type: "registry:ui", title: "Official item" }),
+            { status: 200 },
+          );
+        },
+      },
+    );
+
+    expect(urls).toEqual([
+      "https://example.com/r/registry.json",
+      "https://example.com/r/watchlist.json",
+    ]);
+    expect(result.itemsByNamespace["@example"]).toEqual([
+      {
+        name: "watchlist",
+        type: "registry:ui",
+        title: "Official item",
+        rawItemUrl: "https://example.com/r/watchlist.json",
+      },
+    ]);
+    expect(result.report.failure_count).toBe(0);
+  });
+
+  it("refuses ambiguous duplicates when the official item cannot be verified", async () => {
+    const result = await syncCatalogEvidenceForRegistries(
+      [{ name: "@example", url: "https://example.com/r/{name}.json" }],
+      {
+        fetchImpl: async (url: string | URL | Request) =>
+          String(url).endsWith("registry.json")
+            ? new Response(
+                JSON.stringify({
+                  items: [
+                    { name: "button", type: "registry:ui" },
+                    { name: "button", type: "registry:block" },
+                  ],
+                }),
+                { status: 200 },
+              )
+            : new Response("missing", { status: 404 }),
+      },
+    );
+
+    expect(result.report.failure_count).toBe(1);
+    expect(result.itemsByNamespace["@example"]).toBeUndefined();
+  });
+
   it("keeps only user-facing registry item types in the compact catalog index", () => {
     expect(DISCOVERABLE_REGISTRY_ITEM_TYPES).toEqual([
       "registry:block",
