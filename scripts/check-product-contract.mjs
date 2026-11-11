@@ -18,7 +18,7 @@ function assert(condition, message) {
 
 const routeSource = read("src/registry-explorer/core/catalogRoutes.ts");
 
-const shellSource = read("src/registry-explorer/ui/shell.ts");
+const rendererSource = read("src/registry-explorer/ui/shellRenderer.ts");
 
 const browseRouteSource = read("src/registry-explorer/ui/browseRouteState.ts");
 
@@ -159,7 +159,7 @@ assert(
 assert(
   read("src/registry-explorer/ui/catalogBreadcrumbs.ts").includes('aria-label="Breadcrumb"') &&
     routeSource.includes('"registry-assets"') &&
-    shellSource.includes("renderCatalogBreadcrumbs"),
+    rendererSource.includes("renderCatalogBreadcrumbs"),
   "registry and component routes must preserve parent-library breadcrumb navigation",
 );
 

@@ -134,7 +134,22 @@ The canonical browser surface is:
 - `index.html` — static shell loaded by Vite and production builds.
 - `public/styles/registry-explorer.css` — application layout and visual system.
 - `src/registry-explorer/entry.ts` — bootstrap and runtime data loading.
-- `src/registry-explorer/ui/shell.ts` — route/history/state coordination.
+- `src/registry-explorer/ui/shell.ts` — composition root for state transitions, navigation, and delegated DOM events.
+
+### Shell Ownership
+
+The shell composes focused controllers through typed dependencies. **`shell.ts` is the sole application-state owner**; extracted modules do not maintain competing route state or separate application entrypoints.
+
+- `shellState.ts` — shared state and focus identity contracts.
+- `shellInteractions.ts` — delegated catalog controls and selection.
+- `shellBrowseFeed.ts` — pagination, observers, and scroll restoration.
+- `shellSetup.ts` — queue, replacement, draft persistence, and clipboard.
+- `shellSidebar.ts` — sidebar counts, facets, and taxonomy expansion.
+- `shellCatalogViews.ts` — catalog landing, collections, profiles, and icons.
+- `shellDetailViews.ts` — item-detail loading and comparisons.
+- `shellRenderer.ts` — route dispatch, headers, tabs, and render fallback.
+
+The public bootstrap remains `initRegistryExplorer` from `ui/shell.ts`. CSS and rendered markup are unchanged. Run `pnpm exec vitest run tests/registry-explorer/shell.test.ts tests/registry-explorer/shellDomContract.test.ts tests/registry-explorer/shellInteractions.test.ts tests/registry-explorer/shellSetup.test.ts` for focused coverage; use the existing browser tests for route, sidebar, setup, and infinite-scroll behavior.
 
 ### Directory Structure
 
