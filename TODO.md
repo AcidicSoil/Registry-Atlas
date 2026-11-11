@@ -29,7 +29,6 @@ Back up PostgreSQL before applying. This workflow rejects incomplete source refr
 - [ ] Audit low-information titles on other browse surfaces, exempting legitimately short icon names.
 - [ ] Run and review desktop/mobile route, card link, filter, focus, keyboard, overflow, and source-link acceptance against a freshly built app.
 - [ ] Complete the remaining component StyleX ownership migration; retain global CSS until rendered parity is independently demonstrated.
-- [ ] Refactor the 2,221-line `ui/shell.ts` along verified ownership boundaries rather than splitting by line count alone.
 - [ ] Audit registry logo quality/coverage across sidebar, directory cards, and registry profile headers.
 
 ## P1 — Release and external delivery
