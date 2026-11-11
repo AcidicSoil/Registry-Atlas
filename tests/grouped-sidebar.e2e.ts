@@ -17,6 +17,28 @@ test("category expansion and filtering are distinct actions", async ({ app, brow
     )
     .toBe(true);
   await expect(group).toBeVisible();
+
+  const navStyle = await browser.evaluate(() => {
+    const nav = document.querySelector<HTMLElement>('nav[aria-label="Browse catalog"]');
+
+    if (!nav) return null;
+    const style = getComputedStyle(nav);
+
+    return {
+      display: style.display,
+      gap: style.gap,
+      paddingBottom: style.paddingBottom,
+      hasStylex: [...nav.classList].some((name) => name.startsWith("x")),
+    };
+  });
+
+  expect(navStyle).toEqual({
+    display: "grid",
+    gap: "0px",
+    paddingBottom: "18px",
+    hasStylex: true,
+  });
+
   const before = await browser.evaluate(() => location.search);
 
   await heading.tap();

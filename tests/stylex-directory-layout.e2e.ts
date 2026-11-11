@@ -15,6 +15,31 @@ test("native StyleX directory grid and list preserve layout, links, and responsi
     })
     .toBe(true);
 
+  const sidebarStyle = await browser.evaluate(() => {
+    const sidebar = document.querySelector<HTMLElement>(
+      'nav[aria-label="Registry directory controls"]',
+    );
+
+    if (!sidebar) return null;
+    const style = getComputedStyle(sidebar);
+
+    return {
+      display: style.display,
+      gap: style.gap,
+      paddingBottom: style.paddingBottom,
+      hasStylex: [...sidebar.classList].some((name) => name.startsWith("x")),
+      hasLegacy: sidebar.classList.contains("registry-library-sidebar"),
+    };
+  });
+
+  expect(sidebarStyle).toEqual({
+    display: "grid",
+    gap: "0px",
+    paddingBottom: "18px",
+    hasStylex: true,
+    hasLegacy: false,
+  });
+
   const inspect = () =>
     browser.evaluate(() => {
       const grid = document.querySelector<HTMLElement>("[data-directory-grid]");

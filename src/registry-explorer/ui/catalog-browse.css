@@ -10,12 +10,6 @@
   display: grid;
 }
 
-.sidebar-browse-navigation {
-  display: grid;
-  min-width: 0;
-  gap: 12px;
-}
-
 .sidebar-browse-section {
   display: grid;
   min-width: 0;
@@ -283,9 +277,5 @@
   .content {
     padding: 18px 15px 42px;
     min-width: 0;
-  }
-
-  .sidebar-browse-navigation {
-    padding-bottom: 22px;
   }
 }

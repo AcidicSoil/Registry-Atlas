@@ -189,9 +189,7 @@ main {
   scrollbar-color: color-mix(in srgb, var(--muted-foreground) 45%, transparent) transparent;
 }
 
-.app-sidebar .desktop-browse-rail,
-.sidebar-browse-navigation,
-.registry-library-sidebar {
+.app-sidebar .desktop-browse-rail {
   display: grid;
   min-width: 0;
   gap: 0;

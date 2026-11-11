@@ -14,7 +14,6 @@ describe("catalog stylesheet ownership", () => {
       "src/registry-explorer/ui/catalog-hierarchy.css",
       "src/registry-explorer/ui/app-shell-core.css",
       "src/registry-explorer/ui/catalog-browse.css",
-      "src/registry-explorer/ui/catalog-library-cards.css",
       "src/registry-explorer/ui/sidebar-browse-rail.css",
       "src/registry-explorer/ui/registry-directory-navigation.css",
       "src/registry-explorer/ui/sidebar-exemplar-rail.css",
@@ -37,13 +36,13 @@ describe("catalog stylesheet ownership", () => {
     const base = source("public/styles/registry-explorer.css");
     const catalog = source("src/registry-explorer/ui/catalog-reference.css");
     const shell = source("src/registry-explorer/ui/app-shell-core.css");
-    const browse = source("src/registry-explorer/ui/catalog-library-cards.css");
+    const navigation = source("src/registry-explorer/ui/sidebarNavigation.stylex.ts");
     const sidebar = source("src/registry-explorer/ui/sidebar-browse-rail.css");
 
     expect(base).not.toContain("21st.dev-reference catalogue surfaces");
     expect(catalog).toContain("21st.dev-reference catalogue surfaces");
     expect(shell).toContain("Sidebar-first shell correction");
-    expect(browse).toContain("Source-backed catalog cards");
+    expect(navigation).toContain("root: {");
     expect(sidebar).toContain("Authoritative browse sidebar");
   });
 });

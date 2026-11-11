@@ -41,7 +41,6 @@ describe("native StyleX architecture", () => {
     const styles = [
       "public/styles/registry-explorer.css",
       "src/registry-explorer/ui/catalog-reference.css",
-      "src/registry-explorer/ui/catalog-library-cards.css",
       "src/registry-explorer/ui/catalog-browse.css",
       "src/registry-explorer/ui/catalog-hierarchy.css",
       "src/registry-explorer/ui/sidebar-browse-rail.css",
@@ -62,6 +61,25 @@ describe("native StyleX architecture", () => {
     }
   });
 
+  it("shares a single StyleX owner for both sidebar navigation roots", () => {
+    const html = root("index.html");
+    const directory = root("src/registry-explorer/ui/registryDirectoryView.ts");
+    const catalog = root("src/registry-explorer/ui/catalogSidebarNavigation.ts");
+    const stylex = root("src/registry-explorer/ui/sidebarNavigation.stylex.ts");
+
+    const global = [
+      root("src/registry-explorer/ui/sidebar-browse-rail.css"),
+      root("src/registry-explorer/ui/catalog-browse.css"),
+    ].join("\n");
+
+    expect(html).not.toContain("catalog-library-cards.css");
+    expect(directory).toContain("stylex.attrs(sidebarNavigationStyles.root)");
+    expect(catalog).toContain("stylex.attrs(sidebarNavigationStyles.root)");
+    expect(directory).not.toContain("registry-library-sidebar");
+    expect(stylex).toContain("root: {");
+    expect(global).not.toMatch(/\.sidebar-browse-navigation\s*\{/);
+  });
+
   it("validates authored StyleX with official lint rules", () => {
     const pkg = JSON.parse(root("package.json"));
     const eslint = root("eslint.config.mjs");
@@ -75,7 +93,7 @@ describe("native StyleX architecture", () => {
 
   it("renders catalog labels without legacy presentation selectors", () => {
     const view = root("src/registry-explorer/ui/catalogComponentsView.ts");
-    const styles = root("src/registry-explorer/ui/catalog-library-cards.css");
+    const styles = root("src/registry-explorer/ui/sidebar-browse-rail.css");
     expect(view).toContain("data-catalog-card");
     expect(view).toContain("data-catalog-open");
     expect(view).toContain("data-catalog-description");

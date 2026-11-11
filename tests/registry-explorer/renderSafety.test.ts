@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   escapeHtml,
   renderExternalLink,
+  renderStyleXAttributes,
   renderRegistryHomepageLink,
   renderSafeExternalImage,
   toSafeExternalUrl,
@@ -11,6 +12,17 @@ describe("renderSafety", () => {
   it("escapes HTML text and attribute characters", () => {
     expect(escapeHtml(`A&B <tag attr="value"> it's`)).toBe(
       "A&amp;B &lt;tag attr=&quot;value&quot;&gt; it&#39;s",
+    );
+  });
+
+  it("combines semantic classes with StyleX classes without duplicating attributes", () => {
+    expect(
+      renderStyleXAttributes(
+        { class: "x-compiled", style: "--level: 1", "data-style-src": "stylex" },
+        "sidebar-browse-navigation",
+      ),
+    ).toBe(
+      ' class="sidebar-browse-navigation x-compiled" style="--level: 1" data-style-src="stylex"',
     );
   });
 

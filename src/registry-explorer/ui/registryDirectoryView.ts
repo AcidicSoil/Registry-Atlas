@@ -1,5 +1,6 @@
 import * as stylex from "@stylexjs/stylex";
 import { directoryOpenMarker, directoryStyles } from "./registryDirectory.stylex";
+import { sidebarNavigationStyles } from "./sidebarNavigation.stylex";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type {
   RegistryCatalogCoverage,
@@ -83,7 +84,10 @@ export function renderRegistryDirectorySidebar(options: RegistryDirectorySidebar
   const selectedKind = options.selectedAssetKinds[0] ?? "";
 
   return `
-    <nav class="registry-library-sidebar sidebar-browse-navigation" aria-label="Registry directory controls">
+    <nav${renderStyleXAttributes(
+      stylex.attrs(sidebarNavigationStyles.root),
+      "sidebar-browse-navigation",
+    )} aria-label="Registry directory controls">
       <section class="sidebar-nav-section" aria-labelledby="registry-sort-heading">
         <p class="sidebar-nav-section-label" id="registry-sort-heading">Sort</p>
         ${sortRow("item-count-desc", "Most items", options.sort)}

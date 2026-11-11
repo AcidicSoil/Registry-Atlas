@@ -5,7 +5,9 @@ import type { CatalogFacetSummary } from "../core/catalogQuery";
 import type { CatalogRoute, CatalogSort } from "../core/catalogRoutes";
 import type { CatalogTaxonomy, CatalogTaxonomyNode } from "../core/catalogTaxonomy";
 import type { CatalogAssetKind } from "../core/catalogCollections";
-import { escapeHtml } from "./renderSafety";
+import * as stylex from "@stylexjs/stylex";
+import { sidebarNavigationStyles } from "./sidebarNavigation.stylex";
+import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 
 export interface SidebarNavigationState {
   canonicalIds: readonly string[];
@@ -271,7 +273,10 @@ export function renderCatalogSidebarNavigation(
   const showAccess = options.showAccess !== false;
   const showRegistrySort = options.showRegistrySort !== false;
 
-  return `<nav class="sidebar-browse-navigation" aria-label="Browse catalog">
+  return `<nav${renderStyleXAttributes(
+    stylex.attrs(sidebarNavigationStyles.root),
+    "sidebar-browse-navigation",
+  )} aria-label="Browse catalog">
     ${renderSort(state, showRegistrySort)}
     ${showCanonical ? renderCanonical(facets, state, taxonomy, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? []) : ""}
     ${renderAssetKinds(options.assetCounts, state)}
