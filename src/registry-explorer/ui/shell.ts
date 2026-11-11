@@ -55,7 +55,22 @@ function catalogBasePath(): string {
     : configured || "/";
 }
 
-export function initRegistryExplorer(options: ShellOptions): void {
+export interface ShellController {
+  dispose(): void;
+}
+
+export function initRegistryExplorer(options: ShellOptions): ShellController {
+  const lifetime = new AbortController();
+
+  const listen = (
+    target: EventTarget,
+    event: string,
+    handler: EventListenerOrEventListenerObject,
+    capture = false,
+  ): void => {
+    target.addEventListener(event, handler, { signal: lifetime.signal, capture });
+  };
+
   const { registries, catalogIndex, roots, policy } = options;
   const taxonomy = policy.taxonomy;
   const taxonomyIds = new Set(catalogTaxonomyNodeMap(taxonomy).keys());
@@ -119,6 +134,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     catalogIndex,
     policy,
     fetchImpl,
+    signal: lifetime.signal,
     basePath: catalogBasePath,
   });
 
@@ -129,6 +145,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
       state.discoveryPage = page;
     },
     render: () => renderer.render(),
+    signal: lifetime.signal,
   });
 
   const renderer = createShellRenderer({
@@ -149,6 +166,15 @@ export function initRegistryExplorer(options: ShellOptions): void {
     historyMode: "push" | "replace" = "replace",
     focusIdentity: FocusIdentity | null = null,
   ) => {
+    if (lifetime.signal.aborted) return;
+    applyStateUpdate(partial, historyMode, focusIdentity);
+  };
+
+  function applyStateUpdate(
+    partial: Partial<AppState>,
+    historyMode: "push" | "replace",
+    focusIdentity: FocusIdentity | null,
+  ): void {
     const routeChanged =
       partial.route !== undefined &&
       catalogRouteIdentity(partial.route) !== catalogRouteIdentity(state.route);
@@ -165,7 +191,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     renderer.render();
 
     if (focusIdentity) restoreControlFocus(focusIdentity);
-  };
+  }
 
   function navigate(
     route: CatalogRoute,
@@ -201,7 +227,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
   }
 
   roots.tabs.forEach((tab) =>
-    tab.addEventListener("click", (event) => {
+    listen(tab, "click", (event) => {
       // SAFETY: Navigation click events originate from DOM click listeners attached to anchor controls.
       const click = event as MouseEvent;
 
@@ -259,7 +285,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     return new Map(Object.entries(replacements)).get(route.kind) ?? route;
   }
 
-  roots.searchInput.addEventListener("input", () => {
+  listen(roots.searchInput, "input", () => {
     setState({
       route: routeForGlobalSearch(state.route),
       searchTerm: roots.searchInput.value,
@@ -268,14 +294,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
     });
   });
 
-  roots.contentBody.addEventListener("click", (event) => {
+  listen(roots.contentBody, "click", (event) => {
     // SAFETY: This listener is attached to the owned content root; delegated clicks target its own controls.
     const target = event.target as HTMLElement | null;
 
     if (target?.closest?.("[data-scroll-load-more]")) feed.loadNextPage();
   });
 
-  roots.contentBody.addEventListener("input", (event) => {
+  listen(roots.contentBody, "input", (event) => {
     // SAFETY: The current target belongs to the app-owned content surface.
     const edited = event.target as HTMLInputElement;
 
@@ -342,7 +368,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   // Native details toggle events are asynchronous. Record intent synchronously
   // before a filter or sort action replaces the sidebar DOM.
-  roots.aside.addEventListener("click", (event) => {
+  listen(roots.aside, "click", (event) => {
     // SAFETY: The aside owns all interactive targets passed to handleClick.
     const target = event.target as HTMLElement;
     sidebar.rememberSidebarTaxonomyToggle(target);
@@ -350,11 +376,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
     // SAFETY: The app-owned sidebar dispatches clicks from its rendered controls.
     interactions.handleClick(event.target as HTMLElement);
   });
+
   // SAFETY: The controlled layout host contains the same trusted browse controls as the sidebar.
-  roots.sidebarLayout?.addEventListener("click", (event) =>
-    interactions.handleClick(event.target as HTMLElement),
-  );
-  roots.contentHeader.addEventListener("click", (event) => {
+  if (roots.sidebarLayout)
+    listen(roots.sidebarLayout, "click", (event) => {
+      // SAFETY: Sidebar layout clicks originate from its owned browse controls.
+      interactions.handleClick(event.target as HTMLElement);
+    });
+  listen(roots.contentHeader, "click", (event) => {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;
 
@@ -378,9 +407,9 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
     interactions.handleClick(target);
   });
-  roots.contentHeader.addEventListener("error", handleRegistryIconError, true);
-  roots.contentBody.addEventListener("error", handleRegistryIconError, true);
-  roots.contentBody.addEventListener("click", (event) => {
+  listen(roots.contentHeader, "error", handleRegistryIconError, true);
+  listen(roots.contentBody, "error", handleRegistryIconError, true);
+  listen(roots.contentBody, "click", (event) => {
     // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
     const target = event.target as HTMLElement;
 
@@ -411,7 +440,7 @@ export function initRegistryExplorer(options: ShellOptions): void {
     authorRows,
   });
 
-  window.addEventListener("popstate", () => {
+  listen(window, "popstate", () => {
     state = {
       ...state,
       ...hydrateBrowseRouteState(
@@ -431,6 +460,14 @@ export function initRegistryExplorer(options: ShellOptions): void {
 
   syncUrlState(state, policy);
   renderer.render();
+
+  return {
+    dispose(): void {
+      if (lifetime.signal.aborted) return;
+      lifetime.abort();
+      feed.dispose();
+    },
+  };
 }
 
 function syncUrlState(

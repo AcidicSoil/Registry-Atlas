@@ -6,6 +6,7 @@ interface BrowseFeedDependencies {
   getPage: () => number;
   setPage: (page: number) => void;
   render: () => void;
+  signal: AbortSignal;
 }
 
 /** Owns progressive feed composition and session browse-position restoration. */
@@ -14,11 +15,13 @@ export function createBrowseFeedController({
   getPage,
   setPage,
   render,
+  signal,
 }: BrowseFeedDependencies) {
   const browsedHistory = new Map<string, BrowseSnapshot>();
   const currentHistoryKey = () => window.location.pathname + window.location.search;
 
   function rememberBrowseRoute(): void {
+    if (signal.aborted) return;
     const route = currentHistoryKey();
 
     const snapshot = {
@@ -43,7 +46,8 @@ export function createBrowseFeedController({
   }
 
   function loadNextPage(): void {
-    if (expandingResults || !body.querySelector?.("[data-scroll-load-more]")) return;
+    if (signal.aborted || expandingResults || !body.querySelector?.("[data-scroll-load-more]"))
+      return;
 
     const previousList = activeResultList();
 
@@ -102,6 +106,8 @@ export function createBrowseFeedController({
   function observeNextPage(): void {
     scrollObserver?.disconnect();
 
+    if (signal.aborted) return;
+
     const sentinel = body.querySelector?.("[data-scroll-sentinel]");
 
     if (!sentinel || !("IntersectionObserver" in window)) return;
@@ -115,10 +121,17 @@ export function createBrowseFeedController({
     scrollObserver.observe(sentinel);
   }
 
-  function restoreBrowseState(): void {
-    const snapshot =
+  function currentBrowseSnapshot(): BrowseSnapshot | null {
+    if (signal.aborted) return null;
+
+    return (
       browsedHistory.get(currentHistoryKey()) ??
-      readBrowseSnapshot(currentHistoryKey(), () => window.sessionStorage);
+      readBrowseSnapshot(currentHistoryKey(), () => window.sessionStorage)
+    );
+  }
+
+  function restoreBrowseState(): void {
+    const snapshot = currentBrowseSnapshot();
 
     if (!snapshot || getPage() !== 1) return;
 
@@ -129,11 +142,18 @@ export function createBrowseFeedController({
     }
 
     window.requestAnimationFrame?.(() => {
+      if (signal.aborted) return;
       const scrollContainer = body.parentElement;
 
       if (scrollContainer) scrollContainer.scrollTop = snapshot.scrollY;
       else window.scrollTo?.({ top: snapshot.scrollY, behavior: "instant" });
     });
+  }
+
+  function dispose(): void {
+    scrollObserver?.disconnect();
+    scrollObserver = null;
+    browsedHistory.clear();
   }
 
   return {
@@ -142,5 +162,6 @@ export function createBrowseFeedController({
     updateFeedSemantics,
     observeNextPage,
     restoreBrowseState,
+    dispose,
   };
 }

@@ -23,6 +23,7 @@ interface DetailDependencies {
   catalogIndex: RegistryCatalogIndex;
   policy: CatalogPolicy;
   fetchImpl: typeof fetch;
+  signal: AbortSignal;
   basePath: () => string;
 }
 
@@ -51,6 +52,7 @@ export function createShellDetailViews({
   catalogIndex,
   policy,
   fetchImpl,
+  signal,
   basePath,
 }: DetailDependencies) {
   const itemDetailCache = new Map<string, RegistryItemDetailResult>();
@@ -61,25 +63,26 @@ export function createShellDetailViews({
     namespace: string,
     slug: string,
   ): Promise<void> {
-    if (itemDetailLoading.has(key)) return;
+    if (signal.aborted || itemDetailLoading.has(key)) return;
     itemDetailLoading.add(key);
 
     try {
-      itemDetailCache.set(
-        key,
-        await loadRegistryItemDetailFromCatalogIndex(
-          registries,
-          catalogIndex,
-          namespace,
-          slug,
-          policy,
-          fetchImpl,
-        ),
+      const result = await loadRegistryItemDetailFromCatalogIndex(
+        registries,
+        catalogIndex,
+        namespace,
+        slug,
+        policy,
+        fetchImpl,
       );
+
+      if (signal.aborted) return;
+      itemDetailCache.set(key, result);
     } finally {
       itemDetailLoading.delete(key);
     }
 
+    if (signal.aborted) return;
     const route = getState().route;
 
     if (isDetailRoute(route) && itemDetailKey(route.namespace, route.slug) === key) {

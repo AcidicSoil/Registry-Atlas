@@ -149,7 +149,7 @@ The shell composes focused controllers through typed dependencies. **`shell.ts` 
 - `shellDetailViews.ts` — item-detail loading and comparisons.
 - `shellRenderer.ts` — route dispatch, headers, tabs, and render fallback.
 
-The public bootstrap remains `initRegistryExplorer` from `ui/shell.ts`. CSS and rendered markup are unchanged. Run `pnpm exec vitest run tests/registry-explorer/shell.test.ts tests/registry-explorer/shellDomContract.test.ts tests/registry-explorer/shellInteractions.test.ts tests/registry-explorer/shellSetup.test.ts` for focused coverage; use the existing browser tests for route, sidebar, setup, and infinite-scroll behavior.
+The public bootstrap remains `initRegistryExplorer` from `ui/shell.ts`. It returns an idempotent `dispose()` controller for UI teardown: attached listeners and scroll observers are released, and pending detail responses cannot render after disposal. Shell tests dispose instances before restoring mocked browser globals. CSS and rendered markup are unchanged. Run `pnpm exec vitest run tests/registry-explorer/shell.test.ts tests/registry-explorer/shellDomContract.test.ts tests/registry-explorer/shellInteractions.test.ts tests/registry-explorer/shellSetup.test.ts` for focused coverage; use the existing browser tests for route, sidebar, setup, and infinite-scroll behavior.
 
 ### Directory Structure
 

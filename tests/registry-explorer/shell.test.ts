@@ -5,7 +5,7 @@ import type { RawJsonInput } from "../../src/registry-explorer/core/jsonInput";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
 import { parseCatalogTaxonomy } from "../../src/registry-explorer/core/catalogTaxonomy";
-import { initRegistryExplorer } from "../../src/registry-explorer/ui/shell";
+import { initRegistryExplorer, type ShellController } from "../../src/registry-explorer/ui/shell";
 
 const TEST_TAXONOMY = parseCatalogTaxonomy({
   version: "v1",
@@ -88,8 +88,12 @@ interface FakeRoot {
   querySelectorAll(selector: string): any[];
 }
 
+const mountedShells: ShellController[] = [];
+
 describe("registry explorer shell interactions", () => {
   afterEach(() => {
+    for (const shell of mountedShells) shell.dispose();
+    mountedShells.length = 0;
     vi.unstubAllGlobals();
   });
 
@@ -733,6 +737,37 @@ describe("registry explorer shell interactions", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(3);
   });
 
+  it("does not render after disposing a pending item-detail request", async () => {
+    let finishDetail!: (response: Response) => void;
+
+    const fetchImpl: typeof fetch = vi.fn((input: RequestInfo | URL) => {
+      if (String(input).endsWith("/catalog-only.json"))
+        return new Promise<Response>((resolve) => {
+          finishDetail = resolve;
+        });
+
+      return Promise.resolve(new Response(null, { status: 404 }));
+    });
+
+    const harness = setup("", "/Registry-Atlas/@delta/components/catalog-only", fetchImpl);
+
+    await vi.waitFor(() => expect(fetchImpl).toHaveBeenCalledTimes(3));
+    const before = harness.contentHeader.innerHTML;
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      harness.shell.dispose();
+      vi.unstubAllGlobals();
+      finishDetail(jsonResponse({ name: "catalog-only", type: "registry:ui", files: [] }));
+      await new Promise<void>((resolve) => setImmediate(resolve));
+
+      expect(harness.contentHeader.innerHTML).toBe(before);
+      expect(error).not.toHaveBeenCalled();
+    } finally {
+      error.mockRestore();
+    }
+  });
+
   it("migrates a legacy registry deep link to the canonical registry path", () => {
     const harness = setup("?view=registries&registry=%40delta");
 
@@ -801,10 +836,11 @@ function setup(
   const contentBody = root();
   const tabs = [tab("discover"), tab("registries"), tab("compare"), tab("authors")];
   const searchInput = input();
+
   // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
   // SAFETY: This is a test-only DOM adapter. Object(stub) preserves the
   // original fake node reference; the test exercises only its implemented members.
-  initRegistryExplorer({
+  const shell = initRegistryExplorer({
     registries: [registryFixture()],
     policy: { taxonomy: TEST_TAXONOMY, kindOverrides: new Map() },
     catalogIndex: {
@@ -843,6 +879,8 @@ function setup(
     },
   });
 
+  mountedShells.push(shell);
+
   const activeNav = Object.fromEntries(
     tabs.map((tab) => [tab.getAttribute("data-view"), tab.getAttribute("aria-current")]),
   );
@@ -857,6 +895,7 @@ function setup(
     history,
     windowListeners,
     activeNav,
+    shell,
   };
 }
 
