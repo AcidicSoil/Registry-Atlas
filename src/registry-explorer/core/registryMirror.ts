@@ -923,7 +923,36 @@ function createResult(): MirrorValidationResult {
   };
 }
 
+function mirroredRawUrlField(field: string | undefined): string | undefined {
+  if (field === "official.homepage") return "raw.homepage";
+
+  if (field === "official.registry_url_template") return "raw.url";
+
+  return undefined;
+}
+
+function isDuplicateMirroredHttpWarning(
+  result: MirrorValidationResult,
+  issue: MirrorValidationIssue,
+): boolean {
+  const sourceField = mirroredRawUrlField(issue.field);
+
+  return (
+    issue.code === "url-http" &&
+    sourceField !== undefined &&
+    result.warnings.some(
+      (warning) =>
+        warning.code === "url-http" &&
+        warning.field === sourceField &&
+        warning.namespace === issue.namespace &&
+        warning.value === issue.value,
+    )
+  );
+}
+
 function addIssue(result: MirrorValidationResult, issue: MirrorValidationIssue): void {
+  if (isDuplicateMirroredHttpWarning(result, issue)) return;
+
   if (issue.severity === "error") {
     result.errors.push(issue);
 

@@ -62,6 +62,43 @@ describe("registryMirror validation", () => {
     expect(result.warnings.map((warning) => warning.code)).toEqual(["url-http", "url-http"]);
   });
 
+  it("reports each upstream HTTP URL once when projected official fields mirror it", () => {
+    const homepage = "http://example.com";
+    const registryUrlTemplate = "http://example.com/r/{name}.json";
+    const mirror = createMirror([createRecord({ homepage, registryUrlTemplate })]);
+    const raw = [{ name: "@example", homepage, url: registryUrlTemplate }];
+
+    const result = validateRegistryMirror(mirror, raw);
+
+    expect(result.errors).toEqual([]);
+    expect(result.warnings.map((warning) => warning.field)).toEqual(["raw.homepage", "raw.url"]);
+  });
+
+  it("still reports divergent HTTP values in official projections", () => {
+    const mirror = createMirror([
+      createRecord({
+        homepage: "http://mirror.example.com",
+        registryUrlTemplate: "http://example.com/r/{name}.json",
+      }),
+    ]);
+
+    const raw = [
+      {
+        name: "@example",
+        homepage: "http://example.com",
+        url: "http://example.com/r/{name}.json",
+      },
+    ];
+
+    const result = validateRegistryMirror(mirror, raw);
+
+    expect(result.warnings.map((warning) => warning.field)).toEqual([
+      "raw.homepage",
+      "raw.url",
+      "official.homepage",
+    ]);
+  });
+
   it("fails registry URL templates without the name token", () => {
     const result = validateRegistryUrlTemplate("https://example.com/r/button.json", "@example");
 
