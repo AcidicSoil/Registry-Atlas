@@ -28,7 +28,7 @@ Back up PostgreSQL before applying. This workflow rejects incomplete source refr
 - [ ] Recover accurate, source-backed display titles for 36 `@shadcnuikit` illustration blocks. Existing source titles are only `1`–`36`; changing titles must flow through canonical ingestion and trigger classification re-review.
 - [ ] Audit low-information titles on other browse surfaces, exempting legitimately short icon names.
 - [x] Run and review fresh-build desktop/mobile route, card link, filter, focus, keyboard, overflow, and source-link acceptance. On 2026-11-10, 16 desktop and 7 mobile E2E cases passed; fresh 1440×900/390×844 captures were visually inspected. See `docs/verification.md`.
-- [ ] Complete the remaining component StyleX ownership migration. The obsolete `catalog-library-cards.css` was removed and both catalog/registry navigation roots moved into shared StyleX on 2026-11-10; remaining document/shell/navigation/setup CSS requires separately verified migrations.
+- [ ] Complete the remaining component StyleX ownership migration. Obsolete `catalog-library-cards.css` and `sidebar-taxonomy.css` were removed; catalog/registry navigation roots and grouped taxonomy states use StyleX. Document/shell/remaining navigation/setup CSS still require separately verified migrations.
 - [ ] Audit registry logo quality/coverage across sidebar, directory cards, and registry profile headers.
 
 ## P1 — Release and external delivery

@@ -36,6 +36,7 @@ describe("quality-tooling integration contract", () => {
   it("keeps Repowise-generated agent guidance outside source formatting", () => {
     const config = JSON.parse(read(".oxfmtrc.json"));
 
+    expect(config.ignorePatterns).toContain(".design/backups/standards-catalog-*.json");
     expect(config.ignorePatterns).toContain("AGENTS.md");
     expect(config.ignorePatterns).toContain(".github/copilot-instructions.md");
   });

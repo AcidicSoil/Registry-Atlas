@@ -32,6 +32,7 @@
     "tools/pylint/**",
     "tools/eslint/anti-slop-stylex/**",
     ".design/standards.json",
+    ".design/backups/standards-catalog-*.json",
     ".design/reviews/*.review.html",
     ".design/evidence/css-cascade-parity-2026-10-30.json",
     ".design/evidence/design-current/browser-observations.json",

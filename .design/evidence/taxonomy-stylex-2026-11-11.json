@@ -1,0 +1,121 @@
+{
+  "schemaVersion": "registry-atlas-scoped-standards-evidence/v1",
+  "date": "2026-11-11",
+  "scope": "navigation, sidebars and visual styling: grouped taxonomy StyleX migration",
+  "certification": "task-scoped verification only; other project-wide standards remain unreviewed or deferred",
+  "review": "Existing approved DESIGN.md record was revalidated against its unchanged source evidence and existing decision reference; no new approval invented.",
+  "sourceBefore": "src/registry-explorer/ui/sidebar-taxonomy.css (59 lines, deleted)",
+  "sourceAfter": "src/registry-explorer/ui/sidebarTaxonomy.stylex.ts",
+  "verification": {
+    "unit": "29/29 scoped tests passed in seven files",
+    "desktopBrowser": "2/2 grouped-sidebar tests passed",
+    "mobileBrowser": "2/2 grouped-sidebar tests passed",
+    "lint": "pnpm lint passed; repository CCCC maxima cognitive 10/cyclomatic 8",
+    "typecheck": "pnpm typecheck and pnpm typecheck:test passed",
+    "build": "pnpm build passed; known third-party Zod Rollup comment warnings remain",
+    "runtime": "pnpm check:product-contract and pnpm check:runtime-data passed",
+    "design": "official Google DESIGN.md lint passed with zero errors/warnings"
+  },
+  "policyEvidence": {
+    "policy:adaptive-panel-surfaces": {
+      "scope": "unchanged-shell-regression",
+      "sources": [
+        "src/registry-explorer/ui/shellSidebar.ts",
+        "tests/registry-explorer/panelLayout.test.ts",
+        "tests/app-shell-panels.e2e.ts"
+      ],
+      "observation": "No panel implementation changed. Existing panel layout unit checks pass; previously verified desktop panel browser checks remain historical regression evidence."
+    },
+    "policy:anti-slop-bundle": {
+      "scope": "verified-in-change",
+      "sources": [
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts",
+        "tests/registry-explorer/qualityToolingContract.test.ts"
+      ],
+      "observation": "Full pnpm lint includes the repository's Oxlint, dependency, Stylelint, StyleX, Knip, CCCC, React Doctor, and format checks, all passing."
+    },
+    "policy:anti-slop-css": {
+      "scope": "verified-in-change",
+      "sources": [
+        "index.html",
+        "src/registry-explorer/ui/sidebarTaxonomy.stylex.ts",
+        "tests/registry-explorer/stylexArchitecture.test.ts"
+      ],
+      "observation": "Removed the sole legacy taxonomy CSS link and the 59-line stylesheet after transferring owned declarations to StyleX. Active CSS remains Stylelint checked."
+    },
+    "policy:anti-slop-stylex": {
+      "scope": "verified-in-change",
+      "sources": [
+        "src/registry-explorer/ui/sidebarTaxonomy.stylex.ts",
+        "tests/registry-explorer/stylexArchitecture.test.ts"
+      ],
+      "observation": "StyleX 0.19.1 compiler build and pnpm lint:stylex passed using valid group marker and ancestor selector."
+    },
+    "policy:collapsible-sidebar-navigation": {
+      "scope": "verified-in-change",
+      "sources": [
+        "src/registry-explorer/ui/catalogSidebarNavigation.ts",
+        "tests/grouped-sidebar.e2e.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts"
+      ],
+      "observation": "Native details expand/collapse preserved, category selection distinct from expansion, Enter reopening and mobile Escape/selection confirmed in desktop/mobile browser tests."
+    },
+    "policy:css-architecture": {
+      "scope": "verified-in-change",
+      "sources": [
+        "src/registry-explorer/ui/sidebarTaxonomy.stylex.ts",
+        "src/registry-explorer/ui/sidebarNavigation.stylex.ts",
+        "tests/registry-explorer/stylesheetOwnership.test.ts"
+      ],
+      "observation": "One owning taxonomy StyleX module; deleted legacy stylesheet rather than maintaining a parallel override; unrelated shell/setup CSS remains deferred."
+    },
+    "policy:design-document": {
+      "scope": "previously-approved-source-review-revalidated",
+      "sources": [
+        "DESIGN.md",
+        "src/registry-explorer/ui/tokens.stylex.ts",
+        ".design/evidence/registry-icon-card-2026-11-09.json"
+      ],
+      "observation": "Existing approved source/rendered design review, seven verified digest matches, updated factual inventory, and official Google designmd lint (zero warnings/errors). No new design approval or global certification."
+    },
+    "policy:light-dismiss": {
+      "scope": "unchanged-shell-regression",
+      "sources": [
+        "src/registry-explorer/ui/shell.ts",
+        "tests-mobile/grouped-sidebar.e2e.ts",
+        "tests-mobile/native-sidebar.e2e.ts"
+      ],
+      "observation": "Mobile modal behavior unchanged; verified Escape dismissal without applying a filter and selection dismissal in browser tests. Broader light-dismiss inventory not certified."
+    },
+    "policy:logo-home-navigation": {
+      "scope": "unchanged-shell-regression",
+      "sources": [
+        "tests/registry-explorer/appShellBranding.test.ts",
+        "tests/app-shell-panels.e2e.ts"
+      ],
+      "observation": "Brand-navigation implementation unchanged; existing branding unit tests passed in this scope. Historical desktop E2E covers logo routing."
+    },
+    "policy:shared-app-shell-interactions": {
+      "scope": "unchanged-shell-regression",
+      "sources": [
+        "src/registry-explorer/ui/shell.ts",
+        "tests/registry-explorer/appShellBranding.test.ts",
+        "tests/registry-explorer/panelLayout.test.ts"
+      ],
+      "observation": "Only category styling was touched; previously verified shell route/panel behavior retained. This is not Workbench Shell certification."
+    },
+    "policy:stylelint": {
+      "scope": "verified-in-change",
+      "sources": [
+        "src/registry-explorer/ui/sidebarTaxonomy.stylex.ts",
+        "tests/registry-explorer/qualityToolingContract.test.ts"
+      ],
+      "observation": "Full repository pnpm lint includes pnpm lint:styles; Stylelint passed on all remaining authored CSS."
+    }
+  },
+  "knownLimits": [
+    "No React Doctor/Oxlint setup changes: unified PPM tooling refresh blocked by incumbents requiring review.",
+    "Pending project-wide StyleX migration outside the grouped taxonomy surface.",
+    "No global Workbench/accessibility/visual certification inferred from a scoped test result."
+  ]
+}

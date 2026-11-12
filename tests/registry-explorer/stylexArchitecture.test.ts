@@ -80,6 +80,18 @@ describe("native StyleX architecture", () => {
     expect(global).not.toMatch(/\.sidebar-browse-navigation\s*\{/);
   });
 
+  it("owns grouped taxonomy appearance in StyleX without a legacy stylesheet", () => {
+    const html = root("index.html");
+    const renderer = root("src/registry-explorer/ui/catalogSidebarNavigation.ts");
+    const styles = root("src/registry-explorer/ui/sidebarTaxonomy.stylex.ts");
+
+    expect(html).not.toContain("sidebar-taxonomy.css");
+    expect(renderer).toContain("stylex.attrs(taxonomyStyles.group, taxonomyGroupMarker)");
+    expect(renderer).toContain("stylex.attrs(taxonomyStyles.chevron)");
+    expect(styles).toContain('stylex.when.ancestor("[open]", taxonomyGroupMarker)');
+    expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
+  });
+
   it("validates authored StyleX with official lint rules", () => {
     const pkg = JSON.parse(root("package.json"));
     const eslint = root("eslint.config.mjs");

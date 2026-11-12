@@ -7,6 +7,7 @@ import type { CatalogTaxonomy, CatalogTaxonomyNode } from "../core/catalogTaxono
 import type { CatalogAssetKind } from "../core/catalogCollections";
 import * as stylex from "@stylexjs/stylex";
 import { sidebarNavigationStyles } from "./sidebarNavigation.stylex";
+import { taxonomyGroupMarker, taxonomyStyles } from "./sidebarTaxonomy.stylex";
 import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
 
 export interface SidebarNavigationState {
@@ -84,8 +85,14 @@ function rowButton(options: {
   count?: number;
   selected?: boolean;
   icon?: string;
+  nested?: boolean;
 }): string {
-  return `<button type="button" class="sidebar-nav-row${options.selected ? " sidebar-nav-row-active" : ""}"
+  const rowClass = `sidebar-nav-row${options.selected ? " sidebar-nav-row-active" : ""}`;
+
+  return `<button type="button"${renderStyleXAttributes(
+    stylex.attrs(options.nested && taxonomyStyles.childRow),
+    rowClass,
+  )}
     ${options.attribute}="${escapeHtml(options.value)}"
     aria-pressed="${options.selected ? "true" : "false"}">
     ${options.icon ? `<span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon(options.icon)}</span>` : ""}
@@ -125,12 +132,22 @@ function isCanonicalNodeRelevant(
   );
 }
 
+function taxonomySummaryAttributes(active: boolean): string {
+  const semanticClass = `sidebar-nav-row sidebar-taxonomy-summary${active ? " sidebar-taxonomy-active" : ""}`;
+
+  return renderStyleXAttributes(
+    stylex.attrs(taxonomyStyles.summary, active && taxonomyStyles.active),
+    semanticClass,
+  );
+}
+
 function renderCanonicalNode(
   node: CatalogTaxonomyNode,
   counts: ReadonlyMap<string, number>,
   selected: string,
   expandedIds: readonly string[],
   collapsedIds: readonly string[],
+  nested = false,
 ): string {
   const count = counts.get(node.id) ?? 0;
 
@@ -148,27 +165,32 @@ function renderCanonicalNode(
       count,
       selected: selected === node.id,
       icon: node.id,
+      nested,
     });
   }
 
   const active = selected === node.id || selected.startsWith(node.id + "/");
   const expanded = isCanonicalNodeExpanded(node.id, active, expandedIds, collapsedIds);
 
-  return `<details class="sidebar-taxonomy-group" data-sidebar-taxonomy-group="${escapeHtml(node.id)}"${expanded ? " open" : ""}>
-    <summary class="sidebar-nav-row sidebar-taxonomy-summary${active ? " sidebar-taxonomy-active" : ""}">
+  return `<details${renderStyleXAttributes(
+    stylex.attrs(taxonomyStyles.group, taxonomyGroupMarker),
+    "sidebar-taxonomy-group",
+  )} data-sidebar-taxonomy-group="${escapeHtml(node.id)}"${expanded ? " open" : ""}>
+    <summary${taxonomySummaryAttributes(active)}>
       <span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon(node.id)}</span>
       <span class="sidebar-nav-row-label">${escapeHtml(node.label)}</span>
-      <span class="sidebar-nav-row-count">${count.toLocaleString()}</span>
-      <span class="sidebar-taxonomy-chevron" aria-hidden="true"></span>
+      <span${renderStyleXAttributes(stylex.attrs(taxonomyStyles.count), "sidebar-nav-row-count")}>${count.toLocaleString()}</span>
+      <span${renderStyleXAttributes(stylex.attrs(taxonomyStyles.chevron), "sidebar-taxonomy-chevron")} aria-hidden="true"></span>
     </summary>
-    <div class="sidebar-taxonomy-children">
+    <div${renderStyleXAttributes(stylex.attrs(taxonomyStyles.children), "sidebar-taxonomy-children")}>
       ${rowButton({
         attribute: "data-catalog-canonical-value",
         value: node.id,
         label: "All " + node.label,
         selected: selected === node.id,
+        nested: true,
       })}
-      ${children.map((child) => renderCanonicalNode(child, counts, selected, expandedIds, collapsedIds)).join("")}
+      ${children.map((child) => renderCanonicalNode(child, counts, selected, expandedIds, collapsedIds, true)).join("")}
     </div>
   </details>`;
 }

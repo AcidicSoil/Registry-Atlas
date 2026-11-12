@@ -39,10 +39,41 @@ test("category expansion and filtering are distinct actions", async ({ app, brow
     hasStylex: true,
   });
 
+  const taxonomyStyle = await browser.evaluate(() => {
+    const group = document.querySelector<HTMLElement>('[data-sidebar-taxonomy-group="navigation"]');
+    const summary = group?.querySelector<HTMLElement>("summary");
+    const chevron = group?.querySelector<HTMLElement>(".sidebar-taxonomy-chevron");
+
+    if (!group || !summary || !chevron) return null;
+
+    return {
+      groupHasStylex: [...group.classList].some((name) => name.startsWith("x")),
+      summaryHasStylex: [...summary.classList].some((name) => name.startsWith("x")),
+      listStyle: getComputedStyle(summary).listStyleType,
+      closedChevron: getComputedStyle(chevron).transform,
+    };
+  });
+
+  expect(taxonomyStyle).not.toBeNull();
+  expect(taxonomyStyle?.groupHasStylex).toBe(true);
+  expect(taxonomyStyle?.summaryHasStylex).toBe(true);
+  expect(taxonomyStyle?.listStyle).toBe("none");
+
   const before = await browser.evaluate(() => location.search);
 
   await heading.tap();
   await expect(group).toHaveAttribute("open", "");
+  await expect
+    .poll(() =>
+      browser.evaluate(() => {
+        const chevron = document.querySelector<HTMLElement>(
+          '[data-sidebar-taxonomy-group="navigation"] .sidebar-taxonomy-chevron',
+        );
+
+        return chevron ? getComputedStyle(chevron).transform : null;
+      }),
+    )
+    .not.toBe(taxonomyStyle?.closedChevron ?? null);
   expect(await browser.evaluate(() => location.search)).toBe(before);
 
   await browser.locator('[data-catalog-sort-value="registry"]').tap();
