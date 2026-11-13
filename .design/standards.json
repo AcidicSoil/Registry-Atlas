@@ -106,7 +106,7 @@
         "tsconfig.json",
         "vite.config.ts"
       ],
-      "fingerprint": "6b7708d5434de6ee95c7654a500db22fff20939e8d1463b3078fb0e36eb09761"
+      "fingerprint": "a7326fbf30ec9e541748cf5b0758e443e83b080502feb0a5b7b546ac873ed699"
     }
   },
   "catalog": {
@@ -119,26 +119,13 @@
     "expected": "required",
     "path": "DESIGN.md",
     "present": true,
-    "digest": "32474ece13aebcb808b8ab4851b8ed4014ba49e6aaad594381904496c3aca41d"
+    "digest": "9fbc45ba04f9320bf3f7419c679944170287176850b40a61a03b4e18cfc5fe11"
   },
   "assessments": {
-    "policy:adaptive-panel-surfaces": {
-      "domain": "frontend",
-      "kind": "policy",
-      "sourceDigest": "e966f888173dee646c218cdf0230ff0704fefd6920b31226ef5d04921557f4ca",
-      "stackFingerprint": "",
-      "candidate": "candidate",
-      "applicability": "review-required",
-      "compliance": "unevaluated",
-      "reason": "",
-      "evidence": [],
-      "evidenceDigests": {},
-      "reviewedSourceDigest": ""
-    },
     "policy:anti-slop-bundle": {
       "domain": "tooling",
       "kind": "policy",
-      "sourceDigest": "7ac83a8b9acbb9a85f8c2005968f1cd9cd5cc8fb95523299c0a1012377d0cc7e",
+      "sourceDigest": "dc08bc801b41963ebe7cff620f5fa781a49da5297532706ddde82db35a867cd1",
       "stackFingerprint": "",
       "candidate": "candidate",
       "applicability": "review-required",
@@ -151,7 +138,7 @@
     "policy:anti-slop-css": {
       "domain": "tooling",
       "kind": "policy",
-      "sourceDigest": "3bad29c74235acae397fcfa6e6a387f3f933df8cd1877d3bf0bb418465d6bf4f",
+      "sourceDigest": "ebe10c76bab230e697db43e7cc21224cd4ed967abef45e9fb66d445425f70b65",
       "stackFingerprint": "",
       "candidate": "candidate",
       "applicability": "review-required",
@@ -164,7 +151,7 @@
     "policy:anti-slop-stylex": {
       "domain": "tooling",
       "kind": "policy",
-      "sourceDigest": "500bfcd1cb29d2f3f07baecc936a92c778a4df8d487b5498dfd77a8c064be909",
+      "sourceDigest": "eafce15d35af15381ff311337b91a221ed268a9e5fd4d158f8a68a133ea48acd",
       "stackFingerprint": "",
       "candidate": "candidate",
       "applicability": "review-required",
@@ -190,7 +177,7 @@
     "policy:css-architecture": {
       "domain": "frontend",
       "kind": "policy",
-      "sourceDigest": "1eab34e630dfadc48ec547a59a7ed8c8517aab2d09c9c88344bb348b62637df4",
+      "sourceDigest": "da1804e6b8f4f5344464e3ef0cb93b29f7965bec5e803ea62d65848445184f24",
       "stackFingerprint": "",
       "candidate": "candidate",
       "applicability": "review-required",
@@ -204,11 +191,11 @@
       "domain": "frontend",
       "kind": "policy",
       "sourceDigest": "1e2409bbe5faaa2e481da4f09a8da7ce18c31bbc9d278a48712bad47ae33c1d3",
-      "stackFingerprint": "6b7708d5434de6ee95c7654a500db22fff20939e8d1463b3078fb0e36eb09761",
+      "stackFingerprint": "a7326fbf30ec9e541748cf5b0758e443e83b080502feb0a5b7b546ac873ed699",
       "candidate": "candidate",
       "applicability": "applicable",
       "compliance": "compliant",
-      "reason": "Re-reviewed unchanged approved design tokens and rendered evidence against the updated factual DESIGN.md, official Google lint, and scope-specific StyleX migration; no new visual design approval or project-wide certification claimed.",
+      "reason": "Re-reviewed four existing approved token claims against unchanged source excerpts; current user requested card placement/accessibility changes. Seven evidence digests refreshed only for the two changed approved source files; no global certification.",
       "evidence": [
         "DESIGN.md",
         "src/registry-explorer/ui/tokens.stylex.ts",
@@ -219,10 +206,10 @@
         ".design/evidence/registry-icon-card-after-2026-11-09.png"
       ],
       "evidenceDigests": {
-        "DESIGN.md": "32474ece13aebcb808b8ab4851b8ed4014ba49e6aaad594381904496c3aca41d",
+        "DESIGN.md": "9fbc45ba04f9320bf3f7419c679944170287176850b40a61a03b4e18cfc5fe11",
         "src/registry-explorer/ui/tokens.stylex.ts": "4f1c871724624c70df53583f124d2884e683afbaa2f4056322c86976f67f0b3a",
         "public/styles/registry-explorer.css": "a2eeb75f129bae74f3b9e2c24b111250922ca07fa60b9ee6b9c147ca43bc25a3",
-        "src/registry-explorer/ui/catalogCard.stylex.ts": "4096c77bfba08f81e4e1042f5e75c978f601c76c2a01fe5d76d37607c29ea4e2",
+        "src/registry-explorer/ui/catalogCard.stylex.ts": "010f9dfef0a71d1d6db6312014e5b29b57f6c126601538b3634705092f6282be",
         ".design/evidence/registry-icon-card-2026-11-09.json": "aef86eb7446f7005cefc802d5d00ab7054a847931c573343e3339d35074591a2",
         ".design/evidence/registry-icon-card-before-2026-11-09.png": "75c1dff26ac220c70d5f5428f88ffc1036a103c087b952354e9b78a4b7d8c2d3",
         ".design/evidence/registry-icon-card-after-2026-11-09.png": "6805bf18c4c2228386bd81333a6e12041a39b6bf297b2c4a0fb8578f8d049eee"
@@ -303,7 +290,7 @@
     "policy:stylelint": {
       "domain": "tooling",
       "kind": "policy",
-      "sourceDigest": "0abdaee9604d386ead213dac9d443e32d66a0941fef6f7b6e136e30066eb068f",
+      "sourceDigest": "37a097f6318d4d96e3b48188d83495c95dcc93ac80ed34885b68c746f91c5f32",
       "stackFingerprint": "",
       "candidate": "candidate",
       "applicability": "review-required",
@@ -543,20 +530,19 @@
       }
     }
   },
-  "updatedAt": "2026-11-12T04:32:23+00:00",
+  "updatedAt": "2026-11-13T06:32:08+00:00",
   "featureMap": {
     "schemaVersion": "ppm-feature-work-map/v1",
-    "objective": "Complete grouped taxonomy StyleX migration with native details, keyboard, and reduced-motion parity",
+    "objective": "Audit catalog card actions with modern web guidance and place copy by registry homepage",
     "mode": "targeted",
     "features": [
       "navigation",
-      "sidebars",
       "visual-styling"
     ],
     "dependencies": [],
     "paths": [
-      "src/registry-explorer/ui/catalogSidebarNavigation.ts",
-      "src/registry-explorer/ui/sidebarTaxonomy.stylex.ts"
+      "src/registry-explorer/ui/catalogComponentsView.ts",
+      "src/registry-explorer/ui/catalogCard.stylex.ts"
     ],
     "questions": [],
     "featureRules": {
@@ -565,13 +551,6 @@
         "policy:design-document",
         "policy:light-dismiss",
         "policy:logo-home-navigation",
-        "policy:shared-app-shell-interactions"
-      ],
-      "sidebars": [
-        "policy:adaptive-panel-surfaces",
-        "policy:collapsible-sidebar-navigation",
-        "policy:design-document",
-        "policy:light-dismiss",
         "policy:shared-app-shell-interactions"
       ],
       "visual-styling": [
@@ -584,7 +563,6 @@
       ]
     },
     "ruleIds": [
-      "policy:adaptive-panel-surfaces",
       "policy:anti-slop-bundle",
       "policy:anti-slop-css",
       "policy:anti-slop-stylex",
@@ -596,51 +574,47 @@
       "policy:shared-app-shell-interactions",
       "policy:stylelint"
     ],
-    "ruleDigest": "5a99262198c4b191272ebd489bb325b6af3351ca029c6104b39160c28e2c6ccf",
+    "ruleDigest": "ea3af3926d23fc6172e4abfcc9927fb49d3b044263c8ba17db7d854e1ade4543",
     "taskEvidence": {
-      "policy:adaptive-panel-surfaces": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
-      },
       "policy:anti-slop-bundle": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:anti-slop-css": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:anti-slop-stylex": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:collapsible-sidebar-navigation": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:css-architecture": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:design-document": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:light-dismiss": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:logo-home-navigation": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:shared-app-shell-interactions": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       },
       "policy:stylelint": {
-        "path": ".design/evidence/taxonomy-stylex-2026-11-11.json",
-        "sha256": "412f92a04d8b9d0bd8144ca7b4404ab5617b1910beae760beb4b5e06c4ed2619"
+        "path": ".design/evidence/card-actions-modern-web-2026-11-13.json",
+        "sha256": "d585e5e325d45a90dc44ab3e4138d8f2807e575281c93d1a126090242a2769fb"
       }
     }
   },
@@ -686,7 +660,7 @@
       "path": "src/registry-explorer/ui/catalogSidebarNavigation.ts",
       "surface": "sidebar",
       "line": 78,
-      "sourceDigest": "6b8d6e64afc49c2f078c0c374257d88d9ccc868fd7b95a5585ee1eb250903e8c",
+      "sourceDigest": "1d6405dba626592963ddedd9d2b9a78f1214f787b7b8d887bf99cd5964815601",
       "policyDigest": "3f00891f2c2aed96cdbbd510026dcd98010a912b57011e35d5eed801d07d7dce",
       "status": "review-required"
     },

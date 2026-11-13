@@ -67,7 +67,10 @@ export const cardStyles = stylex.create({
     cursor: "pointer",
     textAlign: "left",
     textDecorationLine: "none",
-    outlineStyle: { default: null, ":focus-visible": "none" },
+    outlineStyle: { default: null, ":focus-visible": "solid" },
+    outlineWidth: { default: null, ":focus-visible": 2 },
+    outlineColor: { default: null, ":focus-visible": tokens["--primary"] },
+    outlineOffset: { default: null, ":focus-visible": -3 },
   },
   listOpen: {
     minHeight: 72,
@@ -150,12 +153,11 @@ export const cardStyles = stylex.create({
   },
   copyName: {
     display: "inline-flex",
-    width: 32,
-    height: 32,
+    minInlineSize: { default: 32, "@media (pointer: coarse)": 44 },
+    minBlockSize: { default: 32, "@media (pointer: coarse)": 44 },
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,
-    marginInlineStart: "auto",
     padding: 0,
     borderWidth: 0,
     borderRadius: 8,
@@ -173,6 +175,10 @@ export const cardStyles = stylex.create({
   },
   original: {
     position: "static",
+    display: "inline-flex",
+    minInlineSize: { default: 24, "@media (pointer: coarse)": 44 },
+    minBlockSize: { default: 24, "@media (pointer: coarse)": 44 },
+    alignItems: "center",
     alignSelf: "start",
     margin: 0,
     padding: 0,
@@ -208,6 +214,9 @@ export const cardStyles = stylex.create({
     fontSize: 10,
   },
   registryHomepage: {
+    display: "inline-flex",
+    minBlockSize: { default: 24, "@media (pointer: coarse)": 44 },
+    alignItems: "center",
     color: {
       default: tokens["--primary"],
       ":hover": tokens["--foreground"],

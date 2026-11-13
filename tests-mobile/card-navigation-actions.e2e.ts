@@ -18,13 +18,16 @@ test("mobile card keeps one footer homepage link and clickable internal card", a
     const card = document.querySelector("[data-catalog-card]");
     const footer = card?.querySelector("[data-catalog-actions]");
     const link = footer?.querySelector("[data-registry-homepage]");
+    const copyButton = footer?.querySelector<HTMLButtonElement>("[data-catalog-copy-name]");
 
     const open = card?.querySelector("[data-catalog-open]");
 
-    if (!card || !footer || !link || !open) return null;
+    if (!card || !footer || !link || !copyButton || !open) return null;
 
     const box = link.getBoundingClientRect();
+    const copyBox = copyButton.getBoundingClientRect();
     const footerBox = footer.getBoundingClientRect();
+    const minimumTarget = matchMedia("(pointer: coarse)").matches ? 44 : 24;
 
     return {
       cardDisplay: getComputedStyle(card).display,
@@ -32,6 +35,10 @@ test("mobile card keeps one footer homepage link and clickable internal card", a
       footerDisplay: getComputedStyle(footer).display,
       homepageCount: card.querySelectorAll("[data-registry-homepage]").length,
       homepageInFooter: link.parentElement === footer,
+      copyImmediatelyAfterHomepage: link.nextElementSibling === copyButton,
+      copyMeetsPointerTarget: Math.min(copyBox.width, copyBox.height) >= minimumTarget,
+      homepageMeetsPointerTarget: box.height >= minimumTarget,
+      copyWithinViewport: copyBox.right <= window.innerWidth,
       homepageWithinViewport: box.right <= window.innerWidth,
       homepageBelowContent: box.top >= footerBox.top,
       noViewAction: !card.querySelector(".catalog-component-deeplink"),
@@ -45,6 +52,10 @@ test("mobile card keeps one footer homepage link and clickable internal card", a
     footerDisplay: "flex",
     homepageCount: 1,
     homepageInFooter: true,
+    copyImmediatelyAfterHomepage: true,
+    copyMeetsPointerTarget: true,
+    homepageMeetsPointerTarget: true,
+    copyWithinViewport: true,
     homepageWithinViewport: true,
     homepageBelowContent: true,
     noViewAction: true,

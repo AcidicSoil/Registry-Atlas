@@ -38,13 +38,15 @@ test("catalog card uses one footer homepage link and retains internal card navig
     const footer = card?.querySelector("[data-catalog-actions]");
     const homepageLink = footer?.querySelector<HTMLAnchorElement>("[data-registry-homepage]");
     const sourceLink = footer?.querySelector<HTMLAnchorElement>("[data-catalog-source]");
+    const copyButton = footer?.querySelector<HTMLButtonElement>("[data-catalog-copy-name]");
 
     const open = card?.querySelector("[data-catalog-open]");
     const description = card?.querySelector("[data-catalog-description]");
 
-    if (!card || !footer || !homepageLink || !open || !description) return null;
+    if (!card || !footer || !homepageLink || !copyButton || !open || !description) return null;
 
     const homepageRect = homepageLink.getBoundingClientRect();
+    const copyRect = copyButton.getBoundingClientRect();
     const footerRect = footer.getBoundingClientRect();
 
     return {
@@ -56,6 +58,11 @@ test("catalog card uses one footer homepage link and retains internal card navig
       homepageFontSize: getComputedStyle(homepageLink).fontSize,
       footerHomepageCount: footer.querySelectorAll("[data-registry-homepage]").length,
       homepageInFooter: homepageLink.parentElement === footer,
+      copyImmediatelyAfterHomepage: homepageLink.nextElementSibling === copyButton,
+      sourceAfterCopy: !sourceLink || copyButton.nextElementSibling === sourceLink,
+      copyGap: Math.round(copyRect.left - homepageRect.right),
+      copyTargetMinSize: Math.min(copyRect.width, copyRect.height) >= 24,
+      homepageTargetMinHeight: homepageRect.height >= 24,
       homepageInsideFooterBounds:
         homepageRect.top >= footerRect.top - 2 && homepageRect.bottom <= footerRect.bottom + 2,
       hasNoViewAction: !card.querySelector(".catalog-component-deeplink"),
@@ -74,6 +81,11 @@ test("catalog card uses one footer homepage link and retains internal card navig
     homepageFontSize: "11px",
     footerHomepageCount: 1,
     homepageInFooter: true,
+    copyImmediatelyAfterHomepage: true,
+    sourceAfterCopy: true,
+    copyGap: 12,
+    copyTargetMinSize: true,
+    homepageTargetMinHeight: true,
     homepageInsideFooterBounds: true,
     hasNoViewAction: true,
     hasNoInspect: true,

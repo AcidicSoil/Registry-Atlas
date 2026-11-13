@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "registry-atlas-scoped-standards-evidence/v1",
+  "date": "2026-11-13",
+  "scope": "Catalog card action placement, accessible copy feedback, focus visibility, and input-appropriate touch target sizing",
+  "guidance": ["copy-button", "accessibility", "form-factor-adaptation"],
+  "certification": "Targeted review only; do not infer project-wide compliance for untouched policies",
+  "implementation": [
+    "src/registry-explorer/ui/catalogComponentsView.ts",
+    "src/registry-explorer/ui/catalogCard.stylex.ts"
+  ],
+  "verification": {
+    "unit": "63 tests passed across card, shell, StyleX architecture",
+    "desktop": "2 card navigation and copy browser tests passed",
+    "mobile": "1 card navigation and viewport-overflow test passed",
+    "build": "pnpm build passed",
+    "lint": "pnpm lint passed including StyleX ESLint, Stylelint, Oxlint, CCCC, Oxfmt",
+    "types": "pnpm typecheck and pnpm typecheck:test passed",
+    "design": "official Google DESIGN.md lint reports zero errors and zero warnings",
+    "incident": "Initial browser E2E run timed out during Loading catalog; subsequent 200-response diagnostic and same tests passed; root startup variability not proven fixed"
+  },
+  "policyEvidence": {
+    "policy:anti-slop-bundle": {
+      "scope": "verified",
+      "sourceFiles": [
+        "src/registry-explorer/ui/catalogComponentsView.ts",
+        "tests/registry-explorer/catalogComponentsView.test.ts"
+      ],
+      "review": "pnpm lint passed with no anti-slop findings."
+    },
+    "policy:anti-slop-css": {
+      "scope": "verified",
+      "sourceFiles": [
+        "src/registry-explorer/ui/catalogCard.stylex.ts",
+        "src/registry-explorer/ui/catalogComponentsView.ts"
+      ],
+      "review": "No parallel CSS added; existing CSS remains Stylelint checked."
+    },
+    "policy:anti-slop-stylex": {
+      "scope": "verified",
+      "sourceFiles": ["src/registry-explorer/ui/catalogCard.stylex.ts"],
+      "review": "StyleX ESLint and production compiler passed."
+    },
+    "policy:collapsible-sidebar-navigation": {
+      "scope": "unchanged",
+      "sourceFiles": ["src/registry-explorer/ui/catalogComponentsView.ts"],
+      "review": "Card navigation remains separate from footer actions; no sidebar change."
+    },
+    "policy:css-architecture": {
+      "scope": "verified",
+      "sourceFiles": ["src/registry-explorer/ui/catalogCard.stylex.ts"],
+      "review": "Card-owned StyleX variants size all footer actions; no global override."
+    },
+    "policy:design-document": {
+      "scope": "revalidated",
+      "sourceFiles": ["DESIGN.md", "src/registry-explorer/ui/tokens.stylex.ts"],
+      "review": "Existing approved tokens/evidence remain; explicit current-user footer placement updated; Google design lint clean."
+    },
+    "policy:light-dismiss": {
+      "scope": "unchanged",
+      "sourceFiles": ["src/registry-explorer/ui/shellSetup.ts"],
+      "review": "No light-dismiss implementation modified."
+    },
+    "policy:logo-home-navigation": {
+      "scope": "unchanged",
+      "sourceFiles": ["src/registry-explorer/ui/catalogComponentsView.ts"],
+      "review": "No logo-home routing implementation modified."
+    },
+    "policy:shared-app-shell-interactions": {
+      "scope": "regression-verified",
+      "sourceFiles": [
+        "src/registry-explorer/ui/shellSetup.ts",
+        "tests/registry-explorer/shell.test.ts"
+      ],
+      "review": "Shared copy handler, feedback, and card route interactions remain; 35 shell tests passed."
+    },
+    "policy:stylelint": {
+      "scope": "verified",
+      "sourceFiles": ["src/registry-explorer/ui/catalogCard.stylex.ts"],
+      "review": "Full pnpm lint includes Stylelint; no stylesheet errors."
+    }
+  },
+  "deferred": [
+    "Other card-independent frontend surfaces were not audited",
+    "True coarse-pointer emulation not configured in the mobile viewport runner"
+  ]
+}

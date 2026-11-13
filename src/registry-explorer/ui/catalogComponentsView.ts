@@ -307,7 +307,6 @@ export function renderCatalogComponentCard(
       </a>
       <div${renderStyleXAttributes(stylex.attrs(cardStyles.actions))} data-catalog-actions aria-label="Item actions">
         ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
-        ${renderCardSourceLink(original, component.namespace)}
         <button${renderStyleXAttributes(stylex.attrs(cardStyles.copyName))} type="button"
           data-catalog-copy-name data-copy-text="${escapeHtml(component.displayName)}"
           data-copy-label="Component name copied"
@@ -319,6 +318,7 @@ export function renderCatalogComponentCard(
             <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
           </svg>
         </button>
+        ${renderCardSourceLink(original, component.namespace)}
       </div>
     </article>
   `;

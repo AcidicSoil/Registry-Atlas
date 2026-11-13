@@ -51,6 +51,26 @@ describe("renderCatalogComponents", () => {
     );
   });
 
+  it("places copy immediately beside the homepage link before the source action", () => {
+    const html = renderCatalogComponentCard({
+      ...component(),
+      sourcePage: {
+        url: "https://delta.example/docs/code-block",
+        level: "sitemap",
+        source: "official-sitemap",
+      },
+    });
+
+    const actions = html.slice(html.indexOf("data-catalog-actions"));
+
+    expect(actions).toMatch(
+      /data-registry-homepage[\s\S]*?<\/a>\s*<button[\s\S]*?data-catalog-copy-name/,
+    );
+    expect(actions.indexOf("data-catalog-copy-name")).toBeLessThan(
+      actions.indexOf("data-catalog-source"),
+    );
+  });
+
   it("escapes the displayed name used for the clipboard payload", () => {
     const html = renderCatalogComponentCard({
       ...component(),
