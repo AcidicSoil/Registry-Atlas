@@ -51,24 +51,29 @@ test("mobile backdrop dismisses navigation without dismissing inside clicks", as
   await opener.tap();
   await expect(modal).toBeVisible();
 
-  await browser.evaluate(() => {
-    const dialog = document.getElementById("mobileSidebarDialog");
-    const sidebar = document.getElementById("appSidebar");
-
-    if (!(dialog instanceof HTMLDialogElement) || !sidebar)
-      throw new Error("Missing mobile dialog/sidebar");
-
-    sidebar.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-  });
-  await expect(modal).toBeVisible();
-
-  await browser.evaluate(() => {
+  const points = await browser.evaluate(() => {
     const dialog = document.getElementById("mobileSidebarDialog");
 
     if (!(dialog instanceof HTMLDialogElement)) throw new Error("Missing mobile dialog");
 
-    dialog.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    const bounds = dialog.getBoundingClientRect();
+
+    return {
+      inside: {
+        x: Math.round(bounds.left + 4),
+        y: Math.round(bounds.top + bounds.height / 2),
+      },
+      backdrop: {
+        x: Math.round((bounds.right + window.innerWidth) / 2),
+        y: Math.round(bounds.top + bounds.height / 2),
+      },
+    };
   });
+
+  await screen.tapAt(points.inside);
+  await expect(modal).toBeVisible();
+
+  await screen.tapAt(points.backdrop);
   await expect(modal).not.toBeVisible();
   await expect(opener).toHaveAttribute("aria-expanded", "false");
   await expect

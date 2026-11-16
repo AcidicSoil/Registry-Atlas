@@ -59,9 +59,9 @@ function setupMobileSidebarControls(): void {
     // Native Escape closes the modal and restores focus to its invoker.
     returnFocus = true;
   });
-  mobileDialog.addEventListener("click", (event) => {
-    if (event.target === mobileDialog) close();
-  });
+
+  setupDialogLightDismissFallback(mobileDialog, close);
+
   appSidebar.addEventListener("click", (event) => {
     const target = event.target;
 
@@ -78,6 +78,34 @@ function setupMobileSidebarControls(): void {
   sidebarClose?.addEventListener("click", () => close());
   mobileScreen.addEventListener("change", (event) => {
     if (!event.matches && mobileDialog.open) close(false);
+  });
+}
+
+function setupDialogLightDismissFallback(dialog: HTMLDialogElement, dismiss: () => void): void {
+  if ("closedBy" in HTMLDialogElement.prototype) return;
+
+  const outsideDialog = (event: PointerEvent): boolean => {
+    const bounds = dialog.getBoundingClientRect();
+
+    return (
+      event.clientX < bounds.left ||
+      event.clientX > bounds.right ||
+      event.clientY < bounds.top ||
+      event.clientY > bounds.bottom
+    );
+  };
+
+  let pressedOutside = false;
+
+  dialog.addEventListener("pointerdown", (event) => {
+    pressedOutside = outsideDialog(event);
+  });
+  dialog.addEventListener("pointerup", (event) => {
+    if (pressedOutside && outsideDialog(event)) dismiss();
+    pressedOutside = false;
+  });
+  dialog.addEventListener("pointercancel", () => {
+    pressedOutside = false;
   });
 }
 

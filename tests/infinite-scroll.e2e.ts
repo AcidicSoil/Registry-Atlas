@@ -41,6 +41,30 @@ test("catalog appends results without pagination or losing earlier cards", async
   await app.screenshot("incremental-components");
 });
 
+test("keyboard loading retains focus on the next load-more button", async ({ app, browser }) => {
+  await app.open("/Registry-Atlas/components");
+
+  const count = () =>
+    browser.evaluate(
+      () => document.querySelectorAll("[data-catalog-grid] > [data-catalog-card]").length,
+    );
+
+  await expect.poll(count).toBeGreaterThan(0);
+
+  const before = await count();
+  const loadMore = browser.locator("[data-scroll-load-more]");
+
+  await loadMore.focus();
+  await loadMore.press("Enter");
+
+  await expect.poll(count).toBeGreaterThan(before);
+  await expect
+    .poll(() =>
+      browser.evaluate(() => document.activeElement?.matches("[data-scroll-load-more]") ?? false),
+    )
+    .toBe(true);
+});
+
 test("scrolling the registry directory automatically loads additional records", async ({
   app,
   browser,
@@ -63,6 +87,12 @@ test("scrolling the registry directory automatically loads additional records", 
   });
 
   await expect.poll(count, { timeout: 20_000 }).toBeGreaterThan(before);
+  expect(
+    await browser.evaluate(
+      () => document.activeElement?.matches("[data-scroll-load-more]") ?? false,
+    ),
+  ).toBe(false);
+
   await app.screenshot("incremental-registries");
 });
 

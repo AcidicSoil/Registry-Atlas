@@ -78,6 +78,41 @@ for (const example of examples) {
   });
 }
 
+test("keyboard focus exposes and dismisses source preview", async ({ app, screen, browser }) => {
+  await app.open("/Registry-Atlas/components");
+  await screen.getByRole("searchbox", "Search catalog").fill("animated-testimonials");
+
+  const link = screen.getByRole("link", "Open source page on @aceternity");
+
+  await expect(link).toBeVisible();
+  await link.focus();
+
+  await expect(browser.locator("#catalog-link-preview[role='tooltip']")).toBeVisible();
+  await expect
+    .poll(() =>
+      browser.evaluate(
+        () =>
+          document.activeElement
+            ?.getAttribute("aria-describedby")
+            ?.includes("catalog-link-preview") ?? false,
+      ),
+    )
+    .toBe(true);
+
+  await link.press("Escape");
+  await expect(browser.locator("#catalog-link-preview")).toHaveCount(0);
+  await expect
+    .poll(() =>
+      browser.evaluate(
+        () =>
+          document.activeElement
+            ?.getAttribute("aria-describedby")
+            ?.includes("catalog-link-preview") ?? false,
+      ),
+    )
+    .toBe(false);
+});
+
 test("a logo source does not produce an icon-only component popup", async ({
   app,
   screen,

@@ -1,6 +1,14 @@
 import { markAccessibleFeed } from "./infiniteScrollControl";
 import { readBrowseSnapshot, saveBrowseSnapshot, type BrowseSnapshot } from "./browseHistory";
 
+function restoreLoadMoreFocus(body: HTMLElement, wasFocused: boolean): void {
+  if (!wasFocused) return;
+
+  body.querySelector<HTMLButtonElement>("[data-scroll-load-more]")?.focus({
+    preventScroll: true,
+  });
+}
+
 interface BrowseFeedDependencies {
   body: HTMLElement;
   getPage: () => number;
@@ -56,6 +64,9 @@ export function createBrowseFeedController({
     const earlier = Array.from(previousList.children);
     const page = getPage();
 
+    const wasLoadMoreFocused =
+      document.activeElement === body.querySelector("[data-scroll-load-more]");
+
     expandingResults = true;
     previousList.setAttribute("aria-busy", "true");
     scrollObserver?.disconnect();
@@ -76,6 +87,8 @@ export function createBrowseFeedController({
 
     announceVisibleResults(nextList);
     updateFeedSemantics();
+
+    restoreLoadMoreFocus(body, wasLoadMoreFocused);
 
     expandingResults = false;
   }

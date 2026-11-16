@@ -15,12 +15,15 @@
     margin: 0;
     padding: 0;
     overflow: hidden;
+    overscroll-behavior: contain;
     border: 0;
     background: var(--background);
     box-shadow: 22px 0 48px rgb(0 0 0 / 42%);
   }
 
   .mobile-sidebar-dialog::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
     background: rgb(0 0 0 / 64%);
   }
 

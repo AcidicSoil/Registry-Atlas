@@ -22,4 +22,11 @@ describe("native mobile navigation dialog", () => {
     expect(entry).not.toMatch(/event\.key\s*===\s*["']Tab["']/);
     expect(css).toContain(".mobile-sidebar-dialog::backdrop");
   });
+
+  it("uses native backdrop dismissal with a feature-detected fallback", () => {
+    expect(html).toMatch(/<dialog\s[^>]*\bclosedby="any"/);
+    expect(entry).toContain('"closedBy" in HTMLDialogElement.prototype');
+    expect(entry).not.toContain('mobileDialog.addEventListener("click"');
+    expect(css).toContain("overscroll-behavior: contain");
+  });
 });
