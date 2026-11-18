@@ -34,13 +34,6 @@ jobs:
         run: mise run install
       - name: Check source without a database connection
         run: |
-          pnpm audit:dependencies
-          pnpm lint:anti-slop
-          pnpm lint:deps
-          pnpm lint:react-doctor
-          pnpm lint:complexity
-          pnpm lint:styles
-          pnpm lint:stylex
-          pnpm lint:unused
+          pnpm lint audit
+          pnpm lint
           pnpm typecheck
-          pnpm typecheck:test

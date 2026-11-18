@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it } from "vitest";
 import { checkRuntimeData } from "../../scripts/check-runtime-data.mjs";
+import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
 // @ts-ignore Standalone Node ESM publication module.
 import { publishRuntimeSnapshots } from "../../scripts/lib/runtime-publication.mjs";
 
@@ -88,20 +89,21 @@ describe("local-first runtime data", () => {
     await expect(checkRuntimeData(root)).rejects.toThrow(/do not match/);
   });
 
-  it("keeps remote export explicit in package scripts", async () => {
-    const { default: packageJson } = await import("../../package.json");
-    const scripts = packageJson.scripts;
-
-    expect(scripts.predev).toBe("pnpm check:runtime-data");
-    expect(scripts.pretest).toBe("pnpm check:runtime-data");
-    expect(scripts.prebuild).toBe("pnpm check:runtime-data");
-    expect(scripts["prepare:runtime-data"]).toContain("build-runtime-data.mjs");
-    expect(scripts.verify).toContain("pnpm prepare:runtime-data");
-    expect(scripts["verify:local"]).toContain("pnpm test:local");
-    expect(scripts["verify:local"]).not.toContain("pnpm check:product-contract");
-    expect(scripts["test:local"]).toContain(
-      "--exclude tests/registry-explorer/postgresStorage.test.ts",
+  it("keeps remote export explicit and local workflows offline", () => {
+    expect(resolveTask("build", "prepare-runtime-data").args).toContain(
+      "scripts/build-runtime-data.mjs",
     );
-    expect(scripts.verify).toContain("pnpm test && pnpm check:postgres");
+    expect(resolveWorkflow("verify")).toContain("build:prepare-runtime-data");
+    expect(resolveWorkflow("verify:local")).not.toContain("build:prepare-runtime-data");
+    expect(resolveWorkflow("verify:local")).toContain("test:local");
+    expect(resolveWorkflow("verify:local")).not.toContain("test:contract");
+    expect(resolveWorkflow("verify")).toContain("db:check");
+    expect(resolveWorkflow("verify")).toContain("test:contract");
+    expect(resolveWorkflow("test")).toContain("build:check-runtime-data");
+    expect(resolveWorkflow("dev")).toContain("build:check-runtime-data");
+    expect(resolveWorkflow("build")).toContain("build:check-runtime-data");
+    expect(resolveTask("test", "local").args).toContain(
+      "tests/registry-explorer/postgresStorage.test.ts",
+    );
   });
 });

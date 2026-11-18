@@ -10,174 +10,33 @@ description = "Install dependencies from the pnpm lockfile"
 run = "pnpm install --frozen-lockfile"
 
 [tasks.dev]
-description = "Start the Vite development server"
+description = "Start the development server or production preview"
 run = "pnpm dev"
 
-[tasks.test]
-description = "Run the test suite"
-run = "pnpm test"
-
-[tasks."test:watch"]
-description = "Run the test suite in watch mode"
-run = "pnpm exec vitest"
-
-[tasks.typecheck]
-description = "Type-check application source"
-run = "pnpm typecheck"
-
-[tasks."typecheck:test"]
-description = "Type-check application and test source"
-run = "pnpm typecheck:test"
-
-[tasks."validate:data"]
-description = "Validate generated registry data"
-run = "pnpm validate:data"
-
-[tasks."check:product-contract"]
-description = "Check canonical routes, retired taxonomy removal, and detail bundles"
-run = "pnpm check:product-contract"
-
-[tasks."browser:acceptance"]
-description = "Run managed PinchTab desktop/mobile route acceptance"
-run = "pnpm browser:acceptance"
-
-[tasks.verify]
-description = "Run the full maintainer verification gate"
-run = "pnpm verify"
-
-[tasks.build]
-description = "Build the production bundle"
-run = "pnpm build"
-
-[tasks.preview]
-description = "Preview the production build locally"
-run = "pnpm preview"
-
-[tasks."import:catalog"]
-description = "Import the reviewed registry catalog"
-run = "pnpm import:catalog"
-
-[tasks."sync:registries"]
-description = "Refresh the official shadcn registry mirror"
-run = "pnpm sync registries"
-
-[tasks."sync:catalog-evidence"]
-description = "Refresh registry catalog evidence"
-run = "pnpm sync catalog-evidence"
-
-[tasks."sync:registry-icons"]
-description = "Discover source-backed registry icons from registry homepages and persist them to PostgreSQL"
-run = "pnpm sync registry-icons"
-
-[tasks."source-pages"]
-description = "Build exact source-page links and coverage from current verified/sitemap evidence"
-run = "node scripts/verify-component-pages.mjs --report-only --report .instance/component-verification-queue.json && node scripts/build-source-page-index.mjs"
-
-[tasks."verify:registry-patterns"]
-description = "Verify the next 20 eligible registry patterns from PostgreSQL, refresh unresolved queue and source-page links"
-run = "node scripts/verify-registry-patterns.mjs --verify-only --max-registries 20 --samples 2 && mise run source-pages"
-
-[tasks."verify:component-pages"]
-description = "Verify a bounded batch of exact original-component URLs, persist outcomes, publish links, and export a unified slug queue"
-run = "node scripts/verify-component-pages.mjs --max-pages 20 --max-per-registry 3 --delay-ms 1200 --report .instance/component-verification-queue.json && mise run source-pages"
-
-[tasks.all]
-description = "Refresh registry data and run the full verification gate"
-run = "pnpm verify"
-
-[tasks."check:postgres"]
-run = "pnpm run check:postgres"
-
-[tasks."migrate:postgres-schema"]
-run = "pnpm run migrate:postgres-schema"
-
-[tasks.prebuild]
-run = "pnpm run prebuild"
-
-[tasks.predev]
-run = "pnpm run predev"
-
-[tasks."prepare:runtime-data"]
-run = "pnpm run prepare:runtime-data"
-
-[tasks.pretest]
-run = "pnpm run pretest"
-
-[tasks."audit:dependencies"]
-description = "Reject moderate and higher dependency advisories"
-run = "pnpm audit:dependencies"
-
-[tasks."lint:deps"]
-run = "pnpm run lint:deps"
-
-[tasks."lint:react-doctor"]
-run = "pnpm run lint:react-doctor"
-
-[tasks."lint:complexity"]
-run = "pnpm run lint:complexity"
-
-[tasks."lint:anti-slop"]
-description = "Enforce the root Stackforge anti-slop TypeScript policy"
-run = "pnpm run lint:anti-slop"
-
-[tasks."lint:all"]
-description = "runs all lint scripts"
+[tasks.lint]
+description = "Run all quality checks or a selected lint operation"
 run = "pnpm lint"
 
-[tasks.check]
-run = "mise run lint:complexity && mise run lint:node && mise run test"
+[tasks.typecheck]
+description = "Type-check source and tests"
+run = "pnpm typecheck"
 
-[tasks."check:runtime-data"]
-run = "pnpm run check:runtime-data"
+[tasks.test]
+description = "Run tests or a selected test operation"
+run = "pnpm test"
 
-[tasks.db]
-run = "pnpm run db"
+[tasks.build]
+description = "Build the production bundle or generated assets"
+run = "pnpm build"
 
-[tasks.lint]
-run = "pnpm run lint"
-
-[tasks."lint:commit"]
-run = "pnpm run lint:commit"
-
-[tasks."lint:node"]
-run = "(cd . && pnpm run check)"
-
-[tasks."lint:styles"]
-run = "pnpm run lint:styles"
-
-[tasks."lint:unused"]
-run = "pnpm run lint:unused"
+[tasks.verify]
+description = "Run the full or local verification gate"
+run = "pnpm verify"
 
 [tasks.sync]
-run = "pnpm run sync"
+description = "Run a selected registry or catalog synchronization"
+run = "pnpm sync"
 
-[tasks."test:anti-slop-gate"]
-run = "pnpm run test:anti-slop-gate"
-
-[tasks."test:boundaries"]
-run = "pnpm run test:boundaries"
-
-[tasks."test:complexity-gate"]
-run = "pnpm run test:complexity-gate"
-
-[tasks."test:e2e"]
-run = "pnpm run test:e2e"
-
-[tasks."test:local"]
-run = "pnpm run test:local"
-
-[tasks."verify:local"]
-run = "pnpm run verify:local"
-
-[tasks."format:check"]
-run = "pnpm run format:check"
-
-[tasks."format:write"]
-run = "pnpm run format:write"
-
-[tasks."lint:boundaries"]
-run = "pnpm run lint:boundaries"
-
-[tasks."lint:stylex"]
-description = "Validate authored component StyleX via official rules"
-run = "pnpm run lint:stylex"
+[tasks.db]
+description = "Run a selected PostgreSQL operation"
+run = "pnpm db"

@@ -18,29 +18,47 @@ mise run test
 
 The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is the preferred project entrypoint so local and CI toolchains stay aligned.
 
-## Gradual quality cleanup
+## Primary commands
 
-`pnpm lint:styles` runs Stylelint on remaining authored CSS; `pnpm lint:stylex` runs the **official StyleX ESLint rules and token policy** against `src/**/*.stylex.ts`; `pnpm lint:unused` runs Knip on the project/CLI/test entrypoints. All three gates run in `pnpm lint`, `pnpm check`, `pnpm verify`, `pnpm verify:local`, and deploy CI (`.github/workflows/deploy.yml`). `pnpm lint` delegates to `pnpm lint:deps && pnpm check`, preserving dependency-cruiser test coverage while using the canonical quality/formatting gate without duplicate execution. TypeScript/HTML renderers remain subject to Oxlint.
-
-`pnpm audit:dependencies` is also mandatory: the workspace pins patched `zod@4.6.6` and transitive `fast-uri@3.1.9` through `pnpm-workspace.yaml` overrides. This prevents vulnerable versions from resurfacing in E2E or CSS tooling dependency trees. Regenerate and audit `pnpm-lock.yaml` when those overrides change.
-
-The checked-in `.design/quality-debt-baseline.json` records zero accepted findings. Direct Stylelint and Knip commands now enforce zero actionable issues; `node scripts/check-quality-debt.mjs all` retains the optional historical baseline check. The Knip configuration explicitly identifies installed, non-npm CLI binaries; the dev-only React Grab/React peer pair loaded by `index.html`; and generated vendor declarations outside authored source. These are documented tooling boundaries, not globally disabled rules. Any intentional new baseline requires `node scripts/check-quality-debt.mjs all --update-baseline` and reviewer evidence. Historical findings and repairs are recorded in `.design/stale-code-cleanup-2026-10-29.md`.
-
-## Package scripts
-
-The root `package.json` exposes the frequent development and verification entrypoints. Infrequent operations use grouped commands instead of one npm script per action:
+The root `package.json` and `mise.toml` expose eight primary task groups
+(plus `mise run install`). They delegate to the shared command registry in
+`scripts/project-tasks.mjs`. Run a group for its complete workflow or supply a
+purpose-specific operation:
 
 ```bash
-pnpm db status                   # setup | up | down | status | backup
-pnpm db restore-check /path/to/backup.dump
-pnpm db reconcile-source-evidence
-pnpm sync registries              # registries | catalog-evidence | registry-icons
-
-pnpm test:e2e tests/smoke.e2e.ts
-pnpm test:e2e --config e2e.mobile.config.ts
+mise run lint                  # Oxlint, dependency-cruiser, React Doctor, CCCC, CSS, StyleX, Knip, Oxfmt
+mise run lint stylex           # Just the StyleX ESLint gate
+mise run lint format-write     # Apply Oxfmt
+mise run lint audit            # Audit dependencies
+mise run typecheck             # Source and tests
+mise run typecheck tests       # Test TypeScript only
+mise run test                  # Runtime-data check and Vitest
+mise run test local            # Existing offline test subset
+mise run test e2e --config e2e.mobile.config.ts
+mise run test browser          # Managed desktop/mobile acceptance
+mise run test contract         # Canonical product contract
+mise run build                 # Runtime-data check, TypeScript, Vite, SPA fallback, SBOM
+mise run build prepare-runtime-data # Explicit PostgreSQL export
+mise run build validate-data   # Validate the exported registry mirror
+mise run build source-pages    # Generate verified source-page index
+mise run verify                # Full PostgreSQL-backed maintainer verification
+mise run verify local          # Offline verification, without DB-backed checks
+mise run dev preview           # Vite production preview
+mise run sync registries       # Registry synchronization
+mise run sync import           # Reviewed catalog import
+mise run db status             # PostgreSQL status
+mise run db restore-check /path/to/backup.dump
 ```
 
-`pnpm db --help` and `pnpm sync --help` list supported actions. `mise run sync:registries` and the other documented mise sync tasks remain compatibility entrypoints. Existing database and catalog scripts are reused unchanged; selecting a database subcommand does not automatically start PostgreSQL, and synchronizations require an explicit `sync` subcommand. E2E options go directly after `pnpm test:e2e` (do not insert an extra `--` separator). The normal `pnpm verify` gate retains the mandatory quality checks.
+Run `pnpm <group> [operation]` for the equivalent package-manager entrypoint.
+`pnpm <group> --help` lists operations. `pnpm verify` first publishes
+runtime data from PostgreSQL; `pnpm verify local`, `pnpm dev`, `pnpm test`,
+and `pnpm build` only consume existing published runtime data. The default
+lint group executes each required static gate once. Dependency audit is part of
+the full verification gate and is available separately through `lint audit`.
+
+The `db` and `sync` groups require an explicit operation. Neither starts a
+database or contacts upstream registries without the corresponding command.
 
 ## Git worktree isolation
 
@@ -52,16 +70,19 @@ The exclusion was added after canonical root discovery was shown to collect a du
 
 ## Data refresh is separate
 
-Verification does not mutate or refresh the generated registry mirror. When intentionally reviewing upstream registry changes, use the documented refresh sequence:
+Verification does not synchronize the upstream registry mirror. Refresh it
+explicitly, inspect the results, then run the maintainer gate:
 
 ```bash
-mise run import:catalog
-mise run sync:registries
-mise run validate:data
+mise run sync import
+mise run sync registries
+mise run build validate-data
 mise run verify
 ```
 
-Review the generated reports and runtime mirror before accepting regenerated data. See `docs/registry-explorer-data.md` for the data authority and maintenance workflow.
+See `docs/registry-explorer-data.md` for data authority and maintenance. The
+dated reports below record historical verification and may refer to previously
+exposed command aliases.
 
 ## Phase 5A catalog-policy verification (2026-11-04)
 

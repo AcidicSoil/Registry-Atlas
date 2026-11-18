@@ -21,13 +21,13 @@ and route verification records in PostgreSQL (Neon project `Registry Atlas`, sch
 No SQLite database or Git LFS file is committed. PostgreSQL transactions protect updates.
 
 GitHub Pages is a static website. During `pnpm dev` or `pnpm build`, the server-side
-`pnpm prepare:runtime-data` task exports disposable compressed assets:
+`pnpm build prepare-runtime-data` operation exports disposable compressed assets:
 `public/data/registry-atlas.json.gz` (catalog and metadata) and
 `public/data/registry-details.json.gz` (lazy-loaded item details).
 Neither is authoritative, and database credentials never go to the browser.
 
-For reviewed, source-backed links, run `mise run verify:component-pages` and
-`mise run source-pages`. A generic HTTP 200 is not evidence of component identity.
+For reviewed, source-backed links, run `pnpm test component-pages` and
+`pnpm build source-pages`. A generic HTTP 200 is not evidence of component identity.
 See [data operations](docs/registry-explorer-data.md).
 
 ## Getting Started
@@ -36,7 +36,7 @@ See [data operations](docs/registry-explorer-data.md).
 
 - mise
 
-The project pins Node 24.21.0 and pnpm 11.24.0 in `mise.toml`.
+The project configures Node LTS and pnpm through `mise.toml`.
 
 ### Installation
 
@@ -59,7 +59,7 @@ Visit `http://localhost:5173/Registry-Atlas/` in your browser.
 Validate generated registry data:
 
 ```bash
-mise run validate:data
+mise run build validate-data
 ```
 
 Run the test suite:
@@ -71,14 +71,13 @@ mise run test
 Check the canonical product contract:
 
 ```bash
-mise run check:product-contract
+mise run test contract
 ```
 
 Type-check source and tests:
 
 ```bash
 mise run typecheck
-mise run typecheck:test
 ```
 
 Run the full maintainer verification gate:
@@ -92,7 +91,7 @@ mise run verify
 The managed browser acceptance matrix is exposed as:
 
 ```bash
-mise run browser:acceptance
+mise run test browser
 ```
 
 It exercises the canonical route family at desktop and 390px mobile widths and checks route identity, expected unavailable/not-found states, exact catalog items, horizontal overflow, basic accessible labeling, browser exceptions, and unexpected 5xx responses.
@@ -104,15 +103,15 @@ Configure a writable PostgreSQL `DATABASE_URL` (or the ignored
 separate read-only role.
 
 ```bash
-mise run import:catalog
-mise run sync:registries
-mise run validate:data
+mise run sync import
+mise run sync registries
+mise run build validate-data
 mise run verify
 ```
 
-`sync:registries` updates the official directory, catalog evidence, classification
+`sync registries` updates the official directory, catalog evidence, classification
 projection, registry snapshots, and exact item details in PostgreSQL.
-`pnpm prepare:runtime-data` regenerates the two ignored browser assets from the
+`pnpm build prepare-runtime-data` regenerates the two ignored browser assets from the
 database. Route patterns, component URL checks, and classification run state
 are also maintained in PostgreSQL.
 
@@ -122,7 +121,7 @@ are also maintained in PostgreSQL.
 
 ```bash
 mise run build
-mise run preview
+mise run dev preview
 ```
 
 ## Architecture
@@ -190,7 +189,7 @@ src/registry-explorer/
 
 ## Maintenance
 
-Use `pnpm migrate:postgres-schema` to apply the idempotent PostgreSQL route
+Use `pnpm db migrate` to apply the idempotent PostgreSQL route
 constraints and sequences to a newly imported database. The initial SQLite import
 utility is retained only to read legacy snapshots; it is not an active data writer.
 

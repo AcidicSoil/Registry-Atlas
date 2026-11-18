@@ -4,7 +4,7 @@
 
 ## Runtime assets
 
-`pnpm prepare:runtime-data` exports two compressed files from PostgreSQL to `public/data/generations/<sha256>/`. The publisher then replaces `public/data/runtime-manifest.json` to select that generation:
+`pnpm build prepare-runtime-data` exports two compressed files from PostgreSQL to `public/data/generations/<sha256>/`. The publisher then replaces `public/data/runtime-manifest.json` to select that generation:
 
 - `registry-atlas.json.gz` contains the registry mirror, catalog, taxonomy, and source-page evidence.
 - `registry-details.json.gz` contains item details, which the browser loads when needed.
@@ -24,8 +24,8 @@ pnpm db setup              # Create owner-only local credentials if needed
 pnpm db up                 # Start the local PostgreSQL container
 pnpm db status             # Check container health
 pnpm dev                   # Start Vite using existing local assets
-pnpm prepare:runtime-data  # Explicit refresh from local PostgreSQL
-pnpm verify:local          # Offline subset: local assets, non-DB tests, build
+pnpm build prepare-runtime-data # Explicit refresh from local PostgreSQL
+pnpm verify local           # Offline subset: local assets, non-DB tests, build
 pnpm verify                # Full local PostgreSQL checks, all tests, and build
 pnpm db backup             # Produce and verify a timestamped PostgreSQL dump
 pnpm db down               # Stop container without deleting its volume

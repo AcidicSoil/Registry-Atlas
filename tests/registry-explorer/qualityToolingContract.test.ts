@@ -1,36 +1,53 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
+import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
 
 const read = (file: string) => readFileSync(new URL("../../" + file, import.meta.url), "utf8");
 
 describe("quality-tooling integration contract", () => {
-  it("runs all mandatory quality gates during normal verification", () => {
+  it("runs all mandatory quality gates through a single pipeline", () => {
     const pkg = JSON.parse(read("package.json"));
     expect(pkg.devDependencies["dependency-cruiser"]).toBe("18.6.0");
     expect(pkg.devDependencies["react-doctor"]).toBe("0.9.18");
-    expect(pkg.scripts["lint:deps"]).toBe("depcruise src tests --config .dependency-cruiser.cjs");
-    expect(pkg.scripts["lint:react-doctor"]).toContain("--blocking warning --no-telemetry");
-    expect(pkg.scripts["lint:complexity"]).toBe("cccc src/registry-explorer");
-    expect(pkg.scripts["lint:anti-slop"]).toBe("oxlint .");
-
-    for (const gate of ["pnpm lint:styles", "pnpm lint:unused"]) {
-      expect(pkg.scripts.verify).toContain(gate);
-      expect(pkg.scripts["verify:local"]).toContain(gate);
-    }
-
-    expect(pkg.scripts["test:anti-slop-gate"]).toBe("node scripts/verify-anti-slop-gate.mjs");
     expect(pkg.devDependencies.oxlint).toBe("1.87.0");
     expect(pkg.devDependencies["@oxlint/plugins"]).toBe("1.87.0");
-    expect(pkg.scripts["test:complexity-gate"]).toBe("node scripts/verify-complexity-gate.mjs");
+
+    const lintSteps = resolveWorkflow("lint") ?? [];
 
     for (const gate of [
-      "pnpm lint:anti-slop",
-      "pnpm lint:deps",
-      "pnpm lint:react-doctor",
-      "pnpm lint:complexity",
+      "anti-slop",
+      "deps",
+      "react-doctor",
+      "complexity",
+      "styles",
+      "stylex",
+      "unused",
+      "format",
     ]) {
-      expect(pkg.scripts.verify).toContain(gate);
+      expect(lintSteps).toContain(`lint:${gate}`);
     }
+
+    expect(new Set(lintSteps).size).toBe(lintSteps?.length);
+    expect(resolveWorkflow("verify")).toContain("lint");
+    expect(resolveWorkflow("verify:local")).toContain("lint");
+
+    expect(resolveTask("lint", "boundaries").args).toContain("depcruise");
+
+    expect(resolveTask("lint", "anti-slop")).toEqual({
+      executable: "pnpm",
+      args: ["exec", "oxlint", "."],
+    });
+    expect(resolveTask("lint", "react-doctor").args).toContain("--blocking");
+    expect(resolveTask("lint", "complexity")).toEqual({
+      executable: "cccc",
+      args: ["src/registry-explorer"],
+    });
+    expect(resolveTask("test", "anti-slop-gate").args).toContain(
+      "scripts/verify-anti-slop-gate.mjs",
+    );
+    expect(resolveTask("test", "complexity-gate").args).toContain(
+      "scripts/verify-complexity-gate.mjs",
+    );
   });
 
   it("keeps Repowise-generated agent guidance outside source formatting", () => {

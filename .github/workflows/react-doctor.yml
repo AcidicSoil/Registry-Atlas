@@ -25,4 +25,4 @@ jobs:
       - name: Install pinned dependencies
         run: mise run install
       - name: Block React Doctor warnings
-        run: mise run lint:react-doctor
+        run: mise run lint react-doctor

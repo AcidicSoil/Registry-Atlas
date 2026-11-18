@@ -3,9 +3,12 @@ export interface ResolvedProjectTask {
   args: string[];
 }
 
-/** Look up an existing maintenance command without invoking it. */
+/** Look up a single operation without executing it. */
 export function resolveTask(
   group: string,
   operation: string,
   extraArgs?: string[],
 ): ResolvedProjectTask;
+
+/** Look up an ordered task group without executing it. */
+export function resolveWorkflow(group: string, operation?: string): string[] | null;

@@ -33,5 +33,6 @@
     "tools/oxlint/anti-slop/shared/dictionary-types.ts": ["exports", "types"],
   },
   "ignoreBinaries": ["cccc", "pinchtab", "pinchtab-profile-manager"],
-  "ignoreDependencies": ["react", "react-grab", "@shadcn/lint"],
+  // CLI dependencies invoked by scripts/project-tasks.mjs are not statically discoverable.
+  "ignoreDependencies": ["react", "react-grab", "@shadcn/lint", "oxfmt", "react-doctor"],
 }
