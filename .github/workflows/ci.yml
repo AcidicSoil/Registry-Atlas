@@ -20,9 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: jdx/mise-action@v3
-      - uses: pnpm/action-setup@v4
-        with:
-          run_install: false
       - run: pnpm install --frozen-lockfile
       - name: Prepare runtime data
         run: node scripts/project-tasks.mjs build:prepare-runtime-data
