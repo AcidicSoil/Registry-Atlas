@@ -98,7 +98,9 @@ describe("native StyleX architecture", () => {
     expect(resolveTask("lint", "stylex").args).toContain("eslint");
     expect(resolveWorkflow("lint")).toContain("lint:stylex");
     expect(resolveWorkflow("verify")).toContain("lint");
-    expect(root(".github/workflows/deploy.yml")).toContain("pnpm lint");
+    expect(root(".github/workflows/ci.yml")).toContain(
+      "node scripts/project-tasks.mjs verify:local",
+    );
     expect(eslint).toContain("@stylexjs/valid-styles");
     expect(eslint).toContain("@stylexjs/no-unused");
   });
