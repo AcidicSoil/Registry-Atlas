@@ -205,11 +205,16 @@
 }
 
 .catalog-results-context {
+  position: sticky;
+  z-index: 5;
+  top: 0;
   display: flex;
   min-width: 0;
   align-items: center;
   gap: 8px;
   margin: 0 0 var(--space-3);
+  padding-block: 7px;
+  background: var(--background);
   flex-wrap: wrap;
 }
 

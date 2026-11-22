@@ -4,10 +4,15 @@ import { tokens } from "./tokens.stylex";
 export const paletteStyles = stylex.create({
   trigger: {
     flexShrink: 0,
+    boxSizing: "border-box",
+    minWidth: 0,
+    maxWidth: "100%",
+    minHeight: 0,
+    height: 24,
     borderWidth: 0,
     borderRadius: 5,
     paddingInline: 6,
-    paddingBlock: 4,
+    paddingBlock: 0,
     backgroundColor: tokens["--secondary"],
     color: tokens["--muted-foreground"],
     fontSize: 11,
