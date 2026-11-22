@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 75
     steps:
-      - uses: actions/checkout@v4
-      - uses: jdx/mise-action@v3
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v5
       - run: pnpm install --frozen-lockfile
       - name: Restore pinned offline test data
         run: tar -xf tests/fixtures/ci-runtime.tar
