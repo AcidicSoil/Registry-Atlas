@@ -25,3 +25,37 @@ jobs:
         run: tar -xf tests/fixtures/ci-runtime.tar
       - name: Full available offline checks
         run: mise run verify:local
+
+  postgres:
+    name: Real PostgreSQL lifecycle tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: atlas
+          POSTGRES_DB: atlas
+          POSTGRES_PASSWORD: test-only
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U atlas -d atlas"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v5
+      - run: pnpm install --frozen-lockfile
+      - name: Bootstrap isolated schema-only databases
+        run: |
+          docker exec -i "${{ job.services.postgres.id }}" psql -v ON_ERROR_STOP=1 -U atlas -d atlas < tests/fixtures/atlas-schema.sql
+          docker exec "${{ job.services.postgres.id }}" psql -v ON_ERROR_STOP=1 -U atlas -d atlas -c 'CREATE DATABASE atlas_test'
+          docker exec -i "${{ job.services.postgres.id }}" psql -v ON_ERROR_STOP=1 -U atlas -d atlas_test < tests/fixtures/atlas-schema.sql
+          mkdir -p .instance
+          printf 'postgres://atlas:test-only@127.0.0.1:55432/atlas\n' > .instance/local-postgres-url
+          printf 'postgres://atlas:test-only@127.0.0.1:55432/atlas_test\n' > .instance/local-postgres-test-url
+          chmod 600 .instance/local-postgres-url .instance/local-postgres-test-url
+      - name: Verify PostgreSQL lifecycle invariants
+        run: mise run test:postgres
