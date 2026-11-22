@@ -452,11 +452,18 @@ function displayName(match: CatalogMatch): string {
   return displayLabel(match.item);
 }
 
-export function displayLabel(item: RegistryCatalogItem): string {
-  if (item.title?.trim()) return item.title.trim();
-  const segments = item.name.split("/").filter(Boolean);
+function pathDisplayLabel(path: string): string {
+  const segments = path.split("/").filter(Boolean);
+  const leaf = segments.at(-1) ?? path;
 
-  return segments.at(-1) ?? item.name;
+  if (leaf !== "all" || segments.length < 2) return leaf;
+  const parent = segments.at(-2) ?? leaf;
+
+  return parent.replaceAll("-", " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+export function displayLabel(item: RegistryCatalogItem): string {
+  return item.title?.trim() || pathDisplayLabel(item.name);
 }
 
 function matchesCategoryAndAccess(item: RegistryCatalogItem, filters: CatalogFilters): boolean {

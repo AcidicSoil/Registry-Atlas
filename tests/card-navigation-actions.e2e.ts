@@ -115,3 +115,38 @@ test("catalog card uses one footer homepage link and retains internal card navig
   await expect(browser).toHaveURL("/Registry-Atlas/@logoforge/components/dotnet");
   await expect(screen.getByRole("heading", ".NET logo")).toBeVisible();
 });
+
+test("nested theme cards show distinct names and expose canonical copy paths", async ({
+  app,
+  browser,
+  screen,
+}) => {
+  await app.open("/Registry-Atlas/themes");
+
+  const search = screen.getByRole("searchbox", "Search catalog");
+  const apple = screen.getByRole("link", "Open Apple from @registrydirectory");
+  const copy = screen.getByRole("button", "Copy Apple item path");
+
+  await search.fill("marvkr/apple/all");
+  await expect(apple).toBeVisible();
+  await expect(copy).toHaveAttribute("data-copy-text", "@registrydirectory/marvkr/apple/all");
+  await expect(apple).toHaveAttribute(
+    "href",
+    "/Registry-Atlas/@registrydirectory/themes/marvkr/apple/all",
+  );
+
+  await browser.evaluate(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => undefined },
+    });
+
+    return true;
+  });
+
+  await copy.tap();
+  await expect(browser.locator(".copy-feedback-success")).toBeVisible();
+
+  await search.fill("marvkr/beam-lib/all");
+  await expect(screen.getByRole("link", "Open Beam Lib from @registrydirectory")).toBeVisible();
+});

@@ -263,6 +263,20 @@ function catalogCardThemeSpecimen(component: CatalogComponent, routeKind: string
     : "";
 }
 
+function cardCopyDetails(component: CatalogComponent): {
+  value: string;
+  action: string;
+  feedback: string;
+} {
+  return component.slug.includes("/")
+    ? {
+        value: `${component.namespace}/${component.slug}`,
+        action: "item path",
+        feedback: "Item path copied",
+      }
+    : { value: component.displayName, action: "name", feedback: "Component name copied" };
+}
+
 export function renderCatalogComponentCard(
   component: CatalogComponent,
   routeKind: "component" | "block" | "page" | "template" | "theme" | "icon" = "component",
@@ -285,6 +299,7 @@ export function renderCatalogComponentCard(
   const themeData = catalogCardThemeSpecimen(component, routeKind);
 
   const sourcePreviewAttribute = renderSourcePreviewAttribute(original);
+  const copy = cardCopyDetails(component);
 
   return `
     <article${cardLayoutAttributes(options)} data-catalog-card data-card-kind="${routeKind}">
@@ -316,10 +331,10 @@ export function renderCatalogComponentCard(
       <div${renderStyleXAttributes(stylex.attrs(cardStyles.actions))} data-catalog-actions aria-label="Item actions">
         ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
         <button${renderStyleXAttributes(stylex.attrs(cardStyles.copyName))} type="button"
-          data-catalog-copy-name data-copy-text="${escapeHtml(component.displayName)}"
-          data-copy-label="Component name copied"
-          aria-label="Copy ${escapeHtml(component.displayName)} name"
-          title="Copy name">
+          data-catalog-copy-name data-copy-text="${escapeHtml(copy.value)}"
+          data-copy-label="${copy.feedback}"
+          aria-label="Copy ${escapeHtml(component.displayName)} ${copy.action}"
+          title="Copy ${copy.action}">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
             stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <rect x="8" y="8" width="13" height="13" rx="2" />

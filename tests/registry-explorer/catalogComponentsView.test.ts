@@ -51,6 +51,28 @@ describe("renderCatalogComponents", () => {
     );
   });
 
+  it("copies a nested theme's canonical registry identifier rather than its short title", () => {
+    const html = renderCatalogComponentCard(
+      {
+        ...component(),
+        id: "@registrydirectory:marvkr/apple/all",
+        namespace: "@registrydirectory",
+        registry: { ...registry(), name: "@registrydirectory" },
+        slug: "marvkr/apple/all",
+        displayName: "Apple",
+        item: { name: "marvkr/apple/all", type: "registry:style" },
+        routePath: "/Registry-Atlas/@registrydirectory/components/marvkr/apple/all",
+      },
+      "theme",
+    );
+
+    expect(html).toContain(">Apple</strong>");
+    expect(html).toContain('data-copy-text="@registrydirectory/marvkr/apple/all"');
+    expect(html).toContain('data-copy-label="Item path copied"');
+    expect(html).toContain('aria-label="Copy Apple item path"');
+    expect(html).toContain('data-view-item-slug="marvkr/apple/all"');
+  });
+
   it("places copy immediately beside the homepage link before the source action", () => {
     const html = renderCatalogComponentCard({
       ...component(),

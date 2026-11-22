@@ -5,6 +5,7 @@ import {
   catalogItemCountForRegistry,
   catalogDistinctItemCount,
   queryCatalogComponents,
+  displayLabel,
 } from "../../src/registry-explorer/core/catalogQuery";
 import type {
   Registry,
@@ -50,6 +51,28 @@ function index(registries: RegistryCatalogIndex["registries"]): RegistryCatalogI
 }
 
 describe("queryCatalogComponents", () => {
+  it("labels nested all-theme records by their actual theme instead of a generic basename", () => {
+    const apple = { name: "marvkr/apple/all", type: "registry:style" };
+    const beam = { name: "marvkr/beam-lib/all", type: "registry:style" };
+
+    expect(displayLabel(apple)).toBe("Apple");
+    expect(displayLabel(beam)).toBe("Beam Lib");
+    expect(displayLabel({ ...apple, title: "Apple Design" })).toBe("Apple Design");
+    expect(displayLabel({ name: "components/all", type: "registry:ui" })).toBe("Components");
+    expect(displayLabel({ name: "all", type: "registry:style" })).toBe("all");
+    expect(displayLabel({ name: "forms/button", type: "registry:ui" })).toBe("button");
+
+    const matches = queryCatalogComponents(
+      [registry("@registrydirectory")],
+      index({ "@registrydirectory": [apple, beam] }),
+      { policy: TEST_CATALOG_POLICY },
+    );
+
+    expect(matches.items.map(({ displayName, slug }) => ({ displayName, slug }))).toEqual([
+      { displayName: "Apple", slug: "marvkr/apple/all" },
+      { displayName: "Beam Lib", slug: "marvkr/beam-lib/all" },
+    ]);
+  });
   it("counts one exact identity once without collapsing nested names or other registries", () => {
     const catalog = index({
       "@alpha": [
