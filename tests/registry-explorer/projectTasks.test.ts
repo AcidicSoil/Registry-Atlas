@@ -100,6 +100,7 @@ describe("Mise-owned project tasks", () => {
         encoding: "utf8",
       }),
     );
+
     expect(Object.keys(documents).sort()).toEqual([
       "catalog-access-rules",
       "catalog-gold-set",
