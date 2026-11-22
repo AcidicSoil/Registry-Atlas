@@ -7,7 +7,6 @@ const runtimeManifestSchema = z.object({
   generation: z.string().regex(/^[a-f0-9]{64}$/),
 });
 
-// Pin one immutable generation across the catalog fetch and lazy detail fetch.
 let manifests = new WeakMap<typeof fetch, Promise<string | null>>();
 
 let detailsPromise: Promise<Record<string, JsonInput>> | null = null;
