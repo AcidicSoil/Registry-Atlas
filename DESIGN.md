@@ -106,7 +106,7 @@ Registry Atlas is a dense, dark catalog for finding registries and their publish
 
 ## Verification and unresolved decisions
 
-The relevant checks are `pnpm audit:dependencies`, `pnpm typecheck`, `pnpm typecheck:test`, `pnpm test`, `pnpm check:postgres`, `pnpm check:product-contract`, `pnpm validate:data`, and `pnpm build`, composed by `pnpm verify`. Browser interaction verification is separate. The build emits a CycloneDX dependency inventory. Existing project-wide or deferred standards findings remain open until separately verified and approved.
+The relevant checks are `pnpm lint audit`, `pnpm typecheck`, `pnpm test`, `pnpm db check`, `pnpm test contract`, `pnpm build validate-data`, and `pnpm build`, composed by `pnpm verify`. Browser interaction verification is separate. The build emits a CycloneDX dependency inventory. Existing project-wide or deferred standards findings remain open until separately verified and approved.
 
 ## Quality gates under certification
 

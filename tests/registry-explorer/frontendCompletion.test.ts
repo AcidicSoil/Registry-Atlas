@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
+import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
 import {
   catalogRoutePath,
   parseCatalogRoute,
@@ -31,9 +32,12 @@ describe("frontend completion contract", () => {
   });
 
   it("runs the dependency security audit as part of normal verification", () => {
-    const pkg = JSON.parse(readFileSync(new URL("../../package.json", import.meta.url), "utf8"));
-    expect(pkg.scripts["audit:dependencies"]).toBe("pnpm audit --audit-level low");
-    expect(pkg.scripts.verify).toContain("pnpm audit:dependencies &&");
+    expect(resolveTask("lint", "audit")).toEqual({
+      executable: "pnpm",
+      args: ["audit", "--audit-level", "low"],
+    });
+    expect(resolveWorkflow("verify")).toContain("lint:audit");
+    expect(resolveWorkflow("verify:local")).toContain("lint:audit");
   });
 
   it("provides a keyboard skip link to the focusable main content header", () => {
