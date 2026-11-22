@@ -95,6 +95,7 @@ pnpm = "latest"
 "test:contract" = "node scripts/check-product-contract.mjs"
 "test:e2e" = [{ task = "build" }, { task = "test:e2e-run" }]
 "test:e2e-run" = "pnpm exec e2e run"
+"test:postgres" = "pnpm exec vitest run tests/registry-explorer/postgresStorage.test.ts tests/registry-explorer/registryDiscoveryPostgres.test.ts"
 "test:local" = "pnpm exec vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts --exclude tests/registry-explorer/catalogApprovalRetirement.test.ts --exclude tests/registry-explorer/registryCatalogImport.test.ts --exclude tests/registry-explorer/sourceEvidenceRecovery.test.ts"
 "test:registry-patterns" = [
   { task = "test:registry-patterns-run" },
