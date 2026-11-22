@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import packageJson from "../../package.json";
 import { taskNames, taskSteps } from "./miseTaskContract";
@@ -77,6 +77,46 @@ describe("Mise-owned project tasks", () => {
     expect(taskSteps("db:restore-check")).toEqual(["bash scripts/check-local-postgres-backup.sh"]);
     expect(taskSteps("sync:import")).toEqual(["node scripts/import-registry-catalog.mjs"]);
     expect(taskSteps("test:watch")).toEqual(["pnpm exec vitest"]);
+  });
+
+  it("restores a pinned CI runtime fixture without a live PostgreSQL export", () => {
+    const workflow = readFileSync(
+      new URL("../../.github/workflows/ci.yml", import.meta.url),
+      "utf8",
+    );
+
+    expect(workflow).toContain("tar -xf tests/fixtures/ci-runtime.tar");
+    expect(workflow).not.toContain("mise run build:prepare-runtime-data");
+    const fixture = new URL("../fixtures/ci-runtime.tar", import.meta.url).pathname;
+    expect(existsSync(fixture)).toBe(true);
+
+    const archived = execFileSync("tar", ["-tf", fixture], { encoding: "utf8" }).trim().split("\n");
+    expect(archived.filter((path) => path.startsWith(".instance/") && !path.endsWith("/"))).toEqual(
+      [".instance/atlas-test-documents.json"],
+    );
+
+    const documents = JSON.parse(
+      execFileSync("tar", ["-xOf", fixture, ".instance/atlas-test-documents.json"], {
+        encoding: "utf8",
+      }),
+    );
+    expect(Object.keys(documents).sort()).toEqual([
+      "catalog-access-rules",
+      "catalog-gold-set",
+      "catalog-kind-overrides",
+      "catalog-taxonomy",
+    ]);
+    expect(taskSteps("ci:fixture")).toEqual(["node scripts/package-ci-runtime-fixture.mjs"]);
+
+    const offline = taskSteps("test:local")[0];
+
+    for (const file of [
+      "catalogApprovalRetirement.test.ts",
+      "registryCatalogImport.test.ts",
+      "sourceEvidenceRecovery.test.ts",
+    ]) {
+      expect(offline).toContain(`--exclude tests/registry-explorer/${file}`);
+    }
   });
 
   it("references existing scripts and resolvable task dependencies", () => {

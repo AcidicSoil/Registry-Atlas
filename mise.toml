@@ -6,6 +6,7 @@ pnpm = "latest"
 
 # Single task authority: named commands and ordered workflows live here.
 [tasks]
+"ci:fixture" = "node scripts/package-ci-runtime-fixture.mjs"
 "install" = "pnpm install --frozen-lockfile"
 "audit:dependencies" = [{ task = "lint:audit" }]
 "build" = [
@@ -94,7 +95,7 @@ pnpm = "latest"
 "test:contract" = "node scripts/check-product-contract.mjs"
 "test:e2e" = [{ task = "build" }, { task = "test:e2e-run" }]
 "test:e2e-run" = "pnpm exec e2e run"
-"test:local" = "pnpm exec vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts"
+"test:local" = "pnpm exec vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts --exclude tests/registry-explorer/catalogApprovalRetirement.test.ts --exclude tests/registry-explorer/registryCatalogImport.test.ts --exclude tests/registry-explorer/sourceEvidenceRecovery.test.ts"
 "test:registry-patterns" = [
   { task = "test:registry-patterns-run" },
   { task = "build:source-pages" },

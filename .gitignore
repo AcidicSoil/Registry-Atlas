@@ -29,7 +29,17 @@ venv/
 *.sqlite-shm
 /public/data/*.sqlite
 /public/data/*.sqlite.gz
-tools/
+# Keep the authored lint rule plugins available in fresh CI checkouts.
+/tools/*
+!/tools/oxlint/
+!/tools/eslint/
+!/tools/stylelint/
+/tools/oxlint/*
+!/tools/oxlint/anti-slop/
+/tools/eslint/*
+!/tools/eslint/anti-slop-stylex/
+/tools/stylelint/*
+!/tools/stylelint/anti-slop-css/
 
 # Local git worktrees
 .repowise/
