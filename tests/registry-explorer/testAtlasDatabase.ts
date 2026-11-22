@@ -6,7 +6,6 @@ import { runtimeAssetPath } from "../../scripts/lib/runtime-publication.mjs";
 type Reference = {
   mirror: unknown;
   catalog: unknown;
-  sourcePageManifest: unknown;
 };
 
 function runtimeReference(): Reference {
@@ -46,9 +45,4 @@ export function readRepositoryCatalog<T = unknown>(): T {
 export function readRepositoryRegistrySnapshot<T = unknown>(): T {
   // SAFETY: The test constructs or loads the expected fixture shape here and verifies the observed result against that fixture.
   return runtimeReference().mirror as T;
-}
-
-export function readRepositorySourcePageManifest<T = unknown>(): T {
-  // SAFETY: Callers validate the generated runtime fixture shape against the expected source-page manifest.
-  return runtimeReference().sourcePageManifest as T;
 }
