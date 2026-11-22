@@ -53,17 +53,24 @@ export function renderCatalogComponents(
   bodyRoot.innerHTML = `
     ${controls}
     ${renderDiscoveryBands(options.discoveryBands ?? [])}
-    ${
-      result.items.length
-        ? `
-        ${renderResultMeta(result)}
-        <div${renderCatalogGridAttributes({ layout: options.layout, kind: "component" })}>
-          ${result.items.map((item) => renderCatalogComponentCard(item, "component", { layout: options.layout, context: "collection" })).join("")}
-        </div>
-        ${renderInfiniteScrollControl(result.page, result.pageCount)}
-      `
-        : `<div class="empty-state"><h2>${emptyCopy}</h2><p>Try a different item name, category, kind, or registry.</p></div>`
-    }
+    ${renderCatalogResultList(result, options, emptyCopy)}
+  `;
+}
+
+function renderCatalogResultList(
+  result: CatalogQueryResult,
+  options: CatalogComponentsViewOptions,
+  emptyCopy: string,
+): string {
+  if (!result.items.length)
+    return `<div class="empty-state"><h2>${emptyCopy}</h2><p>Try a different item name, category, kind, or registry.</p></div>`;
+
+  return `
+    ${renderResultMeta(result)}
+    <div${renderCatalogGridAttributes({ layout: options.layout, kind: "component" })}>
+      ${result.items.map((item) => renderCatalogComponentCard(item, "component", { layout: options.layout, context: "collection" })).join("")}
+    </div>
+    ${renderInfiniteScrollControl(result.page, result.pageCount)}
   `;
 }
 

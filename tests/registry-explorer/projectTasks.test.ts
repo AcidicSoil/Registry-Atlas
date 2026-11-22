@@ -6,7 +6,20 @@ import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
 describe("project command surface", () => {
   it("exposes only the primary task groups in pnpm and mise", () => {
     const groups = ["build", "db", "dev", "lint", "sync", "test", "typecheck", "verify"] as const;
-    expect(Object.keys(packageJson.scripts).sort()).toEqual(groups);
+
+    const aliases = {
+      "audit:dependencies": ["lint", "audit"],
+      "build:source-pages": ["build", "source-pages"],
+      "lint:complexity": ["lint", "complexity"],
+      "test:e2e": ["test", "e2e"],
+      "test:local": ["test", "local"],
+      "typecheck:tests": ["typecheck", "tests"],
+      "verify:local": ["verify", "local"],
+    } as const;
+
+    expect(Object.keys(packageJson.scripts).sort()).toEqual(
+      [...groups, ...Object.keys(aliases)].sort(),
+    );
 
     for (const group of groups) {
       expect(packageJson.scripts[group]).toBe(`node scripts/project-tasks.mjs ${group}`);
@@ -14,11 +27,20 @@ describe("project command surface", () => {
 
     const mise = readFileSync(new URL("../../mise.toml", import.meta.url), "utf8");
 
+    for (const [name, args] of Object.entries(aliases)) {
+      expect(packageJson.scripts).toHaveProperty(
+        name,
+        `node scripts/project-tasks.mjs ${args.join(" ")}`,
+      );
+      expect(mise).toContain(`[tasks."${name}"]`);
+      expect(mise).toContain(`run = "pnpm run ${name}"`);
+    }
+
     const taskNames = [...mise.matchAll(/^\[tasks\.(?:"([^"]+)"|([^\]]+))\]/gm)]
       .map((match) => match[1] ?? match[2])
       .sort();
 
-    expect(taskNames).toEqual([...groups, "install"].sort());
+    expect(taskNames).toEqual([...groups, ...Object.keys(aliases), "install"].sort());
   });
 
   it("runs each mandatory lint gate once through the canonical group", () => {
@@ -33,6 +55,10 @@ describe("project command surface", () => {
       "lint:format",
     ]);
     expect(resolveWorkflow("verify")).toContain("lint");
+    expect(resolveTask("lint", "complexity")).toEqual({
+      executable: "cccc",
+      args: ["--table", "src/registry-explorer"],
+    });
     expect(resolveTask("lint", "deps")).toEqual({
       executable: "pnpm",
       args: ["exec", "depcruise", "src", "tests", "--config", ".dependency-cruiser.cjs"],

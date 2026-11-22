@@ -31,6 +31,58 @@ interface SidebarDependencies {
   basePath: () => string;
 }
 
+function emptyAssetCounts(): Record<AssetKindToken, number> {
+  return {
+    component: 0,
+    block: 0,
+    page: 0,
+    template: 0,
+    theme: 0,
+    icon: 0,
+    other: 0,
+  };
+}
+
+function countRegistryItems(
+  namespace: string,
+  items: RegistryCatalogIndex["registries"][string],
+  policy: CatalogPolicy,
+  libraryItemCounts: Record<AssetKindToken, number>,
+): Record<AssetKindToken, number> {
+  const counts = emptyAssetCounts();
+  const seen = new Set<string>();
+
+  for (const item of items) {
+    const kind = assetKindForCatalogItem(item, policy, namespace);
+    counts[kind] += 1;
+    const identity = registryCatalogItemIdentity(item.name);
+
+    if (!seen.has(identity)) libraryItemCounts[kind] += 1;
+    seen.add(identity);
+  }
+
+  return counts;
+}
+
+function collectSidebarAssetCounts(catalogIndex: RegistryCatalogIndex, policy: CatalogPolicy) {
+  const directoryAssetCounts = emptyAssetCounts();
+  const libraryItemCounts = emptyAssetCounts();
+  const registryAssetCounts = new Map<string, Record<AssetKindToken, number>>();
+
+  for (const [namespace, items] of Object.entries(catalogIndex.registries)) {
+    const counts = countRegistryItems(namespace, items, policy, libraryItemCounts);
+
+    registryAssetCounts.set(namespace, counts);
+
+    // SAFETY: countRegistryItems returns only AssetKindToken keys from emptyAssetCounts.
+    for (const kind of Object.keys(counts) as AssetKindToken[]) {
+      if (counts[kind] > 0) directoryAssetCounts[kind] += 1;
+    }
+  }
+
+  return { directoryAssetCounts, libraryItemCounts, registryAssetCounts };
+}
+
 /** Owns taxonomy expansion, registry asset counts, facets, and browse-rail rendering. */
 export function createShellSidebar({
   getState,
@@ -44,47 +96,8 @@ export function createShellSidebar({
   const expandedCategoryIds = new Set<string>();
   const collapsedCategoryIds = new Set<string>();
 
-  const emptyAssetCounts = (): Record<AssetKindToken, number> => ({
-    component: 0,
-    block: 0,
-    page: 0,
-    template: 0,
-    theme: 0,
-    icon: 0,
-    other: 0,
-  });
-
-  const directoryAssetCounts = emptyAssetCounts();
-  const libraryItemCounts = emptyAssetCounts();
-  const registryAssetCounts = new Map<string, Record<AssetKindToken, number>>();
-
-  for (const [namespace, items] of Object.entries(catalogIndex.registries)) {
-    const counts = emptyAssetCounts();
-    const seen = new Set<string>();
-
-    for (const item of items) {
-      const kind = assetKindForCatalogItem(item, policy, namespace);
-      counts[kind] += 1;
-      const identity = registryCatalogItemIdentity(item.name);
-
-      if (!seen.has(identity)) libraryItemCounts[kind] += 1;
-      seen.add(identity);
-    }
-
-    registryAssetCounts.set(namespace, counts);
-
-    for (const kind of [
-      "component",
-      "block",
-      "page",
-      "template",
-      "theme",
-      "icon",
-      "other",
-    ] as const) {
-      if (counts[kind] > 0) directoryAssetCounts[kind] += 1;
-    }
-  }
+  const { directoryAssetCounts, libraryItemCounts, registryAssetCounts } =
+    collectSidebarAssetCounts(catalogIndex, policy);
 
   const sidebarFacetCache = new Map<string, ReturnType<typeof buildCatalogFacetSummary>>();
 
@@ -302,6 +315,14 @@ export function createShellSidebar({
     return filteredSidebarNavigation(contextFacets, globalFacets);
   }
 
+  function renderSidebarLayout(layoutMarkup: string): string {
+    if (!roots.sidebarLayout) return layoutMarkup;
+
+    roots.sidebarLayout.innerHTML = layoutMarkup;
+
+    return "";
+  }
+
   function renderSidebar(queued: ReadonlySet<string>, _batchCommand: string | null): void {
     renderSidebarContext();
 
@@ -324,9 +345,8 @@ export function createShellSidebar({
       ? renderBrowseLayoutToggle(layout)
       : "";
 
-    if (roots.sidebarLayout) roots.sidebarLayout.innerHTML = layoutMarkup;
     roots.aside.innerHTML =
-      (roots.sidebarLayout ? "" : layoutMarkup) +
+      renderSidebarLayout(layoutMarkup) +
       '<div class="sidebar-scroll-pane"><div class="desktop-browse-rail">' +
       navigation +
       "</div></div>";

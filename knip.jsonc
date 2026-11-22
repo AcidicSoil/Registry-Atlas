@@ -23,7 +23,6 @@
     "scripts/**/*.{mjs,mts}",
     "tests/**/*.{ts,tsx,mjs}",
     "tests-mobile/**/*.{ts,tsx,mjs}",
-    "tools/**/*.{ts,mjs}",
     "*.config.ts",
     "!tools/oxlint/anti-slop/vendor/**",
     "*.config.mjs",

@@ -40,3 +40,31 @@ run = "pnpm sync"
 [tasks.db]
 description = "Run a selected PostgreSQL operation"
 run = "pnpm db"
+
+[tasks."audit:dependencies"]
+description = "Check dependency vulnerabilities"
+run = "pnpm run audit:dependencies"
+
+[tasks."build:source-pages"]
+description = "Regenerate verified source-page assets"
+run = "pnpm run build:source-pages"
+
+[tasks."lint:complexity"]
+description = "Run strict CCCC complexity checks"
+run = "pnpm run lint:complexity"
+
+[tasks."test:e2e"]
+description = "Build and run browser E2E tests"
+run = "pnpm run test:e2e"
+
+[tasks."test:local"]
+description = "Run the offline unit test subset"
+run = "pnpm run test:local"
+
+[tasks."typecheck:tests"]
+description = "Type-check test sources"
+run = "pnpm run typecheck:tests"
+
+[tasks."verify:local"]
+description = "Run the offline verification workflow"
+run = "pnpm run verify:local"

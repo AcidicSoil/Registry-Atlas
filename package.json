@@ -34,14 +34,21 @@
   "name": "registry-atlas",
   "private": true,
   "scripts": {
+    "audit:dependencies": "node scripts/project-tasks.mjs lint audit",
+    "build": "node scripts/project-tasks.mjs build",
+    "build:source-pages": "node scripts/project-tasks.mjs build source-pages",
+    "db": "node scripts/project-tasks.mjs db",
     "dev": "node scripts/project-tasks.mjs dev",
     "lint": "node scripts/project-tasks.mjs lint",
-    "typecheck": "node scripts/project-tasks.mjs typecheck",
-    "test": "node scripts/project-tasks.mjs test",
-    "build": "node scripts/project-tasks.mjs build",
-    "verify": "node scripts/project-tasks.mjs verify",
+    "lint:complexity": "node scripts/project-tasks.mjs lint complexity",
     "sync": "node scripts/project-tasks.mjs sync",
-    "db": "node scripts/project-tasks.mjs db"
+    "test": "node scripts/project-tasks.mjs test",
+    "test:e2e": "node scripts/project-tasks.mjs test e2e",
+    "test:local": "node scripts/project-tasks.mjs test local",
+    "typecheck": "node scripts/project-tasks.mjs typecheck",
+    "typecheck:tests": "node scripts/project-tasks.mjs typecheck tests",
+    "verify": "node scripts/project-tasks.mjs verify",
+    "verify:local": "node scripts/project-tasks.mjs verify local"
   },
   "type": "module",
   "version": "0.0.0"

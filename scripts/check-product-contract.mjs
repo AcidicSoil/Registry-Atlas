@@ -176,33 +176,37 @@ assert(
   "setup instructions must be generated from selected install commands, without inspection prompts",
 );
 
-const navigationMarkup =
-  indexSource.match(/<nav\b[^>]*class="primary-nav"[^>]*>[\s\S]*?<\/nav>/)?.[0] ?? "";
-
-const navigationLinks = [...navigationMarkup.matchAll(/<a\b[^>]*>[\s\S]*?<\/a\s*>/g)].map(
-  ([link]) => link,
+const navigationLinksByGroup = new Map(
+  [
+    ...indexSource.matchAll(
+      /<nav\b[^>]*class="primary-nav[^"]*"[^>]*aria-label="([^"]+)"[^>]*>([\s\S]*?)<\/nav>/g,
+    ),
+  ].map(([, group, markup]) => [
+    group,
+    [...markup.matchAll(/<a\b[^>]*>[\s\S]*?<\/a\s*>/g)].map(([link]) => link),
+  ]),
 );
 
-for (const [view, path, label] of [
-  ["home", "/Registry-Atlas/", "Featured"],
-  ["authors", "/Registry-Atlas/authors", "Authors"],
-  ["registries", "/Registry-Atlas/registries", "Libraries"],
-  ["discover", "/Registry-Atlas/components", "Components"],
-  ["blocks", "/Registry-Atlas/blocks", "Blocks"],
-  ["pages", "/Registry-Atlas/pages", "Pages"],
-  ["templates", "/Registry-Atlas/templates", "Templates"],
-  ["themes", "/Registry-Atlas/themes", "Themes"],
-  ["icons", "/Registry-Atlas/icons", "Icons"],
-  ["compare", "/Registry-Atlas/compare", "Compare"],
+for (const [group, view, path, label] of [
+  ["Explore", "home", "/Registry-Atlas/", "Featured"],
+  ["Explore", "authors", "/Registry-Atlas/authors", "Authors"],
+  ["Explore", "registries", "/Registry-Atlas/registries", "Libraries"],
+  ["Library", "discover", "/Registry-Atlas/components", "Components"],
+  ["Library", "blocks", "/Registry-Atlas/blocks", "Blocks"],
+  ["Library", "pages", "/Registry-Atlas/pages", "Pages"],
+  ["Library", "templates", "/Registry-Atlas/templates", "Templates"],
+  ["Library", "themes", "/Registry-Atlas/themes", "Themes"],
+  ["Library", "icons", "/Registry-Atlas/icons", "Icons"],
+  ["Explore", "compare", "/Registry-Atlas/compare", "Compare"],
 ]) {
   assert(
-    navigationLinks.some(
+    (navigationLinksByGroup.get(group) ?? []).some(
       (link) =>
         link.includes(`data-view="${view}"`) &&
         link.includes(`href="${path}"`) &&
-        new RegExp(`>\\s*${label}\\s*<\\/a\\s*>`).test(link),
+        new RegExp(`>\\s*${label}(?:\\s|<)`).test(link),
     ),
-    `primary navigation is missing its ${label} route link`,
+    `${group} navigation is missing its ${label} route link`,
   );
 }
 

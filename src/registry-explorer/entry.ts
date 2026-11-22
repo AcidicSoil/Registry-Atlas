@@ -175,17 +175,21 @@ async function bootstrap() {
     }
   } catch (error) {
     console.error("Registry Explorer: Data load failed", error);
-    const contentBody = document.getElementById("contentBody");
+    renderCatalogLoadFailure();
+  }
+}
 
-    if (contentBody) {
-      contentBody.innerHTML = `
-        <div class="empty-state" role="alert">
-          <div class="empty-state-icon">!</div>
-          <div>Catalog data is unavailable.</div>
-          <div>Refresh after the registry data sync completes.</div>
-        </div>
-      `;
-    }
+function renderCatalogLoadFailure(): void {
+  const contentBody = document.getElementById("contentBody");
+
+  if (contentBody) {
+    contentBody.innerHTML = `
+      <div class="empty-state" role="alert">
+        <div class="empty-state-icon">!</div>
+        <div>Catalog data is unavailable.</div>
+        <div>Refresh after the registry data sync completes.</div>
+      </div>
+    `;
   }
 }
 

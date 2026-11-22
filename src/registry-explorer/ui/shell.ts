@@ -171,14 +171,12 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     focusIdentity: FocusIdentity | null = null,
   ) => {
     if (lifetime.signal.aborted) return;
-    applyStateUpdate(partial, historyMode, focusIdentity);
+    applyStateUpdate(partial, historyMode);
+
+    if (focusIdentity) restoreControlFocus(focusIdentity);
   };
 
-  function applyStateUpdate(
-    partial: Partial<AppState>,
-    historyMode: "push" | "replace",
-    focusIdentity: FocusIdentity | null,
-  ): void {
+  function applyStateUpdate(partial: Partial<AppState>, historyMode: "push" | "replace"): void {
     const routeChanged =
       partial.route !== undefined &&
       catalogRouteIdentity(partial.route) !== catalogRouteIdentity(state.route);
@@ -197,8 +195,6 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
 
     syncUrlState(state, policy, historyMode);
     renderer.render();
-
-    if (focusIdentity) restoreControlFocus(focusIdentity);
   }
 
   function clearCopyFeedbackTimer(): void {

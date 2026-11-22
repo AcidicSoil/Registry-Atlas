@@ -40,7 +40,7 @@ describe("quality-tooling integration contract", () => {
     expect(resolveTask("lint", "react-doctor").args).toContain("--blocking");
     expect(resolveTask("lint", "complexity")).toEqual({
       executable: "cccc",
-      args: ["src/registry-explorer"],
+      args: ["--table", "src/registry-explorer"],
     });
     expect(resolveTask("test", "anti-slop-gate").args).toContain(
       "scripts/verify-anti-slop-gate.mjs",

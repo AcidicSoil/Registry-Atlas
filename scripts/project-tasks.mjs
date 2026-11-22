@@ -17,7 +17,7 @@ const tasks = {
     deps: tool("depcruise", "src", "tests", "--config", ".dependency-cruiser.cjs"),
     boundaries: tool("depcruise", "src"),
     "react-doctor": tool("react-doctor", ".", "--blocking", "warning", "--no-telemetry"),
-    complexity: ["cccc", "src/registry-explorer"],
+    complexity: ["cccc", "--table", "src/registry-explorer"],
     styles: tool("stylelint", "public/styles/**/*.css", "src/**/*.css"),
     stylex: tool("eslint", "src/**/*.stylex.ts", "--max-warnings", "0"),
     unused: tool("knip"),

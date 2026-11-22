@@ -51,7 +51,11 @@ mise run db restore-check /path/to/backup.dump
 ```
 
 Run `pnpm <group> [operation]` for the equivalent package-manager entrypoint.
-`pnpm <group> --help` lists operations. `pnpm verify` first publishes
+`pnpm <group> --help` lists operations. Common direct aliases are available in
+both pnpm and Mise: `audit:dependencies`, `lint:complexity`,
+`typecheck:tests`, `test:local`, `test:e2e`, `build:source-pages`, and
+`verify:local`. These delegate to `scripts/project-tasks.mjs` rather than
+maintaining separate command implementations. `pnpm verify` first publishes
 runtime data from PostgreSQL; `pnpm verify local`, `pnpm dev`, `pnpm test`,
 and `pnpm build` only consume existing published runtime data. The default
 lint group executes each required static gate once. Dependency audit is part of
