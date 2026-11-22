@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// Idempotent PostgreSQL constraints missed by the original SQLite data importer.
 import { openAtlasCoreDatabase, exec, one } from "./lib/atlas-postgres.mjs";
 
 const sql = openAtlasCoreDatabase();
@@ -9,6 +8,13 @@ const uniques = [
 ];
 
 const foreignKeys = [
+  [
+    "atlas_catalog_evidence",
+    "atlas_catalog_evidence_registry_fk",
+    ["namespace"],
+    "atlas_raw_registries",
+    ["namespace"],
+  ],
   [
     "atlas_catalog_items",
     "atlas_catalog_items_namespace_fk",
@@ -100,6 +106,7 @@ try {
     }
 
     const deleteRules = {
+      atlas_catalog_evidence_registry_fk: "CASCADE",
       atlas_catalog_items_namespace_fk: "CASCADE",
       examples_pattern_fk: "CASCADE",
       pattern_checks_pattern_fk: "CASCADE",

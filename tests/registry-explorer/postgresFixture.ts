@@ -62,7 +62,25 @@ export async function testRouteDatabase(): Promise<any> {
       );
     }
 
+    const foreignKeys = await db.exec(
+      "SELECT t.relname AS table_name,c.conname,pg_get_constraintdef(c.oid) AS definition FROM pg_constraint c JOIN pg_class t ON t.oid=c.conrelid JOIN pg_namespace n ON n.oid=t.relnamespace WHERE n.nspname='atlas' AND c.contype='f'",
+    );
+
     await db.exec("SET search_path TO " + name + ",atlas,public");
+
+    for (const row of foreignKeys) {
+      await db.exec(
+        "ALTER TABLE " +
+          name +
+          "." +
+          row.table_name +
+          " ADD CONSTRAINT " +
+          row.conname +
+          " " +
+          row.definition,
+      );
+    }
+
     db.__atlasSchema = name;
     db.close = async () => {
       try {

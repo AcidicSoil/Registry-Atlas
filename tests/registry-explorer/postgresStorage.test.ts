@@ -7,6 +7,8 @@ const {
   transaction,
   replaceRawRegistries,
   readRawRegistries,
+  replaceCatalogEvidence,
+  readCatalogEvidence,
   replaceCatalogSnapshot,
   readCatalogSnapshot,
   replaceRegistrySnapshot,
@@ -58,6 +60,35 @@ describe("authoritative PostgreSQL storage", () => {
       });
       expect((await readSourcePages(db))["@demo/button"].level).toBe("reviewed");
       expect(await readDocument(db, "catalog-taxonomy")).toEqual({ version: "v1", roots: [] });
+    } finally {
+      await db.close();
+    }
+  });
+
+  it("cascades removed registry evidence but keeps current registry evidence", async () => {
+    const db = await testRouteDatabase();
+
+    try {
+      await replaceRawRegistries(db, [
+        { name: "@current", homepage: "https://current.example" },
+        { name: "@removed", homepage: "https://removed.example" },
+      ]);
+      await replaceCatalogEvidence(db, {
+        "@current": { namespace: "@current", status: "available" },
+        "@removed": { namespace: "@removed", status: "available" },
+      });
+
+      await replaceRawRegistries(db, [{ name: "@current", homepage: "https://current.example" }]);
+
+      expect(await readCatalogEvidence(db)).toEqual({
+        "@current": { namespace: "@current", status: "available" },
+      });
+
+      await expect(
+        replaceCatalogEvidence(db, {
+          "@impossible": { namespace: "@impossible", status: "available" },
+        }),
+      ).rejects.toMatchObject({ code: "23503" });
     } finally {
       await db.close();
     }
