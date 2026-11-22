@@ -10,7 +10,6 @@
   "devDependencies": {
     "@e2e-dev/web": "0.14.0",
     "@oxlint/plugins": "1.87.0",
-    "@shadcn/lint": "file:tools/oxlint/shadcn-lint",
     "@stylexjs/eslint-plugin": "0.19.1",
     "@stylexjs/unplugin": "0.19.1",
     "@types/node": "^26.6.4",

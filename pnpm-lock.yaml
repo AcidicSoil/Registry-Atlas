@@ -39,9 +39,6 @@ importers:
       '@oxlint/plugins':
         specifier: 1.87.0
         version: 1.87.0
-      '@shadcn/lint':
-        specifier: file:tools/oxlint/shadcn-lint
-        version: file:tools/oxlint/shadcn-lint(eslint@9.39.1(jiti@2.7.0)(supports-color@7.2.0))
       '@stylexjs/eslint-plugin':
         specifier: 0.19.1
         version: 0.19.1
@@ -1738,18 +1735,6 @@ packages:
     resolution: {integrity: sha512-wogj6Trj8fAu+aD7HbpvHEBlyANMOvvO9MP5NFJaiQbprLKugtCdE6rFTxDhofXvRo4nswL9m4Cvysg3k5KcvQ==}
     engines: {node: '>=18'}
 
-  '@shadcn/lint@file:tools/oxlint/shadcn-lint':
-    resolution: {directory: tools/oxlint/shadcn-lint, type: directory}
-    engines: {node: '>=20.19'}
-    peerDependencies:
-      '@typescript-eslint/parser': '>=8.40.0'
-      eslint: '>=9.30.0'
-    peerDependenciesMeta:
-      '@typescript-eslint/parser':
-        optional: true
-      eslint:
-        optional: true
-
   '@shaderfrog/glsl-parser@7.0.1':
     resolution: {integrity: sha512-8mpfsoPeRhesY3pOrzNZBL8uG6N5GVX1EHLBYbd4gzKs+c7vaEIqpTNK5VrffU33qQN4cwpP2v3u4aPPBU32sw==}
     engines: {node: '>=16'}
@@ -1988,11 +1973,6 @@ packages:
   cli-spinners@3.4.0:
     resolution: {integrity: sha512-bXfOC4QcT1tKXGorxL3wbJm6XJPDqEnij2gQ2m7ESQuE+/z9YFIWnl/5RpTiKWbMq3EVKR4fRLJGn6DVfu0mpw==}
     engines: {node: '>=18.20'}
-
-  cn@0.4.0:
-    resolution: {integrity: sha512-qOAeUhPwPzBxx6jaeQdo646XIKliKHc2j1ZF7Ngb1o0pJZKH5gq8FkA0aVdUdPFUDXNXyUCXpCtoJISo6dhizg==}
-    engines: {node: '>=20'}
-    hasBin: true
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -4355,13 +4335,6 @@ snapshots:
       '@sentry/conventions': 0.16.0
       '@sentry/core': 10.76.2
 
-  '@shadcn/lint@file:tools/oxlint/shadcn-lint(eslint@9.39.1(jiti@2.7.0)(supports-color@7.2.0))':
-    dependencies:
-      '@eslint/core': 0.17.0
-      cn: 0.4.0
-    optionalDependencies:
-      eslint: 9.39.1(jiti@2.7.0)(supports-color@7.2.0)
-
   '@shaderfrog/glsl-parser@7.0.1': {}
 
   '@standard-schema/spec@1.1.0': {}
@@ -4630,8 +4603,6 @@ snapshots:
       restore-cursor: 5.1.0
 
   cli-spinners@3.4.0: {}
-
-  cn@0.4.0: {}
 
   color-convert@2.0.1:
     dependencies:

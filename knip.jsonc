@@ -1,7 +1,7 @@
 {
   // Explicit external executables are installed by the workstation, not npm.
   // React Grab is imported from index.html in development; React is its peer.
-  // StyleX lint is active; Shadcn remains staged until Tailwind v4 is authored.
+  // StyleX lint is active; Tailwind-specific lint is not configured.
   // Bundled vendor type declarations are generated, not authored application code.
   "$schema": "https://unpkg.com/knip@6.44.0/schema.json",
   "entry": [
@@ -33,5 +33,5 @@
   },
   "ignoreBinaries": ["cccc", "mise", "pinchtab", "pinchtab-profile-manager"],
   // CLI dependencies invoked by package scripts are not statically discoverable.
-  "ignoreDependencies": ["react", "react-grab", "@shadcn/lint"],
+  "ignoreDependencies": ["react", "react-grab"],
 }
