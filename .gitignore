@@ -23,7 +23,8 @@ node_modules/
 .env.local
 .venv/
 venv/
-
+.claude/
+.agents/
 # SQLite transient companions: the committed snapshot is the .sqlite file only
 *.sqlite-wal
 *.sqlite-shm
@@ -40,6 +41,7 @@ venv/
 !/tools/eslint/anti-slop-stylex/
 /tools/stylelint/*
 !/tools/stylelint/anti-slop-css/
+.design/
 
 # Local git worktrees
 .repowise/
