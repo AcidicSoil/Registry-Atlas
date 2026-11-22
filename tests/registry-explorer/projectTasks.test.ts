@@ -89,6 +89,10 @@ describe("project command surface", () => {
     expect(resolveWorkflow("test:e2e")).toEqual(["build", "test:e2e-run"]);
   });
 
+  it("uses the official registry refresh for bare sync commands", () => {
+    expect(resolveWorkflow("sync")).toEqual(["sync:registries"]);
+  });
+
   it("preserves database and sync operations", () => {
     const cases: Array<[string, string, string, string[]]> = [
       ["db", "setup", "node", ["scripts/manage-local-postgres.mjs", "setup"]],
@@ -122,6 +126,10 @@ describe("project command surface", () => {
     expect(() => resolveTask("sync", "bad")).toThrow(/Unknown/);
     expect(() => resolveTask("db", "up", ["--force"])).toThrow(/arguments/);
     expect(() => resolveTask("sync", "registries", ["--apply"])).toThrow(/arguments/);
+    expect(resolveTask("sync", "import", ["--source", "/tmp/catalog.json"])).toEqual({
+      executable: "node",
+      args: ["scripts/import-registry-catalog.mjs", "--source", "/tmp/catalog.json"],
+    });
     expect(() => resolveTask("db", "restore-check")).toThrow(/exactly one/);
     expect(() => resolveTask("db", "restore-check", ["a", "b"])).toThrow(/exactly one/);
   });

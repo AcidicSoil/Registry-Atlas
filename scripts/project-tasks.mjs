@@ -127,6 +127,7 @@ const workflows = {
   build: ["build:check-runtime-data", "build:production"],
   "build:production": ["build:compile", "build:bundle", "build:spa-fallback", "build:sbom"],
   "build:source-pages": ["build:source-pages-report", "build:source-pages-index"],
+  sync: ["sync:registries"],
   "test:e2e": ["build", "test:e2e-run"],
   "test:registry-patterns": ["test:registry-patterns-run", "build:source-pages"],
   "test:component-pages": ["test:component-pages-run", "build:source-pages"],
@@ -158,6 +159,7 @@ const acceptsArgs = new Set([
   "test:unit",
   "test:watch",
   "test:e2e-run",
+  "sync:import",
 ]);
 
 const forwardsArgs = new Set(["dev", "test", "test:e2e"]);
@@ -194,7 +196,7 @@ export function resolveTask(group, operation, extraArgs = []) {
 function usage() {
   return Object.entries(tasks)
     .map(([group, entries]) => `pnpm ${group} [${Object.keys(entries).join("|")}]`)
-    .concat(["pnpm verify [local]"])
+    .concat(["pnpm sync (default: registries)", "pnpm verify [local]"])
     .join("\n");
 }
 

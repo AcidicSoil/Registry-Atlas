@@ -44,8 +44,9 @@ mise run build source-pages    # Generate verified source-page index
 mise run verify                # Full PostgreSQL-backed maintainer verification
 mise run verify local          # Offline verification, without DB-backed checks
 mise run dev preview           # Vite production preview
-mise run sync registries       # Registry synchronization
-mise run sync import           # Reviewed catalog import
+mise run sync                  # Refresh official registries and catalog evidence
+mise run sync registries       # Same operation explicitly
+mise run sync import --source /path/to/catalog.json # Optional reviewed catalog import
 mise run db status             # PostgreSQL status
 mise run db restore-check /path/to/backup.dump
 ```
@@ -61,8 +62,10 @@ and `pnpm build` only consume existing published runtime data. The default
 lint group executes each required static gate once. Dependency audit is part of
 the full verification gate and is available separately through `lint audit`.
 
-The `db` and `sync` groups require an explicit operation. Neither starts a
-database or contacts upstream registries without the corresponding command.
+The `db` group requires an explicit operation. Bare `sync` runs `sync registries`,
+which contacts the official registry directory and updates the local PostgreSQL
+catalog; use `sync import --source <catalog.json>` only with a reviewed source.
+Icon discovery and standalone catalog-evidence sync remain explicit operations.
 
 ## Git worktree isolation
 
@@ -78,8 +81,7 @@ Verification does not synchronize the upstream registry mirror. Refresh it
 explicitly, inspect the results, then run the maintainer gate:
 
 ```bash
-mise run sync import
-mise run sync registries
+mise run sync                  # Or: mise run sync registries
 mise run build validate-data
 mise run verify
 ```

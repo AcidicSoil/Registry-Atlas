@@ -103,14 +103,15 @@ Configure a writable PostgreSQL `DATABASE_URL` (or the ignored
 separate read-only role.
 
 ```bash
-mise run sync import
-mise run sync registries
+mise run sync                  # Sync official registries into PostgreSQL
 mise run build validate-data
 mise run verify
 ```
 
-`sync registries` updates the official directory, catalog evidence, classification
-projection, registry snapshots, and exact item details in PostgreSQL.
+Bare `sync` runs `sync registries`, updating the official directory, catalog
+evidence, classification projection, registry snapshots, and exact item details
+in PostgreSQL. To import reviewed catalog metadata first, explicitly run
+`mise run sync import --source /path/to/catalog.json` with an approved source.
 `pnpm build prepare-runtime-data` regenerates the two ignored browser assets from the
 database. Route patterns, component URL checks, and classification run state
 are also maintained in PostgreSQL.
