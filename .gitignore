@@ -24,7 +24,6 @@ node_modules/
 .venv/
 venv/
 .claude/
-.agents/
 # SQLite transient companions: the committed snapshot is the .sqlite file only
 *.sqlite-wal
 *.sqlite-shm
