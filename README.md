@@ -82,6 +82,8 @@ mise run verify
 
 `mise run verify` refreshes the local static export from PostgreSQL, runs lint, test TypeScript checks, the unit suite, database and product contracts, runtime-data validation, and the production build. It does not fetch upstream registries. GitHub Actions runs `mise run verify:local` with the pinned public fixture and runs `mise run test:postgres` against an isolated PostgreSQL 18 service loaded from a schema-only fixture. Neither job connects to the authoritative workstation database.
 
+Runtime publication and browser-generation consistency are also model-checked in CI. Run `mise run test:formal` to check the safe TLA+ model and require counterexamples for both historical broken variants. See [the project-local formal verification skill](skills/registry-runtime-generation/SKILL.md) and [statechart](docs/architecture/runtime-generation-formal.md).
+
 The managed browser acceptance matrix is exposed as:
 
 ```bash

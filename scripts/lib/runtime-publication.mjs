@@ -126,7 +126,6 @@ async function installGeneration(generations, manifest, compressed) {
   }
 }
 
-/** Publish both immutable files before atomically swapping the sole live pointer. */
 export async function publishRuntimeSnapshots(dataDir, payloads) {
   const compressed = {
     core: gzipSync(JSON.stringify(payloads.core), { level: 9 }),
