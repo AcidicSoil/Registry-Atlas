@@ -63,6 +63,32 @@ describe("authoritative PostgreSQL storage", () => {
     }
   });
 
+  it("removes orphan detail rows after an official registry disappears", async () => {
+    const db = await testRouteDatabase();
+
+    try {
+      await replaceCatalogSnapshot(db, {
+        meta: {},
+        registries: {
+          "@active": [{ name: "button" }],
+          "@removed": [{ name: "retired-button" }],
+        },
+      });
+      await replaceItemDetails(db, "@active", [{ name: "button" }]);
+      await replaceItemDetails(db, "@removed", [{ name: "retired-button" }]);
+
+      await replaceCatalogSnapshot(db, {
+        meta: {},
+        registries: { "@active": [{ name: "button" }] },
+      });
+
+      expect(await readItemDetail(db, "@removed", "retired-button")).toBeNull();
+      expect(await readItemDetail(db, "@active", "button")).toEqual({ name: "button" });
+    } finally {
+      await db.close();
+    }
+  });
+
   it("rolls back all nested writes when the outer transaction fails", async () => {
     const db = await testRouteDatabase();
 

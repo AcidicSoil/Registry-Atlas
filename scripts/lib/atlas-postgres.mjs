@@ -218,6 +218,10 @@ export async function replaceCatalogSnapshot(db, snapshot) {
     await bulkInsert(tx, "atlas_catalog_items", ["namespace", "name", "payload_json"], rows, {
       conflict: "ON CONFLICT DO NOTHING",
     });
+    await exec(
+      tx,
+      "DELETE FROM atlas.atlas_item_details d WHERE NOT EXISTS (SELECT 1 FROM atlas.atlas_catalog_items c WHERE c.namespace=d.namespace AND c.name=d.name)",
+    );
     await setMeta(
       tx,
       "catalog_snapshot_meta",
