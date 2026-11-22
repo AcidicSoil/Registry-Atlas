@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { tokens } from "../../src/registry-explorer/ui/tokens.stylex";
-import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
+import packageJson from "../../package.json";
 
 const root = (path: string): string =>
   readFileSync(new URL("../../" + path, import.meta.url), "utf8");
@@ -95,12 +95,10 @@ describe("native StyleX architecture", () => {
 
   it("validates authored StyleX with official lint rules", () => {
     const eslint = root("eslint.config.mjs");
-    expect(resolveTask("lint", "stylex").args).toContain("eslint");
-    expect(resolveWorkflow("lint")).toContain("lint:stylex");
-    expect(resolveWorkflow("verify")).toContain("lint");
-    expect(root(".github/workflows/ci.yml")).toContain(
-      "node scripts/project-tasks.mjs verify:local",
-    );
+    expect(packageJson.scripts["lint:stylex"]).toContain("eslint");
+    expect(packageJson.scripts.lint).toContain("pnpm run lint:stylex");
+    expect(packageJson.scripts.verify).toContain("pnpm run lint");
+    expect(root(".github/workflows/ci.yml")).toContain("pnpm run verify:local");
     expect(eslint).toContain("@stylexjs/valid-styles");
     expect(eslint).toContain("@stylexjs/no-unused");
   });

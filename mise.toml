@@ -5,66 +5,73 @@ node = "lts"
 pnpm = "latest"
 "github:moznion/cccc" = "1.8.0"
 
-[tasks.install]
-description = "Install dependencies from the pnpm lockfile"
-run = "pnpm install --frozen-lockfile"
-
-[tasks.dev]
-description = "Start the development server or production preview"
-run = "pnpm dev"
-
-[tasks.lint]
-description = "Run all quality checks or a selected lint operation"
-run = "pnpm lint"
-
-[tasks.typecheck]
-description = "Type-check source and tests"
-run = "pnpm typecheck"
-
-[tasks.test]
-description = "Run tests or a selected test operation"
-run = "pnpm test"
-
-[tasks.build]
-description = "Build the production bundle or generated assets"
-run = "pnpm build"
-
-[tasks.verify]
-description = "Run the full or local verification gate"
-run = "pnpm verify"
-
-[tasks.sync]
-description = "Run a selected registry or catalog synchronization"
-run = "pnpm sync"
-
-[tasks.db]
-description = "Run a selected PostgreSQL operation"
-run = "pnpm db"
-
-[tasks."audit:dependencies"]
-description = "Check dependency vulnerabilities"
-run = "pnpm run audit:dependencies"
-
-[tasks."build:source-pages"]
-description = "Regenerate verified source-page assets"
-run = "pnpm run build:source-pages"
-
-[tasks."lint:complexity"]
-description = "Run strict CCCC complexity checks"
-run = "pnpm run lint:complexity"
-
-[tasks."test:e2e"]
-description = "Build and run browser E2E tests"
-run = "pnpm run test:e2e"
-
-[tasks."test:local"]
-description = "Run the offline unit test subset"
-run = "pnpm run test:local"
-
-[tasks."typecheck:tests"]
-description = "Type-check test sources"
-run = "pnpm run typecheck:tests"
-
-[tasks."verify:local"]
-description = "Run the offline verification workflow"
-run = "pnpm run verify:local"
+# PAB-style declarative task entrypoints. package.json owns commands.
+[tasks]
+"install" = "pnpm install --frozen-lockfile"
+"audit:dependencies" = "pnpm run audit:dependencies"
+"build" = "pnpm run build"
+"build:bundle" = "pnpm run build:bundle"
+"build:check-runtime-data" = "pnpm run build:check-runtime-data"
+"build:compile" = "pnpm run build:compile"
+"build:prepare-runtime-data" = "pnpm run build:prepare-runtime-data"
+"build:production" = "pnpm run build:production"
+"build:sbom" = "pnpm run build:sbom"
+"build:source-pages" = "pnpm run build:source-pages"
+"build:source-pages-index" = "pnpm run build:source-pages-index"
+"build:source-pages-report" = "pnpm run build:source-pages-report"
+"build:spa-fallback" = "pnpm run build:spa-fallback"
+"build:validate-data" = "pnpm run build:validate-data"
+"check" = "pnpm run check"
+"db" = "pnpm run db"
+"db:backup" = "pnpm run db:backup"
+"db:check" = "pnpm run db:check"
+"db:down" = "pnpm run db:down"
+"db:migrate" = "pnpm run db:migrate"
+"db:reconcile-source-evidence" = "pnpm run db:reconcile-source-evidence"
+"db:restore-check" = "pnpm run db:restore-check"
+"db:setup" = "pnpm run db:setup"
+"db:status" = "pnpm run db:status"
+"db:up" = "pnpm run db:up"
+"dev" = "pnpm run dev"
+"dev:preview" = "pnpm run dev:preview"
+"dev:serve" = "pnpm run dev:serve"
+"format:check" = "pnpm run format:check"
+"format:write" = "pnpm run format:write"
+"lint" = "pnpm run lint"
+"lint:anti-slop" = "pnpm run lint:anti-slop"
+"lint:audit" = "pnpm run lint:audit"
+"lint:boundaries" = "pnpm run lint:boundaries"
+"lint:commit" = "pnpm run lint:commit"
+"lint:complexity" = "pnpm run lint:complexity"
+"lint:deps" = "pnpm run lint:deps"
+"lint:format" = "pnpm run lint:format"
+"lint:format-write" = "pnpm run lint:format-write"
+"lint:react-doctor" = "pnpm run lint:react-doctor"
+"lint:styles" = "pnpm run lint:styles"
+"lint:stylex" = "pnpm run lint:stylex"
+"lint:unused" = "pnpm run lint:unused"
+"sync" = "pnpm run sync"
+"sync:catalog-evidence" = "pnpm run sync:catalog-evidence"
+"sync:import" = "pnpm run sync:import"
+"sync:registries" = "pnpm run sync:registries"
+"sync:registry-icons" = "pnpm run sync:registry-icons"
+"test" = "pnpm run test"
+"test:anti-slop-gate" = "pnpm run test:anti-slop-gate"
+"test:boundaries" = "pnpm run test:boundaries"
+"test:browser" = "pnpm run test:browser"
+"test:complexity-gate" = "pnpm run test:complexity-gate"
+"test:component-pages" = "pnpm run test:component-pages"
+"test:component-pages-run" = "pnpm run test:component-pages-run"
+"test:contract" = "pnpm run test:contract"
+"test:e2e" = "pnpm run test:e2e"
+"test:e2e-run" = "pnpm run test:e2e-run"
+"test:local" = "pnpm run test:local"
+"test:registry-patterns" = "pnpm run test:registry-patterns"
+"test:registry-patterns-run" = "pnpm run test:registry-patterns-run"
+"test:unit" = "pnpm run test:unit"
+"test:watch" = "pnpm run test:watch"
+"typecheck" = "pnpm run typecheck"
+"typecheck:app" = "pnpm run typecheck:app"
+"typecheck:tests" = "pnpm run typecheck:tests"
+"verify" = "pnpm run verify"
+"verify:local" = "pnpm run verify:local"

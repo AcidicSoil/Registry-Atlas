@@ -20,52 +20,46 @@ The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is t
 
 ## Primary commands
 
-The root `package.json` and `mise.toml` expose eight primary task groups
-(plus `mise run install`). They delegate to the shared command registry in
-`scripts/project-tasks.mjs`. Run a group for its complete workflow or supply a
-purpose-specific operation:
+Registry Atlas follows PAB's declarative task layout. `package.json` owns actual
+commands; `mise.toml` exposes the same named operations through the `[tasks]`
+table. There is no custom command dispatcher.
 
 ```bash
-mise run lint                  # Oxlint, dependency-cruiser, React Doctor, CCCC, CSS, StyleX, Knip, Oxfmt
-mise run lint stylex           # Just the StyleX ESLint gate
-mise run lint format-write     # Apply Oxfmt
-mise run lint audit            # Audit dependencies
-mise run typecheck             # Source and tests
-mise run typecheck tests       # Test TypeScript only
-mise run test                  # Runtime-data check and Vitest
-mise run test local            # Existing offline test subset
-mise run test e2e --config e2e.mobile.config.ts
-mise run test browser          # Managed desktop/mobile acceptance
-mise run test contract         # Canonical product contract
-mise run build                 # Runtime-data check, TypeScript, Vite, SPA fallback, SBOM
-mise run build prepare-runtime-data # Explicit PostgreSQL export
-mise run build validate-data   # Validate the exported registry mirror
-mise run build source-pages    # Generate verified source-page index
-mise run verify                # Full PostgreSQL-backed maintainer verification
-mise run verify local          # Offline verification, without DB-backed checks
-mise run dev preview           # Vite production preview
-mise run sync                  # Refresh official registries and catalog evidence
-mise run sync registries       # Same operation explicitly
-mise run sync import --source /path/to/catalog.json # Optional reviewed catalog import
-mise run db status             # PostgreSQL status
-mise run db restore-check /path/to/backup.dump
+mise tasks ls               # Discover all named operations
+mise run check              # Lint and typecheck
+mise run lint               # All project quality checks
+mise run lint:stylex        # StyleX ESLint gate
+mise run format:write       # Format authored files
+mise run typecheck          # Application and test typechecking
+mise run test               # Runtime-data check and Vitest
+mise run test:local         # Offline test subset
+mise run test:e2e           # Production build and browser tests
+mise run test:browser       # Managed browser acceptance
+mise run test:contract      # Product contract
+mise run build              # Production build
+mise run build:prepare-runtime-data # Explicit PostgreSQL export
+mise run build:validate-data # Validate catalog data
+mise run build:source-pages # Generate source-page index
+mise run verify             # Complete PostgreSQL-backed verification
+mise run verify:local       # CI-safe offline verification
+mise run dev:preview        # Preview built website
+mise run sync               # Update official registries in PostgreSQL
+mise run sync:import --source /path/to/catalog.json # Reviewed import
+mise run db                 # Database status (read-only)
+mise run db:restore-check /path/to/backup.dump
 ```
 
-Run `pnpm <group> [operation]` for the equivalent package-manager entrypoint.
-`pnpm <group> --help` lists operations. Common direct aliases are available in
-both pnpm and Mise: `audit:dependencies`, `lint:complexity`,
-`typecheck:tests`, `test:local`, `test:e2e`, `build:source-pages`, and
-`verify:local`. These delegate to `scripts/project-tasks.mjs` rather than
-maintaining separate command implementations. `pnpm verify` first publishes
-runtime data from PostgreSQL; `pnpm verify local`, `pnpm dev`, `pnpm test`,
-and `pnpm build` only consume existing published runtime data. The default
-lint group executes each required static gate once. Dependency audit is part of
-the full verification gate and is available separately through `lint audit`.
+Every named package script is also available through `pnpm run <task>`.
+For example, `pnpm run test:contract` and `mise run test:contract` execute the
+same existing contract checker. `pnpm sync` and `mise run sync` run the official
+registry refresh. `pnpm db` checks database status; mutating maintenance actions
+are explicitly named, such as `pnpm run db:up` and `mise run db:migrate`.
+Catalog imports require a reviewed `--source` file; icon discovery and catalog
+evidence synchronization remain separate named operations.
 
-The `db` group requires an explicit operation. Bare `sync` runs `sync registries`,
-which contacts the official registry directory and updates the local PostgreSQL
-catalog; use `sync import --source <catalog.json>` only with a reviewed source.
-Icon discovery and standalone catalog-evidence sync remain explicit operations.
+Full verification exports current local PostgreSQL runtime data first. Offline
+verification uses existing published files without connecting to PostgreSQL.
+Neither verification command refreshes upstream registries.
 
 ## Git worktree isolation
 
@@ -81,8 +75,8 @@ Verification does not synchronize the upstream registry mirror. Refresh it
 explicitly, inspect the results, then run the maintainer gate:
 
 ```bash
-mise run sync                  # Or: mise run sync registries
-mise run build validate-data
+mise run sync
+mise run build:validate-data
 mise run verify
 ```
 

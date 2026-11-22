@@ -1,136 +1,64 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import packageJson from "../../package.json";
-import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
 
-describe("project command surface", () => {
-  it("exposes only the primary task groups in pnpm and mise", () => {
-    const groups = ["build", "db", "dev", "lint", "sync", "test", "typecheck", "verify"] as const;
+const scripts: Record<string, string> = packageJson.scripts;
 
-    const aliases = {
-      "audit:dependencies": ["lint", "audit"],
-      "build:source-pages": ["build", "source-pages"],
-      "lint:complexity": ["lint", "complexity"],
-      "test:e2e": ["test", "e2e"],
-      "test:local": ["test", "local"],
-      "typecheck:tests": ["typecheck", "tests"],
-      "verify:local": ["verify", "local"],
-    } as const;
+const mise = readFileSync(new URL("../../mise.toml", import.meta.url), "utf8");
 
-    expect(Object.keys(packageJson.scripts).sort()).toEqual(
-      [...groups, ...Object.keys(aliases)].sort(),
-    );
+describe("PAB-style project commands", () => {
+  it("exposes direct package scripts and flat, named Mise tasks", () => {
+    expect(mise).toContain("[tasks]");
+    expect(mise).not.toContain("[tasks.");
+    expect(mise).toContain('"install" = "pnpm install --frozen-lockfile"');
 
-    for (const group of groups) {
-      expect(packageJson.scripts[group]).toBe(`node scripts/project-tasks.mjs ${group}`);
-    }
-
-    const mise = readFileSync(new URL("../../mise.toml", import.meta.url), "utf8");
-
-    for (const [name, args] of Object.entries(aliases)) {
-      expect(packageJson.scripts).toHaveProperty(
-        name,
-        `node scripts/project-tasks.mjs ${args.join(" ")}`,
-      );
-      expect(mise).toContain(`[tasks."${name}"]`);
-      expect(mise).toContain(`run = "pnpm run ${name}"`);
-    }
-
-    const taskNames = [...mise.matchAll(/^\[tasks\.(?:"([^"]+)"|([^\]]+))\]/gm)]
-      .map((match) => match[1] ?? match[2])
-      .sort();
-
-    expect(taskNames).toEqual([...groups, ...Object.keys(aliases), "install"].sort());
-  });
-
-  it("runs each mandatory lint gate once through the canonical group", () => {
-    expect(resolveWorkflow("lint")).toEqual([
-      "lint:anti-slop",
-      "lint:deps",
-      "lint:react-doctor",
-      "lint:complexity",
-      "lint:styles",
-      "lint:stylex",
-      "lint:unused",
-      "lint:format",
-    ]);
-    expect(resolveWorkflow("verify")).toContain("lint");
-    expect(resolveTask("lint", "complexity")).toEqual({
-      executable: "cccc",
-      args: ["--table", "src/registry-explorer"],
-    });
-    expect(resolveTask("lint", "deps")).toEqual({
-      executable: "pnpm",
-      args: ["exec", "depcruise", "src", "tests", "--config", ".dependency-cruiser.cjs"],
-    });
-  });
-
-  it("preserves explicit data preparation and offline verification", () => {
-    expect(resolveWorkflow("dev")).toEqual(["build:check-runtime-data", "dev:serve"]);
-    expect(resolveWorkflow("test")).toEqual(["build:check-runtime-data", "test:unit"]);
-    expect(resolveWorkflow("build")).toEqual(["build:check-runtime-data", "build:production"]);
-    expect(resolveWorkflow("build:production")).toEqual([
-      "build:compile",
-      "build:bundle",
-      "build:spa-fallback",
-      "build:sbom",
-    ]);
-    expect(resolveWorkflow("verify")?.slice(0, 2)).toEqual([
-      "build:prepare-runtime-data",
-      "build:check-runtime-data",
-    ]);
-    expect(resolveWorkflow("verify")).toContain("build:production");
-    expect(resolveWorkflow("verify")).not.toContain("build");
-    expect(resolveWorkflow("verify")).not.toContain("test");
-    expect(resolveWorkflow("verify:local")).toContain("test:local");
-    expect(resolveWorkflow("verify:local")).not.toContain("build:prepare-runtime-data");
-    expect(resolveWorkflow("verify:local")).not.toContain("db:check");
-    expect(resolveWorkflow("typecheck")).toEqual(["typecheck:app", "typecheck:tests"]);
-    expect(resolveWorkflow("test:e2e")).toEqual(["build", "test:e2e-run"]);
-  });
-
-  it("uses the official registry refresh for bare sync commands", () => {
-    expect(resolveWorkflow("sync")).toEqual(["sync:registries"]);
-  });
-
-  it("preserves database and sync operations", () => {
-    const cases: Array<[string, string, string, string[]]> = [
-      ["db", "setup", "node", ["scripts/manage-local-postgres.mjs", "setup"]],
-      ["db", "up", "node", ["scripts/manage-local-postgres.mjs", "up"]],
-      ["db", "down", "node", ["scripts/manage-local-postgres.mjs", "down"]],
-      ["db", "status", "node", ["scripts/manage-local-postgres.mjs", "status"]],
-      ["db", "backup", "bash", ["scripts/backup-local-postgres.sh"]],
-      ["db", "restore-check", "bash", ["scripts/check-local-postgres-backup.sh", "/tmp/a.dump"]],
-      [
-        "db",
-        "reconcile-source-evidence",
-        "node",
-        ["scripts/reconcile-runtime-source-evidence.mjs", "--apply"],
-      ],
-      ["db", "check", "node", ["scripts/check-postgres.mjs"]],
-      ["db", "migrate", "node", ["scripts/migrate-postgres-schema.mjs"]],
-      ["sync", "registries", "node", ["scripts/sync-shadcn-registries.mjs"]],
-      ["sync", "catalog-evidence", "node", ["scripts/sync-registry-catalog-evidence.mjs"]],
-      ["sync", "registry-icons", "node", ["scripts/discover-registry-icons.mjs"]],
-      ["sync", "import", "node", ["scripts/import-registry-catalog.mjs"]],
-    ];
-
-    for (const [group, operation, executable, args] of cases) {
-      const extra = operation === "restore-check" ? ["/tmp/a.dump"] : [];
-      expect(resolveTask(group, operation, extra)).toEqual({ executable, args });
+    for (const [name, command] of Object.entries(scripts)) {
+      expect(command).not.toContain("project-tasks.mjs");
+      expect(command.trim()).not.toBe("");
+      expect(mise).toContain(`"${name}" = "pnpm run ${name}"`);
     }
   });
 
-  it("rejects unknown operations and unapproved arguments", () => {
-    expect(() => resolveTask("db", "drop")).toThrow(/Unknown/);
-    expect(() => resolveTask("sync", "bad")).toThrow(/Unknown/);
-    expect(() => resolveTask("db", "up", ["--force"])).toThrow(/arguments/);
-    expect(() => resolveTask("sync", "registries", ["--apply"])).toThrow(/arguments/);
-    expect(resolveTask("sync", "import", ["--source", "/tmp/catalog.json"])).toEqual({
-      executable: "node",
-      args: ["scripts/import-registry-catalog.mjs", "--source", "/tmp/catalog.json"],
-    });
-    expect(() => resolveTask("db", "restore-check")).toThrow(/exactly one/);
-    expect(() => resolveTask("db", "restore-check", ["a", "b"])).toThrow(/exactly one/);
+  it("resolves every named dependency and executable script", () => {
+    for (const [name, command] of Object.entries(scripts)) {
+      const dependencies = [...command.matchAll(/\bpnpm run ([\w:-]+)/g)].map((match) => match[1]);
+
+      expect(dependencies).not.toContain(name);
+      expect(new Set(dependencies).size).toBe(dependencies.length);
+
+      for (const dependency of dependencies) expect(scripts).toHaveProperty(dependency);
+
+      for (const [, scriptPath] of command.matchAll(
+        /\b(?:node|bash) (scripts\/[\w/.-]+\.(?:mjs|sh))/g,
+      )) {
+        expect(existsSync(new URL(`../../${scriptPath}`, import.meta.url))).toBe(true);
+      }
+    }
+  });
+
+  it("provides working defaults without subcommand dispatch", () => {
+    expect(scripts.sync).toBe("node scripts/sync-shadcn-registries.mjs");
+    expect(scripts.db).toBe("pnpm run db:status");
+    expect(scripts.dev).toContain("pnpm run dev:serve");
+    expect(scripts.test).toContain("pnpm run test:unit");
+    expect(scripts.build).toContain("pnpm run build:production");
+    expect(scripts.typecheck).toContain("pnpm run typecheck:tests");
+    expect(scripts.lint).toContain("pnpm run lint:stylex");
+    expect(scripts.verify).toContain("pnpm run build:prepare-runtime-data");
+  });
+
+  it("requires explicit task names for mutating operations", () => {
+    expect(scripts["sync:import"]).toBe("node scripts/import-registry-catalog.mjs");
+    expect(scripts["db:up"]).toBe("node scripts/manage-local-postgres.mjs up");
+    expect(scripts["db:down"]).toBe("node scripts/manage-local-postgres.mjs down");
+    expect(scripts["db:restore-check"]).toBe("bash scripts/check-local-postgres-backup.sh");
+  });
+
+  it("keeps offline verification separate from production database mutation", () => {
+    expect(scripts["verify:local"]).toContain("pnpm run test:local");
+    expect(scripts["verify:local"]).not.toContain("build:prepare-runtime-data");
+    expect(scripts["verify:local"]).not.toContain("db:check");
+    expect(scripts.verify).toContain("pnpm run db:check");
+    expect(scripts.verify).toContain("pnpm run test:contract");
   });
 });

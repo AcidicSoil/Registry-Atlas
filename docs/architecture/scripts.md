@@ -4,9 +4,9 @@ Registry Atlas is one application, not a workspace of independent packages. The 
 
 ## Entry points
 
-Keep commands used by `package.json`, CI, and `scripts/project-tasks.mjs` at their existing paths until their callers are migrated together. A root script is an executable entry point, not an appropriate home for reusable domain logic.
+Keep commands used by `package.json`, `mise.toml`, and CI at their existing paths until callers are migrated together. A root script is an executable entry point, not an appropriate home for reusable domain logic.
 
-Use package scripts for supported workflows, such as `pnpm build` and `pnpm prepare:runtime-data`.
+Use package scripts for supported workflows, such as `pnpm build` and `pnpm run build:prepare-runtime-data`.
 
 ## Source audits
 

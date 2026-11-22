@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
+import packageJson from "../../package.json";
 
 const read = (file: string) => readFileSync(new URL("../../" + file, import.meta.url), "utf8");
 
@@ -12,7 +12,9 @@ describe("quality-tooling integration contract", () => {
     expect(pkg.devDependencies.oxlint).toBe("1.87.0");
     expect(pkg.devDependencies["@oxlint/plugins"]).toBe("1.87.0");
 
-    const lintSteps = resolveWorkflow("lint") ?? [];
+    const lintSteps = packageJson.scripts.lint
+      .split(" && ")
+      .map((step) => step.replace("pnpm run ", ""));
 
     for (const gate of [
       "anti-slop",
@@ -27,25 +29,18 @@ describe("quality-tooling integration contract", () => {
       expect(lintSteps).toContain(`lint:${gate}`);
     }
 
-    expect(new Set(lintSteps).size).toBe(lintSteps?.length);
-    expect(resolveWorkflow("verify")).toContain("lint");
-    expect(resolveWorkflow("verify:local")).toContain("lint");
+    expect(new Set(lintSteps).size).toBe(lintSteps.length);
+    expect(packageJson.scripts.verify).toContain("pnpm run lint");
+    expect(packageJson.scripts["verify:local"]).toContain("pnpm run lint");
 
-    expect(resolveTask("lint", "boundaries").args).toContain("depcruise");
-
-    expect(resolveTask("lint", "anti-slop")).toEqual({
-      executable: "pnpm",
-      args: ["exec", "oxlint", "."],
-    });
-    expect(resolveTask("lint", "react-doctor").args).toContain("--blocking");
-    expect(resolveTask("lint", "complexity")).toEqual({
-      executable: "cccc",
-      args: ["--table", "src/registry-explorer"],
-    });
-    expect(resolveTask("test", "anti-slop-gate").args).toContain(
+    expect(packageJson.scripts["lint:boundaries"]).toContain("depcruise");
+    expect(packageJson.scripts["lint:anti-slop"]).toBe("pnpm exec oxlint .");
+    expect(packageJson.scripts["lint:react-doctor"]).toContain("--blocking");
+    expect(packageJson.scripts["lint:complexity"]).toBe("cccc --table src/registry-explorer");
+    expect(packageJson.scripts["test:anti-slop-gate"]).toContain(
       "scripts/verify-anti-slop-gate.mjs",
     );
-    expect(resolveTask("test", "complexity-gate").args).toContain(
+    expect(packageJson.scripts["test:complexity-gate"]).toContain(
       "scripts/verify-complexity-gate.mjs",
     );
   });

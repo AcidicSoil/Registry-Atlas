@@ -20,14 +20,14 @@ Registry Atlas stores authoritative catalog, registry, classification, item-deta
 and route verification records in PostgreSQL (Neon project `Registry Atlas`, schema `atlas`).
 No SQLite database or Git LFS file is committed. PostgreSQL transactions protect updates.
 
-GitHub Pages is a static website. During `pnpm dev` or `pnpm build`, the server-side
-`pnpm build prepare-runtime-data` operation exports disposable compressed assets:
+GitHub Pages is a static website. The explicit `pnpm run build:prepare-runtime-data` task exports disposable
+compressed assets from PostgreSQL:
 `public/data/registry-atlas.json.gz` (catalog and metadata) and
 `public/data/registry-details.json.gz` (lazy-loaded item details).
 Neither is authoritative, and database credentials never go to the browser.
 
-For reviewed, source-backed links, run `pnpm test component-pages` and
-`pnpm build source-pages`. A generic HTTP 200 is not evidence of component identity.
+For reviewed, source-backed links, run `pnpm run test:component-pages` and
+`pnpm run build:source-pages`. A generic HTTP 200 is not evidence of component identity.
 See [data operations](docs/registry-explorer-data.md).
 
 ## Getting Started
@@ -59,7 +59,7 @@ Visit `http://localhost:5173/Registry-Atlas/` in your browser.
 Validate generated registry data:
 
 ```bash
-mise run build validate-data
+mise run build:validate-data
 ```
 
 Run the test suite:
@@ -71,7 +71,7 @@ mise run test
 Check the canonical product contract:
 
 ```bash
-mise run test contract
+mise run test:contract
 ```
 
 Type-check source and tests:
@@ -91,7 +91,7 @@ mise run verify
 The managed browser acceptance matrix is exposed as:
 
 ```bash
-mise run test browser
+mise run test:browser
 ```
 
 It exercises the canonical route family at desktop and 390px mobile widths and checks route identity, expected unavailable/not-found states, exact catalog items, horizontal overflow, basic accessible labeling, browser exceptions, and unexpected 5xx responses.
@@ -104,15 +104,15 @@ separate read-only role.
 
 ```bash
 mise run sync                  # Sync official registries into PostgreSQL
-mise run build validate-data
+mise run build:validate-data
 mise run verify
 ```
 
 Bare `sync` runs `sync registries`, updating the official directory, catalog
 evidence, classification projection, registry snapshots, and exact item details
 in PostgreSQL. To import reviewed catalog metadata first, explicitly run
-`mise run sync import --source /path/to/catalog.json` with an approved source.
-`pnpm build prepare-runtime-data` regenerates the two ignored browser assets from the
+`mise run sync:import --source /path/to/catalog.json` with an approved source.
+`pnpm run build:prepare-runtime-data` regenerates the two ignored browser assets from the
 database. Route patterns, component URL checks, and classification run state
 are also maintained in PostgreSQL.
 
@@ -190,7 +190,7 @@ src/registry-explorer/
 
 ## Maintenance
 
-Use `pnpm db migrate` to apply the idempotent PostgreSQL route
+Use `pnpm run db:migrate` to apply the idempotent PostgreSQL route
 constraints and sequences to a newly imported database. The initial SQLite import
 utility is retained only to read legacy snapshots; it is not an active data writer.
 

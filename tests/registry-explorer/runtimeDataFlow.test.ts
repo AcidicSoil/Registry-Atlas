@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it } from "vitest";
 import { checkRuntimeData } from "../../scripts/check-runtime-data.mjs";
-import { resolveTask, resolveWorkflow } from "../../scripts/project-tasks.mjs";
+import packageJson from "../../package.json";
 // @ts-ignore Standalone Node ESM publication module.
 import { publishRuntimeSnapshots } from "../../scripts/lib/runtime-publication.mjs";
 
@@ -90,20 +90,18 @@ describe("local-first runtime data", () => {
   });
 
   it("keeps remote export explicit and local workflows offline", () => {
-    expect(resolveTask("build", "prepare-runtime-data").args).toContain(
-      "scripts/build-runtime-data.mjs",
-    );
-    expect(resolveWorkflow("verify")).toContain("build:prepare-runtime-data");
-    expect(resolveWorkflow("verify:local")).not.toContain("build:prepare-runtime-data");
-    expect(resolveWorkflow("verify:local")).toContain("test:local");
-    expect(resolveWorkflow("verify:local")).not.toContain("test:contract");
-    expect(resolveWorkflow("verify")).toContain("db:check");
-    expect(resolveWorkflow("verify")).toContain("test:contract");
-    expect(resolveWorkflow("test")).toContain("build:check-runtime-data");
-    expect(resolveWorkflow("dev")).toContain("build:check-runtime-data");
-    expect(resolveWorkflow("build")).toContain("build:check-runtime-data");
-    expect(resolveTask("test", "local").args).toContain(
-      "tests/registry-explorer/postgresStorage.test.ts",
-    );
+    const scripts = packageJson.scripts;
+
+    expect(scripts["build:prepare-runtime-data"]).toBe("node scripts/build-runtime-data.mjs");
+    expect(scripts.verify).toContain("pnpm run build:prepare-runtime-data");
+    expect(scripts["verify:local"]).not.toContain("build:prepare-runtime-data");
+    expect(scripts["verify:local"]).toContain("pnpm run test:local");
+    expect(scripts["verify:local"]).not.toContain("test:contract");
+    expect(scripts.verify).toContain("pnpm run db:check");
+    expect(scripts.verify).toContain("pnpm run test:contract");
+    expect(scripts.test).toContain("pnpm run build:check-runtime-data");
+    expect(scripts.dev).toContain("pnpm run build:check-runtime-data");
+    expect(scripts.build).toContain("pnpm run build:check-runtime-data");
+    expect(scripts["test:local"]).toContain("tests/registry-explorer/postgresStorage.test.ts");
   });
 });
