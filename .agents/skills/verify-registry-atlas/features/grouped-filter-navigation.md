@@ -25,7 +25,7 @@ Route: `/Registry-Atlas/components`, with shared behavior on taxonomy-filtered c
 pnpm exec vitest run tests/registry-explorer/catalogSidebarNavigation.test.ts tests/registry-explorer/sidebarExemplar.test.ts
 pnpm build
 pnpm exec e2e run tests/grouped-sidebar.e2e.ts --trace on
-pnpm test:e2e:mobile
+mise run test:e2e-run --config e2e.mobile.config.ts
 ```
 
 Verify Navigation opens before filtering; Navbar filters `navigation/navbar`; closing and reopening preserves the filter; selected child and ancestor remain visible; groups use actual taxonomy counts and labels. Capture desktop/mobile proof only from the real built application.

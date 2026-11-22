@@ -22,6 +22,6 @@ jobs:
       - uses: jdx/mise-action@v3
       - run: pnpm install --frozen-lockfile
       - name: Prepare runtime data
-        run: pnpm run build:prepare-runtime-data
+        run: mise run build:prepare-runtime-data
       - name: Full available offline checks
-        run: pnpm run verify:local
+        run: mise run verify:local

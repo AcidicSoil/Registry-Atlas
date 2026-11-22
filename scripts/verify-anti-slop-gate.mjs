@@ -9,7 +9,7 @@ const root = resolve(import.meta.dirname, "..");
 const probe = resolve(root, "src/registry-explorer/core/__anti_slop_gate_probe.ts");
 
 function scan() {
-  const result = spawnSync("pnpm", ["lint:anti-slop"], {
+  const result = spawnSync("mise", ["run", "lint:anti-slop"], {
     cwd: root,
     encoding: "utf8",
     timeout: 120_000,

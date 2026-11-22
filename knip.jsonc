@@ -31,7 +31,7 @@
   "ignoreIssues": {
     "tools/oxlint/anti-slop/shared/dictionary-types.ts": ["exports", "types"],
   },
-  "ignoreBinaries": ["cccc", "pinchtab", "pinchtab-profile-manager"],
+  "ignoreBinaries": ["cccc", "mise", "pinchtab", "pinchtab-profile-manager"],
   // CLI dependencies invoked by package scripts are not statically discoverable.
   "ignoreDependencies": ["react", "react-grab", "@shadcn/lint"],
 }

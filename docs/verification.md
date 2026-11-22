@@ -20,9 +20,9 @@ The underlying `pnpm verify` and `pnpm test` scripts remain available; mise is t
 
 ## Primary commands
 
-Registry Atlas follows PAB's declarative task layout. `package.json` owns actual
-commands; `mise.toml` exposes the same named operations through the `[tasks]`
-table. There is no custom command dispatcher.
+Registry Atlas follows PAB's declarative task layout. `mise.toml` owns
+all commands and ordered workflows; `package.json` exposes only nine primary
+entrypoints. No separate command dispatcher is needed.
 
 ```bash
 mise tasks ls               # Discover all named operations
@@ -49,12 +49,12 @@ mise run db                 # Database status and consistency check
 mise run db:restore-check /path/to/backup.dump
 ```
 
-Every named package script is also available through `pnpm run <task>`.
-For example, `pnpm run test:contract` and `mise run test:contract` execute the
-same existing contract checker. `pnpm sync` and `mise run sync` refresh official
+Use `mise run <task>` for granular commands, such as `mise run test:contract`
+and `mise run lint:stylex`. The nine primary commands work through either
+`pnpm <group>` or `mise run <group>`. `pnpm sync` and `mise run sync` refresh official
 registries, catalog evidence, and registry icons. `pnpm db` checks database
 status and health. Mutating maintenance actions are explicitly named, such as
-`pnpm run db:up` and `mise run db:migrate`.
+`mise run db:up` and `mise run db:migrate`.
 The registry refresh already includes catalog-evidence collection, so the
 standalone `sync:catalog-evidence` task is not repeated. `sync:import` requires a
 reviewed `--source` file and remains explicit. Similarly, formatting writes,
@@ -136,7 +136,7 @@ The prior 236-entry URL image mapping is retired: 227 entries were from Aceterni
 ```bash
 pnpm exec vitest run tests/registry-explorer/componentPreviews.test.ts tests/registry-explorer/catalogLinkPreview.test.ts
 pnpm typecheck
-pnpm typecheck:test
+mise run typecheck:tests
 pnpm check
 pnpm build
 pnpm exec e2e run tests/catalog-link-preview.e2e.ts
@@ -150,7 +150,7 @@ The independent PPM project-standards closing check is **not** globally complian
 
 ### Earlier baseline (not remediated in this preview change)
 
-The previous source navigation/database work passed 86 relevant unit tests and two browser tests, but those browser tests did **not** establish non-icon preview quality. `pnpm check:product-contract` had five outstanding failures: four brittle shell/navigation source-text assertions and 432 stale reviewed-overlay input fingerprints in local canonical data. They are not part of the current component-preview change. The project also already had 41 package scripts against an existing limit of 40; this change does not add scripts or alter that test limit. Do not claim either the product-contract gate or the full suite is green without new evidence.
+The previous source navigation/database work passed 86 relevant unit tests and two browser tests, but those browser tests did **not** establish non-icon preview quality. `mise run test:contract` had five outstanding failures: four brittle shell/navigation source-text assertions and 432 stale reviewed-overlay input fingerprints in local canonical data. They are not part of the current component-preview change. The project also already had 41 package scripts against an existing limit of 40; this change does not add scripts or alter that test limit. Do not claim either the product-contract gate or the full suite is green without new evidence.
 
 ### Runtime source-coverage reconciliation
 
@@ -171,7 +171,7 @@ The hook also reported the existing `projectTasks.test.ts` package-script limit 
 
 ## Complete lint gate remediation (2026-11-07)
 
-`pnpm lint` now runs `pnpm lint:deps && pnpm check`. This preserves dependency-cruiser coverage of `src` and `tests`, and runs the canonical Oxlint/anti-slop, Stylelint, StyleX ESLint, Knip, dependency-boundary, React Doctor, CCCC, and Oxfmt gates without recursively calling lint. The script contract in `projectTasks.test.ts` asserts this wiring.
+`pnpm lint` now calls the canonical Mise lint workflow. This preserves dependency-cruiser coverage of `src` and `tests`, and runs the canonical Oxlint/anti-slop, Stylelint, StyleX ESLint, Knip, dependency-boundary, React Doctor, CCCC, and Oxfmt gates without recursively calling lint. The script contract in `projectTasks.test.ts` asserts this wiring.
 
 The project CCCC policy remains strict at **maximum cognitive 10** and **maximum cyclomatic 8**, without exceptions. Source-backed refactors in `src/registry-explorer/core/`, `data/`, `entry.ts`, and `ui/` resolved **42 existing per-function threshold violations** through named validation, route, rendering, and event-handler helpers. The current CCCC report covers 61 files and 723 functions, with maximum cognitive **10**, maximum cyclomatic **8**, and zero parser errors. `qualityToolingContract.test.ts` now asserts these configured limits rather than the superseded 15/10 baseline.
 
@@ -195,7 +195,7 @@ The new publisher writes both gzip files before it replaces `runtime-manifest.js
 
 - All 77 affected Vitest tests passed across eight files. The new tests cover concurrent publishers, serialization failures, abandoned staging directories, invalid manifests, missing files, manifest retries, and generation integrity.
 - Three production-browser tests passed after `pnpm build`: `runtime-generation.e2e.ts`, `catalog-navigation.e2e.ts`, and `stylex-registry-icon.e2e.ts`. The first test checks the catalog and detail URLs selected by the manifest.
-- `pnpm prepare:runtime-data` exported 118,643 catalog records and 118,643 details. `pnpm check:runtime-data` verified both counts, the generation digest, and 16 documents. The source-evidence dry run found 46,397 matching pages, with no missing records or conflicts. None of these steps wrote to PostgreSQL.
+- `mise run build:prepare-runtime-data` exported 118,643 catalog records and 118,643 details. `mise run build:check-runtime-data` verified both counts, the generation digest, and 16 documents. The source-evidence dry run found 46,397 matching pages, with no missing records or conflicts. None of these steps wrote to PostgreSQL.
 - Source and test TypeScript checks, dependency-cruiser, Oxlint, Knip, Oxfmt, CCCC, and the production build passed.
 
 The manifest selects a complete local generation; it does not control the order of concurrent exports. Older generations stay on disk for open clients. The hosting system must also retain those assets. This work did not deploy the site, run the full unit suite, or certify the entire project against PPM standards.
@@ -212,7 +212,7 @@ The three adapter tests, shared endpoint tests, classifier tests, catalog CLI te
 
 The November 8 removal of preview assets left `entry.ts` requesting a manifest that no longer existed. This change restores the three **previously reviewed** WebP captures and manifest from commit `3bda23b0`, plus the removed source-hover browser test. It does not capture new imagery or expand the three-item pilot. The regression test first failed with `ENOENT`, then passed after restoring the original assets. Each asset's bytes match its recorded SHA-256 and the source URL matches the currently generated source-page manifest. All four source-hover browser tests passed against a fresh production build, including the icon-negative case.
 
-The read-only `node scripts/audits/report-classification-drift.mjs` command now writes `.instance/reviews/catalog-classification-drift.json` with reviewed identities, current source metadata, old input fingerprints and computed current fingerprints. The resulting queue has **26,603 reviewed identities: 26,040 matched, 432 stale, and 131 absent**. A regression test covers stale, missing, matching and duplicate-variant cases. The original classification-run rows are no longer present in PostgreSQL; the reporter does **not** reapprove classifications, rewrite fingerprints or mutate database records. `pnpm check:product-contract` and `pnpm validate:data` must continue to fail until the changed inputs are reviewed and the approved classifications are promoted through the existing gate.
+The read-only `node scripts/audits/report-classification-drift.mjs` command now writes `.instance/reviews/catalog-classification-drift.json` with reviewed identities, current source metadata, old input fingerprints and computed current fingerprints. The resulting queue has **26,603 reviewed identities: 26,040 matched, 432 stale, and 131 absent**. A regression test covers stale, missing, matching and duplicate-variant cases. The original classification-run rows are no longer present in PostgreSQL; the reporter does **not** reapprove classifications, rewrite fingerprints or mutate database records. `mise run test:contract` and `mise run build:validate-data` must continue to fail until the changed inputs are reviewed and the approved classifications are promoted through the existing gate.
 
 The obsolete `.planning/` browser-smoke link was replaced with runnable desktop E2E commands. `TODO.md` now records current PostgreSQL-era tasks instead of the superseded SQLite worktree. Hosted publication and complete CSS/StyleX ownership remain outside this recovery.
 
@@ -222,7 +222,7 @@ The official Animate UI source at `https://animate-ui.com/r/registry.json` and P
 
 `scripts/lib/classification/overlay.mjs` now uses each successfully refreshed source index to identify absent approvals. Both sync entrypoints use the same projector and record retirements in the catalog transaction. The now-retired single-namespace reconciliation command confirmed that the upstream and local identity sets matched before applying the targeted Animate UI retirement. A read-only dry-run preceded the 27-row change. A repeated dry-run found no remaining Animate UI retirements.
 
-The retirement audit records prior identities and fingerprints but is not used as a fallback catalog. PostgreSQL still contains all 789 current Animate UI items and 118,643 matching catalog/detail pairs across 469 namespaces. The updated report has 26,576 active reviewed classifications: 26,040 matching, 432 input-changed, and 104 missing elsewhere. `pnpm check:product-contract` still fails on the 432 genuine input mismatches. No approval fingerprint was rewritten.
+The retirement audit records prior identities and fingerprints but is not used as a fallback catalog. PostgreSQL still contains all 789 current Animate UI items and 118,643 matching catalog/detail pairs across 469 namespaces. The updated report has 26,576 active reviewed classifications: 26,040 matching, 432 input-changed, and 104 missing elsewhere. `mise run test:contract` still fails on the 432 genuine input mismatches. No approval fingerprint was rewritten.
 
 Tests exercised failed and successful refreshes, empty-index rejection, source/database disagreement, idempotence, projection, and isolated PostgreSQL commit/rollback. Independent changes already staged or deleted under `.gitignore` and `tools/` were not modified.
 
@@ -232,7 +232,7 @@ A live source audit found 432 changed approved inputs and 104 absent identities 
 
 The pre-change PostgreSQL backup completed at `/mnt/i/Backups/Registry-Atlas/PostgreSQL/registry-atlas-20261110T201515Z.dump`. The dry run projected zero stale and zero missing references. The apply transaction revalidated 429 classifications whose canonical categories were independently reproduced from current source fields, retired 138 identities absent from official indexes, retired six identities from two removed registry namespaces, and retired five changed classifications that could not be deterministically verified. The retirement and revalidation audits preserve prior fingerprints, reasons, and source provenance; they are **not** alternative catalogs or approvals.
 
-After the transaction, `node scripts/audits/report-classification-drift.mjs` reported **26,427 reviewed, 26,427 matching, zero stale, zero missing**. `pnpm check:postgres` verified 120,407 catalog entries and 120,407 matching details across 469 namespaces. `pnpm check:product-contract`, `pnpm validate:data`, `pnpm prepare:runtime-data`, and `pnpm check:runtime-data` passed. Data validation retained four existing official-directory HTTP URL warnings. The generated runtime generation is `87b34032f8f9266a99579e56bd61a4797101d8093983c8aa9165556781b56a8f`. A repeated reconciliation returned `alreadyCurrent: true`.
+After the transaction, `node scripts/audits/report-classification-drift.mjs` reported **26,427 reviewed, 26,427 matching, zero stale, zero missing**. `mise run db:check` verified 120,407 catalog entries and 120,407 matching details across 469 namespaces. `mise run test:contract`, `mise run build:validate-data`, `mise run build:prepare-runtime-data`, and `mise run build:check-runtime-data` passed. Data validation retained four existing official-directory HTTP URL warnings. The generated runtime generation is `87b34032f8f9266a99579e56bd61a4797101d8093983c8aa9165556781b56a8f`. A repeated reconciliation returned `alreadyCurrent: true`.
 
 The five unverified changed items are `@d2/alert`, `@d2/card`, `@d2/progress`, `@kokonutui/card-stack`, and `@mewo/marquee`. Their categories were not silently reapproved. Full source/visual review is required before restoring classifications for them. The same database transaction updated only the current catalog and active approval records; no superseded registry index or shadow database was added.
 

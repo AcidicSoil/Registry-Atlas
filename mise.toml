@@ -1,77 +1,125 @@
 [tools]
 bun = "latest"
-
 node = "lts"
 pnpm = "latest"
 "github:moznion/cccc" = "1.8.0"
 
-# PAB-style declarative task entrypoints. package.json owns commands.
+# Single task authority: named commands and ordered workflows live here.
 [tasks]
 "install" = "pnpm install --frozen-lockfile"
-"audit:dependencies" = "pnpm run audit:dependencies"
-"build" = "pnpm run build"
-"build:bundle" = "pnpm run build:bundle"
-"build:check-runtime-data" = "pnpm run build:check-runtime-data"
-"build:compile" = "pnpm run build:compile"
-"build:prepare-runtime-data" = "pnpm run build:prepare-runtime-data"
-"build:production" = "pnpm run build:production"
-"build:sbom" = "pnpm run build:sbom"
-"build:source-pages" = "pnpm run build:source-pages"
-"build:source-pages-index" = "pnpm run build:source-pages-index"
-"build:source-pages-report" = "pnpm run build:source-pages-report"
-"build:spa-fallback" = "pnpm run build:spa-fallback"
-"build:validate-data" = "pnpm run build:validate-data"
-"check" = "pnpm run check"
-"db" = "pnpm run db"
-"db:backup" = "pnpm run db:backup"
-"db:check" = "pnpm run db:check"
-"db:down" = "pnpm run db:down"
-"db:migrate" = "pnpm run db:migrate"
-"db:reconcile-source-evidence" = "pnpm run db:reconcile-source-evidence"
-"db:restore-check" = "pnpm run db:restore-check"
-"db:setup" = "pnpm run db:setup"
-"db:status" = "pnpm run db:status"
-"db:up" = "pnpm run db:up"
-"dev" = "pnpm run dev"
-"dev:preview" = "pnpm run dev:preview"
-"dev:serve" = "pnpm run dev:serve"
-"format:check" = "pnpm run format:check"
-"format:write" = "pnpm run format:write"
-"lint" = "pnpm run lint"
-"lint:anti-slop" = "pnpm run lint:anti-slop"
-"lint:audit" = "pnpm run lint:audit"
-"lint:boundaries" = "pnpm run lint:boundaries"
-"lint:commit" = "pnpm run lint:commit"
-"lint:complexity" = "pnpm run lint:complexity"
-"lint:deps" = "pnpm run lint:deps"
-"lint:format" = "pnpm run lint:format"
-"lint:format-write" = "pnpm run lint:format-write"
-"lint:react-doctor" = "pnpm run lint:react-doctor"
-"lint:styles" = "pnpm run lint:styles"
-"lint:stylex" = "pnpm run lint:stylex"
-"lint:unused" = "pnpm run lint:unused"
-"sync" = "pnpm run sync"
-"sync:catalog-evidence" = "pnpm run sync:catalog-evidence"
-"sync:import" = "pnpm run sync:import"
-"sync:registries" = "pnpm run sync:registries"
-"sync:registry-icons" = "pnpm run sync:registry-icons"
-"test" = "pnpm run test"
-"test:anti-slop-gate" = "pnpm run test:anti-slop-gate"
-"test:boundaries" = "pnpm run test:boundaries"
-"test:browser" = "pnpm run test:browser"
-"test:complexity-gate" = "pnpm run test:complexity-gate"
-"test:component-pages" = "pnpm run test:component-pages"
-"test:component-pages-run" = "pnpm run test:component-pages-run"
-"test:contract" = "pnpm run test:contract"
-"test:e2e" = "pnpm run test:e2e"
-"test:e2e-run" = "pnpm run test:e2e-run"
-"test:local" = "pnpm run test:local"
-"test:registry-patterns" = "pnpm run test:registry-patterns"
-"test:registry-patterns-run" = "pnpm run test:registry-patterns-run"
-"test:unit" = "pnpm run test:unit"
-"test:watch" = "pnpm run test:watch"
-"typecheck" = "pnpm run typecheck"
-"typecheck:app" = "pnpm run typecheck:app"
-"typecheck:tests" = "pnpm run typecheck:tests"
-"verify" = "pnpm run verify"
-"verify:local" = "pnpm run verify:local"
+"audit:dependencies" = [{ task = "lint:audit" }]
+"build" = [
+  { task = "build:check-runtime-data" },
+  { task = "build:validate-data" },
+  { task = "build:production" },
+]
+"build:bundle" = "pnpm exec vite build"
+"build:check-runtime-data" = "node scripts/check-runtime-data.mjs"
+"build:compile" = "pnpm exec tsc"
+"build:prepare-runtime-data" = "node scripts/build-runtime-data.mjs"
+"build:production" = [
+  { task = "build:compile" },
+  { task = "build:bundle" },
+  { task = "build:spa-fallback" },
+  { task = "build:sbom" },
+]
+"build:sbom" = "node scripts/generate-sbom.mjs"
+"build:source-pages" = [
+  { task = "build:source-pages-report" },
+  { task = "build:source-pages-index" },
+]
+"build:source-pages-index" = "node scripts/build-source-page-index.mjs"
+"build:source-pages-report" = "node scripts/verify-component-pages.mjs --report-only --report .instance/component-verification-queue.json"
+"build:spa-fallback" = "node scripts/create-pages-spa-fallback.mjs"
+"build:validate-data" = "node scripts/validate-registry-data.mjs"
+"check" = [{ task = "lint" }, { task = "typecheck" }]
+"db" = [{ task = "db:status" }, { task = "db:check" }]
+"db:backup" = "bash scripts/backup-local-postgres.sh"
+"db:check" = "node scripts/check-postgres.mjs"
+"db:down" = "node scripts/manage-local-postgres.mjs down"
+"db:migrate" = "node scripts/migrate-postgres-schema.mjs"
+"db:reconcile-source-evidence" = "node scripts/reconcile-runtime-source-evidence.mjs --apply"
+"db:restore-check" = "bash scripts/check-local-postgres-backup.sh"
+"db:setup" = "node scripts/manage-local-postgres.mjs setup"
+"db:status" = "node scripts/manage-local-postgres.mjs status"
+"db:up" = "node scripts/manage-local-postgres.mjs up"
+"dev" = [{ task = "build:check-runtime-data" }, { task = "dev:serve" }]
+"dev:preview" = "pnpm exec vite preview"
+"dev:serve" = "pnpm exec vite"
+"format:check" = [{ task = "lint:format" }]
+"format:write" = [{ task = "lint:format-write" }]
+"lint" = [
+  { task = "lint:anti-slop" },
+  { task = "lint:deps" },
+  { task = "lint:react-doctor" },
+  { task = "lint:complexity" },
+  { task = "lint:styles" },
+  { task = "lint:stylex" },
+  { task = "lint:unused" },
+  { task = "lint:format" },
+  { task = "lint:audit" },
+]
+"lint:anti-slop" = "pnpm exec oxlint ."
+"lint:audit" = "pnpm audit --audit-level low"
+"lint:boundaries" = "pnpm exec depcruise src"
+"lint:commit" = "node scripts/check-commit-message.mjs --range HEAD^..HEAD"
+"lint:complexity" = "cccc --table src/registry-explorer"
+"lint:deps" = "pnpm exec depcruise src tests --config .dependency-cruiser.cjs"
+"lint:format" = "pnpm exec oxfmt --check ."
+"lint:format-write" = "pnpm exec oxfmt --write ."
+"lint:react-doctor" = "pnpm exec react-doctor . --blocking warning --no-telemetry"
+"lint:styles" = "pnpm exec stylelint \"public/styles/**/*.css\" \"src/**/*.css\""
+"lint:stylex" = "pnpm exec eslint \"src/**/*.stylex.ts\" --max-warnings 0"
+"lint:unused" = "pnpm exec knip"
+"sync" = [{ task = "sync:registries" }, { task = "sync:registry-icons" }]
+"sync:catalog-evidence" = "node scripts/sync-registry-catalog-evidence.mjs"
+"sync:import" = "node scripts/import-registry-catalog.mjs"
+"sync:registries" = "node scripts/sync-shadcn-registries.mjs"
+"sync:registry-icons" = "node scripts/discover-registry-icons.mjs"
+"test" = [
+  { task = "build:check-runtime-data" },
+  { task = "test:unit" },
+  { task = "test:contract" },
+  { task = "test:anti-slop-gate" },
+  { task = "test:boundaries" },
+  { task = "test:complexity-gate" },
+  { task = "test:e2e" },
+]
+"test:anti-slop-gate" = "node scripts/verify-anti-slop-gate.mjs"
+"test:boundaries" = "node scripts/verify-deep-module-boundaries.mjs"
+"test:browser" = "node scripts/check-browser-acceptance.mjs"
+"test:complexity-gate" = "node scripts/verify-complexity-gate.mjs"
+"test:component-pages" = [{ task = "test:component-pages-run" }, { task = "build:source-pages" }]
+"test:component-pages-run" = "node scripts/verify-component-pages.mjs --max-pages 20 --max-per-registry 3 --delay-ms 1200 --report .instance/component-verification-queue.json"
+"test:contract" = "node scripts/check-product-contract.mjs"
+"test:e2e" = [{ task = "build" }, { task = "test:e2e-run" }]
+"test:e2e-run" = "pnpm exec e2e run"
+"test:local" = "pnpm exec vitest run --testTimeout 30000 --exclude tests/registry-explorer/catalogClassificationCli.test.ts --exclude tests/registry-explorer/postgresStorage.test.ts --exclude tests/registry-explorer/registryDiscoveryPostgres.test.ts --exclude tests/registry-explorer/verifyComponentPages.test.ts --exclude tests/registry-explorer/verifyRegistryPatterns.test.ts"
+"test:registry-patterns" = [
+  { task = "test:registry-patterns-run" },
+  { task = "build:source-pages" },
+]
+"test:registry-patterns-run" = "node scripts/verify-registry-patterns.mjs --verify-only --max-registries 20 --samples 2"
+"test:unit" = "pnpm exec vitest run --testTimeout 30000"
+"test:watch" = "pnpm exec vitest"
+"typecheck" = [{ task = "typecheck:app" }, { task = "typecheck:tests" }]
+"typecheck:app" = "pnpm exec tsc --noEmit"
+"typecheck:tests" = "pnpm exec tsc --noEmit -p tsconfig.test.json"
+"verify" = [
+  { task = "build:prepare-runtime-data" },
+  { task = "build:check-runtime-data" },
+  { task = "lint" },
+  { task = "typecheck:tests" },
+  { task = "test:unit" },
+  { task = "db:check" },
+  { task = "test:contract" },
+  { task = "build:validate-data" },
+  { task = "build:production" },
+]
+"verify:local" = [
+  { task = "build:check-runtime-data" },
+  { task = "lint" },
+  { task = "typecheck:tests" },
+  { task = "test:local" },
+  { task = "build:production" },
+]

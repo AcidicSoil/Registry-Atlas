@@ -14,7 +14,7 @@ Read `.agents/skills/e2e/SKILL.md` and its topics `setup`, `running`, `writing-t
 From the repository root, run:
 
 ```sh
-pnpm check:runtime-data
+mise run build:check-runtime-data
 pnpm build
 pnpm exec e2e run tests/smoke.e2e.ts --output .e2e/proof/doctor --trace on
 ```

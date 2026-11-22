@@ -50,10 +50,10 @@ Back up PostgreSQL before applying. This workflow rejects incomplete source refr
 
 ```bash
 node scripts/audits/report-classification-drift.mjs  # read-only DB; local report
-pnpm check:postgres
-pnpm check:runtime-data
-pnpm check:product-contract
-pnpm validate:data
+mise run db:check
+mise run build:check-runtime-data
+mise run test:contract
+mise run build:validate-data
 pnpm lint
 pnpm test
 pnpm build

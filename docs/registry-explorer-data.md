@@ -4,7 +4,7 @@
 
 ## Runtime assets
 
-`pnpm run build:prepare-runtime-data` exports two compressed files from PostgreSQL to `public/data/generations/<sha256>/`. The publisher then replaces `public/data/runtime-manifest.json` to select that generation:
+`mise run build:prepare-runtime-data` exports two compressed files from PostgreSQL to `public/data/generations/<sha256>/`. The publisher then replaces `public/data/runtime-manifest.json` to select that generation:
 
 - `registry-atlas.json.gz` contains the registry mirror, catalog, taxonomy, and source-page evidence.
 - `registry-details.json.gz` contains item details, which the browser loads when needed.
@@ -20,15 +20,15 @@ The browser JSON reader now requires a parser callback before returning typed sn
 ## Common commands
 
 ```sh
-pnpm run db:setup              # Create owner-only local credentials if needed
-pnpm run db:up                 # Start the local PostgreSQL container
-pnpm run db:status             # Check container health
+mise run db:setup              # Create owner-only local credentials if needed
+mise run db:up                 # Start the local PostgreSQL container
+mise run db:status             # Check container health
 pnpm dev                   # Start Vite using existing local assets
-pnpm run build:prepare-runtime-data # Explicit refresh from local PostgreSQL
-pnpm run verify:local           # Offline subset: local assets, non-DB tests, build
+mise run build:prepare-runtime-data # Explicit refresh from local PostgreSQL
+mise run verify:local           # Offline subset: local assets, non-DB tests, build
 pnpm verify                # Full local PostgreSQL checks, all tests, and build
-pnpm run db:backup             # Produce and verify a timestamped PostgreSQL dump
-pnpm run db:down               # Stop container without deleting its volume
+mise run db:backup             # Produce and verify a timestamped PostgreSQL dump
+mise run db:down               # Stop container without deleting its volume
 ```
 
 The PostgreSQL URLs are stored in ignored, mode-600 files under `.instance/`: `local-postgres-url` for the authoritative database and `local-postgres-test-url` for the isolated test database. All database entrypoints reject non-loopback connections. Legacy provider credential files are ignored and never read.
@@ -61,11 +61,11 @@ Historical, pre-provider SQLite files can be extracted from commit `42f3c2a^`. T
 
 The two regenerated compressed runtime files match the previous runtime files byte-for-byte. The recovered database contains 91,716 catalog/detail pairs and 46,390 source-page records. Historical operational records outside those runtime files cannot be independently compared with the former provider while it is unavailable.
 
-`pnpm run db:backup` writes a custom-format PostgreSQL dump to **`I:\Backups\Registry-Atlas\PostgreSQL`** (`/mnt/i/Backups/Registry-Atlas/PostgreSQL` from WSL). I: is a separate physical NVMe disk from G:, which stores Docker Desktop's database volume. The command verifies the dump structure and writes a `.sha256` checksum beside each dump. It refuses to fall back to the WSL filesystem if I: is disconnected, and it never deletes older backups. To use another destination intentionally, set `ATLAS_BACKUP_DIR`.
+`mise run db:backup` writes a custom-format PostgreSQL dump to **`I:\Backups\Registry-Atlas\PostgreSQL`** (`/mnt/i/Backups/Registry-Atlas/PostgreSQL` from WSL). I: is a separate physical NVMe disk from G:, which stores Docker Desktop's database volume. The command verifies the dump structure and writes a `.sha256` checksum beside each dump. It refuses to fall back to the WSL filesystem if I: is disconnected, and it never deletes older backups. To use another destination intentionally, set `ATLAS_BACKUP_DIR`.
 
-Verify a complete restore with `pnpm run db:restore-check /mnt/i/Backups/Registry-Atlas/PostgreSQL/<backup-file>.dump`; it validates any accompanying checksum, restores into a temporary database, checks record counts, and deletes only that temporary database. The current I: backup has been successfully tested this way.
+Verify a complete restore with `mise run db:restore-check /mnt/i/Backups/Registry-Atlas/PostgreSQL/<backup-file>.dump`; it validates any accompanying checksum, restores into a temporary database, checks record counts, and deletes only that temporary database. The current I: backup has been successfully tested this way.
 
-**A second physical drive protects against failure of the database drive, but not against theft, fire, ransomware, or whole-machine failure.** Backups on I: are local and not automatically replicated off-site. Backups are not yet scheduled; use `pnpm run db:backup` after significant updates, and set up a separate scheduled job if daily backups are needed. Monitor free space on I: and regularly test restores.
+**A second physical drive protects against failure of the database drive, but not against theft, fire, ransomware, or whole-machine failure.** Backups on I: are local and not automatically replicated off-site. Backups are not yet scheduled; use `mise run db:backup` after significant updates, and set up a separate scheduled job if daily backups are needed. Monitor free space on I: and regularly test restores.
 
 ## CI and publishing
 
@@ -83,9 +83,9 @@ with normal PostgreSQL transactions. CLI scripts update the canonical database f
 - classification batches, decision outcomes, evaluated overlays, and promotion
 - exact source-page evidence and linked operational reports
 
-Run `pnpm run db:migrate` to apply route uniqueness, foreign keys,
+Run `mise run db:migrate` to apply route uniqueness, foreign keys,
 ID sequences, and defaults after an initial import. Run
-`pnpm run db:check`, `pnpm run test:contract`, and `pnpm run build:validate-data`
+`mise run db:check`, `mise run test:contract`, and `mise run build:validate-data`
 to check authoritative data before building the site.
 
 Maintenance connects only to the loopback-bound PostgreSQL service. Database integration tests use the separate local `atlas_test` database, create temporary schemas there, and remove them after each suite. They must not modify production catalog records. Public GitHub-hosted CI does not connect to the workstation database.
@@ -95,7 +95,7 @@ Maintenance connects only to the loopback-bound PostgreSQL service. Database int
 1. Start the approved `registry-atlas-source-audit` profile and inspect its **current** instance URL. Do not reuse an old port or tab ID.
 2. Run `node scripts/survey-registry-sitemaps.mjs --profile registry-atlas-source-audit --server <current-instance-url> --output-dir "$PWD/.instance/source-sitemaps" --max-registries 408`. Continue from its reported `nextCursor` until every currently eligible official registry has been surveyed. Use `--registry @namespace` to refresh one source.
 3. Review survey errors and results. Run `node scripts/import-official-sitemap-surveys.mjs "$PWD/.instance/source-sitemaps" --dry-run`, then omit `--dry-run` to atomically import only eligible official URLs. Conflicting older URLs are held for investigation. It **never** erases route patterns, redoes the SQLite migration, or promotes a sitemap candidate to individually verified status.
-4. Run `node scripts/build-source-page-index.mjs`, then `pnpm run build:prepare-runtime-data` to rebuild the disposable static assets.
+4. Run `node scripts/build-source-page-index.mjs`, then `mise run build:prepare-runtime-data` to rebuild the disposable static assets.
 
 The importer stores a separate current sitemap catalog fingerprint in PostgreSQL so newer sitemap evidence does not incorrectly revalidate historic route-pattern observations. Official `https://www.` canonical redirects may be followed only when the origin responds with a permanent 308 to the identical sitemap path; the published same-origin link remains a provisional sitemap link. If a source does not publish an item-level page, keep it unresolved. Its installable registry JSON is **not** a human-readable source page.
 
@@ -124,6 +124,6 @@ Runtime source-page metadata is reconciled from the exported PostgreSQL source r
 
 `scripts/lib/runtime-publication.mjs` writes and verifies both files before replacing `public/data/runtime-manifest.json`. The manifest selects a SHA-256 generation directory. `src/registry-explorer/data/runtimeJson.ts` reads the manifest once per fetch function, so the catalog and later detail requests use the same generation.
 
-`pnpm check:runtime-data` checks the generation digest, catalog and detail counts, and exported documents. An HTTP 404 for the manifest selects the legacy fixed-name files. An invalid manifest or missing generation file causes an error instead of a fallback.
+`mise run build:check-runtime-data` checks the generation digest, catalog and detail counts, and exported documents. An HTTP 404 for the manifest selects the legacy fixed-name files. An invalid manifest or missing generation file causes an error instead of a fallback.
 
 The publisher keeps old generation directories for clients that have already selected them. A static host must retain those files or deploy the entire site atomically. The publisher does not change PostgreSQL records or schema.

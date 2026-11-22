@@ -45,7 +45,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     .catch((error) => {
       console.error("LOCAL_RUNTIME_DATA_INVALID", error.message);
       console.error(
-        "Restore a known-good runtime snapshot or run pnpm prepare:runtime-data when PostgreSQL is available.",
+        "Restore a known-good runtime snapshot or run mise run build:prepare-runtime-data when PostgreSQL is available.",
       );
       process.exitCode = 1;
     });

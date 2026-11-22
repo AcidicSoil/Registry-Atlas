@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
-import packageJson from "../../package.json";
+import { taskSteps } from "./miseTaskContract";
 
 const read = (file: string) => readFileSync(new URL("../../" + file, import.meta.url), "utf8");
 
@@ -12,9 +12,7 @@ describe("quality-tooling integration contract", () => {
     expect(pkg.devDependencies.oxlint).toBe("1.87.0");
     expect(pkg.devDependencies["@oxlint/plugins"]).toBe("1.87.0");
 
-    const lintSteps = packageJson.scripts.lint
-      .split(" && ")
-      .map((step) => step.replace("pnpm run ", ""));
+    const lintSteps = taskSteps("lint");
 
     for (const gate of [
       "anti-slop",
@@ -30,19 +28,15 @@ describe("quality-tooling integration contract", () => {
     }
 
     expect(new Set(lintSteps).size).toBe(lintSteps.length);
-    expect(packageJson.scripts.verify).toContain("pnpm run lint");
-    expect(packageJson.scripts["verify:local"]).toContain("pnpm run lint");
+    expect(taskSteps("verify")).toContain("lint");
+    expect(taskSteps("verify:local")).toContain("lint");
 
-    expect(packageJson.scripts["lint:boundaries"]).toContain("depcruise");
-    expect(packageJson.scripts["lint:anti-slop"]).toBe("pnpm exec oxlint .");
-    expect(packageJson.scripts["lint:react-doctor"]).toContain("--blocking");
-    expect(packageJson.scripts["lint:complexity"]).toBe("cccc --table src/registry-explorer");
-    expect(packageJson.scripts["test:anti-slop-gate"]).toContain(
-      "scripts/verify-anti-slop-gate.mjs",
-    );
-    expect(packageJson.scripts["test:complexity-gate"]).toContain(
-      "scripts/verify-complexity-gate.mjs",
-    );
+    expect(taskSteps("lint:boundaries")[0]).toContain("depcruise");
+    expect(taskSteps("lint:anti-slop")).toEqual(["pnpm exec oxlint ."]);
+    expect(taskSteps("lint:react-doctor")[0]).toContain("--blocking");
+    expect(taskSteps("lint:complexity")).toEqual(["cccc --table src/registry-explorer"]);
+    expect(taskSteps("test:anti-slop-gate")[0]).toContain("scripts/verify-anti-slop-gate.mjs");
+    expect(taskSteps("test:complexity-gate")[0]).toContain("scripts/verify-complexity-gate.mjs");
   });
 
   it("keeps Repowise-generated agent guidance outside source formatting", () => {
