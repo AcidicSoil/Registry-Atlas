@@ -117,7 +117,15 @@ export async function replaceRawRegistries(db, regs) {
     r?.name ? [[r.name.startsWith("@") ? r.name : "@" + r.name, i, json(r)]] : [],
   );
 
-  await replaceRows(db, "atlas_raw_registries", ["namespace", "ordinal", "payload_json"], rows);
+  await transaction(db, async (tx) => {
+    await exec(tx, "DELETE FROM atlas.atlas_raw_registries WHERE namespace <> ALL($1::text[])", [
+      rows.map(([namespace]) => namespace),
+    ]);
+    await bulkInsert(tx, "atlas_raw_registries", ["namespace", "ordinal", "payload_json"], rows, {
+      conflict:
+        "ON CONFLICT(namespace) DO UPDATE SET ordinal=excluded.ordinal,payload_json=excluded.payload_json",
+    });
+  });
 }
 
 export async function readRawRegistries(db) {

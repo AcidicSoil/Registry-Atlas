@@ -64,6 +64,7 @@ try {
 
   for (const [name, rule] of Object.entries({
     route_patterns_identity_unique: " ",
+    atlas_catalog_evidence_registry_fk: "c",
     atlas_catalog_items_namespace_fk: "c",
     examples_pattern_fk: "c",
     pattern_checks_pattern_fk: "c",
