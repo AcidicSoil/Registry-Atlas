@@ -85,16 +85,13 @@ test("logo navigation and favicons work from a non-home route", async ({
   expect(result.title).toBe("Registry Atlas");
 });
 
-test("nested sidebar disclosure navigates without changing the parent destination", async ({
+test("library navigation opens a collection without changing other destinations", async ({
   app,
   browser,
-  screen,
 }) => {
   await app.open("/Registry-Atlas/registries");
 
-  await screen.getByText("Collections", { exact: false }).tap();
-  await expect(browser.locator(".sidebar-collections[open]")).toBeVisible();
-  await screen.getByRole("link", "Components").tap();
+  await browser.locator('nav[aria-label="Library"] [data-view="discover"]').tap();
   await expect(browser).toHaveURL("/Registry-Atlas/components");
 });
 

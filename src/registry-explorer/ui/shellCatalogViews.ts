@@ -2,6 +2,7 @@ import { buildRegistryDirectory, registryCatalogCoverage } from "../core/registr
 import { catalogDistinctItemCount, queryCatalogComponents } from "../core/catalogQuery";
 import { exploreCollectionBySlug, type CatalogAssetKind } from "../core/catalogCollections";
 import type { CatalogBrowseQueryState } from "../core/catalogRoutes";
+import { catalogTaxonomyNodeMap } from "../core/catalogTaxonomy";
 import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
 import type { CatalogPolicy } from "../core/catalogPolicy";
 import type { buildAuthorDirectory } from "../core/catalogAuthors";
@@ -141,8 +142,13 @@ export function createShellCatalogViews({
       basePath: basePath(),
     });
 
+    const selectedGroup = state.catalogCanonicalIds[0]
+      ? catalogTaxonomyNodeMap(taxonomy).get(state.catalogCanonicalIds[0])?.label
+      : undefined;
+
     renderCatalogComponents(roots.contentHeader, roots.contentBody, result, {
       searchTerm: state.searchTerm,
+      selectedGroup,
       browseState: catalogBrowseState(),
       browseControls: renderCatalogBrowseControls(catalogBrowseState(), {
         taxonomy,

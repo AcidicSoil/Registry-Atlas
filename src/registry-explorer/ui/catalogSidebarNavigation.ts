@@ -221,7 +221,7 @@ function renderCanonical(
   if (!rows.length) return "";
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-categories-heading">
-    <p class="sidebar-nav-section-label" id="catalog-categories-heading">Categories</p>
+    <p class="sidebar-nav-section-label" id="catalog-categories-heading">Component groups</p>
     ${rows.join("")}
   </section>`;
 }
@@ -299,8 +299,8 @@ export function renderCatalogSidebarNavigation(
     stylex.attrs(sidebarNavigationStyles.root),
     "sidebar-browse-navigation",
   )} aria-label="Browse catalog">
-    ${renderSort(state, showRegistrySort)}
     ${showCanonical ? renderCanonical(facets, state, taxonomy, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? []) : ""}
+    ${renderSort(state, showRegistrySort)}
     ${renderAssetKinds(options.assetCounts, state)}
     ${showAccess ? renderAccess(facets, state) : ""}
   </nav>`;

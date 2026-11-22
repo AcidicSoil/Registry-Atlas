@@ -6,13 +6,13 @@ import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
 import type { MirrorValidationIssue } from "../core/registryMirror";
 import type { RegistryMirrorMeta } from "../data/loadRegistries";
 
-import type { RegistryDirectorySort } from "../core/registryDirectory";
-import type { CatalogRoute, CatalogSort } from "../core/catalogRoutes";
+import type { CatalogRoute } from "../core/catalogRoutes";
 import { catalogTaxonomyNodeMap } from "../core/catalogTaxonomy";
 import type { CatalogPolicy } from "../core/catalogPolicy";
 import { createCatalogInteractions } from "./shellInteractions";
 import { createBrowseFeedController } from "./shellBrowseFeed";
 import { createShellSidebar } from "./shellSidebar";
+import { createCommandPalette } from "./commandPalette";
 import { createShellCatalogViews } from "./shellCatalogViews";
 import { createShellDetailViews } from "./shellDetailViews";
 import { createShellRenderer } from "./shellRenderer";
@@ -37,6 +37,7 @@ export interface ShellOptions {
     contentBody: HTMLElement;
     tabs: NodeListOf<Element>;
     searchInput: HTMLInputElement;
+    paletteMount?: HTMLElement;
     sidebarContext?: HTMLElement;
     sidebarLayout?: HTMLElement;
     sidebarCollectionCurrent?: HTMLElement;
@@ -226,6 +227,18 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     return click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey;
   }
 
+  const resetBrowse = {
+    searchTerm: "",
+    catalogRegistryNames: [],
+    catalogItemTypes: [],
+    catalogCategories: [],
+    catalogAssetKinds: [],
+    catalogCanonicalIds: [],
+    catalogAccess: [],
+    catalogSort: "name",
+    registrySort: "name",
+  } satisfies Partial<AppState>;
+
   roots.tabs.forEach((tab) =>
     listen(tab, "click", (event) => {
       // SAFETY: Navigation click events originate from DOM click listeners attached to anchor controls.
@@ -236,17 +249,6 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
       const view = tab.getAttribute("data-view");
 
       // SAFETY: The UI event is dispatched by this controlled DOM node or the value was checked against this handler’s finite selection set.
-      const resetBrowse = {
-        searchTerm: "",
-        catalogRegistryNames: [],
-        catalogItemTypes: [],
-        catalogCategories: [],
-        catalogAssetKinds: [],
-        catalogCanonicalIds: [],
-        catalogAccess: [],
-        catalogSort: "name" as CatalogSort,
-        registrySort: "name" as RegistryDirectorySort,
-      };
 
       const route = new Map<string, CatalogRoute>([
         ["home", { kind: "home" }],
@@ -440,6 +442,34 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     authorRows,
   });
 
+  const commandPalette = roots.paletteMount
+    ? createCommandPalette({
+        mount: roots.paletteMount,
+        registries,
+        index: catalogIndex,
+        policy,
+        onActivate: (action, query) => {
+          if (action.kind === "route") {
+            navigate(action.route, "push", resetBrowse);
+
+            return;
+          }
+
+          if (action.kind === "category") {
+            navigate({ kind: "components" }, "push", {
+              ...resetBrowse,
+              catalogCanonicalIds: [action.canonicalId],
+            });
+
+            return;
+          }
+
+          roots.searchInput.value = query;
+          navigate({ kind: "components" }, "push", { ...resetBrowse, searchTerm: query });
+        },
+      })
+    : null;
+
   listen(window, "popstate", () => {
     state = {
       ...state,
@@ -466,6 +496,7 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
       if (lifetime.signal.aborted) return;
       lifetime.abort();
       feed.dispose();
+      commandPalette?.dispose();
     },
   };
 }

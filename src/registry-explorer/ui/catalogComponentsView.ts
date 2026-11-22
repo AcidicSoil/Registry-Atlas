@@ -20,6 +20,7 @@ interface CatalogDiscoveryBand {
 
 export interface CatalogComponentsViewOptions {
   searchTerm: string;
+  selectedGroup?: string;
   browseState?: CatalogBrowseQueryState;
   browseControls?: string;
   discoveryBands?: readonly CatalogDiscoveryBand[];
@@ -35,8 +36,8 @@ export function renderCatalogComponents(
   const countLabel = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
   headerRoot.innerHTML = `
     <div class="catalog-page-heading">
-      <div class="catalog-eyebrow">Explore</div>
-      <h1>Components</h1>
+      <div class="catalog-eyebrow">${options.selectedGroup ? "Explore / Components" : "Explore"}</div>
+      <h1>${escapeHtml(options.selectedGroup ?? "Components")}</h1>
       <p>${escapeHtml(countLabel)} across published registries.</p>
     </div>
   `;

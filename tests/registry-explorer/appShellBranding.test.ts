@@ -26,9 +26,8 @@ describe("app-shell navigation and browser branding", () => {
     );
   });
 
-  it("uses native nested navigation disclosure", () => {
-    expect(html).toContain('<details class="sidebar-collections">');
-    expect(html).toMatch(/<summary>\s*Collections/);
-    expect(html).toContain('aria-label="Catalog navigation"');
+  it("uses source-backed Explore and Library navigation", () => {
+    expect(html).toContain('aria-label="Explore"');
+    expect(html).toContain('aria-label="Library"');
   });
 });

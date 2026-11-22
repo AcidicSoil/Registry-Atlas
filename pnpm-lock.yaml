@@ -17,6 +17,12 @@ importers:
       '@stylexjs/stylex':
         specifier: 0.19.1
         version: 0.19.1
+      '@ui-sdk/core':
+        specifier: 0.1.0-beta.13
+        version: 0.1.0-beta.13
+      '@ui-sdk/web':
+        specifier: 0.1.0-beta.13
+        version: 0.1.0-beta.13(@ui-sdk/core@0.1.0-beta.13)
       postgres:
         specifier: ^3.4.9
         version: 3.4.9
@@ -1792,6 +1798,14 @@ packages:
   '@typescript-eslint/types@8.71.1':
     resolution: {integrity: sha512-ybYnPTUwg3VQQOFEiBPLs8Jxl1ry2vXdn1kVKguomBbvxpetdu3MKTNDqFNUrlG8ylP9MpZosmXMFYlGQHk1oQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@ui-sdk/core@0.1.0-beta.13':
+    resolution: {integrity: sha512-URjk9hqdc/cZKDtw6Gb9NqjY48U8l0EgoP4d5ghlooa3av+GrR0iSmsav133UU4oelcuKIO1ZPJ4j7gIPMr1Vg==}
+
+  '@ui-sdk/web@0.1.0-beta.13':
+    resolution: {integrity: sha512-f3lnxrjlTCHagChy/6ZW+4Axv9XcDfPnawkxCL++mZ1NbLMf302WPvbwwP1w+/bxOgxucu4euLYOQ6aPoYzXZw==}
+    peerDependencies:
+      '@ui-sdk/core': ^0.1.0-beta.13
 
   '@vitest/expect@4.1.12':
     resolution: {integrity: sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==}
@@ -4416,6 +4430,12 @@ snapshots:
       undici-types: 8.9.0
 
   '@typescript-eslint/types@8.71.1': {}
+
+  '@ui-sdk/core@0.1.0-beta.13': {}
+
+  '@ui-sdk/web@0.1.0-beta.13(@ui-sdk/core@0.1.0-beta.13)':
+    dependencies:
+      '@ui-sdk/core': 0.1.0-beta.13
 
   '@vitest/expect@4.1.12':
     dependencies:

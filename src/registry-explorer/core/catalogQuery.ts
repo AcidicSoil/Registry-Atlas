@@ -452,7 +452,7 @@ function displayName(match: CatalogMatch): string {
   return displayLabel(match.item);
 }
 
-function displayLabel(item: RegistryCatalogItem): string {
+export function displayLabel(item: RegistryCatalogItem): string {
   if (item.title?.trim()) return item.title.trim();
   const segments = item.name.split("/").filter(Boolean);
 

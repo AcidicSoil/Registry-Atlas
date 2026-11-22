@@ -8,6 +8,15 @@ const css = readFileSync(
   "utf8",
 );
 
+describe("Hairline-inspired grouped sidebar", () => {
+  it("separates Explore from Library with source-backed count slots", () => {
+    expect(html).toContain('aria-label="Explore"');
+    expect(html).toContain('aria-label="Library"');
+    expect(html).toContain('data-sidebar-asset-count="component"');
+    expect(html).toContain('data-view="compare"');
+  });
+});
+
 describe("21st.dev-inspired sidebar shell", () => {
   it("keeps browse routes as real links in the single desktop sidebar, not a top toolbar", () => {
     for (const [view, href] of [
@@ -31,13 +40,13 @@ describe("21st.dev-inspired sidebar shell", () => {
     expect(html).toContain('class="sidebar-body-scroll"');
     expect(css).toMatch(/\.sidebar-body-scroll\s*\{[^}]*overflow:\s*hidden auto/s);
     expect(html).not.toContain("shadcn directory");
-    expect(html).toContain('<details class="sidebar-collections"');
+    expect(html).toContain('aria-label="Library"');
     expect(html).toContain('id="sidebarCollectionCurrent"');
     const nav = html.slice(navigation, filters);
     expect(nav).toContain('data-view="home"');
     expect(nav).toContain('data-view="authors"');
     expect(nav).toContain('data-view="registries"');
-    expect(nav).toContain('data-view="icons"');
+    expect(html).toContain('data-view="icons"');
     expect(nav).toContain('data-view="compare"');
   });
 });

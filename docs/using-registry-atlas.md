@@ -2,7 +2,7 @@
 
 Registry Atlas is a visual dictionary for discovering components in the mirrored shadcn community-registry ecosystem. The browser app has three main surfaces: **Discover**, **Registries**, and **Compare**.
 
-This guide describes behavior available on the current `main` branch. Registry Atlas mirrors third-party metadata and generates install commands, but it does not audit or endorse the code in community registries.
+This guide describes the implemented Registry Atlas frontend behavior. Registry Atlas mirrors third-party metadata and generates install commands, but it does not audit or endorse the code in community registries.
 
 ## Discover components
 
@@ -16,6 +16,12 @@ Use **Discover** when you know roughly what kind of interface component you need
 Search uses published item data rather than a guessed component taxonomy or a quality/relevance ranking. Entries with no upstream page evidence remain searchable; no original-page URL is guessed.
 
 The Discover list is paginated. Changing the global search or a discovery facet returns the list to its first page.
+
+## Command search and grouped navigation
+
+Press **Ctrl+K** (**Cmd+K** on macOS) or select the small shortcut next to **Search catalog** to open a command palette. Type part of a component, library, category, or destination; the palette uses UI SDK fuzzy matching and supports arrow-key selection, Enter to activate, and Escape to dismiss. Choosing **Search catalog** applies the palette text to the existing result filter. Merely typing in the palette does not modify the current catalog search or URL.
+
+The sidebar separates **Explore** destinations, source-backed **Library** asset types with item counts, and applicable **Component groups** from Atlas’s canonical taxonomy. Expand a group to inspect its children without changing results; select a category to filter and open its corresponding component view. The current item names, counts and routes remain derived from Atlas’s catalog, not the visual reference.
 
 ## Inspect source registry pages
 

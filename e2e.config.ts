@@ -6,7 +6,7 @@ export default {
   targets: [
     {
       name: "registry-atlas-web",
-      engine: web({ viewport: { width: 1440, height: 900 } }),
+      engine: web({ viewport: { width: 1920, height: 1080 } }),
       app: {
         url: "http://127.0.0.1:0/Registry-Atlas/",
         command: {

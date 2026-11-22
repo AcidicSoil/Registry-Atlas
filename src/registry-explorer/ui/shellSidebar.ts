@@ -2,6 +2,7 @@ import { buildCatalogFacetSummary } from "../core/catalogQuery";
 import { catalogRoutePath, type CatalogRoute } from "../core/catalogRoutes";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
 import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
+import { registryCatalogItemIdentity } from "../core/registryCatalogIndex";
 import type { CatalogPolicy } from "../core/catalogPolicy";
 import {
   renderRegistryDirectorySidebar,
@@ -54,14 +55,20 @@ export function createShellSidebar({
   });
 
   const directoryAssetCounts = emptyAssetCounts();
+  const libraryItemCounts = emptyAssetCounts();
   const registryAssetCounts = new Map<string, Record<AssetKindToken, number>>();
 
   for (const [namespace, items] of Object.entries(catalogIndex.registries)) {
     const counts = emptyAssetCounts();
+    const seen = new Set<string>();
 
     for (const item of items) {
       const kind = assetKindForCatalogItem(item, policy, namespace);
       counts[kind] += 1;
+      const identity = registryCatalogItemIdentity(item.name);
+
+      if (!seen.has(identity)) libraryItemCounts[kind] += 1;
+      seen.add(identity);
     }
 
     registryAssetCounts.set(namespace, counts);
@@ -297,6 +304,14 @@ export function createShellSidebar({
 
   function renderSidebar(queued: ReadonlySet<string>, _batchCommand: string | null): void {
     renderSidebarContext();
+
+    for (const [kind, count] of Object.entries(libraryItemCounts)) {
+      const node = roots.aside.parentElement?.querySelector<HTMLElement>(
+        `[data-sidebar-asset-count="${kind}"]`,
+      );
+
+      if (node) node.textContent = count.toLocaleString();
+    }
 
     if (roots.setupCount) roots.setupCount.textContent = String(queued.size);
 

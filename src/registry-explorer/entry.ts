@@ -1,4 +1,6 @@
 import "./ui/stylex.css";
+import "@ui-sdk/web/command";
+import "@ui-sdk/web/dialog";
 import { initRegistryExplorer } from "./ui";
 import { loadRegistries } from "./data/loadRegistries";
 import { attachCatalogLinkPreviews } from "./ui/catalogLinkPreview";
@@ -163,6 +165,7 @@ async function bootstrap() {
           ...optionalShellRoots(sidebarContext, setupCount),
           sidebarLayout,
           sidebarCollectionCurrent,
+          paletteMount: document.getElementById("commandPaletteMount") ?? undefined,
         },
       });
 

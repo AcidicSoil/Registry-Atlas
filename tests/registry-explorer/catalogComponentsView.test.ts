@@ -235,6 +235,18 @@ describe("renderCatalogComponents", () => {
     expect(body.innerHTML).not.toContain("Add to queue");
   });
 
+  it("shows the selected component group without replacing its source cards", () => {
+    const header = root();
+    const body = root();
+    renderCatalogComponents(header, body, result([component()]), {
+      searchTerm: "",
+      selectedGroup: "Application / App Shell",
+    });
+    expect(header.innerHTML).toContain("<h1>Application / App Shell</h1>");
+    expect(header.innerHTML).toContain("1 item");
+    expect(body.innerHTML).toContain('data-view-item-slug="code-block"');
+  });
+
   it("renders evidence-backed discovery bands before the full component grid", () => {
     const body = root();
     renderCatalogComponents(root(), body, result([component()]), {

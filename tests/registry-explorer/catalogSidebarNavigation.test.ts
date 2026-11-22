@@ -80,6 +80,17 @@ const facets: CatalogFacetSummary = {
   unreviewedCount: 0,
 };
 
+describe("grouped sidebar information architecture", () => {
+  it("names the canonical taxonomy section Component groups", () => {
+    const html = renderCatalogSidebarNavigation(
+      facets,
+      { canonicalIds: [], registryNames: [], kind: "components", sort: "name", access: [] },
+      taxonomy,
+    );
+    expect(html).toContain(">Component groups<");
+  });
+});
+
 describe("catalog browse sidebar", () => {
   it("places sorting before categories and access in the exemplar rail", () => {
     const html = renderCatalogSidebarNavigation(
@@ -94,14 +105,14 @@ describe("catalog browse sidebar", () => {
       taxonomy,
     );
 
-    const categoryPosition = html.indexOf(">Categories<");
+    const categoryPosition = html.indexOf(">Component groups<");
     const sortPosition = html.indexOf(">Sort<");
     const accessPosition = html.indexOf(">Access<");
 
     expect(categoryPosition).toBeGreaterThanOrEqual(0);
     expect(sortPosition).toBeGreaterThanOrEqual(0);
-    expect(categoryPosition).toBeGreaterThan(sortPosition);
-    expect(accessPosition).toBeGreaterThan(categoryPosition);
+    expect(categoryPosition).toBeLessThan(sortPosition);
+    expect(accessPosition).toBeGreaterThan(sortPosition);
     expect(html).not.toContain("shadcn directory");
 
     expect(html).toContain('data-catalog-sort-value="registry"');
