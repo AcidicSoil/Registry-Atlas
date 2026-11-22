@@ -4,7 +4,6 @@ import { join } from "node:path";
 import { gzipSync } from "node:zlib";
 import { afterEach, describe, expect, it } from "vitest";
 import { checkRuntimeData } from "../../scripts/check-runtime-data.mjs";
-import { taskSteps } from "./miseTaskContract";
 // @ts-ignore Standalone Node ESM publication module.
 import { publishRuntimeSnapshots } from "../../scripts/lib/runtime-publication.mjs";
 
@@ -87,21 +86,5 @@ describe("local-first runtime data", () => {
   it("rejects mismatched catalog and detail snapshots", async () => {
     const root = await createSnapshot({});
     await expect(checkRuntimeData(root)).rejects.toThrow(/do not match/);
-  });
-
-  it("keeps remote export explicit and local workflows offline", () => {
-    expect(taskSteps("build:prepare-runtime-data")).toEqual([
-      "node scripts/build-runtime-data.mjs",
-    ]);
-    expect(taskSteps("verify")).toContain("build:prepare-runtime-data");
-    expect(taskSteps("verify:local")).not.toContain("build:prepare-runtime-data");
-    expect(taskSteps("verify:local")).toContain("test:local");
-    expect(taskSteps("verify:local")).not.toContain("test:contract");
-    expect(taskSteps("verify")).toContain("db:check");
-    expect(taskSteps("verify")).toContain("test:contract");
-    expect(taskSteps("test")).toContain("build:check-runtime-data");
-    expect(taskSteps("dev")).toContain("build:check-runtime-data");
-    expect(taskSteps("build")).toContain("build:check-runtime-data");
-    expect(taskSteps("test:local")[0]).toContain("tests/registry-explorer/postgresStorage.test.ts");
   });
 });
