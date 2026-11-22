@@ -60,8 +60,11 @@ export interface ShellController {
   dispose(): void;
 }
 
+const COPY_FEEDBACK_LIFETIME_MS = { success: 4_000, error: 12_000 } as const;
+
 export function initRegistryExplorer(options: ShellOptions): ShellController {
   const lifetime = new AbortController();
+  let copyFeedbackTimer: ReturnType<typeof setTimeout> | undefined;
 
   const listen = (
     target: EventTarget,
@@ -182,16 +185,39 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
 
     if (routeChanged) feed.rememberBrowseRoute();
 
+    const previousFeedback = state.copyFeedback;
     state = { ...state, ...partial };
 
     if (partial.installQueue !== undefined || partial.setupInstructions !== undefined)
       setup.saveSetupDraft();
 
     if (routeChanged && partial.copyFeedback === undefined) state.copyFeedback = null;
+
+    if (state.copyFeedback !== previousFeedback) scheduleCopyFeedbackDismissal();
+
     syncUrlState(state, policy, historyMode);
     renderer.render();
 
     if (focusIdentity) restoreControlFocus(focusIdentity);
+  }
+
+  function clearCopyFeedbackTimer(): void {
+    clearTimeout(copyFeedbackTimer);
+    copyFeedbackTimer = undefined;
+  }
+
+  function scheduleCopyFeedbackDismissal(): void {
+    clearCopyFeedbackTimer();
+    const feedback = state.copyFeedback;
+
+    if (!feedback) return;
+
+    copyFeedbackTimer = setTimeout(() => {
+      state.copyFeedback = null;
+      // Avoid rerendering results and resetting the user's scroll position.
+      roots.contentHeader.querySelector(".copy-feedback")?.remove();
+      copyFeedbackTimer = undefined;
+    }, COPY_FEEDBACK_LIFETIME_MS[feedback.status]);
   }
 
   function navigate(
@@ -471,6 +497,7 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     : null;
 
   listen(window, "popstate", () => {
+    clearCopyFeedbackTimer();
     state = {
       ...state,
       ...hydrateBrowseRouteState(
@@ -495,6 +522,7 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     dispose(): void {
       if (lifetime.signal.aborted) return;
       lifetime.abort();
+      clearCopyFeedbackTimer();
       feed.dispose();
       commandPalette?.dispose();
     },

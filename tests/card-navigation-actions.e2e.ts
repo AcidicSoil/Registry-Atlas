@@ -8,13 +8,27 @@ test("catalog copy-name control reports feedback without navigating", async ({
 }) => {
   await app.open("/Registry-Atlas/components/s/.NET%20logo");
 
+  await browser.evaluate(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: async () => undefined },
+    });
+
+    return true;
+  });
+
   const copy = screen.getByRole("button", "Copy .NET logo name");
   await expect(copy).toBeVisible();
   await app.screenshot("catalog-copy-name");
   await copy.tap();
 
   await expect(browser).toHaveURL("/Registry-Atlas/components/s/.NET%20logo");
-  await expect(browser.locator(".copy-feedback")).toBeVisible();
+  await expect(browser.locator(".copy-feedback-success")).toBeVisible();
+  await expect
+    .poll(() => browser.evaluate(() => document.querySelector(".copy-feedback") === null), {
+      timeout: 7_000,
+    })
+    .toBe(true);
   await expect(screen.getByRole("link", "Open .NET logo from @logoforge")).toBeVisible();
 });
 

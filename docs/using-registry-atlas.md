@@ -51,6 +51,8 @@ Component and item surfaces can add installable entries to the in-memory install
 
 Copy actions expose generated install commands for the selected registry item. Review the registry source and command before running it. Registry Atlas does not execute third-party install commands for you.
 
+Copy confirmations dismiss automatically after 4 seconds; clipboard errors remain visible for 12 seconds to allow manual copying. Dismissal preserves the current catalog scroll position.
+
 The install queue is browser-session state; it is not a persistent project manifest.
 
 ## Keyboard and accessibility behavior
