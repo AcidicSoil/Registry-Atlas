@@ -27,35 +27,41 @@ table. There is no custom command dispatcher.
 ```bash
 mise tasks ls               # Discover all named operations
 mise run check              # Lint and typecheck
-mise run lint               # All project quality checks
+mise run lint               # All static lint gates, formatting check, and audit
 mise run lint:stylex        # StyleX ESLint gate
 mise run format:write       # Format authored files
 mise run typecheck          # Application and test typechecking
-mise run test               # Runtime-data check and Vitest
+mise run test               # Vitest, contract, gate proofs, and browser E2E
 mise run test:local         # Offline test subset
 mise run test:e2e           # Production build and browser tests
 mise run test:browser       # Managed browser acceptance
 mise run test:contract      # Product contract
-mise run build              # Production build
+mise run build              # Catalog validation and production build
 mise run build:prepare-runtime-data # Explicit PostgreSQL export
 mise run build:validate-data # Validate catalog data
 mise run build:source-pages # Generate source-page index
 mise run verify             # Complete PostgreSQL-backed verification
 mise run verify:local       # CI-safe offline verification
 mise run dev:preview        # Preview built website
-mise run sync               # Update official registries in PostgreSQL
+mise run sync               # Refresh registries, catalog evidence, and icons
 mise run sync:import --source /path/to/catalog.json # Reviewed import
-mise run db                 # Database status (read-only)
+mise run db                 # Database status and consistency check
 mise run db:restore-check /path/to/backup.dump
 ```
 
 Every named package script is also available through `pnpm run <task>`.
 For example, `pnpm run test:contract` and `mise run test:contract` execute the
-same existing contract checker. `pnpm sync` and `mise run sync` run the official
-registry refresh. `pnpm db` checks database status; mutating maintenance actions
-are explicitly named, such as `pnpm run db:up` and `mise run db:migrate`.
-Catalog imports require a reviewed `--source` file; icon discovery and catalog
-evidence synchronization remain separate named operations.
+same existing contract checker. `pnpm sync` and `mise run sync` refresh official
+registries, catalog evidence, and registry icons. `pnpm db` checks database
+status and health. Mutating maintenance actions are explicitly named, such as
+`pnpm run db:up` and `mise run db:migrate`.
+The registry refresh already includes catalog-evidence collection, so the
+standalone `sync:catalog-evidence` task is not repeated. `sync:import` requires a
+reviewed `--source` file and remains explicit. Similarly, formatting writes,
+commit-only checks, interactive watch/preview modes, and database migrations
+remain named operations. `test:browser` requires a managed PinchTab session;
+network-backed source audits and source-page indexing are explicit tasks.
+The normal lint dependency scan covers module boundaries as well.
 
 Full verification exports current local PostgreSQL runtime data first. Offline
 verification uses existing published files without connecting to PostgreSQL.

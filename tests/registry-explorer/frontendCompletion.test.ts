@@ -33,8 +33,9 @@ describe("frontend completion contract", () => {
 
   it("runs the dependency security audit as part of normal verification", () => {
     expect(packageJson.scripts["lint:audit"]).toBe("pnpm audit --audit-level low");
-    expect(packageJson.scripts.verify).toContain("pnpm run lint:audit");
-    expect(packageJson.scripts["verify:local"]).toContain("pnpm run lint:audit");
+    expect(packageJson.scripts.lint).toContain("pnpm run lint:audit");
+    expect(packageJson.scripts.verify).toContain("pnpm run lint");
+    expect(packageJson.scripts["verify:local"]).toContain("pnpm run lint");
   });
 
   it("provides a keyboard skip link to the focusable main content header", () => {

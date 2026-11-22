@@ -36,9 +36,47 @@ describe("PAB-style project commands", () => {
     }
   });
 
+  it("runs every applicable default group step", () => {
+    const groups = {
+      lint: [
+        "lint:anti-slop",
+        "lint:deps",
+        "lint:react-doctor",
+        "lint:complexity",
+        "lint:styles",
+        "lint:stylex",
+        "lint:unused",
+        "lint:format",
+        "lint:audit",
+      ],
+      test: [
+        "build:check-runtime-data",
+        "test:unit",
+        "test:contract",
+        "test:anti-slop-gate",
+        "test:boundaries",
+        "test:complexity-gate",
+        "test:e2e",
+      ],
+      build: ["build:check-runtime-data", "build:validate-data", "build:production"],
+      dev: ["build:check-runtime-data", "dev:serve"],
+      sync: ["sync:registries", "sync:registry-icons"],
+      typecheck: ["typecheck:app", "typecheck:tests"],
+      db: ["db:status", "db:check"],
+    } satisfies Record<string, string[]>;
+
+    for (const [group, steps] of Object.entries(groups)) {
+      expect(scripts[group]).toBe(steps.map((step) => `pnpm run ${step}`).join(" && "));
+    }
+
+    expect(scripts["sync:registries"]).toBe("node scripts/sync-shadcn-registries.mjs");
+    expect(scripts.verify).not.toContain("pnpm run lint:audit");
+    expect(scripts["verify:local"]).not.toContain("pnpm run lint:audit");
+  });
+
   it("provides working defaults without subcommand dispatch", () => {
-    expect(scripts.sync).toBe("node scripts/sync-shadcn-registries.mjs");
-    expect(scripts.db).toBe("pnpm run db:status");
+    expect(scripts.sync).toContain("pnpm run sync:registries");
+    expect(scripts.db).toContain("pnpm run db:status");
     expect(scripts.dev).toContain("pnpm run dev:serve");
     expect(scripts.test).toContain("pnpm run test:unit");
     expect(scripts.build).toContain("pnpm run build:production");

@@ -108,10 +108,10 @@ mise run build:validate-data
 mise run verify
 ```
 
-Bare `sync` runs `sync registries`, updating the official directory, catalog
-evidence, classification projection, registry snapshots, and exact item details
-in PostgreSQL. To import reviewed catalog metadata first, explicitly run
-`mise run sync:import --source /path/to/catalog.json` with an approved source.
+Bare `sync` refreshes official registries and then discovers registry icons,
+updating catalog evidence, classification projection, registry snapshots, and
+exact item details in PostgreSQL. To import reviewed catalog metadata first,
+run `mise run sync:import --source /path/to/catalog.json` with an approved source.
 `pnpm run build:prepare-runtime-data` regenerates the two ignored browser assets from the
 database. Route patterns, component URL checks, and classification run state
 are also maintained in PostgreSQL.
