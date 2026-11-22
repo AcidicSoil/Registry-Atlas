@@ -87,6 +87,7 @@ describe("grouped sidebar information architecture", () => {
       { canonicalIds: [], registryNames: [], kind: "components", sort: "name", access: [] },
       taxonomy,
     );
+
     expect(html).toContain(">Component groups<");
   });
 });

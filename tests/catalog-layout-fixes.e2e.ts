@@ -9,12 +9,15 @@ test("selected category remains removable after scrolling results", async ({ app
 
   const geometry = await browser.evaluate(() => {
     const pane = document.querySelector<HTMLElement>(".content-body");
+
     const chip = document.querySelector<HTMLElement>(
       '[aria-label="Remove Category: Button Group filter"]',
     );
+
     if (!pane || !chip) return null;
 
     pane.scrollTop = 750;
+
     return {
       scrollTop: pane.scrollTop,
       paneTop: pane.getBoundingClientRect().top,
@@ -46,9 +49,11 @@ test("palette trigger stays inside the narrow sidebar search row", async ({ app,
     const bar = document.querySelector<HTMLElement>(".app-sidebar .search-bar");
     const trigger = document.querySelector<HTMLElement>("#atlasCommandPalette-trigger");
     const input = document.querySelector<HTMLElement>("#searchInput");
+
     if (!bar || !trigger || !input) return null;
     const bounds = bar.getBoundingClientRect();
     const button = trigger.getBoundingClientRect();
+
     return {
       barRight: bounds.right,
       barTop: bounds.top,
