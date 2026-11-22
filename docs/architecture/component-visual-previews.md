@@ -4,15 +4,15 @@
 
 ## Ownership
 
-| Source                                                                 | Responsibility                                                                     |
-| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| PostgreSQL `atlas_source_pages` and runtime `sourcePageManifest.pages` | Authoritative item identity and original source URL                                |
-| `public/data/component-previews.json`                                  | Reviewed screenshot metadata and exact item/source identity                        |
-| `public/data/component-previews/*.webp`                                | Locally stored, visually reviewed component screenshots                            |
-| `src/registry-explorer/ui/componentPreviews.ts`                        | Validate manifest; return exact source-URL → local-image lookup                    |
-| `src/registry-explorer/ui/catalogLinkPreview.ts`                       | Pointer/focus popup without changing source navigation                             |
-| `tests/registry-explorer/componentPreviews.test.ts`                    | Verify source identities, bundled WebP files, SHA-256 digests, parser and fallback |
-| `tests/catalog-link-preview.e2e.ts`                                    | Verify each real specimen displays in the browser; icons do not                    |
+| Source                                                                 | Responsibility                                                     |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| PostgreSQL `atlas_source_pages` and runtime `sourcePageManifest.pages` | Authoritative item identity and original source URL                |
+| `public/data/component-previews.json`                                  | Reviewed screenshot metadata and exact item/source identity        |
+| `public/data/component-previews/*.webp`                                | Locally stored, visually reviewed component screenshots            |
+| `src/registry-explorer/ui/componentPreviews.ts`                        | Validate manifest; return exact source-URL → local-image lookup    |
+| `src/registry-explorer/ui/catalogLinkPreview.ts`                       | Pointer/focus popup without changing source navigation             |
+| `tests/registry-explorer/componentPreviews.test.ts`                    | Verify preview parsing, duplicate validation, and failure fallback |
+| `tests/catalog-link-preview.e2e.ts`                                    | Verify each real specimen displays in the browser; icons do not    |
 
 The former `collect-source-media.mjs`, `scripts/lib/source-media.mjs`, `sourceMedia.ts`, and 236-entry `source-media.json` have been retired. Those records established image URLs, not that each image usefully depicted a component. No provider URL formulas, OG-image scraping, new crawler, iframe embedding, browser-side fetch to remote image hosts, or automatic discovery are part of the current preview path.
 
