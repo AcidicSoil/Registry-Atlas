@@ -175,6 +175,37 @@ export async function discoverRegistryIcon({
     }
   }
 
+  // Absence of <link rel="icon"> does not prove there is no favicon.
+  // Verify ICO bytes because some sites serve HTML fallbacks with status 200.
+  const conventionalUrl = new URL("/favicon.ico", pageUrl).href;
+
+  try {
+    const response = await fetchWithTimeout(fetchImpl, conventionalUrl, timeoutMs, {
+      headers: { accept: "image/x-icon,image/vnd.microsoft.icon" },
+      redirect: "follow",
+    });
+
+    const url = safeIconUrl(response.url || conventionalUrl);
+
+    if (response.ok && url && sameOrigin(pageUrl, url)) {
+      const bytes = new Uint8Array(await response.arrayBuffer());
+
+      const validIco =
+        bytes.length >= 6 &&
+        bytes[0] === 0 &&
+        bytes[1] === 0 &&
+        bytes[2] === 1 &&
+        bytes[3] === 0 &&
+        (bytes[4] !== 0 || bytes[5] !== 0);
+
+      if (validIco) {
+        return { namespace, homepage: pageUrl, url, source: "conventional-favicon", observedAt };
+      }
+    }
+  } catch {
+    // Failed optional probes leave the official evidence unchanged.
+  }
+
   return {
     namespace,
     homepage: pageUrl,

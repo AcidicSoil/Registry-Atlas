@@ -83,6 +83,39 @@ describe("registry icon discovery", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
+  it("recovers a verified conventional favicon when metadata is absent", async () => {
+    const requests: string[] = [];
+    const icon = new Uint8Array([0, 0, 1, 0, 1, 0, 16, 16]);
+
+    const result = await discoverRegistryIcon({
+      namespace: "@example",
+      homepage: "https://example.com/docs",
+      fetchImpl: async (input: RequestInfo | URL) => {
+        requests.push(String(input));
+
+        return String(input).endsWith("/favicon.ico")
+          ? new Response(icon, { status: 200, headers: { "content-type": "image/x-icon" } })
+          : new Response("<html><head></head></html>", { status: 200 });
+      },
+    });
+
+    expect(requests).toEqual(["https://example.com/docs", "https://example.com/favicon.ico"]);
+    expect(result).toMatchObject({
+      url: "https://example.com/favicon.ico",
+      source: "conventional-favicon",
+    });
+  });
+
+  it("rejects an HTML fallback served from a favicon path", async () => {
+    const result = await discoverRegistryIcon({
+      namespace: "@plain",
+      homepage: "https://plain.example",
+      fetchImpl: async () => new Response("<html></html>", { status: 200 }),
+    });
+
+    expect(result.url).toBeNull();
+  });
+
   it("returns a source-backed missing result when the homepage publishes no icon metadata", async () => {
     const result = await discoverRegistryIcon({
       namespace: "@plain",

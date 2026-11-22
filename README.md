@@ -14,21 +14,15 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 - **Authors and unavailable routes**: Authors lists exact attribution names published in source item metadata, not inferred creator accounts. Featured and Newest remain retired because Atlas does not invent popularity or publication-time rankings. The theme editor explains why editing is not yet supported.
 - **Responsive catalog UI**: Full-width desktop layout with a persistent navigation sidebar, compact content controls, and a mobile off-canvas drawer with no horizontal document overflow.
 
-## PostgreSQL and original-page evidence
+## Data architecture and original-page evidence
 
-Registry Atlas stores authoritative catalog, registry, classification, item-detail, source-page,
-and route verification records in PostgreSQL (Neon project `Registry Atlas`, schema `atlas`).
-No SQLite database or Git LFS file is committed. PostgreSQL transactions protect updates.
+**Self-hosted PostgreSQL 18** is authoritative for registry directories, catalogs, item details, classifications, and source-page evidence. The `atlas` schema runs on a loopback-only Docker Compose service. Neither the database nor its credentials are committed or accessible from GitHub Actions.
 
-GitHub Pages is a static website. The explicit `mise run build:prepare-runtime-data` task exports disposable
-compressed assets from PostgreSQL:
-`public/data/registry-atlas.json.gz` (catalog and metadata) and
-`public/data/registry-details.json.gz` (lazy-loaded item details).
-Neither is authoritative, and database credentials never go to the browser.
+GitHub Pages serves a **static export**, not a live database connection. `mise run build:prepare-runtime-data` publishes a matching catalog and detail pair in `public/data/generations/<sha256>/` and atomically updates `public/data/runtime-manifest.json`. The browser loads the generation selected by that manifest. These `.json.gz` assets are disposable database exports, not a second source of truth.
 
-For reviewed, source-backed links, run `mise run test:component-pages` and
-`mise run build:source-pages`. A generic HTTP 200 is not evidence of component identity.
-See [data operations](docs/registry-explorer-data.md).
+The public CI and Pages workflows restore the versioned, sanitized `tests/fixtures/ci-runtime.tar` fixture; they do not connect to PostgreSQL. Site updates are **manual**, not automatic after every push.
+
+For reviewed, source-backed original-page links, run `mise run test:component-pages` and `mise run build:source-pages`. An HTTP 200 alone does not establish component identity. See [data operations](docs/registry-explorer-data.md).
 
 ## Getting Started
 
@@ -86,7 +80,7 @@ Run the full maintainer verification gate:
 mise run verify
 ```
 
-`mise run verify` runs source/test type-checking, the complete test suite, the product contract, data validation, and the production build. It does not refresh upstream registry data.
+`mise run verify` refreshes the local static export from PostgreSQL, runs lint, test TypeScript checks, the unit suite, database and product contracts, runtime-data validation, and the production build. It does not fetch upstream registries. CI instead runs `mise run verify:local` with the pinned public fixture; database-backed checks run only on the trusted workstation.
 
 The managed browser acceptance matrix is exposed as:
 
@@ -98,23 +92,21 @@ It exercises the canonical route family at desktop and 390px mobile widths and c
 
 ### Refreshing Registry Data
 
-Configure a writable PostgreSQL `DATABASE_URL` (or the ignored
-`.instance/neon-database-url`) for local maintenance. CI builds use a
-separate read-only role.
+Start local PostgreSQL with `mise run db:up` and use the ignored `.instance/local-postgres-url` connection file (or a loopback-only `DATABASE_URL`). No managed database credentials are supported.
 
 ```bash
-mise run sync                  # Sync official registries into PostgreSQL
-mise run build:validate-data
-mise run verify
+mise run db:backup             # Back up authoritative PostgreSQL before changes
+mise run sync                  # Refresh official directory, catalogs, and icons
+mise run db:check
+mise run build:prepare-runtime-data
+mise run build:check-runtime-data
 ```
 
-Bare `sync` refreshes official registries and then discovers registry icons,
-updating catalog evidence, classification projection, registry snapshots, and
-exact item details in PostgreSQL. To import reviewed catalog metadata first,
-run `mise run sync:import --source /path/to/catalog.json` with an approved source.
-`mise run build:prepare-runtime-data` regenerates the two ignored browser assets from the
-database. Route patterns, component URL checks, and classification run state
-are also maintained in PostgreSQL.
+`mise run sync` first refreshes registry catalogs and then discovers registry icons. It preserves earlier catalog evidence when an **existing** registry is temporarily unavailable, but removes evidence for registries no longer in the official directory. The catalog sync follows published item URL templates (including supported style variants); it does not invent alternative catalog paths. Missing or invalid upstream indexes remain reported as failures.
+
+Icon discovery prefers explicit website links and linked web manifests, then checks the same-origin `/favicon.ico` path for a valid ICO file. An HTML fallback with HTTP 200 does not count as an icon. Registries publishing no verifiable asset remain marked missing.
+
+For approved, reviewed imports, use `mise run sync:import --source /path/to/catalog.json`. Route patterns, component URLs, and classification runs are also kept in PostgreSQL. See [data operations](docs/registry-explorer-data.md) for reconciliation, error handling, and backup details.
 
 ### Building for Production
 
@@ -122,8 +114,23 @@ are also maintained in PostgreSQL.
 
 ```bash
 mise run build
-mise run dev preview
+mise run dev:preview
 ```
+
+### Publishing GitHub Pages
+
+The site is available at [Registry Atlas on GitHub Pages](https://acidicsoil.github.io/Registry-Atlas/). Production deployments run **only** when the [Deploy GitHub Pages](https://github.com/AcidicSoil/Registry-Atlas/actions/workflows/deploy-pages.yml) workflow is manually dispatched on `main`.
+
+To publish a new database snapshot from the trusted workstation:
+
+```bash
+mise run build:prepare-runtime-data # Export the current PostgreSQL snapshot
+mise run ci:fixture                 # Refresh the reviewed public CI fixture
+# Review and commit tests/fixtures/ci-runtime.tar, then push main.
+gh workflow run deploy-pages.yml --ref main
+```
+
+The workflow restores that fixture, runs offline verification, builds `dist/`, and publishes it with GitHub Pages. Pushing to `main` runs CI but does not deploy. A fresh runtime export alone does not change the live website. See [release workflow](docs/architecture/pages-release.md).
 
 ## Architecture
 
@@ -195,8 +202,7 @@ constraints and sequences to a newly imported database. The initial SQLite impor
 utility is retained only to read legacy snapshots; it is not an active data writer.
 
 Changes to crawled data are made in PostgreSQL, not edited into runtime files.
-After imports or synchronization, run `pnpm verify` and managed browser acceptance
-before deployment.
+After imports or synchronization, run `mise run verify` and the managed browser acceptance checks before publishing a new fixture and dispatching a release.
 
 See [PostgreSQL data and maintenance](docs/registry-explorer-data.md).
 

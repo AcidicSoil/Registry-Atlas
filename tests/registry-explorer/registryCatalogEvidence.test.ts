@@ -105,6 +105,8 @@ describe("registry catalog evidence sync", () => {
     expect(classifyCatalogFailureReason("timeout")).toBe("transient-network");
     expect(classifyCatalogFailureReason("network-error")).toBe("transient-network");
     expect(classifyCatalogFailureReason("invalid-json")).toBe("invalid-response");
+    expect(classifyCatalogFailureReason("http-401")).toBe("access-restricted");
+    expect(classifyCatalogFailureReason("http-402")).toBe("access-restricted");
     expect(classifyCatalogFailureReason("http-403")).toBe("access-restricted");
   });
 
@@ -421,6 +423,30 @@ describe("registry catalog evidence sync", () => {
       "@alpha": [{ name: "old-alpha", type: "registry:ui" }],
       "@beta": [{ name: "new-beta", type: "registry:block" }],
     });
+  });
+
+  it("drops evidence for registries removed from the official directory", async () => {
+    const result = await syncCatalogEvidenceForRegistries(
+      [
+        { name: "@current", url: "https://example.com/r/{name}.json" },
+        { name: "@unavailable", url: "https://missing.example/r/{name}.json" },
+      ],
+      {
+        previous: {
+          "@removed": { namespace: "@removed", status: "available", item_count: 15 },
+          "@unavailable": { namespace: "@unavailable", status: "available", item_count: 4 },
+        },
+        fetchImpl: async (url: string | URL | Request) =>
+          String(url).includes("missing.example")
+            ? new Response("not found", { status: 404 })
+            : Response.json({ items: [{ name: "button", type: "registry:ui" }] }),
+      },
+    );
+
+    expect(Object.keys(result.evidence).sort()).toEqual(["@current", "@unavailable"]);
+    expect(result.evidence["@unavailable"].status).toBe("stale");
+    expect(result.evidence["@removed"]).toBeUndefined();
+    expect(result.report.stale_registry_count).toBe(1);
   });
 
   it("preserves prior evidence on transient failure while scrubbing retired taxonomy fields", () => {

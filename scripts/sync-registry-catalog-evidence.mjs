@@ -553,7 +553,7 @@ export function classifyCatalogFailureReason(reason) {
   )
     return "invalid-response";
 
-  if (reason === "http-403") return "access-restricted";
+  if (["http-401", "http-402", "http-403"].includes(reason)) return "access-restricted";
 
   if (
     reason === "http-429" ||
@@ -596,7 +596,13 @@ export async function syncCatalogEvidenceForRegistries(
   }
 
   await Promise.all(Array.from({ length: Math.min(concurrency, registries.length) }, worker));
-  const evidence = mergeCatalogEvidence(previous, fresh, failures);
+  const officialNames = new Set(registries.map((registry) => normalizeNamespace(registry.name)));
+
+  const currentEvidence = Object.fromEntries(
+    Object.entries(previous).filter(([namespace]) => officialNames.has(namespace)),
+  );
+
+  const evidence = mergeCatalogEvidence(currentEvidence, fresh, failures);
   const itemsByNamespace = mergeCatalogItems(previousItems, freshItems, failures);
   const staleCount = Object.values(evidence).filter((item) => item.status === "stale").length;
 
