@@ -51,6 +51,40 @@ function index(registries: RegistryCatalogIndex["registries"]): RegistryCatalogI
 }
 
 describe("queryCatalogComponents", () => {
+  it("filters unclassified catalog items by component type, not incidental description text", () => {
+    const catalog = index({
+      "@alpha": [
+        { name: "avatar", type: "registry:ui", title: "Avatar" },
+        {
+          name: "profile-card",
+          type: "registry:ui",
+          title: "Profile Card",
+          categories: ["avatar"],
+        },
+        {
+          name: "contact-card",
+          type: "registry:ui",
+          description: "Includes an avatar next to the contact",
+        },
+        { name: "button", type: "registry:ui", title: "Button" },
+      ],
+    });
+
+    const matching = queryCatalogComponents([registry("@alpha")], catalog, {
+      policy: TEST_CATALOG_POLICY,
+      assetKinds: ["component"],
+      componentTypes: ["avatar"],
+    });
+
+    expect(matching.items.map(({ slug }) => slug)).toEqual(["avatar", "profile-card"]);
+
+    const facets = buildCatalogFacetSummary([registry("@alpha")], catalog, {
+      policy: TEST_CATALOG_POLICY,
+      assetKinds: ["component"],
+    });
+
+    expect(facets.componentTypes).toContainEqual({ value: "avatar", count: 2 });
+  });
   it("labels nested all-theme records by their actual theme instead of a generic basename", () => {
     const apple = { name: "marvkr/apple/all", type: "registry:style" };
     const beam = { name: "marvkr/beam-lib/all", type: "registry:style" };

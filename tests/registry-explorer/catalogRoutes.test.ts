@@ -11,6 +11,17 @@ import {
 const BASE = "/Registry-Atlas/";
 
 describe("catalogRoutes", () => {
+  it("persists component type facets independently of reviewed taxonomy versions", () => {
+    const parsed = parseCatalogBrowseQuery(
+      new URLSearchParams("componentType=avatar&componentType=badge&componentType=not-a-real-type"),
+      TEST_CATALOG_POLICY,
+    );
+
+    expect(parsed.componentTypes).toEqual(["avatar", "badge"]);
+    expect(
+      serializeCatalogBrowseQuery(parsed, TEST_CATALOG_POLICY).getAll("componentType"),
+    ).toEqual(["avatar", "badge"]);
+  });
   it("round-trips the local setup and review routes", () => {
     for (const kind of ["setup", "setup-review"] as const) {
       const path = catalogRoutePath({ kind }, BASE);
@@ -93,6 +104,7 @@ describe("catalogRoutes", () => {
       sort: "name",
       itemTypes: [],
       categories: ["forms"],
+      componentTypes: [],
       assetKinds: [],
       canonicalIds: [],
       access: [],

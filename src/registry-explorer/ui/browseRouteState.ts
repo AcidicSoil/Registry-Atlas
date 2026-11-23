@@ -11,6 +11,7 @@ import {
   type CatalogSort,
 } from "../core/catalogRoutes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
+import type { CatalogComponentType } from "../core/catalogComponentTypes";
 import type { RegistryCatalogCoverage, RegistryDirectorySort } from "../core/registryDirectory";
 import type { RegistryDirectoryLayout } from "./registryDirectoryView";
 
@@ -24,6 +25,7 @@ export interface BrowseRouteState {
   catalogRegistryNames: string[];
   catalogItemTypes: string[];
   catalogCategories: string[];
+  catalogComponentTypes: CatalogComponentType[];
   catalogAssetKinds: CatalogAssetKind[];
   catalogCanonicalIds: string[];
   catalogAccess: Array<"free" | "paid">;
@@ -33,6 +35,20 @@ export interface BrowseRouteState {
   registryLayout: RegistryDirectoryLayout;
   catalogLayout: RegistryDirectoryLayout;
 }
+
+export const RESET_BROWSE_STATE = {
+  searchTerm: "",
+  catalogRegistryNames: [],
+  catalogItemTypes: [],
+  catalogCategories: [],
+  catalogComponentTypes: [],
+  catalogAssetKinds: [],
+  catalogCanonicalIds: [],
+  catalogAccess: [],
+  catalogSort: "name",
+  catalogReviewed: "all",
+  registrySort: "name",
+} satisfies Partial<BrowseRouteState>;
 
 function routeFromLocation(
   params: URLSearchParams,
@@ -106,6 +122,7 @@ export function hydrateBrowseRouteState(
     ),
     catalogItemTypes: browse.itemTypes,
     catalogCategories: browse.categories,
+    catalogComponentTypes: browse.componentTypes,
     catalogAssetKinds: browse.assetKinds,
     catalogCanonicalIds: browse.canonicalIds,
     catalogAccess: browse.access,
@@ -146,6 +163,7 @@ function catalogBrowseStateForUrl(state: BrowseRouteState): CatalogBrowseQuerySt
     registryNames: state.catalogRegistryNames,
     itemTypes: [],
     categories: state.catalogCategories,
+    componentTypes: state.catalogComponentTypes,
     assetKinds: state.catalogAssetKinds,
     canonicalIds: state.catalogCanonicalIds,
     access: state.catalogAccess,

@@ -1,4 +1,6 @@
 import { parseCatalogRoute, type CatalogRoute } from "../core/catalogRoutes";
+import { RESET_BROWSE_STATE } from "./browseRouteState";
+import { isCatalogComponentType } from "../core/catalogComponentTypes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
 import {
   createFocusIdentity,
@@ -42,44 +44,42 @@ export function createCatalogInteractions({
         basePath(),
       );
 
-      if (parsed)
-        navigate(parsed, "push", {
-          searchTerm: "",
-          catalogRegistryNames: [],
-          catalogItemTypes: [],
-          catalogCategories: [],
-          catalogAssetKinds: [],
-          catalogCanonicalIds: [],
-          catalogAccess: [],
-          catalogSort: "name",
-          catalogReviewed: "all",
-        });
+      if (parsed) navigate(parsed, "push", RESET_BROWSE_STATE);
 
       return true;
     }
 
     if (target.closest("[data-catalog-clear]")) {
       roots.searchInput.value = "";
-      setState(
-        {
-          searchTerm: "",
-          catalogRegistryNames: [],
-          catalogItemTypes: [],
-          catalogCategories: [],
-          catalogAssetKinds: [],
-          catalogCanonicalIds: [],
-          catalogAccess: [],
-          catalogReviewed: "all",
-          catalogSort: "name",
-          discoveryPage: 1,
-        },
-        "push",
-      );
+      setState({ ...RESET_BROWSE_STATE, discoveryPage: 1 }, "push");
 
       return true;
     }
 
     return false;
+  }
+
+  function handleComponentTypeFilter(target: HTMLElement): boolean {
+    const control = target.closest("[data-catalog-component-type]");
+
+    if (!control) return false;
+    const type = control.getAttribute("data-catalog-component-type");
+
+    if (!type || !isCatalogComponentType(type)) return true;
+
+    setState(
+      {
+        route: { kind: "components" },
+        catalogComponentTypes: toggle(getState().catalogComponentTypes, type),
+        discoveryPage: 1,
+      },
+      "push",
+      createFocusIdentity(control, "[data-catalog-component-type]", [
+        "data-catalog-component-type",
+      ]),
+    );
+
+    return true;
   }
 
   function handleCatalogFiltersClick(target: HTMLElement): boolean {
@@ -409,6 +409,7 @@ export function createCatalogInteractions({
     const handlers = [
       handleInstall,
       handleCatalogRouteClick,
+      handleComponentTypeFilter,
       handleCatalogFiltersClick,
       handleCatalogCategoryClick,
       handleCatalogLayoutClick,

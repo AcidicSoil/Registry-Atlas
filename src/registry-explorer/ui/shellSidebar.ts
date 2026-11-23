@@ -261,6 +261,7 @@ export function createShellSidebar({
         registryNames: fixedRegistry ? [] : getState().catalogRegistryNames,
         sort: getState().catalogSort,
         access: getState().catalogAccess,
+        componentTypes: getState().catalogComponentTypes,
         assetKinds: getState().catalogAssetKinds,
       },
       taxonomy,

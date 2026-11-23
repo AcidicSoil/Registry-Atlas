@@ -1,6 +1,7 @@
 import { catalogRoutePath, type CatalogReviewedFilter, type CatalogSort } from "./catalogRoutes";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "./catalogCollections";
 import { catalogTaxonomySearchValues } from "./catalogTaxonomy";
+import { catalogComponentTypesForItem, type CatalogComponentType } from "./catalogComponentTypes";
 import type { CatalogPolicy } from "./catalogPolicy";
 import { registryCatalogItemIdentity } from "./registryCatalogIndex";
 import { resolveCatalogSourcePage } from "./catalogSourcePage";
@@ -40,6 +41,7 @@ export interface CatalogQueryOptions {
   registryNames?: readonly string[];
   itemTypes?: readonly string[];
   categories?: readonly string[];
+  componentTypes?: readonly CatalogComponentType[];
   assetKinds?: readonly CatalogAssetKind[];
   canonicalIds?: readonly string[];
   access?: readonly ("free" | "paid")[];
@@ -69,6 +71,7 @@ export interface CatalogFacetSummary {
   registries: CatalogFacetOption[];
   itemTypes: CatalogFacetOption[];
   categories: CatalogFacetOption[];
+  componentTypes: CatalogFacetOption[];
   canonical: CatalogFacetOption[];
   access?: CatalogFacetOption[];
   reviewedCount: number;
@@ -105,6 +108,7 @@ type CatalogFilters = {
   registryNames: ReadonlySet<string>;
   itemTypes: ReadonlySet<string>;
   categories: ReadonlySet<string>;
+  componentTypes: ReadonlySet<CatalogComponentType>;
   assetKinds: ReadonlySet<CatalogAssetKind>;
   canonicalIds: ReadonlySet<string>;
   access: ReadonlySet<"free" | "paid">;
@@ -124,6 +128,7 @@ function queryFilters(options: CatalogQueryOptions): CatalogFilters {
     registryNames: normalizedValues(options.registryNames),
     itemTypes: normalizedValues(options.itemTypes, true),
     categories: normalizedValues(options.categories, true),
+    componentTypes: new Set(options.componentTypes ?? []),
     assetKinds: new Set(options.assetKinds ?? []),
     canonicalIds: new Set(options.canonicalIds ?? []),
     access: new Set(options.access ?? []),
@@ -219,6 +224,7 @@ type FacetCounts = {
   registries: Map<string, number>;
   types: Map<string, number>;
   categories: Map<string, number>;
+  componentTypes: Map<string, number>;
   canonical: Map<string, number>;
   access: Map<string, number>;
   reviewed: number;
@@ -230,6 +236,7 @@ function createFacetCounts(): FacetCounts {
     registries: new Map(),
     types: new Map(),
     categories: new Map(),
+    componentTypes: new Map(),
     canonical: new Map(),
     access: new Map(),
     reviewed: 0,
@@ -247,6 +254,7 @@ function collectCatalogFacet(
   increment(counts.types, item.type);
 
   for (const category of item.categories ?? []) increment(counts.categories, category);
+  for (const type of catalogComponentTypesForItem(item)) increment(counts.componentTypes, type);
 
   for (const id of item.canonical?.path ?? []) increment(counts.canonical, id);
 
@@ -290,6 +298,7 @@ function facetSummaryFromCounts(counts: FacetCounts): CatalogFacetSummary {
     registries: facetOptions(counts.registries),
     itemTypes: facetOptions(counts.types),
     categories: facetOptions(counts.categories),
+    componentTypes: facetOptions(counts.componentTypes),
     canonical: facetOptions(counts.canonical),
     reviewedCount: counts.reviewed,
     unreviewedCount: counts.unreviewed,
@@ -508,6 +517,12 @@ function matchesFilters(
     return false;
 
   if (!matchesCategoryAndAccess(item, filters)) return false;
+
+  if (
+    filters.componentTypes.size &&
+    !catalogComponentTypesForItem(item).some((type) => filters.componentTypes.has(type))
+  )
+    return false;
 
   if (!matchesReviewStatus(filters.reviewed, isReviewed)) return false;
 

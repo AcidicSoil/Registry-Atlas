@@ -7,6 +7,7 @@ type ITEMSEGMENTKINDSLookupContract = Readonly<
 type REGISTRYASSETSEGMENTSLookupContract = Readonly<Record<string, CatalogAssetKind>>;
 
 import type { CatalogAssetKind } from "./catalogCollections";
+import { isCatalogComponentType, type CatalogComponentType } from "./catalogComponentTypes";
 import { catalogTaxonomyNodeMap } from "./catalogTaxonomy";
 import type { CatalogPolicy } from "./catalogPolicy";
 
@@ -51,6 +52,7 @@ export interface CatalogBrowseQueryState {
   registryNames: string[];
   itemTypes: string[];
   categories: string[];
+  componentTypes: CatalogComponentType[];
   assetKinds: CatalogAssetKind[];
   canonicalIds: string[];
   access: Array<"free" | "paid">;
@@ -206,6 +208,7 @@ export function parseCatalogBrowseQuery(
     registryNames: uniqueValues(params.getAll("registry").filter(isSafeNamespace)),
     itemTypes: [],
     categories: uniqueValues(params.getAll("category").filter(isSafeFacetValue)),
+    componentTypes: uniqueValues(params.getAll("componentType").filter(isCatalogComponentType)),
     assetKinds: uniqueValues(params.getAll("asset").filter(isCatalogAssetKind)),
     canonicalIds: uniqueValues(
       params
@@ -231,6 +234,9 @@ export function serializeCatalogBrowseQuery(
   });
   state.categories.forEach((value) => {
     if (isSafeFacetValue(value)) params.append("category", value);
+  });
+  state.componentTypes.forEach((value) => {
+    if (isCatalogComponentType(value)) params.append("componentType", value);
   });
   state.assetKinds.forEach((value) => {
     if (CATALOG_ASSET_KINDS.has(value)) params.append("asset", value);

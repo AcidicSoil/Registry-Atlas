@@ -110,11 +110,12 @@ assert(
   !componentViewSource.includes("data-catalog-search") &&
     !componentViewSource.includes("data-catalog-registry-select") &&
     !componentViewSource.includes("data-catalog-access-select") &&
-    !componentViewSource.includes("data-catalog-sort") &&
+    componentViewSource.includes('aria-label="Sort filtered results"') &&
+    componentViewSource.includes("data-catalog-sort-value") &&
     !componentViewSource.includes("<select") &&
     !componentViewSource.includes("catalog-filter-menu") &&
     !componentViewSource.includes("<summary>Filters"),
-  "Catalog result panes must not duplicate search/filter/sort controls or custom disclosures",
+  "Catalog results must expose filtered sorting without duplicating search/filter controls or custom disclosures",
 );
 
 assert(

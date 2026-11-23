@@ -56,6 +56,10 @@ const taxonomy = {
 };
 
 const facets: CatalogFacetSummary = {
+  componentTypes: [
+    { value: "avatar", count: 42 },
+    { value: "accordion", count: 9 },
+  ],
   categories: [
     { value: "forms", count: 42 },
     { value: "custom<script>", count: 3 },
@@ -93,6 +97,41 @@ describe("grouped sidebar information architecture", () => {
 });
 
 describe("catalog browse sidebar", () => {
+  it("shows real catalog-backed component types and counts", () => {
+    const html = renderCatalogSidebarNavigation(
+      facets,
+      { canonicalIds: [], registryNames: [], kind: "components", sort: "name", access: [] },
+      taxonomy,
+      { expandedCategoryIds: ["component-types"] },
+    );
+
+    expect(html).toMatch(/data-sidebar-taxonomy-group="component-types"[^>]*open/);
+    expect(html).toContain('data-catalog-component-type="avatar"');
+    expect(html).toContain('data-catalog-component-type="accordion"');
+    expect(html).toContain("42");
+    expect(html).toContain("9");
+    expect(html).not.toContain('data-catalog-component-type="badge"');
+    expect(html).not.toContain('data-catalog-canonical-value="avatar"');
+  });
+
+  it("keeps selected component type facets expanded after navigation", () => {
+    const html = renderCatalogSidebarNavigation(
+      facets,
+      {
+        canonicalIds: [],
+        registryNames: [],
+        kind: "components",
+        sort: "name",
+        access: [],
+        componentTypes: ["avatar"],
+      },
+      taxonomy,
+    );
+
+    expect(html).toMatch(/data-sidebar-taxonomy-group="component-types"[^>]*open/);
+    expect(html).toMatch(/data-catalog-component-type="avatar"[^>]*aria-pressed="true"/);
+  });
+
   it("places sorting before categories and access in the exemplar rail", () => {
     const html = renderCatalogSidebarNavigation(
       facets,

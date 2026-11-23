@@ -4,6 +4,7 @@ import type {
   CatalogQueryResult,
 } from "../../src/registry-explorer/core/catalogQuery";
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
+import type { CatalogBrowseQueryState } from "../../src/registry-explorer/core/catalogRoutes";
 import { parseCatalogTaxonomy } from "../../src/registry-explorer/core/catalogTaxonomy";
 import {
   renderCatalogBrowseControls,
@@ -331,6 +332,7 @@ describe("renderCatalogComponents", () => {
       registryNames: ["@delta"],
       itemTypes: [],
       categories: [],
+      componentTypes: [],
       assetKinds: [],
       canonicalIds: [],
       access: ["free"] as Array<"free" | "paid">,
@@ -363,6 +365,7 @@ describe("renderCatalogComponents", () => {
         registryNames: [],
         itemTypes: [],
         categories: [],
+        componentTypes: [],
         assetKinds: ["component"],
         canonicalIds: [],
         access: [],
@@ -389,6 +392,7 @@ describe("renderCatalogComponents", () => {
         registryNames: [],
         itemTypes: ["registry:block"],
         categories: [],
+        componentTypes: [],
         assetKinds: [],
         canonicalIds: [],
         access: [],
@@ -483,21 +487,21 @@ function registry(): Registry {
 }
 
 describe("catalog applied-filter context", () => {
-  const state = {
+  const state: CatalogBrowseQueryState = {
     page: 1,
     sort: "name" as const,
     registryNames: [],
     itemTypes: [],
     categories: [],
-    assetKinds: ["block"] as const,
+    componentTypes: [],
+    assetKinds: ["block"],
     canonicalIds: ["application/app-shell"],
-    access: ["free"] as const,
+    access: ["free"],
     reviewed: "all" as const,
   };
 
   it("renders asset type as removable context with the same catalog vocabulary", () => {
-    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
-    const html = renderCatalogBrowseControls(state as any, {
+    const html = renderCatalogBrowseControls(state, {
       selectedAssetKinds: ["block"],
     });
 
@@ -507,8 +511,7 @@ describe("catalog applied-filter context", () => {
   });
 
   it("renders canonical and access state as removable context without duplicating selection controls", () => {
-    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
-    const html = renderCatalogBrowseControls(state as any, {
+    const html = renderCatalogBrowseControls(state, {
       taxonomy: TEST_TAXONOMY,
     });
 
@@ -524,10 +527,12 @@ describe("catalog applied-filter context", () => {
   });
 
   it("omits access context when no access filter is active", () => {
-    // SAFETY: This assertion deliberately bypasses static fixture typing to exercise a malformed input or a test-only browser stub.
-    const html = renderCatalogBrowseControls({ ...state, access: [] } as any, {
-      taxonomy: TEST_TAXONOMY,
-    });
+    const html = renderCatalogBrowseControls(
+      { ...state, access: [] },
+      {
+        taxonomy: TEST_TAXONOMY,
+      },
+    );
 
     expect(html).not.toContain("data-catalog-access-value");
     expect(html).not.toContain("Access: Free");

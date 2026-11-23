@@ -5,6 +5,7 @@ import type { CatalogFacetSummary } from "../core/catalogQuery";
 import { CATALOG_SORT_OPTIONS, type CatalogRoute, type CatalogSort } from "../core/catalogRoutes";
 import type { CatalogTaxonomy, CatalogTaxonomyNode } from "../core/catalogTaxonomy";
 import type { CatalogAssetKind } from "../core/catalogCollections";
+import { CATALOG_COMPONENT_TYPES, type CatalogComponentType } from "../core/catalogComponentTypes";
 import * as stylex from "@stylexjs/stylex";
 import { sidebarNavigationStyles } from "./sidebarNavigation.stylex";
 import { taxonomyGroupMarker, taxonomyStyles } from "./sidebarTaxonomy.stylex";
@@ -17,6 +18,7 @@ export interface SidebarNavigationState {
   sort: CatalogSort;
   access: readonly ("free" | "paid")[];
   assetKinds?: readonly CatalogAssetKind[];
+  componentTypes?: readonly CatalogComponentType[];
 }
 
 export interface CatalogSidebarNavigationOptions {
@@ -203,6 +205,56 @@ function isCanonicalNodeExpanded(
   return !collapsedIds.includes(id) && (active || expandedIds.includes(id));
 }
 
+function renderComponentTypeFacets(
+  facets: CatalogFacetSummary,
+  state: SidebarNavigationState,
+  expandedIds: readonly string[],
+  collapsedIds: readonly string[],
+): string {
+  const counts = new Map(facets.componentTypes.map(({ value, count }) => [value, count]));
+  const selected = new Set(state.componentTypes ?? []);
+  const visible = CATALOG_COMPONENT_TYPES.filter(
+    ({ value }) => (counts.get(value) ?? 0) > 0 || selected.has(value),
+  );
+
+  if (!visible.length) return "";
+
+  const expanded = isCanonicalNodeExpanded(
+    "component-types",
+    selected.size > 0,
+    expandedIds,
+    collapsedIds,
+  );
+
+  return `<section class="sidebar-nav-section" aria-label="Component type filters">
+    <details${renderStyleXAttributes(
+      stylex.attrs(taxonomyStyles.group, taxonomyGroupMarker),
+      "sidebar-taxonomy-group",
+    )} data-sidebar-taxonomy-group="component-types"${expanded ? " open" : ""}>
+      <summary${taxonomySummaryAttributes(selected.size > 0)}>
+        <span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon("component")}</span>
+        <span class="sidebar-nav-row-label">Component types</span>
+        <span class="sidebar-nav-row-count">${visible.length} types</span>
+        <span${renderStyleXAttributes(stylex.attrs(taxonomyStyles.chevron), "sidebar-taxonomy-chevron")} aria-hidden="true"></span>
+      </summary>
+      <div${renderStyleXAttributes(stylex.attrs(taxonomyStyles.children), "sidebar-taxonomy-children")}>
+        ${visible
+          .map(({ value, label }) =>
+            rowButton({
+              attribute: "data-catalog-component-type",
+              value,
+              label,
+              count: counts.get(value) ?? 0,
+              selected: selected.has(value),
+              nested: true,
+            }),
+          )
+          .join("")}
+      </div>
+    </details>
+  </section>`;
+}
+
 function renderCanonical(
   facets: CatalogFacetSummary,
   state: SidebarNavigationState,
@@ -298,6 +350,7 @@ export function renderCatalogSidebarNavigation(
     stylex.attrs(sidebarNavigationStyles.root),
     "sidebar-browse-navigation",
   )} aria-label="Browse catalog">
+    ${renderComponentTypeFacets(facets, state, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? [])}
     ${showCanonical ? renderCanonical(facets, state, taxonomy, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? []) : ""}
     ${renderSort(state, showRegistrySort)}
     ${renderAssetKinds(options.assetCounts, state)}

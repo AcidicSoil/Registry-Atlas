@@ -25,6 +25,7 @@ function harness() {
     catalogRegistryNames: [],
     catalogItemTypes: [],
     catalogCategories: [],
+    catalogComponentTypes: [],
     catalogAssetKinds: [],
     catalogCanonicalIds: [],
     catalogAccess: [],

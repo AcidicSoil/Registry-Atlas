@@ -10,6 +10,7 @@ import {
   type CatalogBrowseQueryState,
 } from "../core/catalogRoutes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
+import { CATALOG_COMPONENT_TYPES } from "../core/catalogComponentTypes";
 import { catalogTaxonomyNodeMap, type CatalogTaxonomy } from "../core/catalogTaxonomy";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
 import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
@@ -131,6 +132,12 @@ function appliedCatalogFilters(
       attribute: "data-catalog-type-value",
       value,
       label: "Type: " + value.replace(/^registry:/, ""),
+    })),
+    ...state.componentTypes.map((value) => ({
+      attribute: "data-catalog-component-type",
+      value,
+      label:
+        "Type: " + (CATALOG_COMPONENT_TYPES.find((type) => type.value === value)?.label ?? value),
     })),
     ...state.categories.map((value) => ({
       attribute: "data-catalog-category-value",

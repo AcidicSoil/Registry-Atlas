@@ -19,7 +19,11 @@ import { createShellRenderer } from "./shellRenderer";
 import { createShellSetupController } from "./shellSetup";
 import { createFocusIdentity, type AppState, type FocusIdentity } from "./shellState";
 
-import { formatBrowseRouteUrl, hydrateBrowseRouteState } from "./browseRouteState";
+import {
+  RESET_BROWSE_STATE,
+  formatBrowseRouteUrl,
+  hydrateBrowseRouteState,
+} from "./browseRouteState";
 
 import { nextRegistryIconCandidate } from "./registryIdentity";
 import { buildAuthorDirectory } from "../core/catalogAuthors";
@@ -249,17 +253,7 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     return click.button === 1 || click.ctrlKey || click.metaKey || click.shiftKey || click.altKey;
   }
 
-  const resetBrowse = {
-    searchTerm: "",
-    catalogRegistryNames: [],
-    catalogItemTypes: [],
-    catalogCategories: [],
-    catalogAssetKinds: [],
-    catalogCanonicalIds: [],
-    catalogAccess: [],
-    catalogSort: "name",
-    registrySort: "name",
-  } satisfies Partial<AppState>;
+  const resetBrowse = RESET_BROWSE_STATE;
 
   roots.tabs.forEach((tab) =>
     listen(tab, "click", (event) => {

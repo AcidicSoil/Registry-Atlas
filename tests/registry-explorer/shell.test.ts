@@ -122,7 +122,7 @@ describe("registry explorer shell interactions", () => {
     expect(harness.aside.innerHTML).toContain('data-catalog-sort-value="name"');
     expect(harness.aside.innerHTML).not.toContain("shadcn directory");
     expect(harness.aside.innerHTML).not.toContain("data-catalog-registry-select");
-    expect(harness.aside.innerHTML).not.toContain("<details");
+    expect(harness.aside.innerHTML).not.toContain('data-sidebar-taxonomy-group="component-types"');
     expect(harness.contentBody.innerHTML).not.toContain("data-catalog-search");
     expect(harness.contentBody.innerHTML).not.toContain("data-catalog-sort");
     expect(harness.aside.innerHTML).not.toContain("catalog-sidebar-summary");
@@ -387,6 +387,24 @@ describe("registry explorer shell interactions", () => {
     harness.searchInput.dispatch("input", {});
     expect(harness.location.pathname).toBe("/Registry-Atlas/components/s/%40delta");
     expect(harness.contentBody.innerHTML).toContain("@delta");
+  });
+
+  it("filters real components from type facets without changing the search input", () => {
+    const harness = setup("", "/Registry-Atlas/components", undefined, undefined, [
+      { name: "avatar", title: "Avatar", type: "registry:ui" },
+      { name: "button", title: "Button", type: "registry:ui" },
+    ]);
+
+    harness.aside.dispatch("click", target({ "data-catalog-component-type": "avatar" }));
+
+    expect(harness.searchInput.value).toBe("");
+    expect(harness.location.pathname).toBe("/Registry-Atlas/components");
+    expect(harness.location.search).toContain("componentType=avatar");
+    expect(harness.contentBody.innerHTML).toContain('data-view-item-slug="avatar"');
+    expect(harness.contentBody.innerHTML).not.toContain('data-view-item-slug="button"');
+    expect(harness.aside.innerHTML).toMatch(
+      /data-catalog-component-type="avatar"[^>]*aria-pressed="true"/,
+    );
   });
 
   it("sorts filtered results using the existing catalog state", () => {
