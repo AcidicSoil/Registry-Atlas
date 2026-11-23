@@ -389,6 +389,20 @@ describe("registry explorer shell interactions", () => {
     expect(harness.contentBody.innerHTML).toContain("@delta");
   });
 
+  it("sorts filtered results using the existing catalog state", () => {
+    const harness = setup("", "/Registry-Atlas/components");
+    harness.searchInput.value = "button";
+    harness.searchInput.dispatch("input", {});
+    expect(harness.contentBody.innerHTML).toContain('aria-label="Sort filtered results"');
+
+    harness.contentBody.dispatch("click", target({ "data-catalog-sort-value": "registry" }));
+
+    expect(harness.location.search).toContain("sort=registry");
+    expect(harness.contentBody.innerHTML).toMatch(
+      /data-catalog-sort-value="registry"[^>]*aria-pressed="true"/,
+    );
+  });
+
   it("copies install commands and announces feedback", async () => {
     const clipboard = { writeText: vi.fn().mockResolvedValue(undefined) };
     const harness = setup("?view=item&registry=%40delta&item=code-block");

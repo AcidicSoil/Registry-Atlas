@@ -4,7 +4,11 @@ import { cardMarker, cardStyles } from "./catalogCard.stylex";
 import { discoveryStyles } from "./catalogDiscovery.stylex";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogComponent, CatalogQueryResult } from "../core/catalogQuery";
-import { catalogRoutePath, type CatalogBrowseQueryState } from "../core/catalogRoutes";
+import {
+  CATALOG_SORT_OPTIONS,
+  catalogRoutePath,
+  type CatalogBrowseQueryState,
+} from "../core/catalogRoutes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
 import { catalogTaxonomyNodeMap, type CatalogTaxonomy } from "../core/catalogTaxonomy";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
@@ -181,6 +185,13 @@ export function renderCatalogBrowseControls(
     </div>`
         : ""
     }
+    <div class="catalog-results-sort" role="group" aria-label="Sort filtered results">
+      <span class="catalog-results-sort-label">Sort by</span>
+      ${CATALOG_SORT_OPTIONS.map(
+        ({ value, label }) =>
+          `<button type="button" class="catalog-results-sort-option" data-catalog-sort-value="${value}" aria-pressed="${state.sort === value}">${label}</button>`,
+      ).join("")}
+    </div>
     <button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear all</button>
   </div>`;
 }

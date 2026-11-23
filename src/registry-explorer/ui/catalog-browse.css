@@ -223,9 +223,51 @@
   font-size: 12px;
 }
 
+.catalog-results-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--card);
+}
+
+.catalog-results-sort-label {
+  padding-inline: 7px;
+  color: var(--muted-foreground);
+  font-size: 11px;
+}
+
+.catalog-results-sort-option {
+  min-height: 28px;
+  padding-inline: 10px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.catalog-results-sort-option[aria-pressed="true"] {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.catalog-results-sort-option:hover {
+  color: var(--foreground);
+}
+
+.catalog-results-sort-option:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
 .catalog-filter-clear {
   min-height: 30px;
-  margin-left: auto;
 }
 
 .catalog-applied-filters {

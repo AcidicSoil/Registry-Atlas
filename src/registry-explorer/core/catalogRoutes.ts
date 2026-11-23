@@ -38,6 +38,11 @@ export type CatalogRoute =
 
 export type CatalogSort = "name" | "registry";
 
+export const CATALOG_SORT_OPTIONS: ReadonlyArray<{ value: CatalogSort; label: string }> = [
+  { value: "name", label: "Name" },
+  { value: "registry", label: "Registry" },
+];
+
 export type CatalogReviewedFilter = "all" | "reviewed" | "unreviewed";
 
 export interface CatalogBrowseQueryState {
@@ -62,7 +67,7 @@ export const REGISTRY_ASSET_SEGMENTS = {
   other: "other",
 } satisfies REGISTRYASSETSEGMENTSLookupContract;
 
-const CATALOG_SORTS = new Set<CatalogSort>(["name", "registry"]);
+const CATALOG_SORTS = new Set(CATALOG_SORT_OPTIONS.map(({ value }) => value));
 
 const CATALOG_ASSET_KINDS = new Set<string>([
   "component",

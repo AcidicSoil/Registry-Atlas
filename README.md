@@ -6,7 +6,7 @@ Registry Atlas mirrors real upstream registry catalogs into a local, evidence-ba
 
 ## Features
 
-- **Components**: Search real catalog items, select multiple registries and common categories as chips, sort by name or registry in either direction, and share filtered URLs.
+- **Components**: Search real catalog items, select multiple registries and common categories as chips, sort by name or registry from the sidebar or filtered-results bar, and share filtered URLs.
 - **Collections**: Explore explicit category collections, templates, themes, and registry-backed icon-related assets without inventing popularity, recency, author, or review rankings.
 - **Registries**: Filter by asset type (components, templates, themes, or icon-related items), sort alphabetically or by item count, and open each registry's catalog. Sync status remains informational, not a primary filter.
 - **Original registry pages on every item route**: Home, Components, filtered collections, Authors, registry inventories, template/theme/icon listings, item details, related items and Compare use exact identity-backed upstream URLs. Reviewed pages show **View original**; links seen only in the official sitemap show **View sitemap-listed page**, not a verification claim. Official homepages and installable item JSON remain distinct, and Atlas never constructs documentation links from guessed slugs.

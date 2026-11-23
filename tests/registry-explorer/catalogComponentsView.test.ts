@@ -348,7 +348,9 @@ describe("renderCatalogComponents", () => {
     expect(context).not.toContain("data-catalog-search");
     expect(context).not.toContain("data-catalog-registry-select");
     expect(context).not.toContain("data-catalog-access-select");
-    expect(context).not.toContain("data-catalog-sort");
+    expect(context).toContain('aria-label="Sort filtered results"');
+    expect(context).toContain('data-catalog-sort-value="name"');
+    expect(context).toMatch(/data-catalog-sort-value="registry"[^>]*aria-pressed="true"/);
     expect(context).not.toContain("<select");
     expect(context).not.toContain("<details");
   });
@@ -396,7 +398,7 @@ describe("renderCatalogComponents", () => {
 
     expect(body.innerHTML).toContain("Type: block");
     expect(body.innerHTML).toContain("data-catalog-clear");
-    expect(body.innerHTML).not.toContain("data-catalog-sort");
+    expect(body.innerHTML).toContain('data-catalog-sort-value="name"');
     expect(body.innerHTML).not.toContain("<select");
     expect(body.innerHTML).toContain("No catalog items are available");
   });
@@ -517,6 +519,7 @@ describe("catalog applied-filter context", () => {
     expect(html).toContain("Access: Free");
     expect(html).not.toContain("data-catalog-access-select");
     expect(html).not.toContain("data-catalog-canonical-checkbox");
+    expect(html).toContain('data-catalog-sort-value="registry"');
     expect(html).not.toContain("<select");
   });
 

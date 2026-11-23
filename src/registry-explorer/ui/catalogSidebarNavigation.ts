@@ -2,7 +2,7 @@
 type PathsLookupContract = Record<string, string>;
 
 import type { CatalogFacetSummary } from "../core/catalogQuery";
-import type { CatalogRoute, CatalogSort } from "../core/catalogRoutes";
+import { CATALOG_SORT_OPTIONS, type CatalogRoute, type CatalogSort } from "../core/catalogRoutes";
 import type { CatalogTaxonomy, CatalogTaxonomyNode } from "../core/catalogTaxonomy";
 import type { CatalogAssetKind } from "../core/catalogCollections";
 import * as stylex from "@stylexjs/stylex";
@@ -102,10 +102,9 @@ function rowButton(options: {
 }
 
 function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): string {
-  const options: Array<{ value: CatalogSort; label: string }> = [
-    { value: "name", label: "Name" },
-    ...(showRegistrySort ? [{ value: "registry" as const, label: "Registry" }] : []),
-  ];
+  const options = showRegistrySort
+    ? CATALOG_SORT_OPTIONS
+    : CATALOG_SORT_OPTIONS.filter(({ value }) => value === "name");
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-sort-heading">
     <p class="sidebar-nav-section-label" id="catalog-sort-heading">Sort</p>

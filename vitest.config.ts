@@ -7,6 +7,7 @@ export default mergeConfig(
     test: {
       include: ["tests/**/*.{test,spec}.{ts,tsx,js,mjs}"],
       exclude: ["**/.worktrees/**"],
+      maxWorkers: 4,
     },
   }),
 );
