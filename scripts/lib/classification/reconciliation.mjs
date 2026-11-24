@@ -1,4 +1,8 @@
-import { currentCatalogClassificationEvidence } from "./overlay.mjs";
+import {
+  currentCatalogClassificationEvidence,
+  projectReviewedCatalogClassifications,
+  validateCatalogClassificationOverlay,
+} from "./overlay.mjs";
 import { isInputString } from "../input-guards.mjs";
 import {
   findDeterministicAliasClassification,
@@ -120,4 +124,37 @@ export function planCatalogApprovalReconciliation({
     revalidated,
     summary: { retained, revalidated: revalidated.length, retired: retired.length },
   };
+}
+
+/** Reconcile only verified refreshed sources before publishing their catalog snapshot. */
+export function reconcileRefreshedCatalogClassifications(
+  catalog,
+  { taxonomy, overlay = null, accessRules = {}, refreshedNamespaces = [] } = {},
+) {
+  if (!overlay) {
+    return {
+      ...projectReviewedCatalogClassifications(catalog, { taxonomy, accessRules }),
+      revalidated: [],
+    };
+  }
+
+  const reviewed = validateCatalogClassificationOverlay(overlay, taxonomy);
+  const reviewedNamespaces = new Set(reviewed.items.map((item) => identity(item.namespace)));
+
+  const plan = planCatalogApprovalReconciliation({
+    catalog,
+    reviews: reviewed.items,
+    taxonomy,
+    verifiedNamespaces: refreshedNamespaces.filter((namespace) =>
+      reviewedNamespaces.has(identity(namespace)),
+    ),
+  });
+
+  const projected = projectReviewedCatalogClassifications(catalog, {
+    taxonomy,
+    overlay: { ...reviewed, items: plan.active },
+    accessRules,
+  });
+
+  return { ...projected, retired: plan.retired, revalidated: plan.revalidated };
 }

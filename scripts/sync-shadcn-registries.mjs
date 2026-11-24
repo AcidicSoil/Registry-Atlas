@@ -1,10 +1,14 @@
 import { isInputObject, isInputString } from "./lib/input-guards.mjs";
+import { projectRegistrySource } from "./lib/registry-source-overrides.mjs";
 import {
   buildCatalogCoverageFacts,
   syncCatalogEvidenceForRegistries,
 } from "./sync-registry-catalog-evidence.mjs";
-import { projectReviewedCatalogClassifications } from "./lib/classification/overlay.mjs";
-import { persistRetiredCatalogApprovals } from "./lib/classification/approval-storage.mjs";
+import { reconcileRefreshedCatalogClassifications } from "./lib/classification/reconciliation.mjs";
+import {
+  persistRetiredCatalogApprovals,
+  persistRevalidatedCatalogApprovals,
+} from "./lib/classification/approval-storage.mjs";
 import { validateCatalogTaxonomy } from "./lib/catalog-taxonomy.mjs";
 import {
   openAtlasCoreDatabase,
@@ -255,7 +259,7 @@ async function main() {
       throw new Error("Missing catalog-taxonomy document in PostgreSQL atlas schema");
     const taxonomy = validateCatalogTaxonomy(state.taxonomy);
 
-    const classificationProjection = projectReviewedCatalogClassifications(
+    const classificationProjection = reconcileRefreshedCatalogClassifications(
       catalogSync.itemsByNamespace,
       {
         taxonomy,
@@ -269,11 +273,15 @@ async function main() {
     const syncedAt = new Date().toISOString();
 
     const registries = upstream.map((registry) =>
-      normalizeOfficialRegistry(
+      projectRegistrySource(
+        normalizeOfficialRegistry(
+          registry,
+          previousEnrichment,
+          state.curated,
+          catalogEvidenceByNamespace,
+        ),
         registry,
-        previousEnrichment,
-        state.curated,
-        catalogEvidenceByNamespace,
+        catalogEvidenceByNamespace[registry.name],
       ),
     );
 
@@ -320,6 +328,7 @@ async function main() {
         classificationProjection.retired,
         catalogEvidenceByNamespace,
       );
+      await persistRevalidatedCatalogApprovals(tx, classificationProjection.revalidated);
       await putDocument(tx, "catalog-evidence-report", "sync-report", catalogSync.report);
       await replaceCatalogSnapshot(tx, {
         meta: {

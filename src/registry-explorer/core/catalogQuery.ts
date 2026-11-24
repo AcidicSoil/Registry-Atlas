@@ -244,6 +244,10 @@ function createFacetCounts(): FacetCounts {
   };
 }
 
+function incrementAll(counts: Map<string, number>, values: readonly string[]): void {
+  for (const value of values) increment(counts, value);
+}
+
 function collectCatalogFacet(
   counts: FacetCounts,
   namespace: string,
@@ -253,11 +257,9 @@ function collectCatalogFacet(
   increment(counts.registries, namespace);
   increment(counts.types, item.type);
 
-  for (const category of item.categories ?? []) increment(counts.categories, category);
-
-  for (const type of catalogComponentTypesForItem(item)) increment(counts.componentTypes, type);
-
-  for (const id of item.canonical?.path ?? []) increment(counts.canonical, id);
+  incrementAll(counts.categories, item.categories ?? []);
+  incrementAll(counts.componentTypes, catalogComponentTypesForItem(item));
+  incrementAll(counts.canonical, item.canonical?.path ?? []);
 
   if (item.access) increment(counts.access, item.access.normalized);
 
@@ -278,16 +280,23 @@ function includeCanonicalAndAccessFacet(
   return !filters.access.size || (!!item.access && filters.access.has(item.access.normalized));
 }
 
+function matchesAssetKindFacet(
+  item: RegistryCatalogItem,
+  namespace: string,
+  filters: Pick<CatalogFilters, "assetKinds" | "policy">,
+): boolean {
+  return (
+    !filters.assetKinds.size ||
+    filters.assetKinds.has(assetKindForCatalogItem(item, filters.policy, namespace))
+  );
+}
+
 function includeCatalogFacet(
   item: RegistryCatalogItem,
   namespace: string,
   filters: Pick<CatalogFilters, "assetKinds" | "canonicalIds" | "access" | "search" | "policy">,
 ): boolean {
-  if (
-    filters.assetKinds.size &&
-    !filters.assetKinds.has(assetKindForCatalogItem(item, filters.policy, namespace))
-  )
-    return false;
+  if (!matchesAssetKindFacet(item, namespace, filters)) return false;
 
   if (!includeCanonicalAndAccessFacet(item, filters)) return false;
 
@@ -452,25 +461,32 @@ function compareFileCounts(a: CatalogMatch, b: CatalogMatch, descending: boolean
   return descending ? right - left : left - right;
 }
 
-function compareCatalogMatches(a: CatalogMatch, b: CatalogMatch, sort: CatalogSort): number {
+function compareCatalogOrder(
+  a: CatalogMatch,
+  b: CatalogMatch,
+  primary: "name" | "registry",
+  descending: boolean,
+): number {
   const nameOrder = naturalOrder.compare(displayName(a), displayName(b));
   const registryOrder = naturalOrder.compare(a.registry.name, b.registry.name);
-  const stableOrder = a.item.name.localeCompare(b.item.name);
+  const first = primary === "name" ? nameOrder : registryOrder;
+  const second = primary === "name" ? registryOrder : nameOrder;
 
+  return (descending ? -first : first) || second || a.item.name.localeCompare(b.item.name);
+}
+
+function compareCatalogMatches(a: CatalogMatch, b: CatalogMatch, sort: CatalogSort): number {
   switch (sort) {
-    case "name-desc":
-      return -nameOrder || registryOrder || stableOrder;
     case "registry":
-      return registryOrder || nameOrder || stableOrder;
     case "registry-desc":
-      return -registryOrder || nameOrder || stableOrder;
+      return compareCatalogOrder(a, b, "registry", sort === "registry-desc");
     case "files-asc":
     case "files-desc":
       return (
-        compareFileCounts(a, b, sort === "files-desc") || nameOrder || registryOrder || stableOrder
+        compareFileCounts(a, b, sort === "files-desc") || compareCatalogOrder(a, b, "name", false)
       );
     default:
-      return nameOrder || registryOrder || stableOrder;
+      return compareCatalogOrder(a, b, "name", sort === "name-desc");
   }
 }
 
@@ -519,6 +535,13 @@ function matchesReviewStatus(expected: CatalogReviewedFilter, actual: boolean): 
   return true;
 }
 
+function matchesComponentTypeFacet(
+  item: RegistryCatalogItem,
+  selected: ReadonlySet<CatalogComponentType>,
+): boolean {
+  return !selected.size || catalogComponentTypesForItem(item).some((type) => selected.has(type));
+}
+
 function matchesFilters(
   item: RegistryCatalogItem,
   namespace: string,
@@ -527,19 +550,11 @@ function matchesFilters(
 ): boolean {
   if (filters.itemTypes.size && !filters.itemTypes.has(normalize(item.type))) return false;
 
-  if (
-    filters.assetKinds.size &&
-    !filters.assetKinds.has(assetKindForCatalogItem(item, filters.policy, namespace))
-  )
-    return false;
+  if (!matchesAssetKindFacet(item, namespace, filters)) return false;
 
   if (!matchesCategoryAndAccess(item, filters)) return false;
 
-  if (
-    filters.componentTypes.size &&
-    !catalogComponentTypesForItem(item).some((type) => filters.componentTypes.has(type))
-  )
-    return false;
+  if (!matchesComponentTypeFacet(item, filters.componentTypes)) return false;
 
   if (!matchesReviewStatus(filters.reviewed, isReviewed)) return false;
 

@@ -56,7 +56,7 @@ try {
     );
   }
 
-  console.log("PASS: cccc rejects an added function that exceeds 15/10.");
+  console.log("PASS: cccc rejects a function exceeding the configured cccc.toml limits.");
 } finally {
   rmSync(probe, { force: true });
 }

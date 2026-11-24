@@ -1,7 +1,14 @@
 import { isInputObject, isInputString } from "./lib/input-guards.mjs";
+import {
+  effectiveRegistrySource,
+  projectRegistrySource,
+} from "./lib/registry-source-overrides.mjs";
 import { pathToFileURL } from "node:url";
-import { projectReviewedCatalogClassifications } from "./lib/classification/overlay.mjs";
-import { persistRetiredCatalogApprovals } from "./lib/classification/approval-storage.mjs";
+import { reconcileRefreshedCatalogClassifications } from "./lib/classification/reconciliation.mjs";
+import {
+  persistRetiredCatalogApprovals,
+  persistRevalidatedCatalogApprovals,
+} from "./lib/classification/approval-storage.mjs";
 import {
   openAtlasCoreDatabase,
   transaction,
@@ -10,6 +17,7 @@ import {
   replaceCatalogEvidence,
   replaceCatalogSnapshot,
   replaceItemDetails,
+  replaceRegistrySnapshot,
 } from "./lib/atlas-storage.mjs";
 
 export const DISCOVERABLE_REGISTRY_ITEM_TYPES = Object.freeze([
@@ -584,7 +592,7 @@ export async function syncCatalogEvidenceForRegistries(
   async function worker() {
     while (queue.length > 0) {
       const registry = queue.shift();
-      const result = await fetchCatalog(registry, timeoutMs, fetchImpl);
+      const result = await fetchCatalog(effectiveRegistrySource(registry), timeoutMs, fetchImpl);
 
       if (result.evidence) {
         fresh[result.evidence.namespace] = result.evidence;
@@ -642,7 +650,7 @@ export async function syncCatalogEvidenceForRegistries(
 }
 
 function parseArgs(argv) {
-  const options = { concurrency: 16, timeoutMs: 8000 };
+  const options = { concurrency: 16, timeoutMs: 8000, namespaces: [] };
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -651,7 +659,13 @@ function parseArgs(argv) {
       options.concurrency = Math.max(1, Number(argv[++index]) || options.concurrency);
     else if (arg === "--timeout-ms")
       options.timeoutMs = Math.max(1000, Number(argv[++index]) || options.timeoutMs);
-    else throw new Error(`Unknown argument: ${arg}`);
+    else if (arg === "--namespace") {
+      const namespace = argv[++index];
+
+      if (!namespace?.startsWith("@")) throw new Error("--namespace requires an @namespace");
+
+      options.namespaces.push(namespace);
+    } else throw new Error(`Unknown argument: ${arg}`);
   }
 
   return options;
@@ -669,14 +683,31 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       throw new Error("The Atlas database does not contain the official registry directory");
     }
 
-    const result = await syncCatalogEvidenceForRegistries(registries, {
+    const selected = options.namespaces.length
+      ? registries.filter((registry) => options.namespaces.includes(registry.name))
+      : registries;
+
+    if (options.namespaces.some((name) => !selected.some((registry) => registry.name === name)))
+      throw new Error("Unknown registry namespace");
+
+    const result = await syncCatalogEvidenceForRegistries(selected, {
       previous: state.catalogEvidence,
       previousItems: state.catalog?.registries ?? {},
       concurrency: options.concurrency,
       timeoutMs: options.timeoutMs,
     });
 
-    const projected = projectReviewedCatalogClassifications(result.itemsByNamespace, {
+    if (options.namespaces.length) {
+      if (result.report.failure_count) throw new Error("Targeted source refresh failed");
+      result.evidence = { ...state.catalogEvidence, ...result.evidence };
+      result.itemsByNamespace = { ...state.catalog.registries, ...result.itemsByNamespace };
+      result.report.discoverable_item_count = Object.values(result.itemsByNamespace).reduce(
+        (count, items) => count + items.length,
+        0,
+      );
+    }
+
+    const projected = reconcileRefreshedCatalogClassifications(result.itemsByNamespace, {
       taxonomy: state.taxonomy,
       overlay: state.classificationOverlay,
       accessRules: state.accessRules ?? {},
@@ -700,7 +731,42 @@ async function main(argv = process.argv.slice(2), cwd = process.cwd()) {
       }
 
       await persistRetiredCatalogApprovals(tx, projected.retired, result.evidence);
-      await putDocument(tx, "catalog-evidence-report", "sync-report", result.report);
+      await persistRevalidatedCatalogApprovals(tx, projected.revalidated);
+      const rawByNamespace = new Map(selected.map((registry) => [registry.name, registry]));
+
+      const nextRegistries = state.runtime.registries.map((record) => {
+        const raw = rawByNamespace.get(record.official.name);
+
+        if (!raw) return record;
+
+        const sourceEvidence = result.evidence[raw.name];
+        const updated = projectRegistrySource(record, raw, sourceEvidence);
+
+        if (updated === record) return record;
+
+        return {
+          ...updated,
+          atlas: {
+            ...updated.atlas,
+            ...buildCatalogCoverageFacts(
+              updated.atlas,
+              updated.atlas?.item_summaries,
+              sourceEvidence,
+            ),
+            catalog_status: "available",
+          },
+        };
+      });
+
+      if (nextRegistries.some((record, index) => record !== state.runtime.registries[index]))
+        await replaceRegistrySnapshot(tx, { ...state.runtime, registries: nextRegistries });
+
+      await putDocument(
+        tx,
+        options.namespaces.length ? "catalog-targeted-evidence-report" : "catalog-evidence-report",
+        "sync-report",
+        result.report,
+      );
       await putDocument(
         tx,
         "catalog-classification-projection-report",

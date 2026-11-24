@@ -3,6 +3,7 @@
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import { validateCatalogRuntimeContract } from "./lib/catalog-runtime-contract.mjs";
+import { resolvedUpstreamHttpIssue } from "./lib/registry-source-overrides.mjs";
 import { openAtlasCoreDatabase, readAtlasState } from "./lib/atlas-storage.mjs";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -82,6 +83,28 @@ try {
       field: "database",
     });
   }
+
+  const rawByNamespace = new Map(rawData.map((registry) => [registry.name, registry]));
+
+  const runtimeByNamespace = new Map(
+    runtimeData.registries.map((registry) => [registry.official.name, registry]),
+  );
+
+  const resolved = result.warnings.filter((issue) =>
+    resolvedUpstreamHttpIssue(
+      issue,
+      runtimeByNamespace.get(issue.namespace),
+      rawByNamespace.get(issue.namespace),
+      state.catalogEvidence[issue.namespace],
+    ),
+  );
+
+  result.warnings = result.warnings.filter((issue) => !resolved.includes(issue));
+
+  for (const issue of resolved)
+    console.log(
+      `resolved upstream ${issue.namespace} ${issue.field}: verified maintainer repository used (${issue.value})`,
+    );
 
   console.log(`validated: ${coreDatabasePath}`);
   console.log(`errors: ${result.errors.length}`);

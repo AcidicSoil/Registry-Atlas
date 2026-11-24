@@ -11,6 +11,8 @@ import {
   projectReviewedCatalogClassifications,
   // @ts-ignore Standalone Node ESM modules.
 } from "../../scripts/lib/classification/overlay.mjs";
+// @ts-ignore Standalone Node ESM module.
+import { reconcileRefreshedCatalogClassifications } from "../../scripts/lib/classification/reconciliation.mjs";
 // @ts-ignore Standalone Node ESM script.
 import { buildReviewedClassificationOverlay } from "../../scripts/promote-catalog-classifications.mjs";
 // @ts-ignore Standalone Node ESM script.
@@ -356,6 +358,78 @@ describe("classification overlay application", () => {
     expect(result.activeOverlay.items).toEqual([overlay.items[0]]);
     expect(result.report).toEqual({ applied: 1, stale: 0, missing: 0 });
     expect(result.itemsByNamespace["@7ovr"][0].canonical.primary).toBe("application/app-shell");
+  });
+
+  it("reconciles changed descriptions during a successful source refresh", () => {
+    const original = classification();
+    const { evaluation, review } = reviewedBundle([original]);
+
+    const overlay = buildReviewedClassificationOverlay({
+      taxonomy,
+      classifications: [original],
+      evaluation,
+      review,
+    });
+
+    const result = reconcileRefreshedCatalogClassifications(
+      {
+        "@7ovr": [
+          {
+            name: original.name,
+            title: "Sidebar Dashboard Shell",
+            description: "Updated description of the same app shell.",
+            categories: ["app-shell"],
+            type: "registry:block",
+          },
+        ],
+      },
+      { taxonomy, overlay, accessRules, refreshedNamespaces: ["@7ovr"] },
+    );
+
+    expect(result.report).toEqual({ applied: 1, stale: 0, missing: 0 });
+    expect(result.revalidated).toHaveLength(1);
+    expect(result.revalidated[0].review.inputFingerprint).not.toBe(original.inputFingerprint);
+    expect(result.itemsByNamespace["@7ovr"][0].canonical.primary).toBe("application/app-shell");
+    expect(result.retired).toEqual([]);
+  });
+
+  it("retires unverified changed inputs and preserves unavailable registry approvals", () => {
+    const changed = classification();
+    const unavailable = classification("@unavailable", "app-shell-2");
+    const { evaluation, review } = reviewedBundle([changed, unavailable]);
+
+    const overlay = buildReviewedClassificationOverlay({
+      taxonomy,
+      classifications: [changed, unavailable],
+      evaluation,
+      review,
+    });
+
+    const result = reconcileRefreshedCatalogClassifications(
+      {
+        "@7ovr": [{ name: changed.name, title: "Unrelated widget", type: "registry:block" }],
+        "@unavailable": [
+          {
+            name: unavailable.name,
+            title: "Sidebar Dashboard Shell",
+            description: "App shell with navigation.",
+            categories: ["app-shell"],
+            type: "registry:block",
+          },
+        ],
+      },
+      { taxonomy, overlay, accessRules, refreshedNamespaces: ["@7ovr"] },
+    );
+
+    expect(result.retired).toMatchObject([
+      { name: changed.name, retirementReason: "changed-input-unverified" },
+    ]);
+    expect(result.revalidated).toEqual([]);
+    expect(result.activeOverlay.items).toEqual([
+      overlay.items.find((item: { namespace: string }) => item.namespace === "@unavailable"),
+    ]);
+    expect(result.itemsByNamespace["@7ovr"][0]).not.toHaveProperty("canonical");
+    expect(result.report).toEqual({ applied: 1, stale: 0, missing: 0 });
   });
 
   it("sync projection strips previously managed fields before reapplying the current reviewed overlay", () => {
