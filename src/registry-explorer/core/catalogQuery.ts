@@ -254,6 +254,7 @@ function collectCatalogFacet(
   increment(counts.types, item.type);
 
   for (const category of item.categories ?? []) increment(counts.categories, category);
+
   for (const type of catalogComponentTypesForItem(item)) increment(counts.componentTypes, type);
 
   for (const id of item.canonical?.path ?? []) increment(counts.canonical, id);
@@ -438,23 +439,39 @@ function reviewedSummaryMap(registry: Registry): Map<string, RegistryItemSummary
   );
 }
 
+const naturalOrder = new Intl.Collator(undefined, { numeric: true });
+
+function compareFileCounts(a: CatalogMatch, b: CatalogMatch, descending: boolean): number {
+  const left = a.item.fileCount;
+  const right = b.item.fileCount;
+
+  if (left === undefined) return right === undefined ? 0 : 1;
+
+  if (right === undefined) return -1;
+
+  return descending ? right - left : left - right;
+}
+
 function compareCatalogMatches(a: CatalogMatch, b: CatalogMatch, sort: CatalogSort): number {
-  const aName = displayName(a);
-  const bName = displayName(b);
+  const nameOrder = naturalOrder.compare(displayName(a), displayName(b));
+  const registryOrder = naturalOrder.compare(a.registry.name, b.registry.name);
+  const stableOrder = a.item.name.localeCompare(b.item.name);
 
-  if (sort === "registry") {
-    return (
-      a.registry.name.localeCompare(b.registry.name) ||
-      aName.localeCompare(bName) ||
-      a.item.name.localeCompare(b.item.name)
-    );
+  switch (sort) {
+    case "name-desc":
+      return -nameOrder || registryOrder || stableOrder;
+    case "registry":
+      return registryOrder || nameOrder || stableOrder;
+    case "registry-desc":
+      return -registryOrder || nameOrder || stableOrder;
+    case "files-asc":
+    case "files-desc":
+      return (
+        compareFileCounts(a, b, sort === "files-desc") || nameOrder || registryOrder || stableOrder
+      );
+    default:
+      return nameOrder || registryOrder || stableOrder;
   }
-
-  return (
-    aName.localeCompare(bName) ||
-    a.registry.name.localeCompare(b.registry.name) ||
-    a.item.name.localeCompare(b.item.name)
-  );
 }
 
 function displayName(match: CatalogMatch): string {

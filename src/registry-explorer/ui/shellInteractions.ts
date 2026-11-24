@@ -1,4 +1,4 @@
-import { parseCatalogRoute, type CatalogRoute } from "../core/catalogRoutes";
+import { isCatalogSort, parseCatalogRoute, type CatalogRoute } from "../core/catalogRoutes";
 import { RESET_BROWSE_STATE } from "./browseRouteState";
 import { isCatalogComponentType } from "../core/catalogComponentTypes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
@@ -218,7 +218,7 @@ export function createCatalogInteractions({
     if (catalogSortControl) {
       const value = catalogSortControl.getAttribute("data-catalog-sort-value");
 
-      if (value === "name" || value === "registry") {
+      if (isCatalogSort(value)) {
         setState(
           { catalogSort: value, discoveryPage: 1 },
           "push",

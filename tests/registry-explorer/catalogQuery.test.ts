@@ -338,6 +338,35 @@ describe("queryCatalogComponents", () => {
     ).toEqual(["@alpha:button", "@alpha:zebra", "@beta:accordion"]);
   });
 
+  it("sorts names naturally in both directions and preserves missing file counts last", () => {
+    const registries = [registry("@alpha"), registry("@beta")];
+
+    const catalog = index({
+      "@alpha": [
+        { name: "Button 10", type: "registry:ui", fileCount: 8 },
+        { name: "Button 2", type: "registry:ui", fileCount: 1 },
+        { name: "Button 20", type: "registry:ui" },
+      ],
+      "@beta": [{ name: "Button 3", type: "registry:ui", fileCount: 3 }],
+    });
+
+    for (const [sort, expected] of [
+      ["name", ["Button 2", "Button 3", "Button 10", "Button 20"]],
+      ["name-desc", ["Button 20", "Button 10", "Button 3", "Button 2"]],
+      ["files-asc", ["Button 2", "Button 3", "Button 10", "Button 20"]],
+      ["files-desc", ["Button 10", "Button 3", "Button 2", "Button 20"]],
+      ["registry-desc", ["Button 3", "Button 2", "Button 10", "Button 20"]],
+    ] as const) {
+      const result = queryCatalogComponents(registries, catalog, {
+        policy: TEST_CATALOG_POLICY,
+        sort,
+        pageSize: 10,
+      });
+
+      expect(result.items.map((item) => item.slug)).toEqual(expected);
+    }
+  });
+
   it("searches native description/author metadata and separates display labels from exact slugs", () => {
     const result = queryCatalogComponents(
       [registry("@alpha")],

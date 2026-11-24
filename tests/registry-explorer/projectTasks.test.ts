@@ -54,6 +54,14 @@ describe("Mise-owned project tasks", () => {
     expect(taskSteps("sync:registries")).toEqual(["node scripts/sync-shadcn-registries.mjs"]);
   });
 
+  it("serves the configured desktop browser port by default", () => {
+    const command = taskSteps("dev:serve").join(" ");
+
+    expect(command).toContain("--host ${REGISTRY_ATLAS_HOST:-127.0.0.1}");
+    expect(command).toContain("--port ${REGISTRY_ATLAS_PORT:-5189}");
+    expect(command).toContain("--strictPort");
+  });
+
   it("preserves meaningful composite build and verification workflows", () => {
     expect(taskSteps("build:production")).toEqual([
       "build:compile",

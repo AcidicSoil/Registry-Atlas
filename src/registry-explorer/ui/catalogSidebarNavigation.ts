@@ -106,7 +106,7 @@ function rowButton(options: {
 function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): string {
   const options = showRegistrySort
     ? CATALOG_SORT_OPTIONS
-    : CATALOG_SORT_OPTIONS.filter(({ value }) => value === "name");
+    : CATALOG_SORT_OPTIONS.filter(({ value }) => value !== "registry" && value !== "registry-desc");
 
   return `<section class="sidebar-nav-section" aria-labelledby="catalog-sort-heading">
     <p class="sidebar-nav-section-label" id="catalog-sort-heading">Sort</p>
@@ -213,6 +213,7 @@ function renderComponentTypeFacets(
 ): string {
   const counts = new Map(facets.componentTypes.map(({ value, count }) => [value, count]));
   const selected = new Set(state.componentTypes ?? []);
+
   const visible = CATALOG_COMPONENT_TYPES.filter(
     ({ value }) => (counts.get(value) ?? 0) > 0 || selected.has(value),
   );

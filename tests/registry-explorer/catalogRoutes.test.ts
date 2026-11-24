@@ -123,6 +123,18 @@ describe("catalogRoutes", () => {
     });
   });
 
+  it("round-trips descending and file-count sort modes", () => {
+    for (const sort of ["name-desc", "registry-desc", "files-asc", "files-desc"]) {
+      const state = parseCatalogBrowseQuery(
+        new URLSearchParams("sort=" + sort),
+        TEST_CATALOG_POLICY,
+      );
+
+      expect(state.sort).toBe(sort);
+      expect(serializeCatalogBrowseQuery(state, TEST_CATALOG_POLICY).get("sort")).toBe(sort);
+    }
+  });
+
   it("rejects routes outside the configured base and unsafe traversal segments", () => {
     expect(parseCatalogRoute("/other/components", BASE)).toBeNull();
     expect(parseCatalogRoute("/Registry-Atlas/@demo/components/%2E%2E/secret", BASE)).toBeNull();

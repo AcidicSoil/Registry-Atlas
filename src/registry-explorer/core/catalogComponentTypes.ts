@@ -97,9 +97,9 @@ export function catalogComponentTypesForItem(
     [item.name, item.title ?? "", ...(item.categories ?? [])].join(" "),
   )} `;
 
-  const types = componentTypeTerms
-    .filter(({ terms }) => terms.some((term) => searchable.includes(term)))
-    .map(({ value }) => value);
+  const types = componentTypeTerms.flatMap(({ value, terms }) =>
+    terms.some((term) => searchable.includes(term)) ? [value] : [],
+  );
 
   itemTypeCache.set(item, types);
 

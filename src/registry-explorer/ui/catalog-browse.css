@@ -226,6 +226,7 @@
 .catalog-results-sort {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 3px;
   margin-left: auto;
   padding: 2px;

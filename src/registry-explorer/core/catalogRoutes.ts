@@ -37,11 +37,21 @@ export type CatalogRoute =
   | { kind: "setup" }
   | { kind: "setup-review" };
 
-export type CatalogSort = "name" | "registry";
+export type CatalogSort =
+  | "name"
+  | "name-desc"
+  | "registry"
+  | "registry-desc"
+  | "files-asc"
+  | "files-desc";
 
 export const CATALOG_SORT_OPTIONS: ReadonlyArray<{ value: CatalogSort; label: string }> = [
-  { value: "name", label: "Name" },
-  { value: "registry", label: "Registry" },
+  { value: "name", label: "Name A–Z" },
+  { value: "name-desc", label: "Name Z–A" },
+  { value: "files-asc", label: "Fewest files" },
+  { value: "files-desc", label: "Most files" },
+  { value: "registry", label: "Registry A–Z" },
+  { value: "registry-desc", label: "Registry Z–A" },
 ];
 
 export type CatalogReviewedFilter = "all" | "reviewed" | "unreviewed";
@@ -69,7 +79,11 @@ export const REGISTRY_ASSET_SEGMENTS = {
   other: "other",
 } satisfies REGISTRYASSETSEGMENTSLookupContract;
 
-const CATALOG_SORTS = new Set(CATALOG_SORT_OPTIONS.map(({ value }) => value));
+const CATALOG_SORTS = new Set<string>(CATALOG_SORT_OPTIONS.map(({ value }) => value));
+
+export function isCatalogSort(value: string | null): value is CatalogSort {
+  return value !== null && CATALOG_SORTS.has(value);
+}
 
 const CATALOG_ASSET_KINDS = new Set<string>([
   "component",
@@ -419,9 +433,7 @@ function isCatalogAccess(value: string): value is "free" | "paid" {
 }
 
 function normalizeCatalogSort(value: string | null): CatalogSort {
-  if (value === "registry" || value === "registry-desc") return "registry";
-
-  return "name";
+  return isCatalogSort(value) ? value : "name";
 }
 
 function encodeNamespace(value: string): string {

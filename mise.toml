@@ -46,7 +46,7 @@ pnpm = "latest"
 "db:up" = "node scripts/manage-local-postgres.mjs up"
 "dev" = [{ task = "build:check-runtime-data" }, { task = "dev:serve" }]
 "dev:preview" = "pnpm exec vite preview"
-"dev:serve" = "pnpm exec vite"
+"dev:serve" = "pnpm exec vite --host ${REGISTRY_ATLAS_HOST:-127.0.0.1} --port ${REGISTRY_ATLAS_PORT:-5189} --strictPort"
 "format:check" = [{ task = "lint:format" }]
 "format:write" = [{ task = "lint:format-write" }]
 "lint" = [

@@ -413,11 +413,11 @@ describe("registry explorer shell interactions", () => {
     harness.searchInput.dispatch("input", {});
     expect(harness.contentBody.innerHTML).toContain('aria-label="Sort filtered results"');
 
-    harness.contentBody.dispatch("click", target({ "data-catalog-sort-value": "registry" }));
+    harness.contentBody.dispatch("click", target({ "data-catalog-sort-value": "name-desc" }));
 
-    expect(harness.location.search).toContain("sort=registry");
+    expect(harness.location.search).toContain("sort=name-desc");
     expect(harness.contentBody.innerHTML).toMatch(
-      /data-catalog-sort-value="registry"[^>]*aria-pressed="true"/,
+      /data-catalog-sort-value="name-desc"[^>]*aria-pressed="true"/,
     );
   });
 
