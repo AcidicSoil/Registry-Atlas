@@ -350,10 +350,12 @@ describe("renderCatalogComponents", () => {
     expect(context).not.toContain("data-catalog-search");
     expect(context).not.toContain("data-catalog-registry-select");
     expect(context).not.toContain("data-catalog-access-select");
-    expect(context).toContain('aria-label="Sort filtered results"');
-    expect(context).toContain('data-catalog-sort-value="name"');
-    expect(context).toMatch(/data-catalog-sort-value="registry"[^>]*aria-pressed="true"/);
-    expect(context).not.toContain("<select");
+    expect(context).toContain('for="catalog-sort-select"');
+    expect(context).toMatch(/<select[^>]*data-catalog-sort-select/);
+    expect(context).toContain('<option value="name">Name A–Z</option>');
+    expect(context).toContain('<option value="registry" selected>Registry A–Z</option>');
+    expect(context).toContain("data-catalog-sort-reset");
+    expect(context).not.toContain("data-catalog-sort-value");
     expect(context).not.toContain("<details");
   });
 
@@ -402,8 +404,8 @@ describe("renderCatalogComponents", () => {
 
     expect(body.innerHTML).toContain("Type: block");
     expect(body.innerHTML).toContain("data-catalog-clear");
-    expect(body.innerHTML).toContain('data-catalog-sort-value="name"');
-    expect(body.innerHTML).not.toContain("<select");
+    expect(body.innerHTML).toContain('<option value="name" selected>Name A–Z</option>');
+    expect(body.innerHTML).not.toContain("data-catalog-sort-reset");
     expect(body.innerHTML).toContain("No catalog items are available");
   });
 
@@ -522,8 +524,8 @@ describe("catalog applied-filter context", () => {
     expect(html).toContain("Access: Free");
     expect(html).not.toContain("data-catalog-access-select");
     expect(html).not.toContain("data-catalog-canonical-checkbox");
-    expect(html).toContain('data-catalog-sort-value="registry"');
-    expect(html).not.toContain("<select");
+    expect(html).toContain('<option value="registry">Registry A–Z</option>');
+    expect(html).toContain("data-catalog-sort-select");
   });
 
   it("omits access context when no access filter is active", () => {

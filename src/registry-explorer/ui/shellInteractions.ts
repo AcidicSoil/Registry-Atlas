@@ -212,7 +212,26 @@ export function createCatalogInteractions({
     return false;
   }
 
+  function handleCatalogSortChange(target: HTMLSelectElement): void {
+    if (!target.hasAttribute("data-catalog-sort-select") || !isCatalogSort(target.value)) return;
+
+    setState(
+      { catalogSort: target.value, discoveryPage: 1 },
+      "push",
+      createFocusIdentity(target, "[data-catalog-sort-select]", []),
+    );
+  }
+
   function handleCatalogSortClick(target: HTMLElement): boolean {
+    if (target.closest("[data-catalog-sort-reset]")) {
+      setState({ catalogSort: "name", discoveryPage: 1 }, "push", {
+        selector: "[data-catalog-sort-select]",
+        attributes: [],
+      });
+
+      return true;
+    }
+
     const catalogSortControl = target.closest("[data-catalog-sort-value]");
 
     if (catalogSortControl) {
@@ -424,5 +443,5 @@ export function createCatalogInteractions({
     }
   }
 
-  return { handleClick };
+  return { handleClick, handleCatalogSortChange };
 }

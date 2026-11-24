@@ -411,14 +411,22 @@ describe("registry explorer shell interactions", () => {
     const harness = setup("", "/Registry-Atlas/components");
     harness.searchInput.value = "button";
     harness.searchInput.dispatch("input", {});
-    expect(harness.contentBody.innerHTML).toContain('aria-label="Sort filtered results"');
+    expect(harness.contentBody.innerHTML).toContain("data-catalog-sort-select");
 
-    harness.contentBody.dispatch("click", target({ "data-catalog-sort-value": "name-desc" }));
+    harness.contentBody.dispatch(
+      "change",
+      target({ "data-catalog-sort-select": "", value: "name-desc" }),
+    );
 
     expect(harness.location.search).toContain("sort=name-desc");
-    expect(harness.contentBody.innerHTML).toMatch(
-      /data-catalog-sort-value="name-desc"[^>]*aria-pressed="true"/,
-    );
+    expect(harness.contentBody.innerHTML).toContain('<option value="name-desc" selected>');
+    expect(harness.searchInput.value).toBe("button");
+
+    harness.contentBody.dispatch("click", target({ "data-catalog-sort-reset": "" }));
+
+    expect(harness.location.search).not.toContain("sort=");
+    expect(harness.contentBody.innerHTML).toContain('<option value="name" selected>');
+    expect(harness.searchInput.value).toBe("button");
   });
 
   it("copies install commands and announces feedback", async () => {

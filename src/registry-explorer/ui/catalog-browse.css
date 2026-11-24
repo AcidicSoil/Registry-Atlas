@@ -226,45 +226,79 @@
 .catalog-results-sort {
   display: inline-flex;
   align-items: center;
-  flex-wrap: wrap;
   gap: 3px;
-  margin-left: auto;
-  padding: 2px;
+  margin-inline-start: auto;
+  padding: 2px 4px;
   border: 1px solid var(--border);
   border-radius: 7px;
   background: var(--card);
 }
 
 .catalog-results-sort-label {
-  padding-inline: 7px;
+  padding-inline-start: 7px;
   color: var(--muted-foreground);
-  font-size: 11px;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
-.catalog-results-sort-option {
+.catalog-results-sort-select,
+.catalog-results-sort-reset {
   min-height: 28px;
-  padding-inline: 10px;
+  padding-inline: 6px;
   border: 0;
   border-radius: 5px;
-  background: transparent;
-  color: var(--muted-foreground);
+  background: var(--card);
+  color: var(--foreground);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
 }
 
-.catalog-results-sort-option[aria-pressed="true"] {
+.catalog-results-sort-select {
+  min-inline-size: 120px;
+  max-inline-size: 100%;
+}
+
+.catalog-results-sort-reset {
+  min-width: 28px;
+  color: var(--muted-foreground);
+  font-size: 16px;
+}
+
+.catalog-results-sort-reset:hover {
   background: var(--secondary);
   color: var(--foreground);
 }
 
-.catalog-results-sort-option:hover {
-  color: var(--foreground);
-}
-
-.catalog-results-sort-option:focus-visible {
+.catalog-results-sort-select:focus-visible,
+.catalog-results-sort-reset:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+@supports (appearance: base-select) {
+  .catalog-results-sort-select,
+  .catalog-results-sort-select::picker(select) {
+    appearance: base-select;
+  }
+
+  .catalog-results-sort-select::picker(select) {
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--card);
+    color: var(--foreground);
+    font-size: 12px;
+  }
+
+  .catalog-results-sort-select option {
+    padding: 6px 8px;
+    border-radius: 4px;
+  }
+
+  .catalog-results-sort-select option:hover {
+    background: var(--secondary);
+  }
 }
 
 .catalog-filter-clear {

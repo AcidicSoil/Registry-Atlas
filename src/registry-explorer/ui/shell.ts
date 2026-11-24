@@ -458,6 +458,11 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     authorRows,
   });
 
+  listen(roots.contentBody, "change", (event) => {
+    // SAFETY: The delegated handler validates the owned sort control and its value.
+    interactions.handleCatalogSortChange(event.target as HTMLSelectElement);
+  });
+
   const commandPalette = roots.paletteMount
     ? createCommandPalette({
         mount: roots.paletteMount,

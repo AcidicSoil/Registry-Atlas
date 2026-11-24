@@ -192,12 +192,15 @@ export function renderCatalogBrowseControls(
     </div>`
         : ""
     }
-    <div class="catalog-results-sort" role="group" aria-label="Sort filtered results">
-      <span class="catalog-results-sort-label">Sort by</span>
-      ${CATALOG_SORT_OPTIONS.map(
-        ({ value, label }) =>
-          `<button type="button" class="catalog-results-sort-option" data-catalog-sort-value="${value}" aria-pressed="${state.sort === value}">${label}</button>`,
-      ).join("")}
+    <div class="catalog-results-sort">
+      <label class="catalog-results-sort-label" for="catalog-sort-select">Sort by:</label>
+      <select class="catalog-results-sort-select" id="catalog-sort-select" name="sort" data-catalog-sort-select>
+        ${CATALOG_SORT_OPTIONS.map(
+          ({ value, label }) =>
+            `<option value="${value}"${state.sort === value ? " selected" : ""}>${label}</option>`,
+        ).join("")}
+      </select>
+      ${state.sort === "name" ? "" : '<button type="button" class="catalog-results-sort-reset" data-catalog-sort-reset aria-label="Reset sorting to Name A–Z"><span aria-hidden="true">×</span></button>'}
     </div>
     <button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear all</button>
   </div>`;
