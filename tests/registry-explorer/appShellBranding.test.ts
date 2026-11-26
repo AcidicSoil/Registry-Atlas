@@ -6,10 +6,20 @@ const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 
 describe("app-shell navigation and browser branding", () => {
   it("points both branded home links to the actual app base path", () => {
-    expect(html.match(/class="brand brand-home-link"\s+href="\/Registry-Atlas\/"/g)).toHaveLength(
-      2,
-    );
-    expect(html).toContain('aria-label="Registry Atlas home"');
+    const homeLinks: string[] = [];
+
+    for (const [tag] of html.matchAll(/<a\s[^>]*>/g)) {
+      const classes = tag.match(/\sclass="([^"]*)"/)?.[1]?.split(/\s+/) ?? [];
+
+      if (classes.includes("brand") && classes.includes("brand-home-link")) homeLinks.push(tag);
+    }
+
+    expect(homeLinks).toHaveLength(2);
+
+    for (const link of homeLinks) {
+      expect(link).toMatch(/\shref="\/Registry-Atlas\/"/);
+      expect(link).toContain('aria-label="Registry Atlas home"');
+    }
   });
 
   it("includes valid and owned favicon metadata", () => {
