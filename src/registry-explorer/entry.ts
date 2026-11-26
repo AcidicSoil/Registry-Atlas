@@ -1,6 +1,7 @@
-import "./ui/stylex.css";
 import "@ui-sdk/web/command";
+import "@ui-sdk/web/combobox";
 import "@ui-sdk/web/dialog";
+import "@ui-sdk/web/popover";
 import { initRegistryExplorer } from "./ui";
 import { loadRegistries } from "./data/loadRegistries";
 import { attachCatalogLinkPreviews } from "./ui/catalogLinkPreview";
@@ -126,8 +127,8 @@ async function bootstrap() {
     // SAFETY: The resolved DOM node is created as this control type in the page template; the handler only accesses its documented control members.
     const searchInput = document.getElementById("searchInput") as HTMLInputElement;
     const sidebarContext = document.getElementById("sidebarContext");
-    // SAFETY: This layout host is a required element in the HTML shell.
-    const sidebarLayout = document.getElementById("sidebarLayout") as HTMLElement;
+    // SAFETY: This browse toolbar host is a required element in the HTML shell.
+    const browseToolbar = document.getElementById("browseToolbar") as HTMLElement;
 
     // SAFETY: This collection label is a required element in the HTML shell.
     const sidebarCollectionCurrent = document.getElementById(
@@ -163,9 +164,11 @@ async function bootstrap() {
           tabs,
           searchInput,
           ...optionalShellRoots(sidebarContext, setupCount),
-          sidebarLayout,
+          browseToolbar,
           sidebarCollectionCurrent,
           paletteMount: document.getElementById("commandPaletteMount") ?? undefined,
+          componentTypeFilterMount:
+            document.getElementById("componentTypeFilterMount") ?? undefined,
         },
       });
 

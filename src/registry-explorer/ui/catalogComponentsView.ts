@@ -1,19 +1,17 @@
+import { emptyStateClasses } from "./primitives/emptyStateClasses";
+import { actionClasses } from "./primitives/actionClasses";
+import { catalogPresentationClasses } from "./primitives/catalogPresentationClasses";
+import { cn } from "./primitives/cn";
 import { renderCatalogGridAttributes } from "./catalogGrid";
-import * as stylex from "@stylexjs/stylex";
-import { cardMarker, cardStyles } from "./catalogCard.stylex";
-import { discoveryStyles } from "./catalogDiscovery.stylex";
+import { cardStyles } from "./catalogCard.classes";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogComponent, CatalogQueryResult } from "../core/catalogQuery";
-import {
-  CATALOG_SORT_OPTIONS,
-  catalogRoutePath,
-  type CatalogBrowseQueryState,
-} from "../core/catalogRoutes";
+import { catalogRoutePath, type CatalogBrowseQueryState } from "../core/catalogRoutes";
 import type { CatalogAssetKind } from "../core/catalogCollections";
 import { CATALOG_COMPONENT_TYPES } from "../core/catalogComponentTypes";
 import { catalogTaxonomyNodeMap, type CatalogTaxonomy } from "../core/catalogTaxonomy";
 import type { RegistryThemeSwatch } from "../core/registry.schema";
-import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
+import { escapeHtml, renderClassAttribute } from "./renderSafety";
 import { sourcePageNavigation, verifiedRegistryHomepage } from "./sourcePageLink";
 import { renderRegistryIcon } from "./registryIdentity";
 
@@ -40,8 +38,8 @@ export function renderCatalogComponents(
 ): void {
   const countLabel = result.total === 1 ? "1 item" : `${result.total.toLocaleString()} items`;
   headerRoot.innerHTML = `
-    <div class="catalog-page-heading">
-      <div class="catalog-eyebrow">${options.selectedGroup ? "Explore / Components" : "Explore"}</div>
+    <div class="catalog-page-heading ${catalogPresentationClasses.pageHeading}">
+      <div class="catalog-eyebrow ${catalogPresentationClasses.eyebrow}">${options.selectedGroup ? "Explore / Components" : "Explore"}</div>
       <h1>${escapeHtml(options.selectedGroup ?? "Components")}</h1>
       <p>${escapeHtml(countLabel)} across published registries.</p>
     </div>
@@ -68,7 +66,7 @@ function renderCatalogResultList(
   emptyCopy: string,
 ): string {
   if (!result.items.length)
-    return `<div class="empty-state"><h2>${emptyCopy}</h2><p>Try a different item name, category, kind, or registry.</p></div>`;
+    return `<div class="empty-state ${emptyStateClasses}"><h2>${emptyCopy}</h2><p>Try a different item name, category, kind, or registry.</p></div>`;
 
   return `
     ${renderResultMeta(result)}
@@ -85,16 +83,16 @@ function renderDiscoveryBands(bands: readonly CatalogDiscoveryBand[]): string {
   if (!visible.length) return "";
 
   return `
-    <section class="catalog-discovery-bands" aria-label="Component discovery collections">
+    <section class="catalog-discovery-bands mb-8 grid gap-8" aria-label="Component discovery collections">
       ${visible
         .map(
           (band) => `
-        <section class="catalog-discovery-band">
-          <div class="catalog-discovery-band-heading">
+        <section class="catalog-discovery-band grid gap-3">
+          <div class="catalog-discovery-band-heading mt-2 flex items-center justify-between gap-3 [&>h2]:m-0">
             <h2>${escapeHtml(band.label)}</h2>
-            <button type="button" class="link-button" data-catalog-route="${escapeHtml(band.routePath)}">View collection</button>
+            <button type="button" class="link-button ${actionClasses.link}" data-catalog-route="${escapeHtml(band.routePath)}">View collection</button>
           </div>
-          <div${renderStyleXAttributes(stylex.attrs(discoveryStyles.row))} data-catalog-discovery-row>
+          <div class="grid w-full auto-cols-[clamp(285px,calc((100%-36px)/3),355px)] grid-flow-col items-start gap-[18px] overflow-x-auto overflow-y-clip snap-x snap-proximity [scroll-padding-inline:2px] [overscroll-behavior-inline:contain] [scrollbar-width:thin] [scrollbar-color:var(--atlas-input)_transparent] pt-0.5 pb-[15px] max-[720px]:auto-cols-[minmax(255px,82%)]" data-catalog-discovery-row>
             ${band.items
               .slice(0, 6)
               .map((item) =>
@@ -176,33 +174,22 @@ export function renderCatalogBrowseControls(
 
   if (!active) return "";
 
-  return `<div class="catalog-results-context" aria-label="Current catalog scope">
-    ${query ? `<span class="catalog-search-context">Search: “${escapeHtml(query)}”</span>` : ""}
+  return `<div class="catalog-results-context sticky top-0 z-5 mb-3 flex min-w-0 flex-wrap items-center gap-2 bg-atlas-background py-[7px]" aria-label="Current catalog scope">
+    ${query ? `<span class="catalog-search-context text-xs text-atlas-muted-foreground">Search: “${escapeHtml(query)}”</span>` : ""}
     ${
       activeFilters.length
-        ? `<div class="catalog-applied-filters" role="group" aria-label="Active filters">
+        ? `<div class="catalog-applied-filters mr-auto flex flex-wrap items-center gap-1.5" role="group" aria-label="Active filters">
       ${activeFilters
         .map(
           (
             entry,
-          ) => `<button type="button" class="catalog-applied-filter" ${entry.attribute}="${escapeHtml(entry.value)}"
+          ) => `<button type="button" class="catalog-applied-filter cursor-pointer rounded-full border border-atlas-input bg-atlas-secondary px-[9px] py-[7px] text-xs text-atlas-foreground hover:border-atlas-primary" ${entry.attribute}="${escapeHtml(entry.value)}"
         aria-label="Remove ${escapeHtml(entry.label)} filter">${escapeHtml(entry.label)} <span aria-hidden="true">×</span></button>`,
         )
         .join("")}
     </div>`
         : ""
     }
-    <div class="catalog-results-sort">
-      <label class="catalog-results-sort-label" for="catalog-sort-select">Sort by:</label>
-      <select class="catalog-results-sort-select" id="catalog-sort-select" name="sort" data-catalog-sort-select>
-        ${CATALOG_SORT_OPTIONS.map(
-          ({ value, label }) =>
-            `<option value="${value}"${state.sort === value ? " selected" : ""}>${label}</option>`,
-        ).join("")}
-      </select>
-      ${state.sort === "name" ? "" : '<button type="button" class="catalog-results-sort-reset" data-catalog-sort-reset aria-label="Reset sorting to Name A–Z"><span aria-hidden="true">×</span></button>'}
-    </div>
-    <button class="link-button catalog-filter-clear" type="button" data-catalog-clear>Clear all</button>
   </div>`;
 }
 
@@ -232,7 +219,7 @@ function catalogCardRoutePath(
 function renderCardRegistryHomepage(url: string | null, namespace: string): string {
   if (!url) return "";
 
-  return `<a${renderStyleXAttributes(stylex.attrs(cardStyles.registryHomepage))}
+  return `<a${renderClassAttribute(cn(cardStyles.registryHomepage))}
     data-registry-homepage href="${escapeHtml(url)}"
     target="_blank" rel="noreferrer noopener"
     aria-label="Open registry homepage for ${escapeHtml(namespace)}">Registry homepage ↗</a>`;
@@ -242,10 +229,9 @@ function cardLayoutAttributes(options: {
   layout?: "grid" | "list";
   context?: "collection" | "discovery";
 }): string {
-  return renderStyleXAttributes(
-    stylex.attrs(
+  return renderClassAttribute(
+    cn(
       cardStyles.card,
-      cardMarker,
       options.context === "collection" && cardStyles.collectionCard,
       options.layout === "list" && cardStyles.listCard,
       options.context === "discovery" && cardStyles.discoveryCard,
@@ -259,16 +245,14 @@ function renderCardSourceLink(
 ): string {
   if (!source) return "";
 
-  return `<a${renderStyleXAttributes(stylex.attrs(cardStyles.original))} data-catalog-source href="${escapeHtml(source.url)}"
+  return `<a${renderClassAttribute(cn(cardStyles.original))} data-catalog-source href="${escapeHtml(source.url)}"
     data-source-level="${escapeHtml(source.level)}"
     target="_blank" rel="noreferrer noopener"
     aria-label="Open source page on ${escapeHtml(namespace)}">Source ↗</a>`;
 }
 
 function cardOpenAttributes(layout: "grid" | "list" | undefined): string {
-  return renderStyleXAttributes(
-    stylex.attrs(cardStyles.open, layout === "list" && cardStyles.listOpen),
-  );
+  return renderClassAttribute(cn(cardStyles.open, layout === "list" && cardStyles.listOpen));
 }
 
 function catalogCardSupportingCopy(component: CatalogComponent, kindLabel: string): string {
@@ -331,27 +315,24 @@ export function renderCatalogComponentCard(
         data-view-item-slug="${escapeHtml(component.slug)}"
         data-view-item-kind="${routeKind}"
         aria-label="Open ${escapeHtml(component.displayName)} from ${escapeHtml(component.namespace)}">
-        <div${renderStyleXAttributes(stylex.attrs(cardStyles.heading))} data-catalog-heading>
-          <div${renderStyleXAttributes(stylex.attrs(cardStyles.library))} data-catalog-library>
+        <div${renderClassAttribute(cn(cardStyles.heading))} data-catalog-heading>
+          <div${renderClassAttribute(cn(cardStyles.library))} data-catalog-library>
             ${renderRegistryIcon(component.registry)}
-            <div${renderStyleXAttributes(stylex.attrs(cardStyles.copy))} data-catalog-copy>
-              <strong${renderStyleXAttributes(stylex.attrs(cardStyles.name))}>${escapeHtml(component.displayName)}</strong>
-              <span${renderStyleXAttributes(stylex.attrs(cardStyles.registry))} data-catalog-registry>${escapeHtml(component.namespace)}</span>
+            <div${renderClassAttribute(cn(cardStyles.copy))} data-catalog-copy>
+              <strong${renderClassAttribute(cn(cardStyles.name))}>${escapeHtml(component.displayName)}</strong>
+              <span${renderClassAttribute(cn(cardStyles.registry))} data-catalog-registry>${escapeHtml(component.namespace)}</span>
             </div>
           </div>
-          <span${renderStyleXAttributes(stylex.attrs(cardStyles.kind))} data-catalog-kind>${escapeHtml(kindLabel)}</span>
+          <span${renderClassAttribute(cn(cardStyles.kind))} data-catalog-kind>${escapeHtml(kindLabel)}</span>
         </div>
-        <p${renderStyleXAttributes(
-          stylex.attrs(
-            cardStyles.description,
-            options.layout === "list" && cardStyles.listDescription,
-          ),
+        <p${renderClassAttribute(
+          cn(cardStyles.description, options.layout === "list" && cardStyles.listDescription),
         )} data-catalog-description>${escapeHtml(supportingCopy)}</p>
         ${themeData}
       </a>
-      <div${renderStyleXAttributes(stylex.attrs(cardStyles.actions))} data-catalog-actions aria-label="Item actions">
+      <div${renderClassAttribute(cn(cardStyles.actions))} data-catalog-actions aria-label="Item actions">
         ${renderCardRegistryHomepage(registryHomepage, component.namespace)}
-        <button${renderStyleXAttributes(stylex.attrs(cardStyles.copyName))} type="button"
+        <button${renderClassAttribute(cn(cardStyles.copyName))} type="button"
           data-catalog-copy-name data-copy-text="${escapeHtml(copy.value)}"
           data-copy-label="${copy.feedback}"
           aria-label="Copy ${escapeHtml(component.displayName)} ${copy.action}"
@@ -396,20 +377,20 @@ function renderCatalogThemeSpecimen(component: CatalogComponent): string {
   if (!visible.length) return renderCatalogMetadataSpecimen(component);
 
   return `
-    <div class="catalog-theme-swatches" aria-label="${escapeHtml(component.displayName)} theme swatches">
+    <div class="catalog-theme-swatches grid size-full grid-cols-2 content-stretch bg-atlas-card" aria-label="${escapeHtml(component.displayName)} theme swatches">
       ${visible
         .map(
           (group) => `
-        <div class="catalog-theme-swatch-group">
+        <div class="catalog-theme-swatch-group grid content-end gap-2 p-4 [&>span]:text-[10px] [&>span]:uppercase [&>span]:text-atlas-muted-foreground">
           <span>${escapeHtml(group.label)}</span>
-          <div class="catalog-theme-swatch-row">
+          <div class="catalog-theme-swatch-row grid min-h-[84px] grid-cols-5 overflow-hidden rounded-[var(--atlas-radius-button)] border border-atlas-input">
             ${THEME_SWATCH_KEYS.map((name) => {
               const value = group.values?.[name];
 
               if (!value) return "";
               const color = safeCssColor(value);
 
-              return `<span class="catalog-theme-swatch" title="${escapeHtml(name)}: ${escapeHtml(value)}"${color ? ` style="background-color:${escapeHtml(color)}"` : ""}></span>`;
+              return `<span class="catalog-theme-swatch min-w-0 border-r border-black/[0.18] bg-atlas-secondary last:border-r-0" title="${escapeHtml(name)}: ${escapeHtml(value)}"${color ? ` style="background-color:${escapeHtml(color)}"` : ""}></span>`;
             }).join("")}
           </div>
         </div>
@@ -441,9 +422,9 @@ function renderCatalogMetadataSpecimen(component: CatalogComponent): string {
   ].filter(Boolean);
 
   return `
-    <div${renderStyleXAttributes(stylex.attrs(cardStyles.metadata))} data-catalog-metadata>
-      <p${renderStyleXAttributes(stylex.attrs(cardStyles.metadataText))}>${escapeHtml(component.description ?? `From ${component.namespace}.`)}</p>
-      <div${renderStyleXAttributes(stylex.attrs(cardStyles.metadataFacts))} data-catalog-facts>
+    <div${renderClassAttribute(cn(cardStyles.metadata))} data-catalog-metadata>
+      <p${renderClassAttribute(cn(cardStyles.metadataText))}>${escapeHtml(component.description ?? `From ${component.namespace}.`)}</p>
+      <div${renderClassAttribute(cn(cardStyles.metadataFacts))} data-catalog-facts>
         ${facts.map((fact) => `<span>${escapeHtml(fact)}</span>`).join("")}
       </div>
     </div>
@@ -454,5 +435,5 @@ function renderResultMeta(result: CatalogQueryResult): string {
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
 
-  return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
+  return `<div class="catalog-result-meta ${catalogPresentationClasses.resultMeta}">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
 }

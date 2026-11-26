@@ -1,6 +1,9 @@
-import * as stylex from "@stylexjs/stylex";
-import { directoryOpenMarker, directoryStyles } from "./registryDirectory.stylex";
-import { sidebarNavigationStyles } from "./sidebarNavigation.stylex";
+import { emptyStateClasses } from "./primitives/emptyStateClasses";
+import { catalogPresentationClasses } from "./primitives/catalogPresentationClasses";
+import { cn } from "./primitives/cn";
+import { sidebarNavigationStyles } from "./sidebarNavigation.classes";
+import { directoryStyles } from "./registryDirectory.classes";
+import { renderBrowseFacetPopover } from "./browseFacetPopover";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type {
   RegistryCatalogCoverage,
@@ -9,7 +12,7 @@ import type {
   RegistryDirectorySort,
 } from "../core/registryDirectory";
 import type { CatalogAssetKind } from "../core/catalogCollections";
-import { escapeHtml, renderRegistryHomepageLink, renderStyleXAttributes } from "./renderSafety";
+import { escapeHtml, renderRegistryHomepageLink, renderClassAttribute } from "./renderSafety";
 import { catalogRoutePath } from "../core/catalogRoutes";
 import { renderRegistryIcon } from "./registryIdentity";
 
@@ -52,8 +55,8 @@ export function renderRegistryDirectory(
   options: RegistryDirectoryViewOptions = {},
 ): void {
   headerRoot.innerHTML = `
-    <div class="catalog-page-heading">
-      <div class="catalog-eyebrow">Registry directory</div>
+    <div class="catalog-page-heading ${catalogPresentationClasses.pageHeading}">
+      <div class="catalog-eyebrow ${catalogPresentationClasses.eyebrow}">Registry directory</div>
       <h1>Registries</h1>
       <p>${result.total.toLocaleString()} registries.</p>
     </div>
@@ -63,8 +66,8 @@ export function renderRegistryDirectory(
   const controls = options.controls ?? "";
   bodyRoot.innerHTML = result.entries.length
     ? `${controls}${renderMeta(result)}
-      <div${renderStyleXAttributes(
-        stylex.attrs(
+      <div${renderClassAttribute(
+        cn(
           directoryStyles.grid,
           layout === "list" ? directoryStyles.gridList : directoryStyles.gridColumns,
         ),
@@ -72,10 +75,10 @@ export function renderRegistryDirectory(
         ${result.entries.map((entry) => renderEntry(entry, layout)).join("")}
       </div>
       ${renderInfiniteScrollControl(result.page, result.pageCount)}`
-    : '<div class="empty-state"><h2>No registries match this view.</h2><p>Try another search or category.</p></div>';
+    : `<div class="empty-state ${emptyStateClasses}"><h2>No registries match this view.</h2><p>Try another search or category.</p></div>`;
 }
 
-export function renderRegistryDirectorySidebar(options: RegistryDirectorySidebarOptions): string {
+export function renderRegistryDirectoryControls(options: RegistryDirectorySidebarOptions): string {
   // SAFETY: The keys come directly from the typed asset label table, which lists only supported asset kinds.
   const assetKinds = (Object.keys(ASSET_LABELS) as CatalogAssetKind[]).filter(
     (kind) => options.assetCounts[kind] > 0,
@@ -83,29 +86,23 @@ export function renderRegistryDirectorySidebar(options: RegistryDirectorySidebar
 
   const selectedKind = options.selectedAssetKinds[0] ?? "";
 
-  return `
-    <nav${renderStyleXAttributes(
-      stylex.attrs(sidebarNavigationStyles.root),
-      "sidebar-browse-navigation",
-    )} aria-label="Registry directory controls">
-      <section class="sidebar-nav-section" aria-labelledby="registry-sort-heading">
-        <p class="sidebar-nav-section-label" id="registry-sort-heading">Sort</p>
-        ${sortRow("item-count-desc", "Most items", options.sort)}
-        ${sortRow("name", "Name", options.sort)}
-      </section>
-
-      <section class="sidebar-nav-section" aria-labelledby="registry-categories-heading">
-        <p class="sidebar-nav-section-label" id="registry-categories-heading">Asset types</p>
-        ${assetKinds
-          .map((kind) =>
-            assetRow(kind, ASSET_LABELS[kind], options.assetCounts[kind], selectedKind === kind),
-          )
-          .join("")}
-      </section>
-
-
-    </nav>
-  `;
+  return (
+    renderBrowseFacetPopover(
+      "Asset types",
+      assetKinds
+        .map((kind) =>
+          assetRow(kind, ASSET_LABELS[kind], options.assetCounts[kind], selectedKind === kind),
+        )
+        .join(""),
+      selectedKind ? ASSET_LABELS[selectedKind] : undefined,
+    ) +
+    renderBrowseFacetPopover(
+      "Sort",
+      sortRow("item-count-desc", "Most items", options.sort) +
+        sortRow("name", "Name", options.sort),
+      options.sort === "name" ? "Name" : "Most items",
+    )
+  );
 }
 
 function sortRow(
@@ -113,9 +110,9 @@ function sortRow(
   label: string,
   selected: RegistryDirectorySort,
 ): string {
-  return `<button type="button" class="sidebar-nav-row${value === selected ? " sidebar-nav-row-active" : ""}"
+  return `<button type="button" class="${cn("sidebar-nav-row", sidebarNavigationStyles.row, sidebarNavigationStyles.rowWithoutIcon, value === selected && "sidebar-nav-row-active", value === selected && sidebarNavigationStyles.rowActive)}"
     data-registry-sort-value="${value}" aria-pressed="${value === selected ? "true" : "false"}">
-    <span class="sidebar-nav-row-label">${escapeHtml(label)}</span>
+    <span class="sidebar-nav-row-label ${cn(sidebarNavigationStyles.label, value === selected && "font-semibold")}">${escapeHtml(label)}</span>
   </button>`;
 }
 
@@ -125,11 +122,11 @@ function assetRow(
   count: number,
   selected: boolean,
 ): string {
-  return `<button type="button" class="sidebar-nav-row${selected ? " sidebar-nav-row-active" : ""}"
+  return `<button type="button" class="${cn("sidebar-nav-row", sidebarNavigationStyles.row, sidebarNavigationStyles.rowWithIcon, selected && "sidebar-nav-row-active", selected && sidebarNavigationStyles.rowActive)}"
     data-registry-asset-value="${value}" aria-pressed="${selected ? "true" : "false"}">
-    <span class="sidebar-nav-row-icon" aria-hidden="true"></span>
-    <span class="sidebar-nav-row-label">${escapeHtml(label)}</span>
-    <span class="sidebar-nav-row-count">${count.toLocaleString()}</span>
+    <span class="sidebar-nav-row-icon ${sidebarNavigationStyles.icon}" aria-hidden="true"></span>
+    <span class="sidebar-nav-row-label ${cn(sidebarNavigationStyles.label, selected && "font-semibold")}">${escapeHtml(label)}</span>
+    <span class="sidebar-nav-row-count ${sidebarNavigationStyles.count}">${count.toLocaleString()}</span>
   </button>`;
 }
 
@@ -138,7 +135,7 @@ function renderEntry(entry: RegistryDirectoryEntry, layout: RegistryDirectoryLay
 
   const homepage = renderRegistryHomepageLink(
     entry.registry.url,
-    stylex.attrs(directoryStyles.homepage).class,
+    directoryStyles.homepage,
     "Homepage ↗",
   );
 
@@ -147,34 +144,30 @@ function renderEntry(entry: RegistryDirectoryEntry, layout: RegistryDirectoryLay
     "/Registry-Atlas/",
   );
 
-  const openAttributes = stylex.attrs(
-    directoryStyles.open,
-    directoryOpenMarker,
-    layout === "list" && directoryStyles.openList,
-  );
+  const openAttributes = cn(directoryStyles.open, layout === "list" && directoryStyles.openList);
 
   return `
-    <article${renderStyleXAttributes(
-      stylex.attrs(directoryStyles.card, layout === "list" && directoryStyles.cardList),
+    <article${renderClassAttribute(
+      cn(directoryStyles.card, layout === "list" && directoryStyles.cardList),
     )} data-directory-card>
-      <a${renderStyleXAttributes(openAttributes)} data-directory-open data-directory-copy
+      <a${renderClassAttribute(openAttributes)} data-directory-open data-directory-copy
         href="${escapeHtml(route)}" data-profile-registry="${escapeHtml(entry.registry.name)}"
         aria-label="Open registry ${escapeHtml(entry.registry.name)}">
-        <div${renderStyleXAttributes(stylex.attrs(directoryStyles.heading))}>
-          <div${renderStyleXAttributes(stylex.attrs(directoryStyles.identity))}>
+        <div${renderClassAttribute(cn(directoryStyles.heading))}>
+          <div${renderClassAttribute(cn(directoryStyles.identity))}>
             ${renderRegistryIcon(entry.registry, "directory")}
-            <div${renderStyleXAttributes(stylex.attrs(directoryStyles.identityCopy))}>
-              <h2${renderStyleXAttributes(stylex.attrs(directoryStyles.headingTitle))}>${escapeHtml(entry.registry.name)}</h2>
-              <span${renderStyleXAttributes(stylex.attrs(directoryStyles.itemCount))}>${escapeHtml(count)}</span>
+            <div${renderClassAttribute(cn(directoryStyles.identityCopy))}>
+              <h2${renderClassAttribute(cn(directoryStyles.headingTitle))}>${escapeHtml(entry.registry.name)}</h2>
+              <span${renderClassAttribute(cn(directoryStyles.itemCount))}>${escapeHtml(count)}</span>
             </div>
           </div>
         </div>
-        <p${renderStyleXAttributes(stylex.attrs(directoryStyles.description))}>${escapeHtml(entry.registry.description)}</p>
+        <p${renderClassAttribute(cn(directoryStyles.description))}>${escapeHtml(entry.registry.description)}</p>
       </a>
-      <div${renderStyleXAttributes(
-        stylex.attrs(directoryStyles.meta, layout === "list" && directoryStyles.metaList),
+      <div${renderClassAttribute(
+        cn(directoryStyles.meta, layout === "list" && directoryStyles.metaList),
       )}>
-        <span${renderStyleXAttributes(stylex.attrs(directoryStyles.status))} data-directory-coverage="${escapeHtml(entry.coverage)}">${escapeHtml(COVERAGE_LABELS[entry.coverage])}</span>
+        <span${renderClassAttribute(cn(directoryStyles.status))} data-directory-coverage="${escapeHtml(entry.coverage)}">${escapeHtml(COVERAGE_LABELS[entry.coverage])}</span>
         ${homepage}
       </div>
     </article>
@@ -185,5 +178,5 @@ function renderMeta(result: RegistryDirectoryResult): string {
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
 
-  return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()} registries</div>`;
+  return `<div class="catalog-result-meta ${catalogPresentationClasses.resultMeta}">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()} registries</div>`;
 }

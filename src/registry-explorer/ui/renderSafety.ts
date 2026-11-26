@@ -1,3 +1,5 @@
+import { actionClasses } from "./primitives/actionClasses";
+
 const UNSUPPORTED_URL_COPY = "Link unavailable: unsupported URL protocol.";
 
 export function escapeHtml(value: string): string {
@@ -9,24 +11,11 @@ export function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
-/** Serialize only compiler-provided StyleX DOM attributes into HTML strings. */
-export function renderStyleXAttributes(
-  attributes: {
-    class?: string;
-    style?: string;
-    "data-style-src"?: string;
-  },
-  semanticClass = "",
-): string {
-  const classNames = [semanticClass, attributes.class].filter(Boolean).join(" ");
-  const classes = classNames ? ` class="${escapeHtml(classNames)}"` : "";
-  const inlineStyle = attributes.style ? ` style="${escapeHtml(attributes.style)}"` : "";
+/** Serialize escaped class names without changing behavioral attributes. */
+export function renderClassAttribute(classes: string, semanticClass = ""): string {
+  const classNames = [semanticClass, classes].filter(Boolean).join(" ");
 
-  const source = attributes["data-style-src"]
-    ? ` data-style-src="${escapeHtml(attributes["data-style-src"])}"`
-    : "";
-
-  return classes + inlineStyle + source;
+  return classNames ? ` class="${escapeHtml(classNames)}"` : "";
 }
 
 export function toSafeExternalUrl(value: string): URL | null {
@@ -64,7 +53,7 @@ function isPublicHomepageHost(host: string): boolean {
 /** Homepage links are navigation only: never render raw registry endpoints as replacements. */
 export function renderRegistryHomepageLink(
   homepage: string,
-  className = "link-button registry-homepage-link",
+  className = `link-button registry-homepage-link ${actionClasses.link}`,
   label = "Visit registry homepage",
 ): string {
   const url = toSafeExternalUrl(homepage);

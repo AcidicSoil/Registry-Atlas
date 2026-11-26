@@ -20,7 +20,7 @@ describe("quality-tooling integration contract", () => {
       "react-doctor",
       "complexity",
       "styles",
-      "stylex",
+      "design",
       "unused",
       "format",
     ]) {

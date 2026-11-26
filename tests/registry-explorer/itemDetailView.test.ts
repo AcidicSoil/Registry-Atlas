@@ -57,7 +57,11 @@ describe("renderItemDetailView", () => {
       const result = resolveRegistryItemDetailFromSummary([fixture], "@delta", "code-block");
       const header = root();
       renderItemDetailView(header, root(), result, new Set(), TEST_CATALOG_POLICY);
-      const identity = header.innerHTML.match(/<p class="item-origin-line">([\s\S]*?)<\/p>/)?.[1];
+
+      const identity = header.innerHTML.match(
+        /<p class="item-origin-line(?: [^"]*)?">([\s\S]*?)<\/p>/,
+      )?.[1];
+
       expect(identity).toBeDefined();
       expect(identity).toContain('href="https://delta.example/"');
       expect(identity).toContain('href="https://delta.example/components/code-block"');

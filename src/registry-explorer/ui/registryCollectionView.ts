@@ -1,3 +1,6 @@
+import { emptyStateClasses } from "./primitives/emptyStateClasses";
+import { actionClasses } from "./primitives/actionClasses";
+import { catalogPresentationClasses } from "./primitives/catalogPresentationClasses";
 import { renderCatalogGridAttributes } from "./catalogGrid";
 import { renderInfiniteScrollControl } from "./infiniteScrollControl";
 import type { CatalogQueryResult } from "../core/catalogQuery";
@@ -39,12 +42,12 @@ export function renderRegistryCollection(
   ];
 
   headerRoot.innerHTML = `
-    <div class="registry-collection-heading">
-      <button class="link-button" type="button" data-back-to-results>← Registries</button>
-      <div class="catalog-eyebrow">Registry</div>
+    <div class="registry-collection-heading grid min-w-0 gap-2 [&>p]:m-0 [&>p]:max-w-[68ch] [&>p]:text-[13px] [&>p]:text-atlas-muted-foreground [&_.link-button]:mb-2">
+      <button class="link-button ${actionClasses.link}" type="button" data-back-to-results>← Registries</button>
+      <div class="catalog-eyebrow ${catalogPresentationClasses.eyebrow}">Registry</div>
       <h1>${escapeHtml(registry.name)}</h1>
       <p>${escapeHtml(registry.description)}</p>
-      <div class="registry-collection-meta">
+      <div class="registry-collection-meta flex min-w-0 flex-wrap items-center justify-start gap-3 text-[11px] text-atlas-muted-foreground">
         <strong>${escapeHtml(count)}</strong>
         ${renderRegistryCoverageBadge(options.coverage)}
       </div>
@@ -52,31 +55,31 @@ export function renderRegistryCollection(
   `;
 
   bodyRoot.innerHTML = `
-    <div class="registry-profile-layout">
-      <section id="registryProfileSummary" class="registry-profile-summary-rail" aria-label="Registry summary">
-        <div class="catalog-eyebrow">Registry summary</div>
+    <div class="registry-profile-layout grid grid-cols-1 items-start gap-8 min-[861px]:grid-cols-[var(--registry-summary-width,280px)_14px_minmax(0,1fr)] min-[861px]:gap-0 min-[861px]:group-data-[profile-summary-collapsed=true]/shell:grid-cols-[0_14px_minmax(0,1fr)]">
+      <section id="registryProfileSummary" class="registry-profile-summary-rail static grid gap-3 rounded-[var(--atlas-radius-card)] border border-atlas-input bg-atlas-card p-4 min-[861px]:sticky min-[861px]:top-5 [&>p]:m-0 [&>p]:text-[13px] [&>p]:text-atlas-muted-foreground min-[861px]:min-w-0 min-[861px]:max-h-[calc(100dvh-155px)] min-[861px]:overflow-y-auto min-[861px]:group-data-[profile-summary-collapsed=true]/shell:invisible min-[861px]:group-data-[profile-summary-collapsed=true]/shell:pointer-events-none min-[861px]:group-data-[profile-summary-collapsed=true]/shell:overflow-hidden min-[861px]:group-data-[profile-summary-collapsed=true]/shell:p-0 min-[861px]:group-data-[profile-summary-collapsed=true]/shell:border-0" aria-label="Registry summary">
+        <div class="catalog-eyebrow ${catalogPresentationClasses.eyebrow}">Registry summary</div>
         <h2>${escapeHtml(registry.name)}</h2>
         <p>${escapeHtml(registry.description)}</p>
-        <div class="registry-profile-summary-facts">
+        <div class="registry-profile-summary-facts grid gap-2 text-[11px] text-atlas-muted-foreground [&_strong]:text-atlas-foreground">
           <span><strong>${result.total.toLocaleString()}</strong> items</span>
           ${renderRegistryCoverageBadge(options.coverage)}
         </div>
       </section>
-      <div class="registry-profile-divider" aria-label="Registry summary panel controls">
-        <button type="button" class="registry-profile-toggle" data-profile-rail-toggle aria-label="Collapse registry summary" aria-controls="registryProfileSummary" aria-expanded="true">◂</button>
-        <div role="separator" tabindex="0" data-profile-rail-resize
+      <div class="registry-profile-divider flex min-w-0 flex-col items-center max-[860px]:hidden" aria-label="Registry summary panel controls">
+        <button type="button" class="registry-profile-toggle min-h-[26px] w-3.5 cursor-pointer border-0 bg-transparent p-0 text-atlas-muted-foreground hover:bg-atlas-secondary hover:text-atlas-foreground focus-visible:bg-atlas-secondary focus-visible:text-atlas-foreground" data-profile-rail-toggle aria-label="Collapse registry summary" aria-controls="registryProfileSummary" aria-expanded="true">◂</button>
+        <div class="grid min-h-[35px] w-full flex-1 cursor-col-resize touch-none place-items-center before:h-7 before:w-0.5 before:rounded before:bg-atlas-muted-foreground before:opacity-50 before:content-['']" role="separator" tabindex="0" data-profile-rail-resize
           aria-label="Resize registry summary and inventory" aria-controls="registryProfileSummary"
           aria-orientation="vertical" aria-valuemin="200" aria-valuemax="400" aria-valuenow="280"></div>
       </div>
-      <section class="registry-profile-inventory registry-collection-components">
-        <div class="section-heading-row">
+      <section class="registry-profile-inventory registry-collection-components min-w-0 grid gap-3 min-[861px]:pl-5">
+        <div class="section-heading-row ${catalogPresentationClasses.sectionHeading}">
           <div>
             <h2>Items</h2>
             <p>Browse all items in this library or filter by type.</p>
           </div>
         </div>
-        <nav class="registry-asset-navigation" aria-label="Browse library by type">
-          <a class="registry-asset-link${!options.selectedKind ? " is-active" : ""}"
+        <nav class="registry-asset-navigation flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-1.5 pb-3 max-[640px]:gap-y-1" aria-label="Browse library by type">
+          <a class="registry-asset-link inline-flex items-center gap-1.5 border-b-2 border-transparent px-0.5 py-[7px] text-xs text-atlas-muted-foreground no-underline hover:text-atlas-foreground focus-visible:text-atlas-foreground aria-[current=page]:border-current aria-[current=page]:font-semibold aria-[current=page]:text-atlas-foreground [&>span]:text-[11px] [&>span]:tabular-nums${!options.selectedKind ? " is-active" : ""}"
             href="${escapeHtml(rootRoute)}" data-catalog-route="${escapeHtml(rootRoute)}"
             ${!options.selectedKind ? 'aria-current="page"' : ""}>All items</a>
           ${assetLabels
@@ -89,7 +92,7 @@ export function renderRegistryCollection(
               );
 
               return [
-                `<a class="registry-asset-link${options.selectedKind === kind ? " is-active" : ""}"
+                `<a class="registry-asset-link inline-flex items-center gap-1.5 border-b-2 border-transparent px-0.5 py-[7px] text-xs text-atlas-muted-foreground no-underline hover:text-atlas-foreground focus-visible:text-atlas-foreground aria-[current=page]:border-current aria-[current=page]:font-semibold aria-[current=page]:text-atlas-foreground [&>span]:text-[11px] [&>span]:tabular-nums${options.selectedKind === kind ? " is-active" : ""}"
               href="${escapeHtml(path)}" data-catalog-route="${escapeHtml(path)}"
               ${options.selectedKind === kind ? 'aria-current="page"' : ""}>${label} <span>${options.assetCounts?.[kind]?.toLocaleString()}</span></a>`,
               ];
@@ -115,7 +118,7 @@ export function renderRegistryCollection(
 function renderRegistryCoverageBadge(coverage: RegistryCatalogCoverage | undefined): string {
   if (!coverage) return "";
 
-  return `<span class="catalog-coverage catalog-coverage-${escapeHtml(coverage)}">${escapeHtml(coverageLabel(coverage))}</span>`;
+  return `<span class="catalog-coverage catalog-coverage-${escapeHtml(coverage)} flex-none rounded-full border border-atlas-border px-2 py-1 text-[10px] text-atlas-muted-foreground ${coverage === "current" ? "border-atlas-primary/45 text-atlas-foreground" : coverage === "stale" || coverage === "empty" || coverage === "failed" ? "border-dashed" : ""}">${escapeHtml(coverageLabel(coverage))}</span>`;
 }
 
 function coverageLabel(coverage: RegistryCatalogCoverage): string {
@@ -130,18 +133,18 @@ function coverageLabel(coverage: RegistryCatalogCoverage): string {
 
 function renderEmptyRegistryInventory(coverage: RegistryCatalogCoverage | undefined): string {
   if (coverage === "failed") {
-    return '<div class="empty-state"><h2>Catalog unavailable.</h2><p>This registry could not be loaded during the latest sync.</p></div>';
+    return `<div class="empty-state ${emptyStateClasses}"><h2>Catalog unavailable.</h2><p>This registry could not be loaded during the latest sync.</p></div>`;
   }
 
   if (coverage === "empty") {
-    return '<div class="empty-state"><h2>No components found.</h2><p>This registry catalog does not contain component items we can display.</p></div>';
+    return `<div class="empty-state ${emptyStateClasses}"><h2>No components found.</h2><p>This registry catalog does not contain component items we can display.</p></div>`;
   }
 
   if (coverage === "stale") {
-    return '<div class="empty-state"><h2>No components found.</h2><p>The last successful catalog snapshot does not contain component items.</p></div>';
+    return `<div class="empty-state ${emptyStateClasses}"><h2>No components found.</h2><p>The last successful catalog snapshot does not contain component items.</p></div>`;
   }
 
-  return '<div class="empty-state"><h2>No components are available for this registry.</h2></div>';
+  return `<div class="empty-state ${emptyStateClasses}"><h2>No components are available for this registry.</h2></div>`;
 }
 
 function renderMeta(result: CatalogQueryResult): string {
@@ -149,7 +152,7 @@ function renderMeta(result: CatalogQueryResult): string {
   const start = (result.page - 1) * result.pageSize + 1;
   const end = Math.min(result.page * result.pageSize, result.total);
 
-  return `<div class="catalog-result-meta">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
+  return `<div class="catalog-result-meta ${catalogPresentationClasses.resultMeta}">Showing ${start.toLocaleString()}–${end.toLocaleString()} of ${result.total.toLocaleString()}</div>`;
 }
 
 function legacyCardRouteKind(

@@ -1,5 +1,7 @@
 # Phase 4 behavioral baseline
 
+> Historical record. The approved Resend design migration (2026-11-25) supersedes the StyleX styling requirements in this document. Current styling authority: `DESIGN.md`, `design-tokens.json`, `src/styles/globals.css`, and `src/styles/tokens.css`. Component styles now use Tailwind utilities. Historical behavior and evidence below are retained.
+
 **Status:** Recorded 2026-11-03 against clean implementation revision `aa7893e`. Documentation, test, and evidence additions are the only changes. Implementation refactoring has **not started**.
 
 **Runtime:** Ubuntu under WSL2, Node v24.22.2, pnpm 12.16.1, Chromium 153.0.8010.12, Vite 7.3.7, `e2e@0.20.0`. Browser runner uses the freshly built `vite preview` application. The selected viewport configurations are in `e2e.config.ts` and `e2e.mobile.config.ts`.

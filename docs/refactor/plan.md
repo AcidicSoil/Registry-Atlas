@@ -1,5 +1,7 @@
 # Registry Atlas refactor plan
 
+> Historical record. The approved Resend design migration (2026-11-25) supersedes the StyleX styling requirements in this document. Current styling authority: `DESIGN.md`, `design-tokens.json`, `src/styles/globals.css`, and `src/styles/tokens.css`. Component styles now use Tailwind utilities. Historical behavior and evidence below are retained.
+
 **Status (updated 2026-11-10):** Phases 5A–5C and local 5E publication are implemented. The 5D StyleX ownership migration and independent design certification remain open. The restored three-item component-preview pilot does not establish catalog-wide coverage. The November 10 current-source reconciliation resolved all 432 changed and 104 previously missing identities, plus 40 additional upstream removals: zero active stale/missing approvals remain. Five unverified changed decisions were retired rather than reapproved. Older counts below are historical checkpoints. See `TODO.md` for current priorities; the checkpoints below retain historical evidence.
 
 **Historical planning baseline:** `aa7893e` on 2026-11-03. This is not the current checkout revision.

@@ -3,11 +3,6 @@ import { describe, expect, it } from "vitest";
 
 const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 
-const css = readFileSync(
-  new URL("../../src/registry-explorer/ui/sidebar-exemplar-rail.css", import.meta.url),
-  "utf8",
-);
-
 describe("Hairline-inspired grouped sidebar", () => {
   it("separates Explore from Library with source-backed count slots", () => {
     expect(html).toContain('aria-label="Explore"');
@@ -26,19 +21,20 @@ describe("21st.dev-inspired sidebar shell", () => {
       ["authors", "/Registry-Atlas/authors"],
       ["blocks", "/Registry-Atlas/blocks"],
     ]) {
-      expect(html).toContain(`data-view="${view}" href="${href}"`);
+      expect(html.replace(/\s+/g, " ")).toContain(`data-view="${view}" href="${href}"`);
     }
 
     const search = html.indexOf('id="searchInput"');
-    const layout = html.indexOf('id="sidebarLayout"');
-    const navigation = html.indexOf('class="primary-nav"');
+    const layout = html.indexOf('id="browseToolbar"');
+    const navigation = html.indexOf('class="primary-nav ');
     const filters = html.indexOf('id="aside"');
 
-    expect(search).toBeLessThan(layout);
-    expect(layout).toBeLessThan(navigation);
+    expect(search).toBeGreaterThan(filters);
+    expect(html.indexOf('class="catalog-search-toolbar ')).toBeLessThan(search);
+    expect(layout).toBeGreaterThan(search);
     expect(navigation).toBeLessThan(filters);
-    expect(html).toContain('class="sidebar-body-scroll"');
-    expect(css).toMatch(/\.sidebar-body-scroll\s*\{[^}]*overflow:\s*hidden auto/s);
+    expect(html).toContain('class="sidebar-body-scroll ');
+    expect(html).toMatch(/class="sidebar-body-scroll[^"]*overflow-x-hidden[^"]*overflow-y-auto/);
     expect(html).not.toContain("shadcn directory");
     expect(html).toContain('aria-label="Library"');
     expect(html).toContain('id="sidebarCollectionCurrent"');

@@ -1,3 +1,5 @@
+import { cn } from "./primitives/cn";
+
 /** Named map contract for dynamic keys in this module. */
 type PathsLookupContract = Record<string, string>;
 
@@ -5,11 +7,10 @@ import type { CatalogFacetSummary } from "../core/catalogQuery";
 import { CATALOG_SORT_OPTIONS, type CatalogRoute, type CatalogSort } from "../core/catalogRoutes";
 import type { CatalogTaxonomy, CatalogTaxonomyNode } from "../core/catalogTaxonomy";
 import type { CatalogAssetKind } from "../core/catalogCollections";
-import { CATALOG_COMPONENT_TYPES, type CatalogComponentType } from "../core/catalogComponentTypes";
-import * as stylex from "@stylexjs/stylex";
-import { sidebarNavigationStyles } from "./sidebarNavigation.stylex";
-import { taxonomyGroupMarker, taxonomyStyles } from "./sidebarTaxonomy.stylex";
-import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
+import { sidebarNavigationStyles } from "./sidebarNavigation.classes";
+import { taxonomyStyles } from "./sidebarTaxonomy.classes";
+import { renderBrowseFacetPopover } from "./browseFacetPopover";
+import { escapeHtml, renderClassAttribute } from "./renderSafety";
 
 export interface SidebarNavigationState {
   canonicalIds: readonly string[];
@@ -18,7 +19,6 @@ export interface SidebarNavigationState {
   sort: CatalogSort;
   access: readonly ("free" | "paid")[];
   assetKinds?: readonly CatalogAssetKind[];
-  componentTypes?: readonly CatalogComponentType[];
 }
 
 export interface CatalogSidebarNavigationOptions {
@@ -77,7 +77,7 @@ function sidebarIcon(kind: string): string {
     paid: '<circle cx="8" cy="8" r="5"></circle><path d="M9.8 5.8H7.2a1.4 1.4 0 1 0 0 2.8h1.6a1.4 1.4 0 1 1 0 2.8H6M8 4.5v7"></path>',
   } satisfies PathsLookupContract;
 
-  return `<svg class="sidebar-nav-icon-svg" viewBox="0 0 16 16" aria-hidden="true">${new Map(Object.entries(paths)).get(root) ?? paths.other}</svg>`;
+  return `<svg class="sidebar-nav-icon-svg ${sidebarNavigationStyles.iconSvg}" viewBox="0 0 16 16" aria-hidden="true">${new Map(Object.entries(paths)).get(root) ?? paths.other}</svg>`;
 }
 
 function rowButton(options: {
@@ -91,15 +91,20 @@ function rowButton(options: {
 }): string {
   const rowClass = `sidebar-nav-row${options.selected ? " sidebar-nav-row-active" : ""}`;
 
-  return `<button type="button"${renderStyleXAttributes(
-    stylex.attrs(options.nested && taxonomyStyles.childRow),
+  return `<button type="button"${renderClassAttribute(
+    cn(
+      sidebarNavigationStyles.row,
+      options.icon ? sidebarNavigationStyles.rowWithIcon : sidebarNavigationStyles.rowWithoutIcon,
+      options.selected && sidebarNavigationStyles.rowActive,
+      options.nested && taxonomyStyles.childRow,
+    ),
     rowClass,
   )}
     ${options.attribute}="${escapeHtml(options.value)}"
     aria-pressed="${options.selected ? "true" : "false"}">
-    ${options.icon ? `<span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon(options.icon)}</span>` : ""}
-    <span class="sidebar-nav-row-label">${escapeHtml(options.label)}</span>
-    ${options.count === undefined ? "" : `<span class="sidebar-nav-row-count">${options.count.toLocaleString()}</span>`}
+    ${options.icon ? `<span class="sidebar-nav-row-icon ${sidebarNavigationStyles.icon}" aria-hidden="true">${sidebarIcon(options.icon)}</span>` : ""}
+    <span class="sidebar-nav-row-label ${cn(sidebarNavigationStyles.label, options.selected && "font-semibold")}">${escapeHtml(options.label)}</span>
+    ${options.count === undefined ? "" : `<span class="sidebar-nav-row-count ${sidebarNavigationStyles.count}">${options.count.toLocaleString()}</span>`}
   </button>`;
 }
 
@@ -108,9 +113,9 @@ function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): s
     ? CATALOG_SORT_OPTIONS
     : CATALOG_SORT_OPTIONS.filter(({ value }) => value !== "registry" && value !== "registry-desc");
 
-  return `<section class="sidebar-nav-section" aria-labelledby="catalog-sort-heading">
-    <p class="sidebar-nav-section-label" id="catalog-sort-heading">Sort</p>
-    ${options
+  return renderBrowseFacetPopover(
+    "Sort",
+    options
       .map((option) =>
         rowButton({
           attribute: "data-catalog-sort-value",
@@ -119,8 +124,9 @@ function renderSort(state: SidebarNavigationState, showRegistrySort: boolean): s
           selected: state.sort === option.value,
         }),
       )
-      .join("")}
-  </section>`;
+      .join(""),
+    options.find((option) => option.value === state.sort)?.label,
+  );
 }
 
 function isCanonicalNodeRelevant(
@@ -136,8 +142,8 @@ function isCanonicalNodeRelevant(
 function taxonomySummaryAttributes(active: boolean): string {
   const semanticClass = `sidebar-nav-row sidebar-taxonomy-summary${active ? " sidebar-taxonomy-active" : ""}`;
 
-  return renderStyleXAttributes(
-    stylex.attrs(taxonomyStyles.summary, active && taxonomyStyles.active),
+  return renderClassAttribute(
+    cn(sidebarNavigationStyles.row, taxonomyStyles.summary, active && taxonomyStyles.active),
     semanticClass,
   );
 }
@@ -173,17 +179,17 @@ function renderCanonicalNode(
   const active = selected === node.id || selected.startsWith(node.id + "/");
   const expanded = isCanonicalNodeExpanded(node.id, active, expandedIds, collapsedIds);
 
-  return `<details${renderStyleXAttributes(
-    stylex.attrs(taxonomyStyles.group, taxonomyGroupMarker),
+  return `<details${renderClassAttribute(
+    cn(taxonomyStyles.group),
     "sidebar-taxonomy-group",
   )} data-sidebar-taxonomy-group="${escapeHtml(node.id)}"${expanded ? " open" : ""}>
     <summary${taxonomySummaryAttributes(active)}>
-      <span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon(node.id)}</span>
-      <span class="sidebar-nav-row-label">${escapeHtml(node.label)}</span>
-      <span${renderStyleXAttributes(stylex.attrs(taxonomyStyles.count), "sidebar-nav-row-count")}>${count.toLocaleString()}</span>
-      <span${renderStyleXAttributes(stylex.attrs(taxonomyStyles.chevron), "sidebar-taxonomy-chevron")} aria-hidden="true"></span>
+      <span class="sidebar-nav-row-icon ${sidebarNavigationStyles.icon}" aria-hidden="true">${sidebarIcon(node.id)}</span>
+      <span class="sidebar-nav-row-label ${sidebarNavigationStyles.label}">${escapeHtml(node.label)}</span>
+      <span${renderClassAttribute(cn(sidebarNavigationStyles.count, taxonomyStyles.count), "sidebar-nav-row-count")}>${count.toLocaleString()}</span>
+      <span${renderClassAttribute(cn(taxonomyStyles.chevron), "sidebar-taxonomy-chevron")} aria-hidden="true"></span>
     </summary>
-    <div${renderStyleXAttributes(stylex.attrs(taxonomyStyles.children), "sidebar-taxonomy-children")}>
+    <div${renderClassAttribute(cn(taxonomyStyles.children), "sidebar-taxonomy-children")}>
       ${rowButton({
         attribute: "data-catalog-canonical-value",
         value: node.id,
@@ -205,57 +211,6 @@ function isCanonicalNodeExpanded(
   return !collapsedIds.includes(id) && (active || expandedIds.includes(id));
 }
 
-function renderComponentTypeFacets(
-  facets: CatalogFacetSummary,
-  state: SidebarNavigationState,
-  expandedIds: readonly string[],
-  collapsedIds: readonly string[],
-): string {
-  const counts = new Map(facets.componentTypes.map(({ value, count }) => [value, count]));
-  const selected = new Set(state.componentTypes ?? []);
-
-  const visible = CATALOG_COMPONENT_TYPES.filter(
-    ({ value }) => (counts.get(value) ?? 0) > 0 || selected.has(value),
-  );
-
-  if (!visible.length) return "";
-
-  const expanded = isCanonicalNodeExpanded(
-    "component-types",
-    selected.size > 0,
-    expandedIds,
-    collapsedIds,
-  );
-
-  return `<section class="sidebar-nav-section" aria-label="Component type filters">
-    <details${renderStyleXAttributes(
-      stylex.attrs(taxonomyStyles.group, taxonomyGroupMarker),
-      "sidebar-taxonomy-group",
-    )} data-sidebar-taxonomy-group="component-types"${expanded ? " open" : ""}>
-      <summary${taxonomySummaryAttributes(selected.size > 0)}>
-        <span class="sidebar-nav-row-icon" aria-hidden="true">${sidebarIcon("component")}</span>
-        <span class="sidebar-nav-row-label">Component types</span>
-        <span class="sidebar-nav-row-count">${visible.length} types</span>
-        <span${renderStyleXAttributes(stylex.attrs(taxonomyStyles.chevron), "sidebar-taxonomy-chevron")} aria-hidden="true"></span>
-      </summary>
-      <div${renderStyleXAttributes(stylex.attrs(taxonomyStyles.children), "sidebar-taxonomy-children")}>
-        ${visible
-          .map(({ value, label }) =>
-            rowButton({
-              attribute: "data-catalog-component-type",
-              value,
-              label,
-              count: counts.get(value) ?? 0,
-              selected: selected.has(value),
-              nested: true,
-            }),
-          )
-          .join("")}
-      </div>
-    </details>
-  </section>`;
-}
-
 function renderCanonical(
   facets: CatalogFacetSummary,
   state: SidebarNavigationState,
@@ -272,8 +227,8 @@ function renderCanonical(
 
   if (!rows.length) return "";
 
-  return `<section class="sidebar-nav-section" aria-labelledby="catalog-categories-heading">
-    <p class="sidebar-nav-section-label" id="catalog-categories-heading">Component groups</p>
+  return `<section class="sidebar-nav-section ${sidebarNavigationStyles.section}" aria-labelledby="catalog-categories-heading">
+    <p class="sidebar-nav-section-label ${sidebarNavigationStyles.sectionLabel}" id="catalog-categories-heading">Component groups</p>
     ${rows.join("")}
   </section>`;
 }
@@ -292,9 +247,9 @@ function renderAssetKinds(
 
   if (!rows.length) return "";
 
-  return `<section class="sidebar-nav-section" aria-labelledby="catalog-types-heading">
-    <p class="sidebar-nav-section-label" id="catalog-types-heading">Asset types</p>
-    ${rows
+  return renderBrowseFacetPopover(
+    "Asset types",
+    rows
       .map((kind) =>
         rowButton({
           attribute: "data-asset-kind-value",
@@ -305,8 +260,9 @@ function renderAssetKinds(
           icon: kind,
         }),
       )
-      .join("")}
-  </section>`;
+      .join(""),
+    selected ? ASSET_KIND_LABELS[selected] : undefined,
+  );
 }
 
 function renderAccess(facets: CatalogFacetSummary, state: SidebarNavigationState): string {
@@ -315,14 +271,14 @@ function renderAccess(facets: CatalogFacetSummary, state: SidebarNavigationState
   const selected = state.access[0] ?? "";
 
   const rows = (["free", "paid"] as const).filter(
-    (value) => counts.has(value) || selected === value,
+    (value) => counts.has(value) || Boolean(selected),
   );
 
   if (!rows.length) return "";
 
-  return `<section class="sidebar-nav-section" aria-labelledby="catalog-access-heading">
-    <p class="sidebar-nav-section-label" id="catalog-access-heading">Access</p>
-    ${rows
+  return renderBrowseFacetPopover(
+    "Access",
+    rows
       .map((value) =>
         rowButton({
           attribute: "data-catalog-access-value",
@@ -333,8 +289,9 @@ function renderAccess(facets: CatalogFacetSummary, state: SidebarNavigationState
           icon: value,
         }),
       )
-      .join("")}
-  </section>`;
+      .join(""),
+    selected ? (selected === "free" ? "Free" : "Paid") : undefined,
+  );
 }
 
 export function renderCatalogSidebarNavigation(
@@ -344,17 +301,23 @@ export function renderCatalogSidebarNavigation(
   options: CatalogSidebarNavigationOptions = {},
 ): string {
   const showCanonical = options.showCanonical !== false;
-  const showAccess = options.showAccess !== false;
-  const showRegistrySort = options.showRegistrySort !== false;
 
-  return `<nav${renderStyleXAttributes(
-    stylex.attrs(sidebarNavigationStyles.root),
+  return `<nav${renderClassAttribute(
+    cn(sidebarNavigationStyles.root),
     "sidebar-browse-navigation",
   )} aria-label="Browse catalog">
-    ${renderComponentTypeFacets(facets, state, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? [])}
     ${showCanonical ? renderCanonical(facets, state, taxonomy, options.expandedCategoryIds ?? [], options.collapsedCategoryIds ?? []) : ""}
-    ${renderSort(state, showRegistrySort)}
-    ${renderAssetKinds(options.assetCounts, state)}
-    ${showAccess ? renderAccess(facets, state) : ""}
   </nav>`;
+}
+
+export function renderCatalogToolbarControls(
+  facets: CatalogFacetSummary,
+  state: SidebarNavigationState,
+  options: CatalogSidebarNavigationOptions = {},
+): string {
+  return (
+    renderAssetKinds(options.assetCounts, state) +
+    (options.showAccess !== false ? renderAccess(facets, state) : "") +
+    renderSort(state, options.showRegistrySort !== false)
+  );
 }

@@ -97,42 +97,17 @@ describe("grouped sidebar information architecture", () => {
 });
 
 describe("catalog browse sidebar", () => {
-  it("shows real catalog-backed component types and counts", () => {
+  it("leaves component type filters to the content toolbar", () => {
     const html = renderCatalogSidebarNavigation(
       facets,
       { canonicalIds: [], registryNames: [], kind: "components", sort: "name", access: [] },
       taxonomy,
-      { expandedCategoryIds: ["component-types"] },
     );
 
-    expect(html).toMatch(/data-sidebar-taxonomy-group="component-types"[^>]*open/);
-    expect(html).toContain('data-catalog-component-type="avatar"');
-    expect(html).toContain('data-catalog-component-type="accordion"');
-    expect(html).toContain("42");
-    expect(html).toContain("9");
-    expect(html).not.toContain('data-catalog-component-type="badge"');
-    expect(html).not.toContain('data-catalog-canonical-value="avatar"');
+    expect(html).not.toContain("data-catalog-component-type");
   });
 
-  it("keeps selected component type facets expanded after navigation", () => {
-    const html = renderCatalogSidebarNavigation(
-      facets,
-      {
-        canonicalIds: [],
-        registryNames: [],
-        kind: "components",
-        sort: "name",
-        access: [],
-        componentTypes: ["avatar"],
-      },
-      taxonomy,
-    );
-
-    expect(html).toMatch(/data-sidebar-taxonomy-group="component-types"[^>]*open/);
-    expect(html).toMatch(/data-catalog-component-type="avatar"[^>]*aria-pressed="true"/);
-  });
-
-  it("places sorting before categories and access in the exemplar rail", () => {
+  it("keeps category navigation but removes sorting and access controls from the rail", () => {
     const html = renderCatalogSidebarNavigation(
       facets,
       {
@@ -145,28 +120,10 @@ describe("catalog browse sidebar", () => {
       taxonomy,
     );
 
-    const categoryPosition = html.indexOf(">Component groups<");
-    const sortPosition = html.indexOf(">Sort<");
-    const accessPosition = html.indexOf(">Access<");
-
-    expect(categoryPosition).toBeGreaterThanOrEqual(0);
-    expect(sortPosition).toBeGreaterThanOrEqual(0);
-    expect(categoryPosition).toBeLessThan(sortPosition);
-    expect(accessPosition).toBeGreaterThan(sortPosition);
-    expect(html).not.toContain("shadcn directory");
-
-    expect(html).toContain('data-catalog-sort-value="registry"');
-    expect(html).toMatch(/data-catalog-sort-value="registry"[\s\S]*?aria-pressed="true"/);
-    expect(html).toContain('data-catalog-canonical-value="application"');
-    expect(html).toMatch(/data-catalog-canonical-value="application"[\s\S]*?aria-pressed="true"/);
-    expect(html).toContain('data-catalog-access-value="free"');
-    expect(html).toMatch(/data-catalog-access-value="free"[\s\S]*?aria-pressed="true"/);
-    expect(html).not.toContain("<select");
-    expect(html).not.toContain('type="checkbox"');
-    expect(html).not.toContain('type="radio"');
-    expect(html).toContain("<details");
-    expect(html).toContain("All Application");
     expect(html).toContain('data-catalog-canonical-value="application/app-shell"');
+    expect(html).toContain("All Application");
+    expect(html).not.toContain("data-catalog-sort-value");
+    expect(html).not.toContain("data-catalog-access-value");
   });
 
   it("opens a category without selecting it, with nested choices in the group", () => {
@@ -223,7 +180,7 @@ describe("catalog browse sidebar", () => {
     );
 
     expect(html).not.toContain("shadcn directory");
-    expect(html).toContain('data-catalog-sort-value="name"');
+    expect(html).not.toContain('data-catalog-sort-value="name"');
     expect(html).not.toContain("data-catalog-registry-select");
     expect(html).not.toContain("data-sidebar-registry-search");
     expect(html).not.toContain("data-sidebar-search-root");

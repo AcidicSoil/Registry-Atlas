@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 const source = (path: string) => readFileSync(new URL("../../" + path, import.meta.url), "utf8");
 
 describe("app shell DOM ownership", () => {
-  it("uses one kebab-case main identifier across markup, behavior and feature CSS", () => {
-    expect(source("index.html")).toContain('<main id="app-main">');
+  it("uses one kebab-case main identifier across markup, behavior and layout utilities", () => {
+    expect(source("index.html")).toMatch(/<main\s+id="app-main"/);
     expect(source("index.html")).not.toContain('id="appMain"');
 
     for (const path of [
@@ -16,16 +16,16 @@ describe("app shell DOM ownership", () => {
       expect(source(path)).not.toMatch(/getElementById\(["']appMain["']\)/);
     }
 
-    const styles = source("src/registry-explorer/ui/split-panels.css");
+    const styles = source("index.html");
 
-    expect(styles).toContain("main#app-main");
+    expect(styles).toContain("data-[sidebar-collapsed=true]:grid-cols-");
     expect(styles).not.toContain("#appMain");
   });
 
   it("uses clip-path for the existing screen-reader-only treatment", () => {
-    const stylesheet = source("src/registry-explorer/ui/catalog-browse.css");
+    const stylesheet = source("index.html");
 
-    expect(stylesheet).toContain("clip-path: inset(50%)");
+    expect(stylesheet).toContain("[clip-path:inset(50%)]");
     expect(stylesheet).not.toMatch(/(^|[;{])\s*clip:\s*rect\(/m);
   });
 });

@@ -38,7 +38,7 @@ test("selected category remains removable after scrolling results", async ({ app
     .toBe(false);
 });
 
-test("palette trigger stays inside the narrow sidebar search row", async ({ app, browser }) => {
+test("palette trigger stays inside the content search row", async ({ app, browser }) => {
   await app.open("/Registry-Atlas/components");
   await expect(browser.locator("#atlasCommandPalette-trigger")).toBeVisible();
 
@@ -46,7 +46,7 @@ test("palette trigger stays inside the narrow sidebar search row", async ({ app,
     document
       .querySelector<HTMLElement>("#app-main")
       ?.style.setProperty("--sidebar-panel-width", "190px");
-    const bar = document.querySelector<HTMLElement>(".app-sidebar .search-bar");
+    const bar = document.querySelector<HTMLElement>(".catalog-search-toolbar .search-bar");
     const trigger = document.querySelector<HTMLElement>("#atlasCommandPalette-trigger");
     const input = document.querySelector<HTMLElement>("#searchInput");
 
@@ -73,4 +73,45 @@ test("palette trigger stays inside the narrow sidebar search row", async ({ app,
   expect(geometry!.buttonBottom).toBeLessThanOrEqual(geometry!.barBottom + 1);
   expect(geometry!.barScrollWidth).toBeLessThanOrEqual(geometry!.barClientWidth + 1);
   expect(geometry!.inputWidth).toBeGreaterThan(0);
+});
+
+test("selects multiple component types from the content toolbar", async ({ app, browser }) => {
+  await app.open("/Registry-Atlas/components");
+  const query = browser.locator("#componentTypeFilterMount input");
+  await expect(query).toBeVisible();
+  await query.fill("split");
+  await expect(browser.locator("#componentTypeFilterMount ui-combobox-content")).toBeVisible();
+  await expect(
+    browser.locator('#componentTypeFilterMount ui-combobox-item[value="button-group"]'),
+  ).not.toBeVisible();
+  await query.press("ArrowDown");
+  await query.press("Enter");
+  await query.fill("button group");
+  await browser.locator('#componentTypeFilterMount ui-combobox-item[value="button-group"]').tap();
+  await query.fill("toolbar");
+  await browser.locator('#componentTypeFilterMount ui-combobox-item[value="toolbar"]').tap();
+  await query.press("Escape");
+  await expect
+    .poll(() =>
+      browser.evaluate(() => new URLSearchParams(location.search).getAll("componentType").sort()),
+    )
+    .toEqual(["button-group", "split-button", "toolbar"]);
+  await expect(browser.locator('[aria-label="Remove Type: Toolbar filter"]')).toBeVisible();
+  await app.screenshot("horizontal-filter-toolbar");
+  const url = await browser.evaluate(() => location.pathname + location.search);
+  await app.open(url);
+  await expect(browser.locator('[aria-label="Remove Type: Toolbar filter"]')).toBeVisible();
+  await browser.locator('[aria-label="Remove Type: Toolbar filter"]').tap();
+  await expect
+    .poll(() =>
+      browser.evaluate(() => new URLSearchParams(location.search).getAll("componentType").sort()),
+    )
+    .toEqual(["button-group", "split-button"]);
+  await expect(browser.locator("#browseToolbar [data-catalog-clear]")).toBeVisible();
+  await browser.locator("#browseToolbar [data-catalog-clear]").tap();
+  await expect
+    .poll(() =>
+      browser.evaluate(() => new URLSearchParams(location.search).getAll("componentType")),
+    )
+    .toEqual([]);
 });

@@ -15,7 +15,7 @@ const groups = {
     "lint:react-doctor",
     "lint:complexity",
     "lint:styles",
-    "lint:stylex",
+    "lint:design",
     "lint:unused",
     "lint:format",
     "lint:audit",

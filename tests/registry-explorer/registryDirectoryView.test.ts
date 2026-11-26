@@ -3,7 +3,7 @@ import type { RegistryDirectoryResult } from "../../src/registry-explorer/core/r
 import type { Registry } from "../../src/registry-explorer/core/registry.schema";
 import {
   renderRegistryDirectory,
-  renderRegistryDirectorySidebar,
+  renderRegistryDirectoryControls,
 } from "../../src/registry-explorer/ui/registryDirectoryView";
 
 describe("renderRegistryDirectory", () => {
@@ -32,7 +32,7 @@ describe("renderRegistryDirectory", () => {
   });
 
   it("renders sort navigation before asset types without duplicate source rows", () => {
-    const html = renderRegistryDirectorySidebar({
+    const html = renderRegistryDirectoryControls({
       layout: "list",
       sort: "item-count-desc",
       registryCount: 430,
@@ -49,7 +49,8 @@ describe("renderRegistryDirectory", () => {
     });
 
     expect(html).not.toContain("shadcn directory");
-    expect(html.indexOf(">Sort<")).toBeLessThan(html.indexOf(">Asset types<"));
+    expect(html).toContain("ui-popover");
+    expect(html).not.toContain("<nav");
     expect(html).toContain('data-registry-sort-value="item-count-desc"');
     expect(html).toMatch(/data-registry-sort-value="item-count-desc"[^>]*aria-pressed="true"/);
     expect(html).toContain('data-registry-asset-value="block"');

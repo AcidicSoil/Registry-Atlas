@@ -11,31 +11,32 @@
       name="description"
       content="Explore and assemble open-source component libraries in Registry Atlas."
     />
-    <meta name="theme-color" content="#0b0c0e" />
+    <meta name="theme-color" content="#000000" />
     <link rel="icon" type="image/png" sizes="32x32" href="/registry-atlas/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/registry-atlas/favicon-16x16.png" />
     <link rel="shortcut icon" href="/registry-atlas/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/registry-atlas/apple-touch-icon.png" />
-    <link rel="stylesheet" href="/styles/registry-explorer.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-reference.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-hierarchy.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/app-shell-core.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/catalog-browse.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-browse-rail.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/registry-directory-navigation.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/sidebar-exemplar-rail.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/setup-workflow.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/mobile-sidebar-dialog.css" />
-    <link rel="stylesheet" href="/src/registry-explorer/ui/split-panels.css" />
+    <link rel="stylesheet" href="/src/styles/globals.css" />
   </head>
   <body>
-    <a class="skip-link" href="#contentHeader">Skip to main content</a>
-    <div id="app">
-      <div class="app-inner">
-        <header class="mobile-app-header">
+    <a
+      class="skip-link fixed top-2 left-2 z-[1001] -translate-y-[180%] rounded-[var(--atlas-radius-button)] border-2 border-atlas-primary bg-atlas-popover px-3.5 py-2.5 text-atlas-foreground focus-visible:translate-y-0 focus-visible:outline-2 focus-visible:outline-atlas-focus focus-visible:outline-offset-2"
+      href="#contentHeader"
+      >Skip to main content</a
+    >
+    <div
+      id="app"
+      class="min-h-screen w-full bg-atlas-background min-[861px]:h-dvh min-[861px]:min-h-0 min-[861px]:overflow-hidden"
+    >
+      <div
+        class="app-inner flex min-h-screen w-full flex-col min-[861px]:h-dvh min-[861px]:min-h-0 min-[861px]:overflow-hidden"
+      >
+        <header
+          class="mobile-app-header hidden max-[860px]:sticky max-[860px]:top-0 max-[860px]:z-40 max-[860px]:flex max-[860px]:min-h-[52px] max-[860px]:items-center max-[860px]:gap-3 max-[860px]:border-b max-[860px]:border-atlas-border max-[860px]:bg-atlas-background/95 max-[860px]:px-3 max-[860px]:py-2 max-[860px]:backdrop-blur-md"
+        >
           <button
             id="sidebarToggle"
-            class="sidebar-toggle"
+            class="sidebar-toggle grid size-[34px] cursor-pointer place-items-center rounded-[var(--atlas-radius-button)] border border-atlas-border bg-atlas-card p-0 text-atlas-foreground"
             type="button"
             aria-controls="appSidebar"
             aria-expanded="false"
@@ -43,42 +44,81 @@
           >
             ☰
           </button>
-          <a class="brand brand-home-link" href="/Registry-Atlas/" aria-label="Registry Atlas home">
-            <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
-            <span class="brand-title">Registry Atlas</span>
+          <a
+            class="brand brand-home-link group/brand flex min-w-0 items-center gap-2 text-inherit no-underline"
+            href="/Registry-Atlas/"
+            aria-label="Registry Atlas home"
+          >
+            <span
+              class="brand-logo grid size-5 flex-none place-items-center rounded-[5px] border border-atlas-primary/55 bg-atlas-secondary max-[860px]:in-[.mobile-app-header]:size-7"
+              ><span
+                class="brand-logo-inner text-[11px] font-bold tracking-[0.04em] text-atlas-primary"
+                >R</span
+              ></span
+            >
+            <span
+              class="brand-title truncate text-xs font-[650] tracking-[0.04em] uppercase text-atlas-foreground group-hover/brand:text-atlas-primary max-[860px]:in-[.mobile-app-header]:text-[13px]"
+              >Registry Atlas</span
+            >
           </a>
-          <a class="setup-header-link" href="/Registry-Atlas/setup">Setup</a>
+          <a
+            class="setup-header-link ml-auto inline-flex items-center gap-1.5 rounded-[var(--atlas-radius-button)] border border-atlas-border px-2 py-[5px] text-xs text-atlas-foreground no-underline hover:bg-atlas-secondary focus-visible:bg-atlas-secondary"
+            href="/Registry-Atlas/setup"
+            >Setup</a
+          >
         </header>
 
         <dialog
           id="mobileSidebarDialog"
-          class="mobile-sidebar-dialog"
+          class="mobile-sidebar-dialog group/mobile hidden max-[860px]:open:fixed max-[860px]:open:inset-y-0 max-[860px]:open:left-0 max-[860px]:open:right-auto max-[860px]:open:block max-[860px]:w-[min(308px,calc(100vw-32px))] max-[860px]:max-w-none max-[860px]:h-dvh max-[860px]:max-h-dvh m-0 overflow-hidden overscroll-contain border-0 bg-atlas-background p-0 shadow-[22px_0_48px_rgb(0_0_0/42%)] backdrop:bg-black/64 backdrop:overflow-hidden backdrop:overscroll-contain"
           aria-label="Registry Atlas navigation"
           closedby="any"
         ></dialog>
 
-        <main id="app-main">
+        <main
+          id="app-main"
+          class="group/shell flex-1 max-[860px]:block min-[861px]:grid min-[861px]:h-dvh min-[861px]:min-h-0 min-[861px]:grid-cols-[var(--sidebar-panel-width,240px)_16px_minmax(0,1fr)] min-[861px]:pr-[18px] min-[861px]:overflow-hidden min-[861px]:data-[sidebar-collapsed=true]:grid-cols-[0_16px_minmax(0,1fr)] min-[861px]:data-[content-collapsed=true]:grid-cols-[minmax(0,1fr)_16px_0]"
+        >
           <aside
             id="appSidebar"
-            class="app-sidebar"
+            class="app-sidebar sticky top-0 flex h-dvh min-h-0 min-w-0 flex-col overflow-hidden border-r border-atlas-border bg-atlas-background px-2 min-[861px]:group-data-[sidebar-collapsed=true]/shell:invisible min-[861px]:group-data-[sidebar-collapsed=true]/shell:pointer-events-none max-[860px]:fixed max-[860px]:inset-y-0 max-[860px]:left-0 max-[860px]:z-[70] max-[860px]:w-[min(308px,calc(100vw-32px))] max-[860px]:-translate-x-[102%] max-[860px]:data-[open=true]:translate-x-0 max-[860px]:group-open/mobile:relative max-[860px]:group-open/mobile:inset-auto max-[860px]:group-open/mobile:h-full max-[860px]:group-open/mobile:w-full max-[860px]:group-open/mobile:translate-x-0"
             data-open="false"
             aria-label="Registry Atlas navigation"
           >
-            <div class="sidebar-topbar">
+            <div
+              class="sidebar-topbar flex min-h-[42px] min-w-0 flex-[0_0_42px] items-center justify-between gap-2 px-2"
+            >
               <a
-                class="brand brand-home-link"
+                class="brand brand-home-link group/brand flex min-w-0 items-center gap-2 text-inherit no-underline"
                 href="/Registry-Atlas/"
                 aria-label="Registry Atlas home"
               >
-                <span class="brand-logo"><span class="brand-logo-inner">R</span></span>
-                <span class="brand-title">Registry Atlas</span>
+                <span
+                  class="brand-logo grid size-5 flex-none place-items-center rounded-[5px] border border-atlas-primary/55 bg-atlas-secondary max-[860px]:in-[.mobile-app-header]:size-7"
+                  ><span
+                    class="brand-logo-inner text-[11px] font-bold tracking-[0.04em] text-atlas-primary"
+                    >R</span
+                  ></span
+                >
+                <span
+                  class="brand-title truncate text-xs font-[650] tracking-[0.04em] uppercase text-atlas-foreground group-hover/brand:text-atlas-primary max-[860px]:in-[.mobile-app-header]:text-[13px]"
+                  >Registry Atlas</span
+                >
               </a>
-              <a class="setup-header-link" href="/Registry-Atlas/setup">
-                Setup <span id="setupCount" class="setup-header-count">0</span>
+              <a
+                class="setup-header-link ml-auto inline-flex items-center gap-1.5 rounded-[var(--atlas-radius-button)] border border-atlas-border px-2 py-[5px] text-xs text-atlas-foreground no-underline hover:bg-atlas-secondary focus-visible:bg-atlas-secondary"
+                href="/Registry-Atlas/setup"
+              >
+                Setup
+                <span
+                  id="setupCount"
+                  class="setup-header-count tabular-nums text-atlas-muted-foreground"
+                  >0</span
+                >
               </a>
               <button
                 id="sidebarClose"
-                class="sidebar-close"
+                class="sidebar-close hidden max-[860px]:grid max-[860px]:size-[34px] max-[860px]:flex-none max-[860px]:cursor-pointer max-[860px]:place-items-center max-[860px]:rounded-[var(--atlas-radius-button)] max-[860px]:border max-[860px]:border-atlas-border max-[860px]:bg-atlas-card max-[860px]:p-0 max-[860px]:text-atlas-foreground"
                 type="button"
                 aria-label="Close navigation"
               >
@@ -86,68 +126,133 @@
               </button>
             </div>
 
-            <div class="sidebar-context" id="sidebarContext"></div>
+            <div class="sidebar-context min-h-9 flex-[0_0_36px]" id="sidebarContext"></div>
 
-            <div class="search-bar">
-              <span class="search-icon" aria-hidden="true">
-                <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
-                  <circle cx="7" cy="7" r="4" stroke="currentColor"></circle>
-                  <path d="m10 10 3 3" stroke="currentColor" stroke-linecap="round"></path>
-                </svg>
-              </span>
-              <input
-                id="searchInput"
-                type="search"
-                class="search-input"
-                placeholder="Search catalog"
-                aria-label="Search catalog"
-              />
-              <div id="commandPaletteMount" class="command-palette-mount"></div>
-            </div>
-
-            <div class="sidebar-layout-slot" id="sidebarLayout"></div>
-            <div class="sidebar-body-scroll">
-              <p class="sidebar-section-caption">Explore</p>
-              <nav class="primary-nav" aria-label="Explore">
-                <a class="nav-item" data-view="home" href="/Registry-Atlas/">Featured</a>
-                <a class="nav-item" data-view="registries" href="/Registry-Atlas/registries"
+            <div
+              class="sidebar-body-scroll min-h-0 flex-auto overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:thin] [scrollbar-color:color-mix(in_srgb,var(--atlas-muted-foreground)_42%,transparent)_transparent]"
+            >
+              <p
+                class="sidebar-section-caption flex min-h-[30px] items-end gap-1.5 px-2.5 pb-2 text-[10px] font-[650] tracking-[0.08em] uppercase text-atlas-muted-foreground"
+              >
+                Explore
+              </p>
+              <nav
+                class="primary-nav static m-0 flex h-auto min-h-0 flex-col items-stretch gap-0.5 overflow-visible border-b border-atlas-border/45 bg-transparent p-0 pb-2.5"
+                aria-label="Explore"
+              >
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="home"
+                  href="/Registry-Atlas/"
+                  >Featured</a
+                >
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="registries"
+                  href="/Registry-Atlas/registries"
                   >Libraries</a
                 >
-                <a class="nav-item" data-view="authors" href="/Registry-Atlas/authors">Authors</a>
-                <a class="nav-item" data-view="compare" href="/Registry-Atlas/compare">Compare</a>
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="authors"
+                  href="/Registry-Atlas/authors"
+                  >Authors</a
+                >
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="compare"
+                  href="/Registry-Atlas/compare"
+                  >Compare</a
+                >
               </nav>
-              <p class="sidebar-section-caption">
+              <p
+                class="sidebar-section-caption flex min-h-[30px] items-end gap-1.5 px-2.5 pb-2 text-[10px] font-[650] tracking-[0.08em] uppercase text-atlas-muted-foreground"
+              >
                 Library
-                <span class="sidebar-collection-current" id="sidebarCollectionCurrent"></span>
+                <span
+                  class="sidebar-collection-current min-w-0 truncate text-xs text-atlas-foreground [&:not(:empty)]:before:content-['·_'] before:text-atlas-muted-foreground"
+                  id="sidebarCollectionCurrent"
+                ></span>
               </p>
-              <nav class="primary-nav sidebar-library" aria-label="Library">
-                <a class="nav-item" data-view="discover" href="/Registry-Atlas/components"
-                  >Components <span data-sidebar-asset-count="component"></span
+              <nav
+                class="primary-nav sidebar-library static m-0 flex h-auto min-h-0 flex-col items-stretch gap-0.5 overflow-visible border-b border-atlas-border/45 bg-transparent p-0 pb-2.5"
+                aria-label="Library"
+              >
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="discover"
+                  href="/Registry-Atlas/components"
+                  >Components
+                  <span
+                    class="ml-auto text-[11px] tabular-nums text-atlas-muted-foreground"
+                    data-sidebar-asset-count="component"
+                  ></span
                 ></a>
-                <a class="nav-item" data-view="blocks" href="/Registry-Atlas/blocks"
-                  >Blocks <span data-sidebar-asset-count="block"></span
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="blocks"
+                  href="/Registry-Atlas/blocks"
+                  >Blocks
+                  <span
+                    class="ml-auto text-[11px] tabular-nums text-atlas-muted-foreground"
+                    data-sidebar-asset-count="block"
+                  ></span
                 ></a>
-                <a class="nav-item" data-view="pages" href="/Registry-Atlas/pages"
-                  >Pages <span data-sidebar-asset-count="page"></span
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="pages"
+                  href="/Registry-Atlas/pages"
+                  >Pages
+                  <span
+                    class="ml-auto text-[11px] tabular-nums text-atlas-muted-foreground"
+                    data-sidebar-asset-count="page"
+                  ></span
                 ></a>
-                <a class="nav-item" data-view="templates" href="/Registry-Atlas/templates"
-                  >Templates <span data-sidebar-asset-count="template"></span
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="templates"
+                  href="/Registry-Atlas/templates"
+                  >Templates
+                  <span
+                    class="ml-auto text-[11px] tabular-nums text-atlas-muted-foreground"
+                    data-sidebar-asset-count="template"
+                  ></span
                 ></a>
-                <a class="nav-item" data-view="themes" href="/Registry-Atlas/themes"
-                  >Themes <span data-sidebar-asset-count="theme"></span
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="themes"
+                  href="/Registry-Atlas/themes"
+                  >Themes
+                  <span
+                    class="ml-auto text-[11px] tabular-nums text-atlas-muted-foreground"
+                    data-sidebar-asset-count="theme"
+                  ></span
                 ></a>
-                <a class="nav-item" data-view="icons" href="/Registry-Atlas/icons"
-                  >Icons <span data-sidebar-asset-count="icon"></span
+                <a
+                  class="nav-item flex min-h-8 w-full flex-none cursor-pointer items-center whitespace-nowrap rounded-[var(--atlas-radius-button)] border-0 bg-transparent px-2.5 py-[5px] text-left text-[13px] leading-[1.25] text-atlas-muted-foreground no-underline transition-colors duration-150 ease-out hover:bg-atlas-secondary hover:text-atlas-foreground aria-[current=page]:bg-atlas-secondary aria-[current=page]:text-atlas-foreground [&.nav-item-active]:bg-atlas-secondary [&.nav-item-active]:text-atlas-foreground"
+                  data-view="icons"
+                  href="/Registry-Atlas/icons"
+                  >Icons
+                  <span
+                    class="ml-auto text-[11px] tabular-nums text-atlas-muted-foreground"
+                    data-sidebar-asset-count="icon"
+                  ></span
                 ></a>
               </nav>
-              <div class="aside-inner" id="aside"></div>
+              <div
+                class="aside-inner block min-h-0 flex-none overflow-visible border-0 p-0"
+                id="aside"
+              ></div>
             </div>
           </aside>
 
-          <div class="app-panel-boundary" aria-label="Panel controls">
+          <div
+            class="app-panel-boundary flex h-full min-w-0 flex-col items-center gap-1.5 border-r border-atlas-border/44 py-[9px] max-[860px]:hidden"
+            aria-label="Panel controls"
+          >
             <button
               id="toggleSidebarPanel"
-              class="panel-collapse-toggle"
+              class="panel-collapse-toggle grid h-[22px] w-4 cursor-pointer place-items-center border-0 bg-transparent text-xs text-atlas-muted-foreground hover:bg-atlas-secondary hover:text-atlas-foreground focus-visible:bg-atlas-secondary focus-visible:text-atlas-foreground"
               type="button"
               aria-label="Collapse navigation panel"
               aria-controls="appSidebar"
@@ -158,7 +263,7 @@
             </button>
             <div
               id="appPanelResize"
-              class="panel-resize-handle"
+              class="panel-resize-handle grid min-h-12 w-full flex-auto cursor-col-resize touch-none place-items-center before:h-8 before:w-[3px] before:rounded before:bg-atlas-muted-foreground/36 before:content-[''] hover:before:bg-atlas-primary focus-visible:before:bg-atlas-primary aria-disabled:cursor-default"
               role="separator"
               tabindex="0"
               aria-label="Resize navigation and content panels"
@@ -170,7 +275,7 @@
             ></div>
             <button
               id="toggleContentPanel"
-              class="panel-collapse-toggle"
+              class="panel-collapse-toggle grid h-[22px] w-4 cursor-pointer place-items-center border-0 bg-transparent text-xs text-atlas-muted-foreground hover:bg-atlas-secondary hover:text-atlas-foreground focus-visible:bg-atlas-secondary focus-visible:text-atlas-foreground"
               type="button"
               aria-label="Collapse content panel"
               aria-controls="appContent"
@@ -181,13 +286,53 @@
             </button>
           </div>
 
-          <section id="appContent" class="content">
-            <div class="content-header" id="contentHeader" tabindex="-1"></div>
-            <div class="content-body">
-              <div class="scroll-region" id="contentBody"></div>
+          <section
+            id="appContent"
+            class="content flex min-w-0 flex-col max-[860px]:min-h-[calc(100vh-52px)] max-[860px]:px-[15px] max-[860px]:pt-[18px] max-[860px]:pb-[42px] min-[861px]:h-dvh min-[861px]:overflow-hidden min-[861px]:pl-[18px] min-[861px]:pt-[18px] min-[861px]:group-data-[content-collapsed=true]/shell:invisible min-[861px]:group-data-[content-collapsed=true]/shell:pointer-events-none"
+          >
+            <div
+              class="content-header has-[>.catalog-breadcrumb]:flex-wrap flex min-w-0 items-start justify-between gap-4 pb-5 max-[640px]:flex-col"
+              id="contentHeader"
+              tabindex="-1"
+            ></div>
+            <search
+              class="catalog-search-toolbar mb-3 flex min-w-0 flex-wrap items-center gap-2"
+              aria-label="Catalog search and filters"
+            >
+              <div
+                class="search-bar w-[min(100%,360px)] min-w-0 min-h-[34px] flex-[0_1_360px] focus-within:border-atlas-primary flex items-center gap-2 rounded-[var(--atlas-radius-button)] border border-atlas-input bg-atlas-card px-3"
+              >
+                <span
+                  class="search-icon text-lg leading-none text-atlas-muted-foreground"
+                  aria-hidden="true"
+                >
+                  <svg viewBox="0 0 16 16" width="14" height="14" fill="none">
+                    <circle cx="7" cy="7" r="4" stroke="currentColor"></circle>
+                    <path d="m10 10 3 3" stroke="currentColor" stroke-linecap="round"></path>
+                  </svg>
+                </span>
+                <input
+                  id="searchInput"
+                  type="search"
+                  class="search-input flex-1 text-[13px] min-h-[30px] w-full min-w-0 border-0 bg-transparent text-atlas-foreground outline-none placeholder:text-atlas-muted-foreground"
+                  placeholder="Search catalog"
+                  aria-label="Search catalog"
+                />
+                <div id="commandPaletteMount" class="command-palette-mount"></div>
+              </div>
+              <div id="componentTypeFilterMount" hidden></div>
+              <div
+                id="browseToolbar"
+                class="browse-toolbar-controls flex flex-wrap items-center gap-2"
+              ></div>
+            </search>
+            <div
+              class="content-body min-h-0 min-w-0 min-[861px]:flex-auto min-[861px]:overflow-x-hidden min-[861px]:overflow-y-auto min-[861px]:overscroll-contain min-[861px]:[scrollbar-width:thin]"
+            >
+              <div class="scroll-region min-h-0 min-w-0 overflow-visible" id="contentBody"></div>
               <div
                 id="catalogScrollStatus"
-                class="sr-only"
+                class="absolute size-px overflow-hidden whitespace-nowrap [clip-path:inset(50%)]"
                 role="status"
                 aria-live="polite"
                 aria-atomic="true"

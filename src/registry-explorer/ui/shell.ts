@@ -13,6 +13,7 @@ import { createCatalogInteractions } from "./shellInteractions";
 import { createBrowseFeedController } from "./shellBrowseFeed";
 import { createShellSidebar } from "./shellSidebar";
 import { createCommandPalette } from "./commandPalette";
+import { createComponentTypeFilter } from "./componentTypeFilter";
 import { createShellCatalogViews } from "./shellCatalogViews";
 import { createShellDetailViews } from "./shellDetailViews";
 import { createShellRenderer } from "./shellRenderer";
@@ -42,8 +43,9 @@ export interface ShellOptions {
     tabs: NodeListOf<Element>;
     searchInput: HTMLInputElement;
     paletteMount?: HTMLElement;
+    componentTypeFilterMount?: HTMLElement;
     sidebarContext?: HTMLElement;
-    sidebarLayout?: HTMLElement;
+    browseToolbar?: HTMLElement;
     sidebarCollectionCurrent?: HTMLElement;
     setupCount?: HTMLElement;
   };
@@ -156,7 +158,15 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     signal: lifetime.signal,
   });
 
+  const typeFilter = roots.componentTypeFilterMount
+    ? createComponentTypeFilter(roots.componentTypeFilterMount, (catalogComponentTypes) => {
+        setState({ catalogComponentTypes, discoveryPage: 1 }, "push");
+      })
+    : null;
+
   const renderer = createShellRenderer({
+    syncTypeFilter: () =>
+      typeFilter?.sync(state.route.kind === "components", state.catalogComponentTypes),
     getState: () => state,
     roots,
     registries,
@@ -240,13 +250,19 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     const candidates = [
       ...Array.from(roots.contentBody.querySelectorAll<HTMLElement>(identity.selector)),
       ...Array.from(roots.aside.querySelectorAll<HTMLElement>(identity.selector)),
+      ...Array.from(roots.browseToolbar?.querySelectorAll<HTMLElement>(identity.selector) ?? []),
     ];
 
     const equivalent = candidates.find((candidate) =>
       identity.attributes.every(([name, value]) => candidate.getAttribute(name) === value),
     );
 
-    (equivalent ?? candidates[0])?.focus();
+    const control = equivalent ?? candidates[0];
+    const popup = control?.closest("ui-popover-content");
+
+    if (popup)
+      popup.closest("ui-popover")?.querySelector<HTMLElement>("ui-popover-trigger button")?.focus();
+    else control?.focus();
   }
 
   function isModifiedNavigationClick(click: MouseEvent): boolean {
@@ -395,10 +411,10 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     interactions.handleClick(event.target as HTMLElement);
   });
 
-  // SAFETY: The controlled layout host contains the same trusted browse controls as the sidebar.
-  if (roots.sidebarLayout)
-    listen(roots.sidebarLayout, "click", (event) => {
-      // SAFETY: Sidebar layout clicks originate from its owned browse controls.
+  // SAFETY: The toolbar host contains app-owned browse controls.
+  if (roots.browseToolbar)
+    listen(roots.browseToolbar, "click", (event) => {
+      // SAFETY: Toolbar clicks originate from its owned browse controls.
       interactions.handleClick(event.target as HTMLElement);
     });
   listen(roots.contentHeader, "click", (event) => {
@@ -520,6 +536,7 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
       clearCopyFeedbackTimer();
       feed.dispose();
       commandPalette?.dispose();
+      typeFilter?.dispose();
     },
   };
 }

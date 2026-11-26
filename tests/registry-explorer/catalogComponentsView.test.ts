@@ -125,7 +125,7 @@ describe("renderCatalogComponents", () => {
     expect(html).not.toContain("View original ↗");
     expect(html).not.toContain("View item JSON");
   });
-  it("encodes card presentation as StyleX variants instead of ancestor class selectors", () => {
+  it("encodes card presentation as Tailwind variants instead of ancestor class selectors", () => {
     const base = renderCatalogComponentCard(component());
     const list = renderCatalogComponentCard(component(), "component", { layout: "list" });
 
@@ -283,10 +283,10 @@ describe("renderCatalogComponents", () => {
       ],
     });
 
-    expect(body.innerHTML).toContain('class="catalog-discovery-bands"');
+    expect(body.innerHTML).toContain('class="catalog-discovery-bands ');
     expect(body.innerHTML).toContain("data-catalog-discovery-row");
     expect(body.innerHTML).not.toContain('class="catalog-discovery-row"');
-    expect(body.innerHTML).toContain('class="catalog-discovery-band"');
+    expect(body.innerHTML).toContain('class="catalog-discovery-band ');
     expect(body.innerHTML).toContain(">Forms<");
     expect(body.innerHTML).toContain(
       'data-catalog-route="/Registry-Atlas/components/explore/forms"',
@@ -346,16 +346,12 @@ describe("renderCatalogComponents", () => {
     expect(context).toContain("Search: “button”");
     expect(context).toContain("Registry: @delta");
     expect(context).toContain("Access: Free");
-    expect(context).toContain("data-catalog-clear");
+    expect(context).not.toContain("data-catalog-clear");
     expect(context).not.toContain("data-catalog-search");
     expect(context).not.toContain("data-catalog-registry-select");
     expect(context).not.toContain("data-catalog-access-select");
-    expect(context).toContain('for="catalog-sort-select"');
-    expect(context).toMatch(/<select[^>]*data-catalog-sort-select/);
-    expect(context).toContain('<option value="name">Name A–Z</option>');
-    expect(context).toContain('<option value="registry" selected>Registry A–Z</option>');
-    expect(context).toContain("data-catalog-sort-reset");
     expect(context).not.toContain("data-catalog-sort-value");
+    expect(context).not.toContain("data-catalog-sort-select");
     expect(context).not.toContain("<details");
   });
 
@@ -380,7 +376,7 @@ describe("renderCatalogComponents", () => {
 
     expect(markup).toContain("Asset type: Components");
     expect(markup).toContain('data-asset-kind-value="component"');
-    expect(markup).toContain("data-catalog-clear");
+    expect(markup).not.toContain("data-catalog-clear");
     expect(markup).not.toContain("data-asset-kind-select");
   });
 
@@ -403,8 +399,8 @@ describe("renderCatalogComponents", () => {
     });
 
     expect(body.innerHTML).toContain("Type: block");
-    expect(body.innerHTML).toContain("data-catalog-clear");
-    expect(body.innerHTML).toContain('<option value="name" selected>Name A–Z</option>');
+    expect(body.innerHTML).not.toContain("data-catalog-clear");
+    expect(body.innerHTML).not.toContain("data-catalog-sort-select");
     expect(body.innerHTML).not.toContain("data-catalog-sort-reset");
     expect(body.innerHTML).toContain("No catalog items are available");
   });
@@ -524,8 +520,6 @@ describe("catalog applied-filter context", () => {
     expect(html).toContain("Access: Free");
     expect(html).not.toContain("data-catalog-access-select");
     expect(html).not.toContain("data-catalog-canonical-checkbox");
-    expect(html).toContain('<option value="registry">Registry A–Z</option>');
-    expect(html).toContain("data-catalog-sort-select");
   });
 
   it("omits access context when no access filter is active", () => {

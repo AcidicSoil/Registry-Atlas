@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderCatalogGridAttributes } from "../../src/registry-explorer/ui/catalogGrid";
 
-describe("catalog grid StyleX attributes", () => {
+describe("catalog grid utility attributes", () => {
   it("uses semantic grid attributes without layout CSS classes", () => {
     const grid = renderCatalogGridAttributes();
     const list = renderCatalogGridAttributes({ layout: "list" });
@@ -13,7 +13,10 @@ describe("catalog grid StyleX attributes", () => {
     expect(list).toContain('data-catalog-layout="list"');
     expect(component).toContain('data-catalog-grid-kind="component"');
     expect(theme).toContain('data-catalog-grid-kind="theme"');
-    expect(grid).toMatch(/class="x/);
+    expect(grid).toContain("grid-cols-3");
+    expect(list).toContain("grid-cols-1");
+    expect(list).not.toContain("max-[1080px]:grid-cols-2");
+    expect(component).toContain("gap-0");
     expect(list).not.toContain("catalog-component-grid-list");
     expect(component).not.toContain("catalog-collection-grid-component");
   });

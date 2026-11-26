@@ -1,6 +1,8 @@
 # Component visual previews
 
-**Current implementation (verified 2026-11-09):** Three previously reviewed, item-specific screenshot assets were restored from commit `3bda23b0` after their November 8 deletion. The manifest, SHA-256 asset checks and source-hover browser tests are restored. This is a verification pilot, **not** catalog-wide visual coverage.
+**Historical pilot (verified 2026-11-09):** Three previously reviewed, item-specific screenshot assets were restored from commit `3bda23b0` after their November 8 deletion. The manifest, SHA-256 asset checks and source-hover browser tests are restored. This is a verification pilot, **not** catalog-wide visual coverage.
+
+**Current status (2026-11-25):** The manifest and all three images were subsequently removed in commit `1e46da5`. The loader and hover behavior remain, but the positive browser fixtures are unavailable. Source-page evidence for two pilot entries is also stale. The Resend styling migration does not restore removed assets or override source-evidence validation. The ownership and verification instructions below describe the historical pilot until its scope is reconciled.
 
 ## Ownership
 

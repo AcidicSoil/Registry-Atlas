@@ -141,7 +141,9 @@ Registry Atlas uses modular vanilla TypeScript with PostgreSQL-backed static run
 The canonical browser surface is:
 
 - `index.html` — static shell loaded by Vite and production builds.
-- `public/styles/registry-explorer.css` — application layout and visual system.
+- `src/styles/globals.css` — Tailwind initialization and document foundations.
+- `src/styles/tokens.css` — centralized Resend design tokens.
+- `src/registry-explorer/ui/` — component-owned Tailwind utilities and UI SDK behavior.
 - `src/registry-explorer/entry.ts` — bootstrap and runtime data loading.
 - `src/registry-explorer/ui/shell.ts` — composition root for state transitions, navigation, and delegated DOM events.
 
@@ -158,7 +160,7 @@ The shell composes focused controllers through typed dependencies. **`shell.ts` 
 - `shellDetailViews.ts` — item-detail loading and comparisons.
 - `shellRenderer.ts` — route dispatch, headers, tabs, and render fallback.
 
-The public bootstrap remains `initRegistryExplorer` from `ui/shell.ts`. It returns an idempotent `dispose()` controller for UI teardown: attached listeners and scroll observers are released, and pending detail responses cannot render after disposal. Shell tests dispose instances before restoring mocked browser globals. CSS and rendered markup are unchanged. Run `pnpm exec vitest run tests/registry-explorer/shell.test.ts tests/registry-explorer/shellDomContract.test.ts tests/registry-explorer/shellInteractions.test.ts tests/registry-explorer/shellSetup.test.ts` for focused coverage; use the existing browser tests for route, sidebar, setup, and infinite-scroll behavior.
+The public bootstrap remains `initRegistryExplorer` from `ui/shell.ts`. It returns an idempotent `dispose()` controller for UI teardown: attached listeners and scroll observers are released, and pending detail responses cannot render after disposal. Shell tests dispose instances before restoring mocked browser globals. The Resend migration changes styling ownership without replacing the shell state model. Run `pnpm exec vitest run tests/registry-explorer/shell.test.ts tests/registry-explorer/shellDomContract.test.ts tests/registry-explorer/shellInteractions.test.ts tests/registry-explorer/shellSetup.test.ts` for focused coverage; use the existing browser tests for route, sidebar, setup, and infinite-scroll behavior.
 
 ### Directory Structure
 

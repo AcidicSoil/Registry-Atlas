@@ -1,3 +1,4 @@
+import { actionClasses } from "./primitives/actionClasses";
 import { buildRegistryDirectory, registryCatalogCoverage } from "../core/registryDirectory";
 import { catalogDistinctItemCount, queryCatalogComponents } from "../core/catalogQuery";
 import { exploreCollectionBySlug, type CatalogAssetKind } from "../core/catalogCollections";
@@ -118,7 +119,7 @@ export function createShellCatalogViews({
       title: author,
       description:
         "Original registry item metadata; this is not a verified 21st.dev account profile.",
-      controls: '<button type="button" class="link-button" data-author-clear>All authors</button>',
+      controls: `<button type="button" class="link-button ${actionClasses.link}" data-author-clear>All authors</button>`,
       layout: state.catalogLayout,
     });
   }

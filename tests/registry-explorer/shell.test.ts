@@ -116,10 +116,10 @@ describe("registry explorer shell interactions", () => {
     expect(home.aside.innerHTML).not.toContain("mobile-browse-menu");
 
     const harness = setup("", "/Registry-Atlas/components");
-    expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail"');
-    expect(harness.aside.innerHTML).toContain('data-browse-layout="grid"');
-    expect(harness.aside.innerHTML).toContain('data-browse-layout="list"');
-    expect(harness.aside.innerHTML).toContain('data-catalog-sort-value="name"');
+    expect(harness.aside.innerHTML).toContain('class="desktop-browse-rail ');
+    expect(harness.browseToolbar.innerHTML).toContain('data-browse-layout="grid"');
+    expect(harness.browseToolbar.innerHTML).toContain('data-browse-layout="list"');
+    expect(harness.browseToolbar.innerHTML).toContain('data-catalog-sort-value="name"');
     expect(harness.aside.innerHTML).not.toContain("shadcn directory");
     expect(harness.aside.innerHTML).not.toContain("data-catalog-registry-select");
     expect(harness.aside.innerHTML).not.toContain('data-sidebar-taxonomy-group="component-types"');
@@ -215,10 +215,10 @@ describe("registry explorer shell interactions", () => {
       canonicalCatalogItems(),
     );
 
-    expect(harness.aside.innerHTML).toContain('data-catalog-access-value="free"');
-    expect(harness.aside.innerHTML).toContain('data-catalog-access-value="paid"');
+    expect(harness.browseToolbar.innerHTML).toContain('data-catalog-access-value="free"');
+    expect(harness.browseToolbar.innerHTML).toContain('data-catalog-access-value="paid"');
 
-    harness.aside.dispatch(
+    harness.browseToolbar.dispatch(
       "click",
       target({
         "data-catalog-access-value": "free",
@@ -228,11 +228,11 @@ describe("registry explorer shell interactions", () => {
     expect(harness.contentBody.innerHTML).toContain("Free App Shell");
     expect(harness.contentBody.innerHTML).not.toContain("Paid AI Chat");
     expect(harness.contentBody.innerHTML).toContain("Access: Free");
-    expect(harness.aside.innerHTML).toMatch(
+    expect(harness.browseToolbar.innerHTML).toMatch(
       /data-catalog-access-value="free"[\s\S]*?aria-pressed="true"/,
     );
 
-    harness.aside.dispatch(
+    harness.browseToolbar.dispatch(
       "click",
       target({
         "data-catalog-access-value": "free",
@@ -252,7 +252,7 @@ describe("registry explorer shell interactions", () => {
       }),
     );
 
-    expect(noAccess.aside.innerHTML).not.toContain("data-catalog-access-value");
+    expect(noAccess.browseToolbar.innerHTML).not.toContain("data-catalog-access-value");
   });
 
   it("rehydrates canonical and access URL state on a first-class block route", () => {
@@ -267,7 +267,7 @@ describe("registry explorer shell interactions", () => {
     expect(harness.aside.innerHTML).toMatch(
       /data-catalog-canonical-value="application\/app-shell"[\s\S]*?aria-pressed="true"/,
     );
-    expect(harness.aside.innerHTML).toMatch(
+    expect(harness.browseToolbar.innerHTML).toMatch(
       /data-catalog-access-value="free"[\s\S]*?aria-pressed="true"/,
     );
     expect(harness.contentBody.innerHTML).toContain("Access: Free");
@@ -291,24 +291,27 @@ describe("registry explorer shell interactions", () => {
     expect(harness.contentBody.innerHTML).not.toContain('data-catalog-category-value="app-shell"');
   });
 
-  it("uses the exemplar registry rail for layout, sort, and category rows", () => {
+  it("uses the content toolbar for registry layout, sort, and asset filters", () => {
     const harness = setup("", "/Registry-Atlas/registries");
-    expect(harness.aside.innerHTML).toContain('data-browse-layout="grid"');
-    expect(harness.aside.innerHTML).toContain('data-browse-layout="list"');
-    expect(harness.aside.innerHTML).toContain('data-registry-sort-value="item-count-desc"');
-    expect(harness.aside.innerHTML).toContain("data-registry-asset-value");
+    expect(harness.browseToolbar.innerHTML).toContain('data-browse-layout="grid"');
+    expect(harness.browseToolbar.innerHTML).toContain('data-browse-layout="list"');
+    expect(harness.browseToolbar.innerHTML).toContain('data-registry-sort-value="item-count-desc"');
+    expect(harness.browseToolbar.innerHTML).toContain("data-registry-asset-value");
     expect(harness.aside.innerHTML).not.toContain("shadcn directory");
     expect(harness.aside.innerHTML).not.toContain("Canonical category");
     expect(harness.contentBody.innerHTML).not.toContain("registry-directory-controls");
 
-    harness.aside.dispatch("click", target({ "data-browse-layout": "list" }));
+    harness.browseToolbar.dispatch("click", target({ "data-browse-layout": "list" }));
     expect(harness.location.search).toContain("layout=list");
     expect(harness.contentBody.innerHTML).toContain('data-directory-layout="list"');
 
-    harness.aside.dispatch("click", target({ "data-registry-sort-value": "item-count-desc" }));
+    harness.browseToolbar.dispatch(
+      "click",
+      target({ "data-registry-sort-value": "item-count-desc" }),
+    );
     expect(harness.location.search).toContain("registrySort=item-count-desc");
 
-    harness.aside.dispatch("click", target({ "data-registry-asset-value": "component" }));
+    harness.browseToolbar.dispatch("click", target({ "data-registry-asset-value": "component" }));
     expect(harness.location.search).toContain("asset=component");
 
     const reloaded = setup(
@@ -316,11 +319,13 @@ describe("registry explorer shell interactions", () => {
       "/Registry-Atlas/registries",
     );
 
-    expect(reloaded.aside.innerHTML).toMatch(/data-browse-layout="list"[^>]*aria-pressed="true"/);
-    expect(reloaded.aside.innerHTML).toMatch(
+    expect(reloaded.browseToolbar.innerHTML).toMatch(
+      /data-browse-layout="list"[^>]*aria-pressed="true"/,
+    );
+    expect(reloaded.browseToolbar.innerHTML).toMatch(
       /data-registry-sort-value="item-count-desc"[^>]*aria-pressed="true"/,
     );
-    expect(reloaded.aside.innerHTML).toMatch(
+    expect(reloaded.browseToolbar.innerHTML).toMatch(
       /data-registry-asset-value="component"[^>]*aria-pressed="true"/,
     );
     expect(reloaded.contentBody.innerHTML).toContain('data-directory-layout="list"');
@@ -390,42 +395,45 @@ describe("registry explorer shell interactions", () => {
   });
 
   it("filters real components from type facets without changing the search input", () => {
-    const harness = setup("", "/Registry-Atlas/components", undefined, undefined, [
-      { name: "avatar", title: "Avatar", type: "registry:ui" },
-      { name: "button", title: "Button", type: "registry:ui" },
-    ]);
-
-    harness.aside.dispatch("click", target({ "data-catalog-component-type": "avatar" }));
+    const harness = setup(
+      "?componentType=avatar",
+      "/Registry-Atlas/components",
+      undefined,
+      undefined,
+      [
+        { name: "avatar", title: "Avatar", type: "registry:ui" },
+        { name: "button", title: "Button", type: "registry:ui" },
+      ],
+    );
 
     expect(harness.searchInput.value).toBe("");
     expect(harness.location.pathname).toBe("/Registry-Atlas/components");
     expect(harness.location.search).toContain("componentType=avatar");
     expect(harness.contentBody.innerHTML).toContain('data-view-item-slug="avatar"');
     expect(harness.contentBody.innerHTML).not.toContain('data-view-item-slug="button"');
-    expect(harness.aside.innerHTML).toMatch(
-      /data-catalog-component-type="avatar"[^>]*aria-pressed="true"/,
-    );
+    expect(harness.aside.innerHTML).not.toContain('data-catalog-component-type="avatar"');
+    harness.contentBody.dispatch("click", target({ "data-catalog-component-type": "avatar" }));
+    expect(harness.location.search).not.toContain("componentType=avatar");
+    expect(harness.contentBody.innerHTML).toContain('data-view-item-slug="button"');
   });
 
-  it("sorts filtered results using the existing catalog state", () => {
+  it("sorts filtered results from the toolbar without changing text search", () => {
     const harness = setup("", "/Registry-Atlas/components");
     harness.searchInput.value = "button";
     harness.searchInput.dispatch("input", {});
-    expect(harness.contentBody.innerHTML).toContain("data-catalog-sort-select");
 
-    harness.contentBody.dispatch(
-      "change",
-      target({ "data-catalog-sort-select": "", value: "name-desc" }),
-    );
+    expect(harness.browseToolbar.innerHTML).toContain('data-catalog-sort-value="name-desc"');
+    expect(harness.aside.innerHTML).not.toContain("data-catalog-sort-value");
+    harness.browseToolbar.dispatch("click", target({ "data-catalog-sort-value": "name-desc" }));
 
     expect(harness.location.search).toContain("sort=name-desc");
-    expect(harness.contentBody.innerHTML).toContain('<option value="name-desc" selected>');
+    expect(harness.browseToolbar.innerHTML).toMatch(
+      /data-catalog-sort-value="name-desc"[^>]*aria-pressed="true"/,
+    );
     expect(harness.searchInput.value).toBe("button");
-
-    harness.contentBody.dispatch("click", target({ "data-catalog-sort-reset": "" }));
+    harness.browseToolbar.dispatch("click", target({ "data-catalog-sort-value": "name" }));
 
     expect(harness.location.search).not.toContain("sort=");
-    expect(harness.contentBody.innerHTML).toContain('<option value="name" selected>');
     expect(harness.searchInput.value).toBe("button");
   });
 
@@ -542,7 +550,7 @@ describe("registry explorer shell interactions", () => {
     );
 
     expect(harness.aside.innerHTML).not.toContain("data-catalog-registry-select");
-    expect(harness.aside.innerHTML).toMatch(
+    expect(harness.browseToolbar.innerHTML).toMatch(
       /data-catalog-sort-value="name"[\s\S]*?aria-pressed="true"/,
     );
     expect(harness.contentBody.innerHTML).toContain("Registry: @delta");
@@ -756,7 +764,7 @@ describe("registry explorer shell interactions", () => {
       expect(harness.contentHeader.innerHTML).toContain(
         "Loaded from the upstream registry item JSON.",
       );
-      expect(harness.contentBody.innerHTML).toContain("<code>react</code>");
+      expect(harness.contentBody.innerHTML).toMatch(/<code(?: [^>]*)?>react<\/code>/);
     });
     expect(fetchImpl).toHaveBeenCalledTimes(3);
     expect(String(fetchImpl.mock.calls[0]?.[0])).toContain("/data/runtime-manifest.json");
@@ -872,6 +880,7 @@ function setup(
   });
 
   const aside = root();
+  const browseToolbar = root();
   const contentHeader = root();
   const contentBody = root();
   const tabs = [tab("discover"), tab("registries"), tab("compare"), tab("authors")];
@@ -912,6 +921,7 @@ function setup(
     fetchImpl,
     roots: {
       aside: asTestDomStub<HTMLElement>(aside),
+      browseToolbar: asTestDomStub<HTMLElement>(browseToolbar),
       contentHeader: asTestDomStub<HTMLElement>(contentHeader),
       contentBody: asTestDomStub<HTMLElement>(contentBody),
       tabs: asTestDomStub<NodeListOf<Element>>(tabs),
@@ -927,6 +937,7 @@ function setup(
 
   return {
     aside,
+    browseToolbar,
     contentHeader,
     contentBody,
     tabs,

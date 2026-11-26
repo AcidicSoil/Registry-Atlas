@@ -85,6 +85,29 @@ describe("queryCatalogComponents", () => {
 
     expect(facets.componentTypes).toContainEqual({ value: "avatar", count: 2 });
   });
+  it("matches selected button group, split button and toolbar types as a union", () => {
+    const catalog = index({
+      "@alpha": [
+        { name: "split-button", type: "registry:ui" },
+        { name: "button-group", type: "registry:ui" },
+        { name: "toolbar", type: "registry:ui" },
+        { name: "button", type: "registry:ui" },
+      ],
+    });
+
+    const result = queryCatalogComponents([registry("@alpha")], catalog, {
+      policy: TEST_CATALOG_POLICY,
+      assetKinds: ["component"],
+      componentTypes: ["split-button", "button-group", "toolbar"],
+    });
+
+    expect(result.items.map(({ slug }) => slug).sort()).toEqual([
+      "button-group",
+      "split-button",
+      "toolbar",
+    ]);
+  });
+
   it("labels nested all-theme records by their actual theme instead of a generic basename", () => {
     const apple = { name: "marvkr/apple/all", type: "registry:style" };
     const beam = { name: "marvkr/beam-lib/all", type: "registry:style" };

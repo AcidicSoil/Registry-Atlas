@@ -1,48 +1,33 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const source = (path: string): string =>
-  readFileSync(new URL("../../" + path, import.meta.url), "utf8");
+const root = new URL("../../", import.meta.url);
 
-describe("catalog stylesheet ownership", () => {
-  it("loads feature CSS after the base sheet in cascade order", () => {
-    const html = source("index.html");
+describe("stylesheet ownership", () => {
+  it("permits exactly the two design-system stylesheets in application source", () => {
+    const styles = ["src", "public"].flatMap((directory) =>
+      readdirSync(new URL(directory + "/", root), { recursive: true, encoding: "utf8" })
+        .filter((name) => name.endsWith(".css"))
+        .map((name) => directory + "/" + name),
+    );
 
-    const sheets = [
-      "styles/registry-explorer.css",
-      "src/registry-explorer/ui/catalog-reference.css",
-      "src/registry-explorer/ui/catalog-hierarchy.css",
-      "src/registry-explorer/ui/app-shell-core.css",
-      "src/registry-explorer/ui/catalog-browse.css",
-      "src/registry-explorer/ui/sidebar-browse-rail.css",
-      "src/registry-explorer/ui/registry-directory-navigation.css",
-      "src/registry-explorer/ui/sidebar-exemplar-rail.css",
-    ];
-
-    let previous = -1;
-
-    for (const path of sheets) {
-      const at = html.indexOf('href="/' + path + '"');
-
-      expect(at).toBeGreaterThan(previous);
-      const repoPath = path.startsWith("styles/") ? "public/" + path : path;
-
-      expect(source(repoPath).length).toBeGreaterThan(100);
-      previous = at;
-    }
+    expect(styles.sort()).toEqual(["src/styles/globals.css", "src/styles/tokens.css"]);
   });
 
-  it("keeps each feature-owned source in one stylesheet", () => {
-    const base = source("public/styles/registry-explorer.css");
-    const catalog = source("src/registry-explorer/ui/catalog-reference.css");
-    const shell = source("src/registry-explorer/ui/app-shell-core.css");
-    const navigation = source("src/registry-explorer/ui/sidebarNavigation.stylex.ts");
-    const sidebar = source("src/registry-explorer/ui/sidebar-browse-rail.css");
+  it("initializes Tailwind once and imports centralized tokens", () => {
+    const html = readFileSync(new URL("index.html", root), "utf8");
+    const globals = readFileSync(new URL("src/styles/globals.css", root), "utf8");
 
-    expect(base).not.toContain("21st.dev-reference catalogue surfaces");
-    expect(catalog).toContain("21st.dev-reference catalogue surfaces");
-    expect(shell).toContain("Sidebar-first shell correction");
-    expect(navigation).toContain("root: {");
-    expect(sidebar).toContain("Authoritative browse sidebar");
+    expect(html.match(/<link[^>]*rel="stylesheet"[^>]*>/g)).toEqual([
+      '<link rel="stylesheet" href="/src/styles/globals.css" />',
+    ]);
+    expect(globals).toContain('@import "tailwindcss";');
+    expect(globals).toContain('@import "./tokens.css";');
+  });
+
+  it("does not let component selectors accumulate in global foundations", () => {
+    const globals = readFileSync(new URL("src/styles/globals.css", root), "utf8");
+
+    expect(globals).not.toMatch(/\.[a-z][\w-]*\s*[{,:]/);
   });
 });

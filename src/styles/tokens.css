@@ -1,0 +1,97 @@
+/* Resend source primitives; design-tokens.json records the upstream payload. */
+:root {
+  --color-void-black: #000000;
+  --color-graphite-hairline: #292d30;
+  --color-white: #ffffff;
+  --color-bone-white: #f0f0f0;
+  --color-ash-gray: #a1a4a5;
+  --color-smoke-gray: #abafb4;
+  --color-iron: #6e727a;
+  --color-charcoal: #464a4d;
+  --color-iris-violet: #9281f7;
+  --gradient-iris-violet: linear-gradient(
+    to right bottom in oklab,
+    rgb(146 129 247) 0%,
+    rgb(154 84 220) 100%
+  );
+  --color-iris-violet-glow: #baa7ff;
+  --color-signal-blue: #3b9eff;
+  --color-sky-blue: #70b8ff;
+  --color-pulse-green: #3ad389;
+  --color-alarm-red: #ff9592;
+  --color-crimson: #ff6465;
+  --color-amber: #ffca16;
+  --color-amber-glow: #ffd60a;
+  --color-surface-gradient: #0b0e14;
+  --gradient-surface-gradient: linear-gradient(rgb(27 27 27), rgb(3 3 3));
+  --refero-radius-cards: 16px;
+  --refero-radius-badges: 6px;
+  --refero-radius-inputs: 6px;
+  --refero-radius-buttons: 6px;
+  --refero-radius-large-panels: 24px;
+  --refero-space-unit: 4px;
+  --refero-font-sans: inter, ui-sans-serif, system-ui, sans-serif;
+  --refero-font-mono: "Commit Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  /* Semantic and component aliases for the catalog. */
+  --atlas-background: var(--color-void-black);
+  --atlas-foreground: var(--color-bone-white);
+  --atlas-card: var(--color-void-black);
+  --atlas-popover: var(--color-void-black);
+  --atlas-secondary: color-mix(
+    in srgb,
+    var(--color-graphite-hairline) 65%,
+    var(--color-void-black)
+  );
+  --atlas-preview-visual: var(--color-void-black);
+  --atlas-muted-foreground: var(--color-ash-gray);
+  --atlas-border: var(--color-graphite-hairline);
+  --atlas-input: var(--color-iron);
+  --atlas-primary: var(--color-sky-blue);
+  --atlas-developer: var(--color-iris-violet-glow);
+  --atlas-focus: var(--color-signal-blue);
+  --atlas-radius-button: var(--refero-radius-buttons);
+  --atlas-radius-card: var(--refero-radius-cards);
+  --atlas-radius-panel: var(--refero-radius-large-panels);
+  --atlas-font-sans: var(--refero-font-sans);
+  --atlas-font-mono: var(--refero-font-mono);
+  --atlas-space-1: calc(var(--refero-space-unit) * 1);
+  --atlas-space-2: calc(var(--refero-space-unit) * 2);
+  --atlas-space-3: calc(var(--refero-space-unit) * 3);
+  --atlas-space-4: calc(var(--refero-space-unit) * 4);
+  --atlas-space-5: calc(var(--refero-space-unit) * 5);
+  --atlas-space-6: calc(var(--refero-space-unit) * 6);
+}
+
+@theme inline {
+  --animate-atlas-preview: atlas-preview 125ms cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  @keyframes atlas-preview {
+    from {
+      opacity: 0;
+      transform: translateY(4px) scale(0.985);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  --color-atlas-background: var(--atlas-background);
+  --color-atlas-foreground: var(--atlas-foreground);
+  --color-atlas-card: var(--atlas-card);
+  --color-atlas-popover: var(--atlas-popover);
+  --color-atlas-secondary: var(--atlas-secondary);
+  --color-atlas-muted-foreground: var(--atlas-muted-foreground);
+  --color-atlas-border: var(--atlas-border);
+  --color-atlas-input: var(--atlas-input);
+  --color-atlas-primary: var(--atlas-primary);
+  --color-atlas-developer: var(--atlas-developer);
+  --color-atlas-focus: var(--atlas-focus);
+  --radius-atlas-button: var(--atlas-radius-button);
+  --radius-atlas-card: var(--atlas-radius-card);
+  --radius-atlas-panel: var(--atlas-radius-panel);
+  --font-atlas-sans: var(--atlas-font-sans);
+  --font-atlas-mono: var(--atlas-font-mono);
+}

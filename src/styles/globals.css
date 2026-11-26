@@ -1,0 +1,119 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html {
+    overflow-x: clip;
+    min-width: 320px;
+    min-height: 100%;
+    background: var(--atlas-background);
+  }
+
+  body {
+    overflow-x: clip;
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    background: var(--atlas-background);
+    color: var(--atlas-foreground);
+    font-family: var(--atlas-font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  button,
+  input,
+  summary {
+    font: inherit;
+  }
+
+  button,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  a,
+  summary {
+    outline: none;
+  }
+
+  a {
+    color: var(--atlas-primary);
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  summary:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--atlas-focus);
+    outline-offset: 3px;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  p,
+  h1,
+  h2,
+  h3 {
+    margin-top: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    color: var(--atlas-foreground);
+    line-height: 1.2;
+    font-weight: 650;
+  }
+
+  p {
+    margin-bottom: 1em;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  h1 {
+    margin-bottom: var(--atlas-space-2);
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    letter-spacing: -0.035em;
+  }
+
+  h2 {
+    margin-bottom: var(--atlas-space-2);
+    font-size: 1.05rem;
+    letter-spacing: -0.015em;
+  }
+
+  @media (width >= 861px) {
+    html,
+    body {
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+}

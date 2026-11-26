@@ -28,13 +28,13 @@ Back up PostgreSQL before applying. This workflow rejects incomplete source refr
 - [ ] Recover accurate, source-backed display titles for 36 `@shadcnuikit` illustration blocks. Existing source titles are only `1`–`36`; changing titles must flow through canonical ingestion and trigger classification re-review.
 - [ ] Audit low-information titles on other browse surfaces, exempting legitimately short icon names.
 - [x] Run and review fresh-build desktop/mobile route, card link, filter, focus, keyboard, overflow, and source-link acceptance. On 2026-11-10, 16 desktop and 7 mobile E2E cases passed; fresh 1440×900/390×844 captures were visually inspected. See `docs/verification.md`.
-- [ ] Complete the remaining component StyleX ownership migration. Obsolete `catalog-library-cards.css` and `sidebar-taxonomy.css` were removed; catalog/registry navigation roots and grouped taxonomy states use StyleX. Document/shell/remaining navigation/setup CSS still require separately verified migrations.
+- [x] Replace StyleX and legacy component CSS with Resend/Tailwind ownership. Only globals.css and tokens.css remain; full visual acceptance and preview-fixture reconciliation are tracked separately.
 - [ ] Audit registry logo quality/coverage across sidebar, directory cards, and registry profile headers.
 
 ## P1 — Release and external delivery
 
 - [x] Make local catalog/detail snapshot publication generation-atomic and verify paired reads.
-- [x] Restore three existing reviewed component preview captures and their browser test. This is a **three-item pilot**, not broad preview coverage.
+- [ ] Reconcile the historical three-item preview pilot with the current removal of its manifest and images (commit `1e46da5`). Do not restore deleted assets or relax source-evidence checks without approval.
 - [ ] Configure a trusted publication environment with access to the private PostgreSQL export and generation retention; GitHub Actions currently runs source checks only.
 - [ ] Run production release acceptance and confirm navigation, accessibility, asset integrity, and no console errors.
 - [ ] Resolve two distinct upstream HTTP URLs (formerly four mirrored warnings): `@shadcn-map` registry template redirects securely to HTTPS, while `@wandry-ui` homepage HTTPS certificate is expired. Keep warnings until the official directory or verified upstream source is fixed; do not rewrite authoritative records locally.

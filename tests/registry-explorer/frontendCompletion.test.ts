@@ -14,10 +14,7 @@ const BASE = "/Registry-Atlas/";
 
 describe("frontend completion contract", () => {
   it("globally limits CSS motion when reduced motion is requested", () => {
-    const css = readFileSync(
-      new URL("../../public/styles/registry-explorer.css", import.meta.url),
-      "utf8",
-    );
+    const css = readFileSync(new URL("../../src/styles/globals.css", import.meta.url), "utf8");
 
     const media = css.match(
       /@media \(prefers-reduced-motion: reduce\) \{\s*\*,\s*\*::before,\s*\*::after \{([^}]+)\}/,
@@ -41,14 +38,9 @@ describe("frontend completion contract", () => {
   it("provides a keyboard skip link to the focusable main content header", () => {
     const html = readFileSync(new URL("../../index.html", import.meta.url), "utf8");
 
-    const css = readFileSync(
-      new URL("../../public/styles/registry-explorer.css", import.meta.url),
-      "utf8",
-    );
-
-    expect(html).toContain('<a class="skip-link" href="#contentHeader">Skip to main content</a>');
-    expect(html).toContain('id="contentHeader" tabindex="-1"');
-    expect(css).toContain(".skip-link:focus-visible");
+    expect(html).toMatch(/<a\s+class="skip-link[^"]*"\s+href="#contentHeader"/);
+    expect(html).toMatch(/id="contentHeader"\s+tabindex="-1"/);
+    expect(html).toContain("focus-visible:translate-y-0");
   });
 
   it("provides first-class block and page collection/detail routes", () => {

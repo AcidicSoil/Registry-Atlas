@@ -12,12 +12,20 @@ export default {
         ownerDirectories: ["ui", "components"],
         scopedSuffixes: [".css"],
         allowedGlobalDirectories: [],
-        allowedGlobalFiles: ["public/styles/registry-explorer.css"],
+        allowedGlobalFiles: ["src/styles/globals.css", "src/styles/tokens.css"],
       },
     ],
     "anti-slop-css/no-cross-feature-styling": [{ featureRoot: "src/registry-explorer" }],
   },
   overrides: [
+    { files: ["src/styles/globals.css"], rules: { "import-notation": "string" } },
+    {
+      files: ["src/styles/tokens.css"],
+      rules: {
+        "color-hex-length": "long",
+        "at-rule-no-unknown": [true, { ignoreAtRules: ["theme"] }],
+      },
+    },
     {
       files: ["src/**/*.css"],
       rules: { "anti-slop-css/max-stylesheet-size": 400 },

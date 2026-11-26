@@ -1,3 +1,4 @@
+import { actionClasses } from "./primitives/actionClasses";
 import { buildCatalogFacetSummary } from "../core/catalogQuery";
 import { catalogRoutePath, type CatalogRoute } from "../core/catalogRoutes";
 import { assetKindForCatalogItem, type CatalogAssetKind } from "../core/catalogCollections";
@@ -5,10 +6,13 @@ import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
 import { registryCatalogItemIdentity } from "../core/registryCatalogIndex";
 import type { CatalogPolicy } from "../core/catalogPolicy";
 import {
-  renderRegistryDirectorySidebar,
+  renderRegistryDirectoryControls,
   type RegistryDirectoryLayout,
 } from "./registryDirectoryView";
-import { renderCatalogSidebarNavigation } from "./catalogSidebarNavigation";
+import {
+  renderCatalogSidebarNavigation,
+  renderCatalogToolbarControls,
+} from "./catalogSidebarNavigation";
 import { escapeHtml } from "./renderSafety";
 import type { AssetKindToken } from "./catalogComponentsView";
 import type { AppState } from "./shellState";
@@ -22,7 +26,7 @@ interface SidebarDependencies {
   roots: {
     aside: HTMLElement;
     sidebarContext?: HTMLElement;
-    sidebarLayout?: HTMLElement;
+    browseToolbar?: HTMLElement;
     setupCount?: HTMLElement;
   };
   registries: readonly Registry[];
@@ -98,8 +102,6 @@ export function createShellSidebar({
 
   const { directoryAssetCounts, libraryItemCounts, registryAssetCounts } =
     collectSidebarAssetCounts(catalogIndex, policy);
-
-  const sidebarFacetCache = new Map<string, ReturnType<typeof buildCatalogFacetSummary>>();
 
   function routeAssetKinds(): CatalogAssetKind[] {
     const route = getState().route;
@@ -182,12 +184,12 @@ export function createShellSidebar({
     const context = sidebarContextForRoute(getState().route);
     const href = catalogRoutePath(context.route, basePath());
     roots.sidebarContext.innerHTML =
-      '<a class="sidebar-context-link" href="' +
+      '<a class="sidebar-context-link grid h-9 min-w-0 grid-cols-[20px_minmax(0,1fr)_20px] items-center gap-1 rounded-[var(--atlas-radius-button)] px-2 text-sm text-atlas-muted-foreground no-underline hover:bg-atlas-secondary hover:text-atlas-foreground focus-visible:bg-atlas-secondary focus-visible:text-atlas-foreground" href="' +
       escapeHtml(href) +
       '" data-catalog-route="' +
       escapeHtml(href) +
       '">' +
-      '<span class="sidebar-context-icon" aria-hidden="true">' +
+      '<span class="sidebar-context-icon grid size-4 place-items-center text-current" aria-hidden="true">' +
       '<svg viewBox="0 0 16 16" width="14" height="14" fill="none">' +
       '<rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
       '<rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
@@ -195,10 +197,10 @@ export function createShellSidebar({
       '<rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor"></rect>' +
       "</svg>" +
       "</span>" +
-      '<span class="sidebar-context-label">' +
+      '<span class="sidebar-context-label min-w-0 truncate">' +
       escapeHtml(context.label) +
       "</span>" +
-      '<span class="sidebar-context-end" aria-hidden="true"></span>' +
+      '<span class="sidebar-context-end size-4" aria-hidden="true"></span>' +
       "</a>";
   }
 
@@ -221,8 +223,8 @@ export function createShellSidebar({
 
   function renderBrowseLayoutToggle(layout: RegistryDirectoryLayout): string {
     return (
-      '<div class="sidebar-layout-strip">' +
-      '<div class="sidebar-layout-toggle" role="group" aria-label="Result layout">' +
+      '<div class="browse-layout-strip flex-none">' +
+      '<div class="browse-layout-toggle grid h-[34px] grid-cols-2 gap-0.5 rounded-[var(--atlas-radius-button)] border border-atlas-border bg-atlas-card p-0.5 [&>button]:h-[26px] [&>button]:min-w-0 [&>button]:cursor-pointer [&>button]:rounded [&>button]:border-0 [&>button]:bg-transparent [&>button]:px-2.5 [&>button]:text-[13px] [&>button]:text-atlas-muted-foreground [&>button:hover]:bg-atlas-secondary [&>button:hover]:text-atlas-foreground [&>button[aria-pressed=true]]:bg-atlas-background [&>button[aria-pressed=true]]:font-semibold [&>button[aria-pressed=true]]:text-atlas-foreground [&>button[aria-pressed=true]]:inset-ring [&>button[aria-pressed=true]]:inset-ring-atlas-border" role="group" aria-label="Result layout">' +
       '<button type="button" data-browse-layout="grid" aria-pressed="' +
       String(layout === "grid") +
       '">Grid</button>' +
@@ -242,86 +244,51 @@ export function createShellSidebar({
     return null;
   }
 
-  function filteredSidebarNavigation(
-    contextFacets: ReturnType<typeof buildCatalogFacetSummary>,
-    globalFacets: ReturnType<typeof buildCatalogFacetSummary>,
-  ): string {
-    const route = getState().route;
-    const fixedNamespace = fixedSidebarNamespace(route);
-    const fixedRegistry = fixedNamespace !== null;
+  function renderBrowseSurfaces() {
+    const state = getState();
+    const route = state.route;
 
-    return renderCatalogSidebarNavigation(
-      {
-        ...contextFacets,
-        registries: globalFacets.registries,
-      },
-      {
-        kind: route.kind,
-        canonicalIds: getState().catalogCanonicalIds,
-        registryNames: fixedRegistry ? [] : getState().catalogRegistryNames,
-        sort: getState().catalogSort,
-        access: getState().catalogAccess,
-        componentTypes: getState().catalogComponentTypes,
-        assetKinds: getState().catalogAssetKinds,
-      },
-      taxonomy,
-      {
-        showRegistrySort: !fixedRegistry,
-        expandedCategoryIds: [...expandedCategoryIds],
-        collapsedCategoryIds: [...collapsedCategoryIds],
-        assetCounts:
-          route.kind === "registry" || route.kind === "registry-assets"
-            ? registryAssetCounts.get(route.namespace)
-            : undefined,
-      },
-    );
-  }
+    if (!supportsBrowseLayout(route)) return { navigation: "", controls: "" };
 
-  function sidebarNavigation(): string {
-    if (getState().route.kind === "registries") {
-      return renderRegistryDirectorySidebar({
-        layout: getState().registryLayout,
-        sort: getState().registrySort,
-        registryCount: registries.length,
-        assetCounts: directoryAssetCounts,
-        selectedAssetKinds: getState().catalogAssetKinds,
-      });
+    if (route.kind === "registries") {
+      return {
+        navigation: "",
+        controls: renderRegistryDirectoryControls({
+          layout: state.registryLayout,
+          sort: state.registrySort,
+          registryCount: registries.length,
+          assetCounts: directoryAssetCounts,
+          selectedAssetKinds: state.catalogAssetKinds,
+        }),
+      };
     }
 
-    if (
-      ![
-        "components",
-        "blocks",
-        "pages",
-        "templates",
-        "themes",
-        "icons",
-        "explore",
-        "registry",
-        "registry-assets",
-        "icon-category",
-        "icon-family",
-      ].includes(getState().route.kind)
-    )
-      return "";
+    const facets = facetsForSidebar();
+    const fixedRegistry = fixedSidebarNamespace(route) !== null;
 
-    const contextFacets = facetsForSidebar();
-    let globalFacets = sidebarFacetCache.get("all:registries");
+    const selection = {
+      kind: route.kind,
+      canonicalIds: state.catalogCanonicalIds,
+      registryNames: fixedRegistry ? [] : state.catalogRegistryNames,
+      sort: state.catalogSort,
+      access: state.catalogAccess,
+      assetKinds: state.catalogAssetKinds,
+    };
 
-    if (!globalFacets) {
-      globalFacets = buildCatalogFacetSummary(registries, catalogIndex, { policy });
-      sidebarFacetCache.set("all:registries", globalFacets);
-    }
+    const options = {
+      showRegistrySort: !fixedRegistry,
+      expandedCategoryIds: [...expandedCategoryIds],
+      collapsedCategoryIds: [...collapsedCategoryIds],
+      assetCounts:
+        route.kind === "registry" || route.kind === "registry-assets"
+          ? registryAssetCounts.get(route.namespace)
+          : undefined,
+    };
 
-    return filteredSidebarNavigation(contextFacets, globalFacets);
-  }
-
-  function renderSidebarLayout(layoutMarkup: string): string {
-    if (!roots.sidebarLayout) return layoutMarkup;
-
-    roots.sidebarLayout.innerHTML = layoutMarkup;
-
-    return "";
+    return {
+      navigation: renderCatalogSidebarNavigation(facets, selection, taxonomy, options),
+      controls: renderCatalogToolbarControls(facets, selection, options),
+    };
   }
 
   function renderSidebar(queued: ReadonlySet<string>, _batchCommand: string | null): void {
@@ -337,7 +304,7 @@ export function createShellSidebar({
 
     if (roots.setupCount) roots.setupCount.textContent = String(queued.size);
 
-    const navigation = sidebarNavigation();
+    const { navigation, controls } = renderBrowseSurfaces();
 
     const layout =
       getState().route.kind === "registries" ? getState().registryLayout : getState().catalogLayout;
@@ -346,9 +313,20 @@ export function createShellSidebar({
       ? renderBrowseLayoutToggle(layout)
       : "";
 
+    const clearMarkup = supportsBrowseLayout(getState().route)
+      ? `<button class="link-button catalog-filter-clear min-h-[30px] ${actionClasses.link}" type="button" data-catalog-clear>Clear all</button>`
+      : "";
+
+    if (roots.browseToolbar)
+      roots.browseToolbar.innerHTML =
+        '<div class="browse-filter-group flex flex-wrap items-center gap-2" role="group" aria-label="Catalog filters">' +
+        controls +
+        "</div>" +
+        clearMarkup +
+        layoutMarkup;
+
     roots.aside.innerHTML =
-      renderSidebarLayout(layoutMarkup) +
-      '<div class="sidebar-scroll-pane"><div class="desktop-browse-rail">' +
+      '<div class="sidebar-scroll-pane min-h-0 flex-auto overflow-visible overscroll-contain"><div class="desktop-browse-rail grid min-w-0 gap-0 pb-[18px]">' +
       navigation +
       "</div></div>";
   }

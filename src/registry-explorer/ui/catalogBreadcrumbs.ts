@@ -105,14 +105,14 @@ function renderCrumb(crumb: Crumb, index: number, basePath: string): string {
   const url = crumb.route ? catalogRoutePath(crumb.route, basePath) : null;
 
   const separator = index
-    ? '<span class="catalog-breadcrumb-separator" aria-hidden="true">/</span>'
+    ? '<span class="catalog-breadcrumb-separator text-atlas-muted-foreground opacity-60" aria-hidden="true">/</span>'
     : "";
 
   const content = url
-    ? `<a href="${escapeHtml(url)}" data-catalog-route="${escapeHtml(url)}">${label}</a>`
-    : `<span aria-current="page">${label}</span>`;
+    ? `<a class="text-atlas-muted-foreground no-underline hover:text-atlas-foreground hover:underline focus-visible:text-atlas-foreground focus-visible:underline" href="${escapeHtml(url)}" data-catalog-route="${escapeHtml(url)}">${label}</a>`
+    : `<span class="font-[550] text-atlas-foreground [overflow-wrap:anywhere]" aria-current="page">${label}</span>`;
 
-  return `<li>${separator}${content}</li>`;
+  return `<li class="inline-flex min-w-0 items-center gap-2 text-xs">${separator}${content}</li>`;
 }
 
 export function renderCatalogBreadcrumbs(
@@ -126,7 +126,7 @@ export function renderCatalogBreadcrumbs(
   const trail =
     "namespace" in route ? registryBreadcrumbs(route, itemTitle) : otherBreadcrumbs(route);
 
-  return `<nav class="catalog-breadcrumb" aria-label="Breadcrumb">
-    <ol>${[root, ...trail].map((crumb, index) => renderCrumb(crumb, index, basePath)).join("")}</ol>
+  return `<nav class="catalog-breadcrumb mb-0.5 min-w-0 basis-full" aria-label="Breadcrumb">
+    <ol class="m-0 flex list-none flex-wrap items-center gap-x-2 gap-y-[3px] p-0">${[root, ...trail].map((crumb, index) => renderCrumb(crumb, index, basePath)).join("")}</ol>
   </nav>`;
 }

@@ -1,8 +1,8 @@
-import * as stylex from "@stylexjs/stylex";
-import { previewStyles } from "./catalogLinkPreview.stylex";
+import { cn } from "./primitives/cn";
+import { previewStyles } from "./catalogLinkPreview.classes";
 import { type ComponentPreviews } from "./componentPreviews";
 import { verifiedRegistryHomepage } from "../core/sourcePageValidation";
-import { escapeHtml, renderStyleXAttributes } from "./renderSafety";
+import { escapeHtml, renderClassAttribute } from "./renderSafety";
 
 const PREVIEW_ID = "catalog-link-preview";
 
@@ -22,8 +22,8 @@ export function renderSourceLinkPreview(
   source: NonNullable<ReturnType<typeof sourceLinkPreview>>,
   title: string,
 ): string {
-  return `<div${renderStyleXAttributes(stylex.attrs(previewStyles.visual))} data-preview-visual>
-    <img${renderStyleXAttributes(stylex.attrs(previewStyles.image))} src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} preview"
+  return `<div${renderClassAttribute(cn(previewStyles.visual))} data-preview-visual>
+    <img${renderClassAttribute(cn(previewStyles.image))} src="${escapeHtml(source.src)}" alt="${escapeHtml(title)} preview"
       decoding="async" referrerpolicy="no-referrer" />
   </div>`;
 }
@@ -82,11 +82,7 @@ export function attachCatalogLinkPreviews(
     const title = previewTitle(card, anchor);
 
     element.id = PREVIEW_ID;
-    const previewAttributes = stylex.attrs(previewStyles.root, immediate && previewStyles.instant);
-
-    if (previewAttributes.class) element.className = previewAttributes.class;
-
-    if (previewAttributes.style) element.style.cssText = previewAttributes.style;
+    element.className = cn(previewStyles.root, !immediate && previewStyles.animate);
     element.setAttribute("role", "tooltip");
     element.innerHTML = renderSourceLinkPreview(data, title);
     element.querySelector("img")?.addEventListener("error", close);

@@ -1,3 +1,4 @@
+import { emptyStateClasses } from "./primitives/emptyStateClasses";
 import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
 import type { CatalogRoute } from "../core/catalogRoutes";
 import { findRegistryCatalogItem } from "../core/registryCatalogIndex";
@@ -18,6 +19,7 @@ import type { AppState } from "./shellState";
 type KindLookupContract = Readonly<Record<string, string>>;
 
 interface RendererDependencies {
+  syncTypeFilter?: () => void;
   getState: () => AppState;
   roots: {
     contentHeader: HTMLElement;
@@ -68,6 +70,7 @@ function primaryViewForRoute(route: CatalogRoute): string | null {
 
 /** Owns route dispatch, app chrome, and render fallback; state mutations stay in shell. */
 export function createShellRenderer({
+  syncTypeFilter,
   getState,
   roots,
   registries,
@@ -294,6 +297,7 @@ export function createShellRenderer({
 
     try {
       renderTabs();
+      syncTypeFilter?.();
       const queued = new Set(state.installQueue.map((entry) => entry.token));
       const batch = buildInstallQueueBatchState(state.installQueue);
       sidebar.renderSidebar(queued, batch.command);
@@ -305,8 +309,7 @@ export function createShellRenderer({
       feed.observeNextPage();
     } catch (error) {
       console.error("Registry Explorer: Render failed", error);
-      roots.contentBody.innerHTML =
-        '<div class="empty-state">Something went wrong while rendering this view.</div>';
+      roots.contentBody.innerHTML = `<div class="empty-state ${emptyStateClasses}">Something went wrong while rendering this view.</div>`;
     }
   }
 

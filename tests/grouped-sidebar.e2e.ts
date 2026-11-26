@@ -28,7 +28,7 @@ test("category expansion and filtering are distinct actions", async ({ app, brow
       display: style.display,
       gap: style.gap,
       paddingBottom: style.paddingBottom,
-      hasStylex: [...nav.classList].some((name) => name.startsWith("x")),
+      hasUtilities: nav.classList.contains("grid"),
     };
   });
 
@@ -36,7 +36,7 @@ test("category expansion and filtering are distinct actions", async ({ app, brow
     display: "grid",
     gap: "0px",
     paddingBottom: "18px",
-    hasStylex: true,
+    hasUtilities: true,
   });
 
   const taxonomyStyle = await browser.evaluate(() => {
@@ -47,17 +47,20 @@ test("category expansion and filtering are distinct actions", async ({ app, brow
     if (!group || !summary || !chevron) return null;
 
     return {
-      groupHasStylex: [...group.classList].some((name) => name.startsWith("x")),
-      summaryHasStylex: [...summary.classList].some((name) => name.startsWith("x")),
+      groupHasUtilities: group.classList.contains("group/taxonomy"),
+      summaryHasUtilities: summary.classList.contains("list-none"),
       listStyle: getComputedStyle(summary).listStyleType,
+      chevronInRow:
+        chevron.getBoundingClientRect().right > summary.getBoundingClientRect().right - 40,
       closedChevron: getComputedStyle(chevron).transform,
     };
   });
 
   expect(taxonomyStyle).not.toBeNull();
-  expect(taxonomyStyle?.groupHasStylex).toBe(true);
-  expect(taxonomyStyle?.summaryHasStylex).toBe(true);
+  expect(taxonomyStyle?.groupHasUtilities).toBe(true);
+  expect(taxonomyStyle?.summaryHasUtilities).toBe(true);
   expect(taxonomyStyle?.listStyle).toBe("none");
+  expect(taxonomyStyle?.chevronInRow).toBe(true);
 
   const before = await browser.evaluate(() => location.search);
 
@@ -76,6 +79,7 @@ test("category expansion and filtering are distinct actions", async ({ app, brow
     .not.toBe(taxonomyStyle?.closedChevron ?? null);
   expect(await browser.evaluate(() => location.search)).toBe(before);
 
+  await browser.locator('#browseToolbar [data-browse-facet="Sort"]').tap();
   await browser.locator('[data-catalog-sort-value="registry"]').tap();
   await expect(group).toHaveAttribute("open", "");
 
@@ -130,6 +134,7 @@ test("selected taxonomy branch can be collapsed across sorting and reopened", as
   await summary.press("Enter");
   await expect(group).not.toHaveAttribute("open", "");
 
+  await browser.locator('#browseToolbar [data-browse-facet="Sort"]').tap();
   await browser.locator('[data-catalog-sort-value="registry"]').tap();
   await expect(group).not.toHaveAttribute("open", "");
   await expect

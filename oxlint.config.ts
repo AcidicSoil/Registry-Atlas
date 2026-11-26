@@ -17,7 +17,6 @@ export default defineConfig({
     "**/dist/**",
     "**/node_modules/**",
     "tools/oxlint/anti-slop/**",
-    "tools/eslint/anti-slop-stylex/**",
     "tools/stylelint/anti-slop-css/**",
     "tools/oxlint/shadcn-lint/**",
   ],

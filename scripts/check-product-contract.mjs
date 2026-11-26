@@ -74,11 +74,13 @@ assert(
 );
 
 assert(
-  sidebarNavigationSource.includes("data-catalog-sort-value") &&
+  indexSource.includes('id="browseToolbar"') &&
+    sidebarNavigationSource.includes("renderCatalogToolbarControls") &&
+    sidebarNavigationSource.includes("data-catalog-sort-value") &&
     sidebarNavigationSource.includes("data-catalog-canonical-value") &&
     sidebarNavigationSource.includes("sidebar-nav-row") &&
     sidebarNavigationSource.includes("sidebar-nav-section-label"),
-  "Catalog browse controls must use the exemplar-style persistent navigation-row rail",
+  "Catalog browse controls must live in the content toolbar with category navigation retained",
 );
 
 assert(
@@ -97,7 +99,7 @@ assert(
     registryDirectorySource.includes("sidebar-nav-row") &&
     !registryDirectorySource.includes('type="checkbox"') &&
     !registryDirectorySource.includes('type="radio"'),
-  "Registry directory controls must use the same exemplar-style navigation-row rail",
+  "Registry directory controls must retain the source-backed option rows",
 );
 
 assert(
@@ -110,13 +112,12 @@ assert(
   !componentViewSource.includes("data-catalog-search") &&
     !componentViewSource.includes("data-catalog-registry-select") &&
     !componentViewSource.includes("data-catalog-access-select") &&
-    componentViewSource.includes('for="catalog-sort-select"') &&
-    componentViewSource.includes("data-catalog-sort-select") &&
-    componentViewSource.includes("data-catalog-sort-reset") &&
+    !componentViewSource.includes("data-catalog-sort-select") &&
+    !componentViewSource.includes("data-catalog-sort-reset") &&
     !componentViewSource.includes("data-catalog-sort-value") &&
     !componentViewSource.includes("catalog-filter-menu") &&
     !componentViewSource.includes("<summary>Filters"),
-  "Catalog results must expose filtered sorting without duplicating search/filter controls or custom disclosures",
+  "Catalog results must expose only applied filter context; sorting belongs in the toolbar",
 );
 
 assert(

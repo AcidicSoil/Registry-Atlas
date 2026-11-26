@@ -28,7 +28,7 @@ entrypoints. No separate command dispatcher is needed.
 mise tasks ls               # Discover all named operations
 mise run check              # Lint and typecheck
 mise run lint               # All static lint gates, formatting check, and audit
-mise run lint:stylex        # StyleX ESLint gate
+mise run lint:design        # Tailwind and stylesheet ownership gates
 mise run format:write       # Format authored files
 mise run typecheck          # Application and test typechecking
 mise run test               # Vitest, contract, gate proofs, and browser E2E
@@ -50,7 +50,7 @@ mise run db:restore-check /path/to/backup.dump
 ```
 
 Use `mise run <task>` for granular commands, such as `mise run test:contract`
-and `mise run lint:stylex`. The nine primary commands work through either
+and `mise run lint:design`. The nine primary commands work through either
 `pnpm <group>` or `mise run <group>`. `pnpm sync` and `mise run sync` refresh official
 registries, catalog evidence, and registry icons. `pnpm db` checks database
 status and health. Mutating maintenance actions are explicitly named, such as
@@ -119,7 +119,9 @@ The approved Oxfmt 0.74.0 migration resolved **288 formatting differences**. `pn
 
 For a later replay, run `node scripts/verify-oxfmt-migration.mjs c81d56c` to compare current code with the pre-migration baseline.
 
-## StyleX-native UI verification
+## Historical StyleX-native UI verification (superseded)
+
+The following historical checkpoint is superseded by the Resend/Tailwind migration. Current authority: DESIGN.md; run `mise run lint:design` and `mise run lint:styles`. The only application stylesheets are globals.css and tokens.css.
 
 **Authority:** https://stylexjs.com/docs/llm-resources. For this project, official StyleX APIs and compiler behavior override local skill examples or generic CSS-to-StyleX conventions. No Tailwind runtime or React rewrite is involved.
 

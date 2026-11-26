@@ -11,6 +11,7 @@ export const CATALOG_COMPONENT_TYPES = [
   { value: "avatar", label: "Avatar" },
   { value: "badge", label: "Badge" },
   { value: "button", label: "Button" },
+  { value: "button-group", label: "Button Group" },
   { value: "calendar", label: "Calendar" },
   { value: "card", label: "Card" },
   { value: "carousel", label: "Carousel" },
@@ -45,6 +46,7 @@ export const CATALOG_COMPONENT_TYPES = [
   { value: "sidebar", label: "Sidebar" },
   { value: "skeleton", label: "Skeleton" },
   { value: "slider", label: "Slider" },
+  { value: "split-button", label: "Split Button" },
   { value: "stepper", label: "Stepper" },
   { value: "switch", label: "Switch" },
   { value: "table", label: "Table" },
@@ -52,6 +54,7 @@ export const CATALOG_COMPONENT_TYPES = [
   { value: "textarea", label: "Textarea", aliases: ["text area"] },
   { value: "toast", label: "Toast" },
   { value: "toggle", label: "Toggle" },
+  { value: "toolbar", label: "Toolbar", aliases: ["tool bar"] },
   { value: "tooltip", label: "Tooltip" },
   { value: "tree", label: "Tree" },
 ] as const;

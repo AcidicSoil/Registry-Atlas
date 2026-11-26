@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   escapeHtml,
   renderExternalLink,
-  renderStyleXAttributes,
+  renderClassAttribute,
   renderRegistryHomepageLink,
   renderSafeExternalImage,
   toSafeExternalUrl,
@@ -15,14 +15,9 @@ describe("renderSafety", () => {
     );
   });
 
-  it("combines semantic classes with StyleX classes without duplicating attributes", () => {
-    expect(
-      renderStyleXAttributes(
-        { class: "x-compiled", style: "--level: 1", "data-style-src": "stylex" },
-        "sidebar-browse-navigation",
-      ),
-    ).toBe(
-      ' class="sidebar-browse-navigation x-compiled" style="--level: 1" data-style-src="stylex"',
+  it("combines escaped semantic and utility classes without duplicating attributes", () => {
+    expect(renderClassAttribute("grid gap-0", "sidebar-browse-navigation")).toBe(
+      ' class="sidebar-browse-navigation grid gap-0"',
     );
   });
 

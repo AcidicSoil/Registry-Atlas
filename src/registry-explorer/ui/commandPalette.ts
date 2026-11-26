@@ -9,9 +9,23 @@ import { buildCatalogFacetSummary, displayLabel } from "../core/catalogQuery";
 import type { CatalogRoute } from "../core/catalogRoutes";
 import { registryCatalogItemIdentity } from "../core/registryCatalogIndex";
 import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
-import { renderStyleXAttributes } from "./renderSafety";
-import * as stylex from "@stylexjs/stylex";
-import { paletteStyles } from "./commandPalette.stylex";
+
+const paletteClasses = {
+  trigger:
+    "box-border h-5 min-h-5 min-w-9 max-w-full shrink-0 cursor-pointer whitespace-nowrap rounded-[var(--atlas-radius-button)] border border-atlas-border bg-transparent px-1 py-0 font-atlas-mono text-[11px] text-atlas-muted-foreground hover:border-atlas-input hover:text-atlas-foreground focus-visible:outline-2 focus-visible:outline-atlas-focus",
+  backdrop: "fixed inset-0 z-[1000] bg-atlas-background opacity-[0.72]",
+  content:
+    "fixed top-[12vh] left-1/2 z-[1001] m-0 min-h-[190px] w-[min(590px,calc(100vw-32px))] max-h-[min(560px,76vh)] [transform:translateX(-50%)] [&:not([hidden])]:grid grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden rounded-[var(--atlas-radius-panel)] border border-atlas-border bg-atlas-popover p-0 text-atlas-foreground",
+  title: "px-4 py-3 text-xs font-semibold text-atlas-muted-foreground",
+  command: "grid min-h-0 grid-rows-[auto_minmax(0,1fr)] overflow-hidden",
+  search: "block border-y border-atlas-border px-3.5 py-2",
+  input: "w-full border-0 bg-transparent p-2 text-sm text-atlas-foreground outline-none",
+  list: "block min-h-0 max-h-[380px] overflow-y-auto p-2 [scrollbar-width:thin] [scrollbar-color:var(--atlas-border)_transparent]",
+  group:
+    "block px-2.5 pt-2.5 pb-[5px] text-[10px] font-semibold tracking-[0.06em] text-atlas-muted-foreground uppercase",
+  item: "[&:not([hidden])]:block min-w-0 cursor-pointer rounded-[var(--atlas-radius-button)] bg-transparent px-3 py-[9px] text-[13px] text-atlas-foreground hover:bg-atlas-secondary data-[highlighted]:bg-atlas-secondary",
+  footer: "m-0 border-t border-atlas-border px-4 py-2.5 text-[11px] text-atlas-muted-foreground",
+};
 
 export type PaletteAction =
   | { kind: "route"; route: CatalogRoute }
@@ -215,31 +229,31 @@ export function createCommandPalette(options: {
   host.innerHTML = `
     <ui-dialog id="atlasCommandPalette">
       <ui-dialog-trigger shortcut="mod+k">
-        <button type="button" aria-label="Open command palette"${renderStyleXAttributes(stylex.attrs(paletteStyles.trigger))}>
+        <button type="button" aria-label="Open command palette" aria-keyshortcuts="Control+K Meta+K" class="${paletteClasses.trigger}">
           <span aria-hidden="true">Ctrl K</span>
         </button>
       </ui-dialog-trigger>
-      <ui-dialog-backdrop hidden${renderStyleXAttributes(stylex.attrs(paletteStyles.backdrop))}></ui-dialog-backdrop>
-      <ui-dialog-content hidden${renderStyleXAttributes(stylex.attrs(paletteStyles.content))}>
-        <ui-dialog-title${renderStyleXAttributes(stylex.attrs(paletteStyles.title))}>Search Registry Atlas</ui-dialog-title>
-        <ui-command filter="false"${renderStyleXAttributes(stylex.attrs(paletteStyles.command))}>
-          <ui-command-input${renderStyleXAttributes(stylex.attrs(paletteStyles.search))}>
-            <input aria-label="Search commands" placeholder="Search components, libraries, and actions…"${renderStyleXAttributes(stylex.attrs(paletteStyles.input))} />
+      <ui-dialog-backdrop hidden class="${paletteClasses.backdrop}"></ui-dialog-backdrop>
+      <ui-dialog-content hidden class="${paletteClasses.content}">
+        <ui-dialog-title class="${paletteClasses.title}">Search Registry Atlas</ui-dialog-title>
+        <ui-command filter="false" class="${paletteClasses.command}">
+          <ui-command-input class="${paletteClasses.search}">
+            <input aria-label="Search commands" placeholder="Search components, libraries, and actions…" class="${paletteClasses.input}" />
           </ui-command-input>
           <ui-command-empty>No matching components or commands.</ui-command-empty>
-          <ui-command-list${renderStyleXAttributes(stylex.attrs(paletteStyles.list))}></ui-command-list>
+          <ui-command-list class="${paletteClasses.list}"></ui-command-list>
           <template>
             <ui-command-list>
               <ui-command-group>
-                <ui-command-group-label${renderStyleXAttributes(stylex.attrs(paletteStyles.group))}></ui-command-group-label>
-                <ui-command-item${renderStyleXAttributes(stylex.attrs(paletteStyles.item))}>
+                <ui-command-group-label class="${paletteClasses.group}"></ui-command-group-label>
+                <ui-command-item class="${paletteClasses.item}">
                   <ui-command-item-text></ui-command-item-text>
                 </ui-command-item>
               </ui-command-group>
             </ui-command-list>
           </template>
         </ui-command>
-        <p${renderStyleXAttributes(stylex.attrs(paletteStyles.footer))}>↑ ↓ Navigate · Enter Open · Esc Close</p>
+        <p class="${paletteClasses.footer}">↑ ↓ Navigate · Enter Open · Esc Close</p>
       </ui-dialog-content>
     </ui-dialog>`;
 

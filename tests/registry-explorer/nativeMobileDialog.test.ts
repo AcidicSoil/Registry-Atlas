@@ -8,11 +8,6 @@ const entry = readFileSync(
   "utf8",
 );
 
-const css = readFileSync(
-  new URL("../../src/registry-explorer/ui/mobile-sidebar-dialog.css", import.meta.url),
-  "utf8",
-);
-
 describe("native mobile navigation dialog", () => {
   it("uses a real modal element, not an aside claiming aria-modal", () => {
     expect(html).toMatch(/<dialog\s+id="mobileSidebarDialog"/);
@@ -20,13 +15,13 @@ describe("native mobile navigation dialog", () => {
     expect(entry).toContain(".close()");
     expect(entry).not.toMatch(/setAttribute\(\s*["']aria-modal/);
     expect(entry).not.toMatch(/event\.key\s*===\s*["']Tab["']/);
-    expect(css).toContain(".mobile-sidebar-dialog::backdrop");
+    expect(html).toContain("backdrop:bg-black/64");
   });
 
   it("uses native backdrop dismissal with a feature-detected fallback", () => {
     expect(html).toMatch(/<dialog\s[^>]*\bclosedby="any"/);
     expect(entry).toContain('"closedBy" in HTMLDialogElement.prototype');
     expect(entry).not.toContain('mobileDialog.addEventListener("click"');
-    expect(css).toContain("overscroll-behavior: contain");
+    expect(html).toContain("backdrop:overscroll-contain");
   });
 });

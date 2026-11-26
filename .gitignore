@@ -37,7 +37,6 @@ venv/
 /tools/oxlint/*
 !/tools/oxlint/anti-slop/
 /tools/eslint/*
-!/tools/eslint/anti-slop-stylex/
 /tools/stylelint/*
 !/tools/stylelint/anti-slop-css/
 .design/

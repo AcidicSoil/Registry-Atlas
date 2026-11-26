@@ -19,7 +19,7 @@ export function newIssueCounts(current, baseline) {
 
 async function styleIssues() {
   const result = await stylelint.lint({
-    files: ["public/styles/**/*.css", "src/**/*.css"],
+    files: ["src/styles/*.css"],
     configFile: "stylelint.config.mjs",
     cache: false,
   });
