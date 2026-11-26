@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { renderClassAttribute } from "../../src/registry-explorer/ui/renderSafety";
-import { cn } from "../../src/registry-explorer/ui/primitives/cn";
 
 describe("utility class serializer", () => {
   it("escapes attribute injection", () => {
@@ -11,14 +10,5 @@ describe("utility class serializer", () => {
 
   it("omits empty attributes", () => {
     expect(renderClassAttribute("")).toBe("");
-  });
-
-  it("merges conflicting variant utilities without losing unrelated states", () => {
-    expect(
-      cn(
-        "flex min-h-[150px] rounded-[var(--atlas-radius-card)] hover:border-atlas-input",
-        "grid min-h-24 rounded-none",
-      ),
-    ).toBe("hover:border-atlas-input grid min-h-24 rounded-none");
   });
 });

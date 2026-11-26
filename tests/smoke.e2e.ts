@@ -7,7 +7,8 @@ test(
   async ({ app, screen }) => {
     await app.open();
 
-    await expect(screen.getByRole("navigation", "Catalog navigation")).toBeVisible();
+    await expect(screen.getByRole("navigation", "Explore")).toBeVisible();
+    await expect(screen.getByRole("navigation", "Library")).toBeVisible();
     await expect(screen.getByRole("searchbox", "Search catalog")).toBeVisible();
     await expect(screen.getByRole("link", "Libraries")).toBeVisible();
 

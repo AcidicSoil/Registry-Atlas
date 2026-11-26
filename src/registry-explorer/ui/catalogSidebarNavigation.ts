@@ -102,7 +102,7 @@ function rowButton(options: {
     rowClass,
   )}
     ${options.attribute}="${escapeHtml(options.value)}"
-    aria-pressed="${options.selected ? "true" : "false"}">
+    aria-pressed="${Boolean(options.selected)}">
     ${options.icon ? `<span class="sidebar-nav-row-icon ${sidebarNavigationStyles.icon}" aria-hidden="true">${sidebarIcon(options.icon)}</span>` : ""}
     <span class="sidebar-nav-row-label ${cn(sidebarNavigationStyles.label, options.selected && "font-semibold")}">${escapeHtml(options.label)}</span>
     ${options.count === undefined ? "" : `<span class="sidebar-nav-row-count ${sidebarNavigationStyles.count}">${options.count.toLocaleString()}</span>`}

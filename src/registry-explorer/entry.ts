@@ -116,6 +116,8 @@ function optionalShellRoots(sidebarContext: HTMLElement | null, setupCount: HTML
   return {
     sidebarContext: sidebarContext ?? undefined,
     setupCount: setupCount ?? undefined,
+    paletteMount: document.getElementById("commandPaletteMount") ?? undefined,
+    componentTypeFilterMount: document.getElementById("componentTypeFilterMount") ?? undefined,
   };
 }
 
@@ -166,9 +168,6 @@ async function bootstrap() {
           ...optionalShellRoots(sidebarContext, setupCount),
           browseToolbar,
           sidebarCollectionCurrent,
-          paletteMount: document.getElementById("commandPaletteMount") ?? undefined,
-          componentTypeFilterMount:
-            document.getElementById("componentTypeFilterMount") ?? undefined,
         },
       });
 

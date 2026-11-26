@@ -260,9 +260,11 @@ export function initRegistryExplorer(options: ShellOptions): ShellController {
     const control = equivalent ?? candidates[0];
     const popup = control?.closest("ui-popover-content");
 
-    if (popup)
-      popup.closest("ui-popover")?.querySelector<HTMLElement>("ui-popover-trigger button")?.focus();
-    else control?.focus();
+    const focusTarget = popup
+      ? popup.closest("ui-popover")?.querySelector<HTMLElement>("ui-popover-trigger button")
+      : control;
+
+    focusTarget?.focus();
   }
 
   function isModifiedNavigationClick(click: MouseEvent): boolean {

@@ -291,6 +291,28 @@ export function createShellSidebar({
     };
   }
 
+  function renderBrowseToolbar(controls: string): void {
+    if (!roots.browseToolbar) return;
+
+    const layout =
+      getState().route.kind === "registries" ? getState().registryLayout : getState().catalogLayout;
+
+    const layoutMarkup = supportsBrowseLayout(getState().route)
+      ? renderBrowseLayoutToggle(layout)
+      : "";
+
+    const clearMarkup = supportsBrowseLayout(getState().route)
+      ? `<button class="link-button catalog-filter-clear min-h-[30px] ${actionClasses.link}" type="button" data-catalog-clear>Clear all</button>`
+      : "";
+
+    roots.browseToolbar.innerHTML =
+      '<div class="browse-filter-group flex flex-wrap items-center gap-2" role="group" aria-label="Catalog filters">' +
+      controls +
+      "</div>" +
+      clearMarkup +
+      layoutMarkup;
+  }
+
   function renderSidebar(queued: ReadonlySet<string>, _batchCommand: string | null): void {
     renderSidebarContext();
 
@@ -306,24 +328,7 @@ export function createShellSidebar({
 
     const { navigation, controls } = renderBrowseSurfaces();
 
-    const layout =
-      getState().route.kind === "registries" ? getState().registryLayout : getState().catalogLayout;
-
-    const layoutMarkup = supportsBrowseLayout(getState().route)
-      ? renderBrowseLayoutToggle(layout)
-      : "";
-
-    const clearMarkup = supportsBrowseLayout(getState().route)
-      ? `<button class="link-button catalog-filter-clear min-h-[30px] ${actionClasses.link}" type="button" data-catalog-clear>Clear all</button>`
-      : "";
-
-    if (roots.browseToolbar)
-      roots.browseToolbar.innerHTML =
-        '<div class="browse-filter-group flex flex-wrap items-center gap-2" role="group" aria-label="Catalog filters">' +
-        controls +
-        "</div>" +
-        clearMarkup +
-        layoutMarkup;
+    renderBrowseToolbar(controls);
 
     roots.aside.innerHTML =
       '<div class="sidebar-scroll-pane min-h-0 flex-auto overflow-visible overscroll-contain"><div class="desktop-browse-rail grid min-w-0 gap-0 pb-[18px]">' +

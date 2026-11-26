@@ -142,6 +142,17 @@ describe("renderCatalogComponents", () => {
     expect(base).not.toContain("catalog-component-card-");
   });
 
+  it("merges conflicting card variants without losing unrelated hover states", () => {
+    const html = renderCatalogComponentCard(component(), "component", { layout: "list" });
+    const classes = html.match(/<article\s+class="([^"]+)"/)?.[1]?.split(/\s+/) ?? [];
+
+    expect(classes).toEqual(
+      expect.arrayContaining(["min-h-[104px]", "rounded-none", "hover:border-atlas-input"]),
+    );
+    expect(classes).not.toContain("min-h-[150px]");
+    expect(classes).not.toContain("rounded-[var(--atlas-radius-card)]");
+  });
+
   it("places a single registry homepage link in the footer, without View or Inspect", () => {
     const html = renderCatalogComponentCard(component());
 
