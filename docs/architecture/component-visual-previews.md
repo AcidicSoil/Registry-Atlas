@@ -6,15 +6,15 @@
 
 ## Ownership
 
-| Source                                                                 | Responsibility                                                     |
-| ---------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| PostgreSQL `atlas_source_pages` and runtime `sourcePageManifest.pages` | Authoritative item identity and original source URL                |
-| `public/data/component-previews.json`                                  | Reviewed screenshot metadata and exact item/source identity        |
-| `public/data/component-previews/*.webp`                                | Locally stored, visually reviewed component screenshots            |
-| `src/registry-explorer/ui/componentPreviews.ts`                        | Validate manifest; return exact source-URL → local-image lookup    |
-| `src/registry-explorer/ui/catalogLinkPreview.ts`                       | Pointer/focus popup without changing source navigation             |
-| `tests/registry-explorer/componentPreviews.test.ts`                    | Verify preview parsing, duplicate validation, and failure fallback |
-| `tests/catalog-link-preview.e2e.ts`                                    | Verify each real specimen displays in the browser; icons do not    |
+| Source                                                                 | Responsibility                                                                            |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| PostgreSQL `atlas_source_pages` and runtime `sourcePageManifest.pages` | Authoritative item identity and original source URL                                       |
+| `public/data/component-previews.json`                                  | Reviewed screenshot metadata and exact item/source identity                               |
+| `public/data/component-previews/*.webp`                                | Locally stored, visually reviewed component screenshots                                   |
+| `src/registry-explorer/ui/componentPreviews.ts`                        | Validate manifest; return exact source-URL → local-image lookup                           |
+| `src/registry-explorer/ui/catalogLinkPreview.ts`                       | Pointer/focus popup without changing source navigation                                    |
+| `tests/registry-explorer/componentPreviews.test.ts`                    | Verify preview parsing, duplicate validation, and failure fallback                        |
+| `tests/catalog-link-preview.e2e.ts`                                    | Verify hover, focus, dismissal and missing-data behavior with isolated transport fixtures |
 
 The former `collect-source-media.mjs`, `scripts/lib/source-media.mjs`, `sourceMedia.ts`, and 236-entry `source-media.json` have been retired. Those records established image URLs, not that each image usefully depicted a component. No provider URL formulas, OG-image scraping, new crawler, iframe embedding, browser-side fetch to remote image hosts, or automatic discovery are part of the current preview path.
 
@@ -59,4 +59,4 @@ pnpm build
 pnpm exec e2e run tests/catalog-link-preview.e2e.ts
 ```
 
-The browser assertions must decode all three local images on genuine catalog links and verify the original source `href`; the logo case must not open a popup. Other catalog behavior should remain unchanged. This pilot does not certify coverage for the remaining catalog or interactive component demonstrations.
+The retired three-specimen assertions were replaced on 2026-11-26 with browser tests supplying a synthetic, test-only WebP and manifest at the request boundary. The actual loader, URL match, image decode, hover/focus and Escape behavior are exercised against an existing verified catalog link. A missing manifest must leave source navigation usable. Unit tests retain unmatched/unsafe URL and manifest validation coverage. These tests do not assert that the deleted publisher screenshots are deployed or reinstate the pilot.

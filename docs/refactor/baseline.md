@@ -42,10 +42,9 @@ The original combined-run output and isolated rerun results are retained at:
 
 ## Browser measurements
 
-The capture tests always assert catalog geometry, but only rewrite evidence when explicitly requested:
+The desktop baseline capture was retired from the active suite on 2026-11-26: the historical 1440×900 viewport is superseded by the approved 1920×1080 runner, and current grid geometry is covered by `tests/tailwind-catalog-grid.e2e.ts`. Historical evidence remains unchanged. The remaining mobile capture only rewrites evidence when explicitly requested:
 
 ```bash
-ATLAS_CAPTURE_REFACTOR_BASELINE=1 pnpm exec e2e run tests/refactor-baseline.e2e.ts
 ATLAS_CAPTURE_REFACTOR_BASELINE=1 pnpm exec e2e run --config e2e.mobile.config.ts tests-mobile/refactor-baseline.e2e.ts
 ```
 
