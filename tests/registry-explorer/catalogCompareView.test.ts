@@ -59,6 +59,13 @@ describe("renderCatalogCompare", () => {
     expect(body.innerHTML).toContain('data-compare-search="registry"');
     expect((body.innerHTML.match(/data-compare-registry=/g) ?? []).length).toBeLessThanOrEqual(10);
   });
+  it("distinguishes already selected registries from absent matches", () => {
+    const body = root();
+    renderCatalogCompare(root(), body, result(), ["@a", "@b", "@c"], "@a");
+
+    expect(body.innerHTML).toContain("Matching registries are already selected.");
+    expect(body.innerHTML).not.toContain("No registries match this search.");
+  });
 });
 
 function root(): HTMLElement {

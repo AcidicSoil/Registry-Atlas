@@ -21,7 +21,7 @@ describe("renderRegistryDirectory", () => {
     expect(body.innerHTML).toContain("data-directory-open");
     expect(body.innerHTML).not.toContain("registry-directory-open");
     expect(body.innerHTML).toContain('href="https://registry.directory/"');
-    expect(body.innerHTML).toContain(">Homepage ↗</a>");
+    expect(body.innerHTML).toContain(">Homepage <svg");
     expect(body.innerHTML).toContain("data-directory-grid");
     expect(body.innerHTML).toContain('data-directory-layout="grid"');
     expect(body.innerHTML).toContain("data-directory-card");
@@ -70,7 +70,7 @@ describe("renderRegistryDirectory", () => {
       view.entries[0]!.registry.url = url;
       const body = root();
       renderRegistryDirectory(root(), body, view);
-      expect(body.innerHTML).not.toContain(">Homepage ↗</a>");
+      expect(body.innerHTML).not.toContain(">Homepage <svg");
       expect(body.innerHTML).not.toContain('href="javascript:');
       expect(body.innerHTML).not.toContain("user:pass@");
     },

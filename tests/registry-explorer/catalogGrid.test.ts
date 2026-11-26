@@ -16,7 +16,8 @@ describe("catalog grid utility attributes", () => {
     expect(grid).toContain("grid-cols-3");
     expect(list).toContain("grid-cols-1");
     expect(list).not.toContain("max-[1080px]:grid-cols-2");
-    expect(component).toContain("gap-0");
+    expect(component).toContain("gap-3");
+    expect(component).not.toContain("border-l");
     expect(list).not.toContain("catalog-component-grid-list");
     expect(component).not.toContain("catalog-collection-grid-component");
   });

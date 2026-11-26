@@ -143,7 +143,7 @@ assert(
   componentViewSource.includes("sourcePageNavigation") &&
     componentViewSource.includes("data-catalog-open") &&
     componentViewSource.includes("renderCardRegistryHomepage(registryHomepage") &&
-    componentViewSource.includes("Source ↗") &&
+    componentViewSource.includes("Source ") &&
     !componentViewSource.includes("catalog-component-deeplink") &&
     !componentViewSource.includes("View item JSON"),
   "catalog cards retain their internal card link and only one external homepage action, keeping upstream Source links independent",

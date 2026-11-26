@@ -224,7 +224,7 @@ export function createShellSidebar({
   function renderBrowseLayoutToggle(layout: RegistryDirectoryLayout): string {
     return (
       '<div class="browse-layout-strip flex-none">' +
-      '<div class="browse-layout-toggle grid h-[34px] grid-cols-2 gap-0.5 rounded-[var(--atlas-radius-button)] border border-atlas-border bg-atlas-card p-0.5 [&>button]:h-[26px] [&>button]:min-w-0 [&>button]:cursor-pointer [&>button]:rounded [&>button]:border-0 [&>button]:bg-transparent [&>button]:px-2.5 [&>button]:text-[13px] [&>button]:text-atlas-muted-foreground [&>button:hover]:bg-atlas-secondary [&>button:hover]:text-atlas-foreground [&>button[aria-pressed=true]]:bg-atlas-background [&>button[aria-pressed=true]]:font-semibold [&>button[aria-pressed=true]]:text-atlas-foreground [&>button[aria-pressed=true]]:inset-ring [&>button[aria-pressed=true]]:inset-ring-atlas-border" role="group" aria-label="Result layout">' +
+      '<div class="browse-layout-toggle grid h-[34px] grid-cols-2 gap-0.5 rounded-[var(--atlas-radius-button)] border border-atlas-border bg-atlas-card p-0.5 [&>button]:h-[26px] [&>button]:min-w-0 [&>button]:cursor-pointer [&>button]:rounded [&>button]:border-0 [&>button]:bg-transparent [&>button]:px-2.5 [&>button]:text-sm [&>button]:text-atlas-muted-foreground [&>button:hover]:bg-atlas-secondary [&>button:hover]:text-atlas-foreground [&>button[aria-pressed=true]]:bg-atlas-background [&>button[aria-pressed=true]]:font-semibold [&>button[aria-pressed=true]]:text-atlas-foreground [&>button[aria-pressed=true]]:inset-ring [&>button[aria-pressed=true]]:inset-ring-atlas-border" role="group" aria-label="Result layout">' +
       '<button type="button" data-browse-layout="grid" aria-pressed="' +
       String(layout === "grid") +
       '">Grid</button>' +

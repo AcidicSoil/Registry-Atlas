@@ -12,7 +12,7 @@ import type { Registry, RegistryCatalogIndex } from "../core/registry.schema";
 
 const paletteClasses = {
   trigger:
-    "box-border h-5 min-h-5 min-w-9 max-w-full shrink-0 cursor-pointer whitespace-nowrap rounded-[var(--atlas-radius-button)] border border-atlas-border bg-transparent px-1 py-0 font-atlas-mono text-[11px] text-atlas-muted-foreground hover:border-atlas-input hover:text-atlas-foreground focus-visible:outline-2 focus-visible:outline-atlas-focus",
+    "box-border h-6 min-h-6 min-w-9 max-w-full shrink-0 cursor-pointer whitespace-nowrap rounded-[var(--atlas-radius-button)] border border-atlas-border bg-transparent px-1 py-0 font-atlas-mono text-xs text-atlas-muted-foreground hover:border-atlas-input hover:text-atlas-foreground focus-visible:outline-2 focus-visible:outline-atlas-focus",
   backdrop: "fixed inset-0 z-[1000] bg-atlas-background opacity-[0.72]",
   content:
     "fixed top-[12vh] left-1/2 z-[1001] m-0 min-h-[190px] w-[min(590px,calc(100vw-32px))] max-h-[min(560px,76vh)] [transform:translateX(-50%)] [&:not([hidden])]:grid grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden rounded-[var(--atlas-radius-panel)] border border-atlas-border bg-atlas-popover p-0 text-atlas-foreground",
@@ -22,9 +22,9 @@ const paletteClasses = {
   input: "w-full border-0 bg-transparent p-2 text-sm text-atlas-foreground outline-none",
   list: "block min-h-0 max-h-[380px] overflow-y-auto p-2 [scrollbar-width:thin] [scrollbar-color:var(--atlas-border)_transparent]",
   group:
-    "block px-2.5 pt-2.5 pb-[5px] text-[10px] font-semibold tracking-[0.06em] text-atlas-muted-foreground uppercase",
-  item: "[&:not([hidden])]:block min-w-0 cursor-pointer rounded-[var(--atlas-radius-button)] bg-transparent px-3 py-[9px] text-[13px] text-atlas-foreground hover:bg-atlas-secondary data-[highlighted]:bg-atlas-secondary",
-  footer: "m-0 border-t border-atlas-border px-4 py-2.5 text-[11px] text-atlas-muted-foreground",
+    "block px-2.5 pt-2.5 pb-[5px] text-xs font-semibold tracking-[0.06em] text-atlas-muted-foreground uppercase",
+  item: "[&:not([hidden])]:block min-w-0 cursor-pointer rounded-[var(--atlas-radius-button)] bg-transparent px-3 py-[9px] text-sm text-atlas-foreground hover:bg-atlas-secondary data-[highlighted]:bg-atlas-secondary",
+  footer: "m-0 border-t border-atlas-border px-4 py-2.5 text-xs text-atlas-muted-foreground",
 };
 
 export type PaletteAction =
@@ -253,7 +253,7 @@ export function createCommandPalette(options: {
             </ui-command-list>
           </template>
         </ui-command>
-        <p class="${paletteClasses.footer}">↑ ↓ Navigate · Enter Open · Esc Close</p>
+        <p class="${paletteClasses.footer}">Arrow keys Navigate · Enter Open · Esc Clear / close</p>
       </ui-dialog-content>
     </ui-dialog>`;
 

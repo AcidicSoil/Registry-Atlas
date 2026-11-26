@@ -30,26 +30,29 @@
   --refero-radius-buttons: 6px;
   --refero-radius-large-panels: 24px;
   --refero-space-unit: 4px;
-  --refero-font-sans: inter, ui-sans-serif, system-ui, sans-serif;
-  --refero-font-mono: "Commit Mono", "JetBrains Mono", ui-monospace, monospace;
+  --refero-font-sans: "Inter Variable", inter, ui-sans-serif, system-ui, sans-serif;
+  --refero-font-mono: "Commit Mono", ui-monospace, monospace;
 
   /* Semantic and component aliases for the catalog. */
   --atlas-background: var(--color-void-black);
   --atlas-foreground: var(--color-bone-white);
-  --atlas-card: var(--color-void-black);
-  --atlas-popover: var(--color-void-black);
+  --atlas-card: color-mix(in srgb, var(--color-graphite-hairline) 25%, var(--color-void-black));
+  --atlas-popover: color-mix(in srgb, var(--color-graphite-hairline) 55%, var(--color-void-black));
   --atlas-secondary: color-mix(
     in srgb,
     var(--color-graphite-hairline) 65%,
     var(--color-void-black)
   );
-  --atlas-preview-visual: var(--color-void-black);
+  --atlas-preview-visual: var(--atlas-card);
   --atlas-muted-foreground: var(--color-ash-gray);
   --atlas-border: var(--color-graphite-hairline);
   --atlas-input: var(--color-iron);
   --atlas-primary: var(--color-sky-blue);
-  --atlas-developer: var(--color-iris-violet-glow);
+  --atlas-developer: var(--color-iris-violet);
   --atlas-focus: var(--color-signal-blue);
+  --atlas-radius-input: var(--refero-radius-inputs);
+  --atlas-radius-badge: var(--refero-radius-badges);
+  --atlas-scrollbar: var(--color-iron);
   --atlas-radius-button: var(--refero-radius-buttons);
   --atlas-radius-card: var(--refero-radius-cards);
   --atlas-radius-panel: var(--refero-radius-large-panels);
@@ -61,9 +64,48 @@
   --atlas-space-4: calc(var(--refero-space-unit) * 4);
   --atlas-space-5: calc(var(--refero-space-unit) * 5);
   --atlas-space-6: calc(var(--refero-space-unit) * 6);
+
+  /* Source typography scale; dense workspace roles reuse these values. */
+  --text-caption: 12px;
+  --leading-caption: 1.33;
+  --tracking-caption: 0px;
+  --text-body-sm: 14px;
+  --leading-body-sm: 1.43;
+  --tracking-body-sm: 0px;
+  --text-body: 16px;
+  --leading-body: 1.5;
+  --tracking-body: 0px;
+  --text-subheading: 20px;
+  --leading-subheading: 1;
+  --tracking-subheading: 0px;
+  --text-heading-sm: 24px;
+  --leading-heading-sm: 1.5;
+  --tracking-heading-sm: 0px;
+  --text-heading: 56px;
+  --leading-heading: 1.2;
+  --tracking-heading: -2.8px;
+  --text-heading-lg: 77px;
+  --leading-heading-lg: 1;
+  --tracking-heading-lg: -0.77px;
+  --text-display: 96px;
+  --leading-display: 1;
+  --tracking-display: -0.96px;
 }
 
 @theme inline {
+  --spacing: var(--refero-space-unit);
+  --text-xs: var(--text-caption);
+  --text-xs--line-height: var(--leading-caption);
+  --text-sm: var(--text-body-sm);
+  --text-sm--line-height: var(--leading-body-sm);
+  --text-base: var(--text-body);
+  --text-base--line-height: var(--leading-body);
+  --text-xl: var(--text-subheading);
+  --text-xl--line-height: var(--leading-subheading);
+  --text-2xl: var(--text-heading-sm);
+  --text-2xl--line-height: var(--leading-heading-sm);
+  --radius-atlas-input: var(--atlas-radius-input);
+  --radius-atlas-badge: var(--atlas-radius-badge);
   --animate-atlas-preview: atlas-preview 125ms cubic-bezier(0.22, 1, 0.36, 1) both;
 
   @keyframes atlas-preview {

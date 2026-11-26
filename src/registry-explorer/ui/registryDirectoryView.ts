@@ -136,7 +136,7 @@ function renderEntry(entry: RegistryDirectoryEntry, layout: RegistryDirectoryLay
   const homepage = renderRegistryHomepageLink(
     entry.registry.url,
     directoryStyles.homepage,
-    "Homepage ↗",
+    "Homepage",
   );
 
   const route = catalogRoutePath(

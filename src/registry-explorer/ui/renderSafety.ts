@@ -1,3 +1,4 @@
+import { controlIcon } from "./primitives/controlIcon";
 import { actionClasses } from "./primitives/actionClasses";
 
 const UNSUPPORTED_URL_COPY = "Link unavailable: unsupported URL protocol.";
@@ -39,7 +40,7 @@ export function renderExternalLink(url: string, label: string, className = "regi
     return UNSUPPORTED_URL_COPY;
   }
 
-  return `<a href="${escapeHtml(safeUrl.href)}" class="${escapeHtml(className)}" target="_blank" rel="noreferrer">${escapeHtml(label)}</a>`;
+  return `<a href="${escapeHtml(safeUrl.href)}" class="${escapeHtml(className)}" target="_blank" rel="noreferrer">${escapeHtml(label)} ${controlIcon("arrow-up-right")}</a>`;
 }
 
 function isPublicHomepageHost(host: string): boolean {

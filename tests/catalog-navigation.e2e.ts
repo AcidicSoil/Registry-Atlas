@@ -12,5 +12,5 @@ test("browse components and open the real detail page", async ({ app, screen, br
   await app.open("/Registry-Atlas/@logoforge/components/dotnet");
 
   await expect(screen.getByRole("heading", ".NET logo")).toBeVisible();
-  await expect(screen.getByRole("button", "+ Add to setup")).toBeVisible();
+  await expect(screen.getByRole("button", "Add to setup")).toBeVisible();
 });

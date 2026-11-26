@@ -9,7 +9,7 @@ const disabled =
 export const actionClasses = {
   link: cn(
     base,
-    "inline-flex w-fit items-center bg-transparent text-[13px] text-atlas-primary hover:border-atlas-primary/55 hover:text-atlas-foreground",
+    "inline-flex w-fit items-center gap-1.5 bg-transparent text-sm text-atlas-primary hover:border-atlas-primary/55 hover:text-atlas-foreground",
   ),
   install: cn(
     base,
@@ -19,6 +19,6 @@ export const actionClasses = {
   primary: cn(
     base,
     disabled,
-    "border-atlas-primary bg-atlas-primary text-xs font-[650] text-atlas-background enabled:hover:border-atlas-focus enabled:hover:bg-atlas-focus",
+    "inline-flex items-center gap-1.5 border-atlas-input bg-transparent text-xs font-semibold text-white enabled:hover:border-white enabled:hover:bg-atlas-secondary",
   ),
 };

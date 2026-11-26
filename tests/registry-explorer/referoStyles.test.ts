@@ -32,4 +32,31 @@ describe("Resend design foundations", () => {
     );
     expect(read("index.html")).toContain('href="/src/styles/globals.css"');
   });
+  it("connects typography, surface roles, and native theme to the design", () => {
+    const tokens = read("src/styles/tokens.css");
+    const globals = read("src/styles/globals.css");
+
+    for (const role of [
+      "caption",
+      "body-sm",
+      "body",
+      "subheading",
+      "heading-sm",
+      "heading",
+      "heading-lg",
+      "display",
+    ]) {
+      expect(tokens).toContain(`--text-${role}:`);
+    }
+
+    expect(globals).toContain("color-scheme: dark");
+    expect(globals).toContain("@layer ui-sdk;");
+    expect(globals).toContain("@fontsource-variable/inter");
+    expect(globals).toContain("@fontsource/commit-mono");
+    expect(tokens).not.toContain("--atlas-card: var(--color-void-black)");
+    expect(tokens).not.toContain("--atlas-popover: var(--color-void-black)");
+    expect(read("src/registry-explorer/ui/primitives/actionClasses.ts")).not.toContain(
+      "bg-atlas-primary",
+    );
+  });
 });

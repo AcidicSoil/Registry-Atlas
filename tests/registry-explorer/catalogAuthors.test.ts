@@ -43,4 +43,17 @@ describe("catalog author attribution", () => {
     renderCatalogAuthors(header, body, [], { search: "" });
     expect(body.innerHTML).toContain("No attributed components");
   });
+  it("displays the attribution name separately without changing its identity", () => {
+    // SAFETY: These in-memory roots exercise the real view renderer.
+    const body = { innerHTML: "" } as HTMLElement;
+    // SAFETY: The view only writes to innerHTML on this test root.
+    const header = { innerHTML: "" } as HTMLElement;
+    renderCatalogAuthors(header, body, [
+      { name: "Alice <https://example.test>", componentCount: 2 },
+    ]);
+
+    expect(body.innerHTML).toMatch(/<strong[^>]*>Alice<\/strong>/);
+    expect(body.innerHTML).toContain('data-author-select="Alice &lt;https://example.test&gt;"');
+    expect(body.innerHTML).toContain("https://example.test");
+  });
 });

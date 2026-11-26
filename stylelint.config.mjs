@@ -23,6 +23,7 @@ export default {
       files: ["src/styles/tokens.css"],
       rules: {
         "color-hex-length": "long",
+        "custom-property-pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*(?:--line-height)?$",
         "at-rule-no-unknown": [true, { ignoreAtRules: ["theme"] }],
       },
     },

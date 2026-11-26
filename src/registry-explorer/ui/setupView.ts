@@ -43,9 +43,9 @@ export function renderSetupView(
           : renderSelections(items, instructions)
       }
     </div>
-    <aside class="setup-summary grid gap-[18px] rounded-[var(--atlas-radius-card)] border border-atlas-border p-5 max-[800px]:row-start-1 [&>h2]:m-0 [&>h2]:text-base [&>p]:m-0 [&>p]:text-[13px] [&>p]:text-atlas-muted-foreground" aria-label="Setup summary">
+    <aside class="setup-summary grid gap-[18px] rounded-[var(--atlas-radius-card)] border border-atlas-border p-5 max-[800px]:row-start-1 [&>h2]:m-0 [&>h2]:text-base [&>p]:m-0 [&>p]:text-sm [&>p]:text-atlas-muted-foreground" aria-label="Setup summary">
       <h2>Summary</h2>
-      <div class="setup-summary-count flex justify-between border-y border-atlas-border py-3 text-[13px]"><span>Components</span><strong>${items.length}</strong></div>
+      <div class="setup-summary-count flex justify-between border-y border-atlas-border py-3 text-sm"><span>Components</span><strong>${items.length}</strong></div>
       <p>No payment or automatic installation.</p>
       ${
         review
@@ -61,8 +61,8 @@ function renderSelections(items: readonly InstallQueueEntry[], instructions: str
   return `<div class="setup-selection-list border-t border-atlas-border" aria-label="Selected components">
     ${items.map(renderSelection).join("")}
   </div>
-  <label class="setup-instructions-label block mt-6 mb-2.5 text-[13px] font-semibold" for="setupInstructions">Special instructions (optional)</label>
-  <textarea class="box-border w-full min-h-[104px] resize-y rounded-[var(--atlas-radius-button)] border border-atlas-border bg-atlas-background p-3 text-[13px] text-atlas-foreground" id="setupInstructions" data-setup-instructions rows="4" maxlength="2000"
+  <label class="setup-instructions-label block mt-6 mb-2.5 text-sm font-semibold" for="setupInstructions">Special instructions (optional)</label>
+  <textarea class="box-border w-full min-h-[104px] resize-y rounded-[var(--atlas-radius-button)] border border-atlas-border bg-atlas-background p-3 text-sm text-atlas-foreground" id="setupInstructions" data-setup-instructions rows="4" maxlength="2000"
     placeholder="Project-specific constraints for the coding agent.">${escapeHtml(instructions)}</textarea>
   <p class="setup-instructions-help text-xs text-atlas-muted-foreground">These instructions are included in the copied setup prompt.</p>`;
 }
@@ -92,13 +92,13 @@ function renderReview(
   const prompt = buildSetupPrompt(items, instructions);
 
   return `<div class="setup-review-content grid gap-7">
-    <section class="setup-review-section grid min-w-0 gap-3.5 [&>h2]:m-0 [&>h2]:text-base [&>p]:m-0 [&>p]:text-[13px] [&>p]:text-atlas-muted-foreground [&>button]:justify-self-start">
+    <section class="setup-review-section grid min-w-0 gap-3.5 [&>h2]:m-0 [&>h2]:text-base [&>p]:m-0 [&>p]:text-sm [&>p]:text-atlas-muted-foreground [&>button]:justify-self-start">
       <h2>Install command</h2><p>Run this command in your project if you prefer to install directly.</p>
       <div class="setup-review-command ${installCommandClasses.row}"><code class="${installCommandClasses.code}">${escapeHtml(command ?? "")}</code>
         <button class="install-button ${actionClasses.install}" type="button" data-copy-text="${escapeHtml(command ?? "")}"
           data-copy-label="Setup command copied">Copy command</button></div>
     </section>
-    <section class="setup-review-section grid min-w-0 gap-3.5 [&>h2]:m-0 [&>h2]:text-base [&>p]:m-0 [&>p]:text-[13px] [&>p]:text-atlas-muted-foreground [&>button]:justify-self-start">
+    <section class="setup-review-section grid min-w-0 gap-3.5 [&>h2]:m-0 [&>h2]:text-base [&>p]:m-0 [&>p]:text-sm [&>p]:text-atlas-muted-foreground [&>button]:justify-self-start">
       <h2>Coding-agent instructions</h2>
       <p>Copy these instructions to your coding agent. It will need your approval before changing files.</p>
       <pre class="setup-review-prompt ${installCommandClasses.code} max-h-[370px] overflow-auto whitespace-pre-wrap leading-[1.65]">${escapeHtml(prompt ?? "")}</pre>

@@ -9,7 +9,7 @@ import type { CatalogPolicy } from "../core/catalogPolicy";
 import type { buildAuthorDirectory } from "../core/catalogAuthors";
 import { renderCatalogLanding } from "./catalogLandingView";
 import { renderCatalogCollection, renderEvidenceUnavailable } from "./catalogCollectionView";
-import { renderCatalogAuthors } from "./catalogAuthorsView";
+import { authorAttributionLabel, renderCatalogAuthors } from "./catalogAuthorsView";
 import {
   renderCatalogComponents,
   renderCatalogBrowseControls,
@@ -114,11 +114,14 @@ export function createShellCatalogViews({
       basePath: basePath(),
     });
 
+    const attribution = authorAttributionLabel(author);
+
     renderCatalogCollection(roots.contentHeader, roots.contentBody, result, {
       eyebrow: "Registry Atlas · Catalog attribution",
-      title: author,
+      title: attribution.name,
       description:
-        "Original registry item metadata; this is not a verified 21st.dev account profile.",
+        "Original registry item metadata; this is not a verified 21st.dev account profile." +
+        (attribution.source ? " Source attribution: " + attribution.source : ""),
       controls: `<button type="button" class="link-button ${actionClasses.link}" data-author-clear>All authors</button>`,
       layout: state.catalogLayout,
     });

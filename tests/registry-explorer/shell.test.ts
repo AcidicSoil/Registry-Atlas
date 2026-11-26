@@ -639,11 +639,11 @@ describe("registry explorer shell interactions", () => {
       expect(header, path).toContain('href="https://delta.example/"');
 
       if (header.includes("item-quick-links")) {
-        expect(header, path).toContain(">Registry homepage ↗</a>");
+        expect(header, path).toContain(">Registry homepage <svg");
         expect(header, path).toContain('aria-label="Visit upstream registry homepage for @delta"');
         expect(header, path).not.toContain("Component permalink for ");
       } else {
-        expect(header, path).toContain(">Visit registry homepage</a>");
+        expect(header, path).toContain(">Visit registry homepage <svg");
         expect(header, path).toContain('target="_blank" rel="noreferrer"');
       }
     }
@@ -658,7 +658,7 @@ describe("registry explorer shell interactions", () => {
       "/Registry-Atlas/@missing/components/button",
     ]) {
       const harness = setup("", path);
-      expect(harness.contentHeader.innerHTML, path).not.toContain(">Visit registry homepage</a>");
+      expect(harness.contentHeader.innerHTML, path).not.toContain(">Visit registry homepage <svg");
     }
   });
 

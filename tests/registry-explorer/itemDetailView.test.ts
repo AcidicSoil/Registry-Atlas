@@ -146,7 +146,7 @@ describe("renderItemDetailView", () => {
       new Set(),
       TEST_CATALOG_POLICY,
     );
-    expect(body.innerHTML).toContain("+ Add to setup");
+    expect(body.innerHTML).toContain("Add to setup");
     expect(body.innerHTML).toContain("View setup");
     expect(body.innerHTML).toContain("npx shadcn@latest add @delta/code-block");
     expect(body.innerHTML).toContain("Install directly");

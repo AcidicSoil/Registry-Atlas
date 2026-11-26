@@ -1,4 +1,8 @@
+@layer ui-sdk;
+
 @import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "@fontsource/commit-mono/400.css";
 @import "./tokens.css";
 
 @layer base {
@@ -10,6 +14,9 @@
   }
 
   html {
+    color-scheme: dark;
+    scrollbar-color: var(--atlas-scrollbar) transparent;
+    accent-color: var(--atlas-focus);
     overflow-x: clip;
     min-width: 320px;
     min-height: 100%;
@@ -24,8 +31,8 @@
     background: var(--atlas-background);
     color: var(--atlas-foreground);
     font-family: var(--atlas-font-sans);
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: var(--text-body-sm);
+    line-height: var(--leading-body-sm);
   }
 
   button,
@@ -74,7 +81,7 @@
   h3 {
     color: var(--atlas-foreground);
     line-height: 1.2;
-    font-weight: 650;
+    font-weight: 600;
   }
 
   p {
@@ -82,18 +89,18 @@
   }
 
   h3 {
-    font-size: 1rem;
+    font-size: var(--text-body);
   }
 
   h1 {
     margin-bottom: var(--atlas-space-2);
-    font-size: clamp(1.5rem, 2vw, 2rem);
+    font-size: var(--text-heading-sm);
     letter-spacing: -0.035em;
   }
 
   h2 {
     margin-bottom: var(--atlas-space-2);
-    font-size: 1.05rem;
+    font-size: var(--text-subheading);
     letter-spacing: -0.015em;
   }
 

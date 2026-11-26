@@ -1,3 +1,4 @@
+import { controlIcon } from "./primitives/controlIcon";
 import { detailClasses } from "./primitives/detailClasses";
 import { emptyStateClasses } from "./primitives/emptyStateClasses";
 import { actionClasses } from "./primitives/actionClasses";
@@ -33,7 +34,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
   if (!detail) {
     return `
       <div>
-        <button class="link-button ${actionClasses.link}" type="button" data-back-from-item>← Back to results</button>
+        <button class="link-button ${actionClasses.link}" type="button" data-back-from-item>${controlIcon("arrow-left")} Back to results</button>
         <h1>Item details unavailable</h1>
         <p>Registry Atlas could not find this item in the selected registry.</p>
       </div>
@@ -56,16 +57,16 @@ function renderHeader(detail: RegistryItemDetail | null): string {
     <div class="item-detail-header mx-auto grid w-[min(100%,800px)] min-w-0 gap-3">
       <nav class="item-quick-links flex w-full flex-wrap items-center justify-center gap-x-[18px] gap-y-2 [&>a]:text-xs [&>a]:underline-offset-[3px]" aria-label="Component links">
         <a href="${escapeHtml(libraryUrl)}" data-profile-registry="${escapeHtml(detail.namespace)}">Browse library</a>
-        ${registryHomepage ? `<a href="${escapeHtml(registryHomepage)}" target="_blank" rel="noreferrer noopener">Registry homepage ↗</a>` : ""}
+        ${registryHomepage ? `<a href="${escapeHtml(registryHomepage)}" target="_blank" rel="noreferrer noopener">Registry homepage ${controlIcon("arrow-up-right")}</a>` : ""}
         ${
           source
             ? `<a href="${escapeHtml(source.url)}" data-preview-source-url="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
-          target="_blank" rel="noreferrer noopener">${escapeHtml(source.level === "reviewed" ? "Original component" : source.label)} ↗</a>`
+          target="_blank" rel="noreferrer noopener">${escapeHtml(source.level === "reviewed" ? "Original component" : source.label)} ${controlIcon("arrow-up-right")}</a>`
             : ""
         }
       </nav>
-      <button class="link-button ${actionClasses.link}" type="button" data-back-from-item>← Back to results</button>
-      <div class="item-detail-title-row">
+      <button class="link-button ${actionClasses.link}" type="button" data-back-from-item>${controlIcon("arrow-left")} Back to results</button>
+      <div class="item-detail-title-row flex min-w-0 items-start gap-3">
         ${renderRegistryIcon(detail.registry, "detail")}
         <div>
           <h1>${escapeHtml(detail.title)}</h1>
@@ -73,7 +74,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
             ${
               registryHomepage
                 ? `<a href="${escapeHtml(registryHomepage)}" target="_blank" rel="noreferrer noopener"
-                 aria-label="Visit upstream registry homepage for ${escapeHtml(detail.namespace)}">${escapeHtml(detail.namespace)} ↗</a>`
+                 aria-label="Visit upstream registry homepage for ${escapeHtml(detail.namespace)}">${escapeHtml(detail.namespace)} ${controlIcon("arrow-up-right")}</a>`
                 : `<span title="Official registry homepage unavailable">${escapeHtml(detail.namespace)}</span>`
             }
             <span aria-hidden="true">·</span>
@@ -81,7 +82,7 @@ function renderHeader(detail: RegistryItemDetail | null): string {
               source
                 ? `<a href="${escapeHtml(source.url)}" data-preview-source-url="${escapeHtml(source.url)}" data-source-level="${escapeHtml(source.level)}"
                 target="_blank" rel="noreferrer noopener"
-                aria-label="Open upstream component page for ${escapeHtml(detail.slug)}">${escapeHtml(detail.slug)} ↗</a>`
+                aria-label="Open upstream component page for ${escapeHtml(detail.slug)}">${escapeHtml(detail.slug)} ${controlIcon("arrow-up-right")}</a>`
                 : `<span title="Upstream component page unavailable">${escapeHtml(detail.slug)}</span>`
             }
           </p>
@@ -105,14 +106,14 @@ function renderDetailBody(
   return `
     <article class="item-detail-page mx-auto grid w-[min(100%,800px)] gap-6">
       <section class="item-detail-hero flex flex-col-reverse items-stretch gap-5">
-        <div class="item-detail-summary w-full max-w-full [&>p]:max-w-[70ch] grid min-w-0 content-start gap-4 [&>p]:mb-0 [&>p]:text-[15px] [&>p]:text-atlas-muted-foreground">
+        <div class="item-detail-summary w-full max-w-full [&>p]:max-w-[70ch] grid min-w-0 content-start gap-4 [&>p]:mb-0 [&>p]:text-sm [&>p]:text-atlas-muted-foreground">
           ${renderInstallActions(detail.installAction, detail, queuedTokens)}
           ${fallback}
         </div>
       </section>
       ${renderRelatedComponentLinks(relatedItems, detail.namespace, detail.slug, policy)}
       <details class="item-technical-disclosure border-t border-atlas-border pt-3 [&>summary]:cursor-pointer [&>summary]:text-xs [&>summary]:text-atlas-muted-foreground [&>summary:hover]:text-atlas-foreground">
-        <summary>Technical details and provenance</summary>
+        <summary class="flex items-center gap-1.5 list-none">${controlIcon("chevron-right", "transition-transform duration-150 motion-reduce:transition-none [[open]_&]:[transform:rotate(90deg)]")}Technical details and provenance</summary>
         <div class="item-technical-content grid grid-cols-2 gap-4 pt-3 max-[640px]:grid-cols-1">
           ${renderListCard("Dependencies", detail.dependencies)}
           ${renderListCard("Dev dependencies", detail.devDependencies)}
@@ -171,14 +172,14 @@ export function renderRelatedComponentLinks(
             aria-label="View ${escapeHtml(item.displayName)} from ${escapeHtml(namespace)}">
             ${renderRegistryIcon(item.registry, "related")}
             <span${renderClassAttribute(cn(relatedStyles.titleText))} data-related-title>${escapeHtml(item.displayName)}</span>
-            <span${renderClassAttribute(cn(relatedStyles.arrow))} aria-hidden="true">↗</span>
+            <span${renderClassAttribute(cn(relatedStyles.arrow))} aria-hidden="true">${controlIcon("arrow-up-right")}</span>
           </a>
           <div data-related-source-actions>
             ${
               original
                 ? `<a${renderClassAttribute(cn(relatedStyles.original))} data-related-source href="${escapeHtml(original.url)}"
               data-source-level="${escapeHtml(original.level)}"
-              target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ↗</a>`
+              target="_blank" rel="noreferrer noopener">${escapeHtml(original.label)} ${controlIcon("arrow-up-right")}</a>`
                 : ""
             }
           </div>
@@ -240,7 +241,7 @@ function renderInstallActions(
         data-queue-item="${escapeHtml(detail.slug)}"
         data-queue-install="${escapeHtml(action.installCommand)}"
         data-queue-inspect="${escapeHtml(action.inspectCommand)}"
-        data-queue-route="${escapeHtml(action.route)}">+ Add to setup</button>`;
+        data-queue-route="${escapeHtml(action.route)}">${controlIcon("plus")} Add to setup</button>`;
 
   return `<div class="setup-detail-controls grid w-[min(100%,700px)] gap-4">
     <div class="setup-detail-main-actions flex flex-wrap items-center gap-2 [&>.install-button]:inline-flex [&>.install-button]:min-h-9 [&>.install-button]:items-center [&>.install-button]:justify-center [&>.install-button]:no-underline">
@@ -257,7 +258,7 @@ function renderInstallActions(
           data-copy-label="Install command copied">Copy</button>
       </div>
       <details class="setup-command-more text-xs text-atlas-muted-foreground [&>summary]:w-max [&>summary]:cursor-pointer [&>p]:mt-2 [&>p]:mb-0 [&_code]:text-atlas-foreground">
-        <summary>View component details</summary>
+        <summary class="flex items-center gap-1.5 list-none">${controlIcon("chevron-right", "transition-transform duration-150 motion-reduce:transition-none [[open]_&]:[transform:rotate(90deg)]")}View component details</summary>
         <p>Registry token: <code>${escapeHtml(action.token)}</code></p>
         <p>View command: <code>${escapeHtml(action.inspectCommand)}</code></p>
       </details>
@@ -271,7 +272,7 @@ function renderListCard(title: string, items: readonly string[]): string {
   return `
     <section class="item-detail-card shadow-none ${detailClasses.card}">
       <h2>${escapeHtml(title)}</h2>
-      <div class="item-dependency-list grid gap-2 [&_code]:min-w-0 [&_code]:rounded-sm [&_code]:bg-atlas-secondary [&_code]:px-2 [&_code]:py-1 [&_code]:font-atlas-mono [&_code]:text-[11px] [&_code]:text-atlas-primary [&_code]:[overflow-wrap:anywhere]">
+      <div class="item-dependency-list grid gap-2 [&_code]:min-w-0 [&_code]:rounded-[var(--atlas-radius-badge)] [&_code]:bg-atlas-secondary [&_code]:px-2 [&_code]:py-1 [&_code]:font-atlas-mono [&_code]:text-xs [&_code]:text-atlas-primary [&_code]:[overflow-wrap:anywhere]">
         ${items.map((item) => `<code class="${detailClasses.code}">${escapeHtml(item)}</code>`).join("")}
       </div>
     </section>
@@ -284,7 +285,7 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
   return `
     <section class="item-detail-card shadow-none ${detailClasses.card}">
       <h2>Files</h2>
-      <div class="item-file-list grid gap-2 [&_code]:min-w-0 [&_code]:rounded-sm [&_code]:bg-atlas-secondary [&_code]:px-2 [&_code]:py-1 [&_code]:font-atlas-mono [&_code]:text-[11px] [&_code]:text-atlas-primary [&_code]:[overflow-wrap:anywhere] [&>div]:grid [&>div]:gap-1 [&_span]:text-xs [&_span]:text-atlas-muted-foreground">${files
+      <div class="item-file-list grid gap-2 [&_code]:min-w-0 [&_code]:rounded-[var(--atlas-radius-badge)] [&_code]:bg-atlas-secondary [&_code]:px-2 [&_code]:py-1 [&_code]:font-atlas-mono [&_code]:text-xs [&_code]:text-atlas-primary [&_code]:[overflow-wrap:anywhere] [&>div]:grid [&>div]:gap-1 [&_span]:text-xs [&_span]:text-atlas-muted-foreground">${files
         .map(
           (file) => `
         <div>
@@ -300,7 +301,7 @@ function renderFilesCard(files: readonly RegistryItemSummaryFile[]): string {
 
 function renderSourceCard(detail: RegistryItemDetail): string {
   return `
-    <section class="item-technical-group min-w-0 [&>h3]:m-0 [&>h3]:mb-2 [&>h3]:text-[13px]">
+    <section class="item-technical-group min-w-0 [&>h3]:m-0 [&>h3]:mb-2 [&>h3]:text-sm">
       <h3>Provenance</h3>
       <dl class="profile-facts ${detailClasses.facts}">
         <div class="profile-fact ${detailClasses.fact}"><dt>Source</dt><dd>${escapeHtml(detail.source)}</dd></div>

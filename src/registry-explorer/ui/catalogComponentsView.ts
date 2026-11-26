@@ -1,3 +1,4 @@
+import { controlIcon } from "./primitives/controlIcon";
 import { emptyStateClasses } from "./primitives/emptyStateClasses";
 import { actionClasses } from "./primitives/actionClasses";
 import { catalogPresentationClasses } from "./primitives/catalogPresentationClasses";
@@ -183,8 +184,8 @@ export function renderCatalogBrowseControls(
         .map(
           (
             entry,
-          ) => `<button type="button" class="catalog-applied-filter cursor-pointer rounded-full border border-atlas-input bg-atlas-secondary px-[9px] py-[7px] text-xs text-atlas-foreground hover:border-atlas-primary" ${entry.attribute}="${escapeHtml(entry.value)}"
-        aria-label="Remove ${escapeHtml(entry.label)} filter">${escapeHtml(entry.label)} <span aria-hidden="true">×</span></button>`,
+          ) => `<button type="button" class="catalog-applied-filter inline-flex items-center gap-1.5 cursor-pointer rounded-[var(--atlas-radius-badge)] border border-atlas-input bg-atlas-secondary px-[9px] py-[7px] text-xs text-atlas-foreground hover:border-atlas-primary" ${entry.attribute}="${escapeHtml(entry.value)}"
+        aria-label="Remove ${escapeHtml(entry.label)} filter">${escapeHtml(entry.label)} ${controlIcon("close")}</button>`,
         )
         .join("")}
     </div>`
@@ -222,7 +223,7 @@ function renderCardRegistryHomepage(url: string | null, namespace: string): stri
   return `<a${renderClassAttribute(cn(cardStyles.registryHomepage))}
     data-registry-homepage href="${escapeHtml(url)}"
     target="_blank" rel="noreferrer noopener"
-    aria-label="Open registry homepage for ${escapeHtml(namespace)}">Registry homepage ↗</a>`;
+    aria-label="Open registry homepage for ${escapeHtml(namespace)}">Registry homepage ${controlIcon("arrow-up-right")}</a>`;
 }
 
 function cardLayoutAttributes(options: {
@@ -248,7 +249,7 @@ function renderCardSourceLink(
   return `<a${renderClassAttribute(cn(cardStyles.original))} data-catalog-source href="${escapeHtml(source.url)}"
     data-source-level="${escapeHtml(source.level)}"
     target="_blank" rel="noreferrer noopener"
-    aria-label="Open source page on ${escapeHtml(namespace)}">Source ↗</a>`;
+    aria-label="Open source page on ${escapeHtml(namespace)}">Source ${controlIcon("arrow-up-right")}</a>`;
 }
 
 function cardOpenAttributes(layout: "grid" | "list" | undefined): string {
@@ -337,11 +338,7 @@ export function renderCatalogComponentCard(
           data-copy-label="${copy.feedback}"
           aria-label="Copy ${escapeHtml(component.displayName)} ${copy.action}"
           title="Copy ${copy.action}">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
-            stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="8" y="8" width="13" height="13" rx="2" />
-            <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
-          </svg>
+          ${controlIcon("copy")}
         </button>
         ${renderCardSourceLink(original, component.namespace)}
       </div>
@@ -381,7 +378,7 @@ function renderCatalogThemeSpecimen(component: CatalogComponent): string {
       ${visible
         .map(
           (group) => `
-        <div class="catalog-theme-swatch-group grid content-end gap-2 p-4 [&>span]:text-[10px] [&>span]:uppercase [&>span]:text-atlas-muted-foreground">
+        <div class="catalog-theme-swatch-group grid content-end gap-2 p-4 [&>span]:text-xs [&>span]:uppercase [&>span]:text-atlas-muted-foreground">
           <span>${escapeHtml(group.label)}</span>
           <div class="catalog-theme-swatch-row grid min-h-[84px] grid-cols-5 overflow-hidden rounded-[var(--atlas-radius-button)] border border-atlas-input">
             ${THEME_SWATCH_KEYS.map((name) => {

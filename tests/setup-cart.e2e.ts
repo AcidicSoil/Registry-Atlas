@@ -16,7 +16,7 @@ test("add a component and review the non-payment setup", async ({ app, screen, b
     )
     .toBe(".NET logo");
   await expect(screen.getByRole("heading", ".NET logo")).toBeVisible();
-  await screen.getByRole("button", "+ Add to setup").tap();
+  await screen.getByRole("button", "Add to setup").tap();
 
   await screen.getByRole("link", "View setup").tap();
   await expect(browser).toHaveURL("/Registry-Atlas/setup");

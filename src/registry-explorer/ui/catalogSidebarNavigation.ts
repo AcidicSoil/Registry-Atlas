@@ -1,3 +1,4 @@
+import { controlIcon } from "./primitives/controlIcon";
 import { cn } from "./primitives/cn";
 
 /** Named map contract for dynamic keys in this module. */
@@ -187,7 +188,7 @@ function renderCanonicalNode(
       <span class="sidebar-nav-row-icon ${sidebarNavigationStyles.icon}" aria-hidden="true">${sidebarIcon(node.id)}</span>
       <span class="sidebar-nav-row-label ${sidebarNavigationStyles.label}">${escapeHtml(node.label)}</span>
       <span${renderClassAttribute(cn(sidebarNavigationStyles.count, taxonomyStyles.count), "sidebar-nav-row-count")}>${count.toLocaleString()}</span>
-      <span${renderClassAttribute(cn(taxonomyStyles.chevron), "sidebar-taxonomy-chevron")} aria-hidden="true"></span>
+      ${controlIcon("chevron-right", taxonomyStyles.chevron + " sidebar-taxonomy-chevron")}
     </summary>
     <div${renderClassAttribute(cn(taxonomyStyles.children), "sidebar-taxonomy-children")}>
       ${rowButton({

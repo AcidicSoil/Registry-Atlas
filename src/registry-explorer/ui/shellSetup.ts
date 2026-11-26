@@ -73,7 +73,7 @@ export function createShellSetupController({
 
     header.insertAdjacentHTML(
       "beforeend",
-      '<div class="setup-replacement-notice mt-3 flex items-center gap-3 rounded-[var(--atlas-radius-button)] border border-atlas-border px-3 py-2.5 text-[13px]" role="status">Choose a replacement component.' +
+      '<div class="setup-replacement-notice mt-3 flex items-center gap-3 rounded-[var(--atlas-radius-button)] border border-atlas-border px-3 py-2.5 text-sm" role="status">Choose a replacement component.' +
         `<button class="install-button ${actionClasses.install}" type="button" data-setup-cancel-replace>Cancel</button></div>`,
     );
   }
@@ -220,7 +220,7 @@ export function renderCopyFeedback(feedback: CopyFeedback | null): string {
   if (!feedback) return "";
 
   return `
-    <div class="copy-feedback copy-feedback-${escapeHtml(feedback.status)} mt-2 inline-flex w-fit max-w-full items-center gap-2 rounded-[var(--atlas-radius-button)] border-0 bg-atlas-secondary px-2 py-1 text-[11px] [&_code]:min-w-0 [&_code]:rounded-sm [&_code]:bg-atlas-secondary [&_code]:px-2 [&_code]:py-1 [&_code]:font-atlas-mono [&_code]:text-[11px] [&_code]:text-atlas-primary [&_code]:[overflow-wrap:anywhere]" role="status" aria-live="polite" aria-atomic="true">
+    <div class="copy-feedback copy-feedback-${escapeHtml(feedback.status)} mt-2 inline-flex w-fit max-w-full items-center gap-2 rounded-[var(--atlas-radius-button)] border-0 bg-atlas-secondary px-2 py-1 text-xs [&_code]:min-w-0 [&_code]:rounded-sm [&_code]:bg-atlas-secondary [&_code]:px-2 [&_code]:py-1 [&_code]:font-atlas-mono [&_code]:text-xs [&_code]:text-atlas-primary [&_code]:[overflow-wrap:anywhere]" role="status" aria-live="polite" aria-atomic="true">
       <span>${escapeHtml(feedback.message)}</span>
       ${feedback.status === "error" && feedback.command ? `<code>${escapeHtml(feedback.command)}</code>` : ""}
     </div>

@@ -1,3 +1,4 @@
+import { controlIcon, dropdownChevron } from "./primitives/controlIcon";
 import {
   CATALOG_COMPONENT_TYPES,
   isCatalogComponentType,
@@ -17,7 +18,7 @@ export function createComponentTypeFilter(
           <input class="${filterControlClasses.input}" aria-label="Find component types" placeholder="Find component types…" />
         </ui-combobox-input>
         <ui-combobox-trigger>
-          <button class="${filterControlClasses.groupButton}" type="button" aria-label="Show component types">Types <span aria-hidden="true">⌄</span></button>
+          <button class="${filterControlClasses.groupButton}" type="button" aria-label="Show component types"><span data-type-trigger-label>Types</span>${dropdownChevron()}</button>
         </ui-combobox-trigger>
       </div>
       <ui-combobox-content hidden align="start" side-offset="6" class="${filterControlClasses.panel}">
@@ -28,7 +29,7 @@ export function createComponentTypeFilter(
             ({ value, label }) => `
             <ui-combobox-item value="${escapeHtml(value)}" label="${escapeHtml(label)}" class="${filterControlClasses.option}">
               <span>${escapeHtml(label)}</span>
-              <ui-combobox-item-indicator class="${filterControlClasses.indicator}" aria-hidden="true">✓</ui-combobox-item-indicator>
+              <ui-combobox-item-indicator class="${filterControlClasses.indicator}" aria-hidden="true">${controlIcon("check")}</ui-combobox-item-indicator>
             </ui-combobox-item>`,
           ).join("")}
         </ui-combobox-list>
@@ -37,7 +38,9 @@ export function createComponentTypeFilter(
   const combobox = mount.querySelector("ui-combobox");
   const trigger = mount.querySelector<HTMLButtonElement>("ui-combobox-trigger button");
 
-  if (!combobox || !trigger) throw new Error("Missing type filter controls");
+  const triggerLabel = trigger?.querySelector("[data-type-trigger-label]");
+
+  if (!combobox || !trigger || !triggerLabel) throw new Error("Missing type filter controls");
 
   const lifetime = new AbortController();
   let selected: readonly CatalogComponentType[] = [];
@@ -74,7 +77,7 @@ export function createComponentTypeFilter(
         syncing = false;
       }
 
-      trigger.textContent = types.length ? `Types (${types.length}) ⌄` : "Types ⌄";
+      triggerLabel.textContent = types.length ? `Types (${types.length})` : "Types";
       trigger.setAttribute(
         "aria-label",
         types.length ? `Show component types, ${types.length} selected` : "Show component types",
