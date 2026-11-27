@@ -106,12 +106,29 @@ test("nested theme cards show distinct names and expose canonical copy paths", a
   browser,
   screen,
 }) => {
+  await browser.addInitScript(() => {
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+        const input = document.querySelector<HTMLInputElement>("#searchInput");
+
+        document.documentElement.dataset.initialSearchDisabled = String(input?.disabled);
+      },
+      { once: true },
+    );
+  });
   await app.open("/Registry-Atlas/themes");
 
   const search = screen.getByRole("searchbox", "Search catalog");
   const apple = screen.getByRole("link", "Open Apple from @registrydirectory");
   const copy = screen.getByRole("button", "Copy Apple item path");
 
+  await expect
+    .poll(() =>
+      browser.evaluate(() => document.documentElement.dataset.initialSearchDisabled ?? null),
+    )
+    .toBe("true");
+  await expect(search).toBeEnabled();
   await search.fill("marvkr/apple/all");
   await expect(apple).toBeVisible();
   await expect(copy).toHaveAttribute("data-copy-text", "@registrydirectory/marvkr/apple/all");

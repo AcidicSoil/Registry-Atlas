@@ -172,6 +172,7 @@ async function bootstrap() {
       });
 
       attachCatalogLinkPreviews([contentBody, contentHeader], media);
+      searchInput.disabled = false;
     } else {
       console.error("Registry Explorer: Missing DOM roots");
     }

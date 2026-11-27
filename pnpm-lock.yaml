@@ -10,6 +10,9 @@ overrides:
   fast-uri: 3.1.9
   minimatch: 11.0.1
 
+patchedDependencies:
+  zod@4.6.6: 26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6
+
 importers:
 
   .:
@@ -40,7 +43,7 @@ importers:
         version: 3.5.0
       zod:
         specifier: 4.6.6
-        version: 4.6.6
+        version: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
     devDependencies:
       '@e2e-dev/web':
         specifier: 0.14.0
@@ -3718,12 +3721,12 @@ snapshots:
 
   '@modelcontextprotocol/core@2.3.0':
     dependencies:
-      zod: 4.6.6
+      zod: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
 
   '@modelcontextprotocol/server@2.3.0':
     dependencies:
       '@modelcontextprotocol/core': 2.3.0
-      zod: 4.6.6
+      zod: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
 
   '@napi-rs/wasm-runtime@1.2.5(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.2)':
     dependencies:
@@ -4798,7 +4801,7 @@ snapshots:
       oxc-transform: 0.152.0
       picocolors: 1.1.1
       pixelmatch: 8.0.0
-      zod: 4.6.6
+      zod: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
 
   electron-to-chromium@1.5.452: {}
 
@@ -4862,8 +4865,8 @@ snapshots:
       '@babel/parser': 7.29.9
       eslint: 9.39.1(jiti@2.7.0)(supports-color@7.2.0)
       hermes-parser: 0.25.1
-      zod: 4.6.6
-      zod-validation-error: 4.0.2(zod@4.6.6)
+      zod: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
+      zod-validation-error: 4.0.2(zod@4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6))
     transitivePeerDependencies:
       - supports-color
 
@@ -5219,7 +5222,7 @@ snapshots:
       tinyglobby: 0.2.17
       unbash: 6.0.1
       yaml: 2.9.1
-      zod: 4.6.6
+      zod: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
 
   known-css-properties@0.37.0: {}
 
@@ -6064,8 +6067,8 @@ snapshots:
 
   yoga-layout@3.2.1: {}
 
-  zod-validation-error@4.0.2(zod@4.6.6):
+  zod-validation-error@4.0.2(zod@4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)):
     dependencies:
-      zod: 4.6.6
+      zod: 4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6)
 
-  zod@4.6.6: {}
+  zod@4.6.6(patch_hash=26f6d50e2d9469001b23ad6cb69652b632d5419f488d5f2e61e49045743dcba6): {}

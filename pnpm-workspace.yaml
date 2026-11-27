@@ -16,3 +16,6 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - knip@6.44.0
+
+patchedDependencies:
+  zod@4.6.6: patches/zod@4.6.6.patch
