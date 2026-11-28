@@ -7,6 +7,12 @@ import {
 import { escapeHtml } from "./renderSafety";
 import { filterControlClasses } from "./primitives/filterControlClasses";
 
+function sameSelection(left: readonly unknown[], right: readonly CatalogComponentType[]): boolean {
+  const values = new Set(left);
+
+  return left.length === right.length && right.every((type) => values.has(type));
+}
+
 export function createComponentTypeFilter(
   mount: HTMLElement,
   onChange: (types: CatalogComponentType[]) => void,
@@ -54,7 +60,7 @@ export function createComponentTypeFilter(
       if (!Array.isArray(value)) return;
       const next = value.filter(isCatalogComponentType);
 
-      if (next.length === selected.length && next.every((type) => selected.includes(type))) return;
+      if (sameSelection(selected, next)) return;
       onChange(next);
     },
     { signal: lifetime.signal },
@@ -67,11 +73,7 @@ export function createComponentTypeFilter(
       selected = [...types];
       const current = combobox.value;
 
-      if (
-        !Array.isArray(current) ||
-        current.length !== types.length ||
-        !types.every((type) => current.includes(type))
-      ) {
+      if (!Array.isArray(current) || !sameSelection(current, types)) {
         syncing = true;
         combobox.value = [...types];
         syncing = false;

@@ -18,7 +18,7 @@
     "tools/oxlint/anti-slop/effect/index.ts",
   ],
   "project": [
-    "src/**/*.{ts,tsx}",
+    "src/**/*.{ts,tsx,css}",
     "scripts/**/*.{mjs,mts}",
     "tests/**/*.{ts,tsx,mjs}",
     "tests-mobile/**/*.{ts,tsx,mjs}",
